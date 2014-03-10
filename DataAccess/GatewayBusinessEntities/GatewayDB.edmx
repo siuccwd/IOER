@@ -1,0 +1,2259 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="2.0" xmlns:edmx="http://schemas.microsoft.com/ado/2008/10/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="GatewayModel1.Store" Alias="Self" Provider="System.Data.SqlClient" ProviderManifestToken="2008" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/02/edm/ssdl">
+        <EntityContainer Name="GatewayModel1StoreContainer">
+          <EntitySet Name="AppGroup" EntityType="GatewayModel1.Store.AppGroup" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="AppGroup_Member" EntityType="GatewayModel1.Store.AppGroup_Member" store:Type="Tables" Schema="dbo" Table="AppGroup.Member" />
+          <EntitySet Name="AppGroup_OrgMember" EntityType="GatewayModel1.Store.AppGroup_OrgMember" store:Type="Tables" Schema="dbo" Table="AppGroup.OrgMember" />
+          <EntitySet Name="AppGroup_Privilege" EntityType="GatewayModel1.Store.AppGroup_Privilege" store:Type="Tables" Schema="dbo" Table="AppGroup.Privilege" />
+          <EntitySet Name="AppGroup_TeamMember" EntityType="GatewayModel1.Store.AppGroup_TeamMember" store:Type="Tables" Schema="dbo" Table="AppGroup.TeamMember" />
+          <EntitySet Name="Application" EntityType="GatewayModel1.Store.Application" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="Application_Member" EntityType="GatewayModel1.Store.Application_Member" store:Type="Tables" Schema="dbo" Table="Application.Member" />
+          <EntitySet Name="ApplicationObject" EntityType="GatewayModel1.Store.ApplicationObject" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="ApplicationRolePrivilege" EntityType="GatewayModel1.Store.ApplicationRolePrivilege" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="AppUser" EntityType="GatewayModel1.Store.AppUser" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="AppUser_ExternalAccount" EntityType="GatewayModel1.Store.AppUser_ExternalAccount" store:Type="Tables" Schema="dbo" Table="AppUser.ExternalAccount" />
+          <EntitySet Name="AppUser_Profile" EntityType="GatewayModel1.Store.AppUser_Profile" store:Type="Tables" Schema="dbo" Table="AppUser.Profile" />
+          <EntitySet Name="AppVisitLog" EntityType="GatewayModel1.Store.AppVisitLog" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="Codes_AuthorizationLevel" EntityType="GatewayModel1.Store.Codes_AuthorizationLevel" store:Type="Tables" Schema="dbo" Table="Codes.AuthorizationLevel" />
+          <EntitySet Name="Codes_ExternalSite" EntityType="GatewayModel1.Store.Codes_ExternalSite" store:Type="Tables" Schema="dbo" Table="Codes.ExternalSite" />
+          <EntitySet Name="Codes_GroupType" EntityType="GatewayModel1.Store.Codes_GroupType" store:Type="Tables" Schema="dbo" Table="Codes.GroupType" />
+          <EntitySet Name="Codes_OrgMemberRole" EntityType="GatewayModel1.Store.Codes_OrgMemberRole" store:Type="Tables" Schema="dbo" Table="Codes.OrgMemberRole" />
+          <EntitySet Name="Codes_OrgMemberType" EntityType="GatewayModel1.Store.Codes_OrgMemberType" store:Type="Tables" Schema="dbo" Table="Codes.OrgMemberType" />
+          <EntitySet Name="Codes_OrgType" EntityType="GatewayModel1.Store.Codes_OrgType" store:Type="Tables" Schema="dbo" Table="Codes.OrgType" />
+          <EntitySet Name="Codes_PrivilegeDepth" EntityType="GatewayModel1.Store.Codes_PrivilegeDepth" store:Type="Tables" Schema="dbo" Table="Codes.PrivilegeDepth" />
+          <EntitySet Name="Codes_PrivilegeType" EntityType="GatewayModel1.Store.Codes_PrivilegeType" store:Type="Tables" Schema="dbo" Table="Codes.PrivilegeType" />
+          <EntitySet Name="Codes_PublishingRole" EntityType="GatewayModel1.Store.Codes_PublishingRole" store:Type="Tables" Schema="dbo" Table="Codes.PublishingRole" />
+          <EntitySet Name="Codes_State" EntityType="GatewayModel1.Store.Codes_State" store:Type="Tables" Schema="dbo" Table="Codes.State" />
+          <EntitySet Name="CodeTable" EntityType="GatewayModel1.Store.CodeTable" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="EmailNotice" EntityType="GatewayModel1.Store.EmailNotice" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="Organization" EntityType="GatewayModel1.Store.Organization" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="Organization_Member" EntityType="GatewayModel1.Store.Organization_Member" store:Type="Tables" Schema="dbo" Table="Organization.Member" />
+          <EntitySet Name="Organization_MemberRole" EntityType="GatewayModel1.Store.Organization_MemberRole" store:Type="Tables" Schema="dbo" Table="Organization.MemberRole" />
+          <EntitySet Name="OrganizationRequest" EntityType="GatewayModel1.Store.OrganizationRequest" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="OrganizationTemp" EntityType="GatewayModel1.Store.OrganizationTemp" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="SqlQuery" EntityType="GatewayModel1.Store.SqlQuery" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="LR_PatronOrgSummary" EntityType="GatewayModel1.Store.LR_PatronOrgSummary" store:Type="Views" store:Schema="dbo" store:Name="LR.PatronOrgSummary">
+            <DefiningQuery>SELECT 
+      [LR_PatronOrgSummary].[UserId] AS [UserId], 
+      [LR_PatronOrgSummary].[UserName] AS [UserName], 
+      [LR_PatronOrgSummary].[FirstName] AS [FirstName], 
+      [LR_PatronOrgSummary].[LastName] AS [LastName], 
+      [LR_PatronOrgSummary].[FullName] AS [FullName], 
+      [LR_PatronOrgSummary].[SortName] AS [SortName], 
+      [LR_PatronOrgSummary].[Email] AS [Email], 
+      [LR_PatronOrgSummary].[PublishingRole] AS [PublishingRole], 
+      [LR_PatronOrgSummary].[ImageUrl] AS [ImageUrl], 
+      [LR_PatronOrgSummary].[UserRowId] AS [UserRowId], 
+      [LR_PatronOrgSummary].[JobTitle] AS [JobTitle], 
+      [LR_PatronOrgSummary].[RoleProfile] AS [RoleProfile], 
+      [LR_PatronOrgSummary].[OrganizationId] AS [OrganizationId], 
+      [LR_PatronOrgSummary].[Organization] AS [Organization], 
+      [LR_PatronOrgSummary].[Created] AS [Created], 
+      [LR_PatronOrgSummary].[LastUpdated] AS [LastUpdated]
+      FROM [dbo].[LR.PatronOrgSummary] AS [LR_PatronOrgSummary]</DefiningQuery>
+          </EntitySet>
+          <AssociationSet Name="FK_AppGroup_OrgMember_AppGroup" Association="GatewayModel1.Store.FK_AppGroup_OrgMember_AppGroup">
+            <End Role="AppGroup" EntitySet="AppGroup" />
+            <End Role="AppGroup_OrgMember" EntitySet="AppGroup_OrgMember" />
+          </AssociationSet>
+          <AssociationSet Name="FK_AppGroup_OrgMember_Organization" Association="GatewayModel1.Store.FK_AppGroup_OrgMember_Organization">
+            <End Role="Organization" EntitySet="Organization" />
+            <End Role="AppGroup_OrgMember" EntitySet="AppGroup_OrgMember" />
+          </AssociationSet>
+          <AssociationSet Name="FK_AppGroup_Privilege_AppGroup" Association="GatewayModel1.Store.FK_AppGroup_Privilege_AppGroup">
+            <End Role="AppGroup" EntitySet="AppGroup" />
+            <End Role="AppGroup_Privilege" EntitySet="AppGroup_Privilege" />
+          </AssociationSet>
+          <AssociationSet Name="FK_AppGroup_Privilege_ApplicationObject" Association="GatewayModel1.Store.FK_AppGroup_Privilege_ApplicationObject">
+            <End Role="ApplicationObject" EntitySet="ApplicationObject" />
+            <End Role="AppGroup_Privilege" EntitySet="AppGroup_Privilege" />
+          </AssociationSet>
+          <AssociationSet Name="FK_AppGroup_Privilege_ApplicationObject1" Association="GatewayModel1.Store.FK_AppGroup_Privilege_ApplicationObject1">
+            <End Role="ApplicationObject" EntitySet="ApplicationObject" />
+            <End Role="AppGroup_Privilege" EntitySet="AppGroup_Privilege" />
+          </AssociationSet>
+          <AssociationSet Name="FK_AppGroup_Application" Association="GatewayModel1.Store.FK_AppGroup_Application">
+            <End Role="Application" EntitySet="Application" />
+            <End Role="AppGroup" EntitySet="AppGroup" />
+          </AssociationSet>
+          <AssociationSet Name="FK_AppGroup_Organization" Association="GatewayModel1.Store.FK_AppGroup_Organization">
+            <End Role="Organization" EntitySet="Organization" />
+            <End Role="AppGroup" EntitySet="AppGroup" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Application_Member_Application" Association="GatewayModel1.Store.FK_Application_Member_Application">
+            <End Role="Application" EntitySet="Application" />
+            <End Role="Application_Member" EntitySet="Application_Member" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Application_Member_AppUser" Association="GatewayModel1.Store.FK_Application_Member_AppUser">
+            <End Role="AppUser" EntitySet="AppUser" />
+            <End Role="Application_Member" EntitySet="Application_Member" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ApplicationRolePrivilege_ApplicationObject" Association="GatewayModel1.Store.FK_ApplicationRolePrivilege_ApplicationObject">
+            <End Role="ApplicationObject" EntitySet="ApplicationObject" />
+            <End Role="ApplicationRolePrivilege" EntitySet="ApplicationRolePrivilege" />
+          </AssociationSet>
+          <AssociationSet Name="FK_AppUser_ExternalSite_AppUser" Association="GatewayModel1.Store.FK_AppUser_ExternalSite_AppUser">
+            <End Role="AppUser" EntitySet="AppUser" />
+            <End Role="AppUser_ExternalAccount" EntitySet="AppUser_ExternalAccount" />
+          </AssociationSet>
+          <AssociationSet Name="FK_AppUser_ExternalSite_Codes_ExternalSite" Association="GatewayModel1.Store.FK_AppUser_ExternalSite_Codes_ExternalSite">
+            <End Role="Codes_ExternalSite" EntitySet="Codes_ExternalSite" />
+            <End Role="AppUser_ExternalAccount" EntitySet="AppUser_ExternalAccount" />
+          </AssociationSet>
+          <AssociationSet Name="FK_AppUser_Profile_AppUser" Association="GatewayModel1.Store.FK_AppUser_Profile_AppUser">
+            <End Role="AppUser" EntitySet="AppUser" />
+            <End Role="AppUser_Profile" EntitySet="AppUser_Profile" />
+          </AssociationSet>
+          <AssociationSet Name="FK_GroupMember_Group" Association="GatewayModel1.Store.FK_GroupMember_Group">
+            <End Role="AppGroup" EntitySet="AppGroup" />
+            <End Role="AppGroup_Member" EntitySet="AppGroup_Member" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Organization_Member_Codes_OrgMemberType" Association="GatewayModel1.Store.FK_Organization_Member_Codes_OrgMemberType">
+            <End Role="Codes_OrgMemberType" EntitySet="Codes_OrgMemberType" />
+            <End Role="Organization_Member" EntitySet="Organization_Member" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Organization_Member_Organization" Association="GatewayModel1.Store.FK_Organization_Member_Organization">
+            <End Role="Organization" EntitySet="Organization" />
+            <End Role="Organization_Member" EntitySet="Organization_Member" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Organization_MemberRole_Codes_OrgMemberRole" Association="GatewayModel1.Store.FK_Organization_MemberRole_Codes_OrgMemberRole">
+            <End Role="Codes_OrgMemberRole" EntitySet="Codes_OrgMemberRole" />
+            <End Role="Organization_MemberRole" EntitySet="Organization_MemberRole" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Organization_MemberRole_Organization_Contact" Association="GatewayModel1.Store.FK_Organization_MemberRole_Organization_Contact">
+            <End Role="Organization_Member" EntitySet="Organization_Member" />
+            <End Role="Organization_MemberRole" EntitySet="Organization_MemberRole" />
+          </AssociationSet>
+          <AssociationSet Name="FK_TeamMember_Group" Association="GatewayModel1.Store.FK_TeamMember_Group">
+            <End Role="AppGroup" EntitySet="AppGroup" />
+            <End Role="AppGroup_TeamMember" EntitySet="AppGroup_TeamMember" />
+          </AssociationSet>
+        </EntityContainer>
+        <EntityType Name="AppGroup">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="ApplicationId" Type="int" />
+          <Property Name="GroupCode" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="Title" Type="varchar" Nullable="false" MaxLength="100" />
+          <Property Name="Description" Type="varchar" MaxLength="500" />
+          <Property Name="GroupTypeId" Type="int" />
+          <Property Name="IsActive" Type="bit" />
+          <Property Name="ContactId" Type="int" />
+          <Property Name="OrgId" Type="int" />
+          <Property Name="ParentGroupId" Type="int" />
+          <Property Name="Created" Type="datetime" />
+          <Property Name="CreatedById" Type="int" />
+          <Property Name="LastUpdated" Type="datetime" />
+          <Property Name="LastUpdatedById" Type="int" />
+          <Property Name="RowId" Type="uniqueidentifier" Nullable="false" />
+        </EntityType>
+        <EntityType Name="AppGroup_Member">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="GroupId" Type="int" Nullable="false" />
+          <Property Name="UserId" Type="int" Nullable="false" />
+          <Property Name="UserRowId" Type="uniqueidentifier" />
+          <Property Name="OrgId" Type="int" />
+          <Property Name="Status" Type="varchar" MaxLength="50" />
+          <Property Name="Category" Type="varchar" MaxLength="25" />
+          <Property Name="IsActive" Type="bit" />
+          <Property Name="Comment" Type="varchar" MaxLength="500" />
+          <Property Name="Created" Type="datetime" />
+          <Property Name="CreatedById" Type="int" />
+          <Property Name="LastUpdated" Type="datetime" />
+          <Property Name="LastUpdatedById" Type="int" />
+        </EntityType>
+        <EntityType Name="AppGroup_OrgMember">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="GroupId" Type="int" Nullable="false" />
+          <Property Name="OrgId" Type="int" />
+          <Property Name="ID" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="IsActive" Type="bit" />
+          <Property Name="Created" Type="datetime" />
+          <Property Name="CreatedById" Type="int" />
+          <Property Name="LastUpdated" Type="datetime" />
+          <Property Name="LastUpdatedById" Type="int" />
+          <Property Name="RowId" Type="uniqueidentifier" Nullable="false" />
+        </EntityType>
+        <EntityType Name="AppGroup_Privilege">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="GroupId" Type="int" Nullable="false" />
+          <Property Name="ObjectId" Type="int" Nullable="false" />
+          <Property Name="Id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="CreatePrivilege" Type="int" />
+          <Property Name="ReadPrivilege" Type="int" />
+          <Property Name="WritePrivilege" Type="int" />
+          <Property Name="DeletePrivilege" Type="int" />
+          <Property Name="AppendPrivilege" Type="int" />
+          <Property Name="AppendToPrivilege" Type="int" />
+          <Property Name="AssignPrivilege" Type="int" />
+          <Property Name="ApprovePrivilege" Type="int" />
+          <Property Name="SharePrivilege" Type="int" />
+          <Property Name="Created" Type="datetime" />
+        </EntityType>
+        <EntityType Name="AppGroup_TeamMember">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="GroupId" Type="int" Nullable="false" />
+          <Property Name="UserId" Type="int" Nullable="false" />
+          <Property Name="UserRowId" Type="uniqueidentifier" />
+          <Property Name="CreatePrivilege" Type="int" />
+          <Property Name="ReadPrivilege" Type="int" />
+          <Property Name="WritePrivilege" Type="int" />
+          <Property Name="DeletePrivilege" Type="int" />
+          <Property Name="AppendPrivilege" Type="int" />
+          <Property Name="AppendToPrivilege" Type="int" />
+          <Property Name="AssignPrivilege" Type="int" />
+          <Property Name="ApprovePrivilege" Type="int" />
+          <Property Name="SharePrivilege" Type="int" />
+          <Property Name="Created" Type="datetime" />
+          <Property Name="CreatedById" Type="int" />
+          <Property Name="LastUpdated" Type="datetime" />
+          <Property Name="LastUpdatedById" Type="int" />
+        </EntityType>
+        <EntityType Name="Application">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="Title" Type="varchar" MaxLength="100" />
+          <Property Name="Description" Type="varchar" MaxLength="250" />
+          <Property Name="RowId" Type="uniqueidentifier" />
+        </EntityType>
+        <EntityType Name="Application_Member">
+          <Key>
+            <PropertyRef Name="AppId" />
+            <PropertyRef Name="UserId" />
+          </Key>
+          <Property Name="AppId" Type="int" Nullable="false" />
+          <Property Name="UserId" Type="int" Nullable="false" />
+          <Property Name="Password" Type="nvarchar" Nullable="false" MaxLength="128" />
+          <Property Name="RowId" Type="uniqueidentifier" />
+          <Property Name="Token" Type="varchar" MaxLength="100" />
+          <Property Name="PasswordQuestion" Type="nvarchar" MaxLength="256" />
+          <Property Name="PasswordAnswer" Type="nvarchar" MaxLength="128" />
+          <Property Name="IsApproved" Type="bit" Nullable="false" />
+          <Property Name="ApprovalDate" Type="datetime" Nullable="false" />
+          <Property Name="IsLockedOut" Type="bit" Nullable="false" />
+          <Property Name="CreateDate" Type="datetime" Nullable="false" />
+          <Property Name="LastLoginDate" Type="datetime" Nullable="false" />
+          <Property Name="Comment" Type="varchar(max)" />
+        </EntityType>
+        <EntityType Name="ApplicationObject">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="ObjectName" Type="nvarchar" MaxLength="100" />
+          <Property Name="DisplayName" Type="nvarchar" MaxLength="75" />
+          <Property Name="Description" Type="nvarchar" MaxLength="250" />
+          <Property Name="Active" Type="bit" />
+          <Property Name="ObjectType" Type="varchar" MaxLength="50" />
+          <Property Name="RelatedUrl" Type="varchar" MaxLength="150" />
+          <Property Name="Created" Type="datetime" />
+          <Property Name="CreatedById" Type="int" />
+          <Property Name="LastUpdated" Type="datetime" />
+          <Property Name="LastUpdatedById" Type="int" />
+        </EntityType>
+        <EntityType Name="ApplicationRolePrivilege">
+          <Key>
+            <PropertyRef Name="RoleId" />
+            <PropertyRef Name="ObjectId" />
+          </Key>
+          <Property Name="RoleId" Type="int" Nullable="false" />
+          <Property Name="ObjectId" Type="int" Nullable="false" />
+          <Property Name="Sequence" Type="int" Nullable="false" />
+          <Property Name="Create" Type="int" />
+          <Property Name="Read" Type="int" />
+          <Property Name="Write" Type="int" />
+          <Property Name="Delete" Type="int" />
+          <Property Name="Append" Type="int" />
+          <Property Name="AppendTo" Type="int" />
+          <Property Name="Assign" Type="int" />
+          <Property Name="Approve" Type="int" />
+          <Property Name="Share" Type="int" />
+          <Property Name="Created" Type="datetime" />
+          <Property Name="RoleCode" Type="smallint" />
+        </EntityType>
+        <EntityType Name="AppUser">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" Nullable="false" />
+          <Property Name="UserName" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="Password" Type="varchar" MaxLength="50" />
+          <Property Name="FirstName" Type="varchar" MaxLength="50" />
+          <Property Name="LastName" Type="varchar" MaxLength="50" />
+          <Property Name="Email" Type="varchar" MaxLength="100" />
+          <Property Name="SecretQuestionId" Type="int" />
+          <Property Name="SecretAnswer" Type="varchar" MaxLength="50" />
+          <Property Name="Created" Type="datetime" />
+          <Property Name="LastUpdated" Type="datetime" />
+          <Property Name="LastUpdatedById" Type="int" />
+          <Property Name="RowId" Type="uniqueidentifier" Nullable="false" />
+        </EntityType>
+        <EntityType Name="AppUser_ExternalAccount">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="UserId" Type="int" />
+          <Property Name="ExternalSiteId" Type="int" />
+          <Property Name="Id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="LoginId" Type="varchar" MaxLength="50" />
+          <Property Name="Password" Type="varchar" MaxLength="50" />
+          <Property Name="Token" Type="varchar" MaxLength="100" />
+        </EntityType>
+        <EntityType Name="AppUser_Profile">
+          <Key>
+            <PropertyRef Name="UserId" />
+          </Key>
+          <Property Name="UserId" Type="int" Nullable="false" />
+          <Property Name="MainPhone" Type="varchar" MaxLength="15" />
+          <Property Name="JobTitle" Type="varchar" MaxLength="50" />
+          <Property Name="PublishingRoleId" Type="int" />
+          <Property Name="RoleProfile" Type="varchar" MaxLength="500" />
+          <Property Name="OrganizationId" Type="int" />
+          <Property Name="Created" Type="datetime" />
+          <Property Name="CreatedById" Type="int" />
+          <Property Name="LastUpdated" Type="datetime" />
+          <Property Name="LastUpdatedId" Type="int" />
+          <Property Name="Notes" Type="varchar" MaxLength="1000" />
+        </EntityType>
+        <EntityType Name="AppVisitLog">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="SessionId" Type="varchar" Nullable="false" MaxLength="30" />
+          <Property Name="CreatedDate" Type="datetime" Nullable="false" />
+          <Property Name="Application" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="URL" Type="varchar" Nullable="false" MaxLength="300" />
+          <Property Name="Parameters" Type="varchar" MaxLength="300" />
+          <Property Name="IsPostback" Type="bit" />
+          <Property Name="Userid" Type="varchar" MaxLength="50" />
+          <Property Name="Comment" Type="varchar" MaxLength="250" />
+          <Property Name="RemoteIP" Type="varchar" MaxLength="25" />
+          <Property Name="ServerName" Type="varchar" MaxLength="25" />
+          <Property Name="CurrentZip" Type="varchar" MaxLength="12" />
+        </EntityType>
+        <EntityType Name="Codes_AuthorizationLevel">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" Nullable="false" />
+          <Property Name="Title" Type="varchar" MaxLength="50" />
+          <Property Name="Description" Type="varchar" MaxLength="200" />
+          <Property Name="Created" Type="datetime" />
+        </EntityType>
+        <EntityType Name="Codes_ExternalSite">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="Title" Type="varchar" MaxLength="100" />
+          <Property Name="Url" Type="varchar" MaxLength="200" />
+        </EntityType>
+        <EntityType Name="Codes_GroupType">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" Nullable="false" />
+          <Property Name="Title" Type="varchar" MaxLength="50" />
+          <Property Name="Created" Type="datetime" />
+        </EntityType>
+        <EntityType Name="Codes_OrgMemberRole">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" Nullable="false" />
+          <Property Name="Title" Type="varchar" MaxLength="50" />
+          <Property Name="Created" Type="datetime" />
+        </EntityType>
+        <EntityType Name="Codes_OrgMemberType">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" Nullable="false" />
+          <Property Name="Title" Type="varchar" MaxLength="50" />
+          <Property Name="Created" Type="datetime" />
+        </EntityType>
+        <EntityType Name="Codes_OrgType">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" Nullable="false" />
+          <Property Name="Title" Type="varchar" MaxLength="50" />
+          <Property Name="Created" Type="datetime" />
+        </EntityType>
+        <EntityType Name="Codes_PrivilegeDepth">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" Nullable="false" />
+          <Property Name="Title" Type="varchar" Nullable="false" MaxLength="75" />
+          <Property Name="Created" Type="datetime" />
+        </EntityType>
+        <EntityType Name="Codes_PrivilegeType">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" Nullable="false" />
+          <Property Name="Title" Type="varchar" Nullable="false" MaxLength="75" />
+          <Property Name="Created" Type="datetime" />
+        </EntityType>
+        <EntityType Name="Codes_PublishingRole">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" Nullable="false" />
+          <Property Name="Title" Type="varchar" MaxLength="50" />
+          <Property Name="IsOrgRequired" Type="bit" />
+          <Property Name="IsActive" Type="bit" />
+          <Property Name="Created" Type="datetime" />
+        </EntityType>
+        <EntityType Name="Codes_State">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="StateCode" Type="varchar" MaxLength="2" />
+          <Property Name="State" Type="varchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="CodeTable">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="CodeName" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="LanguageCode" Type="varchar" Nullable="false" MaxLength="10" />
+          <Property Name="StringValue" Type="varchar" Nullable="false" MaxLength="100" />
+          <Property Name="NumericValue" Type="decimal" Precision="12" Scale="4" />
+          <Property Name="IntegerValue" Type="int" />
+          <Property Name="Description" Type="varchar" MaxLength="500" />
+          <Property Name="SortOrder" Type="tinyint" />
+          <Property Name="IsActive" Type="bit" />
+          <Property Name="Created" Type="datetime" />
+          <Property Name="Modified" Type="datetime" />
+        </EntityType>
+        <EntityType Name="EmailNotice">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="Title" Type="varchar" Nullable="false" MaxLength="75" />
+          <Property Name="Category" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="NoticeCode" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="Description" Type="varchar" Nullable="false" MaxLength="500" />
+          <Property Name="Filter" Type="varchar(max)" />
+          <Property Name="isActive" Type="bit" Nullable="false" />
+          <Property Name="LanguageCode" Type="varchar" MaxLength="10" />
+          <Property Name="FromEmail" Type="nvarchar" Nullable="false" MaxLength="100" />
+          <Property Name="CcEmail" Type="nvarchar" MaxLength="500" />
+          <Property Name="BccEmail" Type="nvarchar" MaxLength="100" />
+          <Property Name="Subject" Type="nvarchar" Nullable="false" MaxLength="100" />
+          <Property Name="HtmlBody" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="TextBody" Type="nvarchar(max)" />
+          <Property Name="Created" Type="datetime" Nullable="false" />
+          <Property Name="CreatedById" Type="int" />
+          <Property Name="LastUpdated" Type="datetime" Nullable="false" />
+          <Property Name="LastUpdatedById" Type="int" />
+          <Property Name="CreatedBy" Type="varchar" MaxLength="50" />
+          <Property Name="LastUpdatedBy" Type="varchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="Organization">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="varchar" Nullable="false" MaxLength="100" />
+          <Property Name="OrgTypeId" Type="int" />
+          <Property Name="parentId" Type="int" />
+          <Property Name="IsActive" Type="bit" />
+          <Property Name="MainPhone" Type="varchar" MaxLength="20" />
+          <Property Name="MainExtension" Type="varchar" MaxLength="10" />
+          <Property Name="Fax" Type="varchar" MaxLength="10" />
+          <Property Name="TTY" Type="varchar" MaxLength="10" />
+          <Property Name="WebSite" Type="varchar" MaxLength="100" />
+          <Property Name="Email" Type="varchar" MaxLength="100" />
+          <Property Name="LogoUrl" Type="varchar" MaxLength="200" />
+          <Property Name="Address" Type="varchar" MaxLength="50" />
+          <Property Name="Address2" Type="varchar" MaxLength="50" />
+          <Property Name="City" Type="varchar" MaxLength="50" />
+          <Property Name="State" Type="char" MaxLength="2" />
+          <Property Name="Zipcode" Type="varchar" MaxLength="10" />
+          <Property Name="Zipcode4" Type="varchar" MaxLength="4" />
+          <Property Name="Created" Type="datetime" />
+          <Property Name="CreatedById" Type="int" />
+          <Property Name="LastUpdated" Type="datetime" />
+          <Property Name="LastUpdatedById" Type="int" />
+          <Property Name="RowId" Type="uniqueidentifier" />
+        </EntityType>
+        <EntityType Name="Organization_Member">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="OrgId" Type="int" Nullable="false" />
+          <Property Name="UserId" Type="int" Nullable="false" />
+          <Property Name="OrgMemberTypeId" Type="int" />
+          <Property Name="Created" Type="datetime" Nullable="false" />
+          <Property Name="CreatedById" Type="int" />
+          <Property Name="LastUpdated" Type="datetime" />
+          <Property Name="LastUpdatedById" Type="int" />
+        </EntityType>
+        <EntityType Name="Organization_MemberRole">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="OrgContactId" Type="int" Nullable="false" />
+          <Property Name="RoleId" Type="int" Nullable="false" />
+          <Property Name="Created" Type="datetime" Nullable="false" />
+          <Property Name="CreatedById" Type="int" />
+        </EntityType>
+        <EntityType Name="OrganizationRequest">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="UserId" Type="int" Nullable="false" />
+          <Property Name="OrgId" Type="int" />
+          <Property Name="OrganzationName" Type="varchar" MaxLength="100" />
+          <Property Name="Action" Type="varchar" MaxLength="100" />
+          <Property Name="IsActive" Type="bit" />
+          <Property Name="Created" Type="datetime" />
+          <Property Name="LastUpdated" Type="datetime" />
+          <Property Name="LastUpdatedById" Type="int" />
+        </EntityType>
+        <EntityType Name="OrganizationTemp">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="varchar" Nullable="false" MaxLength="100" />
+          <Property Name="OrgTypeId" Type="int" />
+          <Property Name="parentId" Type="int" />
+          <Property Name="IsActive" Type="bit" />
+          <Property Name="MainPhone" Type="varchar" MaxLength="20" />
+          <Property Name="MainExtension" Type="varchar" MaxLength="10" />
+          <Property Name="Fax" Type="varchar" MaxLength="10" />
+          <Property Name="TTY" Type="varchar" MaxLength="10" />
+          <Property Name="WebSite" Type="varchar" MaxLength="100" />
+          <Property Name="Email" Type="varchar" MaxLength="100" />
+          <Property Name="LogoUrl" Type="varchar" MaxLength="200" />
+          <Property Name="Address" Type="varchar" MaxLength="50" />
+          <Property Name="Address2" Type="varchar" MaxLength="50" />
+          <Property Name="City" Type="varchar" MaxLength="50" />
+          <Property Name="State" Type="char" MaxLength="2" />
+          <Property Name="Zipcode" Type="varchar" MaxLength="10" />
+          <Property Name="Created" Type="datetime" />
+          <Property Name="CreatedById" Type="int" />
+          <Property Name="LastUpdated" Type="datetime" />
+          <Property Name="LastUpdatedById" Type="int" />
+          <Property Name="RowId" Type="uniqueidentifier" />
+        </EntityType>
+        <EntityType Name="SqlQuery">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="Title" Type="varchar" Nullable="false" MaxLength="125" />
+          <Property Name="Description" Type="varchar" MaxLength="500" />
+          <Property Name="QueryCode" Type="varchar" MaxLength="50" />
+          <Property Name="Category" Type="varchar" MaxLength="25" />
+          <Property Name="SQL" Type="varchar(max)" Nullable="false" />
+          <Property Name="OwnerId" Type="int" />
+          <Property Name="IsPublic" Type="bit" />
+          <Property Name="Created" Type="datetime" />
+          <Property Name="CreatedBy" Type="varchar" MaxLength="50" />
+          <Property Name="LastUpdated" Type="datetime" />
+          <Property Name="LastUpdatedBy" Type="varchar" MaxLength="50" />
+        </EntityType>
+        <!--Errors Found During Generation:
+      warning 6002: The table/view 'Gateway.dbo.LR.PatronOrgSummary' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.
+      -->
+        <EntityType Name="LR_PatronOrgSummary">
+          <Key>
+            <PropertyRef Name="UserId" />
+            <PropertyRef Name="UserName" />
+            <PropertyRef Name="UserRowId" />
+          </Key>
+          <Property Name="UserId" Type="int" Nullable="false" />
+          <Property Name="UserName" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="FirstName" Type="varchar" MaxLength="50" />
+          <Property Name="LastName" Type="varchar" MaxLength="50" />
+          <Property Name="FullName" Type="varchar" MaxLength="101" />
+          <Property Name="SortName" Type="varchar" MaxLength="102" />
+          <Property Name="Email" Type="varchar" MaxLength="100" />
+          <Property Name="PublishingRole" Type="varchar" MaxLength="50" />
+          <Property Name="ImageUrl" Type="varchar" MaxLength="200" />
+          <Property Name="UserRowId" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="JobTitle" Type="varchar" MaxLength="100" />
+          <Property Name="RoleProfile" Type="varchar" MaxLength="500" />
+          <Property Name="OrganizationId" Type="int" />
+          <Property Name="Organization" Type="varchar" MaxLength="100" />
+          <Property Name="Created" Type="datetime" />
+          <Property Name="LastUpdated" Type="datetime" />
+        </EntityType>
+        <Association Name="FK_AppGroup_OrgMember_AppGroup">
+          <End Role="AppGroup" Type="GatewayModel1.Store.AppGroup" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="AppGroup_OrgMember" Type="GatewayModel1.Store.AppGroup_OrgMember" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AppGroup">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="AppGroup_OrgMember">
+              <PropertyRef Name="GroupId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_AppGroup_OrgMember_Organization">
+          <End Role="Organization" Type="GatewayModel1.Store.Organization" Multiplicity="0..1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="AppGroup_OrgMember" Type="GatewayModel1.Store.AppGroup_OrgMember" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Organization">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="AppGroup_OrgMember">
+              <PropertyRef Name="OrgId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_AppGroup_Privilege_AppGroup">
+          <End Role="AppGroup" Type="GatewayModel1.Store.AppGroup" Multiplicity="1" />
+          <End Role="AppGroup_Privilege" Type="GatewayModel1.Store.AppGroup_Privilege" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AppGroup">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="AppGroup_Privilege">
+              <PropertyRef Name="GroupId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_AppGroup_Privilege_ApplicationObject">
+          <End Role="ApplicationObject" Type="GatewayModel1.Store.ApplicationObject" Multiplicity="1" />
+          <End Role="AppGroup_Privilege" Type="GatewayModel1.Store.AppGroup_Privilege" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ApplicationObject">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="AppGroup_Privilege">
+              <PropertyRef Name="ObjectId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_AppGroup_Privilege_ApplicationObject1">
+          <End Role="ApplicationObject" Type="GatewayModel1.Store.ApplicationObject" Multiplicity="1" />
+          <End Role="AppGroup_Privilege" Type="GatewayModel1.Store.AppGroup_Privilege" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ApplicationObject">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="AppGroup_Privilege">
+              <PropertyRef Name="ObjectId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_AppGroup_Application">
+          <End Role="Application" Type="GatewayModel1.Store.Application" Multiplicity="0..1" />
+          <End Role="AppGroup" Type="GatewayModel1.Store.AppGroup" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Application">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="AppGroup">
+              <PropertyRef Name="ApplicationId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_AppGroup_Organization">
+          <End Role="Organization" Type="GatewayModel1.Store.Organization" Multiplicity="0..1" />
+          <End Role="AppGroup" Type="GatewayModel1.Store.AppGroup" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Organization">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="AppGroup">
+              <PropertyRef Name="OrgId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Application_Member_Application">
+          <End Role="Application" Type="GatewayModel1.Store.Application" Multiplicity="1" />
+          <End Role="Application_Member" Type="GatewayModel1.Store.Application_Member" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Application">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Application_Member">
+              <PropertyRef Name="AppId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Application_Member_AppUser">
+          <End Role="AppUser" Type="GatewayModel1.Store.AppUser" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Application_Member" Type="GatewayModel1.Store.Application_Member" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AppUser">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Application_Member">
+              <PropertyRef Name="UserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ApplicationRolePrivilege_ApplicationObject">
+          <End Role="ApplicationObject" Type="GatewayModel1.Store.ApplicationObject" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="ApplicationRolePrivilege" Type="GatewayModel1.Store.ApplicationRolePrivilege" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ApplicationObject">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="ApplicationRolePrivilege">
+              <PropertyRef Name="ObjectId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_AppUser_ExternalSite_AppUser">
+          <End Role="AppUser" Type="GatewayModel1.Store.AppUser" Multiplicity="0..1" />
+          <End Role="AppUser_ExternalAccount" Type="GatewayModel1.Store.AppUser_ExternalAccount" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AppUser">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="AppUser_ExternalAccount">
+              <PropertyRef Name="UserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_AppUser_ExternalSite_Codes_ExternalSite">
+          <End Role="Codes_ExternalSite" Type="GatewayModel1.Store.Codes_ExternalSite" Multiplicity="0..1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="AppUser_ExternalAccount" Type="GatewayModel1.Store.AppUser_ExternalAccount" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Codes_ExternalSite">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="AppUser_ExternalAccount">
+              <PropertyRef Name="ExternalSiteId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_AppUser_Profile_AppUser">
+          <End Role="AppUser" Type="GatewayModel1.Store.AppUser" Multiplicity="1" />
+          <End Role="AppUser_Profile" Type="GatewayModel1.Store.AppUser_Profile" Multiplicity="0..1" />
+          <ReferentialConstraint>
+            <Principal Role="AppUser">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="AppUser_Profile">
+              <PropertyRef Name="UserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_GroupMember_Group">
+          <End Role="AppGroup" Type="GatewayModel1.Store.AppGroup" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="AppGroup_Member" Type="GatewayModel1.Store.AppGroup_Member" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AppGroup">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="AppGroup_Member">
+              <PropertyRef Name="GroupId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Organization_Member_Codes_OrgMemberType">
+          <End Role="Codes_OrgMemberType" Type="GatewayModel1.Store.Codes_OrgMemberType" Multiplicity="0..1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Organization_Member" Type="GatewayModel1.Store.Organization_Member" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Codes_OrgMemberType">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Organization_Member">
+              <PropertyRef Name="OrgMemberTypeId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Organization_Member_Organization">
+          <End Role="Organization" Type="GatewayModel1.Store.Organization" Multiplicity="1" />
+          <End Role="Organization_Member" Type="GatewayModel1.Store.Organization_Member" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Organization">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="Organization_Member">
+              <PropertyRef Name="OrgId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Organization_MemberRole_Codes_OrgMemberRole">
+          <End Role="Codes_OrgMemberRole" Type="GatewayModel1.Store.Codes_OrgMemberRole" Multiplicity="1" />
+          <End Role="Organization_MemberRole" Type="GatewayModel1.Store.Organization_MemberRole" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Codes_OrgMemberRole">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Organization_MemberRole">
+              <PropertyRef Name="RoleId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Organization_MemberRole_Organization_Contact">
+          <End Role="Organization_Member" Type="GatewayModel1.Store.Organization_Member" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Organization_MemberRole" Type="GatewayModel1.Store.Organization_MemberRole" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Organization_Member">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Organization_MemberRole">
+              <PropertyRef Name="OrgContactId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_TeamMember_Group">
+          <End Role="AppGroup" Type="GatewayModel1.Store.AppGroup" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="AppGroup_TeamMember" Type="GatewayModel1.Store.AppGroup_TeamMember" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AppGroup">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="AppGroup_TeamMember">
+              <PropertyRef Name="GroupId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="GatewayModel1" Alias="Self" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns="http://schemas.microsoft.com/ado/2008/09/edm">
+        <EntityContainer Name="GatewayEntities1" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="AppGroups" EntityType="GatewayModel1.AppGroup" />
+          <EntitySet Name="AppGroup_Member" EntityType="GatewayModel1.AppGroup_Member" />
+          <EntitySet Name="AppGroup_OrgMember" EntityType="GatewayModel1.AppGroup_OrgMember" />
+          <EntitySet Name="AppGroup_Privilege" EntityType="GatewayModel1.AppGroup_Privilege" />
+          <EntitySet Name="AppGroup_TeamMember" EntityType="GatewayModel1.AppGroup_TeamMember" />
+          <EntitySet Name="Applications" EntityType="GatewayModel1.Application" />
+          <EntitySet Name="Application_Member" EntityType="GatewayModel1.Application_Member" />
+          <EntitySet Name="ApplicationObjects" EntityType="GatewayModel1.ApplicationObject" />
+          <EntitySet Name="ApplicationRolePrivileges" EntityType="GatewayModel1.ApplicationRolePrivilege" />
+          <EntitySet Name="AppUsers" EntityType="GatewayModel1.AppUser" />
+          <EntitySet Name="AppUser_ExternalAccount" EntityType="GatewayModel1.AppUser_ExternalAccount" />
+          <EntitySet Name="AppUser_Profile" EntityType="GatewayModel1.AppUser_Profile" />
+          <EntitySet Name="Codes_AuthorizationLevel" EntityType="GatewayModel1.Codes_AuthorizationLevel" />
+          <EntitySet Name="Codes_ExternalSite" EntityType="GatewayModel1.Codes_ExternalSite" />
+          <EntitySet Name="Codes_GroupType" EntityType="GatewayModel1.Codes_GroupType" />
+          <EntitySet Name="Codes_OrgMemberRole" EntityType="GatewayModel1.Codes_OrgMemberRole" />
+          <EntitySet Name="Codes_OrgMemberType" EntityType="GatewayModel1.Codes_OrgMemberType" />
+          <EntitySet Name="Codes_OrgType" EntityType="GatewayModel1.Codes_OrgType" />
+          <EntitySet Name="Codes_PrivilegeDepth" EntityType="GatewayModel1.Codes_PrivilegeDepth" />
+          <EntitySet Name="Codes_PrivilegeType" EntityType="GatewayModel1.Codes_PrivilegeType" />
+          <EntitySet Name="Codes_PublishingRole" EntityType="GatewayModel1.Codes_PublishingRole" />
+          <EntitySet Name="CodeTables" EntityType="GatewayModel1.CodeTable" />
+          <EntitySet Name="EmailNotices" EntityType="GatewayModel1.EmailNotice" />
+          <EntitySet Name="Organizations" EntityType="GatewayModel1.Organization" />
+          <EntitySet Name="Organization_Member" EntityType="GatewayModel1.Organization_Member" />
+          <EntitySet Name="Organization_MemberRole" EntityType="GatewayModel1.Organization_MemberRole" />
+          <EntitySet Name="OrganizationRequests" EntityType="GatewayModel1.OrganizationRequest" />
+          <EntitySet Name="OrganizationTemps" EntityType="GatewayModel1.OrganizationTemp" />
+          <EntitySet Name="SqlQueries" EntityType="GatewayModel1.SqlQuery" />
+          <EntitySet Name="LR_PatronOrgSummary" EntityType="GatewayModel1.LR_PatronOrgSummary" />
+          <AssociationSet Name="FK_AppGroup_OrgMember_AppGroup" Association="GatewayModel1.FK_AppGroup_OrgMember_AppGroup">
+            <End Role="AppGroup" EntitySet="AppGroups" />
+            <End Role="AppGroup_OrgMember" EntitySet="AppGroup_OrgMember" />
+          </AssociationSet>
+          <AssociationSet Name="FK_AppGroup_Privilege_AppGroup" Association="GatewayModel1.FK_AppGroup_Privilege_AppGroup">
+            <End Role="AppGroup" EntitySet="AppGroups" />
+            <End Role="AppGroup_Privilege" EntitySet="AppGroup_Privilege" />
+          </AssociationSet>
+          <AssociationSet Name="FK_AppGroup_Application" Association="GatewayModel1.FK_AppGroup_Application">
+            <End Role="Application" EntitySet="Applications" />
+            <End Role="AppGroup" EntitySet="AppGroups" />
+          </AssociationSet>
+          <AssociationSet Name="FK_AppGroup_Organization" Association="GatewayModel1.FK_AppGroup_Organization">
+            <End Role="Organization" EntitySet="Organizations" />
+            <End Role="AppGroup" EntitySet="AppGroups" />
+          </AssociationSet>
+          <AssociationSet Name="FK_GroupMember_Group" Association="GatewayModel1.FK_GroupMember_Group">
+            <End Role="AppGroup" EntitySet="AppGroups" />
+            <End Role="AppGroup_Member" EntitySet="AppGroup_Member" />
+          </AssociationSet>
+          <AssociationSet Name="FK_TeamMember_Group" Association="GatewayModel1.FK_TeamMember_Group">
+            <End Role="AppGroup" EntitySet="AppGroups" />
+            <End Role="AppGroup_TeamMember" EntitySet="AppGroup_TeamMember" />
+          </AssociationSet>
+          <AssociationSet Name="FK_AppGroup_OrgMember_Organization" Association="GatewayModel1.FK_AppGroup_OrgMember_Organization">
+            <End Role="Organization" EntitySet="Organizations" />
+            <End Role="AppGroup_OrgMember" EntitySet="AppGroup_OrgMember" />
+          </AssociationSet>
+          <AssociationSet Name="FK_AppGroup_Privilege_ApplicationObject" Association="GatewayModel1.FK_AppGroup_Privilege_ApplicationObject">
+            <End Role="ApplicationObject" EntitySet="ApplicationObjects" />
+            <End Role="AppGroup_Privilege" EntitySet="AppGroup_Privilege" />
+          </AssociationSet>
+          <AssociationSet Name="FK_AppGroup_Privilege_ApplicationObject1" Association="GatewayModel1.FK_AppGroup_Privilege_ApplicationObject1">
+            <End Role="ApplicationObject" EntitySet="ApplicationObjects" />
+            <End Role="AppGroup_Privilege" EntitySet="AppGroup_Privilege" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Application_Member_Application" Association="GatewayModel1.FK_Application_Member_Application">
+            <End Role="Application" EntitySet="Applications" />
+            <End Role="Application_Member" EntitySet="Application_Member" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Application_Member_AppUser" Association="GatewayModel1.FK_Application_Member_AppUser">
+            <End Role="AppUser" EntitySet="AppUsers" />
+            <End Role="Application_Member" EntitySet="Application_Member" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ApplicationRolePrivilege_ApplicationObject" Association="GatewayModel1.FK_ApplicationRolePrivilege_ApplicationObject">
+            <End Role="ApplicationObject" EntitySet="ApplicationObjects" />
+            <End Role="ApplicationRolePrivilege" EntitySet="ApplicationRolePrivileges" />
+          </AssociationSet>
+          <AssociationSet Name="FK_AppUser_ExternalSite_AppUser" Association="GatewayModel1.FK_AppUser_ExternalSite_AppUser">
+            <End Role="AppUser" EntitySet="AppUsers" />
+            <End Role="AppUser_ExternalAccount" EntitySet="AppUser_ExternalAccount" />
+          </AssociationSet>
+          <AssociationSet Name="FK_AppUser_Profile_AppUser" Association="GatewayModel1.FK_AppUser_Profile_AppUser">
+            <End Role="AppUser" EntitySet="AppUsers" />
+            <End Role="AppUser_Profile" EntitySet="AppUser_Profile" />
+          </AssociationSet>
+          <AssociationSet Name="FK_AppUser_ExternalSite_Codes_ExternalSite" Association="GatewayModel1.FK_AppUser_ExternalSite_Codes_ExternalSite">
+            <End Role="Codes_ExternalSite" EntitySet="Codes_ExternalSite" />
+            <End Role="AppUser_ExternalAccount" EntitySet="AppUser_ExternalAccount" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Organization_MemberRole_Codes_OrgMemberRole" Association="GatewayModel1.FK_Organization_MemberRole_Codes_OrgMemberRole">
+            <End Role="Codes_OrgMemberRole" EntitySet="Codes_OrgMemberRole" />
+            <End Role="Organization_MemberRole" EntitySet="Organization_MemberRole" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Organization_Member_Codes_OrgMemberType" Association="GatewayModel1.FK_Organization_Member_Codes_OrgMemberType">
+            <End Role="Codes_OrgMemberType" EntitySet="Codes_OrgMemberType" />
+            <End Role="Organization_Member" EntitySet="Organization_Member" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Organization_Member_Organization" Association="GatewayModel1.FK_Organization_Member_Organization">
+            <End Role="Organization" EntitySet="Organizations" />
+            <End Role="Organization_Member" EntitySet="Organization_Member" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Organization_MemberRole_Organization_Contact" Association="GatewayModel1.FK_Organization_MemberRole_Organization_Contact">
+            <End Role="Organization_Member" EntitySet="Organization_Member" />
+            <End Role="Organization_MemberRole" EntitySet="Organization_MemberRole" />
+          </AssociationSet>
+          <EntitySet Name="AppVisitLogs" EntityType="GatewayModel1.AppVisitLog" />
+          <EntitySet Name="Codes_State" EntityType="GatewayModel1.Codes_State" />
+        </EntityContainer>
+        <EntityType Name="AppGroup">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ApplicationId" Type="Int32" />
+          <Property Name="GroupCode" Type="String" Nullable="false" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Name="Title" Type="String" Nullable="false" MaxLength="100" Unicode="false" FixedLength="false" />
+          <Property Name="Description" Type="String" MaxLength="500" Unicode="false" FixedLength="false" />
+          <Property Name="GroupTypeId" Type="Int32" />
+          <Property Name="IsActive" Type="Boolean" />
+          <Property Name="ContactId" Type="Int32" />
+          <Property Name="OrgId" Type="Int32" />
+          <Property Name="ParentGroupId" Type="Int32" />
+          <Property Name="Created" Type="DateTime" Precision="3" />
+          <Property Name="CreatedById" Type="Int32" />
+          <Property Name="LastUpdated" Type="DateTime" Precision="3" />
+          <Property Name="LastUpdatedById" Type="Int32" />
+          <Property Name="RowId" Type="Guid" Nullable="false" />
+          <NavigationProperty Name="AppGroup_OrgMember" Relationship="GatewayModel1.FK_AppGroup_OrgMember_AppGroup" FromRole="AppGroup" ToRole="AppGroup_OrgMember" />
+          <NavigationProperty Name="AppGroup_Privilege" Relationship="GatewayModel1.FK_AppGroup_Privilege_AppGroup" FromRole="AppGroup" ToRole="AppGroup_Privilege" />
+          <NavigationProperty Name="Application" Relationship="GatewayModel1.FK_AppGroup_Application" FromRole="AppGroup" ToRole="Application" />
+          <NavigationProperty Name="Organization" Relationship="GatewayModel1.FK_AppGroup_Organization" FromRole="AppGroup" ToRole="Organization" />
+          <NavigationProperty Name="AppGroup_Member" Relationship="GatewayModel1.FK_GroupMember_Group" FromRole="AppGroup" ToRole="AppGroup_Member" />
+          <NavigationProperty Name="AppGroup_TeamMember" Relationship="GatewayModel1.FK_TeamMember_Group" FromRole="AppGroup" ToRole="AppGroup_TeamMember" />
+        </EntityType>
+        <EntityType Name="AppGroup_Member">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="GroupId" Type="Int32" Nullable="false" />
+          <Property Name="UserId" Type="Int32" Nullable="false" />
+          <Property Name="UserRowId" Type="Guid" />
+          <Property Name="OrgId" Type="Int32" />
+          <Property Name="Status" Type="String" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Name="Category" Type="String" MaxLength="25" Unicode="false" FixedLength="false" />
+          <Property Name="IsActive" Type="Boolean" />
+          <Property Name="Comment" Type="String" MaxLength="500" Unicode="false" FixedLength="false" />
+          <Property Name="Created" Type="DateTime" Precision="3" />
+          <Property Name="CreatedById" Type="Int32" />
+          <Property Name="LastUpdated" Type="DateTime" Precision="3" />
+          <Property Name="LastUpdatedById" Type="Int32" />
+          <NavigationProperty Name="AppGroup" Relationship="GatewayModel1.FK_GroupMember_Group" FromRole="AppGroup_Member" ToRole="AppGroup" />
+        </EntityType>
+        <EntityType Name="AppGroup_OrgMember">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="GroupId" Type="Int32" Nullable="false" />
+          <Property Name="OrgId" Type="Int32" />
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="IsActive" Type="Boolean" />
+          <Property Name="Created" Type="DateTime" Precision="3" />
+          <Property Name="CreatedById" Type="Int32" />
+          <Property Name="LastUpdated" Type="DateTime" Precision="3" />
+          <Property Name="LastUpdatedById" Type="Int32" />
+          <Property Name="RowId" Type="Guid" Nullable="false" />
+          <NavigationProperty Name="AppGroup" Relationship="GatewayModel1.FK_AppGroup_OrgMember_AppGroup" FromRole="AppGroup_OrgMember" ToRole="AppGroup" />
+          <NavigationProperty Name="Organization" Relationship="GatewayModel1.FK_AppGroup_OrgMember_Organization" FromRole="AppGroup_OrgMember" ToRole="Organization" />
+        </EntityType>
+        <EntityType Name="AppGroup_Privilege">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="GroupId" Type="Int32" Nullable="false" />
+          <Property Name="ObjectId" Type="Int32" Nullable="false" />
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="CreatePrivilege" Type="Int32" />
+          <Property Name="ReadPrivilege" Type="Int32" />
+          <Property Name="WritePrivilege" Type="Int32" />
+          <Property Name="DeletePrivilege" Type="Int32" />
+          <Property Name="AppendPrivilege" Type="Int32" />
+          <Property Name="AppendToPrivilege" Type="Int32" />
+          <Property Name="AssignPrivilege" Type="Int32" />
+          <Property Name="ApprovePrivilege" Type="Int32" />
+          <Property Name="SharePrivilege" Type="Int32" />
+          <Property Name="Created" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="AppGroup" Relationship="GatewayModel1.FK_AppGroup_Privilege_AppGroup" FromRole="AppGroup_Privilege" ToRole="AppGroup" />
+          <NavigationProperty Name="ApplicationObject" Relationship="GatewayModel1.FK_AppGroup_Privilege_ApplicationObject" FromRole="AppGroup_Privilege" ToRole="ApplicationObject" />
+          <NavigationProperty Name="ApplicationObject1" Relationship="GatewayModel1.FK_AppGroup_Privilege_ApplicationObject1" FromRole="AppGroup_Privilege" ToRole="ApplicationObject" />
+        </EntityType>
+        <EntityType Name="AppGroup_TeamMember">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="GroupId" Type="Int32" Nullable="false" />
+          <Property Name="UserId" Type="Int32" Nullable="false" />
+          <Property Name="UserRowId" Type="Guid" />
+          <Property Name="CreatePrivilege" Type="Int32" />
+          <Property Name="ReadPrivilege" Type="Int32" />
+          <Property Name="WritePrivilege" Type="Int32" />
+          <Property Name="DeletePrivilege" Type="Int32" />
+          <Property Name="AppendPrivilege" Type="Int32" />
+          <Property Name="AppendToPrivilege" Type="Int32" />
+          <Property Name="AssignPrivilege" Type="Int32" />
+          <Property Name="ApprovePrivilege" Type="Int32" />
+          <Property Name="SharePrivilege" Type="Int32" />
+          <Property Name="Created" Type="DateTime" Precision="3" />
+          <Property Name="CreatedById" Type="Int32" />
+          <Property Name="LastUpdated" Type="DateTime" Precision="3" />
+          <Property Name="LastUpdatedById" Type="Int32" />
+          <NavigationProperty Name="AppGroup" Relationship="GatewayModel1.FK_TeamMember_Group" FromRole="AppGroup_TeamMember" ToRole="AppGroup" />
+        </EntityType>
+        <EntityType Name="Application">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Title" Type="String" MaxLength="100" Unicode="false" FixedLength="false" />
+          <Property Name="Description" Type="String" MaxLength="250" Unicode="false" FixedLength="false" />
+          <Property Name="RowId" Type="Guid" />
+          <NavigationProperty Name="AppGroups" Relationship="GatewayModel1.FK_AppGroup_Application" FromRole="Application" ToRole="AppGroup" />
+          <NavigationProperty Name="Application_Member" Relationship="GatewayModel1.FK_Application_Member_Application" FromRole="Application" ToRole="Application_Member" />
+        </EntityType>
+        <EntityType Name="Application_Member">
+          <Key>
+            <PropertyRef Name="AppId" />
+            <PropertyRef Name="UserId" />
+          </Key>
+          <Property Name="AppId" Type="Int32" Nullable="false" />
+          <Property Name="UserId" Type="Int32" Nullable="false" />
+          <Property Name="Password" Type="String" Nullable="false" MaxLength="128" Unicode="true" FixedLength="false" />
+          <Property Name="RowId" Type="Guid" />
+          <Property Name="Token" Type="String" MaxLength="100" Unicode="false" FixedLength="false" />
+          <Property Name="PasswordQuestion" Type="String" MaxLength="256" Unicode="true" FixedLength="false" />
+          <Property Name="PasswordAnswer" Type="String" MaxLength="128" Unicode="true" FixedLength="false" />
+          <Property Name="IsApproved" Type="Boolean" Nullable="false" />
+          <Property Name="ApprovalDate" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="IsLockedOut" Type="Boolean" Nullable="false" />
+          <Property Name="CreateDate" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="LastLoginDate" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="Comment" Type="String" MaxLength="Max" Unicode="false" FixedLength="false" />
+          <NavigationProperty Name="Application" Relationship="GatewayModel1.FK_Application_Member_Application" FromRole="Application_Member" ToRole="Application" />
+          <NavigationProperty Name="AppUser" Relationship="GatewayModel1.FK_Application_Member_AppUser" FromRole="Application_Member" ToRole="AppUser" />
+        </EntityType>
+        <EntityType Name="ApplicationObject">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ObjectName" Type="String" MaxLength="100" Unicode="true" FixedLength="false" />
+          <Property Name="DisplayName" Type="String" MaxLength="75" Unicode="true" FixedLength="false" />
+          <Property Name="Description" Type="String" MaxLength="250" Unicode="true" FixedLength="false" />
+          <Property Name="Active" Type="Boolean" />
+          <Property Name="ObjectType" Type="String" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Name="RelatedUrl" Type="String" MaxLength="150" Unicode="false" FixedLength="false" />
+          <Property Name="Created" Type="DateTime" Precision="3" />
+          <Property Name="CreatedById" Type="Int32" />
+          <Property Name="LastUpdated" Type="DateTime" Precision="3" />
+          <Property Name="LastUpdatedById" Type="Int32" />
+          <NavigationProperty Name="AppGroup_Privilege" Relationship="GatewayModel1.FK_AppGroup_Privilege_ApplicationObject" FromRole="ApplicationObject" ToRole="AppGroup_Privilege" />
+          <NavigationProperty Name="AppGroup_Privilege1" Relationship="GatewayModel1.FK_AppGroup_Privilege_ApplicationObject1" FromRole="ApplicationObject" ToRole="AppGroup_Privilege" />
+          <NavigationProperty Name="ApplicationRolePrivileges" Relationship="GatewayModel1.FK_ApplicationRolePrivilege_ApplicationObject" FromRole="ApplicationObject" ToRole="ApplicationRolePrivilege" />
+        </EntityType>
+        <EntityType Name="ApplicationRolePrivilege">
+          <Key>
+            <PropertyRef Name="RoleId" />
+            <PropertyRef Name="ObjectId" />
+          </Key>
+          <Property Name="RoleId" Type="Int32" Nullable="false" />
+          <Property Name="ObjectId" Type="Int32" Nullable="false" />
+          <Property Name="Sequence" Type="Int32" Nullable="false" />
+          <Property Name="Create" Type="Int32" />
+          <Property Name="Read" Type="Int32" />
+          <Property Name="Write" Type="Int32" />
+          <Property Name="Delete" Type="Int32" />
+          <Property Name="Append" Type="Int32" />
+          <Property Name="AppendTo" Type="Int32" />
+          <Property Name="Assign" Type="Int32" />
+          <Property Name="Approve" Type="Int32" />
+          <Property Name="Share" Type="Int32" />
+          <Property Name="Created" Type="DateTime" Precision="3" />
+          <Property Name="RoleCode" Type="Int16" />
+          <NavigationProperty Name="ApplicationObject" Relationship="GatewayModel1.FK_ApplicationRolePrivilege_ApplicationObject" FromRole="ApplicationRolePrivilege" ToRole="ApplicationObject" />
+        </EntityType>
+        <EntityType Name="AppUser">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" />
+          <Property Name="UserName" Type="String" Nullable="false" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Name="Password" Type="String" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Name="FirstName" Type="String" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Name="LastName" Type="String" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Name="Email" Type="String" MaxLength="100" Unicode="false" FixedLength="false" />
+          <Property Name="SecretQuestionId" Type="Int32" />
+          <Property Name="SecretAnswer" Type="String" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Name="Created" Type="DateTime" Precision="3" />
+          <Property Name="LastUpdated" Type="DateTime" Precision="3" />
+          <Property Name="LastUpdatedById" Type="Int32" />
+          <Property Name="RowId" Type="Guid" Nullable="false" />
+          <NavigationProperty Name="Application_Member" Relationship="GatewayModel1.FK_Application_Member_AppUser" FromRole="AppUser" ToRole="Application_Member" />
+          <NavigationProperty Name="AppUser_ExternalAccount" Relationship="GatewayModel1.FK_AppUser_ExternalSite_AppUser" FromRole="AppUser" ToRole="AppUser_ExternalAccount" />
+          <NavigationProperty Name="AppUser_Profile" Relationship="GatewayModel1.FK_AppUser_Profile_AppUser" FromRole="AppUser" ToRole="AppUser_Profile" />
+        </EntityType>
+        <EntityType Name="AppUser_ExternalAccount">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="UserId" Type="Int32" />
+          <Property Name="ExternalSiteId" Type="Int32" />
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="LoginId" Type="String" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Name="Password" Type="String" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Name="Token" Type="String" MaxLength="100" Unicode="false" FixedLength="false" />
+          <NavigationProperty Name="AppUser" Relationship="GatewayModel1.FK_AppUser_ExternalSite_AppUser" FromRole="AppUser_ExternalAccount" ToRole="AppUser" />
+          <NavigationProperty Name="Codes_ExternalSite" Relationship="GatewayModel1.FK_AppUser_ExternalSite_Codes_ExternalSite" FromRole="AppUser_ExternalAccount" ToRole="Codes_ExternalSite" />
+        </EntityType>
+        <EntityType Name="AppUser_Profile">
+          <Key>
+            <PropertyRef Name="UserId" />
+          </Key>
+          <Property Name="UserId" Type="Int32" Nullable="false" />
+          <Property Name="MainPhone" Type="String" MaxLength="15" Unicode="false" FixedLength="false" />
+          <Property Name="JobTitle" Type="String" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Name="PublishingRoleId" Type="Int32" />
+          <Property Name="RoleProfile" Type="String" MaxLength="500" Unicode="false" FixedLength="false" />
+          <Property Name="OrganizationId" Type="Int32" />
+          <Property Name="Created" Type="DateTime" Precision="3" />
+          <Property Name="CreatedById" Type="Int32" />
+          <Property Name="LastUpdated" Type="DateTime" Precision="3" />
+          <Property Name="LastUpdatedId" Type="Int32" />
+          <Property Name="Notes" Type="String" MaxLength="1000" Unicode="false" FixedLength="false" />
+          <NavigationProperty Name="AppUser" Relationship="GatewayModel1.FK_AppUser_Profile_AppUser" FromRole="AppUser_Profile" ToRole="AppUser" />
+        </EntityType>
+        <EntityType Name="Codes_AuthorizationLevel">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" />
+          <Property Name="Title" Type="String" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Name="Description" Type="String" MaxLength="200" Unicode="false" FixedLength="false" />
+          <Property Name="Created" Type="DateTime" Precision="3" />
+        </EntityType>
+        <EntityType Name="Codes_ExternalSite">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Title" Type="String" MaxLength="100" Unicode="false" FixedLength="false" />
+          <Property Name="Url" Type="String" MaxLength="200" Unicode="false" FixedLength="false" />
+          <NavigationProperty Name="AppUser_ExternalAccount" Relationship="GatewayModel1.FK_AppUser_ExternalSite_Codes_ExternalSite" FromRole="Codes_ExternalSite" ToRole="AppUser_ExternalAccount" />
+        </EntityType>
+        <EntityType Name="Codes_GroupType">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" />
+          <Property Name="Title" Type="String" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Name="Created" Type="DateTime" Precision="3" />
+        </EntityType>
+        <EntityType Name="Codes_OrgMemberRole">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" />
+          <Property Name="Title" Type="String" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Name="Created" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="Organization_MemberRole" Relationship="GatewayModel1.FK_Organization_MemberRole_Codes_OrgMemberRole" FromRole="Codes_OrgMemberRole" ToRole="Organization_MemberRole" />
+        </EntityType>
+        <EntityType Name="Codes_OrgMemberType">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" />
+          <Property Name="Title" Type="String" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Name="Created" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="Organization_Member" Relationship="GatewayModel1.FK_Organization_Member_Codes_OrgMemberType" FromRole="Codes_OrgMemberType" ToRole="Organization_Member" />
+        </EntityType>
+        <EntityType Name="Codes_OrgType">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" />
+          <Property Name="Title" Type="String" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Name="Created" Type="DateTime" Precision="3" />
+        </EntityType>
+        <EntityType Name="Codes_PrivilegeDepth">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" />
+          <Property Name="Title" Type="String" Nullable="false" MaxLength="75" Unicode="false" FixedLength="false" />
+          <Property Name="Created" Type="DateTime" Precision="3" />
+        </EntityType>
+        <EntityType Name="Codes_PrivilegeType">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" />
+          <Property Name="Title" Type="String" Nullable="false" MaxLength="75" Unicode="false" FixedLength="false" />
+          <Property Name="Created" Type="DateTime" Precision="3" />
+        </EntityType>
+        <EntityType Name="Codes_PublishingRole">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" />
+          <Property Name="Title" Type="String" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Name="IsOrgRequired" Type="Boolean" />
+          <Property Name="IsActive" Type="Boolean" />
+          <Property Name="Created" Type="DateTime" Precision="3" />
+        </EntityType>
+        <EntityType Name="CodeTable">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="CodeName" Type="String" Nullable="false" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Name="LanguageCode" Type="String" Nullable="false" MaxLength="10" Unicode="false" FixedLength="false" />
+          <Property Name="StringValue" Type="String" Nullable="false" MaxLength="100" Unicode="false" FixedLength="false" />
+          <Property Name="NumericValue" Type="Decimal" Precision="12" Scale="4" />
+          <Property Name="IntegerValue" Type="Int32" />
+          <Property Name="Description" Type="String" MaxLength="500" Unicode="false" FixedLength="false" />
+          <Property Name="SortOrder" Type="Byte" />
+          <Property Name="IsActive" Type="Boolean" />
+          <Property Name="Created" Type="DateTime" Precision="3" />
+          <Property Name="Modified" Type="DateTime" Precision="3" />
+        </EntityType>
+        <EntityType Name="EmailNotice">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Title" Type="String" Nullable="false" MaxLength="75" Unicode="false" FixedLength="false" />
+          <Property Name="Category" Type="String" Nullable="false" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Name="NoticeCode" Type="String" Nullable="false" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Name="Description" Type="String" Nullable="false" MaxLength="500" Unicode="false" FixedLength="false" />
+          <Property Name="Filter" Type="String" MaxLength="Max" Unicode="false" FixedLength="false" />
+          <Property Name="isActive" Type="Boolean" Nullable="false" />
+          <Property Name="LanguageCode" Type="String" MaxLength="10" Unicode="false" FixedLength="false" />
+          <Property Name="FromEmail" Type="String" Nullable="false" MaxLength="100" Unicode="true" FixedLength="false" />
+          <Property Name="CcEmail" Type="String" MaxLength="500" Unicode="true" FixedLength="false" />
+          <Property Name="BccEmail" Type="String" MaxLength="100" Unicode="true" FixedLength="false" />
+          <Property Name="Subject" Type="String" Nullable="false" MaxLength="100" Unicode="true" FixedLength="false" />
+          <Property Name="HtmlBody" Type="String" Nullable="false" MaxLength="Max" Unicode="true" FixedLength="false" />
+          <Property Name="TextBody" Type="String" MaxLength="Max" Unicode="true" FixedLength="false" />
+          <Property Name="Created" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="CreatedById" Type="Int32" />
+          <Property Name="LastUpdated" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="LastUpdatedById" Type="Int32" />
+          <Property Name="CreatedBy" Type="String" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Name="LastUpdatedBy" Type="String" MaxLength="50" Unicode="false" FixedLength="false" />
+        </EntityType>
+        <EntityType Name="Organization">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="100" Unicode="false" FixedLength="false" />
+          <Property Name="OrgTypeId" Type="Int32" />
+          <Property Name="parentId" Type="Int32" />
+          <Property Name="IsActive" Type="Boolean" />
+          <Property Name="MainPhone" Type="String" MaxLength="20" Unicode="false" FixedLength="false" />
+          <Property Name="MainExtension" Type="String" MaxLength="10" Unicode="false" FixedLength="false" />
+          <Property Name="Fax" Type="String" MaxLength="10" Unicode="false" FixedLength="false" />
+          <Property Name="TTY" Type="String" MaxLength="10" Unicode="false" FixedLength="false" />
+          <Property Name="WebSite" Type="String" MaxLength="100" Unicode="false" FixedLength="false" />
+          <Property Name="Email" Type="String" MaxLength="100" Unicode="false" FixedLength="false" />
+          <Property Name="LogoUrl" Type="String" MaxLength="200" Unicode="false" FixedLength="false" />
+          <Property Name="Address" Type="String" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Name="Address2" Type="String" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Name="City" Type="String" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Name="State" Type="String" MaxLength="2" Unicode="false" FixedLength="true" />
+          <Property Name="Zipcode" Type="String" MaxLength="10" Unicode="false" FixedLength="false" />
+          <Property Name="Created" Type="DateTime" Precision="3" />
+          <Property Name="CreatedById" Type="Int32" />
+          <Property Name="LastUpdated" Type="DateTime" Precision="3" />
+          <Property Name="LastUpdatedById" Type="Int32" />
+          <Property Name="RowId" Type="Guid" />
+          <NavigationProperty Name="AppGroups" Relationship="GatewayModel1.FK_AppGroup_Organization" FromRole="Organization" ToRole="AppGroup" />
+          <NavigationProperty Name="AppGroup_OrgMember" Relationship="GatewayModel1.FK_AppGroup_OrgMember_Organization" FromRole="Organization" ToRole="AppGroup_OrgMember" />
+          <NavigationProperty Name="Organization_Member" Relationship="GatewayModel1.FK_Organization_Member_Organization" FromRole="Organization" ToRole="Organization_Member" />
+          <Property Type="String" Name="Zipcode4" MaxLength="4" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="Organization_Member">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="OrgId" Type="Int32" Nullable="false" />
+          <Property Name="UserId" Type="Int32" Nullable="false" />
+          <Property Name="OrgMemberTypeId" Type="Int32" />
+          <Property Name="Created" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="CreatedById" Type="Int32" />
+          <Property Name="LastUpdated" Type="DateTime" Precision="3" />
+          <Property Name="LastUpdatedById" Type="Int32" />
+          <NavigationProperty Name="Codes_OrgMemberType" Relationship="GatewayModel1.FK_Organization_Member_Codes_OrgMemberType" FromRole="Organization_Member" ToRole="Codes_OrgMemberType" />
+          <NavigationProperty Name="Organization" Relationship="GatewayModel1.FK_Organization_Member_Organization" FromRole="Organization_Member" ToRole="Organization" />
+          <NavigationProperty Name="Organization_MemberRole" Relationship="GatewayModel1.FK_Organization_MemberRole_Organization_Contact" FromRole="Organization_Member" ToRole="Organization_MemberRole" />
+        </EntityType>
+        <EntityType Name="Organization_MemberRole">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="OrgContactId" Type="Int32" Nullable="false" />
+          <Property Name="RoleId" Type="Int32" Nullable="false" />
+          <Property Name="Created" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="CreatedById" Type="Int32" />
+          <NavigationProperty Name="Codes_OrgMemberRole" Relationship="GatewayModel1.FK_Organization_MemberRole_Codes_OrgMemberRole" FromRole="Organization_MemberRole" ToRole="Codes_OrgMemberRole" />
+          <NavigationProperty Name="Organization_Member" Relationship="GatewayModel1.FK_Organization_MemberRole_Organization_Contact" FromRole="Organization_MemberRole" ToRole="Organization_Member" />
+        </EntityType>
+        <EntityType Name="OrganizationRequest">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="UserId" Type="Int32" Nullable="false" />
+          <Property Name="OrgId" Type="Int32" />
+          <Property Name="OrganzationName" Type="String" MaxLength="100" Unicode="false" FixedLength="false" />
+          <Property Name="Action" Type="String" MaxLength="100" Unicode="false" FixedLength="false" />
+          <Property Name="IsActive" Type="Boolean" />
+          <Property Name="Created" Type="DateTime" Precision="3" />
+          <Property Name="LastUpdated" Type="DateTime" Precision="3" />
+          <Property Name="LastUpdatedById" Type="Int32" />
+        </EntityType>
+        <EntityType Name="OrganizationTemp">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="100" Unicode="false" FixedLength="false" />
+          <Property Name="OrgTypeId" Type="Int32" />
+          <Property Name="parentId" Type="Int32" />
+          <Property Name="IsActive" Type="Boolean" />
+          <Property Name="MainPhone" Type="String" MaxLength="20" Unicode="false" FixedLength="false" />
+          <Property Name="MainExtension" Type="String" MaxLength="10" Unicode="false" FixedLength="false" />
+          <Property Name="Fax" Type="String" MaxLength="10" Unicode="false" FixedLength="false" />
+          <Property Name="TTY" Type="String" MaxLength="10" Unicode="false" FixedLength="false" />
+          <Property Name="WebSite" Type="String" MaxLength="100" Unicode="false" FixedLength="false" />
+          <Property Name="Email" Type="String" MaxLength="100" Unicode="false" FixedLength="false" />
+          <Property Name="LogoUrl" Type="String" MaxLength="200" Unicode="false" FixedLength="false" />
+          <Property Name="Address" Type="String" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Name="Address2" Type="String" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Name="City" Type="String" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Name="State" Type="String" MaxLength="2" Unicode="false" FixedLength="true" />
+          <Property Name="Zipcode" Type="String" MaxLength="10" Unicode="false" FixedLength="false" />
+          <Property Name="Created" Type="DateTime" Precision="3" />
+          <Property Name="CreatedById" Type="Int32" />
+          <Property Name="LastUpdated" Type="DateTime" Precision="3" />
+          <Property Name="LastUpdatedById" Type="Int32" />
+          <Property Name="RowId" Type="Guid" />
+        </EntityType>
+        <EntityType Name="SqlQuery">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Title" Type="String" Nullable="false" MaxLength="125" Unicode="false" FixedLength="false" />
+          <Property Name="Description" Type="String" MaxLength="500" Unicode="false" FixedLength="false" />
+          <Property Name="QueryCode" Type="String" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Name="Category" Type="String" MaxLength="25" Unicode="false" FixedLength="false" />
+          <Property Name="SQL" Type="String" Nullable="false" MaxLength="Max" Unicode="false" FixedLength="false" />
+          <Property Name="OwnerId" Type="Int32" />
+          <Property Name="IsPublic" Type="Boolean" />
+          <Property Name="Created" Type="DateTime" Precision="3" />
+          <Property Name="CreatedBy" Type="String" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Name="LastUpdated" Type="DateTime" Precision="3" />
+          <Property Name="LastUpdatedBy" Type="String" MaxLength="50" Unicode="false" FixedLength="false" />
+        </EntityType>
+        <EntityType Name="LR_PatronOrgSummary">
+          <Key>
+            <PropertyRef Name="UserId" />
+            <PropertyRef Name="UserName" />
+            <PropertyRef Name="UserRowId" />
+          </Key>
+          <Property Name="UserId" Type="Int32" Nullable="false" />
+          <Property Name="UserName" Type="String" Nullable="false" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Name="FirstName" Type="String" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Name="LastName" Type="String" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Name="FullName" Type="String" MaxLength="101" Unicode="false" FixedLength="false" />
+          <Property Name="SortName" Type="String" MaxLength="102" Unicode="false" FixedLength="false" />
+          <Property Name="Email" Type="String" MaxLength="100" Unicode="false" FixedLength="false" />
+          <Property Name="PublishingRole" Type="String" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Name="JobTitle" Type="String" MaxLength="100" Unicode="false" FixedLength="false" />
+          <Property Name="RoleProfile" Type="String" MaxLength="500" Unicode="false" FixedLength="false" />
+          <Property Name="OrganizationId" Type="Int32" />
+          <Property Name="Organization" Type="String" MaxLength="100" Unicode="false" FixedLength="false" />
+          <Property Type="String" Name="ImageUrl" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Type="Guid" Name="UserRowId" Nullable="false" />
+          <Property Type="DateTime" Name="Created" Precision="3" />
+          <Property Type="DateTime" Name="LastUpdated" Precision="3" />
+        </EntityType>
+        <Association Name="FK_AppGroup_OrgMember_AppGroup">
+          <End Role="AppGroup" Type="GatewayModel1.AppGroup" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="AppGroup_OrgMember" Type="GatewayModel1.AppGroup_OrgMember" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AppGroup">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="AppGroup_OrgMember">
+              <PropertyRef Name="GroupId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_AppGroup_Privilege_AppGroup">
+          <End Role="AppGroup" Type="GatewayModel1.AppGroup" Multiplicity="1" />
+          <End Role="AppGroup_Privilege" Type="GatewayModel1.AppGroup_Privilege" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AppGroup">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="AppGroup_Privilege">
+              <PropertyRef Name="GroupId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_AppGroup_Application">
+          <End Role="Application" Type="GatewayModel1.Application" Multiplicity="0..1" />
+          <End Role="AppGroup" Type="GatewayModel1.AppGroup" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Application">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="AppGroup">
+              <PropertyRef Name="ApplicationId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_AppGroup_Organization">
+          <End Role="Organization" Type="GatewayModel1.Organization" Multiplicity="0..1" />
+          <End Role="AppGroup" Type="GatewayModel1.AppGroup" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Organization">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="AppGroup">
+              <PropertyRef Name="OrgId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_GroupMember_Group">
+          <End Role="AppGroup" Type="GatewayModel1.AppGroup" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="AppGroup_Member" Type="GatewayModel1.AppGroup_Member" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AppGroup">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="AppGroup_Member">
+              <PropertyRef Name="GroupId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_TeamMember_Group">
+          <End Role="AppGroup" Type="GatewayModel1.AppGroup" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="AppGroup_TeamMember" Type="GatewayModel1.AppGroup_TeamMember" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AppGroup">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="AppGroup_TeamMember">
+              <PropertyRef Name="GroupId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_AppGroup_OrgMember_Organization">
+          <End Role="Organization" Type="GatewayModel1.Organization" Multiplicity="0..1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="AppGroup_OrgMember" Type="GatewayModel1.AppGroup_OrgMember" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Organization">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="AppGroup_OrgMember">
+              <PropertyRef Name="OrgId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_AppGroup_Privilege_ApplicationObject">
+          <End Role="ApplicationObject" Type="GatewayModel1.ApplicationObject" Multiplicity="1" />
+          <End Role="AppGroup_Privilege" Type="GatewayModel1.AppGroup_Privilege" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ApplicationObject">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="AppGroup_Privilege">
+              <PropertyRef Name="ObjectId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_AppGroup_Privilege_ApplicationObject1">
+          <End Role="ApplicationObject" Type="GatewayModel1.ApplicationObject" Multiplicity="1" />
+          <End Role="AppGroup_Privilege" Type="GatewayModel1.AppGroup_Privilege" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ApplicationObject">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="AppGroup_Privilege">
+              <PropertyRef Name="ObjectId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Application_Member_Application">
+          <End Role="Application" Type="GatewayModel1.Application" Multiplicity="1" />
+          <End Role="Application_Member" Type="GatewayModel1.Application_Member" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Application">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Application_Member">
+              <PropertyRef Name="AppId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Application_Member_AppUser">
+          <End Role="AppUser" Type="GatewayModel1.AppUser" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Application_Member" Type="GatewayModel1.Application_Member" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AppUser">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Application_Member">
+              <PropertyRef Name="UserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ApplicationRolePrivilege_ApplicationObject">
+          <End Role="ApplicationObject" Type="GatewayModel1.ApplicationObject" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="ApplicationRolePrivilege" Type="GatewayModel1.ApplicationRolePrivilege" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ApplicationObject">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="ApplicationRolePrivilege">
+              <PropertyRef Name="ObjectId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_AppUser_ExternalSite_AppUser">
+          <End Role="AppUser" Type="GatewayModel1.AppUser" Multiplicity="0..1" />
+          <End Role="AppUser_ExternalAccount" Type="GatewayModel1.AppUser_ExternalAccount" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AppUser">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="AppUser_ExternalAccount">
+              <PropertyRef Name="UserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_AppUser_Profile_AppUser">
+          <End Role="AppUser" Type="GatewayModel1.AppUser" Multiplicity="1" />
+          <End Role="AppUser_Profile" Type="GatewayModel1.AppUser_Profile" Multiplicity="0..1" />
+          <ReferentialConstraint>
+            <Principal Role="AppUser">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="AppUser_Profile">
+              <PropertyRef Name="UserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_AppUser_ExternalSite_Codes_ExternalSite">
+          <End Role="Codes_ExternalSite" Type="GatewayModel1.Codes_ExternalSite" Multiplicity="0..1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="AppUser_ExternalAccount" Type="GatewayModel1.AppUser_ExternalAccount" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Codes_ExternalSite">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="AppUser_ExternalAccount">
+              <PropertyRef Name="ExternalSiteId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Organization_MemberRole_Codes_OrgMemberRole">
+          <End Role="Codes_OrgMemberRole" Type="GatewayModel1.Codes_OrgMemberRole" Multiplicity="1" />
+          <End Role="Organization_MemberRole" Type="GatewayModel1.Organization_MemberRole" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Codes_OrgMemberRole">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Organization_MemberRole">
+              <PropertyRef Name="RoleId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Organization_Member_Codes_OrgMemberType">
+          <End Role="Codes_OrgMemberType" Type="GatewayModel1.Codes_OrgMemberType" Multiplicity="0..1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Organization_Member" Type="GatewayModel1.Organization_Member" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Codes_OrgMemberType">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Organization_Member">
+              <PropertyRef Name="OrgMemberTypeId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Organization_Member_Organization">
+          <End Role="Organization" Type="GatewayModel1.Organization" Multiplicity="1" />
+          <End Role="Organization_Member" Type="GatewayModel1.Organization_Member" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Organization">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="Organization_Member">
+              <PropertyRef Name="OrgId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Organization_MemberRole_Organization_Contact">
+          <End Role="Organization_Member" Type="GatewayModel1.Organization_Member" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Organization_MemberRole" Type="GatewayModel1.Organization_MemberRole" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Organization_Member">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Organization_MemberRole">
+              <PropertyRef Name="OrgContactId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="AppVisitLog">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Type="Int32" Name="id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="String" Name="SessionId" Nullable="false" MaxLength="30" FixedLength="false" Unicode="false" />
+          <Property Type="DateTime" Name="CreatedDate" Nullable="false" Precision="3" />
+          <Property Type="String" Name="Application" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="URL" Nullable="false" MaxLength="300" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="Parameters" MaxLength="300" FixedLength="false" Unicode="false" />
+          <Property Type="Boolean" Name="IsPostback" />
+          <Property Type="String" Name="Userid" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="Comment" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="RemoteIP" MaxLength="25" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="ServerName" MaxLength="25" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="CurrentZip" MaxLength="12" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="Codes_State">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="String" Name="StateCode" MaxLength="2" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="State" MaxLength="50" FixedLength="false" Unicode="false" />
+        </EntityType>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2008/09/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="GatewayModel1StoreContainer" CdmEntityContainer="GatewayEntities1">
+          <EntitySetMapping Name="AppGroups">
+            <EntityTypeMapping TypeName="GatewayModel1.AppGroup">
+              <MappingFragment StoreEntitySet="AppGroup">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="ApplicationId" ColumnName="ApplicationId" />
+                <ScalarProperty Name="GroupCode" ColumnName="GroupCode" />
+                <ScalarProperty Name="Title" ColumnName="Title" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="GroupTypeId" ColumnName="GroupTypeId" />
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="ContactId" ColumnName="ContactId" />
+                <ScalarProperty Name="OrgId" ColumnName="OrgId" />
+                <ScalarProperty Name="ParentGroupId" ColumnName="ParentGroupId" />
+                <ScalarProperty Name="Created" ColumnName="Created" />
+                <ScalarProperty Name="CreatedById" ColumnName="CreatedById" />
+                <ScalarProperty Name="LastUpdated" ColumnName="LastUpdated" />
+                <ScalarProperty Name="LastUpdatedById" ColumnName="LastUpdatedById" />
+                <ScalarProperty Name="RowId" ColumnName="RowId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AppGroup_Member">
+            <EntityTypeMapping TypeName="GatewayModel1.AppGroup_Member">
+              <MappingFragment StoreEntitySet="AppGroup_Member">
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="GroupId" ColumnName="GroupId" />
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
+                <ScalarProperty Name="UserRowId" ColumnName="UserRowId" />
+                <ScalarProperty Name="OrgId" ColumnName="OrgId" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="Category" ColumnName="Category" />
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="Comment" ColumnName="Comment" />
+                <ScalarProperty Name="Created" ColumnName="Created" />
+                <ScalarProperty Name="CreatedById" ColumnName="CreatedById" />
+                <ScalarProperty Name="LastUpdated" ColumnName="LastUpdated" />
+                <ScalarProperty Name="LastUpdatedById" ColumnName="LastUpdatedById" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AppGroup_OrgMember">
+            <EntityTypeMapping TypeName="GatewayModel1.AppGroup_OrgMember">
+              <MappingFragment StoreEntitySet="AppGroup_OrgMember">
+                <ScalarProperty Name="GroupId" ColumnName="GroupId" />
+                <ScalarProperty Name="OrgId" ColumnName="OrgId" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="Created" ColumnName="Created" />
+                <ScalarProperty Name="CreatedById" ColumnName="CreatedById" />
+                <ScalarProperty Name="LastUpdated" ColumnName="LastUpdated" />
+                <ScalarProperty Name="LastUpdatedById" ColumnName="LastUpdatedById" />
+                <ScalarProperty Name="RowId" ColumnName="RowId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AppGroup_Privilege">
+            <EntityTypeMapping TypeName="GatewayModel1.AppGroup_Privilege">
+              <MappingFragment StoreEntitySet="AppGroup_Privilege">
+                <ScalarProperty Name="GroupId" ColumnName="GroupId" />
+                <ScalarProperty Name="ObjectId" ColumnName="ObjectId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="CreatePrivilege" ColumnName="CreatePrivilege" />
+                <ScalarProperty Name="ReadPrivilege" ColumnName="ReadPrivilege" />
+                <ScalarProperty Name="WritePrivilege" ColumnName="WritePrivilege" />
+                <ScalarProperty Name="DeletePrivilege" ColumnName="DeletePrivilege" />
+                <ScalarProperty Name="AppendPrivilege" ColumnName="AppendPrivilege" />
+                <ScalarProperty Name="AppendToPrivilege" ColumnName="AppendToPrivilege" />
+                <ScalarProperty Name="AssignPrivilege" ColumnName="AssignPrivilege" />
+                <ScalarProperty Name="ApprovePrivilege" ColumnName="ApprovePrivilege" />
+                <ScalarProperty Name="SharePrivilege" ColumnName="SharePrivilege" />
+                <ScalarProperty Name="Created" ColumnName="Created" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AppGroup_TeamMember">
+            <EntityTypeMapping TypeName="GatewayModel1.AppGroup_TeamMember">
+              <MappingFragment StoreEntitySet="AppGroup_TeamMember">
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="GroupId" ColumnName="GroupId" />
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
+                <ScalarProperty Name="UserRowId" ColumnName="UserRowId" />
+                <ScalarProperty Name="CreatePrivilege" ColumnName="CreatePrivilege" />
+                <ScalarProperty Name="ReadPrivilege" ColumnName="ReadPrivilege" />
+                <ScalarProperty Name="WritePrivilege" ColumnName="WritePrivilege" />
+                <ScalarProperty Name="DeletePrivilege" ColumnName="DeletePrivilege" />
+                <ScalarProperty Name="AppendPrivilege" ColumnName="AppendPrivilege" />
+                <ScalarProperty Name="AppendToPrivilege" ColumnName="AppendToPrivilege" />
+                <ScalarProperty Name="AssignPrivilege" ColumnName="AssignPrivilege" />
+                <ScalarProperty Name="ApprovePrivilege" ColumnName="ApprovePrivilege" />
+                <ScalarProperty Name="SharePrivilege" ColumnName="SharePrivilege" />
+                <ScalarProperty Name="Created" ColumnName="Created" />
+                <ScalarProperty Name="CreatedById" ColumnName="CreatedById" />
+                <ScalarProperty Name="LastUpdated" ColumnName="LastUpdated" />
+                <ScalarProperty Name="LastUpdatedById" ColumnName="LastUpdatedById" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Applications">
+            <EntityTypeMapping TypeName="GatewayModel1.Application">
+              <MappingFragment StoreEntitySet="Application">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Title" ColumnName="Title" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="RowId" ColumnName="RowId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Application_Member">
+            <EntityTypeMapping TypeName="GatewayModel1.Application_Member">
+              <MappingFragment StoreEntitySet="Application_Member">
+                <ScalarProperty Name="AppId" ColumnName="AppId" />
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
+                <ScalarProperty Name="Password" ColumnName="Password" />
+                <ScalarProperty Name="RowId" ColumnName="RowId" />
+                <ScalarProperty Name="Token" ColumnName="Token" />
+                <ScalarProperty Name="PasswordQuestion" ColumnName="PasswordQuestion" />
+                <ScalarProperty Name="PasswordAnswer" ColumnName="PasswordAnswer" />
+                <ScalarProperty Name="IsApproved" ColumnName="IsApproved" />
+                <ScalarProperty Name="ApprovalDate" ColumnName="ApprovalDate" />
+                <ScalarProperty Name="IsLockedOut" ColumnName="IsLockedOut" />
+                <ScalarProperty Name="CreateDate" ColumnName="CreateDate" />
+                <ScalarProperty Name="LastLoginDate" ColumnName="LastLoginDate" />
+                <ScalarProperty Name="Comment" ColumnName="Comment" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ApplicationObjects">
+            <EntityTypeMapping TypeName="GatewayModel1.ApplicationObject">
+              <MappingFragment StoreEntitySet="ApplicationObject">
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="ObjectName" ColumnName="ObjectName" />
+                <ScalarProperty Name="DisplayName" ColumnName="DisplayName" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="Active" ColumnName="Active" />
+                <ScalarProperty Name="ObjectType" ColumnName="ObjectType" />
+                <ScalarProperty Name="RelatedUrl" ColumnName="RelatedUrl" />
+                <ScalarProperty Name="Created" ColumnName="Created" />
+                <ScalarProperty Name="CreatedById" ColumnName="CreatedById" />
+                <ScalarProperty Name="LastUpdated" ColumnName="LastUpdated" />
+                <ScalarProperty Name="LastUpdatedById" ColumnName="LastUpdatedById" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ApplicationRolePrivileges">
+            <EntityTypeMapping TypeName="GatewayModel1.ApplicationRolePrivilege">
+              <MappingFragment StoreEntitySet="ApplicationRolePrivilege">
+                <ScalarProperty Name="RoleId" ColumnName="RoleId" />
+                <ScalarProperty Name="ObjectId" ColumnName="ObjectId" />
+                <ScalarProperty Name="Sequence" ColumnName="Sequence" />
+                <ScalarProperty Name="Create" ColumnName="Create" />
+                <ScalarProperty Name="Read" ColumnName="Read" />
+                <ScalarProperty Name="Write" ColumnName="Write" />
+                <ScalarProperty Name="Delete" ColumnName="Delete" />
+                <ScalarProperty Name="Append" ColumnName="Append" />
+                <ScalarProperty Name="AppendTo" ColumnName="AppendTo" />
+                <ScalarProperty Name="Assign" ColumnName="Assign" />
+                <ScalarProperty Name="Approve" ColumnName="Approve" />
+                <ScalarProperty Name="Share" ColumnName="Share" />
+                <ScalarProperty Name="Created" ColumnName="Created" />
+                <ScalarProperty Name="RoleCode" ColumnName="RoleCode" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AppUsers">
+            <EntityTypeMapping TypeName="GatewayModel1.AppUser">
+              <MappingFragment StoreEntitySet="AppUser">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="UserName" ColumnName="UserName" />
+                <ScalarProperty Name="Password" ColumnName="Password" />
+                <ScalarProperty Name="FirstName" ColumnName="FirstName" />
+                <ScalarProperty Name="LastName" ColumnName="LastName" />
+                <ScalarProperty Name="Email" ColumnName="Email" />
+                <ScalarProperty Name="SecretQuestionId" ColumnName="SecretQuestionId" />
+                <ScalarProperty Name="SecretAnswer" ColumnName="SecretAnswer" />
+                <ScalarProperty Name="Created" ColumnName="Created" />
+                <ScalarProperty Name="LastUpdated" ColumnName="LastUpdated" />
+                <ScalarProperty Name="LastUpdatedById" ColumnName="LastUpdatedById" />
+                <ScalarProperty Name="RowId" ColumnName="RowId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AppUser_ExternalAccount">
+            <EntityTypeMapping TypeName="GatewayModel1.AppUser_ExternalAccount">
+              <MappingFragment StoreEntitySet="AppUser_ExternalAccount">
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
+                <ScalarProperty Name="ExternalSiteId" ColumnName="ExternalSiteId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="LoginId" ColumnName="LoginId" />
+                <ScalarProperty Name="Password" ColumnName="Password" />
+                <ScalarProperty Name="Token" ColumnName="Token" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AppUser_Profile">
+            <EntityTypeMapping TypeName="GatewayModel1.AppUser_Profile">
+              <MappingFragment StoreEntitySet="AppUser_Profile">
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
+                <ScalarProperty Name="MainPhone" ColumnName="MainPhone" />
+                <ScalarProperty Name="JobTitle" ColumnName="JobTitle" />
+                <ScalarProperty Name="PublishingRoleId" ColumnName="PublishingRoleId" />
+                <ScalarProperty Name="RoleProfile" ColumnName="RoleProfile" />
+                <ScalarProperty Name="OrganizationId" ColumnName="OrganizationId" />
+                <ScalarProperty Name="Created" ColumnName="Created" />
+                <ScalarProperty Name="CreatedById" ColumnName="CreatedById" />
+                <ScalarProperty Name="LastUpdated" ColumnName="LastUpdated" />
+                <ScalarProperty Name="LastUpdatedId" ColumnName="LastUpdatedId" />
+                <ScalarProperty Name="Notes" ColumnName="Notes" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Codes_AuthorizationLevel">
+            <EntityTypeMapping TypeName="GatewayModel1.Codes_AuthorizationLevel">
+              <MappingFragment StoreEntitySet="Codes_AuthorizationLevel">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Title" ColumnName="Title" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="Created" ColumnName="Created" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Codes_ExternalSite">
+            <EntityTypeMapping TypeName="GatewayModel1.Codes_ExternalSite">
+              <MappingFragment StoreEntitySet="Codes_ExternalSite">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Title" ColumnName="Title" />
+                <ScalarProperty Name="Url" ColumnName="Url" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Codes_GroupType">
+            <EntityTypeMapping TypeName="GatewayModel1.Codes_GroupType">
+              <MappingFragment StoreEntitySet="Codes_GroupType">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Title" ColumnName="Title" />
+                <ScalarProperty Name="Created" ColumnName="Created" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Codes_OrgMemberRole">
+            <EntityTypeMapping TypeName="GatewayModel1.Codes_OrgMemberRole">
+              <MappingFragment StoreEntitySet="Codes_OrgMemberRole">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Title" ColumnName="Title" />
+                <ScalarProperty Name="Created" ColumnName="Created" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Codes_OrgMemberType">
+            <EntityTypeMapping TypeName="GatewayModel1.Codes_OrgMemberType">
+              <MappingFragment StoreEntitySet="Codes_OrgMemberType">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Title" ColumnName="Title" />
+                <ScalarProperty Name="Created" ColumnName="Created" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Codes_OrgType">
+            <EntityTypeMapping TypeName="GatewayModel1.Codes_OrgType">
+              <MappingFragment StoreEntitySet="Codes_OrgType">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Title" ColumnName="Title" />
+                <ScalarProperty Name="Created" ColumnName="Created" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Codes_PrivilegeDepth">
+            <EntityTypeMapping TypeName="GatewayModel1.Codes_PrivilegeDepth">
+              <MappingFragment StoreEntitySet="Codes_PrivilegeDepth">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Title" ColumnName="Title" />
+                <ScalarProperty Name="Created" ColumnName="Created" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Codes_PrivilegeType">
+            <EntityTypeMapping TypeName="GatewayModel1.Codes_PrivilegeType">
+              <MappingFragment StoreEntitySet="Codes_PrivilegeType">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Title" ColumnName="Title" />
+                <ScalarProperty Name="Created" ColumnName="Created" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Codes_PublishingRole">
+            <EntityTypeMapping TypeName="GatewayModel1.Codes_PublishingRole">
+              <MappingFragment StoreEntitySet="Codes_PublishingRole">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Title" ColumnName="Title" />
+                <ScalarProperty Name="IsOrgRequired" ColumnName="IsOrgRequired" />
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="Created" ColumnName="Created" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="CodeTables">
+            <EntityTypeMapping TypeName="GatewayModel1.CodeTable">
+              <MappingFragment StoreEntitySet="CodeTable">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="CodeName" ColumnName="CodeName" />
+                <ScalarProperty Name="LanguageCode" ColumnName="LanguageCode" />
+                <ScalarProperty Name="StringValue" ColumnName="StringValue" />
+                <ScalarProperty Name="NumericValue" ColumnName="NumericValue" />
+                <ScalarProperty Name="IntegerValue" ColumnName="IntegerValue" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="SortOrder" ColumnName="SortOrder" />
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="Created" ColumnName="Created" />
+                <ScalarProperty Name="Modified" ColumnName="Modified" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="EmailNotices">
+            <EntityTypeMapping TypeName="GatewayModel1.EmailNotice">
+              <MappingFragment StoreEntitySet="EmailNotice">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Title" ColumnName="Title" />
+                <ScalarProperty Name="Category" ColumnName="Category" />
+                <ScalarProperty Name="NoticeCode" ColumnName="NoticeCode" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="Filter" ColumnName="Filter" />
+                <ScalarProperty Name="isActive" ColumnName="isActive" />
+                <ScalarProperty Name="LanguageCode" ColumnName="LanguageCode" />
+                <ScalarProperty Name="FromEmail" ColumnName="FromEmail" />
+                <ScalarProperty Name="CcEmail" ColumnName="CcEmail" />
+                <ScalarProperty Name="BccEmail" ColumnName="BccEmail" />
+                <ScalarProperty Name="Subject" ColumnName="Subject" />
+                <ScalarProperty Name="HtmlBody" ColumnName="HtmlBody" />
+                <ScalarProperty Name="TextBody" ColumnName="TextBody" />
+                <ScalarProperty Name="Created" ColumnName="Created" />
+                <ScalarProperty Name="CreatedById" ColumnName="CreatedById" />
+                <ScalarProperty Name="LastUpdated" ColumnName="LastUpdated" />
+                <ScalarProperty Name="LastUpdatedById" ColumnName="LastUpdatedById" />
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+                <ScalarProperty Name="LastUpdatedBy" ColumnName="LastUpdatedBy" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Organizations">
+            <EntityTypeMapping TypeName="GatewayModel1.Organization">
+              <MappingFragment StoreEntitySet="Organization">
+                <ScalarProperty Name="Zipcode4" ColumnName="Zipcode4" />
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="OrgTypeId" ColumnName="OrgTypeId" />
+                <ScalarProperty Name="parentId" ColumnName="parentId" />
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="MainPhone" ColumnName="MainPhone" />
+                <ScalarProperty Name="MainExtension" ColumnName="MainExtension" />
+                <ScalarProperty Name="Fax" ColumnName="Fax" />
+                <ScalarProperty Name="TTY" ColumnName="TTY" />
+                <ScalarProperty Name="WebSite" ColumnName="WebSite" />
+                <ScalarProperty Name="Email" ColumnName="Email" />
+                <ScalarProperty Name="LogoUrl" ColumnName="LogoUrl" />
+                <ScalarProperty Name="Address" ColumnName="Address" />
+                <ScalarProperty Name="Address2" ColumnName="Address2" />
+                <ScalarProperty Name="City" ColumnName="City" />
+                <ScalarProperty Name="State" ColumnName="State" />
+                <ScalarProperty Name="Zipcode" ColumnName="Zipcode" />
+                <ScalarProperty Name="Created" ColumnName="Created" />
+                <ScalarProperty Name="CreatedById" ColumnName="CreatedById" />
+                <ScalarProperty Name="LastUpdated" ColumnName="LastUpdated" />
+                <ScalarProperty Name="LastUpdatedById" ColumnName="LastUpdatedById" />
+                <ScalarProperty Name="RowId" ColumnName="RowId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Organization_Member">
+            <EntityTypeMapping TypeName="GatewayModel1.Organization_Member">
+              <MappingFragment StoreEntitySet="Organization_Member">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="OrgId" ColumnName="OrgId" />
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
+                <ScalarProperty Name="OrgMemberTypeId" ColumnName="OrgMemberTypeId" />
+                <ScalarProperty Name="Created" ColumnName="Created" />
+                <ScalarProperty Name="CreatedById" ColumnName="CreatedById" />
+                <ScalarProperty Name="LastUpdated" ColumnName="LastUpdated" />
+                <ScalarProperty Name="LastUpdatedById" ColumnName="LastUpdatedById" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Organization_MemberRole">
+            <EntityTypeMapping TypeName="GatewayModel1.Organization_MemberRole">
+              <MappingFragment StoreEntitySet="Organization_MemberRole">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="OrgContactId" ColumnName="OrgContactId" />
+                <ScalarProperty Name="RoleId" ColumnName="RoleId" />
+                <ScalarProperty Name="Created" ColumnName="Created" />
+                <ScalarProperty Name="CreatedById" ColumnName="CreatedById" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="OrganizationRequests">
+            <EntityTypeMapping TypeName="GatewayModel1.OrganizationRequest">
+              <MappingFragment StoreEntitySet="OrganizationRequest">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
+                <ScalarProperty Name="OrgId" ColumnName="OrgId" />
+                <ScalarProperty Name="OrganzationName" ColumnName="OrganzationName" />
+                <ScalarProperty Name="Action" ColumnName="Action" />
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="Created" ColumnName="Created" />
+                <ScalarProperty Name="LastUpdated" ColumnName="LastUpdated" />
+                <ScalarProperty Name="LastUpdatedById" ColumnName="LastUpdatedById" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="OrganizationTemps">
+            <EntityTypeMapping TypeName="GatewayModel1.OrganizationTemp">
+              <MappingFragment StoreEntitySet="OrganizationTemp">
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="OrgTypeId" ColumnName="OrgTypeId" />
+                <ScalarProperty Name="parentId" ColumnName="parentId" />
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="MainPhone" ColumnName="MainPhone" />
+                <ScalarProperty Name="MainExtension" ColumnName="MainExtension" />
+                <ScalarProperty Name="Fax" ColumnName="Fax" />
+                <ScalarProperty Name="TTY" ColumnName="TTY" />
+                <ScalarProperty Name="WebSite" ColumnName="WebSite" />
+                <ScalarProperty Name="Email" ColumnName="Email" />
+                <ScalarProperty Name="LogoUrl" ColumnName="LogoUrl" />
+                <ScalarProperty Name="Address" ColumnName="Address" />
+                <ScalarProperty Name="Address2" ColumnName="Address2" />
+                <ScalarProperty Name="City" ColumnName="City" />
+                <ScalarProperty Name="State" ColumnName="State" />
+                <ScalarProperty Name="Zipcode" ColumnName="Zipcode" />
+                <ScalarProperty Name="Created" ColumnName="Created" />
+                <ScalarProperty Name="CreatedById" ColumnName="CreatedById" />
+                <ScalarProperty Name="LastUpdated" ColumnName="LastUpdated" />
+                <ScalarProperty Name="LastUpdatedById" ColumnName="LastUpdatedById" />
+                <ScalarProperty Name="RowId" ColumnName="RowId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SqlQueries">
+            <EntityTypeMapping TypeName="GatewayModel1.SqlQuery">
+              <MappingFragment StoreEntitySet="SqlQuery">
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="Title" ColumnName="Title" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="QueryCode" ColumnName="QueryCode" />
+                <ScalarProperty Name="Category" ColumnName="Category" />
+                <ScalarProperty Name="SQL" ColumnName="SQL" />
+                <ScalarProperty Name="OwnerId" ColumnName="OwnerId" />
+                <ScalarProperty Name="IsPublic" ColumnName="IsPublic" />
+                <ScalarProperty Name="Created" ColumnName="Created" />
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+                <ScalarProperty Name="LastUpdated" ColumnName="LastUpdated" />
+                <ScalarProperty Name="LastUpdatedBy" ColumnName="LastUpdatedBy" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="LR_PatronOrgSummary">
+            <EntityTypeMapping TypeName="GatewayModel1.LR_PatronOrgSummary">
+              <MappingFragment StoreEntitySet="LR_PatronOrgSummary">
+                <ScalarProperty Name="LastUpdated" ColumnName="LastUpdated" />
+                <ScalarProperty Name="Created" ColumnName="Created" />
+                <ScalarProperty Name="UserRowId" ColumnName="UserRowId" />
+                <ScalarProperty Name="ImageUrl" ColumnName="ImageUrl" />
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
+                <ScalarProperty Name="UserName" ColumnName="UserName" />
+                <ScalarProperty Name="FirstName" ColumnName="FirstName" />
+                <ScalarProperty Name="LastName" ColumnName="LastName" />
+                <ScalarProperty Name="FullName" ColumnName="FullName" />
+                <ScalarProperty Name="SortName" ColumnName="SortName" />
+                <ScalarProperty Name="Email" ColumnName="Email" />
+                <ScalarProperty Name="PublishingRole" ColumnName="PublishingRole" />
+                <ScalarProperty Name="JobTitle" ColumnName="JobTitle" />
+                <ScalarProperty Name="RoleProfile" ColumnName="RoleProfile" />
+                <ScalarProperty Name="OrganizationId" ColumnName="OrganizationId" />
+                <ScalarProperty Name="Organization" ColumnName="Organization" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AppVisitLogs">
+            <EntityTypeMapping TypeName="GatewayModel1.AppVisitLog">
+              <MappingFragment StoreEntitySet="AppVisitLog">
+                <ScalarProperty Name="CurrentZip" ColumnName="CurrentZip" />
+                <ScalarProperty Name="ServerName" ColumnName="ServerName" />
+                <ScalarProperty Name="RemoteIP" ColumnName="RemoteIP" />
+                <ScalarProperty Name="Comment" ColumnName="Comment" />
+                <ScalarProperty Name="Userid" ColumnName="Userid" />
+                <ScalarProperty Name="IsPostback" ColumnName="IsPostback" />
+                <ScalarProperty Name="Parameters" ColumnName="Parameters" />
+                <ScalarProperty Name="URL" ColumnName="URL" />
+                <ScalarProperty Name="Application" ColumnName="Application" />
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+                <ScalarProperty Name="SessionId" ColumnName="SessionId" />
+                <ScalarProperty Name="id" ColumnName="id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Codes_State">
+            <EntityTypeMapping TypeName="GatewayModel1.Codes_State">
+              <MappingFragment StoreEntitySet="Codes_State">
+                <ScalarProperty Name="State" ColumnName="State" />
+                <ScalarProperty Name="StateCode" ColumnName="StateCode" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2008/10/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="True" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="True" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

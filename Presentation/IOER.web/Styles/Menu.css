@@ -1,0 +1,137 @@
+﻿
+/*Shop Menu*/
+.header-menu {
+position: relative; /*--important prop/value--*/
+z-index:50;
+clear:both;
+width:960px;
+margin:0 auto;
+padding:0;
+border-top:solid 1px #184D7F;
+}
+div.nostyle,
+ul#topnav ul.nostyle li,
+#header .toplinks a.nostyle,
+img.nostyle {/*override borders here*/
+border:0;
+}
+
+/*jQuery Mega-Menu*/
+#topnav {
+	float:left;
+	margin: -5px auto 0 auto; 
+	padding: 0;
+	width: 960px;
+	list-style: none;
+}
+
+#topnav li {
+	float: left;
+	margin:0 0 -5px 0;
+	padding:12px 0 0 0;
+	position: relative; /*--important prop/value--*/
+	font-size:14px;
+}
+
+#topnav li a {
+    position:relative;
+	top:-5px;
+	float: left;
+	padding: 5px 19px 5px 19px;
+    margin:0 -2px 0 -2px;
+    height:17px;
+	font:bold 17px arial;
+	color:#184d7f;
+	text-decoration:none;
+}
+
+#topnav li:hover a, #topnav li a:hover { 
+    background-position: left bottom; 
+	background:#184D7F;
+	color:#fff;
+}
+
+#topnav li div {
+margin-left:0;
+}
+
+#topnav li .sub {
+	position: absolute; /*--important prop/value--*/
+	top:30px; 
+	left: -2px;
+	z-index: 999999;
+	padding: 12px;
+	float: left;
+	display:none;
+	opacity:100;
+	text-align:left;
+	/*--Bottom right rounded corner--*/
+	-moz-border-radius-bottomright: 5px;
+	-khtml-border-radius-bottomright: 5px;
+	-webkit-border-bottom-right-radius: 5px;
+	/*--Bottom left rounded corner--*/
+	-moz-border-radius-bottomleft: 5px;
+	-khtml-border-radius-bottomleft: 5px;
+	-webkit-border-bottom-left-radius: 5px;
+	 background-color:#184D7F;
+}
+
+#topnav li .sub a { /*keep outlines for accesibility purposes*/
+	outline-color:#184D7F;
+	}
+
+#topnav li .blue {
+margin-left:-170px;
+}
+
+#topnav li .gold {
+margin-left:-200px;
+}
+
+#BillboarBox {
+	Z-index:-4;
+}
+#topnav li .sub ul{
+	margin: 0; /*--override parent ul--*/
+	padding: 0;/*--override parent ul--*/
+	width: 187px;
+	float: left;
+	list-style: none;
+}
+
+#topnav .sub ul li {
+	width: 95%; /*--override parent list item--*/
+	color: #fff;
+	border-left:solid 1px #3d6992;
+	padding-left:10px;
+}
+
+#topnav .sub ul li h2 { /*--sub nav heading style--*/
+	padding: 0;  
+	margin: 0;
+	font:bold 17px arial;
+}
+
+#topnav .sub ul li h2 a { /*--sub nav heading link style--*/
+	padding: 5px 0;
+	background-image: none;
+}
+
+#topnav .sub ul li a {
+	float: none;
+	text-indent: 0; /*--override text-indent from parent list item--*/
+	height: auto; /*--override height from parent list item--*/
+	padding: 1px 0px 1px 7px;
+	display: block;
+	text-decoration: none;
+	color:#DEE8F0;
+	font-size:11px;
+}
+
+#topnav .sub ul li a:hover {
+
+	color: #739DBF;
+	background-position: 5px 12px ;/*--Override background position--*/
+}
+/*Mega-Menu ends*/
+

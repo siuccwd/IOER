@@ -1,0 +1,26 @@
+﻿ul.flyoutList {
+	list-style-type: none; /* De-uglification */
+	position: relative;
+}
+ul.flyoutList > li {
+	text-align: right;
+	margin: 2px;
+}
+.flyoutContainer {
+	position: absolute; /* Allows us to really manipulate this div */
+	top: 0; /* Top and Left will be relative to the containing element because we set the containing element to "position: relative" */
+	left: 0; /* jQuery will manipulate this */
+	padding: 0; /* Necessary for complete compaction */
+	overflow: hidden; /* Keeps things inside */
+	width: 0;
+	text-align: left;
+	padding: 5px;
+	z-index: 1000;
+}
+.flyoutContent {
+	min-width: 200px; /* Ideally should match the value defined in javascript */
+}
+.flyoutTrigger {
+  display: block;
+  padding: 5px;
+}

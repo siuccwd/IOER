@@ -1,0 +1,32 @@
+﻿a.flickrLink 
+{
+	display: inline-block;
+	width: 175px;
+	padding: 10px;
+	text-align: center;
+	font-weight: bold;
+	text-decoration: none;
+	background-color: #CFDEFF;
+	/* Fixes IE7 */
+	zoom: 1;
+	*display: inline;
+}
+a.flickrLink:hover 
+{
+	background-color: #0073AE;
+	color: #FFF;
+}
+a.flickrLinkSelected 
+{
+	background-color: #505050;
+	color: #FFF;
+	display: inline-block;
+	width: 175px;
+	padding: 10px;
+	text-align: center;
+	font-weight: bold;
+	text-decoration: none;
+	/* Fixes IE7 */
+	zoom: 1;
+	*display: inline;
+}

@@ -1,0 +1,6 @@
+﻿<PreloadedPopups>
+  <!-- The following popups will be preloaded into the PopupHolder control -->
+  <popup name="ColorPickerPopup" />
+  <popup name="SpecialCharacters" />
+  <popup name="Icons" />
+</PreloadedPopups>

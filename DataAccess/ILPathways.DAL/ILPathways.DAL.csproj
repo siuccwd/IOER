@@ -1,0 +1,112 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{C91CB23C-3C72-4F3C-B8BC-04EC7B45EC7C}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>ILPathways.DAL</RootNamespace>
+    <AssemblyName>ILPathways.DAL</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="EntityFramework">
+      <HintPath>..\..\packages\EntityFramework.5.0.0\lib\net40\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.ApplicationBlocks.Data, Version=2.0.0.0, Culture=neutral">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Library\Microsoft.ApplicationBlocks.Data.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data.Entity" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Security" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Services" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="%40TemplateManager.cs" />
+    <Compile Include="%40TemplateManager_GuidPK.cs" />
+    <Compile Include="ActivityAuditManager.cs" />
+    <Compile Include="AppItemManager.cs" />
+    <Compile Include="BaseDataManager.cs" />
+    <Compile Include="CommunityManager.cs" />
+    <Compile Include="ContentManager.cs" />
+    <Compile Include="DatabaseManager.cs" />
+    <Compile Include="DocumentStoreManager.cs" />
+    <Compile Include="EmailNoticeManager.cs" />
+    <Compile Include="GatewayManager.cs" />
+    <Compile Include="GroupManager.cs" />
+    <Compile Include="GroupMemberManager.cs" />
+    <Compile Include="GroupTeamMemberManager.cs" />
+    <Compile Include="LibraryManager.cs" />
+    <Compile Include="LibraryResourceManager.cs" />
+    <Compile Include="LibrarySectionManager.cs" />
+    <Compile Include="LibrarySubScriptionManager.cs" />
+    <Compile Include="LogManager.cs" />
+    <Compile Include="OrganizationMemberManager.cs" />
+    <Compile Include="OrganizationManager.cs" />
+    <Compile Include="OrganizationRequestManager.cs" />
+    <Compile Include="AccountManager.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SecurityManager.cs" />
+    <Compile Include="SqlQueryManager.cs" />
+    <Compile Include="UserManager.cs" />
+    <Compile Include="WorkNetSyncManager.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Business\ILPathways.Business\ILPathways.Business.csproj">
+      <Project>{cae031c2-7899-4cc3-9772-0787e65977a2}</Project>
+      <Name>ILPathways.Business</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Common\IllinoisPathways.Common\ILPathways.Common.csproj">
+      <Project>{cbb05737-7947-4ed9-8ed3-79d5c2a6597d}</Project>
+      <Name>ILPathways.Common</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

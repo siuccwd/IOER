@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:ser="http://schemas.microsoft.com/2003/10/Serialization/" xmlns:tns="http://schemas.datacontract.org/2004/07/IllinoisPathways.DataContracts" elementFormDefault="qualified" targetNamespace="http://schemas.datacontract.org/2004/07/IllinoisPathways.DataContracts" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:import schemaLocation="http://209.7.195.215:90/Services/ResourceService.svc?xsd=xsd1" namespace="http://schemas.microsoft.com/2003/10/Serialization/" />
+  <xs:complexType name="ResourceGetRequest">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:BaseRequest">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="ResourceId" nillable="true" type="ser:guid" />
+          <xs:element minOccurs="0" name="ResourceVersionId" nillable="true" type="ser:guid" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="ResourceGetRequest" nillable="true" type="tns:ResourceGetRequest" />
+  <xs:complexType name="BaseRequest">
+    <xs:sequence />
+  </xs:complexType>
+  <xs:element name="BaseRequest" nillable="true" type="tns:BaseRequest" />
+  <xs:complexType name="ResourceGetResponse">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:BaseResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="Resource" nillable="true" type="tns:ResourceDataContract" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="ResourceGetResponse" nillable="true" type="tns:ResourceGetResponse" />
+  <xs:complexType name="BaseResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Error" nillable="true" type="tns:ErrorDataContract" />
+      <xs:element minOccurs="0" name="Status" type="tns:StatusEnumDataContract" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="BaseResponse" nillable="true" type="tns:BaseResponse" />
+  <xs:complexType name="ErrorDataContract">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Message" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="MessageId" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ErrorDataContract" nillable="true" type="tns:ErrorDataContract" />
+  <xs:simpleType name="StatusEnumDataContract">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Success" />
+      <xs:enumeration value="Failure" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:element name="StatusEnumDataContract" nillable="true" type="tns:StatusEnumDataContract" />
+  <xs:complexType name="ResourceDataContract">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:BaseContract">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="AccessRights" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="Creator" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="Description" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="EducationLevels" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="Imported" type="xs:dateTime" />
+          <xs:element minOccurs="0" name="Keywords" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="LRDocId" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="LanguageList" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="Modified" type="xs:dateTime" />
+          <xs:element minOccurs="0" name="Publisher" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="ResouceUrl" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="ResourceId" type="ser:guid" />
+          <xs:element minOccurs="0" name="ResourceTypesList" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="ResourceVersionId" type="ser:guid" />
+          <xs:element minOccurs="0" name="Rights" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="Subjects" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="Submitter" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="Title" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="TypicalLearningTime" nillable="true" type="xs:string" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="ResourceDataContract" nillable="true" type="tns:ResourceDataContract" />
+  <xs:complexType name="BaseContract">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="CreateDate" type="xs:dateTime" />
+      <xs:element minOccurs="0" name="Id" type="ser:guid" />
+      <xs:element minOccurs="0" name="LastUpdateDate" type="xs:dateTime" />
+      <xs:element minOccurs="0" name="LastUpdatedBy" nillable="true" type="ser:guid" />
+      <xs:element minOccurs="0" name="LastUpdatedByName" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="BaseContract" nillable="true" type="tns:BaseContract" />
+  <xs:complexType name="ResourceSearchRequest">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:BaseRequest">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="Filter" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="Keywords" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="OutputRelTables" type="xs:boolean" />
+          <xs:element minOccurs="0" name="PageSize" type="xs:int" />
+          <xs:element minOccurs="0" name="SortOrder" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="StartingPageNbr" type="xs:int" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="ResourceSearchRequest" nillable="true" type="tns:ResourceSearchRequest" />
+  <xs:complexType name="ResourceSearchResponse">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:BaseResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="ResourceList" nillable="true" type="tns:ArrayOfResourceDataContract" />
+          <xs:element minOccurs="0" name="ResultCount" type="xs:int" />
+          <xs:element minOccurs="0" name="TotalRows" type="xs:int" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="ResourceSearchResponse" nillable="true" type="tns:ResourceSearchResponse" />
+  <xs:complexType name="ArrayOfResourceDataContract">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="ResourceDataContract" nillable="true" type="tns:ResourceDataContract" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfResourceDataContract" nillable="true" type="tns:ArrayOfResourceDataContract" />
+</xs:schema>

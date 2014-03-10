@@ -1,0 +1,11 @@
+﻿.toolTipLink { display: inline-block; background: url('/images/icons/infoBubble.gif') no-repeat center center; width: 16px; height: 16px; vertical-align: middle; }
+.toolTipDiv { background-color: #EAEAEA; box-shadow: 0 0 20px -5px #000; border-radius: 5px; padding: 5px; position: fixed; max-width: 300px; max-height: 90%; z-index: 100; }
+.toolTipDiv .toolTipContent { overflow-y: auto; height: 100%; max-height: 100%; }
+.toolTipDiv .toolTipHeader { background-color: #4AA394; color: #FFF; padding: 2px 5px; margin: -5px -5px 5px -5px; border-radius: 5px 5px 0 0; position: relative; }
+.toolTipDiv li { margin-left: 25px; }
+.toolTipDiv .toolTipCloseButton { display: inline-block; position: absolute; top: 1px; right: 2px; display: inline-block; border-radius: 5px; background-color: #B03D25; color: #FFF; font-weight: bold; width: 20px; height: 20px; text-align: center; line-height: 20px; }
+.toolTipDiv .toolTipCloseButton:hover, .toolTipDiv .toolTipCloseButton:focus { background-color: #F00; }
+.toolTipDiv .toolTipRow { margin-bottom: 5px; }
+@media screen and (max-width: 500px) {
+  .toolTipDiv { max-width: 100%; }
+}

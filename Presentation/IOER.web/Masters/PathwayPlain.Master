@@ -1,0 +1,42 @@
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="PathwayPlain.master.cs" Inherits="ILPathways.Masters.PathwayPlain" %>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<%@ Register TagPrefix="uc1" TagName="hdr" Src="/controls/Includes/HeaderPlain.ascx" %>
+<%@ Register TagPrefix="uc1" TagName="systemMessageLine" Src="/controls/includes/SystemMessageLine.ascx" %>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head id="Head1" runat="server">
+	<title></title>
+	<link href="http://www.illinoisworknet.com/vos_portal/css/common2.css" rel="stylesheet" />
+	<link href="/Styles/CustomControls.css" rel="stylesheet" type="text/css" />
+	<link href="/Styles/Stem.css" rel="stylesheet" type="text/css" />
+	<link href="/Styles/Tabs.css" rel="stylesheet" type="text/css" />
+  <link href="/Styles/Widgets.css" rel="stylesheet" type="text/css" />
+
+	<script type="text/javascript" src="/Scripts/jquery-1.4.1.min.js"></script>
+	<%--<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js" type="text/javascript"></script>--%>
+	<script type="text/javascript" src="/scripts/jtip.js"></script>
+
+	<asp:ContentPlaceHolder ID="HeadContent" runat="server">
+	</asp:ContentPlaceHolder>
+</head>
+<body style="background-color: #fff;">
+	<form id="aspnetForm" runat="server">
+	<div style="width: 1024px;">
+		<div style="width: 95%;">
+			<uc1:hdr ID="header1" runat="server"></uc1:hdr>
+		</div>
+		<div style="width: 95%;">
+			<div id="TopBorderDiv" class="TopBorderDiv">
+			</div>
+			<div class="clear" style="margin-left: 21%; margin-right: 5%;">
+				<uc1:systemMessageLine ID="systemMessageLine" runat="server"></uc1:systemMessageLine>
+			</div>
+			<div class="clear">
+			</div>
+			<asp:ContentPlaceHolder ID="BodyContent" runat="server">
+			</asp:ContentPlaceHolder>
+		</div>
+	</div>
+	</form>
+</body>
+</html>

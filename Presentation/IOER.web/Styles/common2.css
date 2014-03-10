@@ -1,0 +1,46 @@
+﻿/* Big stuff */
+* { box-sizing: border-box; -moz-box-sizing: border-box; -webkit-box-sizing: border-box; }
+
+/* Gray Boxes */
+/* Margins intentionally left out--it's usually better to pad the parent element */
+.grayBox { background-color: #EEE; padding: 10px; border-radius: 5px; }
+.grayBox h2.header { background-color: #4AA394; display: block; color: #FFF; font-size: 1.2em; margin: -10px -10px 5px -10px; padding: 2px 5px; border-radius: 5px 5px 0 0; }
+.grayBox h2.mid { background-color: #DDD; font-size: 1.1em; margin: 5px -10px 5px -10px; padding: 1px 5px; }
+
+/* Buttons */
+.isleButton { padding: 2px 5px; width: 100%; color: #FFF; font-weight: bold; border-radius: 5px; }
+.isleButton:hover, .isleButton:focus { background-color: #FF6A00; cursor: pointer; }
+.isleButton.shaded { box-shadow: 0 5px 25px -5px #FFF inset; border: 1px solid #FFF; }
+
+/* Inputs */
+.bigText label, .bigText input[type=text], .bigText input[type=password], .bigText select, .bigText input[type=file],
+label.bigText, input[type=text].bigText, input[type=password].bigText, select.bigText, input[type=file].bigText { height: 40px; line-height: 40px; display: inline-block; vertical-align: top; }
+.bigText input[type=text], .bigText input[type=password], .bigText select, 
+input[type=text].bigText, input[type=password].bigText, select.bigText { font-size: 30px; padding: 2px 5px; }
+.bigText label,
+label.bigText { padding: 2px 5px; font-weight: bold; white-space: nowrap; }
+.bigText input[type=button], .bigText input[type=submit],
+input[type=button].bigText, input[type=submit].bigText { font-size: 25px; }
+.bigText input[type=file], input[type=file].bigText { font-size: 22px; padding: 2px 5px; border-radius: 5px; }
+.bigText textarea, textarea.bigText { font-size: 18px; width: 100%; display: inline-block; vertical-align: top; resize: none; }
+
+/* Background Colors */
+.bgLightGray { background-color: #EEE; }
+.bgBlack { background-color: #333; }
+.bgGreen { background-color: #4AA394; }
+.bgBlue { background-color: #3572B8; }
+.bgOrange { background-color: #FF6A00; }
+.bgRed { background-color: #B03D25; }
+
+/* Block stuff */
+/* There are better ways of doing this, but safari on windows and android browsers don't support them, so we resort to this: */
+.inlineBlock { display: inline-block; vertical-align: top; margin-right: -4px; }
+
+/* Shifting things around for the sake of the AddThis widget */
+/* Use a different name for the content div if you don't want this */
+#content { transition: padding-left 1s; -webkit-transition: padding-left 1s; min-width: 300px; }
+#at4-share { transition: left 1s; -webkit-transition: left 1s; left: -50px; }
+@media screen and (min-width: 980px) {
+  #content { padding-left: 50px; }
+  #at4-share { left: 0px; }
+}

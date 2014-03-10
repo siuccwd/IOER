@@ -1,0 +1,1 @@
+﻿<%@ ServiceHost Language="C#" Debug="true" Service="IllinoisPathways.RESTServices.UserDataService" CodeBehind="UserDataService.svc.cs" Factory="System.ServiceModel.Activation.WebServiceHostFactory" %>

@@ -1,0 +1,42 @@
+﻿/* styles for the custom pager - will be moved to common if needed */
+.PagerContainerTable
+{
+	border: none;
+}
+.PagerInfoCell
+{
+  height: 18px;
+  line-height: 18px;
+  padding: 2px 5px;
+}
+.PagerInfoCell:link, .PagerHyperlinkStyle, .PagerHyperlinkStyle:link {	
+  color: #FFF; 
+  background-color: #4C98CC; 
+  text-decoration: none;
+  display: block;
+  min-width: 18px;
+  text-align: center;
+  font-weight: bold;
+  padding: 2px 5px;
+  height: 20px;
+  line-height: 18px;
+  border-radius: 5px;
+  margin: 0 1.5px;
+  }
+.PagerInfoCell:visited, .PagerHyperlinkStyle:visited { color: #9984BD;	text-decoration: none; }
+.PagerCurrentPageCell, .PagerHyperlinkStyle:hover, .PagerHyperlinkStyle:active {	color: #FFF;	background-color: #FF5707; border-radius: 5px; margin: 0 1.5px; }
+.PagerOtherPageCells {  }
+.PagerSSCCells { }
+.PagerHyperlinkStyle { color: #FFF;	background-color: #FF5707; }
+.PagerHyperlinkStyle:hover {	}
+.PagerHyperlinkStyle:link { }
+.PagerHyperlinkStyle:visited
+{ }
+.PagerHyperlinkStyle:active
+{ }
+.GoToLabel
+{
+	color:#333333;	cursor:pointer;	vertical-align:middle;	display:inline;}
+.GoToSelect{	font-size:55%;}
+.GoToSelectedOption{	color:#f9f9f9;	background-color:#666666;}
+.GoToArrow{	vertical-align:middle;	cursor:pointer;}

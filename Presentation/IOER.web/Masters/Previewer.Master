@@ -1,0 +1,105 @@
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="Previewer.master.cs" Inherits="ILPathways.Masters.Previewer" %>
+<%@ Register TagName="Header" TagPrefix="uc1" Src="/Controls/Includes/Header6.ascx" %>
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <title></title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js" type="text/javascript"></script>
+    <link rel="Stylesheet" type="text/css" href="/Styles/ISLE.css" />
+
+    <style type="text/css">
+      /* Big Stuff */
+      * { box-sizing: border-box; -moz-box-sizing: border-box; }
+      form #header { margin: 0; }
+      #header #logoLink { height: 70px; }
+      html, body, form { height: 100%; padding: 0; }
+      #content { height: calc( 100% - 75px ); font-size: 0;  min-width: 300px; }
+      #toolBox { height: 100%; float: left; overflow-y: scroll; overflow-x: hidden; font-size: 16px; }
+      #previewFrame { height: 100%; border: none; background-color: #EEE; }
+      #main_tabs { font-size: 0; }
+      #main_tabs a { width: 50%; display: inline-block; font-size: 24px; line-height: 30px; text-align: center; color: #FFF; background-color: #3572B8; background: linear-gradient(#3572B8, #5592D8);  }
+      #main_tabs a[data-selected=true] { background-color: #9984BD; background: linear-gradient(#9984BD, #B9A4DD); }
+      #main_tabs a:hover, #main_tabs a:focus { background: #FF5707; }
+
+      @media screen and (max-width: 600px) {
+        /* Compact Mode */
+        #toolBox { width: 100%; height: calc(100% - 105px); }
+        #previewFrame { width: 100%; height: calc(100% - 105px); }
+        #main_tabs { display: block; height: 30px; }
+      }
+      @media screen and (min-width: 601px) and (max-width: 1000px) {
+        /* Medium Mode */
+        #toolBox { width: 300px; }
+        #previewFrame { width: calc(100% - 300px); }
+        #main_tabs { display: none; }
+      }
+      @media screen and (min-width: 1001px) {
+        /* Full Mode */
+        #toolBox { width: 30%; }
+        #previewFrame { width: 70%; }
+        #main_tabs { display: none; }
+      }
+    </style>
+    <script type="text/javascript">
+      var mode = "full";
+      var newMode = "full";
+      $(document).ready(function () {
+        $(window).on("resize", function () {
+          //If we're in mini mode...
+          if ($("#main_tabs").css("display") == "block") {
+            newMode = "mini";
+          }
+          else { //Otherwise we're in full mode
+            newMode = "full";
+          }
+          //If the switch is new...
+          if (newMode != mode) {
+            mode = newMode; //Change the mode
+            if (mode == "mini") { //If mini, show tool
+              showTool();
+            }
+            else { //Otherwise, show both
+              showBoth();
+            }
+          }
+
+        }).trigger("resize");
+      });
+
+      function showTool() {
+        $("#toolBox").show();
+        $("#previewFrame").hide();
+        $("#main_tabs a[data-name=toolLink]").attr("data-selected", "true");
+        $("#main_tabs a[data-name=previewLink]").attr("data-selected", "false");
+      }
+      function showPreview() {
+        $("#toolBox").hide();
+        $("#previewFrame").show();
+        $("#main_tabs a[data-name=toolLink]").attr("data-selected", "false");
+        $("#main_tabs a[data-name=previewLink]").attr("data-selected", "true");
+      }
+      function showBoth() {
+        $("#toolBox, #previewFrame").show();
+      }
+    </script>
+
+  </head>
+  <body>
+    <form id="form1" runat="server" onsubmit="return false;">
+      <uc1:Header ID="IOERHeader" runat="server" />
+      <div id="content">
+        <div id="main_tabs">
+          <a href="#" onclick="showTool(); return false;" data-selected="true" data-name="toolLink">Tool</a>
+          <a href="#" onclick="showPreview(); return false;" data-selected="false" data-name="previewLink">Preview</a>
+        </div>
+        <div id="toolBox">
+          <asp:ContentPlaceHolder ID="BodyContent" runat="server" />
+        </div><!-- /toolBox -->
+        <iframe id="previewFrame" src="http://www.illinoisworknet.com" />
+      </div>
+    </form>
+  </body>
+</html>

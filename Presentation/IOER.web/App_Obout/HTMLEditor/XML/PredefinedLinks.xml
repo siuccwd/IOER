@@ -1,0 +1,10 @@
+<root text="Predefined links">
+    <section text="Microsoft links" expanded="false" >
+        <item text="Main page" url="http://www.microsoft.com/" title="MicroSoft main page" />
+        <item text="ASP.NET AJAX Control Toolkit Forum" url="http://forums.asp.net/1022.aspx" title="ASP.NET AJAX Control Toolkit Forum"/>
+    </section>
+    <section text="obout Inc." expanded="false" >
+        <item text="Main page" url="http://www.obout.com" title="obout Inc. main page"/>
+        <item text="HTML Editor" url="http://www.obout.com/editor_new/" title="obout Inc. HTML Editor page"/>
+    </section>
+</root>

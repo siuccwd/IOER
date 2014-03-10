@@ -1,0 +1,2052 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>
+    </ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{FDEF36B9-84D1-4FCD-9B3F-86B0D8077548}</ProjectGuid>
+    <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>ILPathways</RootNamespace>
+    <AssemblyName>IllinoisPathways</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <UseIISExpress>false</UseIISExpress>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+    <TargetFrameworkProfile />
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <OldToolsVersion>4.0</OldToolsVersion>
+    <IISExpressSSLPort />
+    <IISExpressAnonymousAuthentication />
+    <IISExpressWindowsAuthentication />
+    <IISExpressUseClassicPipelineMode />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\IllinoisPathways.XML</DocumentationFile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\IllinoisPathways.XML</DocumentationFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Accessibility">
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
+    <Reference Include="AjaxControlToolkit, Version=4.1.60501.0, Culture=neutral, PublicKeyToken=28f01b0e84b6d53e, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Library\AjaxControlToolkit.dll</HintPath>
+    </Reference>
+    <Reference Include="AjaxMin">
+      <HintPath>..\..\packages\AjaxMin.5.5.5091.22839\lib\net40\AjaxMin.dll</HintPath>
+    </Reference>
+    <Reference Include="AutoMapper, Version=3.1.1.0, Culture=neutral, PublicKeyToken=be96cd2c38ef1005, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\AutoMapper.3.1.1\lib\net40\AutoMapper.dll</HintPath>
+    </Reference>
+    <Reference Include="AutoMapper.Net4">
+      <HintPath>..\..\packages\AutoMapper.3.1.1\lib\net40\AutoMapper.Net4.dll</HintPath>
+    </Reference>
+    <Reference Include="BouncyCastle.Crypto">
+      <HintPath>..\..\Library\BouncyCastle.Crypto.dll</HintPath>
+    </Reference>
+    <Reference Include="ImageResizer">
+      <HintPath>..\..\Library\ImageResizer.dll</HintPath>
+    </Reference>
+    <Reference Include="Interop.Scripting">
+      <HintPath>..\..\Library\Interop.Scripting.dll</HintPath>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
+    <Reference Include="Microsoft.ApplicationBlocks.Data, Version=2.0.0.0, Culture=neutral">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Library\Microsoft.ApplicationBlocks.Data.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AspNet.FriendlyUrls">
+      <HintPath>..\..\packages\Microsoft.AspNet.FriendlyUrls.Core.1.0.2\lib\net40\Microsoft.AspNet.FriendlyUrls.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Microsoft.Web.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Library\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="Obout.Ajax.UI, Version=2.13.312.3, Culture=neutral, PublicKeyToken=24f3c5cea456f322, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Library\Obout.Ajax.UI.dll</HintPath>
+    </Reference>
+    <Reference Include="obout_AJAXPage, Version=1.13.130.1, Culture=neutral, PublicKeyToken=597a97d56362c7e5, processorArchitecture=MSIL">
+      <HintPath>..\..\Library\obout_AJAXPage.dll</HintPath>
+    </Reference>
+    <Reference Include="obout_Flyout2_NET, Version=2.0.6.4, Culture=neutral, PublicKeyToken=d6418bad3a294aff, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Library\obout_Flyout2_NET.dll</HintPath>
+    </Reference>
+    <Reference Include="obout_Interface, Version=4.0.10.0, Culture=neutral, PublicKeyToken=d5dff6913a9d6649, processorArchitecture=MSIL">
+      <HintPath>..\..\Library\obout_Interface.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Net" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.ServiceModel.Web" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.ApplicationServices" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Web.Services" />
+    <Reference Include="System.EnterpriseServices" />
+    <Reference Include="System.Web.DynamicData" />
+    <Reference Include="System.Web.Entity" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="WebControlLibrary, Version=1.0.4562.26195, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Library\WebControlLibrary.dll</HintPath>
+    </Reference>
+    <Reference Include="workNetCustomGridView, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Library\workNetCustomGridView.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Account\controls\AccountRegisterUpdateController.ascx" />
+    <Content Include="Account\controls\Registration2.ascx" />
+    <Content Include="Account\controls\UserProfile.ascx" />
+    <Content Include="Account\controls\UserProfile2.ascx" />
+    <Content Include="Account\ForgotPassword.aspx" />
+    <Content Include="Account\Login.aspx" />
+    <Content Include="Account\controls\LoginController.ascx" />
+    <Content Include="Account\Profile.aspx" />
+    <Content Include="Account\Profile2.aspx" />
+    <Content Include="Account\Register.aspx" />
+    <Content Include="Activity\Default.aspx" />
+    <Content Include="Admin\AdminStuff.aspx" />
+    <Content Include="Admin\CCSS_Import.aspx" />
+    <Content Include="Admin\DataDump.aspx" />
+    <Content Include="Admin\Default.aspx" />
+    <Content Include="Admin\Groups\Default.aspx" />
+    <Content Include="Admin\Groups\GroupsMgmt.aspx" />
+    <Content Include="Admin\mapping\MapCareerClusters.aspx" />
+    <Content Include="Admin\mapping\MapK12Subjects.aspx" />
+    <Content Include="Admin\Org\OrganizationRequest.aspx" />
+    <Content Include="Admin\Org\Organizations.aspx" />
+    <Content Include="Admin\Org\OrgSearchAdd.aspx" />
+    <Content Include="Admin\Queries\Query.aspx" />
+    <Content Include="Admin\Queries\QueryMgmt.aspx" />
+    <Content Include="Admin\widgetTestingReceiver.aspx" />
+    <Content Include="App_Data\normalizedXML\CCASNEnglishNormalized.xml" />
+    <Content Include="App_Data\normalizedXML\CCASNMathNormalized.xml" />
+    <Content Include="App_Data\privkey.asc" />
+    <Content Include="App_Data\ReplyNoteSnippet.txt" />
+    <Content Include="App_Data\VerisignTrust.txt" />
+    <Content Include="App_Obout\FileUpload\Scripts\sidupload4.swf" />
+    <Content Include="App_Obout\HTMLEditor\CSS\prettify_editor.css" />
+    <Content Include="App_Obout\HTMLEditor\CSS\quickformat.css" />
+    <Content Include="App_Obout\HTMLEditor\customButtons\CustomManagerButton1_a.gif" />
+    <Content Include="App_Obout\HTMLEditor\customButtons\CustomManagerButton1_n.gif" />
+    <Content Include="App_Obout\HTMLEditor\customButtons\ed_date_a.gif" />
+    <Content Include="App_Obout\HTMLEditor\customButtons\ed_date_n.gif" />
+    <Content Include="App_Obout\HTMLEditor\customButtons\ed_empty_a.gif" />
+    <Content Include="App_Obout\HTMLEditor\customButtons\ed_empty_n.gif" />
+    <Content Include="App_Obout\HTMLEditor\customButtons\ed_insertFieldset_a.gif" />
+    <Content Include="App_Obout\HTMLEditor\customButtons\ed_insertFieldset_n.gif" />
+    <Content Include="App_Obout\HTMLEditor\customButtons\ed_insertIcon_a.gif" />
+    <Content Include="App_Obout\HTMLEditor\customButtons\ed_insertIcon_n.gif" />
+    <Content Include="App_Obout\HTMLEditor\customButtons\ed_MakeCodeBlock_a.gif" />
+    <Content Include="App_Obout\HTMLEditor\customButtons\ed_MakeCodeBlock_n.gif" />
+    <Content Include="App_Obout\HTMLEditor\customButtons\ed_RemoveCodeBlock_a.gif" />
+    <Content Include="App_Obout\HTMLEditor\customButtons\ed_RemoveCodeBlock_n.gif" />
+    <Content Include="App_Obout\HTMLEditor\customButtons\ed_removeFieldset.gif" />
+    <Content Include="App_Obout\HTMLEditor\customButtons\ed_upload_document_a.gif" />
+    <Content Include="App_Obout\HTMLEditor\customButtons\ed_upload_document_n.gif" />
+    <Content Include="App_Obout\HTMLEditor\customButtons\ed_upload_image_a.gif" />
+    <Content Include="App_Obout\HTMLEditor\customButtons\ed_upload_image_n.gif" />
+    <Content Include="App_Obout\HTMLEditor\DocumentsGallery\users_documents\New folder\SecureContent[1].txt" />
+    <Content Include="App_Obout\HTMLEditor\FlashGallery\31032010.swf" />
+    <Content Include="App_Obout\HTMLEditor\FlashGallery\Crazy.swf" />
+    <Content Include="App_Obout\HTMLEditor\FlashGallery\E-Shop.swf" />
+    <Content Include="App_Obout\HTMLEditor\FlashGallery\People.swf" />
+    <Content Include="App_Obout\HTMLEditor\FlashVideoGallery\fun.flv" />
+    <Content Include="App_Obout\HTMLEditor\icons\angel.gif" />
+    <Content Include="App_Obout\HTMLEditor\icons\angry.gif" />
+    <Content Include="App_Obout\HTMLEditor\icons\beer.gif" />
+    <Content Include="App_Obout\HTMLEditor\icons\bomb.gif" />
+    <Content Include="App_Obout\HTMLEditor\icons\disappointed.gif" />
+    <Content Include="App_Obout\HTMLEditor\icons\Embarrassed.gif" />
+    <Content Include="App_Obout\HTMLEditor\icons\flower.gif" />
+    <Content Include="App_Obout\HTMLEditor\icons\grin.gif" />
+    <Content Include="App_Obout\HTMLEditor\icons\grumpy.gif" />
+    <Content Include="App_Obout\HTMLEditor\icons\hot.gif" />
+    <Content Include="App_Obout\HTMLEditor\icons\kiss.gif" />
+    <Content Include="App_Obout\HTMLEditor\icons\kiss2.gif" />
+    <Content Include="App_Obout\HTMLEditor\icons\kissing.gif" />
+    <Content Include="App_Obout\HTMLEditor\icons\laugh.gif" />
+    <Content Include="App_Obout\HTMLEditor\icons\love.gif" />
+    <Content Include="App_Obout\HTMLEditor\icons\music.gif" />
+    <Content Include="App_Obout\HTMLEditor\icons\sad.gif" />
+    <Content Include="App_Obout\HTMLEditor\icons\shutup.gif" />
+    <Content Include="App_Obout\HTMLEditor\icons\sleepy.gif" />
+    <Content Include="App_Obout\HTMLEditor\icons\smile.gif" />
+    <Content Include="App_Obout\HTMLEditor\icons\stop.gif" />
+    <Content Include="App_Obout\HTMLEditor\icons\Surprised.gif" />
+    <Content Include="App_Obout\HTMLEditor\icons\tear.gif" />
+    <Content Include="App_Obout\HTMLEditor\icons\thinking.gif" />
+    <Content Include="App_Obout\HTMLEditor\icons\thumb_up.gif" />
+    <Content Include="App_Obout\HTMLEditor\icons\tired.gif" />
+    <Content Include="App_Obout\HTMLEditor\icons\tongue.gif" />
+    <Content Include="App_Obout\HTMLEditor\icons\wink.gif" />
+    <Content Include="App_Obout\HTMLEditor\Scripts\ClassNameButton.js" />
+    <Content Include="App_Obout\HTMLEditor\Scripts\ClassNamesPopup.js" />
+    <Content Include="App_Obout\HTMLEditor\Scripts\CustomImageBrowser1.js" />
+    <Content Include="App_Obout\HTMLEditor\Scripts\flvplayer.swf" />
+    <Content Include="App_Obout\HTMLEditor\Scripts\ImmediateFileInsert.js" />
+    <Content Include="App_Obout\HTMLEditor\Scripts\InsertCodeBlockPopup.js" />
+    <Content Include="App_Obout\HTMLEditor\Scripts\InsertDate.js" />
+    <Content Include="App_Obout\HTMLEditor\Scripts\InsertIconPopup.js" />
+    <Content Include="App_Obout\HTMLEditor\Scripts\MakeCodeBlock.js" />
+    <Content Include="App_Obout\HTMLEditor\Scripts\RemoveCodeBlock.js" />
+    <Content Include="App_Obout\HTMLEditor\XML\ButtonsSet1.xml" />
+    <Content Include="App_Obout\HTMLEditor\XML\DemandPopups1.xml" />
+    <Content Include="App_Obout\HTMLEditor\XML\FullItemsSet.xml" />
+    <Content Include="App_Obout\HTMLEditor\XML\FullSet.xml" />
+    <Content Include="App_Obout\HTMLEditor\XML\ItemsSet1.xml" />
+    <Content Include="App_Obout\HTMLEditor\XML\PredefinedLinks.xml" />
+    <Content Include="App_Obout\HTMLEditor\XML\PreloadedPopups1.xml" />
+    <Content Include="App_Obout\Poll\styles\black_glass\images\horizontal.png" />
+    <Content Include="App_Obout\Poll\styles\black_glass\images\results_fill.png" />
+    <Content Include="App_Obout\Poll\styles\black_glass\images\vertical.png" />
+    <Content Include="App_Obout\Poll\styles\black_glass\style.css" />
+    <Content Include="App_Obout\Poll\styles\grand_gray\images\horizontal.png" />
+    <Content Include="App_Obout\Poll\styles\grand_gray\images\results_fill.png" />
+    <Content Include="App_Obout\Poll\styles\grand_gray\images\vertical.png" />
+    <Content Include="App_Obout\Poll\styles\grand_gray\style.css" />
+    <Content Include="App_Obout\Poll\styles\plain\images\horizontal.png" />
+    <Content Include="App_Obout\Poll\styles\plain\images\results_fill.png" />
+    <Content Include="App_Obout\Poll\styles\plain\images\vertical.png" />
+    <Content Include="App_Obout\Poll\styles\plain\style.css" />
+    <Content Include="App_Obout\Poll\styles\premiere_blue\images\horizontal.png" />
+    <Content Include="App_Obout\Poll\styles\premiere_blue\images\results_fill.png" />
+    <Content Include="App_Obout\Poll\styles\premiere_blue\images\vertical.png" />
+    <Content Include="App_Obout\Poll\styles\premiere_blue\style.css" />
+    <Content Include="Communities\Community.aspx" />
+    <Content Include="Communities\Default.aspx" />
+    <Content Include="Contribute\Default.aspx" />
+    <Content Include="Controls\Activity1.ascx" />
+    <Content Include="Controls\Community\Community1.ascx" />
+    <Content Include="Controls\Community\Home.ascx" />
+    <Content Include="Controls\Content\Authoring.ascx" />
+    <Content Include="Controls\Content\ContentDisplay.ascx" />
+    <Content Include="Controls\Content\ContentSearch.ascx" />
+    <Content Include="Controls\Dashboard2.ascx" />
+    <Content Include="Controls\GroupsManagment\OrgGroupMembers.ascx" />
+    <Content Include="Controls\Guide.ascx" />
+    <Content Include="Controls\Includes\Header6.ascx" />
+    <Content Include="Controls\Libraries\LibrariesSearch.ascx" />
+    <Content Include="Controls\Libraries\LibraryAdmin.ascx" />
+    <Content Include="Controls\Libraries\LibraryAdminManager.ascx" />
+    <Content Include="Controls\Libraries\LibraryMemberInvite.ascx" />
+    <Content Include="Controls\Libraries\LibraryMtce.ascx" />
+    <Content Include="Controls\OrgMgmt\OrganizationMgmt.ascx" />
+    <Content Include="Controls\QuickContribute.ascx" />
+    <Content Include="Controls\Rubric4.ascx" />
+    <Content Include="Controls\Splash.ascx" />
+    <Content Include="Controls\Splash2.ascx" />
+    <Content Include="Controls\SplashMini.ascx" />
+    <Content Include="Feed\Default.aspx" />
+    <Content Include="Feed\Feed1.ascx" />
+    <Content Include="Guide.aspx" />
+    <Content Include="Help\Default.aspx" />
+    <Content Include="Help\FAQs.aspx" />
+    <Content Include="Help\Guide.aspx" />
+    <Content Include="Help\Libraries.aspx" />
+    <Content Include="images\books-15.png" />
+    <Content Include="images\books-25.png" />
+    <Content Include="images\books-50.png" />
+    <Content Include="images\defaultLibraryImg.png" />
+    <Content Include="images\defaultProfileImg.jpg" />
+    <Content Include="images\icons\200px-Adobe_PDF_Icon.png" />
+    <Content Include="images\icons\comments-small.png" />
+    <Content Include="images\icons\filethumbs\filethumb_docx_200x150.png" />
+    <Content Include="images\icons\filethumbs\filethumb_docx_400x300.png" />
+    <Content Include="images\icons\filethumbs\filethumb_pdf_200x150.png" />
+    <Content Include="images\icons\filethumbs\filethumb_pdf_400x300.png" />
+    <Content Include="images\icons\filethumbs\filethumb_pptx_200x150.png" />
+    <Content Include="images\icons\filethumbs\filethumb_pptx_400x300.png" />
+    <Content Include="images\icons\filethumbs\filethumb_xlsx_200x150.png" />
+    <Content Include="images\icons\filethumbs\filethumb_xlsx_400x300.png" />
+    <Content Include="images\icons\icon-click.png" />
+    <Content Include="images\icons\icon_app.png" />
+    <Content Include="images\icons\icon_app_bg.png" />
+    <Content Include="images\icons\icon_click-throughs.png" />
+    <Content Include="images\icons\icon_click-throughs_bg.png" />
+    <Content Include="images\icons\icon_click-throughs_med.png" />
+    <Content Include="images\icons\icon_comments.png" />
+    <Content Include="images\icons\icon_comments_bg.png" />
+    <Content Include="images\icons\icon_comments_med.png" />
+    <Content Include="images\icons\icon_community_med.png" />
+    <Content Include="images\icons\icon_create.png" />
+    <Content Include="images\icons\icon_create_bg.png" />
+    <Content Include="images\icons\icon_create_med.png" />
+    <Content Include="images\icons\icon_dislikes_white.png" />
+    <Content Include="images\icons\icon_help.png" />
+    <Content Include="images\icons\icon_help_bg.png" />
+    <Content Include="images\icons\icon_help_med.png" />
+    <Content Include="images\icons\icon_keywords.png" />
+    <Content Include="images\icons\icon_keywords_bg.png" />
+    <Content Include="images\icons\icon_library_med.png" />
+    <Content Include="images\icons\icon_likes.png" />
+    <Content Include="images\icons\icon_likes_bg.png" />
+    <Content Include="images\icons\icon_library.png" />
+    <Content Include="images\icons\icon_library_bg.png" />
+    <Content Include="images\icons\icon_likes_med.png" />
+    <Content Include="images\icons\icon_likes_white.png" />
+    <Content Include="images\icons\icon_loginaccount.png" />
+    <Content Include="images\icons\icon_loginaccount_bg.png" />
+    <Content Include="images\icons\icon_morelikethis.png" />
+    <Content Include="images\icons\icon_morelikethis_bg.png" />
+    <Content Include="images\icons\icon_myisle.png" />
+    <Content Include="images\icons\icon_myisle_bg.png" />
+    <Content Include="images\icons\icon_ratings.png" />
+    <Content Include="images\icons\icon_ratings_bg.png" />
+    <Content Include="images\icons\icon_report.png" />
+    <Content Include="images\icons\icon_report_bg.png" />
+    <Content Include="images\icons\icon_resources.png" />
+    <Content Include="images\icons\icon_resources_bg.png" />
+    <Content Include="images\icons\icon_resources_med.png" />
+    <Content Include="images\icons\icon_search.png" />
+    <Content Include="images\icons\icon_search_bg.png" />
+    <Content Include="images\icons\icon_search_med.png" />
+    <Content Include="images\icons\icon_standards.png" />
+    <Content Include="images\icons\icon_standards_bg.png" />
+    <Content Include="images\icons\icon_standards_rated_bg.png" />
+    <Content Include="images\icons\icon_subjects.png" />
+    <Content Include="images\icons\icon_subjects_bg.png" />
+    <Content Include="images\icons\icon_swirl.png" />
+    <Content Include="images\icons\icon_swirl_bg.png" />
+    <Content Include="images\icons\icon_swirl_med.png" />
+    <Content Include="images\icons\icon_tag.png" />
+    <Content Include="images\icons\icon_tag_bg.png" />
+    <Content Include="images\icons\icon_dislikes.png" />
+    <Content Include="images\icons\icon_dislikes_bg.png" />
+    <Content Include="images\icons\icon_tag_med.png" />
+    <Content Include="images\icons\icon_upload_med.png" />
+    <Content Include="images\isle.png" />
+    <Content Include="images\NotAvailable.png" />
+    <Content Include="images\scoreboard.png" />
+    <Content Include="images\ThumbnailResizer.png" />
+    <Content Include="images\youtube-autoresizer.png" />
+    <Content Include="Libraries\Admin.aspx" />
+    <Content Include="IslePortalLandingPage.aspx" />
+    <Content Include="LRW\controls\Dashboard1.ascx" />
+    <Content Include="LRW\controls\Detail6.ascx" />
+    <Content Include="LRW\controls\ElasticSearch3.ascx" />
+    <Content Include="LRW\controls\ESLibrary2.ascx" />
+    <Content Include="LRW\controls\ImageHelper.ascx" />
+    <Content Include="LRW\controls\ListPanel.ascx" />
+    <Content Include="LRW\controls\PublishersSearch2.ascx" />
+    <Content Include="LRW\controls\StandardsBrowser5.ascx" />
+    <Content Include="LRW\controls\StandardsRater.ascx" />
+    <Content Include="LRW\controls\TagList.ascx" />
+    <Content Include="My\Avatar.aspx" />
+    <Content Include="My\Dashboard.aspx" />
+    <Content Include="PortalSplash.aspx" />
+    <Content Include="Profiles\Default.aspx" />
+    <Content Include="Repository\Default.aspx" />
+    <Content Include="Repository\OBOUT.aspx" />
+    <Content Include="Repository\Picture.aspx" />
+    <Content Include="Repository\ResourcePage.aspx" />
+    <Content Include="Repository\Search.aspx" />
+    <Content Include="Repository\Show.aspx" />
+    <Content Include="Controls\%40Templates\Search.ascx" />
+    <Content Include="Controls\AppItems\AnnouncementDisplay.ascx" />
+    <Content Include="Controls\AppItems\AppItemManagement.ascx" />
+    <Content Include="Controls\FAQs\FaqList.ascx" />
+    <Content Include="Controls\FAQs\FaqMaintenance.ascx" />
+    <Content Include="Controls\FAQs\PostQuestion.ascx" />
+    <Content Include="Controls\Includes\footer3.ascx" />
+    <Content Include="Controls\GroupsManagment\GroupDetail.ascx" />
+    <Content Include="Controls\GroupsManagment\GroupMembers.ascx" />
+    <Content Include="Controls\GroupsManagment\GroupPrivileges.ascx" />
+    <Content Include="Controls\GroupsManagment\GroupsManager.ascx" />
+    <Content Include="images\icons\icon-comment.png" />
+    <Content Include="images\icons\icon-standard.png" />
+    <Content Include="images\icons\rightsreserved.png" />
+    <Content Include="images\icons\sslicon.gif" />
+    <Content Include="Libraries\Library.aspx" />
+    <Content Include="LRW\controls\SearchConfig.ascx" />
+    <Content Include="Publishers.aspx" />
+    <Content Include="Scripts\detail6.js" />
+    <Content Include="Scripts\ESLibrary2.js" />
+    <Content Include="Scripts\jquery-1.10.2.min.js" />
+    <Content Include="Scripts\jquery.cookie.js" />
+    <Content Include="Scripts\jquery.Jcrop.js" />
+    <Content Include="Scripts\jquery.Jcrop.min.js" />
+    <Content Include="Scripts\jquery.jcrop.preview.js" />
+    <Content Include="Scripts\LibrariesSearch2.js" />
+    <Content Include="Scripts\paradataRenderer.js" />
+    <Content Include="Scripts\searchWidget.js" />
+    <Content Include="Scripts\slider2.js" />
+    <Content Include="Scripts\standards\jsonAB.js" />
+    <Content Include="Scripts\standards\jsonELA-trimmed.js" />
+    <Content Include="Scripts\standards\jsonELA.js" />
+    <Content Include="Scripts\standards\jsonILFineArts.js" />
+    <Content Include="Scripts\standards\jsonILPhysicalDevelopment.js" />
+    <Content Include="Scripts\standards\jsonILSocialScience.js" />
+    <Content Include="Scripts\standards\jsonMath-trimmed.js" />
+    <Content Include="Scripts\standards\jsonMath.js" />
+    <Content Include="Scripts\standards\jsonNGSS-trimmed.js" />
+    <Content Include="Scripts\standards\jsonNGSS.js" />
+    <Content Include="Scripts\standards\xframeCommunication.js" />
+    <Content Include="Scripts\toolTipV2.js" />
+    <Content Include="Scripts\widgetSearch.js" />
+    <Content Include="App_Data\lrpriv.asc" />
+    <Content Include="Masters\Responsive.Master" />
+    <Content Include="Masters\Previewer.Master" />
+    <Content Include="Masters\Responsive2.Master" />
+    <None Include="Service References\com.illinoisworknet.www.vos\vos.disco" />
+    <None Include="Service References\com.illinoisworknet.www.vos\configuration91.svcinfo" />
+    <None Include="Service References\com.illinoisworknet.www.vos\configuration.svcinfo" />
+    <None Include="Service References\com.illinoisworknet.www.vos\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+    <Content Include="Scripts\widgets\ioersearch.js" />
+    <Content Include="Scripts\widgets\standardsbrowser.js" />
+    <Content Include="Scripts\widgets\widgetloader.js" />
+    <Content Include="secure\controls\IsleSSO.ascx" />
+    <Content Include="secure\IsleSSO.aspx" />
+    <Content Include="Server.aspx" />
+    <Content Include="Services\CommunityService.asmx" />
+    <Content Include="Services\Dashboard2Service.asmx" />
+    <Content Include="Services\DashboardService.asmx" />
+    <Content Include="Services\DetailService6.asmx" />
+    <Content Include="Services\ESLibrary2Service.asmx" />
+    <Content Include="Services\LibraryService.asmx" />
+    <Content Include="Services\PublisherService.asmx" />
+    <Content Include="Services\ResourceService.asmx" />
+    <Content Include="Services\UtilityService.asmx" />
+    <Content Include="SSLRedirect.aspx" />
+    <Content Include="LRW\controls\ConditionsOfUseSelector.ascx" />
+    <Content Include="LRW\controls\Rubric3.ascx" />
+    <Content Include="Search.aspx" />
+    <Content Include="ErrorPage.aspx" />
+    <Content Include="FAQS.aspx" />
+    <Content Include="images\grayVerticalGradient50.png" />
+    <Content Include="images\icons\calendar.gif" />
+    <Content Include="images\icons\Edit-Document-icon24.png" />
+    <Content Include="images\icons\icon-dislike.png" />
+    <Content Include="images\icons\icon-like.png" />
+    <Content Include="images\icons\icon-rubric.png" />
+    <Content Include="images\icons\magnifyingBtn1.jpg" />
+    <Content Include="images\icons\magnifyingBtn1.png" />
+    <Content Include="images\icons\preview-popup.png" />
+    <Content Include="images\icons\thumbsUp.gif" />
+    <Content Include="images\icons\thumbsUp.png" />
+    <Content Include="images\icons\Top.png" />
+    <Content Include="images\icons\isleBox_closeButton.png" />
+    <Content Include="images\icons\view_sprite.png" />
+    <Content Include="images\navchevron.png" />
+    <Content Include="images\spacer.gif" />
+    <Content Include="images\icons\edmodo-icon-32x32.png" />
+    <Content Include="images\userguide.png" />
+    <Content Include="images\whiteHorizontalGradient50.png" />
+    <Content Include="images\whiteMiddleGradient50.png" />
+    <Content Include="Libraries\Default.aspx" />
+    <Content Include="LRW\controls\Comments.ascx" />
+    <Content Include="LRW\controls\PublishResource_Narrow2.ascx" />
+    <Content Include="My\Author.aspx" />
+    <Content Include="My\Authored.aspx" />
+    <Content Include="My\ComingSoon.aspx" />
+    <Content Include="My\Library.aspx" />
+    <Content Include="My\Published.aspx" />
+    <Content Include="My\Favorites.aspx" />
+    <Content Include="News\Controls\AnnouncementSubscribe2.ascx" />
+    <Content Include="Controls\AppItems\NewsItemSearch.ascx" />
+    <Content Include="Controls\AppItems\WhatsNew.ascx" />
+    <Content Include="Controls\Includes\SystemMessageLine.ascx" />
+    <Content Include="Default.aspx" />
+    <Content Include="images\icons\demandOcc_icon.png" />
+    <Content Include="images\icons\EmptyStar.png" />
+    <Content Include="images\icons\errorIcon2.png" />
+    <Content Include="images\icons\FilledStar.png" />
+    <Content Include="images\icons\glossaryIcon2.jpg" />
+    <Content Include="images\icons\hide.gif" />
+    <Content Include="images\icons\infoBubble.gif" />
+    <Content Include="images\icons\wait.gif" />
+    <Content Include="images\icons\arrow_left.gif" />
+    <Content Include="images\icons\arrow_left.jpg" />
+    <Content Include="images\icons\arrow_left_over.jpg" />
+    <Content Include="images\icons\arrow_right.gif" />
+    <Content Include="images\icons\arrow_right.jpg" />
+    <Content Include="images\icons\arrow_right_over.jpg" />
+    <Content Include="images\body_FootBottomCenter-horiz2.jpg" />
+    <Content Include="images\body_FootBottomleft-corner2.jpg" />
+    <Content Include="images\body_FootBottomRight-corner2.jpg" />
+    <Content Include="images\CenterRotatorBackground.jpg" />
+    <Content Include="images\icons\close.png" />
+    <Content Include="images\facebook.jpg" />
+    <Content Include="images\favicon.ico" />
+    <Content Include="images\GrayBackgroundTestImage.GIF" />
+    <Content Include="images\icons\arrow3.png" />
+    <Content Include="images\icons\BackButton.png" />
+    <Content Include="images\icons\BackButtonOn.png" />
+    <Content Include="images\icons\ForwardButton.png" />
+    <Content Include="images\icons\ForwardButtonOn.png" />
+    <Content Include="images\icons\loader.gif" />
+    <Content Include="images\icons\open.png" />
+    <Content Include="images\icons\progress.gif" />
+    <Content Include="images\icons\SavedStar.png" />
+    <Content Include="images\twitter.jpg" />
+    <Content Include="images\whiteVerticalGradient50.png" />
+    <Content Include="images\workNetIcon27x32.jpg" />
+    <Content Include="LRW\controls\LRWarehouseAdvSearch.ascx" />
+    <Content Include="LRW\controls\PublishersSearch.ascx" />
+    <Content Include="LRW\controls\PublishersAutoComplete.asmx" />
+    <Content Include="fancybox\blank.gif" />
+    <Content Include="fancybox\fancybox-x.png" />
+    <Content Include="fancybox\fancybox-y.png" />
+    <Content Include="fancybox\fancybox.png" />
+    <Content Include="fancybox\fancy_close.png" />
+    <Content Include="fancybox\fancy_loading.png" />
+    <Content Include="fancybox\fancy_nav_left.png" />
+    <Content Include="fancybox\fancy_nav_right.png" />
+    <Content Include="fancybox\fancy_shadow_e.png" />
+    <Content Include="fancybox\fancy_shadow_n.png" />
+    <Content Include="fancybox\fancy_shadow_ne.png" />
+    <Content Include="fancybox\fancy_shadow_nw.png" />
+    <Content Include="fancybox\fancy_shadow_s.png" />
+    <Content Include="fancybox\fancy_shadow_se.png" />
+    <Content Include="fancybox\fancy_shadow_sw.png" />
+    <Content Include="fancybox\fancy_shadow_w.png" />
+    <Content Include="fancybox\fancy_title_left.png" />
+    <Content Include="fancybox\fancy_title_main.png" />
+    <Content Include="fancybox\fancy_title_over.png" />
+    <Content Include="fancybox\fancy_title_right.png" />
+    <Content Include="fancybox\jquery.fancybox-1.3.4.css" />
+    <Content Include="fancybox\jquery.fancybox-1.3.4.js" />
+    <Content Include="fancybox\jquery.fancybox-1.3.4.min.js" />
+    <Content Include="News\Default.aspx" />
+    <Content Include="Admin\mapping\MapResourceFormat.aspx" />
+    <Content Include="Admin\mapping\MapResourceType.aspx" />
+    <Content Include="PageNotFound.aspx" />
+    <Content Include="Pages\MapResourceNSDL.aspx" />
+    <Content Include="Pages\PublishResource.aspx" />
+    <Content Include="News\Subscribe.aspx" />
+    <Content Include="Publish.aspx" />
+    <Content Include="ResourceDetail.aspx" />
+    <Content Include="Rubric.aspx" />
+    <Content Include="Scripts\fadeCollapse.js" />
+    <Content Include="Scripts\flyout.js" />
+    <Content Include="Scripts\GridHighlights.js" />
+    <Content Include="Scripts\hoverIntent.js" />
+    <Content Include="Scripts\jquery.cluetip.js" />
+    <Content Include="Scripts\jquery.cycle.all.min.js" />
+    <Content Include="Scripts\jquery.easing.1.3.js" />
+    <Content Include="Scripts\jquery.hoverIntent.minified.js" />
+    <Content Include="Scripts\jtip.js" />
+    <Content Include="Scripts\slideOutPanel.js" />
+    <Content Include="Scripts\tagList.js" />
+    <Content Include="Scripts\toolTip.js" />
+    <None Include="App_Data\privkey-old.asc" />
+    <Content Include="App_Obout\SpellChecker\Dictionaries\en-GB.dic" />
+    <Content Include="App_Obout\SpellChecker\Dictionaries\en-US.dic">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="App_Obout\SpellChecker\Dictionaries\user.dic" />
+    <None Include="Properties\DataSources\System.Data.DataSet.datasource" />
+    <None Include="Properties\PublishProfiles\IL Pathways.pubxml" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="Service References\AccountServiceReference\Account.wsdl" />
+    <None Include="Service References\AccountServiceReference\IlPathways.AccountServiceReference.AccountDetail.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\AppItemsServiceReference\items.wsdl" />
+    <None Include="Service References\CodeTableServiceReference\CodeTableService.wsdl" />
+    <None Include="Service References\CodeTableServiceReference\CodeTableService.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\CodeTableServiceReference\CodeTableService1.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\CodeTableServiceReference\CodeTableService2.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\com.illinoisworknet.www.vos\vos.wsdl" />
+    <None Include="Service References\EmailNoticeServiceReference\EmailNoticeWS.wsdl" />
+    <None Include="Service References\EmailNoticeServiceReference\IlPathways.EmailNoticeServiceReference.EmailNotice.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\FaqServiceReference\FaqService.wsdl" />
+    <None Include="Service References\LibraryServiceReference\LibraryService.wsdl" />
+    <None Include="Service References\LibraryServiceReference\LibraryService.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\LibraryServiceReference\LibraryService1.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\LibraryServiceReference\LibraryService2.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\NewsServiceReference\NewsServices.wsdl" />
+    <None Include="Service References\ResourceServiceReferenceOLD\IlPathways.ResourceServiceReference.ResourceGetResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\ResourceServiceReferenceOLD\IlPathways.ResourceServiceReference.ResourceSearchResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\ResourceServiceReferenceOLD\ResourceService1.wsdl" />
+    <None Include="Service References\ResourceServiceReferenceOLD\ResourceService3.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\ResourceServiceReferenceOLD\ResourceService31.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\ResourceServiceReferenceOLD\ResourceService32.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\ResourceServiceReference\ResourceService.wsdl" />
+    <None Include="Service References\ResourceServiceReference\ResourceService.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\ResourceServiceReference\ResourceService1.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\ResourceServiceReference\ResourceService2.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\workNetGlossary\glossaryws.disco" />
+    <None Include="Service References\workNetGlossary\configuration91.svcinfo" />
+    <None Include="Service References\workNetGlossary\configuration.svcinfo" />
+    <None Include="Service References\workNetGlossary\IlPathways.workNetGlossary.Glossary.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\workNetGlossary\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+    <None Include="Service References\ResourceServiceReferenceOLD\configuration91.svcinfo" />
+    <None Include="Service References\ResourceServiceReferenceOLD\configuration.svcinfo" />
+    <None Include="Service References\ResourceServiceReferenceOLD\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+    <None Include="Service References\ResourceServiceReferenceOLD\ResourceService1.disco" />
+    <None Include="Service References\AppItemsServiceReference\items.disco" />
+    <None Include="Service References\AppItemsServiceReference\configuration91.svcinfo" />
+    <None Include="Service References\AppItemsServiceReference\configuration.svcinfo" />
+    <None Include="Service References\AppItemsServiceReference\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+    <None Include="Service References\EmailNoticeServiceReference\EmailNoticeWS.disco" />
+    <None Include="Service References\EmailNoticeServiceReference\configuration91.svcinfo" />
+    <None Include="Service References\EmailNoticeServiceReference\configuration.svcinfo" />
+    <None Include="Service References\EmailNoticeServiceReference\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+    <None Include="Service References\AccountServiceReference\Account.disco" />
+    <None Include="Service References\AccountServiceReference\configuration91.svcinfo" />
+    <None Include="Service References\AccountServiceReference\configuration.svcinfo" />
+    <None Include="Service References\AccountServiceReference\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+    <None Include="Service References\NewsServiceReference\NewsServices.disco" />
+    <None Include="Service References\NewsServiceReference\configuration91.svcinfo" />
+    <None Include="Service References\NewsServiceReference\configuration.svcinfo" />
+    <None Include="Service References\NewsServiceReference\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+    <None Include="Service References\workNetSubscriptionReference\ILPathways.workNetSubscriptionReference.AppItemAnnouncementSubscription.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\workNetSubscriptionReference\Subscriptions.disco" />
+    <None Include="Service References\workNetSubscriptionReference\configuration91.svcinfo" />
+    <None Include="Service References\workNetSubscriptionReference\configuration.svcinfo" />
+    <None Include="Service References\workNetSubscriptionReference\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+    <None Include="Service References\FaqServiceReference\FaqService.disco" />
+    <None Include="Service References\FaqServiceReference\configuration91.svcinfo" />
+    <None Include="Service References\FaqServiceReference\configuration.svcinfo" />
+    <None Include="Service References\FaqServiceReference\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+    <Content Include="Service References\CodeTableServiceReference\CodeTableService.disco" />
+    <Content Include="Service References\CodeTableServiceReference\configuration.svcinfo" />
+    <Content Include="Service References\CodeTableServiceReference\configuration91.svcinfo" />
+    <Content Include="Service References\CodeTableServiceReference\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference1.cs</LastGenOutput>
+    </Content>
+    <None Include="Service References\LibraryServiceReference\LibraryService.disco" />
+    <None Include="Service References\LibraryServiceReference\configuration91.svcinfo" />
+    <None Include="Service References\LibraryServiceReference\configuration.svcinfo" />
+    <None Include="Service References\LibraryServiceReference\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+    <None Include="Service References\ResourceServiceReference\ResourceService.disco" />
+    <None Include="Service References\ResourceServiceReference\configuration91.svcinfo" />
+    <None Include="Service References\ResourceServiceReference\configuration.svcinfo" />
+    <None Include="Service References\ResourceServiceReference\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+    <Content Include="Services\ElasticSearchService.asmx" />
+    <Content Include="Services\ResourceStandardsService.asmx" />
+    <Content Include="Services\WebDALService.asmx" />
+    <Content Include="Styles\common.css" />
+    <Content Include="Styles\common2.css" />
+    <Content Include="Styles\CustomControls.css" />
+    <Content Include="Styles\fadeCollapse.css" />
+    <Content Include="Styles\Flyout.css" />
+    <Content Include="Styles\footerResponsive.css" />
+    <Content Include="Styles\Header.css" />
+    <Content Include="Styles\ISLE.css" />
+    <Content Include="Styles\Isle_large.css" />
+    <Content Include="Styles\Jcrop.gif" />
+    <Content Include="Styles\jquery.cluetip.css" />
+    <Content Include="Styles\jquery.Jcrop.css" />
+    <Content Include="Styles\Menu.css" />
+    <Content Include="Styles\paradataRenderer.css" />
+    <Content Include="Styles\photos.css" />
+    <Content Include="Styles\Publish.css" />
+    <Content Include="Global.asax" />
+    <Content Include="Styles\slider2.css" />
+    <Content Include="Styles\superfish.css" />
+    <Content Include="Styles\Tabs.css" />
+    <Content Include="Styles\tagit.css" />
+    <Content Include="Styles\TagList.css" />
+    <Content Include="Styles\ILPathways.css" />
+    <Content Include="Styles\ToolTip.css" />
+    <Content Include="Services\SearchService.asmx" />
+    <None Include="Service References\workNetSubscriptionReference\Subscriptions.wsdl" />
+    <Content Include="Styles\toolTipV2.css" />
+    <Content Include="testing\app\standardsbrowser\Default.aspx" />
+    <Content Include="testing\browserframe.aspx" />
+    <Content Include="testing\cropping\TestUploadCrop.aspx" />
+    <Content Include="testing\fancyBoxTest.aspx" />
+    <Content Include="testing\placeholder.aspx" />
+    <Content Include="testing\StartPage.htm" />
+    <Content Include="testing\TestingEicarVirus.aspx" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Web.Debug.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </Content>
+    <Content Include="Web.Release.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </Content>
+    <None Include="Service References\workNetGlossary\glossaryws.wsdl" />
+    <None Include="Service References\workNetSubscriptionReference\ILPathways.workNetSubscriptionReference.AppItemAnnouncementSubscription.datasource" />
+    <None Include="Service References\workNetSubscriptionReference\Subscriptions.wsdl" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Account\controls\AccountRegisterUpdateController.ascx.cs">
+      <DependentUpon>AccountRegisterUpdateController.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Account\controls\AccountRegisterUpdateController.ascx.designer.cs">
+      <DependentUpon>AccountRegisterUpdateController.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Account\controls\Registration2.ascx.cs">
+      <DependentUpon>Registration2.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Account\controls\Registration2.ascx.designer.cs">
+      <DependentUpon>Registration2.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Account\controls\UserProfile.ascx.cs">
+      <DependentUpon>UserProfile.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Account\controls\UserProfile.ascx.designer.cs">
+      <DependentUpon>UserProfile.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Account\controls\UserProfile2.ascx.cs">
+      <DependentUpon>UserProfile2.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Account\controls\UserProfile2.ascx.designer.cs">
+      <DependentUpon>UserProfile2.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Account\ForgotPassword.aspx.cs">
+      <DependentUpon>ForgotPassword.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Account\ForgotPassword.aspx.designer.cs">
+      <DependentUpon>ForgotPassword.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Account\Profile2.aspx.cs">
+      <DependentUpon>Profile2.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Account\Profile2.aspx.designer.cs">
+      <DependentUpon>Profile2.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Activity\Default.aspx.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Activity\Default.aspx.designer.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Admin\AdminStuff.aspx.cs">
+      <DependentUpon>AdminStuff.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Admin\AdminStuff.aspx.designer.cs">
+      <DependentUpon>AdminStuff.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Admin\CCSS_Import.aspx.cs">
+      <DependentUpon>CCSS_Import.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Admin\CCSS_Import.aspx.designer.cs">
+      <DependentUpon>CCSS_Import.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Admin\DataDump.aspx.cs">
+      <DependentUpon>DataDump.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Admin\DataDump.aspx.designer.cs">
+      <DependentUpon>DataDump.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Admin\Default.aspx.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Admin\Default.aspx.designer.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Admin\Groups\Default.aspx.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Admin\Groups\Default.aspx.designer.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Admin\Groups\GroupsMgmt.aspx.cs">
+      <DependentUpon>GroupsMgmt.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Admin\Groups\GroupsMgmt.aspx.designer.cs">
+      <DependentUpon>GroupsMgmt.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Admin\mapping\MapCareerClusters.aspx.cs">
+      <DependentUpon>MapCareerClusters.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Admin\mapping\MapCareerClusters.aspx.designer.cs">
+      <DependentUpon>MapCareerClusters.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Admin\mapping\MapK12Subjects.aspx.cs">
+      <DependentUpon>MapK12Subjects.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Admin\mapping\MapK12Subjects.aspx.designer.cs">
+      <DependentUpon>MapK12Subjects.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Admin\Org\OrganizationRequest.aspx.cs">
+      <DependentUpon>OrganizationRequest.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Admin\Org\OrganizationRequest.aspx.designer.cs">
+      <DependentUpon>OrganizationRequest.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Admin\Org\Organizations.aspx.cs">
+      <DependentUpon>Organizations.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Admin\Org\Organizations.aspx.designer.cs">
+      <DependentUpon>Organizations.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Admin\Org\OrgSearchAdd.aspx.cs">
+      <DependentUpon>OrgSearchAdd.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Admin\Org\OrgSearchAdd.aspx.designer.cs">
+      <DependentUpon>OrgSearchAdd.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Admin\Queries\Query.aspx.cs">
+      <DependentUpon>Query.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Admin\Queries\Query.aspx.designer.cs">
+      <DependentUpon>Query.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Admin\Queries\QueryMgmt.aspx.cs">
+      <DependentUpon>QueryMgmt.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Admin\Queries\QueryMgmt.aspx.designer.cs">
+      <DependentUpon>QueryMgmt.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Admin\widgetTestingReceiver.aspx.cs">
+      <DependentUpon>widgetTestingReceiver.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Admin\widgetTestingReceiver.aspx.designer.cs">
+      <DependentUpon>widgetTestingReceiver.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="AppCode\Classes\WebpageMailer.cs" />
+    <Compile Include="AppCode\HTMLEditor\ClassButton.cs" />
+    <Compile Include="AppCode\HTMLEditor\CustomEditors.cs" />
+    <Compile Include="AppCode\HTMLEditor\CustomImageBrowser.cs" />
+    <Compile Include="AppCode\HTMLEditor\CustomButtonsAndPopups.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Compile>
+    <Compile Include="AuthenticationBehavior.cs" />
+    <Compile Include="Communities\Community.aspx.cs">
+      <DependentUpon>Community.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Communities\Community.aspx.designer.cs">
+      <DependentUpon>Community.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Communities\Default.aspx.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Communities\Default.aspx.designer.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Contribute\Default.aspx.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Contribute\Default.aspx.designer.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Controllers\AppItemController.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Controllers\BaseController.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Controllers\CodeTableController.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Controllers\ContentController.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Controllers\EmailController.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Controllers\EventFailureEventArgs.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Controllers\EventFailureEventHandler.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Controllers\FaqController.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controllers\FileResourceController.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Controllers\GroupsManagementController.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controllers\LResourceDataHelper.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Controllers\NewsController.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Controllers\PublishController.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controllers\ResourceCheckBoxFiller.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Controllers\ResourceDataRetriever.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Controllers\ResourcePublishUpdateController.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controllers\ResourceVersionController.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Controllers\SearchController.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controllers\ServiceReferenceHelper.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Controllers\URL2PNG.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Controllers\UserController.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Controls\Activity1.ascx.cs">
+      <DependentUpon>Activity1.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\Activity1.ascx.designer.cs">
+      <DependentUpon>Activity1.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Community\Community1.ascx.cs">
+      <DependentUpon>Community1.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\Community\Community1.ascx.designer.cs">
+      <DependentUpon>Community1.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Community\Home.ascx.cs">
+      <DependentUpon>Home.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\Community\Home.ascx.designer.cs">
+      <DependentUpon>Home.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Content\Authoring.ascx.cs">
+      <DependentUpon>Authoring.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\Content\Authoring.ascx.designer.cs">
+      <DependentUpon>Authoring.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Content\ContentDisplay.ascx.cs">
+      <DependentUpon>ContentDisplay.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\Content\ContentDisplay.ascx.designer.cs">
+      <DependentUpon>ContentDisplay.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Content\ContentSearch.ascx.cs">
+      <DependentUpon>ContentSearch.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\Content\ContentSearch.ascx.designer.cs">
+      <DependentUpon>ContentSearch.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Dashboard2.ascx.cs">
+      <DependentUpon>Dashboard2.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\Dashboard2.ascx.designer.cs">
+      <DependentUpon>Dashboard2.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\GroupsManagment\OrgGroupMembers.ascx.cs">
+      <DependentUpon>OrgGroupMembers.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\GroupsManagment\OrgGroupMembers.ascx.designer.cs">
+      <DependentUpon>OrgGroupMembers.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Guide.ascx.cs">
+      <DependentUpon>Guide.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\Guide.ascx.designer.cs">
+      <DependentUpon>Guide.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Includes\Header6.ascx.cs">
+      <DependentUpon>Header6.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\Includes\Header6.ascx.designer.cs">
+      <DependentUpon>Header6.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Libraries\LibrariesSearch.ascx.cs">
+      <DependentUpon>LibrariesSearch.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\Libraries\LibrariesSearch.ascx.designer.cs">
+      <DependentUpon>LibrariesSearch.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Libraries\LibraryAdmin.ascx.cs">
+      <DependentUpon>LibraryAdmin.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\Libraries\LibraryAdmin.ascx.designer.cs">
+      <DependentUpon>LibraryAdmin.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Libraries\LibraryAdminManager.ascx.cs">
+      <DependentUpon>LibraryAdminManager.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\Libraries\LibraryAdminManager.ascx.designer.cs">
+      <DependentUpon>LibraryAdminManager.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Libraries\LibraryMemberInvite.ascx.cs">
+      <DependentUpon>LibraryMemberInvite.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\Libraries\LibraryMemberInvite.ascx.designer.cs">
+      <DependentUpon>LibraryMemberInvite.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Libraries\LibraryMtce.ascx.cs">
+      <DependentUpon>LibraryMtce.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\Libraries\LibraryMtce.ascx.designer.cs">
+      <DependentUpon>LibraryMtce.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\OrgMgmt\OrganizationMgmt.ascx.cs">
+      <DependentUpon>OrganizationMgmt.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\OrgMgmt\OrganizationMgmt.ascx.designer.cs">
+      <DependentUpon>OrganizationMgmt.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\QuickContribute.ascx.cs">
+      <DependentUpon>QuickContribute.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\QuickContribute.ascx.designer.cs">
+      <DependentUpon>QuickContribute.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Rubric4.ascx.cs">
+      <DependentUpon>Rubric4.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\Rubric4.ascx.designer.cs">
+      <DependentUpon>Rubric4.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Splash.ascx.cs">
+      <DependentUpon>Splash.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\Splash.ascx.designer.cs">
+      <DependentUpon>Splash.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Splash2.ascx.cs">
+      <DependentUpon>Splash2.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\Splash2.ascx.designer.cs">
+      <DependentUpon>Splash2.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\SplashMini.ascx.cs">
+      <DependentUpon>SplashMini.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\SplashMini.ascx.designer.cs">
+      <DependentUpon>SplashMini.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Feed\Default.aspx.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Feed\Default.aspx.designer.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Feed\Feed1.ascx.cs">
+      <DependentUpon>Feed1.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Feed\Feed1.ascx.designer.cs">
+      <DependentUpon>Feed1.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Guide.aspx.cs">
+      <DependentUpon>Guide.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Guide.aspx.designer.cs">
+      <DependentUpon>Guide.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Help\Default.aspx.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Help\Default.aspx.designer.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Help\FAQs.aspx.cs">
+      <DependentUpon>FAQs.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Help\FAQs.aspx.designer.cs">
+      <DependentUpon>FAQs.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Help\Guide.aspx.cs">
+      <DependentUpon>Guide.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Help\Guide.aspx.designer.cs">
+      <DependentUpon>Guide.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Help\Libraries.aspx.cs">
+      <DependentUpon>Libraries.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Help\Libraries.aspx.designer.cs">
+      <DependentUpon>Libraries.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Libraries\Admin.aspx.cs">
+      <DependentUpon>Admin.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Libraries\Admin.aspx.designer.cs">
+      <DependentUpon>Admin.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="IslePortalLandingPage.aspx.cs">
+      <DependentUpon>IslePortalLandingPage.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="IslePortalLandingPage.aspx.designer.cs">
+      <DependentUpon>IslePortalLandingPage.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="LRW\controls\Dashboard1.ascx.cs">
+      <DependentUpon>Dashboard1.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="LRW\controls\Dashboard1.ascx.designer.cs">
+      <DependentUpon>Dashboard1.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="LRW\controls\Detail6.ascx.cs">
+      <DependentUpon>Detail6.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="LRW\controls\Detail6.ascx.designer.cs">
+      <DependentUpon>Detail6.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="LRW\controls\ElasticSearch3.ascx.cs">
+      <DependentUpon>ElasticSearch3.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="LRW\controls\ElasticSearch3.ascx.designer.cs">
+      <DependentUpon>ElasticSearch3.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="LRW\controls\ESLibrary2.ascx.cs">
+      <DependentUpon>ESLibrary2.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="LRW\controls\ESLibrary2.ascx.designer.cs">
+      <DependentUpon>ESLibrary2.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="LRW\controls\ImageHelper.ascx.cs">
+      <DependentUpon>ImageHelper.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="LRW\controls\ImageHelper.ascx.designer.cs">
+      <DependentUpon>ImageHelper.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="LRW\controls\ListPanel.ascx.cs">
+      <DependentUpon>ListPanel.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="LRW\controls\ListPanel.ascx.designer.cs">
+      <DependentUpon>ListPanel.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="LRW\controls\PublishersSearch2.ascx.cs">
+      <DependentUpon>PublishersSearch2.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="LRW\controls\PublishersSearch2.ascx.designer.cs">
+      <DependentUpon>PublishersSearch2.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="LRW\controls\StandardsBrowser5.ascx.cs">
+      <DependentUpon>StandardsBrowser5.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="LRW\controls\StandardsBrowser5.ascx.designer.cs">
+      <DependentUpon>StandardsBrowser5.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="LRW\controls\StandardsRater.ascx.cs">
+      <DependentUpon>StandardsRater.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="LRW\controls\StandardsRater.ascx.designer.cs">
+      <DependentUpon>StandardsRater.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="LRW\controls\TagList.ascx.cs">
+      <DependentUpon>TagList.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="LRW\controls\TagList.ascx.designer.cs">
+      <DependentUpon>TagList.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Masters\Previewer.Master.cs">
+      <DependentUpon>Previewer.Master</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Masters\Previewer.Master.designer.cs">
+      <DependentUpon>Previewer.Master</DependentUpon>
+    </Compile>
+    <Compile Include="Masters\Responsive.Master.cs">
+      <DependentUpon>Responsive.Master</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Masters\Responsive.Master.designer.cs">
+      <DependentUpon>Responsive.Master</DependentUpon>
+    </Compile>
+    <Compile Include="Masters\Responsive2.Master.cs">
+      <DependentUpon>Responsive2.Master</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Masters\Responsive2.Master.designer.cs">
+      <DependentUpon>Responsive2.Master</DependentUpon>
+    </Compile>
+    <Compile Include="My\Avatar.aspx.cs">
+      <DependentUpon>Avatar.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="My\Avatar.aspx.designer.cs">
+      <DependentUpon>Avatar.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="My\Dashboard.aspx.cs">
+      <DependentUpon>Dashboard.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="My\Dashboard.aspx.designer.cs">
+      <DependentUpon>Dashboard.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="PortalSplash.aspx.cs">
+      <DependentUpon>PortalSplash.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="PortalSplash.aspx.designer.cs">
+      <DependentUpon>PortalSplash.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Profiles\Default.aspx.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Profiles\Default.aspx.designer.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Repository\Default.aspx.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Repository\Default.aspx.designer.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Repository\OBOUT.aspx.cs">
+      <DependentUpon>OBOUT.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Repository\OBOUT.aspx.designer.cs">
+      <DependentUpon>OBOUT.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Repository\Picture.aspx.cs">
+      <DependentUpon>Picture.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Repository\Picture.aspx.designer.cs">
+      <DependentUpon>Picture.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Repository\ResourcePage.aspx.cs">
+      <DependentUpon>ResourcePage.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Repository\ResourcePage.aspx.designer.cs">
+      <DependentUpon>ResourcePage.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Repository\Search.aspx.cs">
+      <DependentUpon>Search.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Repository\Search.aspx.designer.cs">
+      <DependentUpon>Search.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Repository\Show.aspx.cs">
+      <DependentUpon>Show.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Repository\Show.aspx.designer.cs">
+      <DependentUpon>Show.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\AppItems\AppItemManagement.ascx.cs">
+      <DependentUpon>AppItemManagement.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\AppItems\AppItemManagement.ascx.designer.cs">
+      <DependentUpon>AppItemManagement.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\FAQs\FaqList.ascx.cs">
+      <DependentUpon>FaqList.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\FAQs\FaqList.ascx.designer.cs">
+      <DependentUpon>FaqList.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\FAQs\FaqMaintenance.ascx.cs">
+      <DependentUpon>FaqMaintenance.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\FAQs\FaqMaintenance.ascx.designer.cs">
+      <DependentUpon>FaqMaintenance.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\FAQs\PostQuestion.ascx.cs">
+      <DependentUpon>PostQuestion.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\FAQs\PostQuestion.ascx.designer.cs">
+      <DependentUpon>PostQuestion.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Includes\footer3.ascx.cs">
+      <DependentUpon>footer3.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\Includes\footer3.ascx.designer.cs">
+      <DependentUpon>footer3.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\GroupsManagment\GroupDetail.ascx.cs">
+      <DependentUpon>GroupDetail.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\GroupsManagment\GroupDetail.ascx.designer.cs">
+      <DependentUpon>GroupDetail.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\GroupsManagment\GroupMembers.ascx.cs">
+      <DependentUpon>GroupMembers.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\GroupsManagment\GroupMembers.ascx.designer.cs">
+      <DependentUpon>GroupMembers.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\GroupsManagment\GroupPrivileges.ascx.cs">
+      <DependentUpon>GroupPrivileges.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\GroupsManagment\GroupPrivileges.ascx.designer.cs">
+      <DependentUpon>GroupPrivileges.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\GroupsManagment\GroupsManager.ascx.cs">
+      <DependentUpon>GroupsManager.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\GroupsManagment\GroupsManager.ascx.designer.cs">
+      <DependentUpon>GroupsManager.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Libraries\Library.aspx.cs">
+      <DependentUpon>Library.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Libraries\Library.aspx.designer.cs">
+      <DependentUpon>Library.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Publishers.aspx.cs">
+      <DependentUpon>Publishers.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Publishers.aspx.designer.cs">
+      <DependentUpon>Publishers.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="secure\controls\IsleSSO.ascx.cs">
+      <DependentUpon>IsleSSO.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="secure\controls\IsleSSO.ascx.designer.cs">
+      <DependentUpon>IsleSSO.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="secure\IsleSSO.aspx.cs">
+      <DependentUpon>IsleSSO.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="secure\IsleSSO.aspx.designer.cs">
+      <DependentUpon>IsleSSO.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Server.aspx.cs">
+      <DependentUpon>Server.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Server.aspx.designer.cs">
+      <DependentUpon>Server.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Service References\com.illinoisworknet.www.vos\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Compile>
+    <Compile Include="Services\CommunityService.asmx.cs">
+      <DependentUpon>CommunityService.asmx</DependentUpon>
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Services\Dashboard2Service.asmx.cs">
+      <DependentUpon>Dashboard2Service.asmx</DependentUpon>
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Services\DashboardService.asmx.cs">
+      <DependentUpon>DashboardService.asmx</DependentUpon>
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Services\DetailService6.asmx.cs">
+      <DependentUpon>DetailService6.asmx</DependentUpon>
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Services\ESLibrary2Service.asmx.cs">
+      <DependentUpon>ESLibrary2Service.asmx</DependentUpon>
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Services\LibraryService.asmx.cs">
+      <DependentUpon>LibraryService.asmx</DependentUpon>
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Services\PublisherService.asmx.cs">
+      <DependentUpon>PublisherService.asmx</DependentUpon>
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Services\ResourceService.asmx.cs">
+      <DependentUpon>ResourceService.asmx</DependentUpon>
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Services\UtilityService.asmx.cs">
+      <DependentUpon>UtilityService.asmx</DependentUpon>
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="SSLRedirect.aspx.cs">
+      <DependentUpon>SSLRedirect.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="SSLRedirect.aspx.designer.cs">
+      <DependentUpon>SSLRedirect.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="LRW\controls\ConditionsOfUseSelector.ascx.cs">
+      <DependentUpon>ConditionsOfUseSelector.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="LRW\controls\ConditionsOfUseSelector.ascx.designer.cs">
+      <DependentUpon>ConditionsOfUseSelector.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="LRW\controls\Rubric3.ascx.cs">
+      <DependentUpon>Rubric3.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="LRW\controls\Rubric3.ascx.designer.cs">
+      <DependentUpon>Rubric3.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Search.aspx.cs">
+      <DependentUpon>Search.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Search.aspx.designer.cs">
+      <DependentUpon>Search.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="ErrorPage.aspx.cs">
+      <DependentUpon>ErrorPage.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ErrorPage.aspx.designer.cs">
+      <DependentUpon>ErrorPage.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="FAQS.aspx.cs">
+      <DependentUpon>FAQS.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="FAQS.aspx.designer.cs">
+      <DependentUpon>FAQS.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Libraries\Default.aspx.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Libraries\Default.aspx.designer.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="LRW\controls\Comments.ascx.cs">
+      <DependentUpon>Comments.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="LRW\controls\Comments.ascx.designer.cs">
+      <DependentUpon>Comments.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="LRW\controls\PublishResource_Narrow2.ascx.cs">
+      <DependentUpon>PublishResource_Narrow2.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="LRW\controls\PublishResource_Narrow2.ascx.designer.cs">
+      <DependentUpon>PublishResource_Narrow2.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="My\Author.aspx.cs">
+      <DependentUpon>Author.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="My\Author.aspx.designer.cs">
+      <DependentUpon>Author.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="My\Authored.aspx.cs">
+      <DependentUpon>Authored.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="My\Authored.aspx.designer.cs">
+      <DependentUpon>Authored.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="My\ComingSoon.aspx.cs">
+      <DependentUpon>ComingSoon.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="My\ComingSoon.aspx.designer.cs">
+      <DependentUpon>ComingSoon.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="My\Library.aspx.cs">
+      <DependentUpon>Library.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="My\Library.aspx.designer.cs">
+      <DependentUpon>Library.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="My\Published.aspx.cs">
+      <DependentUpon>Published.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="My\Published.aspx.designer.cs">
+      <DependentUpon>Published.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="My\Favorites.aspx.cs">
+      <DependentUpon>Favorites.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="My\Favorites.aspx.designer.cs">
+      <DependentUpon>Favorites.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="News\Subscribe.aspx.cs">
+      <DependentUpon>Subscribe.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="News\Subscribe.aspx.designer.cs">
+      <DependentUpon>Subscribe.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="PageNotFound.aspx.cs">
+      <DependentUpon>PageNotFound.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="PageNotFound.aspx.designer.cs">
+      <DependentUpon>PageNotFound.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Publish.aspx.cs">
+      <DependentUpon>Publish.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Publish.aspx.designer.cs">
+      <DependentUpon>Publish.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="ResourceDetail.aspx.cs">
+      <DependentUpon>ResourceDetail.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ResourceDetail.aspx.designer.cs">
+      <DependentUpon>ResourceDetail.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Rubric.aspx.cs">
+      <DependentUpon>Rubric.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Rubric.aspx.designer.cs">
+      <DependentUpon>Rubric.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Service References\CodeTableServiceReference\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Compile>
+    <Compile Include="Service References\FaqServiceReference\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Compile>
+    <Compile Include="Service References\LibraryServiceReference\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Compile>
+    <Compile Include="Service References\ResourceServiceReference\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Compile>
+    <Compile Include="Service References\workNetSubscriptionReference\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Compile>
+    <Compile Include="testing\app\standardsbrowser\Default.aspx.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="testing\app\standardsbrowser\Default.aspx.designer.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="testing\browserframe.aspx.cs">
+      <DependentUpon>browserframe.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="testing\browserframe.aspx.designer.cs">
+      <DependentUpon>browserframe.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="testing\cropping\TestUploadCrop.aspx.cs">
+      <DependentUpon>TestUploadCrop.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="testing\cropping\TestUploadCrop.aspx.designer.cs">
+      <DependentUpon>TestUploadCrop.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="testing\fancyBoxTest.aspx.cs">
+      <DependentUpon>fancyBoxTest.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="testing\fancyBoxTest.aspx.designer.cs">
+      <DependentUpon>fancyBoxTest.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="testing\placeholder.aspx.cs">
+      <DependentUpon>placeholder.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="testing\placeholder.aspx.designer.cs">
+      <DependentUpon>placeholder.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="testing\TestingEicarVirus.aspx.cs">
+      <DependentUpon>TestingEicarVirus.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="testing\TestingEicarVirus.aspx.designer.cs">
+      <DependentUpon>TestingEicarVirus.aspx</DependentUpon>
+    </Compile>
+    <Content Include="AppCode\Classes\ApplicationManager.cs" />
+    <Compile Include="Account\Login.aspx.cs">
+      <DependentUpon>Login.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Account\Login.aspx.designer.cs">
+      <DependentUpon>Login.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Account\controls\LoginController.ascx.cs">
+      <DependentUpon>LoginController.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Account\controls\LoginController.ascx.designer.cs">
+      <DependentUpon>LoginController.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Account\Profile.aspx.cs">
+      <DependentUpon>Profile.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Account\Profile.aspx.designer.cs">
+      <DependentUpon>Profile.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Account\Register.aspx.cs">
+      <DependentUpon>Register.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Account\Register.aspx.designer.cs">
+      <DependentUpon>Register.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="AppCode\Classes\SessionManager.cs" />
+    <Compile Include="AppCode\Library\BaseAppPage.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="AppCode\Library\BaseHeader.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="AppCode\Library\BaseUserControl.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\%40Templates\Search.ascx.cs">
+      <DependentUpon>Search.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\%40Templates\Search.ascx.designer.cs">
+      <DependentUpon>Search.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\AppItems\AnnouncementDisplay.ascx.cs">
+      <DependentUpon>AnnouncementDisplay.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\AppItems\AnnouncementDisplay.ascx.designer.cs">
+      <DependentUpon>AnnouncementDisplay.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="News\Controls\AnnouncementSubscribe2.ascx.cs">
+      <DependentUpon>AnnouncementSubscribe2.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="News\Controls\AnnouncementSubscribe2.ascx.designer.cs">
+      <DependentUpon>AnnouncementSubscribe2.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\AppItems\NewsItemSearch.ascx.cs">
+      <DependentUpon>NewsItemSearch.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\AppItems\NewsItemSearch.ascx.designer.cs">
+      <DependentUpon>NewsItemSearch.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\AppItems\WhatsNew.ascx.cs">
+      <DependentUpon>WhatsNew.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\AppItems\WhatsNew.ascx.designer.cs">
+      <DependentUpon>WhatsNew.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Includes\SystemMessageLine.ascx.cs">
+      <DependentUpon>SystemMessageLine.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\Includes\SystemMessageLine.ascx.designer.cs">
+      <DependentUpon>SystemMessageLine.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Default.aspx.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Default.aspx.designer.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="LRW\controls\LRWarehouseAdvSearch.ascx.cs">
+      <DependentUpon>LRWarehouseAdvSearch.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="LRW\controls\LRWarehouseAdvSearch.ascx.designer.cs">
+      <DependentUpon>LRWarehouseAdvSearch.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="LRW\controls\PublishersSearch.ascx.cs">
+      <DependentUpon>PublishersSearch.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="LRW\controls\PublishersSearch.ascx.designer.cs">
+      <DependentUpon>PublishersSearch.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="LRW\controls\PublishersAutoComplete.asmx.cs">
+      <DependentUpon>PublishersAutoComplete.asmx</DependentUpon>
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Global.asax.cs">
+      <DependentUpon>Global.asax</DependentUpon>
+    </Compile>
+    <Compile Include="News\Default.aspx.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="News\Default.aspx.designer.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Admin\mapping\MapResourceFormat.aspx.cs">
+      <DependentUpon>MapResourceFormat.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Admin\mapping\MapResourceFormat.aspx.designer.cs">
+      <DependentUpon>MapResourceFormat.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Masters\Pathway.Master.cs">
+      <DependentUpon>Pathway.Master</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Masters\Pathway.Master.designer.cs">
+      <DependentUpon>Pathway.Master</DependentUpon>
+    </Compile>
+    <Compile Include="Admin\mapping\MapResourceType.aspx.cs">
+      <DependentUpon>MapResourceType.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Admin\mapping\MapResourceType.aspx.designer.cs">
+      <DependentUpon>MapResourceType.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\MapResourceNSDL.aspx.cs">
+      <DependentUpon>MapResourceNSDL.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\MapResourceNSDL.aspx.designer.cs">
+      <DependentUpon>MapResourceNSDL.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\PublishResource.aspx.cs">
+      <DependentUpon>PublishResource.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\PublishResource.aspx.designer.cs">
+      <DependentUpon>PublishResource.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
+    <Compile Include="Service References\AccountServiceReference\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Compile>
+    <Compile Include="Service References\AppItemsServiceReference\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Compile>
+    <Compile Include="Service References\EmailNoticeServiceReference\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Compile>
+    <Compile Include="Service References\NewsServiceReference\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Compile>
+    <Compile Include="Service References\ResourceServiceReferenceOLD\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Compile>
+    <Compile Include="Service References\workNetGlossary\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Compile>
+    <Compile Include="Service References\workNetSubscriptionReference\Reference1.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Compile>
+    <Compile Include="Services\ElasticSearchService.asmx.cs">
+      <DependentUpon>ElasticSearchService.asmx</DependentUpon>
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Services\ResourceStandardsService.asmx.cs">
+      <DependentUpon>ResourceStandardsService.asmx</DependentUpon>
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Services\WebDALService.asmx.cs">
+      <DependentUpon>WebDALService.asmx</DependentUpon>
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Services\SearchService.asmx.cs">
+      <DependentUpon>SearchService.asmx</DependentUpon>
+      <SubType>Component</SubType>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="App_Obout\HTMLEditor\FlashGallery\users_flashs\" />
+    <Folder Include="App_Obout\HTMLEditor\FlashVideoGallery\users_flashvideos\" />
+    <Folder Include="App_Obout\HTMLEditor\ImageGallery\users_images\" />
+    <Folder Include="App_Obout\HTMLEditor\MediaGallery\users_medias\" />
+    <Folder Include="code\" />
+    <Folder Include="Controls\Gateway\" />
+    <Folder Include="temp\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Account\Web.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Masters\Pathway.Master" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadataStorage Include="Service References\AccountServiceReference\" />
+    <WCFMetadataStorage Include="Service References\AppItemsServiceReference\" />
+    <WCFMetadataStorage Include="Service References\CodeTableServiceReference\" />
+    <WCFMetadataStorage Include="Service References\com.illinoisworknet.www.vos\" />
+    <WCFMetadataStorage Include="Service References\EmailNoticeServiceReference\" />
+    <WCFMetadataStorage Include="Service References\FaqServiceReference\" />
+    <WCFMetadataStorage Include="Service References\LibraryServiceReference\" />
+    <WCFMetadataStorage Include="Service References\NewsServiceReference\" />
+    <WCFMetadataStorage Include="Service References\ResourceServiceReferenceOLD\" />
+    <WCFMetadataStorage Include="Service References\ResourceServiceReference\" />
+    <WCFMetadataStorage Include="Service References\workNetGlossary\" />
+    <WCFMetadataStorage Include="Service References\workNetSubscriptionReference\" />
+  </ItemGroup>
+  <ItemGroup>
+    <WebReferences Include="Web References\" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="App_Obout\FileUpload\Localization\en.resx" />
+    <EmbeddedResource Include="App_Obout\HTMLEditor\Localization\en.resx" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Business\ILPathways.Business\ILPathways.Business.csproj">
+      <Project>{cae031c2-7899-4cc3-9772-0787e65977a2}</Project>
+      <Name>ILPathways.Business</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Business\LRWarehouse.Business\LRWarehouse.Business.csproj">
+      <Project>{e5d37489-c4fc-48c9-a714-5610610a27e4}</Project>
+      <Name>LRWarehouse.Business</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Common\IllinoisPathways.Common\ILPathways.Common.csproj">
+      <Project>{cbb05737-7947-4ed9-8ed3-79d5c2a6597d}</Project>
+      <Name>ILPathways.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Common\ILPathways.Utilities\ILPathways.Utilities.csproj">
+      <Project>{949d7eb6-93e1-489f-a5e7-2d0d9086f720}</Project>
+      <Name>ILPathways.Utilities</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Common\LearningRegistry\LearningRegistry.csproj">
+      <Project>{3b55a41e-0ce7-419e-b1d9-04f300a5cc1c}</Project>
+      <Name>LearningRegistry</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\DataAccess\ILPathways.DAL\ILPathways.DAL.csproj">
+      <Project>{c91cb23c-3c72-4f3c-b8bc-04ec7b45ec7c}</Project>
+      <Name>ILPathways.DAL</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\DataAccess\LRWarehouse.DAL\LRWarehouse.DAL.csproj">
+      <Project>{5a3c08e1-cc85-4a82-bcc1-f43e54107b5b}</Project>
+      <Name>LRWarehouse.DAL</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Services\Isle.BizServices\Isle.BizServices.csproj">
+      <Project>{08620c67-f919-4877-95ce-155ff2405ca8}</Project>
+      <Name>Isle.BizServices</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
+    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+  </PropertyGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets" Condition="'$(VSToolsPath)' != ''" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" Condition="false" />
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
+        <WebProjectProperties>
+          <UseIIS>True</UseIIS>
+          <AutoAssignPort>True</AutoAssignPort>
+          <DevelopmentServerPort>42394</DevelopmentServerPort>
+          <DevelopmentServerVPath>/</DevelopmentServerVPath>
+          <IISUrl>http://localhost:2012</IISUrl>
+          <OverrideIISAppRootUrl>True</OverrideIISAppRootUrl>
+          <IISAppRootUrl>http://localhost:2012</IISAppRootUrl>
+          <NTLMAuthentication>False</NTLMAuthentication>
+          <UseCustomServer>False</UseCustomServer>
+          <CustomServerUrl>
+          </CustomServerUrl>
+          <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
+        </WebProjectProperties>
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

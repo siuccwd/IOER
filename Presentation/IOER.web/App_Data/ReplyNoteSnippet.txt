@@ -1,0 +1,5 @@
+
+The actual sender of this e-mail was <%SenderEmail%>.
+
+Please do not reply to this email. Instead, if a reply is necessary, use the latter e-mail address.
+

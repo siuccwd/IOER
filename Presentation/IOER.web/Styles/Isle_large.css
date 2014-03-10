@@ -1,0 +1,57 @@
+﻿
+
+/*containers*/
+/*very large*/
+.vlrgContent .labelColumn, .vlrgContent .labelColumn .label, .vlrgContent .labelColumn label,.vlrgContent .labelColumn span { font-size: 25px; margin: 10px; padding-top: 20px; }
+.vlrgContent .dataColumn { font-size: 25px; margin: 15px; }
+.vlrgContent textBox, .vlrgContent textarea { font-size: 25px; display: inline-block; margin: 5px 10px; padding-left: 5px;vertical-align: top;  height: 65px; width: 90%;}
+.vlrgContent .defaultButton { font-size: 16px; width: 400px; padding: 5px 20px; }
+.vlrgContent a { font-size: 25px; margin: 15px; }
+.vlrgContent .dropDownList { font-size: 25px; margin: 5px 10px; height: 65px; padding: 5px; width: 90%; }
+.vlrgContent h2, .vlrgContent h2 .label { font-size: 25px; }  
+.vlrgContent h3, .vlrgContent h3 .label { font-size: 23px; }  
+
+/*large*/
+.lrgContent .labelColumn, .lrgContent .label, .lrgContent .labelColumn label,.lrgContent .labelColumn span { font-size: 20px; margin: 10px; padding-top: 20px; }
+.lrgContent .dataColumn { font-size: 20px; margin: 15px; }
+
+.lrgContent input[type=text], .lrgContent input[type=password], .lrgContent select, .lrgContent textarea
+  { font-size: 20px; display: inline-block; margin: 5px 10px; padding-left: 5px;vertical-align: top;  height: 55px; width: 90%;}
+.lrgContent .defaultButton { font-size: 16px; width: 400px; padding: 5px 20px; }
+.lrgContent a { font-size: 20px; margin: 15px; }
+.lrgContent .dropDownList { font-size: 20px; margin: 5px 10px; height: 55px; padding: 5px; width: 90%; }
+.lrgContent h2, .lrgContent h2 .label { font-size: 20px; }  
+.lrgContent h3, .lrgContent h3 .label { font-size: 18px; }  
+
+/*medlarge*/
+.medLrgContent .labelColumn, .medLrgContent .label, .medLrgContent .labelColumn label,.medLrgContent .labelColumn span { font-size: 16px; margin: 7px; padding-top: 10px; }
+.medLrgContent .dataColumn { font-size: 16px; margin: 10px; }
+
+.medLrgContent input[type=text], .medLrgContent input[type=password], .medLrgContent select, .medLrgContent textarea, .medLrgContent textBox { font-size: 16px; display: inline-block; margin: 5px 10px; padding-left: 5px;vertical-align: top;  height: 45px; width: 90%;}
+.medLrgContent .defaultButton { font-size: 16px; width: 400px; padding: 5px 20px; }
+.medLrgContent a { font-size: 16px; margin: 10px; }
+.medLrgContent .dropDownList { font-size: 16px; margin: 5px 10px; height: 45px; padding: 5px; width: 90%; }
+.medLrgContent h2, .medLrgContent h2 .label { font-size: 20px; }  
+.medLrgContent h3, .medLrgContent h3 .label { font-size: 18px; }  
+
+@media screen and (max-width: 900px) {
+
+  .vlrgContent .labelColumn, .vlrgContent .labelColumn span,.vlrgContent .dataColumn , .vlrgContent input { font-size: 20px; }
+  .vlrgContent .defaultButton, .lrgContent .defaultButton  { width:300px; }
+
+.lrgContent .labelColumn, .lrgContent .labelColumn span,.lrgContent .dataColumn , .lrgContent input { font-size: 20px; }
+.lrgContent textBox, .lrgContent .dropDownList  { height: 55px; width: 300px;}
+
+.medLrgContent .labelColumn, .medLrgContent .labelColumn span,.medLrgContent .dataColumn , .medLrgContent input { font-size: 16px; }
+.medLrgContent textBox, .medLrgContent .dropDownList  { height: 45px; width: 300px;}
+}
+
+@media screen and (max-width: 500px) {
+
+.vlrgContent input[type=text], .vlrgContent input[type=password], .vlrgContent select, .lrgContent textarea
+{ height: 55px; width: 85%;}
+.lrgContent input[type=text], .lrgContent input[type=password], .lrgContent select, .lrgContent textarea  
+{ height: 45px; width: 85%;} 
+.medLrgContent input[type=text], .medLrgContent input[type=password], .medLrgContent select, .lrgContent textarea  
+{ height: 35px; width: 85%;}
+}

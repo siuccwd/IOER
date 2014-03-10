@@ -1,0 +1,8 @@
+﻿<PredefinedItems>
+  <!-- The following items only can be present in the context menu -->
+  <item name="RemoveLinkItem" />  <!-- Remove link -->
+  <item name="EditTableItem" />   <!-- Edit Table's properties -->
+  <item name="EditCellItem" />    <!-- Edit Table cell's properties -->
+  <item name="EditImageItem" />   <!-- Edit Image's properties -->
+  <item name="SelectAllItem" />   <!-- Select the whole content -->
+</PredefinedItems>

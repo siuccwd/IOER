@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<discovery xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://schemas.xmlsoap.org/disco/">
+  <contractRef ref="https://www.illinoisworknet.com/accountServices/Account.asmx?wsdl" docRef="https://www.illinoisworknet.com/accountServices/Account.asmx" xmlns="http://schemas.xmlsoap.org/disco/scl/" />
+  <soap address="https://www.illinoisworknet.com/accountServices/Account.asmx" xmlns:q1="https://illinoisworknet.com/AccountServices" binding="q1:AccountSoap" xmlns="http://schemas.xmlsoap.org/disco/soap/" />
+  <soap address="https://www.illinoisworknet.com/accountServices/Account.asmx" xmlns:q2="https://illinoisworknet.com/AccountServices" binding="q2:AccountSoap12" xmlns="http://schemas.xmlsoap.org/disco/soap/" />
+</discovery>

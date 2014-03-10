@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:wsap="http://schemas.xmlsoap.org/ws/2004/08/addressing/policy" xmlns:wsa10="http://www.w3.org/2005/08/addressing" xmlns:tns="http://tempuri.org/" xmlns:msc="http://schemas.microsoft.com/ws/2005/12/wsdl/contract" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:wsx="http://schemas.xmlsoap.org/ws/2004/09/mex" xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata" xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="ResourceService" targetNamespace="http://tempuri.org/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <xsd:schema targetNamespace="http://tempuri.org/Imports">
+      <xsd:import schemaLocation="http://localhost:49270/ResourceService.svc?xsd=xsd0" namespace="http://tempuri.org/" />
+      <xsd:import schemaLocation="http://localhost:49270/ResourceService.svc?xsd=xsd1" namespace="http://schemas.microsoft.com/2003/10/Serialization/" />
+      <xsd:import schemaLocation="http://localhost:49270/ResourceService.svc?xsd=xsd2" namespace="http://schemas.datacontract.org/2004/07/IllinoisPathways.DataContracts" />
+    </xsd:schema>
+  </wsdl:types>
+  <wsdl:message name="IResourceService_ResourceGetTest_InputMessage">
+    <wsdl:part name="parameters" element="tns:ResourceGetTest" />
+  </wsdl:message>
+  <wsdl:message name="IResourceService_ResourceGetTest_OutputMessage">
+    <wsdl:part name="parameters" element="tns:ResourceGetTestResponse" />
+  </wsdl:message>
+  <wsdl:message name="IResourceService_ResourceSearch_InputMessage">
+    <wsdl:part name="parameters" element="tns:ResourceSearch" />
+  </wsdl:message>
+  <wsdl:message name="IResourceService_ResourceSearch_OutputMessage">
+    <wsdl:part name="parameters" element="tns:ResourceSearchResponse" />
+  </wsdl:message>
+  <wsdl:message name="IResourceService_ResourceFTSearch_InputMessage">
+    <wsdl:part name="parameters" element="tns:ResourceFTSearch" />
+  </wsdl:message>
+  <wsdl:message name="IResourceService_ResourceFTSearch_OutputMessage">
+    <wsdl:part name="parameters" element="tns:ResourceFTSearchResponse" />
+  </wsdl:message>
+  <wsdl:message name="IResourceService_ResourceSearchDemo_InputMessage">
+    <wsdl:part name="parameters" element="tns:ResourceSearchDemo" />
+  </wsdl:message>
+  <wsdl:message name="IResourceService_ResourceSearchDemo_OutputMessage">
+    <wsdl:part name="parameters" element="tns:ResourceSearchDemoResponse" />
+  </wsdl:message>
+  <wsdl:message name="IResourceService_LibraryResSearch_InputMessage">
+    <wsdl:part name="parameters" element="tns:LibraryResSearch" />
+  </wsdl:message>
+  <wsdl:message name="IResourceService_LibraryResSearch_OutputMessage">
+    <wsdl:part name="parameters" element="tns:LibraryResSearchResponse" />
+  </wsdl:message>
+  <wsdl:portType name="IResourceService">
+    <wsdl:operation name="ResourceGetTest">
+      <wsdl:input wsaw:Action="http://tempuri.org/IResourceService/ResourceGetTest" message="tns:IResourceService_ResourceGetTest_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IResourceService/ResourceGetTestResponse" message="tns:IResourceService_ResourceGetTest_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="ResourceSearch">
+      <wsdl:input wsaw:Action="http://tempuri.org/IResourceService/ResourceSearch" message="tns:IResourceService_ResourceSearch_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IResourceService/ResourceSearchResponse" message="tns:IResourceService_ResourceSearch_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="ResourceFTSearch">
+      <wsdl:input wsaw:Action="http://tempuri.org/IResourceService/ResourceFTSearch" message="tns:IResourceService_ResourceFTSearch_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IResourceService/ResourceFTSearchResponse" message="tns:IResourceService_ResourceFTSearch_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="ResourceSearchDemo">
+      <wsdl:input wsaw:Action="http://tempuri.org/IResourceService/ResourceSearchDemo" message="tns:IResourceService_ResourceSearchDemo_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IResourceService/ResourceSearchDemoResponse" message="tns:IResourceService_ResourceSearchDemo_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="LibraryResSearch">
+      <wsdl:input wsaw:Action="http://tempuri.org/IResourceService/LibraryResSearch" message="tns:IResourceService_LibraryResSearch_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IResourceService/LibraryResSearchResponse" message="tns:IResourceService_LibraryResSearch_OutputMessage" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="BasicHttpBinding_IResourceService" type="tns:IResourceService">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="ResourceGetTest">
+      <soap:operation soapAction="http://tempuri.org/IResourceService/ResourceGetTest" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ResourceSearch">
+      <soap:operation soapAction="http://tempuri.org/IResourceService/ResourceSearch" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ResourceFTSearch">
+      <soap:operation soapAction="http://tempuri.org/IResourceService/ResourceFTSearch" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ResourceSearchDemo">
+      <soap:operation soapAction="http://tempuri.org/IResourceService/ResourceSearchDemo" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="LibraryResSearch">
+      <soap:operation soapAction="http://tempuri.org/IResourceService/LibraryResSearch" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="ResourceService">
+    <wsdl:port name="BasicHttpBinding_IResourceService" binding="tns:BasicHttpBinding_IResourceService">
+      <soap:address location="http://localhost:49270/ResourceService.svc" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

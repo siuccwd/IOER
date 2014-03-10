@@ -1,0 +1,55 @@
+﻿.toolTipOuter
+{
+    padding: 10px;
+    position: absolute;
+    margin: 10px;
+    left: -10000px;
+    z-index: 10000;
+}
+.toolTip
+{
+    background-color: #E2E5F3;
+    width: 300px;
+    color: #000;
+    font-weight: normal;
+    border-radius: 5px;
+    overflow: hidden;
+    box-shadow: 3px 3px 4px #AAA;
+}
+.toolTip h3
+{
+    background-color: #4AA394;
+    line-height: 20px;
+    color: #FFF;
+    padding:3px 30px 3px 3px;
+    font-size: 14px;
+}
+.toolTip p
+{
+    font-size: 16px;
+    padding: 2px 5px;
+}
+.toolTipLink
+{
+    color: #11E;
+    cursor: pointer;
+}
+.toolTip_closeBox 
+{
+    position:absolute;
+    right:10px;
+    top:10px;
+    width:30px;
+    height:30px;
+    background: transparent url('/fancybox/fancybox.png') -40px 0px no-repeat;
+}
+.toolTip_closeBox:hover 
+{
+    cursor: pointer;
+}
+.toolTip_iframe 
+{
+    border: 0;
+    height: 200px;
+    width: 100%;
+}

@@ -1,0 +1,20 @@
+﻿  .expandCollapseBox {
+    position: relative;
+  }
+  a.showHideLink {
+    position: absolute;
+    display: block;
+    width: 100%;
+    padding-top: 30px;
+    font-weight: bold;
+    text-align: right;
+    text-decoration: none;
+    background: url("/images/whiteVerticalGradient50.png") repeat-x right bottom;
+    bottom: -1px;
+    right: 0;
+  }
+  a.showHideLink:hover, a.showHideLink:focus {
+    color: #FA0;
+    text-decoration: none;
+    background-color: transparent;
+  }

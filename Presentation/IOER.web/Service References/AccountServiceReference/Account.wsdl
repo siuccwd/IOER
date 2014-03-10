@@ -1,0 +1,590 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:tns="https://illinoisworknet.com/AccountServices" xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" targetNamespace="https://illinoisworknet.com/AccountServices" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <s:schema elementFormDefault="qualified" targetNamespace="https://illinoisworknet.com/AccountServices">
+      <s:element name="Register">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="serviceCode" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="applicationPassword" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="email" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="password" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="firstName" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="lastName" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="accountType" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="RegisterResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="RegisterResult" type="tns:AccountDetail" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="AccountDetail">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="worknetId" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="userName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="fullName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="firstName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="lastName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="rowId" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="email" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="statusMessage" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="JobClubRegister">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="email" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="firstName" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="lastName" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="employmentStatus" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="applicationPassword" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="JobClubRegisterResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="JobClubRegisterResult" type="tns:AccountDetail" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="Login">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="serviceCode" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="applicationPassword" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="loginName" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="password" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="LoginResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="LoginResult" type="tns:AccountDetail" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetCustomerByRowId">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="serviceCode" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="applicationPassword" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="rowId" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="password" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetCustomerByRowIdResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetCustomerByRowIdResult">
+              <s:complexType>
+                <s:sequence>
+                  <s:element ref="s:schema" />
+                  <s:any />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="NewsSubscriptionGet">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="email" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="newsCategory" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="applicationPassword" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="NewsSubscriptionGetResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="NewsSubscriptionGetResult">
+              <s:complexType>
+                <s:sequence>
+                  <s:element ref="s:schema" />
+                  <s:any />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="NewsSubscriptionCreate">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="email" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="newsCategory" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="Frequency" type="s:int" />
+            <s:element minOccurs="1" maxOccurs="1" name="isValidated" type="s:boolean" />
+            <s:element minOccurs="0" maxOccurs="1" name="applicationPassword" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="NewsSubscriptionCreateResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="NewsSubscriptionCreateResult">
+              <s:complexType>
+                <s:sequence>
+                  <s:element ref="s:schema" />
+                  <s:any />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="NewsSubscriptionUpdate">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="email" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="newsCategory" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="Frequency" type="s:int" />
+            <s:element minOccurs="1" maxOccurs="1" name="isValidated" type="s:boolean" />
+            <s:element minOccurs="0" maxOccurs="1" name="applicationPassword" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="NewsSubscriptionUpdateResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="NewsSubscriptionUpdateResult">
+              <s:complexType>
+                <s:sequence>
+                  <s:element ref="s:schema" />
+                  <s:any />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="NewsSubscriptionDelete">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="email" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="newsCategory" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="applicationPassword" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="NewsSubscriptionDeleteResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="NewsSubscriptionDeleteResult">
+              <s:complexType>
+                <s:sequence>
+                  <s:element ref="s:schema" />
+                  <s:any />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="NewsletterSubscriptionGet">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="userId" type="s:int" />
+            <s:element minOccurs="1" maxOccurs="1" name="newsLetterId" type="s:int" />
+            <s:element minOccurs="0" maxOccurs="1" name="applicationPassword" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="NewsletterSubscriptionGetResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="NewsletterSubscriptionGetResult">
+              <s:complexType>
+                <s:sequence>
+                  <s:element ref="s:schema" />
+                  <s:any />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="NewsletterSubscriptionCreate">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="userId" type="s:int" />
+            <s:element minOccurs="1" maxOccurs="1" name="newsLetterId" type="s:int" />
+            <s:element minOccurs="1" maxOccurs="1" name="isValidated" type="s:boolean" />
+            <s:element minOccurs="0" maxOccurs="1" name="applicationPassword" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="NewsletterSubscriptionCreateResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="NewsletterSubscriptionCreateResult">
+              <s:complexType>
+                <s:sequence>
+                  <s:element ref="s:schema" />
+                  <s:any />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="NewsletterSubscriptionUpdate">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="userId" type="s:int" />
+            <s:element minOccurs="1" maxOccurs="1" name="newsLetterId" type="s:int" />
+            <s:element minOccurs="1" maxOccurs="1" name="Frequency" type="s:int" />
+            <s:element minOccurs="1" maxOccurs="1" name="isValidated" type="s:boolean" />
+            <s:element minOccurs="0" maxOccurs="1" name="applicationPassword" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="NewsletterSubscriptionUpdateResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="NewsletterSubscriptionUpdateResult">
+              <s:complexType>
+                <s:sequence>
+                  <s:element ref="s:schema" />
+                  <s:any />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+    </s:schema>
+  </wsdl:types>
+  <wsdl:message name="RegisterSoapIn">
+    <wsdl:part name="parameters" element="tns:Register" />
+  </wsdl:message>
+  <wsdl:message name="RegisterSoapOut">
+    <wsdl:part name="parameters" element="tns:RegisterResponse" />
+  </wsdl:message>
+  <wsdl:message name="JobClubRegisterSoapIn">
+    <wsdl:part name="parameters" element="tns:JobClubRegister" />
+  </wsdl:message>
+  <wsdl:message name="JobClubRegisterSoapOut">
+    <wsdl:part name="parameters" element="tns:JobClubRegisterResponse" />
+  </wsdl:message>
+  <wsdl:message name="LoginSoapIn">
+    <wsdl:part name="parameters" element="tns:Login" />
+  </wsdl:message>
+  <wsdl:message name="LoginSoapOut">
+    <wsdl:part name="parameters" element="tns:LoginResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetCustomerByRowIdSoapIn">
+    <wsdl:part name="parameters" element="tns:GetCustomerByRowId" />
+  </wsdl:message>
+  <wsdl:message name="GetCustomerByRowIdSoapOut">
+    <wsdl:part name="parameters" element="tns:GetCustomerByRowIdResponse" />
+  </wsdl:message>
+  <wsdl:message name="NewsSubscriptionGetSoapIn">
+    <wsdl:part name="parameters" element="tns:NewsSubscriptionGet" />
+  </wsdl:message>
+  <wsdl:message name="NewsSubscriptionGetSoapOut">
+    <wsdl:part name="parameters" element="tns:NewsSubscriptionGetResponse" />
+  </wsdl:message>
+  <wsdl:message name="NewsSubscriptionCreateSoapIn">
+    <wsdl:part name="parameters" element="tns:NewsSubscriptionCreate" />
+  </wsdl:message>
+  <wsdl:message name="NewsSubscriptionCreateSoapOut">
+    <wsdl:part name="parameters" element="tns:NewsSubscriptionCreateResponse" />
+  </wsdl:message>
+  <wsdl:message name="NewsSubscriptionUpdateSoapIn">
+    <wsdl:part name="parameters" element="tns:NewsSubscriptionUpdate" />
+  </wsdl:message>
+  <wsdl:message name="NewsSubscriptionUpdateSoapOut">
+    <wsdl:part name="parameters" element="tns:NewsSubscriptionUpdateResponse" />
+  </wsdl:message>
+  <wsdl:message name="NewsSubscriptionDeleteSoapIn">
+    <wsdl:part name="parameters" element="tns:NewsSubscriptionDelete" />
+  </wsdl:message>
+  <wsdl:message name="NewsSubscriptionDeleteSoapOut">
+    <wsdl:part name="parameters" element="tns:NewsSubscriptionDeleteResponse" />
+  </wsdl:message>
+  <wsdl:message name="NewsletterSubscriptionGetSoapIn">
+    <wsdl:part name="parameters" element="tns:NewsletterSubscriptionGet" />
+  </wsdl:message>
+  <wsdl:message name="NewsletterSubscriptionGetSoapOut">
+    <wsdl:part name="parameters" element="tns:NewsletterSubscriptionGetResponse" />
+  </wsdl:message>
+  <wsdl:message name="NewsletterSubscriptionCreateSoapIn">
+    <wsdl:part name="parameters" element="tns:NewsletterSubscriptionCreate" />
+  </wsdl:message>
+  <wsdl:message name="NewsletterSubscriptionCreateSoapOut">
+    <wsdl:part name="parameters" element="tns:NewsletterSubscriptionCreateResponse" />
+  </wsdl:message>
+  <wsdl:message name="NewsletterSubscriptionUpdateSoapIn">
+    <wsdl:part name="parameters" element="tns:NewsletterSubscriptionUpdate" />
+  </wsdl:message>
+  <wsdl:message name="NewsletterSubscriptionUpdateSoapOut">
+    <wsdl:part name="parameters" element="tns:NewsletterSubscriptionUpdateResponse" />
+  </wsdl:message>
+  <wsdl:portType name="AccountSoap">
+    <wsdl:operation name="Register">
+      <wsdl:input message="tns:RegisterSoapIn" />
+      <wsdl:output message="tns:RegisterSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="JobClubRegister">
+      <wsdl:input message="tns:JobClubRegisterSoapIn" />
+      <wsdl:output message="tns:JobClubRegisterSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="Login">
+      <wsdl:input message="tns:LoginSoapIn" />
+      <wsdl:output message="tns:LoginSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetCustomerByRowId">
+      <wsdl:input message="tns:GetCustomerByRowIdSoapIn" />
+      <wsdl:output message="tns:GetCustomerByRowIdSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="NewsSubscriptionGet">
+      <wsdl:input message="tns:NewsSubscriptionGetSoapIn" />
+      <wsdl:output message="tns:NewsSubscriptionGetSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="NewsSubscriptionCreate">
+      <wsdl:input message="tns:NewsSubscriptionCreateSoapIn" />
+      <wsdl:output message="tns:NewsSubscriptionCreateSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="NewsSubscriptionUpdate">
+      <wsdl:input message="tns:NewsSubscriptionUpdateSoapIn" />
+      <wsdl:output message="tns:NewsSubscriptionUpdateSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="NewsSubscriptionDelete">
+      <wsdl:input message="tns:NewsSubscriptionDeleteSoapIn" />
+      <wsdl:output message="tns:NewsSubscriptionDeleteSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="NewsletterSubscriptionGet">
+      <wsdl:input message="tns:NewsletterSubscriptionGetSoapIn" />
+      <wsdl:output message="tns:NewsletterSubscriptionGetSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="NewsletterSubscriptionCreate">
+      <wsdl:input message="tns:NewsletterSubscriptionCreateSoapIn" />
+      <wsdl:output message="tns:NewsletterSubscriptionCreateSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="NewsletterSubscriptionUpdate">
+      <wsdl:input message="tns:NewsletterSubscriptionUpdateSoapIn" />
+      <wsdl:output message="tns:NewsletterSubscriptionUpdateSoapOut" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="AccountSoap" type="tns:AccountSoap">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="Register">
+      <soap:operation soapAction="https://illinoisworknet.com/AccountServices/Register" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="JobClubRegister">
+      <soap:operation soapAction="https://illinoisworknet.com/AccountServices/JobClubRegister" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Login">
+      <soap:operation soapAction="https://illinoisworknet.com/AccountServices/Login" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetCustomerByRowId">
+      <soap:operation soapAction="https://illinoisworknet.com/AccountServices/GetCustomerByRowId" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="NewsSubscriptionGet">
+      <soap:operation soapAction="https://illinoisworknet.com/AccountServices/NewsSubscriptionGet" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="NewsSubscriptionCreate">
+      <soap:operation soapAction="https://illinoisworknet.com/AccountServices/NewsSubscriptionCreate" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="NewsSubscriptionUpdate">
+      <soap:operation soapAction="https://illinoisworknet.com/AccountServices/NewsSubscriptionUpdate" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="NewsSubscriptionDelete">
+      <soap:operation soapAction="https://illinoisworknet.com/AccountServices/NewsSubscriptionDelete" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="NewsletterSubscriptionGet">
+      <soap:operation soapAction="https://illinoisworknet.com/AccountServices/NewsletterSubscriptionGet" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="NewsletterSubscriptionCreate">
+      <soap:operation soapAction="https://illinoisworknet.com/AccountServices/NewsletterSubscriptionCreate" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="NewsletterSubscriptionUpdate">
+      <soap:operation soapAction="https://illinoisworknet.com/AccountServices/NewsletterSubscriptionUpdate" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="AccountSoap12" type="tns:AccountSoap">
+    <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="Register">
+      <soap12:operation soapAction="https://illinoisworknet.com/AccountServices/Register" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="JobClubRegister">
+      <soap12:operation soapAction="https://illinoisworknet.com/AccountServices/JobClubRegister" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Login">
+      <soap12:operation soapAction="https://illinoisworknet.com/AccountServices/Login" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetCustomerByRowId">
+      <soap12:operation soapAction="https://illinoisworknet.com/AccountServices/GetCustomerByRowId" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="NewsSubscriptionGet">
+      <soap12:operation soapAction="https://illinoisworknet.com/AccountServices/NewsSubscriptionGet" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="NewsSubscriptionCreate">
+      <soap12:operation soapAction="https://illinoisworknet.com/AccountServices/NewsSubscriptionCreate" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="NewsSubscriptionUpdate">
+      <soap12:operation soapAction="https://illinoisworknet.com/AccountServices/NewsSubscriptionUpdate" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="NewsSubscriptionDelete">
+      <soap12:operation soapAction="https://illinoisworknet.com/AccountServices/NewsSubscriptionDelete" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="NewsletterSubscriptionGet">
+      <soap12:operation soapAction="https://illinoisworknet.com/AccountServices/NewsletterSubscriptionGet" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="NewsletterSubscriptionCreate">
+      <soap12:operation soapAction="https://illinoisworknet.com/AccountServices/NewsletterSubscriptionCreate" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="NewsletterSubscriptionUpdate">
+      <soap12:operation soapAction="https://illinoisworknet.com/AccountServices/NewsletterSubscriptionUpdate" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="Account">
+    <wsdl:port name="AccountSoap" binding="tns:AccountSoap">
+      <soap:address location="https://www.illinoisworknet.com/accountServices/Account.asmx" />
+    </wsdl:port>
+    <wsdl:port name="AccountSoap12" binding="tns:AccountSoap12">
+      <soap12:address location="https://www.illinoisworknet.com/accountServices/Account.asmx" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

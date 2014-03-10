@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="2.0" xmlns:edmx="http://schemas.microsoft.com/ado/2008/10/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2008/10/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="a55655457415451a9de850338e594bf5" Name="Diagram1" ZoomLevel="73">
+        <EntityTypeShape EntityType="ResourceModel.EmailNotice" Width="1.5" PointX="5.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="ResourceModel.Patron" Width="1.5" PointX="0.75" PointY="1" IsExpanded="true" />
+        <EntityTypeShape EntityType="ResourceModel.Patron_Profile" Width="1.5" PointX="3" PointY="1.25" IsExpanded="true" />
+        <AssociationConnector Association="ResourceModel.FK_Patron_Profile_Patron" ManuallyRouted="false" />
+        <EntityTypeShape EntityType="ResourceModel.Resource" Width="1.875" PointX="5.25" PointY="5.875" />
+        <EntityTypeShape EntityType="ResourceModel.Resource_Version" Width="2.25" PointX="8.125" PointY="5.875" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

@@ -1,0 +1,391 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="2.0" xmlns:edmx="http://schemas.microsoft.com/ado/2008/10/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="ResourceModel.Store" Alias="Self" Provider="System.Data.SqlClient" ProviderManifestToken="2008" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/02/edm/ssdl">
+        <EntityContainer Name="ResourceModelStoreContainer">
+          <EntitySet Name="EmailNotice" EntityType="ResourceModel.Store.EmailNotice" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="Patron" EntityType="ResourceModel.Store.Patron" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="Patron_Profile" EntityType="ResourceModel.Store.Patron_Profile" store:Type="Tables" Schema="dbo" Table="Patron.Profile" />
+          <EntitySet Name="Resource" EntityType="ResourceModel.Store.Resource" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="Resource_Version" EntityType="ResourceModel.Store.Resource_Version" store:Type="Tables" Schema="dbo" Table="Resource.Version" />
+          <AssociationSet Name="FK_Patron_Profile_Patron" Association="ResourceModel.Store.FK_Patron_Profile_Patron">
+            <End Role="Patron" EntitySet="Patron" />
+            <End Role="Patron_Profile" EntitySet="Patron_Profile" />
+          </AssociationSet>
+        </EntityContainer>
+        <EntityType Name="EmailNotice">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="Title" Type="varchar" MaxLength="75" />
+          <Property Name="Category" Type="varchar" MaxLength="50" />
+          <Property Name="NoticeCode" Type="varchar" MaxLength="50" />
+          <Property Name="Description" Type="varchar" MaxLength="500" />
+          <Property Name="Filter" Type="varchar(max)" />
+          <Property Name="isActive" Type="bit" />
+          <Property Name="LanguageCode" Type="varchar" MaxLength="10" />
+          <Property Name="FromEmail" Type="nvarchar" MaxLength="100" />
+          <Property Name="CcEmail" Type="nvarchar" MaxLength="500" />
+          <Property Name="BccEmail" Type="nvarchar" MaxLength="100" />
+          <Property Name="Subject" Type="nvarchar" MaxLength="100" />
+          <Property Name="HtmlBody" Type="nvarchar(max)" />
+          <Property Name="TextBody" Type="nvarchar(max)" />
+          <Property Name="Created" Type="datetime" />
+          <Property Name="CreatedBy" Type="varchar" MaxLength="25" />
+          <Property Name="LastUpdated" Type="datetime" />
+          <Property Name="LastUpdatedBy" Type="varchar" MaxLength="25" />
+        </EntityType>
+        <EntityType Name="Patron">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="UserName" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="Password" Type="varchar" MaxLength="50" />
+          <Property Name="FirstName" Type="varchar" MaxLength="50" />
+          <Property Name="LastName" Type="varchar" MaxLength="50" />
+          <Property Name="Email" Type="varchar" MaxLength="100" />
+          <Property Name="IsActive" Type="bit" />
+          <Property Name="Created" Type="datetime" />
+          <Property Name="LastUpdated" Type="datetime" />
+          <Property Name="LastUpdatedById" Type="int" />
+          <Property Name="RowId" Type="uniqueidentifier" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Patron_Profile">
+          <Key>
+            <PropertyRef Name="UserId" />
+          </Key>
+          <Property Name="UserId" Type="int" Nullable="false" />
+          <Property Name="MainPhone" Type="varchar" MaxLength="15" />
+          <Property Name="JobTitle" Type="varchar" MaxLength="100" />
+          <Property Name="PublishingRoleId" Type="int" />
+          <Property Name="RoleProfile" Type="varchar" MaxLength="500" />
+          <Property Name="OrganizationId" Type="int" />
+          <Property Name="ImageUrl" Type="varchar" MaxLength="200" />
+          <Property Name="Created" Type="datetime" />
+          <Property Name="CreatedById" Type="int" />
+          <Property Name="LastUpdated" Type="datetime" />
+          <Property Name="LastUpdatedId" Type="int" />
+          <Property Name="Notes" Type="varchar" MaxLength="1000" />
+        </EntityType>
+        <EntityType Name="Resource">
+          <Key>
+            <PropertyRef Name="RowId" />
+          </Key>
+          <Property Name="RowId" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="ResourceUrl" Type="varchar" Nullable="false" MaxLength="500" />
+          <Property Name="ViewCount" Type="int" />
+          <Property Name="FavoriteCount" Type="int" />
+          <Property Name="Created" Type="datetime" />
+          <Property Name="LastUpdated" Type="datetime" />
+          <Property Name="IsActive" Type="bit" />
+          <Property Name="HasPathwayGradeLevel" Type="bit" />
+          <Property Name="Id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+        </EntityType>
+        <EntityType Name="Resource_Version">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="ResourceIntId" Type="int" />
+          <Property Name="Title" Type="nvarchar" Nullable="false" MaxLength="300" />
+          <Property Name="Description" Type="nvarchar(max)" />
+          <Property Name="DocId" Type="varchar" MaxLength="500" />
+          <Property Name="Publisher" Type="varchar" MaxLength="200" />
+          <Property Name="Creator" Type="varchar" MaxLength="200" />
+          <Property Name="Rights" Type="varchar" MaxLength="700" />
+          <Property Name="AccessRights" Type="varchar" MaxLength="100" />
+          <Property Name="Modified" Type="datetime" />
+          <Property Name="Submitter" Type="varchar" MaxLength="100" />
+          <Property Name="Imported" Type="datetime" />
+          <Property Name="Created" Type="datetime" />
+          <Property Name="TypicalLearningTime" Type="varchar" MaxLength="50" />
+          <Property Name="IsSkeletonFromParadata" Type="bit" />
+          <Property Name="IsActive" Type="bit" />
+          <Property Name="Requirements" Type="varchar" MaxLength="200" />
+          <Property Name="SortTitle" Type="nvarchar" MaxLength="300" />
+          <Property Name="Schema" Type="varchar" MaxLength="50" />
+          <Property Name="AccessRightsId" Type="int" />
+          <Property Name="InteractivityTypeId" Type="int" />
+          <Property Name="InteractivityType" Type="varchar" MaxLength="100" />
+          <Property Name="RowId" Type="uniqueidentifier" Nullable="false" />
+        </EntityType>
+        <Association Name="FK_Patron_Profile_Patron">
+          <End Role="Patron" Type="ResourceModel.Store.Patron" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Patron_Profile" Type="ResourceModel.Store.Patron_Profile" Multiplicity="0..1" />
+          <ReferentialConstraint>
+            <Principal Role="Patron">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Patron_Profile">
+              <PropertyRef Name="UserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="ResourceModel" Alias="Self" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns="http://schemas.microsoft.com/ado/2008/09/edm">
+        <EntityContainer Name="ResourceEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="EmailNotices" EntityType="ResourceModel.EmailNotice" />
+          <EntitySet Name="Patrons" EntityType="ResourceModel.Patron" />
+          <EntitySet Name="Patron_Profile" EntityType="ResourceModel.Patron_Profile" />
+          <AssociationSet Name="FK_Patron_Profile_Patron" Association="ResourceModel.FK_Patron_Profile_Patron">
+            <End Role="Patron" EntitySet="Patrons" />
+            <End Role="Patron_Profile" EntitySet="Patron_Profile" />
+          </AssociationSet>
+          <EntitySet Name="Resources" EntityType="ResourceModel.Resource" />
+          <EntitySet Name="Resource_Version" EntityType="ResourceModel.Resource_Version" />
+        </EntityContainer>
+        <EntityType Name="EmailNotice">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Title" Type="String" MaxLength="75" Unicode="false" FixedLength="false" />
+          <Property Name="Category" Type="String" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Name="NoticeCode" Type="String" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Name="Description" Type="String" MaxLength="500" Unicode="false" FixedLength="false" />
+          <Property Name="Filter" Type="String" MaxLength="Max" Unicode="false" FixedLength="false" />
+          <Property Name="isActive" Type="Boolean" />
+          <Property Name="LanguageCode" Type="String" MaxLength="10" Unicode="false" FixedLength="false" />
+          <Property Name="FromEmail" Type="String" MaxLength="100" Unicode="true" FixedLength="false" />
+          <Property Name="CcEmail" Type="String" MaxLength="500" Unicode="true" FixedLength="false" />
+          <Property Name="BccEmail" Type="String" MaxLength="100" Unicode="true" FixedLength="false" />
+          <Property Name="Subject" Type="String" MaxLength="100" Unicode="true" FixedLength="false" />
+          <Property Name="HtmlBody" Type="String" MaxLength="Max" Unicode="true" FixedLength="false" />
+          <Property Name="TextBody" Type="String" MaxLength="Max" Unicode="true" FixedLength="false" />
+          <Property Name="Created" Type="DateTime" Precision="3" />
+          <Property Name="CreatedBy" Type="String" MaxLength="25" Unicode="false" FixedLength="false" />
+          <Property Name="LastUpdated" Type="DateTime" Precision="3" />
+          <Property Name="LastUpdatedBy" Type="String" MaxLength="25" Unicode="false" FixedLength="false" />
+        </EntityType>
+        <EntityType Name="Patron">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="UserName" Type="String" Nullable="false" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Name="Password" Type="String" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Name="FirstName" Type="String" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Name="LastName" Type="String" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Name="Email" Type="String" MaxLength="100" Unicode="false" FixedLength="false" />
+          <Property Name="IsActive" Type="Boolean" />
+          <Property Name="Created" Type="DateTime" Precision="3" />
+          <Property Name="LastUpdated" Type="DateTime" Precision="3" />
+          <Property Name="LastUpdatedById" Type="Int32" />
+          <Property Name="RowId" Type="Guid" Nullable="false" />
+          <NavigationProperty Name="Patron_Profile" Relationship="ResourceModel.FK_Patron_Profile_Patron" FromRole="Patron" ToRole="Patron_Profile" />
+        </EntityType>
+        <EntityType Name="Patron_Profile">
+          <Key>
+            <PropertyRef Name="UserId" />
+          </Key>
+          <Property Name="UserId" Type="Int32" Nullable="false" />
+          <Property Name="MainPhone" Type="String" MaxLength="15" Unicode="false" FixedLength="false" />
+          <Property Name="JobTitle" Type="String" MaxLength="100" Unicode="false" FixedLength="false" />
+          <Property Name="PublishingRoleId" Type="Int32" />
+          <Property Name="RoleProfile" Type="String" MaxLength="500" Unicode="false" FixedLength="false" />
+          <Property Name="OrganizationId" Type="Int32" />
+          <Property Name="Created" Type="DateTime" Precision="3" />
+          <Property Name="CreatedById" Type="Int32" />
+          <Property Name="LastUpdated" Type="DateTime" Precision="3" />
+          <Property Name="LastUpdatedId" Type="Int32" />
+          <Property Name="Notes" Type="String" MaxLength="1000" Unicode="false" FixedLength="false" />
+          <NavigationProperty Name="Patron" Relationship="ResourceModel.FK_Patron_Profile_Patron" FromRole="Patron_Profile" ToRole="Patron" />
+          <Property Type="String" Name="ImageUrl" MaxLength="200" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <Association Name="FK_Patron_Profile_Patron">
+          <End Role="Patron" Type="ResourceModel.Patron" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Patron_Profile" Type="ResourceModel.Patron_Profile" Multiplicity="0..1" />
+          <ReferentialConstraint>
+            <Principal Role="Patron">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Patron_Profile">
+              <PropertyRef Name="UserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="Resource">
+          <Key>
+            <PropertyRef Name="RowId" />
+          </Key>
+          <Property Type="Guid" Name="RowId" Nullable="false" />
+          <Property Type="String" Name="ResourceUrl" Nullable="false" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Type="Int32" Name="ViewCount" />
+          <Property Type="Int32" Name="FavoriteCount" />
+          <Property Type="DateTime" Name="Created" Precision="3" />
+          <Property Type="DateTime" Name="LastUpdated" Precision="3" />
+          <Property Type="Boolean" Name="IsActive" />
+          <Property Type="Boolean" Name="HasPathwayGradeLevel" />
+          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+        </EntityType>
+        <EntityType Name="Resource_Version">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="Int32" Name="ResourceIntId" />
+          <Property Type="String" Name="Title" Nullable="false" MaxLength="300" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="Description" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="DocId" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="Publisher" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="Creator" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="Rights" MaxLength="700" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="AccessRights" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Type="DateTime" Name="Modified" Precision="3" />
+          <Property Type="String" Name="Submitter" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Type="DateTime" Name="Imported" Precision="3" />
+          <Property Type="DateTime" Name="Created" Precision="3" />
+          <Property Type="String" Name="TypicalLearningTime" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="Boolean" Name="IsSkeletonFromParadata" />
+          <Property Type="Boolean" Name="IsActive" />
+          <Property Type="String" Name="Requirements" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="SortTitle" MaxLength="300" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="Schema" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="Int32" Name="AccessRightsId" />
+          <Property Type="Int32" Name="InteractivityTypeId" />
+          <Property Type="String" Name="InteractivityType" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Type="Guid" Name="RowId" Nullable="false" />
+        </EntityType>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2008/09/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="ResourceModelStoreContainer" CdmEntityContainer="ResourceEntities">
+          <EntitySetMapping Name="EmailNotices">
+            <EntityTypeMapping TypeName="ResourceModel.EmailNotice">
+              <MappingFragment StoreEntitySet="EmailNotice">
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="Title" ColumnName="Title" />
+                <ScalarProperty Name="Category" ColumnName="Category" />
+                <ScalarProperty Name="NoticeCode" ColumnName="NoticeCode" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="Filter" ColumnName="Filter" />
+                <ScalarProperty Name="isActive" ColumnName="isActive" />
+                <ScalarProperty Name="LanguageCode" ColumnName="LanguageCode" />
+                <ScalarProperty Name="FromEmail" ColumnName="FromEmail" />
+                <ScalarProperty Name="CcEmail" ColumnName="CcEmail" />
+                <ScalarProperty Name="BccEmail" ColumnName="BccEmail" />
+                <ScalarProperty Name="Subject" ColumnName="Subject" />
+                <ScalarProperty Name="HtmlBody" ColumnName="HtmlBody" />
+                <ScalarProperty Name="TextBody" ColumnName="TextBody" />
+                <ScalarProperty Name="Created" ColumnName="Created" />
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+                <ScalarProperty Name="LastUpdated" ColumnName="LastUpdated" />
+                <ScalarProperty Name="LastUpdatedBy" ColumnName="LastUpdatedBy" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Patrons">
+            <EntityTypeMapping TypeName="ResourceModel.Patron">
+              <MappingFragment StoreEntitySet="Patron">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="UserName" ColumnName="UserName" />
+                <ScalarProperty Name="Password" ColumnName="Password" />
+                <ScalarProperty Name="FirstName" ColumnName="FirstName" />
+                <ScalarProperty Name="LastName" ColumnName="LastName" />
+                <ScalarProperty Name="Email" ColumnName="Email" />
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="Created" ColumnName="Created" />
+                <ScalarProperty Name="LastUpdated" ColumnName="LastUpdated" />
+                <ScalarProperty Name="LastUpdatedById" ColumnName="LastUpdatedById" />
+                <ScalarProperty Name="RowId" ColumnName="RowId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Patron_Profile">
+            <EntityTypeMapping TypeName="ResourceModel.Patron_Profile">
+              <MappingFragment StoreEntitySet="Patron_Profile">
+                <ScalarProperty Name="ImageUrl" ColumnName="ImageUrl" />
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
+                <ScalarProperty Name="MainPhone" ColumnName="MainPhone" />
+                <ScalarProperty Name="JobTitle" ColumnName="JobTitle" />
+                <ScalarProperty Name="PublishingRoleId" ColumnName="PublishingRoleId" />
+                <ScalarProperty Name="RoleProfile" ColumnName="RoleProfile" />
+                <ScalarProperty Name="OrganizationId" ColumnName="OrganizationId" />
+                <ScalarProperty Name="Created" ColumnName="Created" />
+                <ScalarProperty Name="CreatedById" ColumnName="CreatedById" />
+                <ScalarProperty Name="LastUpdated" ColumnName="LastUpdated" />
+                <ScalarProperty Name="LastUpdatedId" ColumnName="LastUpdatedId" />
+                <ScalarProperty Name="Notes" ColumnName="Notes" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Resources">
+            <EntityTypeMapping TypeName="ResourceModel.Resource">
+              <MappingFragment StoreEntitySet="Resource">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="HasPathwayGradeLevel" ColumnName="HasPathwayGradeLevel" />
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="LastUpdated" ColumnName="LastUpdated" />
+                <ScalarProperty Name="Created" ColumnName="Created" />
+                <ScalarProperty Name="FavoriteCount" ColumnName="FavoriteCount" />
+                <ScalarProperty Name="ViewCount" ColumnName="ViewCount" />
+                <ScalarProperty Name="ResourceUrl" ColumnName="ResourceUrl" />
+                <ScalarProperty Name="RowId" ColumnName="RowId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Resource_Version">
+            <EntityTypeMapping TypeName="ResourceModel.Resource_Version">
+              <MappingFragment StoreEntitySet="Resource_Version">
+                <ScalarProperty Name="RowId" ColumnName="RowId" />
+                <ScalarProperty Name="InteractivityType" ColumnName="InteractivityType" />
+                <ScalarProperty Name="InteractivityTypeId" ColumnName="InteractivityTypeId" />
+                <ScalarProperty Name="AccessRightsId" ColumnName="AccessRightsId" />
+                <ScalarProperty Name="Schema" ColumnName="Schema" />
+                <ScalarProperty Name="SortTitle" ColumnName="SortTitle" />
+                <ScalarProperty Name="Requirements" ColumnName="Requirements" />
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="IsSkeletonFromParadata" ColumnName="IsSkeletonFromParadata" />
+                <ScalarProperty Name="TypicalLearningTime" ColumnName="TypicalLearningTime" />
+                <ScalarProperty Name="Created" ColumnName="Created" />
+                <ScalarProperty Name="Imported" ColumnName="Imported" />
+                <ScalarProperty Name="Submitter" ColumnName="Submitter" />
+                <ScalarProperty Name="Modified" ColumnName="Modified" />
+                <ScalarProperty Name="AccessRights" ColumnName="AccessRights" />
+                <ScalarProperty Name="Rights" ColumnName="Rights" />
+                <ScalarProperty Name="Creator" ColumnName="Creator" />
+                <ScalarProperty Name="Publisher" ColumnName="Publisher" />
+                <ScalarProperty Name="DocId" ColumnName="DocId" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="Title" ColumnName="Title" />
+                <ScalarProperty Name="ResourceIntId" ColumnName="ResourceIntId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2008/10/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="True" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="True" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

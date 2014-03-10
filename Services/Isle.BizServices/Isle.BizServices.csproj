@@ -1,0 +1,158 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{08620C67-F919-4877-95CE-155FF2405CA8}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Isle.BizServices</RootNamespace>
+    <AssemblyName>Isle.BizServices</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="AutoMapper">
+      <HintPath>..\..\packages\AutoMapper.3.1.1\lib\net40\AutoMapper.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework">
+      <HintPath>..\..\packages\EntityFramework.5.0.0\lib\net40\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.EnterpriseServices" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Services" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AccountServices.cs" />
+    <Compile Include="ActivityBizServices.cs" />
+    <Compile Include="BaseService.cs" />
+    <Compile Include="CodeTableBizService.cs" />
+    <Compile Include="CommunityServices.cs" />
+    <Compile Include="ContentServices.cs" />
+    <Compile Include="EmailServices.cs" />
+    <Compile Include="GatewayServices.cs" />
+    <Compile Include="GroupServices.cs" />
+    <Compile Include="LibraryBizService.cs" />
+    <Compile Include="LogManager.cs" />
+    <Compile Include="OrganizationBizService.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ResourceBizService.cs" />
+    <Compile Include="SecurityManager.cs" />
+    <Compile Include="Service References\workNetAccountServices\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Compile>
+    <Compile Include="ServiceHelper.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Business\ILPathways.Business\ILPathways.Business.csproj">
+      <Project>{cae031c2-7899-4cc3-9772-0787e65977a2}</Project>
+      <Name>ILPathways.Business</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Business\LRWarehouse.Business\LRWarehouse.Business.csproj">
+      <Project>{e5d37489-c4fc-48c9-a714-5610610a27e4}</Project>
+      <Name>LRWarehouse.Business</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Common\IllinoisPathways.Common\ILPathways.Common.csproj">
+      <Project>{cbb05737-7947-4ed9-8ed3-79d5c2a6597d}</Project>
+      <Name>ILPathways.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Common\ILPathways.Utilities\ILPathways.Utilities.csproj">
+      <Project>{949d7eb6-93e1-489f-a5e7-2d0d9086f720}</Project>
+      <Name>ILPathways.Utilities</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\DataAccess\GatewayBusinessEntities\GatewayBusinessEntities.csproj">
+      <Project>{6771cfac-9d01-4a98-9cac-55a401d6aedb}</Project>
+      <Name>GatewayBusinessEntities</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\DataAccess\ILPathways.DAL\ILPathways.DAL.csproj">
+      <Project>{c91cb23c-3c72-4f3c-b8bc-04ec7b45ec7c}</Project>
+      <Name>ILPathways.DAL</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\DataAccess\IOERBusinessEntities\IOERBusinessEntities.csproj">
+      <Project>{f010c012-fc36-4b51-93c4-d6408f9672f1}</Project>
+      <Name>IOERBusinessEntities</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\DataAccess\IoerContentBusinessEntities\IoerContentBusinessEntities.csproj">
+      <Project>{3e114bb6-e7de-45c7-81fd-34df3d2b4dbf}</Project>
+      <Name>IoerContentBusinessEntities</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\DataAccess\LRWarehouse.DAL\LRWarehouse.DAL.csproj">
+      <Project>{5a3c08e1-cc85-4a82-bcc1-f43e54107b5b}</Project>
+      <Name>LRWarehouse.DAL</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Isle.DataContracts\Isle.DataContracts.csproj">
+      <Project>{aecdc4c5-3ef5-4ce1-a4d0-88c8f4e4634e}</Project>
+      <Name>Isle.DataContracts</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="Service References\workNetAccountServices\Account.wsdl" />
+    <None Include="Service References\workNetAccountServices\Isle.BizServices.workNetAccountServices.AccountDetail1.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadataStorage Include="Service References\workNetAccountServices\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Service References\workNetAccountServices\Account.disco" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Service References\workNetAccountServices\configuration91.svcinfo" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Service References\workNetAccountServices\configuration.svcinfo" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Service References\workNetAccountServices\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

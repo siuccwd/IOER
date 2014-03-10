@@ -1,0 +1,252 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{3E114BB6-E7DE-45C7-81FD-34DF3D2B4DBF}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>IoerContentBusinessEntities</RootNamespace>
+    <AssemblyName>IoerContentBusinessEntities</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="AutoMapper">
+      <HintPath>..\..\packages\AutoMapper.3.1.1\lib\net40\AutoMapper.dll</HintPath>
+    </Reference>
+    <Reference Include="AutoMapper.3.1.1.0.Fakes">
+      <HintPath>FakesAssemblies\AutoMapper.3.1.1.0.Fakes.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework">
+      <HintPath>..\..\packages\EntityFramework.5.0.0\lib\net40\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.QualityTools.Testing.Fakes, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data.Entity" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Security" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="ActivityLog.cs">
+      <DependentUpon>IoerContent.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Codes_AccessRights.cs">
+      <DependentUpon>IoerContent.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Codes_AudienceType.cs">
+      <DependentUpon>IoerContent.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Codes_ContentPrivilege.cs">
+      <DependentUpon>IoerContent.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Codes_ContentStatus.cs">
+      <DependentUpon>IoerContent.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Codes_GradeLevel.cs">
+      <DependentUpon>IoerContent.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Codes_LibraryAccessLevel.cs">
+      <DependentUpon>IoerContent.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Codes_LibraryMemberType.cs">
+      <DependentUpon>IoerContent.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Codes_ResourceFormat.cs">
+      <DependentUpon>IoerContent.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Codes_ResourceType.cs">
+      <DependentUpon>IoerContent.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Codes_SubscriptionType.cs">
+      <DependentUpon>IoerContent.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Community.cs">
+      <DependentUpon>IoerContent.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Community_Member.cs">
+      <DependentUpon>IoerContent.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Community_Posting.cs">
+      <DependentUpon>IoerContent.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Community_PostingDocument.cs">
+      <DependentUpon>IoerContent.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Content.cs">
+      <DependentUpon>IoerContent.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ContentFile.cs">
+      <DependentUpon>IoerContent.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ContentSummaryView.cs">
+      <DependentUpon>IoerContent.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ContentTemplate.cs">
+      <DependentUpon>IoerContent.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ContentType.cs">
+      <DependentUpon>IoerContent.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Content_History.cs">
+      <DependentUpon>IoerContent.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Content_Reference.cs">
+      <DependentUpon>IoerContent.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Content_Supplement.cs">
+      <DependentUpon>IoerContent.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Document_Version.cs">
+      <DependentUpon>IoerContent.tt</DependentUpon>
+    </Compile>
+    <Compile Include="EFCommunityManager.cs" />
+    <Compile Include="EFContentManager.cs" />
+    <Compile Include="EFLibraryManager.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="IoerContent.Context.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>IoerContent.Context.tt</DependentUpon>
+    </Compile>
+    <Compile Include="IoerContent.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>IoerContent.tt</DependentUpon>
+    </Compile>
+    <Compile Include="IoerContent.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>IoerContent.edmx</DependentUpon>
+    </Compile>
+    <Compile Include="Library.cs">
+      <DependentUpon>IoerContent.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Library_Comment.cs">
+      <DependentUpon>IoerContent.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Library_Invitation.cs">
+      <DependentUpon>IoerContent.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Library_Like.cs">
+      <DependentUpon>IoerContent.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Library_Member.cs">
+      <DependentUpon>IoerContent.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Library_Party.cs">
+      <DependentUpon>IoerContent.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Library_PartyComment.cs">
+      <DependentUpon>IoerContent.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Library_Resource.cs">
+      <DependentUpon>IoerContent.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Library_Section.cs">
+      <DependentUpon>IoerContent.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Library_SectionComment.cs">
+      <DependentUpon>IoerContent.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Library_SectionLike.cs">
+      <DependentUpon>IoerContent.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Library_SectionMember.cs">
+      <DependentUpon>IoerContent.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Library_SectionResourceSummary.cs">
+      <DependentUpon>IoerContent.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Library_SectionSubscription.cs">
+      <DependentUpon>IoerContent.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Library_SectionType.cs">
+      <DependentUpon>IoerContent.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Library_Subscription.cs">
+      <DependentUpon>IoerContent.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Library_Type.cs">
+      <DependentUpon>IoerContent.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Person_Following.cs">
+      <DependentUpon>IoerContent.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EntityDeploy Include="IoerContent.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>IoerContent.Designer.cs</LastGenOutput>
+    </EntityDeploy>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.Config" />
+    <Fakes Include="Fakes\AutoMapper.fakes" />
+    <None Include="IoerContent.Context.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>IoerContent.edmx</DependentUpon>
+      <LastGenOutput>IoerContent.Context.cs</LastGenOutput>
+    </None>
+    <None Include="IoerContent.edmx.diagram">
+      <DependentUpon>IoerContent.edmx</DependentUpon>
+    </None>
+    <None Include="IoerContent.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>IoerContent.edmx</DependentUpon>
+      <LastGenOutput>IoerContent.cs</LastGenOutput>
+    </None>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Business\ILPathways.Business\ILPathways.Business.csproj">
+      <Project>{cae031c2-7899-4cc3-9772-0787e65977a2}</Project>
+      <Name>ILPathways.Business</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Common\ILPathways.Utilities\ILPathways.Utilities.csproj">
+      <Project>{949d7eb6-93e1-489f-a5e7-2d0d9086f720}</Project>
+      <Name>ILPathways.Utilities</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

@@ -1,0 +1,296 @@
+﻿.ob_pMCont
+{
+    vertical-align: middle;
+}
+
+
+
+/* Header */
+.ob_pH
+{
+    position: relative;
+    height: 41px;
+    line-height: 41px;
+    background-image: url("images/vertical.png");
+    background-position: 0px -102px;
+    margin-left: 17px;
+    margin-right: 17px;
+    text-align: center;
+    font-family: Tahoma;
+    font-size: 18px;
+    color: #69727C;
+    top: 0px;
+}
+
+.ob_pH_E
+{
+    height: 8px;
+}
+
+.ob_pHL
+{
+    position: absolute;
+    left: -17px;
+    top: 0px;
+    width: 17px;
+    height: 41px;
+    background-image: url("images/vertical.png");
+    background-position: 0px 0px;
+}
+
+.ob_pHR
+{
+    position: absolute;
+    right: -17px;
+    top: 0px;
+    width: 17px;
+    height: 41px;
+    background-image: url("images/vertical.png");
+    background-position: 0px -41px;
+}
+
+
+
+/* Body */
+.ob_pB
+{
+    position: relative;
+    margin-left: 17px;
+    margin-right: 17px;
+    background-color: #f4f4f4;
+}
+
+.ob_pBL
+{
+    position: absolute;
+    left: -17px;
+    width: 17px;
+    top:0px;
+    bottom: 0px;
+    background-image: url("images/horizontal.png");
+    background-position: 0px 0px;
+    background-repeat: repeat-y;
+}
+
+.ob_pBR
+{
+    position: absolute;
+    right: -17px;
+    width: 17px;
+    top:0px;
+    bottom: 0px;
+    background-image: url("images/horizontal.png");
+    background-position: -17px 0px;
+    background-repeat: repeat-y;
+}
+
+/* Subtitle */
+.ob_pST
+{
+    font-family: Tahoma;
+    font-size: 13px;
+    font-style: italic;
+    color: #69727C;
+    padding-top: 5px;
+    text-align: left;
+}
+
+.ob_pST_E
+{
+    padding-top: 1px;
+}
+
+
+
+/* Footer */
+.ob_pF
+{
+    position: relative;
+    height: 10px;
+    background-image: url("images/vertical.png");
+    background-position: 0px -143px;
+    margin-left: 17px;
+    margin-right: 17px;
+}
+
+.ob_pFL
+{
+    position: absolute;
+    left: -17px;
+    width: 17px;
+    height: 10px;
+    background-image: url("images/vertical.png");
+    background-position: 0px -82px;
+}
+
+.ob_pFR
+{
+    position: absolute;
+    right: -17px;
+    width: 17px;
+    height: 10px;
+    background-image: url("images/vertical.png");
+    background-position: 0px -92px;
+}
+
+
+
+/* Buttons bar */
+.ob_pBB
+{
+    text-align: center;
+}
+
+
+
+/* Answers */
+.ob_pA
+{
+    list-style-type: none;
+    padding-left: 0px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    margin-left: 0px;
+}
+
+.ob_pA li
+{    
+    margin-top: 8px;
+    background-image: none;
+    padding: 0px !important;
+    margin-left: 0px !important;
+    font-family: Verdana;
+    font-size: 10px;
+    line-height: inherit;
+}
+
+.ob_pA li div
+{
+    font-family: inherit !important;
+    font-size: inherit !important;
+}
+
+.ob_pA li.ob_pA_CS div
+{
+    
+}
+
+
+
+/* Results */
+.ob_pR
+{
+    list-style-type: none;
+    padding-left: 0px;
+    margin-top: 10px;
+    margin-bottom: 0px;
+    margin-left: 0px;
+}
+
+ul.ob_pR li
+{
+    font-family: Verdana;
+    font-size: 11px;
+    line-height: inherit;
+    color: #69727C;
+    margin-top: 8px;
+    position: relative;
+    background-image: none;
+    padding: 0px !important;
+    margin-left: 0px !important;
+}
+
+.ob_pRAC
+{
+}
+
+.ob_pRMRC
+{
+    position: relative;
+}
+
+.ob_pRMRC_M
+{
+    margin-right: 50px;
+}
+
+.ob_pRRC
+{
+    position: relative;
+    height: 27px;
+    border: 1px solid #8e8579;
+    -moz-border-radius: 2px;
+    border-radius: 2px;
+}
+
+.ob_pRRC_Z
+{
+    border: 0px !important;
+}
+
+.ob_pRRCF
+{
+    position: absolute;
+    top: 0px;
+    bottom: 0px;
+    background-image: url("images/results_fill.png");
+    background-repeat: repeat-x;
+    background-color: #EBEBEB;
+    z-index: 1;
+}
+
+.ob_pRTC
+{
+    left: 0;
+    line-height: 27px;
+    margin-left: auto;
+    margin-right: auto;
+    position: absolute;
+    right: 0;
+    text-align: center;
+    top: 14px;
+    z-index: 3;
+    white-space: nowrap;
+}
+
+.ob_pRTC_L
+{
+    text-align: right !important;
+    margin-left: 5px;
+    right: auto !important;
+    top: 2px;
+}
+
+.ob_pRTC_R
+{
+    text-align: right !important;
+}
+
+.ob_pRTC_TO
+{
+    position: absolute;
+    right: 0px;
+    top: 0px;
+}
+
+.ob_pChart img
+{
+    margin-left: -20px;
+    position: relative;
+}
+
+.ob_pEM
+{
+    font-family: Verdana;
+    font-size: 11px;
+    color: #FF0000;
+    margin-bottom: 10px;
+}
+
+.ob_pEM_R
+{
+    font-family: Verdana;
+    font-size: 11px;
+    color: #FF0000;
+    margin-top: 10px;
+}

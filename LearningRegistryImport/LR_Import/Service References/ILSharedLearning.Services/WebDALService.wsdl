@@ -1,0 +1,303 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:tns="http://ilsle.com/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" targetNamespace="http://ilsle.com/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <s:schema elementFormDefault="qualified" targetNamespace="http://ilsle.com/">
+      <s:element name="PostComment">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="resourceIntID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="commentText" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="userID" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="PostCommentResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="PostCommentResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetComments">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="resourceIntID" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetCommentsResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetCommentsResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetSearchThumbnail">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="url" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="intID" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetSearchThumbnailResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetSearchThumbnailResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetDetailThumbnail">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="url" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="intID" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetDetailThumbnailResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetDetailThumbnailResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="FetchStandardsData">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="input" type="tns:RatingMessage" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="RatingMessage">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="id" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="rating" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="userGUID" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="intID" type="s:int" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="FetchStandardsDataResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="FetchStandardsDataResult" type="tns:ArrayOfStandardsData" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="ArrayOfStandardsData">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="StandardsData" nillable="true" type="tns:StandardsData" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="StandardsData">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="code" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="link" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="align" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="id" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="text" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="rating" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="userRated" type="s:boolean" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="RateStandard">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="input" type="tns:RatingMessage" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="RateStandardResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="RateStandardResult" type="tns:ArrayOfStandardsData" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+    </s:schema>
+  </wsdl:types>
+  <wsdl:message name="PostCommentSoapIn">
+    <wsdl:part name="parameters" element="tns:PostComment" />
+  </wsdl:message>
+  <wsdl:message name="PostCommentSoapOut">
+    <wsdl:part name="parameters" element="tns:PostCommentResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetCommentsSoapIn">
+    <wsdl:part name="parameters" element="tns:GetComments" />
+  </wsdl:message>
+  <wsdl:message name="GetCommentsSoapOut">
+    <wsdl:part name="parameters" element="tns:GetCommentsResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetSearchThumbnailSoapIn">
+    <wsdl:part name="parameters" element="tns:GetSearchThumbnail" />
+  </wsdl:message>
+  <wsdl:message name="GetSearchThumbnailSoapOut">
+    <wsdl:part name="parameters" element="tns:GetSearchThumbnailResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetDetailThumbnailSoapIn">
+    <wsdl:part name="parameters" element="tns:GetDetailThumbnail" />
+  </wsdl:message>
+  <wsdl:message name="GetDetailThumbnailSoapOut">
+    <wsdl:part name="parameters" element="tns:GetDetailThumbnailResponse" />
+  </wsdl:message>
+  <wsdl:message name="FetchStandardsDataSoapIn">
+    <wsdl:part name="parameters" element="tns:FetchStandardsData" />
+  </wsdl:message>
+  <wsdl:message name="FetchStandardsDataSoapOut">
+    <wsdl:part name="parameters" element="tns:FetchStandardsDataResponse" />
+  </wsdl:message>
+  <wsdl:message name="RateStandardSoapIn">
+    <wsdl:part name="parameters" element="tns:RateStandard" />
+  </wsdl:message>
+  <wsdl:message name="RateStandardSoapOut">
+    <wsdl:part name="parameters" element="tns:RateStandardResponse" />
+  </wsdl:message>
+  <wsdl:portType name="WebDALServiceSoap">
+    <wsdl:operation name="PostComment">
+      <wsdl:input message="tns:PostCommentSoapIn" />
+      <wsdl:output message="tns:PostCommentSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetComments">
+      <wsdl:input message="tns:GetCommentsSoapIn" />
+      <wsdl:output message="tns:GetCommentsSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetSearchThumbnail">
+      <wsdl:input message="tns:GetSearchThumbnailSoapIn" />
+      <wsdl:output message="tns:GetSearchThumbnailSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetDetailThumbnail">
+      <wsdl:input message="tns:GetDetailThumbnailSoapIn" />
+      <wsdl:output message="tns:GetDetailThumbnailSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="FetchStandardsData">
+      <wsdl:input message="tns:FetchStandardsDataSoapIn" />
+      <wsdl:output message="tns:FetchStandardsDataSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="RateStandard">
+      <wsdl:input message="tns:RateStandardSoapIn" />
+      <wsdl:output message="tns:RateStandardSoapOut" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="WebDALServiceSoap" type="tns:WebDALServiceSoap">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="PostComment">
+      <soap:operation soapAction="http://ilsle.com/PostComment" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetComments">
+      <soap:operation soapAction="http://ilsle.com/GetComments" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetSearchThumbnail">
+      <soap:operation soapAction="http://ilsle.com/GetSearchThumbnail" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetDetailThumbnail">
+      <soap:operation soapAction="http://ilsle.com/GetDetailThumbnail" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="FetchStandardsData">
+      <soap:operation soapAction="http://ilsle.com/FetchStandardsData" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="RateStandard">
+      <soap:operation soapAction="http://ilsle.com/RateStandard" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="WebDALServiceSoap12" type="tns:WebDALServiceSoap">
+    <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="PostComment">
+      <soap12:operation soapAction="http://ilsle.com/PostComment" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetComments">
+      <soap12:operation soapAction="http://ilsle.com/GetComments" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetSearchThumbnail">
+      <soap12:operation soapAction="http://ilsle.com/GetSearchThumbnail" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetDetailThumbnail">
+      <soap12:operation soapAction="http://ilsle.com/GetDetailThumbnail" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="FetchStandardsData">
+      <soap12:operation soapAction="http://ilsle.com/FetchStandardsData" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="RateStandard">
+      <soap12:operation soapAction="http://ilsle.com/RateStandard" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="WebDALService">
+    <wsdl:port name="WebDALServiceSoap" binding="tns:WebDALServiceSoap">
+      <soap:address location="http://ioer.ilsharedlearning.org/Services/WebDALService.asmx" />
+    </wsdl:port>
+    <wsdl:port name="WebDALServiceSoap12" binding="tns:WebDALServiceSoap12">
+      <soap12:address location="http://ioer.ilsharedlearning.org/Services/WebDALService.asmx" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

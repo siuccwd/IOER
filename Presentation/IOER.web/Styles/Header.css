@@ -1,0 +1,176 @@
+﻿    /* Top Navbar */
+    #topNavBar 
+    {
+        position: relative;
+    }
+    #topNavBar ul
+    {
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+        font-weight: bold;
+        color: #000;
+        font-size: 0;
+    }
+    #topNavBar ul li
+    {
+        display: inline;
+        margin: 0;
+        padding: 0;
+        font-size: 0;
+    }
+    #topNavBar ul li a, #topNavBar ul li span 
+    {
+        color: #000;
+        font-size: 11px;
+        display: inline-block;
+        text-decoration: none;
+        height: 20px;
+        line-height: 20px;
+        vertical-align: middle;
+        margin: 0;
+        padding: 4px 5px 0px 5px;
+        border-left: 1px solid #E5E5E5;
+        background-repeat: no-repeat;
+        background-position: center;
+        /* Fixes for IE7 */
+        zoom: 1;
+        *display: inline;
+    }
+    #topNavBar ul li span 
+    {
+        border: 0;
+    }
+    #topNavBar ul li a:hover 
+    {
+        text-decoration: underline;
+    }
+    #topNavBar ul li img#browseAloudImage 
+    {
+        margin: -6px 0 0 3px;
+    }
+    /* Image swapping */
+    #topNavBar ul li a.icon:hover img 
+    {
+        visibility: hidden;
+    }
+    #topNavBar ul li a.Facebook     { background-image: url("http://www.illinoisworknet.com/vos_portal/images/Icons/FBHoverIcon.png"); }
+    #topNavBar ul li a.Twitter      { background-image: url("http://www.illinoisworknet.com/vos_portal/images/Icons/TwitterHoverIcon.png"); }
+    #topNavBar ul li a.LinkedIn     { background-image: url("http://www.illinoisworknet.com/vos_portal/images/Icons/linkedinHoverIcon.png"); }
+    #topNavBar ul li a.Youtube      { background-image: url("http://www.illinoisworknet.com/vos_portal/images/Icons/YoutubeHoverIcon.png"); }
+    #topNavBar ul li a.RSSEvents    { background-image: url("http://www.illinoisworknet.com/vos_portal/images/Icons/RSSEventsHoverIcon.png"); }
+    
+    /* Login box */
+    #loginBox 
+    {
+        display: inline-block;
+        position: absolute;
+        right: 0;
+        top: 2px;
+        zoom: 1;
+        *display: inline;
+    }
+    #loginBox a 
+    {
+        display: block;
+        font-size: 11px;
+        height: 24px;
+        line-height: 24px;
+        text-align: center;
+        width: 100px;
+        text-decoration: none;
+        background-color: #F5F5F5;
+        font-weight: bold;
+        color: #000;
+    }
+    #loginBox a:hover 
+    {
+        color: #FFF;
+        background-color: #CFDEFF;
+    }
+    
+    /* Logo, Google Search, and Social sharing widgets */
+    #pathwaysTopGraphic 
+    {
+      background-image:url('http://www.illinoisworknet.com/vos_portal/STEM/images/header_top-center.png');
+      background-repeat:repeat-x;
+    }
+
+    #logoSearchSharing 
+    {
+        position: relative;
+        border-left: 1px solid #E0E4EC;
+        border-right: 1px solid #E0E4EC;
+    }
+    #logoSearchSharing a img 
+    {
+        border: 0;
+    }
+    #logoSearchSharing #googleSearch 
+    {
+        display: none; /* Leaving this code in here in case we change our mind about having the site be searchable */
+        width: 258px;
+        position: absolute;
+        top: -12px;
+        right: -2px;
+        font-size: 0;
+    }
+    #logoSearchSharing #googleSearch div
+    {
+        width: 230px;
+        line-height: 36px;
+        height: 32px;
+        vertical-align: top;
+        font-size: 14px;
+        display: inline-block;
+        margin: 0 0 0 -1px;
+        padding: 4px 0 0 0;
+        background-color: #0073AE;
+        zoom: 1;
+        *display: inline;
+    }
+    #logoSearchSharing #googleSearch div #searchBox
+    {
+        width: 150px;
+    }
+    #logoSearchSharing #googleSearch div #searchButton
+    {
+        margin: 0 0 0 5px;
+    }
+    #socialSharing 
+    {
+        padding-right: 5px;
+        position: absolute;
+        right: 0;
+        bottom: 0;
+    }
+    #socialSharing a 
+    {
+        display: inline-block;
+        zoom: 1;
+        *display: inline;
+    }
+    #socialSharing #at_hover a:focus, #socialSharing #at_hover a:active, #socialSharing #at_hover a:focus span, #socialSharing #at_hover a:active span 
+    {
+        color: #FFF !important;
+        background-color: #235DAB;
+    }
+    /* typical offscreen methods of hiding text didn't work (addthis scripts didn't like html inside links); following method seems to work: */
+	#socialSharing .hiddentext { font-size: 0px; letter-spacing: -1px; color: #fff; }
+	/* selector such as the following can be used to override addthis default styles: */
+	#networkingWidgetMenuBar .addthis_default_style .addthis_separator { margin: 0 2px; }
+    
+    /* Mega Menu */
+    #megaMenu
+    {
+        height: 35px; 
+        padding: 2px 0;
+        border-left: 1px solid #E0E4EC;
+        border-right: 1px solid #E0E4EC;
+    }
+    
+    /* Superfish tweak */
+    .sf-spacer 
+    {
+        width: 1px;
+    }

@@ -1,0 +1,34 @@
+﻿.tagList {
+  display: inline;
+  list-style-type: none;
+}
+.tagList li {
+  display: inline-block;
+  margin: 2px 2px;
+  padding: 2px 5px;
+  background-color: #DDD;
+  position: relative;
+  padding-right: 20px;
+  border-radius: 5px;
+  *display: inline;
+  zoom: 1;
+}
+.tagList li a {
+  text-decoration: none;
+  color: #C00;
+  font-weight: bold;
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 2px 4px;
+  display: inline-block;
+  background-color: #ECC;
+  border-top-right-radius: 5px;
+  border-bottom-right-radius: 5px;
+  *display: inline;
+  zoom: 1;
+}
+.tagList li a:hover, .tagList li a:focus {
+  background-color: #FAA;
+  color: #F00;
+}

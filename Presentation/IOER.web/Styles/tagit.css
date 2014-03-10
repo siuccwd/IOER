@@ -1,0 +1,51 @@
+ul.tagit {
+	overflow: auto;
+	list-style-type: none;
+	padding: 1px 5px;
+}
+
+ul.tagit li.tagit-choice{
+	display: inline-block;
+	margin: 2px 5px 2px 0;
+	position: relative;
+	line-height: inherit;
+	padding: .2em 11px .2em .5em;
+	
+	background-color: Silver;	
+}
+
+ul.tagit li.tagit-new{
+	padding: .25em 4px .25em 0;
+}
+
+ul.tagit li.tagit-choice a.taget-label
+{
+    cursor: pointer;
+    text-decoration: none;
+}
+
+ul.tagit li.tagit-choice a.tagit-close{
+	cursor: pointer;
+	position: absolute;
+	right: 2px;
+	top: 50%;
+	margin-top: -8px;
+}
+
+ul.tagit li.tagit-new input[type="text"].tagit-input,
+ul.tagit li.tagit-new input[type="text"].tagit-input:active,
+ul.tagit li.tagit-new input[type="text"].tagit-input:hover,
+ul.tagit li.tagit-new input[type="text"].tagit-input:focus{
+	border-style: solid;
+	border-width: 2px;
+	margin: 0;
+	padding: 0;	
+	background-color: inherit;
+	outline: none;
+	display: block;
+}
+select.tagit-hiddenSelect
+{
+    display:none;
+    
+}

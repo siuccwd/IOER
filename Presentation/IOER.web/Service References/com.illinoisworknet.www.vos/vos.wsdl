@@ -1,0 +1,1489 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:tns="http://www.illinoisworknet.com/vos_portal/webService/vos" xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" targetNamespace="http://www.illinoisworknet.com/vos_portal/webService/vos" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <s:schema elementFormDefault="qualified" targetNamespace="http://www.illinoisworknet.com/vos_portal/webService/vos">
+      <s:element name="getOccByJobFamily">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="jobId" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="getOccByJobFamilyResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="getOccByJobFamilyResult">
+              <s:complexType>
+                <s:sequence>
+                  <s:element ref="s:schema" />
+                  <s:any />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="getIDESJobFamily">
+        <s:complexType />
+      </s:element>
+      <s:element name="getIDESJobFamilyResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="getIDESJobFamilyResult">
+              <s:complexType>
+                <s:sequence>
+                  <s:element ref="s:schema" />
+                  <s:any />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="getCompanyList">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="occId" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="zipCode" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="getCompanyListResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="getCompanyListResult">
+              <s:complexType>
+                <s:sequence>
+                  <s:element ref="s:schema" />
+                  <s:any />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="getCompaniesByOccProximity">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="occId" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="zipCode" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="proxMiles" type="s:int" />
+            <s:element minOccurs="0" maxOccurs="1" name="delimiter" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="getCompaniesByOccProximityResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="getCompaniesByOccProximityResult">
+              <s:complexType>
+                <s:sequence>
+                  <s:element ref="s:schema" />
+                  <s:any />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="getCompaniesByOccZipcodes">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="occId" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="zipcodes" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="getCompaniesByOccZipcodesResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="getCompaniesByOccZipcodesResult">
+              <s:complexType>
+                <s:sequence>
+                  <s:element ref="s:schema" />
+                  <s:any />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetCompaniesByNaicsProximity">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="naicsCode" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="zipCode" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="proxMiles" type="s:int" />
+            <s:element minOccurs="0" maxOccurs="1" name="delimiter" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetCompaniesByNaicsProximityResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetCompaniesByNaicsProximityResult">
+              <s:complexType>
+                <s:sequence>
+                  <s:element ref="s:schema" />
+                  <s:any />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="getCompanyQuery">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="parm1" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="parm2" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="parm3" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="getCompanyQueryResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="getCompanyQueryResult">
+              <s:complexType>
+                <s:sequence>
+                  <s:element ref="s:schema" />
+                  <s:any />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="getCompanyInformation">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="empId" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="getCompanyInformationResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="getCompanyInformationResult">
+              <s:complexType>
+                <s:sequence>
+                  <s:element ref="s:schema" />
+                  <s:any />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="getOccupationTitles">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="FirstLetter" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="getOccupationTitlesResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="getOccupationTitlesResult" type="tns:ArrayOfXmlNode" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="ArrayOfXmlNode">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="XmlNode" nillable="true">
+            <s:complexType mixed="true">
+              <s:sequence>
+                <s:any />
+              </s:sequence>
+            </s:complexType>
+          </s:element>
+        </s:sequence>
+      </s:complexType>
+      <s:element name="getIDESOccupationOverview">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="occId" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="occType" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="getIDESOccupationOverviewResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="getIDESOccupationOverviewResult" type="tns:ArrayOfXmlNode" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="getOccupationTopic">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="occId" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="topic" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="getOccupationTopicResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="getOccupationTopicResult" type="tns:ArrayOfXmlNode" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="getHtmlWagesByCisOcc">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="cisStateCode" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="occType" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="stateCodes" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="printFormat" type="s:boolean" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="getHtmlWagesByCisOccResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="getHtmlWagesByCisOccResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="getEmploymentOutlook">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="cisStateCode" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="occType" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="stateCodes" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="includeRegionalData" type="s:boolean" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="getEmploymentOutlookResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="getEmploymentOutlookResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="getOccTrainingPrograms">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="occId" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="getOccTrainingProgramsResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="getOccTrainingProgramsResult" type="tns:ArrayOfXmlNode" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="getProgramLinks">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="prgId" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="linkType" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="getProgramLinksResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="getProgramLinksResult" type="tns:ArrayOfXmlNode" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="getOccupationContent">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="occId" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="topic" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="getOccupationContentResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="getOccupationContentResult" type="tns:ArrayOfXmlNode" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="getOccupationLinks">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="occId" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="type" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="getOccupationLinksResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="getOccupationLinksResult" type="tns:ArrayOfXmlNode" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="getProgramInformation">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="prgId" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="getProgramInformationResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="getProgramInformationResult" type="tns:ArrayOfXmlNode" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="getVideoInformation">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="occId" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="getVideoInformationResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="getVideoInformationResult" type="tns:ArrayOfXmlNode" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="getProgramContent">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="prgId" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="topic" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="getProgramContentResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="getProgramContentResult" type="tns:ArrayOfXmlNode" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="getSchoolInformation">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="schoolId" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="getSchoolInformationResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="getSchoolInformationResult" type="tns:ArrayOfXmlNode" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetClusterContent">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="clusterId" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="topic" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetClusterContentResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetClusterContentResult" type="tns:ArrayOfXmlNode" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetListOfOccupations">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="appUsername" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="appPassword" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="clusterId" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="keywords" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="firstLetter" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetListOfOccupationsResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetListOfOccupationsResult">
+              <s:complexType>
+                <s:sequence>
+                  <s:element ref="s:schema" />
+                  <s:any />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetProvider">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="providerId" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetProviderResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetProviderResult">
+              <s:complexType>
+                <s:sequence>
+                  <s:element ref="s:schema" />
+                  <s:any />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetProviderByZip">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="providerId" type="s:int" />
+            <s:element minOccurs="0" maxOccurs="1" name="zipcode" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetProviderByZipResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetProviderByZipResult">
+              <s:complexType>
+                <s:sequence>
+                  <s:element ref="s:schema" />
+                  <s:any />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetProvidersByCipcode">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="cipcode" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="zipCodeList" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetProvidersByCipcodeResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetProvidersByCipcodeResult">
+              <s:complexType>
+                <s:sequence>
+                  <s:element ref="s:schema" />
+                  <s:any />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetProvidersByProgram">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="program" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="zipCodeList" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetProvidersByProgramResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetProvidersByProgramResult">
+              <s:complexType>
+                <s:sequence>
+                  <s:element ref="s:schema" />
+                  <s:any />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetCustomerBySSN">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="ssn" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="encryptedPassword" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetCustomerBySSNResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetCustomerBySSNResult">
+              <s:complexType>
+                <s:sequence>
+                  <s:element ref="s:schema" />
+                  <s:any />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetCustomers">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="filter" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="encryptedPassword" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetCustomersResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetCustomersResult">
+              <s:complexType>
+                <s:sequence>
+                  <s:element ref="s:schema" />
+                  <s:any />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetBusinessClosures">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="lwia" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="countyCodeList" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="startDate" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="endDate" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="id" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="appPassword" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetBusinessClosuresResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetBusinessClosuresResult">
+              <s:complexType>
+                <s:sequence>
+                  <s:element ref="s:schema" />
+                  <s:any />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetBusinessClosureEvent">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="eventId" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="appPassword" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetBusinessClosureEventResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetBusinessClosureEventResult">
+              <s:complexType>
+                <s:sequence>
+                  <s:element ref="s:schema" />
+                  <s:any />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+    </s:schema>
+  </wsdl:types>
+  <wsdl:message name="getOccByJobFamilySoapIn">
+    <wsdl:part name="parameters" element="tns:getOccByJobFamily" />
+  </wsdl:message>
+  <wsdl:message name="getOccByJobFamilySoapOut">
+    <wsdl:part name="parameters" element="tns:getOccByJobFamilyResponse" />
+  </wsdl:message>
+  <wsdl:message name="getIDESJobFamilySoapIn">
+    <wsdl:part name="parameters" element="tns:getIDESJobFamily" />
+  </wsdl:message>
+  <wsdl:message name="getIDESJobFamilySoapOut">
+    <wsdl:part name="parameters" element="tns:getIDESJobFamilyResponse" />
+  </wsdl:message>
+  <wsdl:message name="getCompanyListSoapIn">
+    <wsdl:part name="parameters" element="tns:getCompanyList" />
+  </wsdl:message>
+  <wsdl:message name="getCompanyListSoapOut">
+    <wsdl:part name="parameters" element="tns:getCompanyListResponse" />
+  </wsdl:message>
+  <wsdl:message name="getCompaniesByOccProximitySoapIn">
+    <wsdl:part name="parameters" element="tns:getCompaniesByOccProximity" />
+  </wsdl:message>
+  <wsdl:message name="getCompaniesByOccProximitySoapOut">
+    <wsdl:part name="parameters" element="tns:getCompaniesByOccProximityResponse" />
+  </wsdl:message>
+  <wsdl:message name="getCompaniesByOccZipcodesSoapIn">
+    <wsdl:part name="parameters" element="tns:getCompaniesByOccZipcodes" />
+  </wsdl:message>
+  <wsdl:message name="getCompaniesByOccZipcodesSoapOut">
+    <wsdl:part name="parameters" element="tns:getCompaniesByOccZipcodesResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetCompaniesByNaicsProximitySoapIn">
+    <wsdl:part name="parameters" element="tns:GetCompaniesByNaicsProximity" />
+  </wsdl:message>
+  <wsdl:message name="GetCompaniesByNaicsProximitySoapOut">
+    <wsdl:part name="parameters" element="tns:GetCompaniesByNaicsProximityResponse" />
+  </wsdl:message>
+  <wsdl:message name="getCompanyQuerySoapIn">
+    <wsdl:part name="parameters" element="tns:getCompanyQuery" />
+  </wsdl:message>
+  <wsdl:message name="getCompanyQuerySoapOut">
+    <wsdl:part name="parameters" element="tns:getCompanyQueryResponse" />
+  </wsdl:message>
+  <wsdl:message name="getCompanyInformationSoapIn">
+    <wsdl:part name="parameters" element="tns:getCompanyInformation" />
+  </wsdl:message>
+  <wsdl:message name="getCompanyInformationSoapOut">
+    <wsdl:part name="parameters" element="tns:getCompanyInformationResponse" />
+  </wsdl:message>
+  <wsdl:message name="getOccupationTitlesSoapIn">
+    <wsdl:part name="parameters" element="tns:getOccupationTitles" />
+  </wsdl:message>
+  <wsdl:message name="getOccupationTitlesSoapOut">
+    <wsdl:part name="parameters" element="tns:getOccupationTitlesResponse" />
+  </wsdl:message>
+  <wsdl:message name="getIDESOccupationOverviewSoapIn">
+    <wsdl:part name="parameters" element="tns:getIDESOccupationOverview" />
+  </wsdl:message>
+  <wsdl:message name="getIDESOccupationOverviewSoapOut">
+    <wsdl:part name="parameters" element="tns:getIDESOccupationOverviewResponse" />
+  </wsdl:message>
+  <wsdl:message name="getOccupationTopicSoapIn">
+    <wsdl:part name="parameters" element="tns:getOccupationTopic" />
+  </wsdl:message>
+  <wsdl:message name="getOccupationTopicSoapOut">
+    <wsdl:part name="parameters" element="tns:getOccupationTopicResponse" />
+  </wsdl:message>
+  <wsdl:message name="getHtmlWagesByCisOccSoapIn">
+    <wsdl:part name="parameters" element="tns:getHtmlWagesByCisOcc" />
+  </wsdl:message>
+  <wsdl:message name="getHtmlWagesByCisOccSoapOut">
+    <wsdl:part name="parameters" element="tns:getHtmlWagesByCisOccResponse" />
+  </wsdl:message>
+  <wsdl:message name="getEmploymentOutlookSoapIn">
+    <wsdl:part name="parameters" element="tns:getEmploymentOutlook" />
+  </wsdl:message>
+  <wsdl:message name="getEmploymentOutlookSoapOut">
+    <wsdl:part name="parameters" element="tns:getEmploymentOutlookResponse" />
+  </wsdl:message>
+  <wsdl:message name="getOccTrainingProgramsSoapIn">
+    <wsdl:part name="parameters" element="tns:getOccTrainingPrograms" />
+  </wsdl:message>
+  <wsdl:message name="getOccTrainingProgramsSoapOut">
+    <wsdl:part name="parameters" element="tns:getOccTrainingProgramsResponse" />
+  </wsdl:message>
+  <wsdl:message name="getProgramLinksSoapIn">
+    <wsdl:part name="parameters" element="tns:getProgramLinks" />
+  </wsdl:message>
+  <wsdl:message name="getProgramLinksSoapOut">
+    <wsdl:part name="parameters" element="tns:getProgramLinksResponse" />
+  </wsdl:message>
+  <wsdl:message name="getOccupationContentSoapIn">
+    <wsdl:part name="parameters" element="tns:getOccupationContent" />
+  </wsdl:message>
+  <wsdl:message name="getOccupationContentSoapOut">
+    <wsdl:part name="parameters" element="tns:getOccupationContentResponse" />
+  </wsdl:message>
+  <wsdl:message name="getOccupationLinksSoapIn">
+    <wsdl:part name="parameters" element="tns:getOccupationLinks" />
+  </wsdl:message>
+  <wsdl:message name="getOccupationLinksSoapOut">
+    <wsdl:part name="parameters" element="tns:getOccupationLinksResponse" />
+  </wsdl:message>
+  <wsdl:message name="getProgramInformationSoapIn">
+    <wsdl:part name="parameters" element="tns:getProgramInformation" />
+  </wsdl:message>
+  <wsdl:message name="getProgramInformationSoapOut">
+    <wsdl:part name="parameters" element="tns:getProgramInformationResponse" />
+  </wsdl:message>
+  <wsdl:message name="getVideoInformationSoapIn">
+    <wsdl:part name="parameters" element="tns:getVideoInformation" />
+  </wsdl:message>
+  <wsdl:message name="getVideoInformationSoapOut">
+    <wsdl:part name="parameters" element="tns:getVideoInformationResponse" />
+  </wsdl:message>
+  <wsdl:message name="getProgramContentSoapIn">
+    <wsdl:part name="parameters" element="tns:getProgramContent" />
+  </wsdl:message>
+  <wsdl:message name="getProgramContentSoapOut">
+    <wsdl:part name="parameters" element="tns:getProgramContentResponse" />
+  </wsdl:message>
+  <wsdl:message name="getSchoolInformationSoapIn">
+    <wsdl:part name="parameters" element="tns:getSchoolInformation" />
+  </wsdl:message>
+  <wsdl:message name="getSchoolInformationSoapOut">
+    <wsdl:part name="parameters" element="tns:getSchoolInformationResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetClusterContentSoapIn">
+    <wsdl:part name="parameters" element="tns:GetClusterContent" />
+  </wsdl:message>
+  <wsdl:message name="GetClusterContentSoapOut">
+    <wsdl:part name="parameters" element="tns:GetClusterContentResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetListOfOccupationsSoapIn">
+    <wsdl:part name="parameters" element="tns:GetListOfOccupations" />
+  </wsdl:message>
+  <wsdl:message name="GetListOfOccupationsSoapOut">
+    <wsdl:part name="parameters" element="tns:GetListOfOccupationsResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetProviderSoapIn">
+    <wsdl:part name="parameters" element="tns:GetProvider" />
+  </wsdl:message>
+  <wsdl:message name="GetProviderSoapOut">
+    <wsdl:part name="parameters" element="tns:GetProviderResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetProviderByZipSoapIn">
+    <wsdl:part name="parameters" element="tns:GetProviderByZip" />
+  </wsdl:message>
+  <wsdl:message name="GetProviderByZipSoapOut">
+    <wsdl:part name="parameters" element="tns:GetProviderByZipResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetProvidersByCipcodeSoapIn">
+    <wsdl:part name="parameters" element="tns:GetProvidersByCipcode" />
+  </wsdl:message>
+  <wsdl:message name="GetProvidersByCipcodeSoapOut">
+    <wsdl:part name="parameters" element="tns:GetProvidersByCipcodeResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetProvidersByProgramSoapIn">
+    <wsdl:part name="parameters" element="tns:GetProvidersByProgram" />
+  </wsdl:message>
+  <wsdl:message name="GetProvidersByProgramSoapOut">
+    <wsdl:part name="parameters" element="tns:GetProvidersByProgramResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetCustomerBySSNSoapIn">
+    <wsdl:part name="parameters" element="tns:GetCustomerBySSN" />
+  </wsdl:message>
+  <wsdl:message name="GetCustomerBySSNSoapOut">
+    <wsdl:part name="parameters" element="tns:GetCustomerBySSNResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetCustomersSoapIn">
+    <wsdl:part name="parameters" element="tns:GetCustomers" />
+  </wsdl:message>
+  <wsdl:message name="GetCustomersSoapOut">
+    <wsdl:part name="parameters" element="tns:GetCustomersResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetBusinessClosuresSoapIn">
+    <wsdl:part name="parameters" element="tns:GetBusinessClosures" />
+  </wsdl:message>
+  <wsdl:message name="GetBusinessClosuresSoapOut">
+    <wsdl:part name="parameters" element="tns:GetBusinessClosuresResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetBusinessClosureEventSoapIn">
+    <wsdl:part name="parameters" element="tns:GetBusinessClosureEvent" />
+  </wsdl:message>
+  <wsdl:message name="GetBusinessClosureEventSoapOut">
+    <wsdl:part name="parameters" element="tns:GetBusinessClosureEventResponse" />
+  </wsdl:message>
+  <wsdl:portType name="vosSoap">
+    <wsdl:operation name="getOccByJobFamily">
+      <wsdl:input message="tns:getOccByJobFamilySoapIn" />
+      <wsdl:output message="tns:getOccByJobFamilySoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="getIDESJobFamily">
+      <wsdl:input message="tns:getIDESJobFamilySoapIn" />
+      <wsdl:output message="tns:getIDESJobFamilySoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="getCompanyList">
+      <wsdl:input message="tns:getCompanyListSoapIn" />
+      <wsdl:output message="tns:getCompanyListSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="getCompaniesByOccProximity">
+      <wsdl:input message="tns:getCompaniesByOccProximitySoapIn" />
+      <wsdl:output message="tns:getCompaniesByOccProximitySoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="getCompaniesByOccZipcodes">
+      <wsdl:input message="tns:getCompaniesByOccZipcodesSoapIn" />
+      <wsdl:output message="tns:getCompaniesByOccZipcodesSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetCompaniesByNaicsProximity">
+      <wsdl:input message="tns:GetCompaniesByNaicsProximitySoapIn" />
+      <wsdl:output message="tns:GetCompaniesByNaicsProximitySoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="getCompanyQuery">
+      <wsdl:input message="tns:getCompanyQuerySoapIn" />
+      <wsdl:output message="tns:getCompanyQuerySoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="getCompanyInformation">
+      <wsdl:input message="tns:getCompanyInformationSoapIn" />
+      <wsdl:output message="tns:getCompanyInformationSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="getOccupationTitles">
+      <wsdl:input message="tns:getOccupationTitlesSoapIn" />
+      <wsdl:output message="tns:getOccupationTitlesSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="getIDESOccupationOverview">
+      <wsdl:input message="tns:getIDESOccupationOverviewSoapIn" />
+      <wsdl:output message="tns:getIDESOccupationOverviewSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="getOccupationTopic">
+      <wsdl:input message="tns:getOccupationTopicSoapIn" />
+      <wsdl:output message="tns:getOccupationTopicSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="getHtmlWagesByCisOcc">
+      <wsdl:input message="tns:getHtmlWagesByCisOccSoapIn" />
+      <wsdl:output message="tns:getHtmlWagesByCisOccSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="getEmploymentOutlook">
+      <wsdl:input message="tns:getEmploymentOutlookSoapIn" />
+      <wsdl:output message="tns:getEmploymentOutlookSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="getOccTrainingPrograms">
+      <wsdl:input message="tns:getOccTrainingProgramsSoapIn" />
+      <wsdl:output message="tns:getOccTrainingProgramsSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="getProgramLinks">
+      <wsdl:input message="tns:getProgramLinksSoapIn" />
+      <wsdl:output message="tns:getProgramLinksSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="getOccupationContent">
+      <wsdl:input message="tns:getOccupationContentSoapIn" />
+      <wsdl:output message="tns:getOccupationContentSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="getOccupationLinks">
+      <wsdl:input message="tns:getOccupationLinksSoapIn" />
+      <wsdl:output message="tns:getOccupationLinksSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="getProgramInformation">
+      <wsdl:input message="tns:getProgramInformationSoapIn" />
+      <wsdl:output message="tns:getProgramInformationSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="getVideoInformation">
+      <wsdl:input message="tns:getVideoInformationSoapIn" />
+      <wsdl:output message="tns:getVideoInformationSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="getProgramContent">
+      <wsdl:input message="tns:getProgramContentSoapIn" />
+      <wsdl:output message="tns:getProgramContentSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="getSchoolInformation">
+      <wsdl:input message="tns:getSchoolInformationSoapIn" />
+      <wsdl:output message="tns:getSchoolInformationSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetClusterContent">
+      <wsdl:input message="tns:GetClusterContentSoapIn" />
+      <wsdl:output message="tns:GetClusterContentSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetListOfOccupations">
+      <wsdl:input message="tns:GetListOfOccupationsSoapIn" />
+      <wsdl:output message="tns:GetListOfOccupationsSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetProvider">
+      <wsdl:input message="tns:GetProviderSoapIn" />
+      <wsdl:output message="tns:GetProviderSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetProviderByZip">
+      <wsdl:input message="tns:GetProviderByZipSoapIn" />
+      <wsdl:output message="tns:GetProviderByZipSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetProvidersByCipcode">
+      <wsdl:input message="tns:GetProvidersByCipcodeSoapIn" />
+      <wsdl:output message="tns:GetProvidersByCipcodeSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetProvidersByProgram">
+      <wsdl:input message="tns:GetProvidersByProgramSoapIn" />
+      <wsdl:output message="tns:GetProvidersByProgramSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetCustomerBySSN">
+      <wsdl:input message="tns:GetCustomerBySSNSoapIn" />
+      <wsdl:output message="tns:GetCustomerBySSNSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetCustomers">
+      <wsdl:input message="tns:GetCustomersSoapIn" />
+      <wsdl:output message="tns:GetCustomersSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetBusinessClosures">
+      <wsdl:input message="tns:GetBusinessClosuresSoapIn" />
+      <wsdl:output message="tns:GetBusinessClosuresSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetBusinessClosureEvent">
+      <wsdl:input message="tns:GetBusinessClosureEventSoapIn" />
+      <wsdl:output message="tns:GetBusinessClosureEventSoapOut" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="vosSoap" type="tns:vosSoap">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="getOccByJobFamily">
+      <soap:operation soapAction="http://www.illinoisworknet.com/vos_portal/webService/vos/getOccByJobFamily" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getIDESJobFamily">
+      <soap:operation soapAction="http://www.illinoisworknet.com/vos_portal/webService/vos/getIDESJobFamily" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getCompanyList">
+      <soap:operation soapAction="http://www.illinoisworknet.com/vos_portal/webService/vos/getCompanyList" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getCompaniesByOccProximity">
+      <soap:operation soapAction="http://www.illinoisworknet.com/vos_portal/webService/vos/getCompaniesByOccProximity" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getCompaniesByOccZipcodes">
+      <soap:operation soapAction="http://www.illinoisworknet.com/vos_portal/webService/vos/getCompaniesByOccZipcodes" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetCompaniesByNaicsProximity">
+      <soap:operation soapAction="http://www.illinoisworknet.com/vos_portal/webService/vos/GetCompaniesByNaicsProximity" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getCompanyQuery">
+      <soap:operation soapAction="http://www.illinoisworknet.com/vos_portal/webService/vos/getCompanyQuery" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getCompanyInformation">
+      <soap:operation soapAction="http://www.illinoisworknet.com/vos_portal/webService/vos/getCompanyInformation" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getOccupationTitles">
+      <soap:operation soapAction="http://www.illinoisworknet.com/vos_portal/webService/vos/getOccupationTitles" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getIDESOccupationOverview">
+      <soap:operation soapAction="http://www.illinoisworknet.com/vos_portal/webService/vos/getIDESOccupationOverview" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getOccupationTopic">
+      <soap:operation soapAction="http://www.illinoisworknet.com/vos_portal/webService/vos/getOccupationTopic" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getHtmlWagesByCisOcc">
+      <soap:operation soapAction="http://www.illinoisworknet.com/vos_portal/webService/vos/getHtmlWagesByCisOcc" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getEmploymentOutlook">
+      <soap:operation soapAction="http://www.illinoisworknet.com/vos_portal/webService/vos/getEmploymentOutlook" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getOccTrainingPrograms">
+      <soap:operation soapAction="http://www.illinoisworknet.com/vos_portal/webService/vos/getOccTrainingPrograms" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getProgramLinks">
+      <soap:operation soapAction="http://www.illinoisworknet.com/vos_portal/webService/vos/getProgramLinks" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getOccupationContent">
+      <soap:operation soapAction="http://www.illinoisworknet.com/vos_portal/webService/vos/getOccupationContent" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getOccupationLinks">
+      <soap:operation soapAction="http://www.illinoisworknet.com/vos_portal/webService/vos/getOccupationLinks" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getProgramInformation">
+      <soap:operation soapAction="http://www.illinoisworknet.com/vos_portal/webService/vos/getProgramInformation" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getVideoInformation">
+      <soap:operation soapAction="http://www.illinoisworknet.com/vos_portal/webService/vos/getVideoInformation" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getProgramContent">
+      <soap:operation soapAction="http://www.illinoisworknet.com/vos_portal/webService/vos/getProgramContent" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getSchoolInformation">
+      <soap:operation soapAction="http://www.illinoisworknet.com/vos_portal/webService/vos/getSchoolInformation" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetClusterContent">
+      <soap:operation soapAction="http://www.illinoisworknet.com/vos_portal/webService/vos/GetClusterContent" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetListOfOccupations">
+      <soap:operation soapAction="http://www.illinoisworknet.com/vos_portal/webService/vos/GetListOfOccupations" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetProvider">
+      <soap:operation soapAction="http://www.illinoisworknet.com/vos_portal/webService/vos/GetProvider" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetProviderByZip">
+      <soap:operation soapAction="http://www.illinoisworknet.com/vos_portal/webService/vos/GetProviderByZip" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetProvidersByCipcode">
+      <soap:operation soapAction="http://www.illinoisworknet.com/vos_portal/webService/vos/GetProvidersByCipcode" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetProvidersByProgram">
+      <soap:operation soapAction="http://www.illinoisworknet.com/vos_portal/webService/vos/GetProvidersByProgram" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetCustomerBySSN">
+      <soap:operation soapAction="http://www.illinoisworknet.com/vos_portal/webService/vos/GetCustomerBySSN" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetCustomers">
+      <soap:operation soapAction="http://www.illinoisworknet.com/vos_portal/webService/vos/GetCustomers" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetBusinessClosures">
+      <soap:operation soapAction="http://www.illinoisworknet.com/vos_portal/webService/vos/GetBusinessClosures" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetBusinessClosureEvent">
+      <soap:operation soapAction="http://www.illinoisworknet.com/vos_portal/webService/vos/GetBusinessClosureEvent" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="vosSoap12" type="tns:vosSoap">
+    <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="getOccByJobFamily">
+      <soap12:operation soapAction="http://www.illinoisworknet.com/vos_portal/webService/vos/getOccByJobFamily" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getIDESJobFamily">
+      <soap12:operation soapAction="http://www.illinoisworknet.com/vos_portal/webService/vos/getIDESJobFamily" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getCompanyList">
+      <soap12:operation soapAction="http://www.illinoisworknet.com/vos_portal/webService/vos/getCompanyList" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getCompaniesByOccProximity">
+      <soap12:operation soapAction="http://www.illinoisworknet.com/vos_portal/webService/vos/getCompaniesByOccProximity" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getCompaniesByOccZipcodes">
+      <soap12:operation soapAction="http://www.illinoisworknet.com/vos_portal/webService/vos/getCompaniesByOccZipcodes" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetCompaniesByNaicsProximity">
+      <soap12:operation soapAction="http://www.illinoisworknet.com/vos_portal/webService/vos/GetCompaniesByNaicsProximity" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getCompanyQuery">
+      <soap12:operation soapAction="http://www.illinoisworknet.com/vos_portal/webService/vos/getCompanyQuery" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getCompanyInformation">
+      <soap12:operation soapAction="http://www.illinoisworknet.com/vos_portal/webService/vos/getCompanyInformation" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getOccupationTitles">
+      <soap12:operation soapAction="http://www.illinoisworknet.com/vos_portal/webService/vos/getOccupationTitles" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getIDESOccupationOverview">
+      <soap12:operation soapAction="http://www.illinoisworknet.com/vos_portal/webService/vos/getIDESOccupationOverview" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getOccupationTopic">
+      <soap12:operation soapAction="http://www.illinoisworknet.com/vos_portal/webService/vos/getOccupationTopic" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getHtmlWagesByCisOcc">
+      <soap12:operation soapAction="http://www.illinoisworknet.com/vos_portal/webService/vos/getHtmlWagesByCisOcc" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getEmploymentOutlook">
+      <soap12:operation soapAction="http://www.illinoisworknet.com/vos_portal/webService/vos/getEmploymentOutlook" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getOccTrainingPrograms">
+      <soap12:operation soapAction="http://www.illinoisworknet.com/vos_portal/webService/vos/getOccTrainingPrograms" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getProgramLinks">
+      <soap12:operation soapAction="http://www.illinoisworknet.com/vos_portal/webService/vos/getProgramLinks" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getOccupationContent">
+      <soap12:operation soapAction="http://www.illinoisworknet.com/vos_portal/webService/vos/getOccupationContent" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getOccupationLinks">
+      <soap12:operation soapAction="http://www.illinoisworknet.com/vos_portal/webService/vos/getOccupationLinks" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getProgramInformation">
+      <soap12:operation soapAction="http://www.illinoisworknet.com/vos_portal/webService/vos/getProgramInformation" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getVideoInformation">
+      <soap12:operation soapAction="http://www.illinoisworknet.com/vos_portal/webService/vos/getVideoInformation" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getProgramContent">
+      <soap12:operation soapAction="http://www.illinoisworknet.com/vos_portal/webService/vos/getProgramContent" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getSchoolInformation">
+      <soap12:operation soapAction="http://www.illinoisworknet.com/vos_portal/webService/vos/getSchoolInformation" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetClusterContent">
+      <soap12:operation soapAction="http://www.illinoisworknet.com/vos_portal/webService/vos/GetClusterContent" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetListOfOccupations">
+      <soap12:operation soapAction="http://www.illinoisworknet.com/vos_portal/webService/vos/GetListOfOccupations" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetProvider">
+      <soap12:operation soapAction="http://www.illinoisworknet.com/vos_portal/webService/vos/GetProvider" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetProviderByZip">
+      <soap12:operation soapAction="http://www.illinoisworknet.com/vos_portal/webService/vos/GetProviderByZip" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetProvidersByCipcode">
+      <soap12:operation soapAction="http://www.illinoisworknet.com/vos_portal/webService/vos/GetProvidersByCipcode" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetProvidersByProgram">
+      <soap12:operation soapAction="http://www.illinoisworknet.com/vos_portal/webService/vos/GetProvidersByProgram" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetCustomerBySSN">
+      <soap12:operation soapAction="http://www.illinoisworknet.com/vos_portal/webService/vos/GetCustomerBySSN" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetCustomers">
+      <soap12:operation soapAction="http://www.illinoisworknet.com/vos_portal/webService/vos/GetCustomers" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetBusinessClosures">
+      <soap12:operation soapAction="http://www.illinoisworknet.com/vos_portal/webService/vos/GetBusinessClosures" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetBusinessClosureEvent">
+      <soap12:operation soapAction="http://www.illinoisworknet.com/vos_portal/webService/vos/GetBusinessClosureEvent" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="vos">
+    <wsdl:port name="vosSoap" binding="tns:vosSoap">
+      <soap:address location="http://www.illinoisworknet.com/vos_portal_wbservice/vos.asmx" />
+    </wsdl:port>
+    <wsdl:port name="vosSoap12" binding="tns:vosSoap12">
+      <soap12:address location="http://www.illinoisworknet.com/vos_portal_wbservice/vos.asmx" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

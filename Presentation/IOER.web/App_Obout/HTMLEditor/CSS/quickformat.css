@@ -1,0 +1,10 @@
+﻿.urgent        { color:#CC0033; font-weight:bold; font-size:14ptr; background-color:#FFCACA;}
+.important     {  color:#990000; font-weight:bold; }
+.optional      { color:#666666; font-style:italic; }
+.title         { font-size:14pt; color:#10A2FF; text-decoration:underline; font-family: Georgia, Serif; }
+.quote         { font-style:italic; background-color:#FFEEDD; color:#663300; padding:5px; }
+
+/* odd row */
+tr.odd   { background-color: #e2e3ff; }
+/* even row */
+tr.even  { background-color: #ebebeb; }

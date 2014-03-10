@@ -1,0 +1,62 @@
+﻿#description {
+	margin-bottom: 20px;
+}
+
+.blue {
+	text-decoration:underline;
+	color:Blue;
+}
+
+.box {
+	padding: 10px;
+	font-size: 12px;
+	border-radius: 2px;
+	background: #f3f3f3;
+	color: #4f6f95;
+	border: 1px solid #e5e5e5;
+}
+
+.note {
+	border: 1px solid #7a8fa9;
+	background: #fef1ec;
+	margin: 5px 0;
+	border-radius: 2px;
+	padding: 3px;
+}
+
+.code {
+	background-color: #eee;
+	border: 1px solid #eee;
+	color: #000;
+}
+
+.code .wrap {
+	font-family: monospace;
+	white-space: pre;
+}
+
+.box:hover .code {
+	background-color: #fff;
+	border-color: #92b5de;
+}
+
+.code .blue {
+	color: #2c4bc1;
+}
+
+.code .red {
+	color: #c12c2c;
+}
+
+.code .green {
+	color: #14730d;
+}
+
+.box a {
+	text-decoration: none;
+	color: #4c91df;
+}
+
+.box a:hover {
+	color: #9fc4ed;
+}

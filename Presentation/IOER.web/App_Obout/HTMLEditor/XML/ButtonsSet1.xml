@@ -1,0 +1,43 @@
+<PredefinedButtons>
+  <!-- Predefinded buttons for the toolbar -->
+   <button name="ButtonsGroup" ><collection name="Buttons">
+      <button name="Bold" />
+      <button name="Italic" />
+      <button name="HorizontalSeparator" />
+   </collection></button>
+   <button name="ButtonsGroup" ><collection name="Buttons">
+      <button name="Undo" />
+      <button name="Redo" />
+      <button name="HorizontalSeparator" />
+   </collection></button>
+   <button name="FontName" ><collection name="Options"> <!-- set only some options for the collection -->
+      <selectoption>
+           <property name="Text" value="Arial" />
+           <property name="Value" value="arial,helvetica,sans-serif" />
+      </selectoption>
+      <selectoption>
+           <property name="Text" value="Courier New" />
+           <property name="Value" value="courier new,courier,monospace" />
+      </selectoption>
+      <selectoption>
+           <property name="Text" value="Georgia" />
+           <property name="Value" value="georgia,times new roman,times,serif" />
+      </selectoption>
+      <selectoption>
+           <property name="Text" value="Tahoma" />
+           <property name="Value" value="tahoma,arial,helvetica,sans-serif" />
+      </selectoption>
+      <selectoption>
+           <property name="Text" value="Verdana" />
+           <property name="Value" value="verdana,arial,helvetica,sans-serif" />
+      </selectoption>
+   </collection></button>
+   <button name="FontSize" >
+      <property name="SelectWidth" value="" /> <!-- the width of the <select> field will be default -->
+   </button>
+   <button name="HorizontalSeparator" />
+   <button name="SpellCheck" />
+   <button name="HorizontalSeparator" />
+   <button name="CustomToolbarButton.InsertDate" />
+   <button name="TextIndicator" />
+</PredefinedButtons>

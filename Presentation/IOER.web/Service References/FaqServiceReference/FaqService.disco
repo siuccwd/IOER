@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<discovery xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://schemas.xmlsoap.org/disco/">
+  <contractRef ref="http://www.illinoisworknet.com/workNetItems/FaqService.asmx?wsdl" docRef="http://www.illinoisworknet.com/workNetItems/FaqService.asmx" xmlns="http://schemas.xmlsoap.org/disco/scl/" />
+  <soap address="http://www.illinoisworknet.com/workNetItems/FaqService.asmx" xmlns:q1="http://www.illinoisworknet.com/Services/Faqs/" binding="q1:FaqServiceSoap" xmlns="http://schemas.xmlsoap.org/disco/soap/" />
+  <soap address="http://www.illinoisworknet.com/workNetItems/FaqService.asmx" xmlns:q2="http://www.illinoisworknet.com/Services/Faqs/" binding="q2:FaqServiceSoap12" xmlns="http://schemas.xmlsoap.org/disco/soap/" />
+</discovery>

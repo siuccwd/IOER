@@ -1,0 +1,531 @@
+﻿/* Basics */
+* {
+    margin: 0; 
+    padding: 0;
+    word-wrap: break-word;
+}
+
+body { 
+	font-family: Arial, Helvetica, Verdana, sans-serif;
+    font-size: 14px; 
+    height: 100%;
+    background-color: #FFF;
+}
+
+/* Tag settings */
+input, select, textarea {   font-family: Verdana, Arial, Helvetica, Sans-Serif; font-size: 100%; } /* fix IE form font inheritance bug */
+
+table { font-size: 100%; } /* fix IE table font inheritance bug */
+td { vertical-align:top;}
+
+a { color: #003aaa; padding:0px;}
+a:visited { color: #003aaa; }
+
+p { padding: 3px 5px;}
+
+h1, h2, h3, h4, h5, h6 { margin-bottom: .25em; }
+h1 {
+  font-size: 150%;
+  color: #E2E5F3;
+  background-color: #4F4E4F;
+  border-radius: 5px;
+  box-shadow: 3px 3px 4px #AAA;
+  padding: 2px 5px 2px 10px;
+  margin: 10px;
+}
+h2 { font-size: 120%; }
+h3 { font-size: 110%; }
+h4 { font-size: 100%; }
+h5 { font-size: 95%; font-style: italic; }
+h6 { font-size: 90%; font-style: italic; font-weight: normal; }
+
+p, ul, ol { margin-top: 2px; margin-bottom: 3px; }
+
+li { margin: 2px 2px 2px 20px; padding-left: 1px; }
+img { border-style: none; }	
+
+/* Common classes */
+
+
+.floatLeft	{ float: left; width: auto; margin-right: 1em; margin-bottom: .5em; } /* ??? */
+.clearFloat { clear: both; }
+.offScreen { position: absolute; top: -10000px; width: 1px; height: 1px; overflow: hidden; font-size: .1em; }
+.titleBox { margin: 0 3px 10px 3px; }
+.titleBox h2 { font-size: 120%; margin-bottom: .25em; }
+.titleBox p { margin: 0 1px 5px 1px; }
+.titleBox ul, .titleBox ol { margin: 0; padding: 0; }
+.titleBox ul li, .titleBox ol li { margin: 1px 5px 1px 20px; }
+
+/* Show text for non-authorized users */
+.nonAuthOnly { display: block; }
+/* Hide it for authorized users */
+.authOnly { display: none; }
+
+/* Common IDs */
+#pageContainer { width:1028px; background-color:#fff; margin: 5px auto 10px auto; }
+#pageContent { width: 1016px; padding: 0 5px; } /* ??? */
+
+#SkipNavDiv a { position: absolute; top: -1000px; color: #FFF; }
+#SkipNavDiv a:active, #SkipNavDiv a:focus { position: relative; top: 0; color: #FFF; }
+
+#networkingWidget { margin: 0; padding: 0; min-height: 15px; background-color: #FFF; }
+
+
+/* ----------  ---------- Page Sections ----------  ---------- */
+/* ---------- Footer ---------- */
+#FooterSection  
+{
+    clear: both; 
+    width: 100%; 
+    font-size: 65%; 
+    padding: 2px 0; 
+    margin: 0 auto; 
+    color: #505050; 
+    background-color: #F5F5F5;
+}
+#FooterDiv  
+{
+    clear: both; 
+    width: 80%; 
+    margin: 0 auto; 
+    vertical-align: top; 
+    background-color: #F5F5F5;
+}
+#CopyWriteDiv  
+{
+    padding-top: 2px; 
+    text-align: center; 
+    font-size: 70%; 
+    color: #707070;  
+}
+#FooterDiv .footerItem {
+	display: inline-block;
+	width: 200px;
+	vertical-align: top;
+	/* Fixes for IE7 */
+	zoom: 1;
+	*display: inline;
+}
+#FooterDiv .footerItem h3 {
+	padding: 2px;
+}
+#FooterDiv .footerItem ul {
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+}
+#FooterDiv .footerItem ul li {
+	margin: 0;
+	padding: 0;
+}
+#FooterDiv .footerItem ul li a {
+	display: block;
+	padding: 2px;
+	text-decoration: none;
+	color: #707070;
+}
+#FooterDiv .footerItem ul li a:hover {
+    background-color: #CFDEFF;
+}
+#FooterSection #pathwaysBottomGraphic
+{
+    background-image: url("/images/body_FootBottomCenter-horiz2.jpg");
+    background-repeat: repeat-x;
+    margin-left: -14px;
+    margin-top: -1px;
+    width: 1028px;
+}
+
+/* ---------- Forms ----------  */
+
+/* Default for two column layout: Label - Data */
+.labelColumn 
+{
+    float: left;
+    color: #000;
+    width: 150px;
+    margin-top: 0;
+    margin-bottom: 0;
+    padding: 0 2px 0 5px;
+    font-weight: bold;
+    font-size: 90%;
+    vertical-align: top;
+    text-align: right;
+}
+.dataColumn 
+{
+    color: #000;
+    float: left;
+    margin-top: 0;
+    margin-bottom: 0;
+    padding: 0 5px 0 5px;
+    vertical-align: top;
+}
+.labelTop 
+{
+    float: none;
+    color: #000;
+    width: 100%;
+    font-weight: bold;
+    font-size: 90%;
+    margin-bottom: 0;
+    margin-left: 5px;
+}
+.labelPlain 
+{
+    color: #000;
+    font-size: 90%;
+}
+.requiredField 
+{
+    font-weight: bold;
+    color: Red;
+}
+.requiredFieldImg 
+{
+    color: Red;
+    background-image: url("/images/icons/asterisk.gif");
+    background-repeat: no-repeat;
+}
+.requiredField a.infoField 
+{
+    color: Red;
+    text-decoration: none;
+}
+
+/* ---------- System Messages ---------- */
+.errorMessage
+{ 
+  border-radius: 5px;
+	border-right: #DBDCDB 2px outset;
+	border-top: #fff 2px outset;
+	border-left: #fff 2px outset;
+	border-bottom: #DBDCDB 2px outset;	
+	font-size:100%;
+	font-weight: bold;
+	color:#FFF;	
+	background-color: #CC0000;	
+	padding:5px 10px 5px 0px;
+	margin: 10px 8px;	
+	width:90%;	
+	padding-left: 40px; 
+	background-image: url('/images/icons/errorIcon2.png'); 
+	background-repeat: no-repeat; 
+} 
+.errorMessage p, .errorMessage h2{ 	background-color: #CC0000;		padding-left: 20px;	margin-left: 20px;}
+.errorMessage a, .errorMessage a:visited{ 	background-color: #CC0000;		color:#FFF;	}
+.redMessage
+{ 
+  border-radius: 5px;
+	font-size:95%;
+	color:#FFF;	
+	background-color: #CC0000;	
+	padding:8px 10px;	
+	width:90%;	
+} 
+.greenMessage
+{ 
+  border-radius: 5px;
+	font-size:95%;
+	color:#FFF;	
+	background-color: #00FF00;	
+	padding:8px 10px;	
+	width:90%;	
+} 
+.infoMessage, .menuSection p .infoMessage {
+    border-radius: 5px;
+	border: #DBDCDB 2px outset;
+	font-size:100%;
+	background-color: #F5F5F5;
+	padding:5px 10px 5px 10px;
+	margin: 10px 10px;	
+	width: 90%;
+
+} 
+.successMessage {
+    border-radius: 5px;
+	border: #DBDCDB 2px outset;
+	font-size:100%;	
+	font-weight: bold;	
+	color: #000;
+	background-color: #00FF00;
+	padding:5px 10px 5px 10px;
+	margin: 10px 5px;	
+	width: 90%;	
+} 
+
+/* ---------- Navigation stuff ---------- */
+.defaultButton, td .defaultButton {
+	font-size: 90%;	
+	font-weight:bold;
+	font-family: Verdana, Arial;
+	padding:2px;
+	margin-bottom:5px;
+
+	color: #E2E5F3;
+  background-color: #4F4E4F;
+  border-radius: 5px;
+}
+.defaultIsleButton {
+	font-size: 90%;	
+	font-weight:bold;
+	font-family: Verdana, Arial;
+	padding-top:0px;
+	margin-bottom:5px;
+	color: #000;
+  background-color: #FF5707;
+  border-radius: 5px;
+}
+.smallButton {
+	color: #993300;
+	font-size: 75%;	
+	font-weight:bold;
+	font-family: Verdana, Arial;
+	background-color: #fff;
+	padding: 0px; margin: 0px;
+}
+.softbreak {
+	font-size:0; position:absolute; left: -10000px; width: 1px; height: 1px; overflow: hidden;  font-size: .1em;
+}
+
+/* Data Web Control Styles */
+.DataWebControlStyle {font-size: 100%;}
+/* grids ----------------------------------------- */
+.gridResultsHeader { font-size: 90%; font-weight: bold;	color: white;	background-color: #294884;	vertical-align:top;	text-transform:capitalize;
+}
+.gridResultsHeader a { display: block; color: #fff;}
+.gridHeader
+{
+	font-size: 100%; 
+	font-weight: bold;
+	color: white;
+	background-color: #294884;
+	text-align: left;
+	vertical-align: top;
+}
+.gridHeader:hover { color: white; text-decoration: none }
+.gridFooter{ background-color: #294884; color:#fff;	}
+.gridPager{ background-color:#FFF8DC; color:#000; text-align:left; }
+.gridSelItem {font-size: .8em; color: White;	background-color: #008A8C; }
+.gridItem { background-color: #E2E5F3; vertical-align:top;	}
+
+.gridItemHover {background-color:#FFF8DC;	color: #000; vertical-align:top;}
+.gridAltItem {background-color: #fff;	color: #000; vertical-align:top;}
+.gridAltItemHover {	background-color:#FFF8DC;	color: #000;	vertical-align:top;	}
+tr.gridItem:hover, tr.over td { background-color: #FFF8DC; 	}
+tr.gridAltItem:hover, tr.over td { background-color: #FFF8DC; }
+
+/* ---------- Miscellaneous ---------- */
+/* unadorned indented lists */
+.unadornedListDiv	
+{ 
+    margin: 0 0px 0px 5px; 
+    padding: 0; 
+}
+.unadornedListDiv li	
+{ 
+    display:list-item; 
+    margin-bottom:2px; 
+}
+.unadornedListDiv ul	
+{ 
+    list-style: none; 
+    margin: 0; 
+    padding: 0; 
+}
+.unadornedListDiv div	
+{ 
+    font-size: 100%; 
+}
+
+/* Body elements */
+.bodyBold 
+{
+    font-size: 0.8em;
+    font-weight: bold;
+}
+.bodySmall 
+{
+    text-align: left;
+    font-size: 80%;
+}
+
+/* --------- Hints/Tooltips ---------- */
+/* 2007-06-21 jeg added css to handle tips when hovering a link or when link has focus
+ * The order of the CSS is particularly fussy, and some javascript is needed to make it
+ * work in IE since IE doesn't seem to support the :focus pseudo-class, at least for anchors
+ * the way we want to use them.  This has been tested in Firefox 2.0 and IE 7.
+ * Here's how you use the following CSS section to make tips pop up when you are hovering or
+ * when the link has focus (as when someone is tabbing to the link rather than using the mouse)
+ *
+ * <span class="hints">some text <a class="normal" onfocus="TipShow(this);return true;"
+ *     onblur="TipHide(this);return true;">Link text<span>Put your tip here</span></a> more text</span>
+ *
+ * the javascript is contained in Scripts.js.
+ *
+* MP - may replace this with a jquery equiv like jtip
+ */
+.hints a.normal span {	display:none;}
+.hints a:focus span	
+{
+	position:absolute;
+	background-color:#fff;
+	width: auto;
+	margin:5 20;
+	padding:5px 5px 5px 5px;
+	border:2px solid #993300;
+	font:normal small arial;
+	color:#000;
+	text-align:left;
+	display:block;
+	text-decoration:none;
+	z-index:1;
+}
+
+.hints a:link 			{color:#0066ff;}
+.hints a:link span		{display:none;}
+.hints a:visited 		{color:#0066ff;}
+.hints a:visited span	{display:none;}
+.hints a:hover 			{color:#fff; background-color:#993300;}
+.hints a:hover span 
+{
+	position:absolute;
+	background-color:#fff;
+	width: auto;
+	margin:5 20;
+	padding:5px 5px 5px 5px;
+	border:2px solid #993300;
+	font:normal small arial;
+	color:#000;
+	text-align:left;
+	display:block;
+	text-decoration:none;
+	z-index:1;
+}
+.hints a.focused {color:black; background-color:#fff;}
+.hints a.focused span 
+{
+	position:absolute;
+	background-color:#fff;
+	width: auto;
+	margin:5 20;
+	padding:5px 5px 5px 5px;
+	border:2px solid #993300;
+	font:normal small arial;
+	color:#000;
+	text-align:left;
+	display:block;
+	text-decoration:none;
+	z-index:1;
+}
+
+/* ---------- Accordions ---------- */
+.accordion_toggle {
+	display: block;	height: auto;	width: 90%;
+	background: url(/vos_portal/images/show.gif) no-repeat left center #A0A0A0;	
+	color: #000000;	
+	padding: 0 10px 0 55px;
+	line-height: 30px;
+	text-decoration: none;
+	outline: none;
+	border-bottom: 1px solid #fff;
+	cursor: pointer;
+	margin: 0 0 8px 0;
+}
+.accordion_toggle a {text-decoration: none; color: #000000;}
+.accordion_toggle_active {
+	background: url(/vos_portal/images/hide.gif) no-repeat left center #006600;		
+	color: #ffffff;
+	border-bottom: 1px solid #A0A0A0;
+}
+.accordion_toggle_active a {text-decoration: none; color: #ffffff;}
+
+.accordion_content {background-color: #ffffff;	width: 92%;	overflow: hidden;	border: dotted 2px #FAEFEB;}
+.accordion_content h3 {	font-size: 110%; }
+.accordion_content p {	line-height: 150%;	padding: 5px 10px 15px 10px;}
+
+.vertical_accordion_toggle {
+	display: block;	height: 30px;	width: 600px;
+	background-color: #a9d06a;
+	padding: 0 10px 0 10px;	line-height: 30px;	color: #ffffff;	font-weight: normal;	text-decoration: none;
+	outline: none;	font-size: 12px;	color: #000000;	border-bottom: 1px solid #cde99f;	cursor: pointer;	margin: 0 0 0 0;
+}
+
+.vertical_accordion_toggle_active {	background-color: #e0542f;	color: #ffffff;	border-bottom: 1px solid #f68263;}
+.vertical_accordion_content {	background-color: #ffffff;	overflow: hidden;}
+.vertical_accordion_content h3 {	margin: 15px 0 5px 10px;	color: #0099FF;}
+.vertical_accordion_content p {	line-height: 150%;	padding: 5px 10px 15px 10px;}
+#vertical_nested_container {  margin: 20px auto 20px auto;  width: 620px;}
+
+/* --------- Youtube CSS ---------- */
+.ytPlayer 
+{
+	border: solid 5px #2793DA;
+	float: left;
+}
+.ytPlayList 
+{
+	border: solid 5px #2793DA;
+	float: left;
+	height: 344px;
+	min-height: 344px;
+	overflow-y: scroll;
+	width: 140px;
+}
+
+/* --------- Google CSS ---------- */
+.googleSearchStyle
+{
+float:right; position:absolute; right:1%; top: 65px; font-size:90%;
+}
+
+/* --------- Ratings ---------- */
+.ratingStar {
+    font-size: 0pt;
+    width: 13px;
+    height: 12px;
+    margin: 0px;
+    padding: 0px;
+    cursor: pointer;
+    display: block;
+    background-repeat: no-repeat;
+}
+
+.filledRatingStar {
+    background-image: url(/images/icons/FilledStar.png);
+
+}
+
+.emptyRatingStar {
+    background-image: url(/images/icons/EmptyStar.png);
+}
+
+.savedRatingStar {
+    background-image: url(/images/icons/SavedStar.png);
+}
+
+/* --------- Print media items ---------- */
+@media print 
+{
+	body {background-color:#fff;}
+	.screenViewOnly {display: none ;}	
+	.nonAuthOnly	{display:block ;  }	
+	.printViewOnly {display:block ;}
+		
+	#TopDiv {display: none;}		
+	#TopBannerDiv {display: none;}		
+	#TopBorderDiv {display: none;}	
+	#toolsMenuBar {display: none;}	
+	#featuresContainer{display: none;}		
+	#networkingWidget{display: none;}		
+	#networkingWidgetMenuBar{display: none;}							
+	
+	#FooterDiv {display: none;}		
+	#CopyWriteDiv { clear: both; width: 75%; font-size: 75%; background-color:#fff; padding: 2px 50px 0px 50px; text-align: center; margin: 0px 0px 0px 0px }	
+	.defaultButton	{display: none;}	
+	
+	.accordionHeader{display: none;}		
+	.accordionLink{display: none;}	
+	.accordion_toggle {	background-image: none;	cursor:default;}
+	.accordion_toggle a {cursor:default;}
+}

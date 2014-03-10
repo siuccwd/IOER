@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:tns="http://www.illinoisworknet.com/webServices/GlossaryWS/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" targetNamespace="http://www.illinoisworknet.com/webServices/GlossaryWS/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <s:schema elementFormDefault="qualified" targetNamespace="http://www.illinoisworknet.com/webServices/GlossaryWS/">
+      <s:element name="GetByTerm">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="term" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="library" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetByTermResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetByTermResult" type="tns:Glossary" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="Glossary">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="Id" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="Term" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Description" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Library" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="IsAlias" type="s:boolean" />
+          <s:element minOccurs="1" maxOccurs="1" name="IsAcronym" type="s:boolean" />
+          <s:element minOccurs="1" maxOccurs="1" name="ParentTermId" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="ParentTerm" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="ParentDescription" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="IsValid" type="s:boolean" />
+          <s:element minOccurs="0" maxOccurs="1" name="Message" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="GetById">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="glossaryId" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetByIdResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetByIdResult" type="tns:Glossary" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetByTermDS">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="term" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="library" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetByTermDSResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetByTermDSResult">
+              <s:complexType>
+                <s:sequence>
+                  <s:element ref="s:schema" />
+                  <s:any />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+    </s:schema>
+  </wsdl:types>
+  <wsdl:message name="GetByTermSoapIn">
+    <wsdl:part name="parameters" element="tns:GetByTerm" />
+  </wsdl:message>
+  <wsdl:message name="GetByTermSoapOut">
+    <wsdl:part name="parameters" element="tns:GetByTermResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetByIdSoapIn">
+    <wsdl:part name="parameters" element="tns:GetById" />
+  </wsdl:message>
+  <wsdl:message name="GetByIdSoapOut">
+    <wsdl:part name="parameters" element="tns:GetByIdResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetByTermDSSoapIn">
+    <wsdl:part name="parameters" element="tns:GetByTermDS" />
+  </wsdl:message>
+  <wsdl:message name="GetByTermDSSoapOut">
+    <wsdl:part name="parameters" element="tns:GetByTermDSResponse" />
+  </wsdl:message>
+  <wsdl:portType name="GlossaryWSSoap">
+    <wsdl:operation name="GetByTerm">
+      <wsdl:input message="tns:GetByTermSoapIn" />
+      <wsdl:output message="tns:GetByTermSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetById">
+      <wsdl:input message="tns:GetByIdSoapIn" />
+      <wsdl:output message="tns:GetByIdSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetByTermDS">
+      <wsdl:input message="tns:GetByTermDSSoapIn" />
+      <wsdl:output message="tns:GetByTermDSSoapOut" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="GlossaryWSSoap" type="tns:GlossaryWSSoap">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="GetByTerm">
+      <soap:operation soapAction="http://www.illinoisworknet.com/webServices/GlossaryWS/GetByTerm" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetById">
+      <soap:operation soapAction="http://www.illinoisworknet.com/webServices/GlossaryWS/GetById" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetByTermDS">
+      <soap:operation soapAction="http://www.illinoisworknet.com/webServices/GlossaryWS/GetByTermDS" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="GlossaryWSSoap12" type="tns:GlossaryWSSoap">
+    <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="GetByTerm">
+      <soap12:operation soapAction="http://www.illinoisworknet.com/webServices/GlossaryWS/GetByTerm" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetById">
+      <soap12:operation soapAction="http://www.illinoisworknet.com/webServices/GlossaryWS/GetById" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetByTermDS">
+      <soap12:operation soapAction="http://www.illinoisworknet.com/webServices/GlossaryWS/GetByTermDS" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="GlossaryWS">
+    <wsdl:port name="GlossaryWSSoap" binding="tns:GlossaryWSSoap">
+      <soap:address location="http://www.illinoisworknet.com/workNetItems/glossaryws.asmx" />
+    </wsdl:port>
+    <wsdl:port name="GlossaryWSSoap12" binding="tns:GlossaryWSSoap12">
+      <soap12:address location="http://www.illinoisworknet.com/workNetItems/glossaryws.asmx" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

@@ -1,0 +1,137 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{5A3C08E1-CC85-4A82-BCC1-F43E54107B5B}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>LRWarehouse.DAL</RootNamespace>
+    <AssemblyName>LRWarehouse.DAL</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Glimpse.Ado">
+      <HintPath>..\..\LR_Import\packages\Glimpse.Ado.1.7.0\lib\net40\Glimpse.Ado.dll</HintPath>
+    </Reference>
+    <Reference Include="Glimpse.Core">
+      <HintPath>..\..\LR_Import\packages\Glimpse.1.8.2\lib\net40\Glimpse.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.ApplicationBlocks.Data, Version=2.0.0.0, Culture=neutral">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\LR_Import\bin\Release\Microsoft.ApplicationBlocks.Data.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="%40TemplateManager_GuidPK.cs" />
+    <Compile Include="AuditReportingManager.cs" />
+    <Compile Include="BaseDataManager.cs" />
+    <Compile Include="CleanseUrlManager.cs" />
+    <Compile Include="CodeTableManager.cs" />
+    <Compile Include="DatabaseManager.cs" />
+    <Compile Include="ElasticSearchManager.cs" />
+    <Compile Include="IResourceIntManager.cs" />
+    <Compile Include="IResourceManager.cs" />
+    <Compile Include="LRManager.cs" />
+    <Compile Include="ParadataManager.cs" />
+    <Compile Include="PatronManager.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RatingSummaryManager.cs" />
+    <Compile Include="RatingTypeManager.cs" />
+    <Compile Include="ResourceAccessibilityApiManager.cs" />
+    <Compile Include="ResourceAccessibilityControlManager.cs" />
+    <Compile Include="ResourceAccessibilityFeatureManager.cs" />
+    <Compile Include="ResourceAccessibilityHazardManager.cs" />
+    <Compile Include="ResourceAgeRangeManager.cs" />
+    <Compile Include="ResourceAsmtTypeManager.cs" />
+    <Compile Include="ResourceClusterManager.cs" />
+    <Compile Include="ResourceCommentManager.cs" />
+    <Compile Include="ResourceDataManager.cs" />
+    <Compile Include="ResourceEducationUseManager.cs" />
+    <Compile Include="ResourceEvaluationManager.cs" />
+    <Compile Include="ResourceFormatManager.cs" />
+    <Compile Include="ResourceGradeLevelManager.cs" />
+    <Compile Include="ResourceGroupTypeManager.cs" />
+    <Compile Include="ResourceIntendedAudienceManager.cs" />
+    <Compile Include="ResourceItemTypeManager.cs" />
+    <Compile Include="ResourceJSONManager.cs" />
+    <Compile Include="ResourceKeywordManager.cs" />
+    <Compile Include="ResourceLanguageManager.cs" />
+    <Compile Include="ResourceLikeManager.cs" />
+    <Compile Include="ResourceLikeSummaryManager.cs" />
+    <Compile Include="ResourceManager.cs" />
+    <Compile Include="ResourcePropertyManager.cs" />
+    <Compile Include="ResourceRelatedUrlManager.cs" />
+    <Compile Include="ResourceStandardManager.cs" />
+    <Compile Include="ResourceSubjectManager.cs" />
+    <Compile Include="ResourceThumbnailManager.cs" />
+    <Compile Include="ResourceTypeManager.cs" />
+    <Compile Include="ResourceVersionManager.cs" />
+    <Compile Include="ResourceViewManager.cs" />
+    <Compile Include="RulesManager.cs" />
+    <Compile Include="StandardDataManager.cs" />
+    <Compile Include="SystemProcessManager.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Business\ILPathways.Business\ILPathways.Business.csproj">
+      <Project>{cae031c2-7899-4cc3-9772-0787e65977a2}</Project>
+      <Name>ILPathways.Business</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Business\LRWarehouse.Business\LRWarehouse.Business.csproj">
+      <Project>{e5d37489-c4fc-48c9-a714-5610610a27e4}</Project>
+      <Name>LRWarehouse.Business</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Common\IllinoisPathways.Common\ILPathways.Common.csproj">
+      <Project>{cbb05737-7947-4ed9-8ed3-79d5c2a6597d}</Project>
+      <Name>ILPathways.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Common\ILPathways.Utilities\ILPathways.Utilities.csproj">
+      <Project>{949d7eb6-93e1-489f-a5e7-2d0d9086f720}</Project>
+      <Name>ILPathways.Utilities</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

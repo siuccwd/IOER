@@ -1,0 +1,105 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{E5D37489-C4FC-48C9-A714-5610610A27E4}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>LRWarehouse.Business</RootNamespace>
+    <AssemblyName>LRWarehouse.Business</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AuditReportDetail.cs" />
+    <Compile Include="BaseBusinessDataEntity.cs" />
+    <Compile Include="BaseParadataEntity.cs" />
+    <Compile Include="BaseParadataItem.cs" />
+    <Compile Include="BaseParadataSummary.cs" />
+    <Compile Include="CareerCluster.cs" />
+    <Compile Include="CodeGradeLevel.cs" />
+    <Compile Include="LearningRegistryJsonImport.cs" />
+    <Compile Include="ParaData.cs" />
+    <Compile Include="ParadataRating.cs" />
+    <Compile Include="ParadataView.cs" />
+    <Compile Include="Patron.cs" />
+    <Compile Include="PatronNote.cs" />
+    <Compile Include="PatronProfile.cs" />
+    <Compile Include="PatronSearchFilter.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="PublishPending.cs" />
+    <Compile Include="RatingSummary.cs" />
+    <Compile Include="RatingSummaryCollection.cs" />
+    <Compile Include="RatingType.cs" />
+    <Compile Include="Resource.cs" />
+    <Compile Include="ResourceAccessibilityHazard.cs" />
+    <Compile Include="ResourceAgeRange.cs" />
+    <Compile Include="ResourceChildItem.cs" />
+    <Compile Include="ResourceCluster.cs" />
+    <Compile Include="ResourceComment.cs" />
+    <Compile Include="ResourceEvaluation.cs" />
+    <Compile Include="ResourceJSON.cs" />
+    <Compile Include="ResourceLike.cs" />
+    <Compile Include="ResourceLikeSummary.cs" />
+    <Compile Include="ResourcePackage.cs" />
+    <Compile Include="ResourceProperty.cs" />
+    <Compile Include="ResourcePropertyCollection.cs" />
+    <Compile Include="ResourceRatings.cs" />
+    <Compile Include="ResourceStandard.cs" />
+    <Compile Include="ResourceStandardCollection.cs" />
+    <Compile Include="ResourceSubject.cs" />
+    <Compile Include="ResourceSubjectCollection.cs" />
+    <Compile Include="ResourceVersion.cs" />
+    <Compile Include="Rule.cs" />
+    <Compile Include="SerializableDictionary.cs" />
+    <Compile Include="StandardItem.cs" />
+    <Compile Include="StandardSubject.cs" />
+    <Compile Include="SystemProcess.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ILPathways.Business\ILPathways.Business.csproj">
+      <Project>{cae031c2-7899-4cc3-9772-0787e65977a2}</Project>
+      <Name>ILPathways.Business</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

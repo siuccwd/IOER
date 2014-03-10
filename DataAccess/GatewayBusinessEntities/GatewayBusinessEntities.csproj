@@ -1,0 +1,197 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{6771CFAC-9D01-4A98-9CAC-55A401D6AEDB}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>GatewayBusinessEntities</RootNamespace>
+    <AssemblyName>GatewayBusinessEntities</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="EntityFramework">
+      <HintPath>..\..\packages\EntityFramework.5.0.0\lib\net40\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data.Entity" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Security" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AppGroup.cs">
+      <DependentUpon>GatewayDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="AppGroup_Member.cs">
+      <DependentUpon>GatewayDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="AppGroup_OrgMember.cs">
+      <DependentUpon>GatewayDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="AppGroup_Privilege.cs">
+      <DependentUpon>GatewayDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="AppGroup_TeamMember.cs">
+      <DependentUpon>GatewayDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Application.cs">
+      <DependentUpon>GatewayDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ApplicationObject.cs">
+      <DependentUpon>GatewayDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ApplicationRolePrivilege.cs">
+      <DependentUpon>GatewayDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Application_Member.cs">
+      <DependentUpon>GatewayDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="AppUser.cs">
+      <DependentUpon>GatewayDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="AppUser_ExternalAccount.cs">
+      <DependentUpon>GatewayDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="AppUser_Profile.cs">
+      <DependentUpon>GatewayDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="AppVisitLog.cs">
+      <DependentUpon>GatewayDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Codes_AuthorizationLevel.cs">
+      <DependentUpon>GatewayDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Codes_ExternalSite.cs">
+      <DependentUpon>GatewayDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Codes_GroupType.cs">
+      <DependentUpon>GatewayDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Codes_OrgMemberRole.cs">
+      <DependentUpon>GatewayDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Codes_OrgMemberType.cs">
+      <DependentUpon>GatewayDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Codes_OrgType.cs">
+      <DependentUpon>GatewayDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Codes_PrivilegeDepth.cs">
+      <DependentUpon>GatewayDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Codes_PrivilegeType.cs">
+      <DependentUpon>GatewayDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Codes_PublishingRole.cs">
+      <DependentUpon>GatewayDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Codes_State.cs">
+      <DependentUpon>GatewayDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="CodeTable.cs">
+      <DependentUpon>GatewayDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="EmailNotice.cs">
+      <DependentUpon>GatewayDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="GatewayDB.Context.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>GatewayDB.Context.tt</DependentUpon>
+    </Compile>
+    <Compile Include="GatewayDB.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>GatewayDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="GatewayDB.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>GatewayDB.edmx</DependentUpon>
+    </Compile>
+    <Compile Include="LR_PatronOrgSummary.cs">
+      <DependentUpon>GatewayDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Organization.cs">
+      <DependentUpon>GatewayDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="OrganizationRequest.cs">
+      <DependentUpon>GatewayDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="OrganizationTemp.cs">
+      <DependentUpon>GatewayDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Organization_Member.cs">
+      <DependentUpon>GatewayDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Organization_MemberRole.cs">
+      <DependentUpon>GatewayDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SqlQuery.cs">
+      <DependentUpon>GatewayDB.tt</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.Config" />
+    <EntityDeploy Include="GatewayDB.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>GatewayDB.Designer.cs</LastGenOutput>
+    </EntityDeploy>
+    <None Include="GatewayDB.Context.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>GatewayDB.edmx</DependentUpon>
+      <LastGenOutput>GatewayDB.Context.cs</LastGenOutput>
+    </None>
+    <None Include="GatewayDB.edmx.diagram">
+      <DependentUpon>GatewayDB.edmx</DependentUpon>
+    </None>
+    <None Include="GatewayDB.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>GatewayDB.edmx</DependentUpon>
+      <LastGenOutput>GatewayDB.cs</LastGenOutput>
+    </None>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

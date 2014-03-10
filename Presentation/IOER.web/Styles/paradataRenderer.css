@@ -1,0 +1,20 @@
+﻿  ul.paradata {
+    list-style-type: none;
+    display: block;
+    width: 100%;
+    text-align: center;
+  }
+  ul.paradata li {
+    margin: 0;
+    padding: 0;
+    display: inline-block;
+    *display: inline;
+    zoom: 1;
+    padding: 2px;
+  }
+  ul.paradata li img {
+    display: block;
+  }
+  ul.paradata li div.text {
+    text-align: center;
+  }

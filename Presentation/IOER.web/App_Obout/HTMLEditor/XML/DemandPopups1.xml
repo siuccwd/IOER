@@ -1,0 +1,26 @@
+﻿<DemandPopups>
+  <!-- The following popups will be loaded on demand into the PopupHolder control -->
+  
+  <!-- Change some default properties of the Spell Checker -->
+  <popup name="SpellCheckPopup" >
+    <property name="CustomDictionaryOnServer" value="true" /> <!-- Keep custom dictionary on the server -->
+    <!-- Define dictionaries to use -->
+    <collection name="Dictionaries">
+      <!-- American dictionary -->
+      <SpellCheckDictionary>
+        <property name="FileName" value="en-US.dic" />      <!-- File name of the dictionary -->
+        <property name="DisplayName" value="English(US)" /> <!-- Dictionary name used for suggestions -->
+      </SpellCheckDictionary>
+      <!-- Great Britain dictionary -->
+      <SpellCheckDictionary>
+        <property name="FileName" value="en-GB.dic" />      <!-- File name of the dictionary -->
+        <property name="DisplayName" value="English(GB)" /> <!-- Dictionary name used for suggestions -->
+      </SpellCheckDictionary>
+    </collection>
+  </popup>
+
+  <!-- The Image browser will generate absolute URL (not relative) for selected image -->
+  <popup name="ImageBrowser" >
+    <property name="RelativeUrl" value="false" />
+  </popup>
+</DemandPopups>

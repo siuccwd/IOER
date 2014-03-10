@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:tns="http://www.illinoisworknet.com/webServices/ENoticeWS/" xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" targetNamespace="http://www.illinoisworknet.com/webServices/ENoticeWS/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <s:schema elementFormDefault="qualified" targetNamespace="http://www.illinoisworknet.com/webServices/ENoticeWS/">
+      <s:element name="GetByCode">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="noticeCode" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetByCodeResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetByCodeResult" type="tns:EmailNotice" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="EmailNotice">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="Id" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="NoticeCode" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Title" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Description" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Category" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Filter" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="FromEmail" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="CcEmail" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="BccEmail" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Subject" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="HtmlBody" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="TextBody" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="LanguageCode" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="IsValid" type="s:boolean" />
+          <s:element minOccurs="0" maxOccurs="1" name="Message" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="GetById">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="entityId" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetByIdResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetByIdResult" type="tns:EmailNotice" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="SendByCode">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="noticeCode" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="toEmail" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="passcode" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="SendByCodeResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="SendByCodeResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="Send">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="wsEntity" type="tns:EmailNotice" />
+            <s:element minOccurs="0" maxOccurs="1" name="toEmail" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="passcode" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="SendResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="SendResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+    </s:schema>
+  </wsdl:types>
+  <wsdl:message name="GetByCodeSoapIn">
+    <wsdl:part name="parameters" element="tns:GetByCode" />
+  </wsdl:message>
+  <wsdl:message name="GetByCodeSoapOut">
+    <wsdl:part name="parameters" element="tns:GetByCodeResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetByIdSoapIn">
+    <wsdl:part name="parameters" element="tns:GetById" />
+  </wsdl:message>
+  <wsdl:message name="GetByIdSoapOut">
+    <wsdl:part name="parameters" element="tns:GetByIdResponse" />
+  </wsdl:message>
+  <wsdl:message name="SendByCodeSoapIn">
+    <wsdl:part name="parameters" element="tns:SendByCode" />
+  </wsdl:message>
+  <wsdl:message name="SendByCodeSoapOut">
+    <wsdl:part name="parameters" element="tns:SendByCodeResponse" />
+  </wsdl:message>
+  <wsdl:message name="SendSoapIn">
+    <wsdl:part name="parameters" element="tns:Send" />
+  </wsdl:message>
+  <wsdl:message name="SendSoapOut">
+    <wsdl:part name="parameters" element="tns:SendResponse" />
+  </wsdl:message>
+  <wsdl:portType name="EmailNoticeWSSoap">
+    <wsdl:operation name="GetByCode">
+      <wsdl:input message="tns:GetByCodeSoapIn" />
+      <wsdl:output message="tns:GetByCodeSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetById">
+      <wsdl:input message="tns:GetByIdSoapIn" />
+      <wsdl:output message="tns:GetByIdSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="SendByCode">
+      <wsdl:input message="tns:SendByCodeSoapIn" />
+      <wsdl:output message="tns:SendByCodeSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="Send">
+      <wsdl:input message="tns:SendSoapIn" />
+      <wsdl:output message="tns:SendSoapOut" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="EmailNoticeWSSoap" type="tns:EmailNoticeWSSoap">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="GetByCode">
+      <soap:operation soapAction="http://www.illinoisworknet.com/webServices/ENoticeWS/GetByCode" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetById">
+      <soap:operation soapAction="http://www.illinoisworknet.com/webServices/ENoticeWS/GetById" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SendByCode">
+      <soap:operation soapAction="http://www.illinoisworknet.com/webServices/ENoticeWS/SendByCode" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Send">
+      <soap:operation soapAction="http://www.illinoisworknet.com/webServices/ENoticeWS/Send" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="EmailNoticeWSSoap12" type="tns:EmailNoticeWSSoap">
+    <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="GetByCode">
+      <soap12:operation soapAction="http://www.illinoisworknet.com/webServices/ENoticeWS/GetByCode" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetById">
+      <soap12:operation soapAction="http://www.illinoisworknet.com/webServices/ENoticeWS/GetById" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SendByCode">
+      <soap12:operation soapAction="http://www.illinoisworknet.com/webServices/ENoticeWS/SendByCode" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Send">
+      <soap12:operation soapAction="http://www.illinoisworknet.com/webServices/ENoticeWS/Send" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="EmailNoticeWS">
+    <wsdl:port name="EmailNoticeWSSoap" binding="tns:EmailNoticeWSSoap">
+      <soap:address location="http://www.illinoisworknet.com/workNetItems/EmailNoticeWS.asmx" />
+    </wsdl:port>
+    <wsdl:port name="EmailNoticeWSSoap12" binding="tns:EmailNoticeWSSoap12">
+      <soap12:address location="http://www.illinoisworknet.com/workNetItems/EmailNoticeWS.asmx" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

@@ -1,0 +1,115 @@
+<PredefinedButtons> 
+    <!-- Predefinded buttons for the toolbar - full set --> 
+    <button name="ButtonsGroup"><collection name="Buttons" > 
+        <button name="Undo" /> 
+        <button name="Redo" /> 
+        <button name="HorizontalSeparator" /> 
+    </collection></button> 
+    <button name="ButtonsGroup"><collection name="Buttons" > 
+        <button name="Bold" /> 
+        <button name="Italic" /> 
+        <button name="Underline" /> 
+        <button name="StrikeThrough" /> 
+        <button name="SubScript" /> 
+        <button name="SuperScript" /> 
+        <button name="ToLowerCase" /> 
+        <button name="ToUpperCase" /> 
+        <button name="HorizontalSeparator" /> 
+    </collection></button> 
+    <button name="ForeColorGroup" /> 
+    <button name="HorizontalSeparator" /> 
+    <button name="BackColorGroup" /> 
+    <button name="HorizontalSeparator" /> 
+    <button name="ButtonsGroup"><collection name="Buttons" > 
+        <button name="GetFormat" /> 
+        <button name="ApplyFormat" /> 
+        <button name="RemoveStyles" /> 
+        <button name="HorizontalSeparator" /> 
+    </collection></button> 
+    <button name="FontName" /> 
+    <button name="HorizontalSeparator" /> 
+    <button name="FontSize" /> 
+    <button name="HorizontalSeparator" /> 
+    <button name="Header" /> 
+    <button name="HorizontalSeparator" /> 
+    <button name="ButtonsGroup"><collection name="Buttons" > 
+        <button name="Cut" /> 
+        <button name="Copy" /> 
+        <button name="Paste" /> 
+        <button name="PasteText" /> 
+        <button name="PasteWord" /> 
+        <button name="HorizontalSeparator" /> 
+    </collection></button> 
+    <button name="ButtonsGroup"><collection name="Buttons" > 
+        <button name="DecreaseIndent" /> 
+        <button name="IncreaseIndent" /> 
+        <button name="HorizontalSeparator" /> 
+    </collection></button> 
+    <button name="ButtonsGroup"><collection name="Buttons" > 
+        <button name="MakeNotEditable" /> 
+        <button name="HorizontalSeparator" /> 
+    </collection></button> 
+    <button name="ButtonsGroup"><collection name="Buttons" > 
+        <button name="Paragraph" /> 
+        <button name="JustifyLeft" /> 
+        <button name="JustifyCenter" /> 
+        <button name="JustifyRight" /> 
+        <button name="JustifyFull" /> 
+        <button name="RemoveAlignment" /> 
+        <button name="HorizontalSeparator" /> 
+    </collection></button> 
+    <button name="ButtonsGroup"><collection name="Buttons" > 
+        <button name="Ltr" /> 
+        <button name="Rtl" /> 
+        <button name="RemoveDirection" /> 
+        <button name="HorizontalSeparator" /> 
+    </collection></button> 
+    <button name="ButtonsGroup"><collection name="Buttons" > 
+        <button name="OrderedList" /> 
+        <button name="BulletedList" /> 
+        <button name="HorizontalSeparator" /> 
+    </collection></button> 
+    <button name="ButtonsGroup"><collection name="Buttons" > 
+        <button name="InsertLink" /> 
+        <button name="RemoveLink" /> 
+        <button name="InsertHR" /> 
+        <button name="InsertIcon" /> 
+        <button name="InsertSpecialCharacter" /> 
+        <button name="ImportDocument" /> 
+        <button name="HorizontalSeparator" /> 
+    </collection></button> 
+    <button name="ButtonsGroup"><collection name="Buttons" > 
+        <button name="InsertTable" /> 
+        <button name="InsertDiv" /> 
+        <button name="InsertImage" /> 
+        <button name="InsertFlash" /> 
+        <button name="InsertMedia" /> 
+        <button name="InsertFlashVideo" /> 
+        <button name="HorizontalSeparator" /> 
+    </collection></button> 
+    <button name="ButtonsGroup"><collection name="Buttons" > 
+        <button name="InsertForm" /> 
+        <button name="InsertCheckBox" /> 
+        <button name="InsertRadio" /> 
+        <button name="InsertTextBox" /> 
+        <button name="InsertPassword" /> 
+        <button name="InsertHidden" /> 
+        <button name="InsertButton" /> 
+        <button name="InsertSubmit" /> 
+        <button name="InsertReset" /> 
+        <button name="HorizontalSeparator" /> 
+    </collection></button> 
+    <button name="ButtonsGroup"><collection name="Buttons" > 
+        <button name="InsertAnchor" /> 
+        <button name="AnchorsToggle" /> 
+        <button name="HorizontalSeparator" /> 
+    </collection></button> 
+    <button name="ButtonsGroup"><collection name="Buttons" >
+         <button name="SpellCheck" /> 
+        <button name="SelectAll" /> 
+        <button name="SelectNone" /> 
+        <button name="Print" /> 
+        <button name="ContextMenuButton" /> 
+    </collection></button> 
+    <button name="TextIndicator" /> 
+</PredefinedButtons>

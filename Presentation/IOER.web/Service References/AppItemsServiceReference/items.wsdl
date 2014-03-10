@@ -1,0 +1,288 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:tns="http://www.illinoisworknet.com/webServices/workNetServices/Items/" xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" targetNamespace="http://www.illinoisworknet.com/webServices/workNetServices/Items/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <s:schema elementFormDefault="qualified" targetNamespace="http://www.illinoisworknet.com/webServices/workNetServices/Items/">
+      <s:element name="GetItemsInGroup">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="pGroupCode" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="pAppItemType" type="s:int" />
+            <s:element minOccurs="0" maxOccurs="1" name="pCategory" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="pSubcategory" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="pStatus" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="encryptedPassword" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetItemsInGroupResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetItemsInGroupResult">
+              <s:complexType>
+                <s:sequence>
+                  <s:element ref="s:schema" />
+                  <s:any />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetItem">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="pRowId" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="encryptedPassword" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetItemResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetItemResult">
+              <s:complexType>
+                <s:sequence>
+                  <s:element ref="s:schema" />
+                  <s:any />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetItemByCode">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="pCode" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="encryptedPassword" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetItemByCodeResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetItemByCodeResult">
+              <s:complexType>
+                <s:sequence>
+                  <s:element ref="s:schema" />
+                  <s:any />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="Select">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="pTypeId" type="s:int" />
+            <s:element minOccurs="0" maxOccurs="1" name="pCategory" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="pSubcategory" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="pStatus" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="parentRowId" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="appItemCode" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="keyword" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="encryptedPassword" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="SelectResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="SelectResult">
+              <s:complexType>
+                <s:sequence>
+                  <s:element ref="s:schema" />
+                  <s:any />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="Search">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="pFilter" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="pSortOrder" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="pStartPageIndex" type="s:int" />
+            <s:element minOccurs="1" maxOccurs="1" name="pMaximumRows" type="s:int" />
+            <s:element minOccurs="1" maxOccurs="1" name="pTotalRows" type="s:int" />
+            <s:element minOccurs="0" maxOccurs="1" name="encryptedPassword" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="SearchResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="SearchResult">
+              <s:complexType>
+                <s:sequence>
+                  <s:element ref="s:schema" />
+                  <s:any />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+            <s:element minOccurs="1" maxOccurs="1" name="pTotalRows" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+    </s:schema>
+  </wsdl:types>
+  <wsdl:message name="GetItemsInGroupSoapIn">
+    <wsdl:part name="parameters" element="tns:GetItemsInGroup" />
+  </wsdl:message>
+  <wsdl:message name="GetItemsInGroupSoapOut">
+    <wsdl:part name="parameters" element="tns:GetItemsInGroupResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetItemSoapIn">
+    <wsdl:part name="parameters" element="tns:GetItem" />
+  </wsdl:message>
+  <wsdl:message name="GetItemSoapOut">
+    <wsdl:part name="parameters" element="tns:GetItemResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetItemByCodeSoapIn">
+    <wsdl:part name="parameters" element="tns:GetItemByCode" />
+  </wsdl:message>
+  <wsdl:message name="GetItemByCodeSoapOut">
+    <wsdl:part name="parameters" element="tns:GetItemByCodeResponse" />
+  </wsdl:message>
+  <wsdl:message name="SelectSoapIn">
+    <wsdl:part name="parameters" element="tns:Select" />
+  </wsdl:message>
+  <wsdl:message name="SelectSoapOut">
+    <wsdl:part name="parameters" element="tns:SelectResponse" />
+  </wsdl:message>
+  <wsdl:message name="SearchSoapIn">
+    <wsdl:part name="parameters" element="tns:Search" />
+  </wsdl:message>
+  <wsdl:message name="SearchSoapOut">
+    <wsdl:part name="parameters" element="tns:SearchResponse" />
+  </wsdl:message>
+  <wsdl:portType name="ItemsSoap">
+    <wsdl:operation name="GetItemsInGroup">
+      <wsdl:input message="tns:GetItemsInGroupSoapIn" />
+      <wsdl:output message="tns:GetItemsInGroupSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetItem">
+      <wsdl:input message="tns:GetItemSoapIn" />
+      <wsdl:output message="tns:GetItemSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetItemByCode">
+      <wsdl:input message="tns:GetItemByCodeSoapIn" />
+      <wsdl:output message="tns:GetItemByCodeSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="Select">
+      <wsdl:input message="tns:SelectSoapIn" />
+      <wsdl:output message="tns:SelectSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="Search">
+      <wsdl:input message="tns:SearchSoapIn" />
+      <wsdl:output message="tns:SearchSoapOut" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="ItemsSoap" type="tns:ItemsSoap">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="GetItemsInGroup">
+      <soap:operation soapAction="http://www.illinoisworknet.com/webServices/workNetServices/Items/GetItemsInGroup" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetItem">
+      <soap:operation soapAction="http://www.illinoisworknet.com/webServices/workNetServices/Items/GetItem" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetItemByCode">
+      <soap:operation soapAction="http://www.illinoisworknet.com/webServices/workNetServices/Items/GetItemByCode" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Select">
+      <soap:operation soapAction="http://www.illinoisworknet.com/webServices/workNetServices/Items/Select" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Search">
+      <soap:operation soapAction="http://www.illinoisworknet.com/webServices/workNetServices/Items/Search" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="ItemsSoap12" type="tns:ItemsSoap">
+    <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="GetItemsInGroup">
+      <soap12:operation soapAction="http://www.illinoisworknet.com/webServices/workNetServices/Items/GetItemsInGroup" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetItem">
+      <soap12:operation soapAction="http://www.illinoisworknet.com/webServices/workNetServices/Items/GetItem" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetItemByCode">
+      <soap12:operation soapAction="http://www.illinoisworknet.com/webServices/workNetServices/Items/GetItemByCode" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Select">
+      <soap12:operation soapAction="http://www.illinoisworknet.com/webServices/workNetServices/Items/Select" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Search">
+      <soap12:operation soapAction="http://www.illinoisworknet.com/webServices/workNetServices/Items/Search" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="Items">
+    <wsdl:port name="ItemsSoap" binding="tns:ItemsSoap">
+      <soap:address location="http://www.illinoisworknet.com/workNetItems/items.asmx" />
+    </wsdl:port>
+    <wsdl:port name="ItemsSoap12" binding="tns:ItemsSoap12">
+      <soap12:address location="http://www.illinoisworknet.com/workNetItems/items.asmx" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>
