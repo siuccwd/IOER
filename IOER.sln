@@ -1,6 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
+# Visual Studio 2013
+VisualStudioVersion = 12.0.30110.0
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "business", "business", "{B5D13629-65FF-43B8-8C7A-8C7EFF072F95}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DAL", "DAL", "{D5BACB07-5E7A-4432-A63C-B964EAFB2AC0}"
@@ -38,6 +40,14 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IOER.web", "Presentation\IOER.web\IOER.web.csproj", "{FDEF36B9-84D1-4FCD-9B3F-86B0D8077548}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Database", "Database", "{98019CAC-E288-4DB2-89C7-9C6F9BC8B16F}"
+	ProjectSection(SolutionItems) = preProject
+		Database\CREATE DATABASE Gateway.sql = Database\CREATE DATABASE Gateway.sql
+		Database\CREATE DATABASE Isle_IOER.sql = Database\CREATE DATABASE Isle_IOER.sql
+		Database\CREATE DATABASE IsleContent.sql = Database\CREATE DATABASE IsleContent.sql
+		Database\Gateway_script.sql = Database\Gateway_script.sql
+		Database\Isle_IOER_script.sql = Database\Isle_IOER_script.sql
+		Database\IsleContent_script.sql = Database\IsleContent_script.sql
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GatewayBusinessEntities", "DataAccess\GatewayBusinessEntities\GatewayBusinessEntities.csproj", "{6771CFAC-9D01-4A98-9CAC-55A401D6AEDB}"
 EndProject
@@ -58,92 +68,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommunitiesTestProject", "Testing\CommunitiesTestProject\CommunitiesTestProject.csproj", "{3475A714-A6BC-433A-A5EA-78A61A5CA649}"
 EndProject
 Global
-	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 21
-		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
-		SccTeamFoundationServer = http://tfs2012:8080/tfs/team%20collection
-		SccLocalPath0 = .
-		SccProjectUniqueName1 = Business\\ILPathways.Business\\ILPathways.Business.csproj
-		SccProjectTopLevelParentUniqueName1 = IOER.sln
-		SccProjectName1 = Business/ILPathways.Business
-		SccLocalPath1 = Business\\ILPathways.Business
-		SccProjectUniqueName2 = Business\\LRWarehouse.Business\\LRWarehouse.Business.csproj
-		SccProjectTopLevelParentUniqueName2 = IOER.sln
-		SccProjectName2 = Business/LRWarehouse.Business
-		SccLocalPath2 = Business\\LRWarehouse.Business
-		SccProjectUniqueName3 = Common\\ILPathways.Utilities\\ILPathways.Utilities.csproj
-		SccProjectTopLevelParentUniqueName3 = IOER.sln
-		SccProjectName3 = Common/ILPathways.Utilities
-		SccLocalPath3 = Common\\ILPathways.Utilities
-		SccProjectUniqueName4 = Common\\LearningRegistry\\LearningRegistry.csproj
-		SccProjectTopLevelParentUniqueName4 = IOER.sln
-		SccProjectName4 = Common/LearningRegistry
-		SccLocalPath4 = Common\\LearningRegistry
-		SccProjectUniqueName5 = DataAccess\\ILPathways.DAL\\ILPathways.DAL.csproj
-		SccProjectTopLevelParentUniqueName5 = IOER.sln
-		SccProjectName5 = DataAccess/ILPathways.DAL
-		SccLocalPath5 = DataAccess\\ILPathways.DAL
-		SccProjectUniqueName6 = DataAccess\\LRWarehouse.DAL\\LRWarehouse.DAL.csproj
-		SccProjectTopLevelParentUniqueName6 = IOER.sln
-		SccProjectName6 = DataAccess/LRWarehouse.DAL
-		SccLocalPath6 = DataAccess\\LRWarehouse.DAL
-		SccProjectUniqueName7 = Common\\IllinoisPathways.Common\\ILPathways.Common.csproj
-		SccProjectTopLevelParentUniqueName7 = IOER.sln
-		SccProjectName7 = Common/IllinoisPathways.Common
-		SccLocalPath7 = Common\\IllinoisPathways.Common
-		SccProjectUniqueName8 = Services\\Isle.BizServices\\Isle.BizServices.csproj
-		SccProjectTopLevelParentUniqueName8 = IOER.sln
-		SccProjectName8 = Services/Isle.BizServices
-		SccLocalPath8 = Services\\Isle.BizServices
-		SccProjectUniqueName9 = Services\\Isle.DataContracts\\Isle.DataContracts.csproj
-		SccProjectTopLevelParentUniqueName9 = IOER.sln
-		SccProjectName9 = Services/Isle.DataContracts
-		SccLocalPath9 = Services\\Isle.DataContracts
-		SccProjectUniqueName10 = Services\\Isle.RESTServices\\Isle.RESTServices.csproj
-		SccProjectTopLevelParentUniqueName10 = IOER.sln
-		SccProjectName10 = Services/Isle.RESTServices
-		SccLocalPath10 = Services\\Isle.RESTServices
-		SccProjectUniqueName11 = DataAccess\\IoerContentBusinessEntities\\IoerContentBusinessEntities.csproj
-		SccProjectTopLevelParentUniqueName11 = IOER.sln
-		SccProjectName11 = DataAccess/IoerContentBusinessEntities
-		SccLocalPath11 = DataAccess\\IoerContentBusinessEntities
-		SccProjectUniqueName12 = Presentation\\IOER.web\\IOER.web.csproj
-		SccProjectTopLevelParentUniqueName12 = IOER.sln
-		SccProjectName12 = Presentation/IOER.web
-		SccLocalPath12 = Presentation\\IOER.web
-		SccProjectUniqueName13 = DataAccess\\GatewayBusinessEntities\\GatewayBusinessEntities.csproj
-		SccProjectTopLevelParentUniqueName13 = IOER.sln
-		SccProjectName13 = DataAccess/GatewayBusinessEntities
-		SccLocalPath13 = DataAccess\\GatewayBusinessEntities
-		SccProjectUniqueName14 = LearningRegistryImport\\LR_Import\\LR_Import.csproj
-		SccProjectTopLevelParentUniqueName14 = IOER.sln
-		SccProjectName14 = LearningRegistryImport/LR_Import
-		SccLocalPath14 = LearningRegistryImport\\LR_Import
-		SccProjectUniqueName15 = Testing\\LibrariesUnitTests\\LibrariesUnitTests.csproj
-		SccProjectTopLevelParentUniqueName15 = IOER.sln
-		SccProjectName15 = Testing/LibrariesUnitTests
-		SccLocalPath15 = Testing\\LibrariesUnitTests
-		SccProjectUniqueName16 = Testing\\ContentServicesUnitTests\\ContentServicesUnitTests.csproj
-		SccProjectTopLevelParentUniqueName16 = IOER.sln
-		SccProjectName16 = Testing/ContentServicesUnitTests
-		SccLocalPath16 = Testing\\ContentServicesUnitTests
-		SccProjectUniqueName17 = DataAccess\\IOERBusinessEntities\\IOERBusinessEntities.csproj
-		SccProjectTopLevelParentUniqueName17 = IOER.sln
-		SccProjectName17 = DataAccess/IOERBusinessEntities
-		SccLocalPath17 = DataAccess\\IOERBusinessEntities
-		SccProjectUniqueName18 = Testing\\ResourceUnitTest\\ResourceUnitTest.csproj
-		SccProjectTopLevelParentUniqueName18 = IOER.sln
-		SccProjectName18 = Testing/ResourceUnitTest
-		SccLocalPath18 = Testing\\ResourceUnitTest
-		SccProjectUniqueName19 = Testing\\ActivityServicesUnitTests\\ActivityServicesUnitTests.csproj
-		SccProjectTopLevelParentUniqueName19 = IOER.sln
-		SccProjectName19 = Testing/ActivityServicesUnitTests
-		SccLocalPath19 = Testing\\ActivityServicesUnitTests
-		SccProjectUniqueName20 = Testing\\CommunitiesTestProject\\CommunitiesTestProject.csproj
-		SccProjectTopLevelParentUniqueName20 = IOER.sln
-		SccProjectName20 = Testing/CommunitiesTestProject
-		SccLocalPath20 = Testing\\CommunitiesTestProject
-	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Debug|Mixed Platforms = Debug|Mixed Platforms
