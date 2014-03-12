@@ -129,6 +129,67 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="bin\Debug\LibrariesUnitTests.dll.config" />
+    <None Include="bin\Release\LibrariesUnitTests.dll.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="bin\Debug\AutoMapper.dll" />
+    <Content Include="bin\Debug\EntityFramework.dll" />
+    <Content Include="bin\Debug\EntityFramework.xml" />
+    <Content Include="bin\Debug\GatewayBusinessEntities.dll" />
+    <Content Include="bin\Debug\GatewayBusinessEntities.pdb" />
+    <Content Include="bin\Debug\ILPathways.Business.dll" />
+    <Content Include="bin\Debug\ILPathways.Business.pdb" />
+    <Content Include="bin\Debug\ILPathways.Common.dll" />
+    <Content Include="bin\Debug\ILPathways.Common.pdb" />
+    <Content Include="bin\Debug\ILPathways.DAL.dll" />
+    <Content Include="bin\Debug\ILPathways.DAL.pdb" />
+    <Content Include="bin\Debug\ILPathways.Utilities.dll" />
+    <Content Include="bin\Debug\ILPathways.Utilities.pdb" />
+    <Content Include="bin\Debug\IOERBusinessEntities.dll" />
+    <Content Include="bin\Debug\IOERBusinessEntities.pdb" />
+    <Content Include="bin\Debug\IoerContentBusinessEntities.dll" />
+    <Content Include="bin\Debug\IoerContentBusinessEntities.pdb" />
+    <Content Include="bin\Debug\Isle.BizServices.dll" />
+    <Content Include="bin\Debug\Isle.BizServices.pdb" />
+    <Content Include="bin\Debug\Isle.DataContracts.dll" />
+    <Content Include="bin\Debug\Isle.DataContracts.pdb" />
+    <Content Include="bin\Debug\LibrariesUnitTests.dll" />
+    <Content Include="bin\Debug\LibrariesUnitTests.pdb" />
+    <Content Include="bin\Debug\LRWarehouse.Business.dll" />
+    <Content Include="bin\Debug\LRWarehouse.Business.pdb" />
+    <Content Include="bin\Debug\LRWarehouse.DAL.dll" />
+    <Content Include="bin\Debug\LRWarehouse.DAL.pdb" />
+    <Content Include="bin\Debug\Microsoft.ApplicationBlocks.Data.dll" />
+    <Content Include="bin\Debug\nClam.dll" />
+    <Content Include="bin\Release\AutoMapper.dll" />
+    <Content Include="bin\Release\EntityFramework.dll" />
+    <Content Include="bin\Release\EntityFramework.xml" />
+    <Content Include="bin\Release\GatewayBusinessEntities.dll" />
+    <Content Include="bin\Release\GatewayBusinessEntities.pdb" />
+    <Content Include="bin\Release\ILPathways.Business.dll" />
+    <Content Include="bin\Release\ILPathways.Business.pdb" />
+    <Content Include="bin\Release\ILPathways.Common.dll" />
+    <Content Include="bin\Release\ILPathways.Common.pdb" />
+    <Content Include="bin\Release\ILPathways.DAL.dll" />
+    <Content Include="bin\Release\ILPathways.DAL.pdb" />
+    <Content Include="bin\Release\ILPathways.Utilities.dll" />
+    <Content Include="bin\Release\ILPathways.Utilities.pdb" />
+    <Content Include="bin\Release\IOERBusinessEntities.dll" />
+    <Content Include="bin\Release\IOERBusinessEntities.pdb" />
+    <Content Include="bin\Release\IoerContentBusinessEntities.dll" />
+    <Content Include="bin\Release\IoerContentBusinessEntities.pdb" />
+    <Content Include="bin\Release\Isle.BizServices.dll" />
+    <Content Include="bin\Release\Isle.BizServices.pdb" />
+    <Content Include="bin\Release\Isle.DataContracts.dll" />
+    <Content Include="bin\Release\Isle.DataContracts.pdb" />
+    <Content Include="bin\Release\LibrariesUnitTests.dll" />
+    <Content Include="bin\Release\LibrariesUnitTests.pdb" />
+    <Content Include="bin\Release\LRWarehouse.Business.dll" />
+    <Content Include="bin\Release\LRWarehouse.Business.pdb" />
+    <Content Include="bin\Release\LRWarehouse.DAL.dll" />
+    <Content Include="bin\Release\LRWarehouse.DAL.pdb" />
+    <Content Include="bin\Release\Microsoft.ApplicationBlocks.Data.dll" />
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">

@@ -126,6 +126,31 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="bin\Debug\ILPathways.Business.dll" />
+    <Content Include="bin\Debug\ILPathways.Business.pdb" />
+    <Content Include="bin\Debug\ILPathways.Common.dll" />
+    <Content Include="bin\Debug\ILPathways.Common.pdb" />
+    <Content Include="bin\Debug\ILPathways.Utilities.dll" />
+    <Content Include="bin\Debug\ILPathways.Utilities.pdb" />
+    <Content Include="bin\Debug\LRWarehouse.Business.dll" />
+    <Content Include="bin\Debug\LRWarehouse.Business.pdb" />
+    <Content Include="bin\Debug\LRWarehouse.DAL.dll" />
+    <Content Include="bin\Debug\LRWarehouse.DAL.pdb" />
+    <Content Include="bin\Debug\Microsoft.ApplicationBlocks.Data.dll" />
+    <Content Include="bin\Debug\nClam.dll" />
+    <Content Include="bin\Release\ILPathways.Business.dll" />
+    <Content Include="bin\Release\ILPathways.Business.pdb" />
+    <Content Include="bin\Release\ILPathways.Common.dll" />
+    <Content Include="bin\Release\ILPathways.Common.pdb" />
+    <Content Include="bin\Release\ILPathways.Utilities.dll" />
+    <Content Include="bin\Release\ILPathways.Utilities.pdb" />
+    <Content Include="bin\Release\LRWarehouse.Business.dll" />
+    <Content Include="bin\Release\LRWarehouse.Business.pdb" />
+    <Content Include="bin\Release\LRWarehouse.DAL.dll" />
+    <Content Include="bin\Release\LRWarehouse.DAL.pdb" />
+    <Content Include="bin\Release\Microsoft.ApplicationBlocks.Data.dll" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -89,6 +89,18 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.Config" />
+    <None Include="bin\Debug\IOERBusinessEntities.dll.config" />
+    <None Include="bin\Release\IOERBusinessEntities.dll.config" />
+    <None Include="obj\Debug\build.force" />
+    <None Include="obj\Debug\DesignTimeResolveAssemblyReferencesInput.cache" />
+    <None Include="obj\Debug\edmxResourcesToEmbed\ResourceModel.csdl" />
+    <None Include="obj\Debug\edmxResourcesToEmbed\ResourceModel.msl" />
+    <None Include="obj\Debug\edmxResourcesToEmbed\ResourceModel.ssdl" />
+    <None Include="obj\Release\DesignTimeResolveAssemblyReferencesInput.cache" />
+    <None Include="obj\Release\edmxResourcesToEmbed\ResourceModel.csdl" />
+    <None Include="obj\Release\edmxResourcesToEmbed\ResourceModel.msl" />
+    <None Include="obj\Release\edmxResourcesToEmbed\ResourceModel.ssdl" />
+    <None Include="obj\Release\IOERBusinessEntities.csprojResolveAssemblyReference.cache" />
     <None Include="packages.config" />
     <None Include="ResourceModel.Context.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
@@ -106,6 +118,27 @@
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="bin\Debug\EntityFramework.dll" />
+    <Content Include="bin\Debug\EntityFramework.xml" />
+    <Content Include="bin\Debug\IOERBusinessEntities.dll" />
+    <Content Include="bin\Debug\IOERBusinessEntities.pdb" />
+    <Content Include="bin\Release\EntityFramework.dll" />
+    <Content Include="bin\Release\EntityFramework.xml" />
+    <Content Include="bin\Release\IOERBusinessEntities.dll" />
+    <Content Include="bin\Release\IOERBusinessEntities.pdb" />
+    <Content Include="obj\Debug\IOERBusinessEntities.csproj.FileListAbsolute.txt" />
+    <Content Include="obj\Debug\IOERBusinessEntities.dll" />
+    <Content Include="obj\Debug\IOERBusinessEntities.pdb" />
+    <Content Include="obj\Debug\TempPE\ResourceModel.cs.dll" />
+    <Content Include="obj\Debug\TempPE\ResourceModel.Designer.cs.dll" />
+    <Content Include="obj\Release\IOERBusinessEntities.csproj.FileListAbsolute.txt" />
+    <Content Include="obj\Release\IOERBusinessEntities.dll" />
+    <Content Include="obj\Release\IOERBusinessEntities.pdb" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="obj\Release\TempPE\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

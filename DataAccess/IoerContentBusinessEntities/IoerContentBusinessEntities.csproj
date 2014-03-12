@@ -213,6 +213,8 @@
   <ItemGroup>
     <None Include="App.Config" />
     <Fakes Include="Fakes\AutoMapper.fakes" />
+    <None Include="bin\Debug\IoerContentBusinessEntities.dll.config" />
+    <None Include="bin\Release\IoerContentBusinessEntities.dll.config" />
     <None Include="IoerContent.Context.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <DependentUpon>IoerContent.edmx</DependentUpon>
@@ -240,6 +242,26 @@
       <Project>{949d7eb6-93e1-489f-a5e7-2d0d9086f720}</Project>
       <Name>ILPathways.Utilities</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="bin\Debug\AutoMapper.dll" />
+    <Content Include="bin\Debug\EntityFramework.dll" />
+    <Content Include="bin\Debug\EntityFramework.xml" />
+    <Content Include="bin\Debug\ILPathways.Business.dll" />
+    <Content Include="bin\Debug\ILPathways.Business.pdb" />
+    <Content Include="bin\Debug\ILPathways.Utilities.dll" />
+    <Content Include="bin\Debug\ILPathways.Utilities.pdb" />
+    <Content Include="bin\Debug\IoerContentBusinessEntities.dll" />
+    <Content Include="bin\Debug\IoerContentBusinessEntities.pdb" />
+    <Content Include="bin\Debug\nClam.dll" />
+    <Content Include="bin\Release\AutoMapper.dll" />
+    <Content Include="bin\Release\AutoMapper.xml" />
+    <Content Include="bin\Release\EntityFramework.dll" />
+    <Content Include="bin\Release\EntityFramework.xml" />
+    <Content Include="bin\Release\ILPathways.Business.dll" />
+    <Content Include="bin\Release\ILPathways.Business.pdb" />
+    <Content Include="bin\Release\IoerContentBusinessEntities.dll" />
+    <Content Include="bin\Release\IoerContentBusinessEntities.pdb" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

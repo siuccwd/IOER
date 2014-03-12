@@ -168,6 +168,8 @@
       <Generator>EntityModelCodeGenerator</Generator>
       <LastGenOutput>GatewayDB.Designer.cs</LastGenOutput>
     </EntityDeploy>
+    <None Include="bin\Debug\GatewayBusinessEntities.dll.config" />
+    <None Include="bin\Release\GatewayBusinessEntities.dll.config" />
     <None Include="GatewayDB.Context.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <DependentUpon>GatewayDB.edmx</DependentUpon>
@@ -185,6 +187,16 @@
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="bin\Debug\EntityFramework.dll" />
+    <Content Include="bin\Debug\EntityFramework.xml" />
+    <Content Include="bin\Debug\GatewayBusinessEntities.dll" />
+    <Content Include="bin\Debug\GatewayBusinessEntities.pdb" />
+    <Content Include="bin\Release\EntityFramework.dll" />
+    <Content Include="bin\Release\EntityFramework.xml" />
+    <Content Include="bin\Release\GatewayBusinessEntities.dll" />
+    <Content Include="bin\Release\GatewayBusinessEntities.pdb" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

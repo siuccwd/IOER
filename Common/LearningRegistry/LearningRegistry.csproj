@@ -72,6 +72,14 @@
     <Compile Include="SliceResult.cs" />
     <Compile Include="Taxonomies.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="bin\Debug\BouncyCastle.Crypto.dll" />
+    <Content Include="bin\Debug\LearningRegistry.dll" />
+    <Content Include="bin\Debug\LearningRegistry.pdb" />
+    <Content Include="bin\Release\BouncyCastle.Crypto.dll" />
+    <Content Include="bin\Release\LearningRegistry.dll" />
+    <Content Include="bin\Release\LearningRegistry.pdb" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -79,6 +79,17 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="bin\Debug\ILPathways.Business.dll" />
+    <Content Include="bin\Debug\ILPathways.Business.pdb" />
+    <Content Include="bin\Debug\ILPathways.Utilities.dll" />
+    <Content Include="bin\Debug\ILPathways.Utilities.pdb" />
+    <Content Include="bin\Debug\nClam.dll" />
+    <Content Include="bin\Release\ILPathways.Business.dll" />
+    <Content Include="bin\Release\ILPathways.Business.pdb" />
+    <Content Include="bin\Release\ILPathways.Utilities.dll" />
+    <Content Include="bin\Release\ILPathways.Utilities.pdb" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
