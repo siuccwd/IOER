@@ -9,6 +9,7 @@ using System.Text;
 using ILPathways.Business;
 using ILPathways.Common;
 using ILPathways.DAL;
+using ILPathways.Utilities;
 using AcctSvce = Isle.BizServices.workNetAccountServices;
 using PatronMgr = LRWarehouse.DAL.PatronManager;
 //.use alias for easy change to Gateway
@@ -19,96 +20,17 @@ using PatronMgr = LRWarehouse.DAL.PatronManager;
 using LRWarehouse.Business;
 using ThisUser = LRWarehouse.Business.Patron;
 using ThisUserProfile = LRWarehouse.Business.PatronProfile;
-using ResBiz = IOERBusinessEntities;
+using EFDal = IOERBusinessEntities;
+
+using Isle.DTO;
 
 namespace Isle.BizServices
 {
     public class AccountServices : ServiceHelper
     {
-        string className = "AccountServices";
+        static string thisClassName = "AccountServices";
         PatronMgr myManager = new PatronMgr();
-
-        #region Organzations
-        public static Organization OrganizationCreate( Organization org, string pathway )
-        {
-            return OrganizationManager.Create( org, pathway); 
-        }
-
-        public static Organization OrganizationUpdate( Organization org )
-        {
-            return OrganizationManager.Update( org );
-        }
-
-
-        public static DataSet GetTopLevelOrganzations()
-        {
-            return OrganizationManager.GetTopLevelOrganzations(); ;
-        }
-        public static DataSet GetChildOrganizations( int parentId )
-        {
-            return OrganizationManager.GetChildOrganizations( parentId );;
-        }
-        public static DataSet GetRTTTOrganzations()
-        {
-            return OrganizationManager.GetRTTTOrganzations(); 
-        }
-        /// <summary>
-        /// Search for Organizations using passed parameters
-        /// </summary>
-        /// <param name="pFilter"></param>
-        /// <param name="pOrderBy">Sort order of results. If blank, the proc should have a default sort order</param>
-        /// <param name="pStartPageIndex"></param>
-        /// <param name="pMaximumRows"></param>
-        /// <param name="pTotalRows"></param>
-        /// <returns>Dataset</returns>
-        public static DataSet OrganizationSearch( string pFilter, string pOrderBy, int pStartPageIndex, int pMaximumRows, ref int pTotalRows )
-        {
-            return OrganizationManager.Search( pFilter, pOrderBy, pStartPageIndex, pMaximumRows, ref pTotalRows );
-        }
-
-        /// <summary>
-        /// Search for Organizations using passed parameters
-        /// </summary>
-        /// <param name="pFilter"></param>
-        /// <param name="pOrderBy"></param>
-        /// <param name="pStartPageIndex"></param>
-        /// <param name="pMaximumRows"></param>
-        /// <param name="pTotalRows"></param>
-        /// <returns>List<></returns>
-        public static List<Organization> SearchAsList( string pFilter, string pOrderBy, int pStartPageIndex, int pMaximumRows, ref int pTotalRows )
-        {
-            //TODO - create a List<> version
-            return OrganizationManager.SearchAsList( pFilter, pOrderBy, pStartPageIndex, pMaximumRows, ref pTotalRows );
-        }
-
-        public static Organization GetOrganization( ThisUser appUser, ref string statusMessage )
-        {
-            Organization entity = new Organization();
-            OrganizationManager mgr = new OrganizationManager();
-            if ( appUser.OrgId > 0 )
-            {
-                entity = OrganizationManager.Get( appUser.OrgId );
-            }
-            return entity;
-        }
-
-        public static Organization GetOrgByName( string orgName )
-        {
-            Organization entity = new Organization();
-            OrganizationManager mgr = new OrganizationManager();
-            entity = OrganizationManager.GetByName( orgName );
-            return entity;
-        }
-
-        public static int OrganizationRequestCreate( OrganizationRequest org, ref string statusMessage )
-        {
-            return new OrganizationRequestManager().Create( org, ref statusMessage );
-        }
-        public static string OrganizationRequestUpdate( OrganizationRequest org )
-        {
-            return new OrganizationRequestManager().Update( org );
-        }
-        #endregion
+        static string SessionLoginProxy = "Session Login Proxy";
 
         #region Authorization
 
@@ -125,32 +47,7 @@ namespace Isle.BizServices
 
             return isValid;
         }
-        /// <summary>
-        /// Retrieve customer by User Id
-        /// </summary>
-        /// <param name="rowId"></param>
-        /// <param name="encryptedPassword"></param>
-        /// <returns></returns>
-        public ThisUser GetCustomerByRowId( string rowId, ref string statusMessage )
-        {
-
-            ThisUser user = new ThisUser();
-            string message = "There was an error while processing the request.";
-
-            try
-            {
-                user = myManager.GetByRowId( rowId );
-
-            }
-            catch ( Exception ex )
-            {
-                ServiceHelper.LogError( "AccountServices.GetCustomerByRowId(): " + ex.ToString() );
-                statusMessage = message;
-                return null;
-            }
-
-            return user;
-        } //
+       
 
         #endregion
         #region  ThisUser methods
@@ -193,15 +90,54 @@ namespace Isle.BizServices
             return mgr.Update( entity );
 
         }//
+
+
+        public int PatronProfile_Create( ThisUserProfile entity, ref string statusMessage )
+        {
+            if ( entity.UserId > 0 )
+            {
+                PatronMgr mgr = new PatronMgr();
+                return mgr.PatronProfile_Create( entity, ref statusMessage );
+            }
+            else
+            {
+                statusMessage = "Error - no userId was found";
+                return 0;
+            }
+
+        }//
+        public string PatronProfile_Update( ThisUserProfile entity )
+        {
+            PatronMgr mgr = new PatronMgr();
+            return mgr.PatronProfile_Update( entity );
+
+        }//
+        public string PatronProfile_UpdateImage( ThisUserProfile entity )
+        {
+            PatronMgr mgr = new PatronMgr();
+            return mgr.PatronProfile_Update( entity );
+
+        }//
         #endregion
 
         #region ====== Retrieval Methods ===============================================
         /// <summary>
-        /// Get User record via integer id
+        /// Get User record and profile via integer id
         /// </summary>
         /// <param name="pId"></param>
         /// <returns></returns>
         public ThisUser Get( int pId )
+        {
+            PatronMgr mgr = new PatronMgr();
+            return mgr.Get( pId );
+        }//
+
+        /// <summary>
+        /// Get user and profile
+        /// </summary>
+        /// <param name="pId"></param>
+        /// <returns></returns>
+        public static ThisUser GetUser( int pId )
         {
             PatronMgr mgr = new PatronMgr();
             return mgr.Get( pId );
@@ -247,8 +183,53 @@ namespace Isle.BizServices
         /// <returns></returns>
         public ThisUser GetByRowId( string pRowId )
         {
+            if ( pRowId == null || pRowId.Trim().Length != 36 )
+                return new Patron() { IsValid = false };
+
             PatronMgr mgr = new PatronMgr();
             return mgr.GetByRowId( pRowId );
+        }//
+
+        /// <summary>
+        /// Retrieve by User RowId - called from UserDataService
+        /// </summary>
+        /// <param name="rowId"></param>
+        /// <param name="encryptedPassword"></param>
+        /// <returns></returns>
+        public ThisUser GetByRowId( string rowId, ref string statusMessage )
+        {
+            ThisUser user = new ThisUser();
+            string message = "There was an error while processing the request.";
+
+            try
+            {
+                user = myManager.GetByRowId( rowId );
+
+            }
+            catch ( Exception ex )
+            {
+                ServiceHelper.LogError( "AccountServices.GetByRowId(rowId, ref string statusMessage): " + ex.ToString() );
+                statusMessage = message;
+                return null;
+            }
+
+            return user;
+        } //
+        /// <summary>
+        /// Get user using the temp proxyId
+        /// </summary>
+        /// <param name="pRowId"></param>
+        /// <returns></returns>
+        public ThisUser GetByProxyRowId( string proxyId, ref string statusMessage  )
+        {
+            if ( proxyId == null || proxyId.Trim().Length != 36 )
+            {
+                statusMessage = "Error: invalaid request";
+                return new Patron() { IsValid = false };
+            }
+
+            Patron user = GetUserFromProxy( proxyId, ref statusMessage );
+            return user;
         }//
 
         /// <summary>
@@ -259,7 +240,7 @@ namespace Isle.BizServices
         public ThisUser GetByEmail( string email )
         {
             PatronMgr mgr = new PatronMgr();
-            return mgr.GetByEmail( email );
+            return mgr.GetByEmail( email.Trim() );
 
         }//
 
@@ -305,7 +286,6 @@ namespace Isle.BizServices
                 encryptedPassword = ServiceHelper.Encrypt( password );
             }
             PatronMgr mgr = new PatronMgr();
-            //return mgr.Authorize( userName, password );
 
             //get user
             appUser = mgr.Authorize( userName, encryptedPassword );
@@ -313,6 +293,11 @@ namespace Isle.BizServices
             if ( appUser == null || appUser.IsValid == false )
             {
                 statusMessage = "Error: Login failed - Invalid credentials";
+            }
+            else
+            {
+                //add proxy
+                appUser.ProxyId = Create_SessionProxyLoginId( appUser.Id, ref statusMessage );
             }
 
             return appUser;
@@ -349,18 +334,7 @@ namespace Isle.BizServices
 
 
         }
-        public int PatronProfile_Create( ThisUserProfile entity, ref string statusMessage )
-        {
-            PatronMgr mgr = new PatronMgr();
-            return mgr.PatronProfile_Create( entity, ref statusMessage );
 
-        }//
-        public string PatronProfile_Update( ThisUserProfile entity )
-        {
-            PatronMgr mgr = new PatronMgr();
-            return mgr.PatronProfile_Update( entity );
-
-        }//
         public ThisUserProfile PatronProfile_Get( int pUserId )
         {
             PatronMgr mgr = new PatronMgr();
@@ -372,14 +346,14 @@ namespace Isle.BizServices
         public static List<Patron> GetAllUsers()
         {
 
-            ResBiz.ResourceEntities ctx = new ResBiz.ResourceEntities();
-            List<ResBiz.Patron> eflist = ctx.Patrons
+            EFDal.ResourceEntities ctx = new EFDal.ResourceEntities();
+            List<EFDal.Patron> eflist = ctx.Patrons
                             .OrderBy( s => s.LastName )
                             .ToList();
             List<Patron> list = new List<Patron>();
             if ( eflist.Count > 0 )
             {
-                foreach ( ResBiz.Patron item in eflist )
+                foreach ( EFDal.Patron item in eflist )
                 {
                     Patron e = new Patron();
                     e.Id = item.Id;
@@ -396,13 +370,13 @@ namespace Isle.BizServices
         {
             CodeItem ci = new CodeItem();
 
-            ResBiz.ResourceEntities ctx = new ResBiz.ResourceEntities();
+            EFDal.ResourceEntities ctx = new EFDal.ResourceEntities();
 
-            List<ResBiz.Patron> eflist = ctx.Patrons.OrderBy( s => s.LastName ).ToList();
+            List<EFDal.Patron> eflist = ctx.Patrons.OrderBy( s => s.LastName ).ToList();
             List<CodeItem> list = new List<CodeItem>();
             if ( eflist.Count > 0 )
             {
-                foreach ( ResBiz.Patron item in eflist )
+                foreach ( EFDal.Patron item in eflist )
                 {
                     ci = new CodeItem();
                     ci.Id = item.Id;
@@ -416,6 +390,346 @@ namespace Isle.BizServices
         }
 
         #endregion
+        #endregion
+
+        #region patron - proxy login methods
+        public string Create_SessionProxyLoginId( int userId, ref string statusMessage )
+        {
+            return Create_ProxyLoginId( userId, SessionLoginProxy, 1, ref statusMessage );
+
+        }
+        public string Create_RegistrationConfirmProxyLoginId( int userId, ref string statusMessage )
+        {
+            int expiryDays = ServiceHelper.GetAppKeyValue( "registrationConfExpiryDays", 5 );
+            return Create_ProxyLoginId( userId, "Registration Immediate Confirmation", expiryDays, ref statusMessage );
+
+        }
+        public string Create_ForgotPasswordProxyLoginId( int userId, ref string statusMessage )
+        {
+            int expiryDays = ServiceHelper.GetAppKeyValue( "forgotPasswordExiryDays", 1 );
+            return Create_ProxyLoginId( userId, "Forgot Password", expiryDays, ref statusMessage );
+            
+        }
+        public string Create_3rdPartyAddProxyLoginId( int userId, ref string statusMessage )
+        {
+            int expiryDays = ServiceHelper.GetAppKeyValue( "user3rdPartyAddExpiryDays", 14 );
+            return Create_ProxyLoginId( userId, "User added from org.", expiryDays, ref statusMessage );
+
+        }
+        public string Create_3rdPartyAddProxyLoginId( int userId, string proxyType, ref string statusMessage )
+        {
+            int expiryDays = ServiceHelper.GetAppKeyValue( "user3rdPartyAddExpiryDays", 14 );
+            return Create_ProxyLoginId( userId, proxyType, expiryDays, ref statusMessage );
+
+        }
+        /// <summary>
+        /// General proxy type - usually a week to handle weekends
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="proxyType"></param>
+        /// <param name="statusMessage"></param>
+        /// <returns></returns>
+        public string Create_ProxyLoginId( int userId, string proxyType, ref string statusMessage )
+        {
+            int expiryDays = ServiceHelper.GetAppKeyValue( "proxyLoginExiryDays", 5 );
+            return Create_ProxyLoginId( userId, proxyType, expiryDays, ref statusMessage );
+
+        }
+        /// <summary>
+        /// Create a proxy guid for use in auto login
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="proxyType"></param>
+        /// <param name="statusMessage"></param>
+        /// <returns></returns>
+        private static string Create_ProxyLoginId( int userId, string proxyType, int expiryDays, ref string statusMessage )
+        {
+            EFDal.System_GenerateLoginId efEntity = new EFDal.System_GenerateLoginId();
+            string proxyId = "";
+            try
+            {
+                using ( var context = new EFDal.ResourceContext() )
+                {
+                    efEntity.UserId = userId;
+                    efEntity.ProxyId = Guid.NewGuid();
+                    efEntity.Created = System.DateTime.Now;
+                    if ( proxyType == SessionLoginProxy )
+                    {
+                        //expire at midnight - not really good for night owls
+                        //efEntity.ExpiryDate = new System.DateTime( DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 23, 59, 59 );
+                        efEntity.ExpiryDate = System.DateTime.Now.AddDays( expiryDays );
+                    }
+                    else
+                        efEntity.ExpiryDate = System.DateTime.Now.AddDays( expiryDays );
+
+                    efEntity.IsActive = true;
+                    efEntity.ProxyType = proxyType;
+
+                    context.System_GenerateLoginId.Add( efEntity );
+
+                    // submit the change to database
+                    int count = context.SaveChanges();
+                    if ( count > 0 )
+                    {
+                        statusMessage = "Successful";
+                        int id = efEntity.Id;
+                        return efEntity.ProxyId.ToString();
+                    }
+                    else
+                    {
+                        //?no info on error
+                        return proxyId;
+                    }
+                }
+            }
+            catch ( Exception ex )
+            {
+                LoggingHelper.LogError( ex, thisClassName + ".Create_ProxyLoginId()" );
+                statusMessage = ex.Message;
+                return proxyId;
+            }
+        }
+
+        /// <summary>
+        /// Retrieve userId for a proxy.
+        /// Even if the proxy has been used, the userid is returned - do can check if multiple links were used for the same user/email
+        /// </summary>
+        /// <param name="rowId"></param>
+        /// <param name="isProxyValid"></param>
+        /// <param name="doingCheckOnly">If true, a valid proxy will not be inactivated</param>
+        /// <param name="statusMessage"></param>
+        /// <returns></returns>
+        public int GetUserIdFromProxy( string rowId, bool doingCheckOnly, ref bool isProxyValid, ref string statusMessage )
+        {
+            int userId = 0;
+            isProxyValid = false;
+
+            using ( var context = new EFDal.ResourceContext() )
+            {
+                Guid id = new Guid( rowId );
+
+                EFDal.System_GenerateLoginId proxy = context.System_GenerateLoginId.FirstOrDefault( s => s.ProxyId == id );
+                if ( proxy != null && proxy.Id > 0 )
+                {
+                    if ( proxy.IsActive == false )
+                    {
+                        statusMessage = "Error: invalid request, previously used.";
+                        userId = proxy.UserId;
+                    }
+                    else if ( proxy.ExpiryDate != null && proxy.ExpiryDate < System.DateTime.Now )
+                    {
+                        statusMessage = "Error: the request has expired.";
+                        userId = proxy.UserId;
+                    }
+                    else
+                    {
+                        isProxyValid = true;
+                        userId = proxy.UserId;
+                        if ( doingCheckOnly == false )
+                        {
+                            //now set inactive (or delete??) ==> assuming only reason for get is to do the login
+                            InactivateProxy( rowId, ref statusMessage );
+                        }
+                    }
+
+                }
+                else
+                {
+                    statusMessage = "Error: invalid request (temp id not found).";
+                }
+            }
+
+            return userId;
+
+        }
+        public ThisUser GetUserFromProxy( string rowId, ref string statusMessage )
+        {
+            ThisUser user = new ThisUser();
+            if ( rowId == null || rowId.Trim().Length != 36 )
+            {
+                statusMessage = "Error: invalid proxy id.";
+                return user;
+            }
+            using ( var context = new EFDal.ResourceContext() )
+            {
+                Guid id = new Guid( rowId );
+
+                EFDal.System_GenerateLoginId proxy = context.System_GenerateLoginId.FirstOrDefault( s => s.ProxyId == id );
+                if ( proxy != null && proxy.Id > 0 )
+                {
+                    if ( proxy.IsActive == false )
+                    {
+                        statusMessage = "Error: invalid request, this temporary login key has been previously used.";
+                    }
+                    else if ( proxy.ExpiryDate != null && proxy.ExpiryDate < System.DateTime.Now )
+                    {
+                        statusMessage = "Error: this temporary login key has expired.";
+                    }
+                    else
+                    {
+                        user = new AccountServices().Get( proxy.UserId );
+                        //now set inactive (or delete??)
+                        InactivateProxy( rowId, ref statusMessage );
+                    }
+
+                }
+                else
+                {
+                    statusMessage = "Error: invalid request (temporary login key  not found).";
+                }
+            }
+
+            return user;
+
+        }
+        public bool InactivateProxy( string rowId, ref string statusMessage )
+        {
+            bool isValid = true;
+            using ( var context = new EFDal.ResourceContext() )
+            {
+                Guid id = new Guid( rowId );
+
+                EFDal.System_GenerateLoginId proxy = context.System_GenerateLoginId.FirstOrDefault( s => s.ProxyId == id );
+                if ( proxy != null && proxy.Id > 0 )
+                {
+                    proxy.IsActive = false;
+                    proxy.AccessDate = System.DateTime.Now;
+
+                    context.SaveChanges();
+                }
+            }
+
+            return isValid;
+
+        }
+        #endregion
+        #region === Dashboard methods
+        private static int resourcesToReturnCount = 8;
+
+        public static DashboardDTO GetMyDashboard( int forUserId )
+        {
+            ThisUser user = GetUser( forUserId );
+
+            return GetDashboard( user, forUserId, resourcesToReturnCount );
+        }
+        public static DashboardDTO GetMyDashboard( ThisUser user )
+        {
+            return GetDashboard( user, user.Id, resourcesToReturnCount );
+        }
+        public static DashboardDTO GetMyDashboard( ThisUser user, int maxResources )
+        {
+            return GetDashboard( user, user.Id, maxResources );
+        }
+        private static DashboardDTO GetDashboard( int forUserId, int requestedByUserId )
+        {
+            ThisUser user = GetUser( forUserId );
+            return GetDashboard( user, requestedByUserId, resourcesToReturnCount );
+        }
+       
+        public static DashboardDTO GetDashboard( ThisUser user, int requestedByUserId, int maxResources )
+        {
+            DashboardDTO dto = new DashboardDTO();
+            if ( user.Id == requestedByUserId )
+                dto.isMyDashboard = true;
+
+            if ( maxResources > 0 )
+                dto.maxResources = maxResources;
+
+            dto.userId = user.Id;
+            dto.name = user.FullName();
+            dto.avatarUrl = user.ImageUrl;
+            dto.description = user.UserProfile.RoleProfile;
+            dto.jobTitle = user.UserProfile.JobTitle;
+            dto.role = user.UserProfile.PublishingRole;
+            dto.organization = user.UserProfile.Organization;
+            //future link to organization page
+
+            //library
+            LibraryBizService ls = new LibraryBizService();
+            ls.Library_FillDashboard( dto, user, requestedByUserId );
+
+            //my resources
+            EFDal.EFResourceManager.Resource_FillDashboard( dto );
+
+            //my followed lib resources
+
+            //my org/library membership lib resources
+
+
+            return dto;
+        }
+
+        public static void FillDashboard( DashboardDTO dto )
+        {
+            if ( dto.userId == 0 )
+            {
+                dto.message = "Error - a userid is required";
+                return;
+            }
+            ThisUser user = GetUser( dto.userId );
+
+            FillDashboard( dto, user, dto.userId, resourcesToReturnCount );
+        }
+
+        public static void FillDashboard( DashboardDTO dto, ThisUser user )
+        {
+            //ThisUser user = GetUser( forUserId );
+
+            FillDashboard( dto, user, user.Id, resourcesToReturnCount );
+        }
+        public static void FillDashboard( DashboardDTO dto, int forUserId, int requestedByUserId )
+        {
+            ThisUser user = GetUser( forUserId );
+            FillDashboard( dto, user, requestedByUserId, resourcesToReturnCount );
+        }
+        public static void FillDashboard( DashboardDTO dto, ThisUser user, int requestedByUserId, int maxResources )
+        {
+            //should be initialized, but just in case
+            if (dto == null)
+                dto = new DashboardDTO();
+
+            if ( user.Id == requestedByUserId )
+                dto.isMyDashboard = true;
+
+            if ( maxResources > 0 && dto.maxResources == 0)
+                dto.maxResources = maxResources;
+
+            dto.userId = user.Id;
+            dto.name = user.FullName();
+            dto.avatarUrl = user.ImageUrl;
+            dto.description = user.UserProfile.RoleProfile;
+            dto.jobTitle = user.UserProfile.JobTitle;
+            dto.role = user.UserProfile.PublishingRole;
+            dto.organization = user.UserProfile.Organization;
+            //future link to organization page
+
+            //library
+            LibraryBizService ls = new LibraryBizService();
+            ls.Library_FillDashboard( dto, user, requestedByUserId );
+
+            //my resources
+            EFDal.EFResourceManager.Resource_FillDashboard( dto );
+
+            //my followed lib resources
+
+            //my org/library membership lib resources
+
+        }
+
+        #endregion
+        #region === Person Following =====
+        public static int Person_FollowingAdd( int pFollowingUserId, int FollowedByUserId )
+        {
+            return EFDal.AccountManager.PersonFollowing_Add( pFollowingUserId, FollowedByUserId );
+        }//
+        public static bool Person_FollowingDelete( int pFollowingUserId, int FollowedByUserId )
+        {
+            return EFDal.AccountManager.PersonFollowing_Delete( pFollowingUserId, FollowedByUserId );
+        }//
+        public static bool Person_FollowingIsMember( int pFollowingUserId, int FollowedByUserId )
+        {
+            return EFDal.AccountManager.PersonFollowing_IsMember( pFollowingUserId, FollowedByUserId );
+        }//
         #endregion
 
         #region ====== workNet/external Methods ===============================================
@@ -453,7 +767,7 @@ namespace Isle.BizServices
                 user.FirstName = acct.firstName;
                 user.LastName = acct.lastName;
                 user.Email = acct.email;
-                user.Username = acct.userName;
+                user.UserName = acct.userName;
                 user.Password = password;
                 user.IsValid = true;
                 //user.worknetId = acct.worknetId;

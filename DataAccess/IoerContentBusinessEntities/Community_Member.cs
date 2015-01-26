@@ -18,7 +18,9 @@ namespace IoerContentBusinessEntities
         public int CommunityId { get; set; }
         public int UserId { get; set; }
         public Nullable<System.DateTime> Created { get; set; }
+        public Nullable<int> MemberTypeId { get; set; }
     
         public virtual Community Community { get; set; }
+        public virtual Codes_LibraryMemberType Codes_LibraryMemberType { get; set; }
     }
 }

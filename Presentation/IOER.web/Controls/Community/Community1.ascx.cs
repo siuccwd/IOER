@@ -2,12 +2,16 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using System.Web.Script.Serialization;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
 using ILPathways.Library;
-using System.Web.Script.Serialization;
+using ILP = ILPathways.Business;
 using ILPathways.Services;
+using ILPathways.Utilities;
+using Isle.BizServices;
+using LRWarehouse.Business;
 
 namespace ILPathways.Controls.Community
 {
@@ -15,6 +19,7 @@ namespace ILPathways.Controls.Community
   {
     JavaScriptSerializer serializer = new JavaScriptSerializer();
     CommunityService comService = new CommunityService();
+    public int communityID { get; set; }
     public string communityData { get; set; }
     public string userGUID { get; set; }
     public string minimumLength { get; set; }
@@ -35,15 +40,24 @@ namespace ILPathways.Controls.Community
       userID = "var userID = 0;";
       userIsAdmin = "var userIsAdmin = false;";
 
+        //default to 1
+      communityID = GetRequestKeyValue( "id", 1 );
       communityData = "var communityData = {};";
       userGUID = "var userGUID = \"\";";
 
-      //Get community data
-      communityData = "var communityData = " + serializer.Serialize( comService.GetJSONCommunity( 1 ) ) +";";
+      //Determine what to show
+      if ( Page.RouteData.Values.Count > 0
+          && Page.RouteData.Values.ContainsKey( "RouteID" ) )
+      {
+          communityID = int.Parse( Page.RouteData.Values[ "RouteID" ].ToString() );
 
+      }
+
+      var currentUser = new Patron();
       //Check user status
       if ( IsUserAuthenticated() )
       {
+        currentUser = ( Patron ) WebUser;
         PostMakerContent.Visible = true;
         PostMakerLoginMessage.Visible = false;
         userGUID = "var userGUID = \"" + WebUser.RowId.ToString() + "\";";
@@ -59,6 +73,20 @@ namespace ILPathways.Controls.Community
         PostMakerLoginMessage.Visible = true;
         loginClass = "login";
       }
+
+      //Get community data
+      communityData = "var communityData = " + serializer.Serialize( comService.GetJSONCommunity( currentUser, communityID ) ) + ";";
+
+       //get all communities
+      string template = "<li><a href='/Community/{0}/{1}'>{2}</a></li>";
+      string communities = "";
+      List<ILP.Community> list = new CommunityServices().Community_SelectAll();
+      foreach ( ILP.Community item in list )
+      {
+          communities += string.Format( template, item.Id, UtilityManager.UrlFriendlyTitle( item.Title), item.Title );
+      }
+      if ( communities.Length > 1 )
+          txtCommunities.Text = "<ul>" + communities + "</ul>";
     }
   }
 }

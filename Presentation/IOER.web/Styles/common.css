@@ -16,7 +16,7 @@ body {
 input, select, textarea {   font-family: Verdana, Arial, Helvetica, Sans-Serif; font-size: 100%; } /* fix IE form font inheritance bug */
 
 table { font-size: 100%; } /* fix IE table font inheritance bug */
-td { vertical-align:top;}
+td { vertical-align:top; padding: 2px 5px;}
 
 a { color: #003aaa; padding:0px;}
 a:visited { color: #003aaa; }

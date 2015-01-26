@@ -16,17 +16,23 @@ namespace IoerContentBusinessEntities
     {
         public Community_Posting()
         {
+            this.Community_Posting1 = new HashSet<Community_Posting>();
             this.Community_PostingDocument = new HashSet<Community_PostingDocument>();
+            this.Community_PostItem = new HashSet<Community_PostItem>();
         }
     
         public int Id { get; set; }
-        public int CommunityId { get; set; }
         public string Message { get; set; }
+        public Nullable<int> PostingTypeId { get; set; }
+        public string PostingStatus { get; set; }
         public int CreatedById { get; set; }
         public Nullable<System.DateTime> Created { get; set; }
         public Nullable<int> RelatedPostingId { get; set; }
     
-        public virtual Community Community { get; set; }
+        public virtual Codes_PostingType Codes_PostingType { get; set; }
+        public virtual ICollection<Community_Posting> Community_Posting1 { get; set; }
+        public virtual Community_Posting Community_Posting2 { get; set; }
         public virtual ICollection<Community_PostingDocument> Community_PostingDocument { get; set; }
+        public virtual ICollection<Community_PostItem> Community_PostItem { get; set; }
     }
 }

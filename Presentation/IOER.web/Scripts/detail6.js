@@ -4,18 +4,31 @@ var timeRequiredMinutesValues = [0, 1, 5, 10, 15, 30, 45];
 var moreLikeThisAttempts = 0;
 var validUpdate = false;
 var userIsAdmin = userIsAdmin.toLowerCase() == "true";
+var userIsAuthor = userIsAuthor.toLowerCase() == "true";
 var thumbDivTypes = [
-    { match: ".doc", header: ".doc File", text: "Microsoft Word Document" },
-    { match: ".ppt", header: ".ppt File", text: "Microsoft PowerPoint" },
-    { match: ".xls", header: ".xls File", text: "Microsoft Excel Spreadsheet" },
-    { match: ".docx", header: ".docx File", text: "Microsoft Word Document" },
-    { match: ".pptx", header: ".pptx File", text: "Microsoft PowerPoint" },
-    { match: ".xlsx", header: ".xlsx File", text: "Microsoft Excel Spreadsheet" },
+    //{ match: ".docXX", header: ".doc File", text: "Microsoft Word Document" },
+    //{ match: ".ppt", header: ".ppt File", text: "Microsoft PowerPoint" },
+    //{ match: ".xls", header: ".xls File", text: "Microsoft Excel Spreadsheet" },
+    //{ match: ".docx", header: ".docx File", text: "Microsoft Word Document" },
+    //{ match: ".pptx", header: ".pptx File", text: "Microsoft PowerPoint" },
+    //{ match: ".xlsx", header: ".xlsx File", text: "Microsoft Excel Spreadsheet" },
     //{ match: ".pdf", header: ".pdf File", text: "Adobe PDF" },
-    { match: ".swf", header: ".swf File", text: "Adobe Shockwave File" }
+    //{ match: ".swfXX", header: ".swf File", text: "Adobe Shockwave File" }
+    //{ match: ".zip", header: "Archive File", file: "/images/icons/icon_zip_400x300.png" }
 ];
 var thumbIconTypes = [
-    { match: ".pdf", header: "Adobe PDF", file: "/images/icons/filethumbs/filethumb_pdf_400x300.png" },
+    //{ match: ".pdf", header: "Adobe PDF", file: "/images/icons/filethumbs/filethumb_pdf_400x300.png" },
+    /*{ match: ".ppt", header: "Microsoft PowerPoint", file: "/images/icons/filethumbs/filethumb_pptx_400x300.png" },
+    { match: ".pptx", header: "Microsoft PowerPoint", file: "/images/icons/filethumbs/filethumb_pptx_400x300.png" },
+    { match: ".doc", header: "Microsoft Word Document", file: "/images/icons/filethumbs/filethumb_docx_400x300.png" },
+    { match: ".docx", header: "Microsoft Word Document", file: "/images/icons/filethumbs/filethumb_docx_400x300.png" },
+    { match: ".xls", header: "Microsoft Excel Spreadsheet", file: "/images/icons/filethumbs/filethumb_xlsx_400x300.png" },
+    { match: ".xlsx", header: "Microsoft Excel Spreadsheet", file: "/images/icons/filethumbs/filethumb_xlsx_400x300.png" },*/
+    //{ match: ".swf", header: "Adobe Shockwave File", file: "/images/icons/filethumbs/filethumb_swf_400x400.png" },
+    { match: ".zip", header: "Archive File", file: "/images/icons/icon_zip_400x300.png" },
+    { match: ".rar", header: "Archive File", file: "/images/icons/icon_zip_400x300.png" },
+    { match: ".7z", header: "Archive File", file: "/images/icons/icon_zip_400x300.png" },
+    { match: ".tar", header: "Archive File", file: "/images/icons/icon_zip_400x300.png" }
 ];
 
 
@@ -25,6 +38,12 @@ $(document).ready(function () {
     $(window).on("resize", function () { resizeStuff(); }).trigger("resize");
     initTabBox();
     refreshData(resource);
+    if (typeof (parent.hasSelector) != "function") {
+      $("#btnSendResource").remove();
+    }
+    if (window == window.top) {
+      $("#btnMsgResource").remove();
+    }
 });
 
 /* ---   ---   Data Management   ---   --- */
@@ -32,6 +51,23 @@ $(document).ready(function () {
 function loadResourceData() {
   console.log("Reloading Resource Data");
     doAjax("LoadAllResourceData", { vid: resourceVersionID }, refreshData);
+}
+
+//Send Resource to external frame
+function sendResource() {
+  var data = {
+    version: resource.versionID,
+    id: resource.intID,
+    title: resource.title,
+    thumbImage: ($("#thumbnail img").length > 0 ? $("#thumbnail img").attr("src") : ""),
+    thumbMessage: ($(".thumbnailDiv").length > 0 ? $(".thumbnailDiv").html() : "")
+  };
+  parent.addResource(data);
+}
+
+//Send Resource ID using postmessage
+function sendResourceMsg() {
+  parent.postMessage(resource.intID, "*");
 }
 
 /* ---   ---   Data Rendering   ---   --- */
@@ -50,7 +86,8 @@ function renderResource() {
     renderLikesDislikes();
     renderBadges();
     renderMyLibrary();
-    renderRubrics();
+    renderEvaluations();
+    //renderRubrics();
     renderStandards(true);
     prefillEditFields();
     renderButtonBox();
@@ -131,7 +168,7 @@ function renderViewSpecialData() {
     }
 
     //Usage Rights
-    $("#usageRights .view").attr("src", resource.usageRightsIconURL ? resource.usageRightsIconURL : "http://mirrors.creativecommons.org/presskit/cc.primary.srr.gif");
+    $("#usageRights .view").attr("src", resource.usageRights.usageRightsIconURL != "" ? resource.usageRights.usageRightsIconURL : "http://mirrors.creativecommons.org/presskit/cc.primary.srr.gif");
     $("#pickUsageRights.edit select option").attr("selected", "false");
     $("#pickUsageRights.edit select option[value=" + resource.usageRights.usageRightsValue + "]").attr("selected", "selected");
     $("#pickUsageRights.edit .txtConditionsOfUse").val(resource.usageRightsURL);
@@ -142,37 +179,43 @@ function renderViewSpecialData() {
       doAjax("AddClickThrough", { userGUID: userGUID, versionID: resourceVersionID }, updateClickThroughs);
     });
     $("#resourceURL").html((resource.url.indexOf("/ContentDocs") == 0 ? "http://ioer.ilsharedlearning.org" + resource.url : resource.url));
+    if (resource.url == "#")
+        $("#resource.url").css("display", "none");
 
     //Thumbnail
-    $("#thumbnail img").attr("src", "//ioer.ilsharedlearning.org/OERThumbs/large/" + resource.intID + "-large.png");
-    for (i in thumbIconTypes) {
-      console.log(resource.url.indexOf(thumbIconTypes[i].match) > -1);
-      console.log(thumbIconTypes[i].file);
-      if(resource.url.indexOf(thumbIconTypes[i].match) > -1){
-        $("#thumbnail img").attr("src", thumbIconTypes[i].file);
-      }
-    }
-    $("#thumbnail img").on("error", function () {
-      $(this).replaceWith(
-          $("<div></div>")
-              .attr("id", "mainThumbDiv")
-              .addClass("thumbnailDiv")
-              .html("Generating Thumbnail...")
-      );
-      setTimeout(function () {
-        doAjax("GetThumbnail", { intID: resource.intID, url: resource.url }, successGetThumbnail);
-      }, 15000);
-    });
-    for (i in thumbDivTypes) {
-        if (resource.url.indexOf(thumbDivTypes[i].match) > -1) {
-            $("#thumbnail img").replaceWith(
-                $("<div></div>")
-                    .addClass("thumbnailDiv")
-                    .html(thumbDivTypes[i].text)
-            );
-        }
-    }
+    if (resource.IsPrivateDocument == false) {
 
+        $("#thumbnail img").attr("src", "//ioer.ilsharedlearning.org/OERThumbs/large/" + resource.intID + "-large.png");
+        for (i in thumbIconTypes) {
+            console.log(resource.url.indexOf(thumbIconTypes[i].match) > -1);
+            console.log(thumbIconTypes[i].file);
+            if (resource.url.indexOf(thumbIconTypes[i].match) > -1) {
+                $("#thumbnail img").attr("src", thumbIconTypes[i].file);
+            }
+        }
+        $("#thumbnail img").on("error", function () {
+            $(this).replaceWith(
+                $("<div></div>")
+                    .attr("id", "mainThumbDiv")
+                    .addClass("thumbnailDiv")
+                    .html("Generating Thumbnail...")
+            );
+            setTimeout(function () {
+                doAjax("GetThumbnail", { intID: resource.intID, url: resource.url }, successGetThumbnail);
+            }, 15000);
+        });
+        for (i in thumbDivTypes) {
+            if (resource.url.indexOf(thumbDivTypes[i].match) > -1) {
+                $("#thumbnail img").replaceWith(
+                    $("<div></div>")
+                        .addClass("thumbnailDiv")
+                        .html(thumbDivTypes[i].text)
+                );
+            }
+        }
+    } else {
+        hideThumbnail();
+    }
     //Click-Throughs
     $("#clickthroughs").html("Visited " + resource.paradata.clickThroughs + " Times");
 
@@ -181,7 +224,7 @@ function renderViewSpecialData() {
 
     //Critical Info
     $("#creator span").html(resource.creator);
-    $("#publisher span").html(resource.publisher);
+    $("#publisher span").html('<a href="/search?q=' + encodeURIComponent( resource.publisher ) + '" target="_blank">' + resource.publisher + '</a>');
     $("#submitter span").html(resource.submitter);
     userIsAdmin ? {} : $("#submitter").hide();
     $("#created span").html(resource.created);
@@ -192,13 +235,12 @@ function renderViewSpecialData() {
 }
 function renderViewTabCounts() {
     //Tab counts
-    var standardsRatingsCount = 0;
-    for (i in resource.standards) {
-        standardsRatingsCount += resource.standards[i].ratingCount;
-    }
     var rubricsRatingsCount = 0;
-    for (i in resource.rubrics) {
+    /*for (i in resource.rubrics) {
         rubricsRatingsCount += resource.rubrics[i].ratingCount;
+    }*/
+    for (i in resource.evaluations) {
+      rubricsRatingsCount += resource.evaluations[i].HasCertificationTotal + resource.evaluations[i].NonCertificationTotal;
     }
     $(".tabNavigator a[data-id=comments]").html(resource.comments.length);
     $(".tabNavigator a[data-id=tags]").html($("#tags div[data-hasContent=true]").length);
@@ -206,7 +248,7 @@ function renderViewTabCounts() {
     $(".tabNavigator a[data-id=subject]").html(resource.subject.items.length);
     $(".tabNavigator a[data-id=moreLikeThis]").html($("#moreLikeThis .resourceLikeThis").length);
     $(".tabNavigator a[data-id=alignedStandards]").html(resource.standards.length);
-    $(".tabNavigator a[data-id=standardsRatings]").html(standardsRatingsCount);
+    $(".tabNavigator a[data-id=standardsRatings]").html(resource.standards.length);
     $(".tabNavigator a[data-id=rubrics]").html(rubricsRatingsCount);
     $(".tabNavigator a[data-id=likedislike]").html(resource.paradata.likes + resource.paradata.dislikes);
     $(".tabNavigator a[data-id=library]").html(resource.libColInfo.libraries.length);
@@ -311,7 +353,7 @@ function renderBadges() {
         var current = resource.libColInfo.libraries[i];
         badgeList.append(
             badgeTemplate
-                .replace(/{img}/g, (current.avatarURL == "" ? "src=\"/images/isle.png\"" : "src=\"" + current.avatarURL + "\""))
+                .replace(/{img}/g, (current.avatarURL == "" ? "src=\"/images/ioer_med.png\"" : "src=\"" + current.avatarURL + "\""))
                 .replace(/{id}/g, current.id)
                 .replace(/{title}/g, current.title)
         );
@@ -340,7 +382,7 @@ function renderMyLibrary() {
         $("<option></option>")
           .attr("value", current.id)
           .attr("disabled", current.isInLibrary ? "disabled" : false )
-        .html(current.title + (current.isInLibrary ? " (Already in this Library)" : ""))
+          .html(current.title + (current.isInLibrary ? " (Already in this Library)" : ""))
       );
     }
     $("#myLibraries").unbind().on("change", function () {
@@ -372,34 +414,163 @@ function renderMyCollections() {
     }
   }
 }
-//Rubrics
-function renderRubrics() {
-    var box = $("#rubrics");
-    var template = $("#template_rubricScoreometer").html();
-    box.html("<h2>CCSS Rubric Evaluations</h2>");
-    if (resource.rubrics.length == 0) {
-        box.append("<p class=\"pleaseLogin\">This Resource has not been evaluated yet. Note that this Resource must align to at least one Standard in order to be evaluated.</p>");
-        box.append("<p class=\"pleaseLogin\"><b>Please Note: The Rubric tool is currently under construction and is not currently available.</b></p>");
-        return;
+//Evaluations
+function renderEvaluations() {
+
+  var box = $("#rubrics #rubricsData");
+  var rubricTemplate = $("#template_evaluation_rubric").html();
+  var dimensionTemplate = $("#template_evaluation_dimension").html();
+  var barsTemplate = $("#template_evaluationBars").html();
+
+  box.html("");
+  if (resource.evaluations.length == 0) {
+    box.append("<p class=\"pleaseLogin\">This Resource has not been evaluated yet.</p>");
+  }
+  if (userGUID != "") {
+    if (resource.userAlreadyEvaluated) {
+      //box.append("<p class=\"pleaseLogin\">You already evaluated this Resource.</p>");
     }
-    for (i in resource.rubrics) {
-        var current = resource.rubrics[i];
-        var percent = getPercent(current.communityRating);
-        box.append(
-            template
-                .replace(/{title}/g, current.description)
-                .replace(/{count}/g, current.ratingCount)
-                .replace(/{plural}/g, current.ratingCount == 1 ? "" : "s")
-                .replace(/{score}/g, percent.text)
-                .replace(/{rawscore}/g, percent.rawPercent)
-        );
-        box.find(".scoreometer").last().find(".bar").css("width", percent.text);
+    else if (resource.userCanEvaluate) {
+      box.append("<p class=\"pleaseLogin\"><a href=\"/Rubrics/?resourceIntID=" + resource.intID + "&resourceURL=" + resource.url + "\">Evaluate this Resource</a></p>");
     }
-    $("#rubrics .scoreometer").sort(sortScores).appendTo("#rubrics");
-    box.append("<p class=\"pleaseLogin\"><b>Please Note: The Rubric tool is currently under construction and is not currently available.</b></p>");
+    else {
+      box.append("<p class=\"pleaseLogin\">Currently only trained users can evaluate Resources.<br /><a href=\"http://oerevaluationteam.weebly.com/\" target=\"_blank\">Learn more about evaluator training</a></p>");
+    }
+  }
+  else {
+    box.append("<p class=\"pleaseLogin\">Please login to Evaluate.</p>");
+  }
+
+  for (i in resource.evaluations) { //For each rubric...
+    var rubric = resource.evaluations[i];
+    //Determine whether the user can evaluate with this rubric
+    var evalText = "";
+    if (rubric.RequiresCertification) {
+      evalText = "This Rubric requires <a href=\"#\" target=\"_blank\">certification</a> to use."; //Link to certification
+    }
+    else {
+      evalText = "You are not able to use this Evaluation."; //Shouldn't happen
+    }
+    if (rubric.UserHasCompletedEvaluation) { //Overwrite any above text if the user has already completed the evaluation
+      evalText = "You have already completed this Evaluation with this Resource.";
+    }
+
+    //Fill out each dimension..
+    var dimensionsText = "";
+    for (j in rubric.Dimensions) {
+      var dimension = rubric.Dimensions[j];
+      dimension.width = 'style="width:' + dimension.percent + ';"';
+      dimensionsText += dimensionTemplate
+        .replace(/{title}/g, dimension.DimensionTitle)
+        .replace(/{ratings}/g, fillOutEvaluationBars(dimension))
+    }
+    //Append the HTML
+    box.append(rubricTemplate
+      .replace(/{title}/g, rubric.EvaluationTitle + " Rubric")
+      .replace(/{overallRatings}/g, fillOutEvaluationBars(rubric))
+      .replace(/{dimensions}/g, dimensionsText)
+      .replace(/{evalText}/g, evalText)
+      .replace(/{requiresCert}/g, rubric.RequiresCertification)
+    );
+  }
 }
+function fillOutEvaluationBars(data) {
+  var template = $("#template_evaluationBars").html();
+  return template
+    .replace(/{trainedRatingsCount}/g, (data.CertifiedAverageScore == -1 ? "N/A" : data.CertifiedAverageScore + "%") + " - " + data.HasCertificationTotal + " Certified Rating" + (data.HasCertificationTotal != 1 ? "s" : ""))
+    .replace(/0px/g, ((data.CertifiedAverageScore == -1 | data.HasCertificationTotal == 0) ? 100 : data.CertifiedAverageScore) + '%')
+    .replace(/{untrainedRatingsCount}/g, (data.NonCertifiedAverageScore == -1 ? "N/A" : data.NonCertifiedAverageScore + "%") + " - " + data.NonCertificationTotal + " User Rating" + (data.NonCertificationTotal != 1 ? "s" : ""))
+    .replace(/9999px/g, ((data.NonCertifiedAverageScore == -1 | data.NonCertificationTotal == 0) ? 100 : data.NonCertifiedAverageScore) + '%')
+    .replace(/{noTrainedRatings}/g, data.HasCertificationTotal == 0 ? "noRatings" : "")
+    .replace(/{noUntrainedRatings}/g, data.NonCertificationTotal == 0 ? "noRatings" : "")
+    .replace(/{trainedNotApplicable}/g, data.CertifiedAverageScore == -1 ? "notApplicable" : "")
+    .replace(/{untrainedNotApplicable}/g, data.NonCertifiedAverageScore == -1 ? "notApplicable" : "");
+}
+
 //Standards
-function renderStandards(hide) {
+function renderStandards() {
+  var box = $("#standardsRatings");
+  var listBox = $("#alignedStandards .view");
+  var itemTemplate = $("#template_standard_ratings").html();
+  var listTemplate = $("#template_listedStandard").html();
+  var ddlTemplate = $("#template_doRating").html();
+  box.html("<h2 class=\"title\">Aligned Standards</h2>");
+  listBox.html("");
+  var totalPercentRatings = 0;
+  var totalPrePercentRating = 0;
+  var totalRatings = 0;
+
+  //Messages
+  if (resource.standards.length == 0) {
+    box.append("<p class=\"pleaseLogin\">This Resource has not been aligned to any Standards yet.</p>");
+    listBox.html("<p class=\"pleaseLogin\">This Resource has not been aligned to any Standards yet.</p>");
+    return;
+  }
+
+  box.append(
+    "<div class=\"lightbox\"><h3>Overall</h3>" +
+    $("#template_evaluation_bar").html().replace(/{id}/g, "overallStandards")
+    + "</div>"
+  );
+
+  for (i in resource.standards) {
+    var current = resource.standards[i];
+    var percent = current.AverageRating == -1 ? "N/A" : current.AverageRating + "%";
+    totalRatings += current.TotalRatings;
+    if (percent != "N/A") { 
+      totalPercentRatings++; 
+      totalPrePercentRating += current.AverageRating; 
+    }
+
+    //Ratings
+    var ddlText = "";
+    if(current.HasUserRated){ ddlText = "<p class=\"pleaseLogin message\">You already rated this Standard's alignment.</p>"; }
+    else if (userGUID == "") { ddlText = "<p class=\"pleaseLogin message\">Please login to rate.</p>"; }
+    else { ddlText = ddlTemplate.replace(/{standardID}/g, current.StandardId); }
+    var code = (current.NotationCode == null || current.NotationCode.length == 0) ? current.Description.substr(0, 30) + "..." : current.NotationCode;
+    box.append(
+      itemTemplate
+        .replace(/{title}/g, code)
+        .replace(/{standardID}/g, current.StandardId)
+        .replace(/{description}/g, current.Description)
+        .replace(/99px/g, percent)
+        .replace(/{ratingsCount}/g, current.TotalRatings)
+        .replace(/{noRatings}/g, current.TotalRatings == 0 ? "noRatings" : "")
+        .replace(/{notApplicable}/g, current.AverageRating == -1 ? "notApplicable" : "")
+        .replace(/{doRating}/g, ddlText)
+    );
+
+    //Listing
+    listBox.append(
+      listTemplate
+        .replace(/{alignment}/g, current.AlignmentType)
+        .replace(/{title}/g, code)
+        .replace(/{description}/g, current.Description)
+        .replace(/{standardID}/g, current.StandardId)
+    );
+
+  }
+
+  //Overall
+  var overallPercent = 0;
+  if (totalPercentRatings == 0) {
+    overallPercent = "N/A";
+    $("#overallStandards .evaluationBarFill").addClass("noRatings");
+  }
+  else {
+    overallPercent = Math.round(totalPrePercentRating / totalPercentRatings) + "%";
+  }
+  $("#overallStandards .evaluationBarText").html(overallPercent + " - " + totalRatings + " Ratings");
+  if (overallPercent == "N/A") {
+    $("#overallStandards .evaluationBarFill").addClass("notApplicable");
+  }
+  else {
+    $("#overallStandards .evaluationBarFill").css("width", overallPercent);
+  }
+  
+}
+function renderStandardsOld(hide) {
+  //return; //temporary
     var box = $("#standardsRatings");
     var listBox = $("#alignedStandards .view");
     var template = $("#template_standardScoreometer").html();
@@ -597,7 +768,7 @@ function renderMoreLikeThis() {
         { fields: "creator,publisher", min: 1 }
     ]
     try {
-        var data = { versionID: resourceVersionID, parameters: attempts[moreLikeThisAttempts].fields, minFieldMatches: attempts[moreLikeThisAttempts].min };
+        var data = { intID: resourceID, text: resource.title, parameters: attempts[moreLikeThisAttempts].fields, minFieldMatches: attempts[moreLikeThisAttempts].min };
         console.log(data);
         doAjax("FindMoreLikeThis", data, updateMoreLikeThis);
         moreLikeThisAttempts++;
@@ -642,13 +813,21 @@ function doAjax(method, data, success) {
     });
 }
 
-function doStandardRating(standardID, rating) {
+function doStandardRating(standardID) {
+  var rating = parseInt($("select#standardRating_" + standardID + " option:selected").attr("value"));
+  if (rating == -1) { return; }
+  if (confirm("Are you sure you want to rate this Standard?")) {
+    doAjax("DoStandardRating", { userGUID: userGUID, standardID: standardID, rating: rating, intID: resourceID }, successDoRating);
+  }
+}
+function doStandardRatingOld(standardID, rating) {
     if (userGUID == "") { return; }
     doAjax("DoStandardRating", { userGUID: userGUID, standardID: standardID, rating: rating, versionID: resourceVersionID }, updateStandards);
 }
 
 function addToCollection() {
-  $("#myLibrary input").attr("disabled", "disabled").attr("value", "...");
+    $("#myLibrary input").attr("disabled", "disabled").attr("value", "...");
+    $("#submissionMessage").html("");
   var targetLibraryID = parseInt($("select#myLibraries option:selected").attr("value"));
     var targetCollectionID = parseInt($("select#myCollections option:selected").attr("value"));
     doAjax("AddToCollection", { userGUID: userGUID, libraryID: targetLibraryID, collectionID: targetCollectionID, intID: resource.intID }, updateLibraryInfo);
@@ -687,6 +866,7 @@ function updateLibraryInfo(data) {
     renderMyLibrary();
     renderBadges();
     renderViewTabCounts();
+    $("#submissionMessage").html(data.message);
 }
 
 function updateComments(data) {
@@ -716,7 +896,7 @@ function updateMoreLikeThis(data) {
             counter++;
             $(".resourcesLikeThis").append(
                 $("#template_moreLikeThis").html()
-                    .replace(/{vid}/g, current.versionID)
+                    .replace(/{rid}/g, current.intID)
                     .replace(/{urlTitle}/g, current.title.replace(/ /g, "_").replace(/:/g, "").substring(0, 100))
                     .replace(/{title}/g, current.title)
                     .replace(/{description}/g, current.description)
@@ -777,7 +957,7 @@ function successGetThumbnail(data) {
 //Resizing
 function resizeStuff() {
     var width = $(window).width();
-    $("#description .edit textarea").width($("#description").width() - (width > 580 ? 435 : 20));
+   // $("#description .edit textarea").width($("#description").width() - (width > 580 ? 435 : 20));
 }
 //Tab Box
 function initTabBox() {
@@ -791,7 +971,7 @@ function initTabBox() {
         resizeStuff();
         return false;
     });
-    $(".tabNavigator a[data-id=tags], .tabNavigator a[data-id=comments]").trigger("click");
+    $(".tabNavigator a[data-id=tags], .tabNavigator a[data-id=library]").trigger("click");
 }
 //Keywords and Subjects
 function addFreeText(text, field) {
@@ -844,6 +1024,11 @@ function removeAddedText(item) {
 function fixThumbnail() {
     $("#thumbnail img").replaceWith("<div class=\"thumbnailDiv\">Sorry, Preview Unavailable</div>");
 }
+//private document
+//not hard to figure out naming conventions - force create of a blank or a secure page??
+function hideThumbnail() {
+    $("#thumbnail img").replaceWith("<div class=\"thumbnailDiv\">Sorry, this is a private document</div>");
+}
 
 //Update the Resource Metadata
 function sendUpdatedResource() {
@@ -861,6 +1046,7 @@ function sendUpdatedResource() {
         resourceType: readMVF(".cbxl#resourceType"),
         mediaType: readMVF(".cbxl#mediaType"),
         educationalUse: readMVF(".cbxl#educationalUse"),
+        k12subject: readMVF(".cbxl#k12subject"),
         usageRights: readUsageRights("#pickUsageRights"),
         timeRequired: readTimeRequired("#timeRequired .edit"),
         accessRights: readDDL("#accessRights .edit select"),
@@ -868,7 +1054,10 @@ function sendUpdatedResource() {
         itemType: readDDL("#itemType .edit select"),
         subject: readFreeText(".addedFreeText[data-id=subject]", "Subject"),
         keyword: readFreeText(".addedFreeText[data-id=keyword]", "Keyword"),
-        standards: readStandards("#selectedStandards")
+        accessibilityControl: readDDL("#accessibilityControl .edit select"),
+        accessibilityFeature: readDDL("#accessibilityFeature .edit select"),
+        accessibilityHazard: readDDL("#accessibilityHazard .edit select"),
+        standards: readStandardsV7()
     }
 
     console.log(update);
@@ -944,17 +1133,17 @@ function readFreeText(selector, name) {
     return list;
 }
 
-function readStandards(selector) {
-    var standards = [];
-    $(selector).find(".selectedStandard").each(function () {
-        var item = $(this);
-        standards.push({
-            id: parseInt(item.attr("data-id")),
-            code: item.attr("data-code"),
-            alignment: readDDL(item.find("select"))
-        });
+function readStandardsV7() {
+  var standards = [];
+  $("#SBselected .selectedStandard").each(function () {
+    var item = $(this);
+    standards.push({
+      id: parseInt(item.attr("data-standardID")),
+      code: item.attr("data-code"),
+      alignment: readDDL(item.find("select"))
     });
-    return standards;
+  });
+  return standards;
 }
 
 /* ---   ---   Page Buttons   ---   --- */
@@ -1017,7 +1206,9 @@ function toggleShowHide() {
 
 //Deactivate the Resource
 function deactivate() {
-    doAjax("DeactivateResource", { userGUID: userGUID, versionID: resourceVersionID }, confirmDeactivated);
+    if (confirm("Really deactivate this Resource?")) {
+        doAjax("DeactivateResource", { userGUID: userGUID, versionID: resourceVersionID }, confirmDeactivated);
+    }
 }
 
 
@@ -1026,10 +1217,44 @@ function reportIssue() {
     var report = readText($("#txtReportProblem"), 10, "Report");
     if (report.length == 0) { return false; }
     else {
-        doAjax("ReportIssue", { issue: report, userGUID: userGUID, versionID: resourceVersionID }, confirmReportReceived);
+        doAjax("ReportIssue", { issue: report, userGUID: userGUID, resourceID: resourceID }, confirmReportReceived);
     }
 }
 function confirmReportReceived() {
     alert("Your report has been received. Thank you.");
     $("#txtReportProblem").val("");
+}
+
+
+//Regenerate thumbnail
+function regenerateThumbnail() {
+  alert("Regenerating thumbnail. Results may take up to 30 seconds to show.");
+  doAjax("RegenerateThumbnail", { userGUID: userGUID, resourceID: resourceID, url: resource.url }, confirmRegenerateThumbnail);
+}
+function confirmRegenerateThumbnail(data) {
+  if (data.isValid) {
+    setTimeout(function () {
+      $("#thumbnail img").attr("src", $("#thumbnail img").attr("src") + "?rand=" + Math.random());
+    }, 10000);
+  }
+  else {
+    alert(data.status);
+  }
+}
+
+//Rating
+function successDoRating(data) {
+  if (data.isValid) {
+    resource.standards = data.data;
+    renderStandards();
+  }
+  else {
+    alert(data.status);
+  }
+}
+
+//Standards
+function expandCollapseStandard(id, button) {
+  $(".ratedStandard[data-standardID=" + id + "]").toggleClass("expanded");
+  $(button).attr("value", $(button).attr("value") == "+" ? "-" : "+");
 }

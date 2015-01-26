@@ -6,6 +6,7 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 
 using MyManager = Isle.BizServices.AccountServices;
+using Isle.BizServices;
 using ILPathways.Controllers;
 using LRWarehouse.DAL;
 using LRWarehouse.Business;
@@ -51,23 +52,33 @@ namespace ILPathways.Account
                 SetConsoleErrorMessage( "Error - enter a valid email address or logon id" );
                 return;
             }
-
+            int attempts = Int32.Parse( this.attemptsCount.Text );
+            attempts++;
+            this.attemptsCount.Text = attempts.ToString();
+            if ( attempts > 5 )
+            {
+                SetConsoleErrorMessage( "Error - questionable activity - no more attempts are allowed." );
+                return;
+            }
+            string statusMessage = "";
 
             Patron currentUser = myManager.RecoverPassword( lookup );
-            if ( currentUser.IsValid )
+            if ( currentUser != null && currentUser.Id > 0 )
             {
                 bool isSecure= false;
+                string proxyId = new AccountServices().Create_ForgotPasswordProxyLoginId( currentUser.Id, ref statusMessage );
 
                 if ( UtilityManager.GetAppKeyValue( "SSLEnable", "0" ) == "1" )
                     isSecure = true;
 
-                string url = string.Format( loginLink.Text, currentUser.RowId.ToString() );
+                string url = string.Format( loginLink.Text, proxyId );
                 url = UtilityManager.FormatAbsoluteUrl( url, isSecure );
                 string message = string.Format( this.recoverMessage.Text, currentUser.FirstName, url );
                 string fromEmail = UtilityManager.GetAppKeyValue( "contactUsMailFrom", "DoNotReply@ilsharedlearning.org" );
                 EmailManager.SendEmail( currentUser.Email, fromEmail, "Recover your IOER account password", message, "", addToBcc.Text );
 
                 SetConsoleSuccessMessage( confirmationMessage.Text );
+                txtEmail.Text = "";
 
             }
             else

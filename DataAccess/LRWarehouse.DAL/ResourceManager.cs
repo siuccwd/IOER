@@ -122,30 +122,11 @@ namespace LRWarehouse.DAL
             ///create the resource
             int resourceIntId = Create( pEntity, ref statusMessage );
 
-            if ( pEntity != null && pEntity.Id > 0 && createdById  > 0)
+            //check pEntity.CreatedById == 0, as the create method will do the published by if present
+            if ( pEntity != null && pEntity.Id > 0 && pEntity.CreatedById == 0 && createdById > 0 )
             {
                 resourceIntId = pEntity.Id;
                 Create_ResourcePublishedBy( resourceIntId, createdById, ref statusMessage );
-                //create PublishedBy
-                //try
-                //{
-
-                //    #region parameters
-                //    SqlParameter[] sqlParameters = new SqlParameter[ 2 ];
-                //    sqlParameters[ 0 ] = new SqlParameter( "@ResourceIntId", pEntity.Id );
-                //    sqlParameters[ 1 ] = new SqlParameter( "@PublishedById", createdById );
-                //    #endregion
-
-                //    SqlHelper.ExecuteNonQuery( LRWarehouse(), "[Resource.PublishedByInsert]", sqlParameters );
-
-                //    statusMessage = "successful";
-
-                //}
-                //catch ( Exception ex )
-                //{
-                //    LogError( ex, thisClassName + string.Format( ".Resource.PublishedByInsert() for Id: {0} and createdById: {1}", resourceIntId, createdById ) );
-                //    statusMessage = thisClassName + "- Unsuccessful: Resource.PublishedByInsert(): " + ex.Message.ToString();
-                //}
             }
             else
             {
@@ -321,25 +302,48 @@ namespace LRWarehouse.DAL
             }
             return status;
         }
+
+        /// <summary>
+        /// Decrease the favorite count by 1 (typically means removed from library
+        /// </summary>
+        /// <param name="resourceId"></param>
+        /// <returns></returns>
+        public string DecreaseFavoritesByOne( int resourceId )
+        {
+            string status = "successful";
+            try
+            {
+                SqlParameter[] arParms = new SqlParameter[ 1 ];
+                arParms[ 0 ] = new SqlParameter( "@Id", resourceId );
+
+                SqlHelper.ExecuteNonQuery( ConnString, CommandType.StoredProcedure, "ResourceDecreaseFavorite", arParms );
+            }
+            catch ( Exception ex )
+            {
+                LogError( "ResourceManager.DecreaseFavoritesByOne(): " + ex.ToString() );
+                status = ex.Message;
+            }
+            return status;
+        }
         /// <summary>
         /// set resource state via resourceVersionId
         /// </summary>
         /// <param name="isActive"></param>
         /// <param name="resourceVersionId"></param>
         /// <returns></returns>
-        public string SetResourceActiveState( bool isActive, int resourceVersionId )
-        {
-            ResourceVersion rv = new ResourceVersionManager().Get( resourceVersionId );
+        //public string SetResourceActiveStateByResVersionId( bool isActive, int resourceVersionId )
+        //{
+        //    ResourceVersion rv = new ResourceVersionManager().Get( resourceVersionId );
 
-            if ( rv != null && rv.ResourceIntId > 0 )
-            {
-                return SetResourceActiveState( rv.ResourceIntId, isActive );
-            }
-            else
-            {
-                return "Error - resource version was not found - hmmmm?";
-            }
-        }
+        //    if ( rv != null && rv.ResourceIntId > 0 )
+        //    {
+        //        return SetResourceActiveState( rv.ResourceIntId, isActive );
+        //    }
+        //    else
+        //    {
+        //        return "Error - resource version was not found - hmmmm?";
+        //    }
+        //}
 
         /// <summary>
         /// set resource state via resource Id
@@ -390,6 +394,11 @@ namespace LRWarehouse.DAL
             return Get( pId, "" );
 
         }//
+        /// <summary>
+        /// Retrieve a Resource using the related resource version id
+        /// </summary>
+        /// <param name="resourceVersionId"></param>
+        /// <returns></returns>
         public Resource GetByVersion( int resourceVersionId )
         {
             ResourceVersion rv = new ResourceVersionManager().Get( resourceVersionId );
@@ -593,7 +602,7 @@ namespace LRWarehouse.DAL
             string status = "successful";
 
             //DataSet ds = propertyManager.Select(filter, ref status);
-            entity.Property = new ResourcePropertyCollection();
+            //entity.Property = new ResourcePropertyCollection();
             //if (DoesDataSetHaveRows(ds))
             //{
             //    foreach (DataRow row in ds.Tables[0].Rows)
@@ -623,7 +632,7 @@ namespace LRWarehouse.DAL
         {
             Resource resource = new Resource();
             resource.Version.RowId = new Guid( GetRowColumn( dr, "RowId", DEFAULT_GUID ) );
-            resource.RowId = resource.Version.ResourceId = new Guid( GetRowColumn( dr, "ResourceId", DEFAULT_GUID ) );
+            resource.RowId =  new Guid( GetRowColumn( dr, "ResourceId", DEFAULT_GUID ) );
             //TODO - confirm
             resource.Id = GetRowColumn( dr, "Id", 0 );
 
@@ -644,7 +653,7 @@ namespace LRWarehouse.DAL
             resource.Version.TypicalLearningTime = GetRowColumn( dr, "TypicalLearningTime", "" );
             resource.Version.IsSkeletonFromParadata = GetRowColumn( dr, "IsSkeletonFromParadata", false );
             resource.HasPathwayGradeLevel = GetRowColumn( dr, "HasPathwayGradeLevel", true );
-            resource.Property = new ResourcePropertyCollection();
+            //resource.Property = new ResourcePropertyCollection();
 
             string filter = string.Format( "ResourceId  = '{0}'", resource.RowId );
             string status = "successful";

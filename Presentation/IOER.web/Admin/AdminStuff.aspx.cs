@@ -6,6 +6,7 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
+using Isle.BizServices;
 using GDAL = Isle.BizServices;
 using ILP=ILPathways.Business;
 using MyMgr= Isle.BizServices.LibraryBizService;
@@ -22,6 +23,7 @@ namespace ILPathways.Admin
     public partial class AdminStuff : BaseAppPage
     {
         MyMgr mgr = new MyMgr();
+        string statusMessage = "";
         #region Properties
 
         /// <summary>
@@ -280,6 +282,15 @@ namespace ILPathways.Admin
                     SetConsoleErrorMessage( "Error encountered" );
             }
 
+        }
+
+        protected void btnRemoveFromColl6_Click( object sender, EventArgs e )
+        {
+            int resourceId = 0;
+            if ( Int32.TryParse( txtResourceId.Text, out resourceId ) )
+            {
+                ElasticIndexServices.RemoveResource_NewCollection( resourceId, ref statusMessage );
+            }
         }
 
     }

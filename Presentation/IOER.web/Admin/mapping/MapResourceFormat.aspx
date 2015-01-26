@@ -1,8 +1,23 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="/Masters/Pathway.Master" AutoEventWireup="true" CodeBehind="MapResourceFormat.aspx.cs" Inherits="ILPathways.Admin.mapping.MapResourceFormat" %>
+﻿<%@ Page Title="Map Resource Format" Language="C#" MasterPageFile="/Masters/Pathway.Master" AutoEventWireup="true" CodeBehind="MapResourceFormat.aspx.cs" Inherits="ILPathways.Admin.mapping.MapResourceFormat" %>
 
+<asp:Content ID="Content1" ContentPlaceHolderID="HeadContent" runat="server">
+    <link href="/Styles/common.css" rel="Stylesheet" type="text/css" />
+<style type="text/css">
+    .labelColumn {
+        display: inline-block;
+        width: 150px;
+        text-align: right;
+    }
+    .dataColumn {
+        display: inline-block;
+        text-align: left;
+    }
+</style>
+</asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="BodyContent" runat="server">
+    <h1 class="isleH1">Map Resource Format</h1>
 <!-- content start -->
-<div style="float:left; width:70%">
+<div style="width:90%; ">
 <asp:validationsummary id="vsErrorSummary" HeaderText="Errors on page" forecolor="" CssClass="errorMessage" runat="server"></asp:validationsummary>
 <br />
 <div>
@@ -77,7 +92,7 @@
 			 </ItemTemplate>
 		 </asp:TemplateField>
 
-    <asp:TemplateField HeaderText="LR Value" ItemStyle-Width="250px" ControlStyle-Width="200px" >
+    <asp:TemplateField HeaderText="LR Value" >
         <EditItemTemplate>
             <asp:TextBox ID="gridLRValue" runat="server" Text='<%# Bind("Title") %>' MaxLength="10"></asp:TextBox>
             <asp:RequiredFieldValidator id="RequiredFieldValidator3" runat="server" ErrorMessage="A LR Value is required!" ControlToValidate="gridLRValue"></asp:RequiredFieldValidator>
@@ -87,7 +102,7 @@
         </ItemTemplate>
     </asp:TemplateField>  
      
-    <asp:TemplateField HeaderText="Resource Format" ItemStyle-Width="250px" ControlStyle-Width="200px" >
+    <asp:TemplateField HeaderText="Resource Format" >
         <EditItemTemplate>
             <asp:DropDownList id="gridDdlResourceFormat" runat="server"></asp:DropDownList>
             <asp:RequiredFieldValidator id="RequiredFieldValidator4" runat="server" ErrorMessage="A Resource Format is required!" ControlToValidate="gridDdlResourceFormat"></asp:RequiredFieldValidator>

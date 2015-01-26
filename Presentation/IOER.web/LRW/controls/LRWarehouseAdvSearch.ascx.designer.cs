@@ -46,7 +46,7 @@ namespace ILPathways.LRW.controls {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::WebControlLibrary.skmCheckBoxList cbxlCluster;
+        protected global::System.Web.UI.WebControls.CheckBoxList cbxlCluster;
         
         /// <summary>
         /// Panel1 control.
@@ -82,7 +82,7 @@ namespace ILPathways.LRW.controls {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::WebControlLibrary.skmCheckBoxList cbxGradeLevel1;
+        protected global::System.Web.UI.WebControls.CheckBoxList cbxGradeLevel1;
         
         /// <summary>
         /// cbxlResType2 control.
@@ -91,7 +91,7 @@ namespace ILPathways.LRW.controls {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::WebControlLibrary.skmCheckBoxList cbxlResType2;
+        protected global::System.Web.UI.WebControls.CheckBoxList cbxlResType2;
         
         /// <summary>
         /// cbxlFormatType control.
@@ -100,7 +100,7 @@ namespace ILPathways.LRW.controls {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::WebControlLibrary.skmCheckBoxList cbxlFormatType;
+        protected global::System.Web.UI.WebControls.CheckBoxList cbxlFormatType;
         
         /// <summary>
         /// showTotalsPanel1 control.

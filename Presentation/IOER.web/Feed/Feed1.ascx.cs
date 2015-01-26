@@ -93,8 +93,8 @@ namespace ILPathways.Feed
             default: break;
           }
           current.item.link = "http://www.ioer.ilsharedlearning.org";
-          current.item.thumbnail = "/images/isle.png";
-          current.location.thumbnail = "/images/isle.png";
+          current.item.thumbnail = "/images/ioer_med.png";
+          current.location.thumbnail = "/images/ioer_med.png";
           current.date = currentList.startDate;
 
           currentList.events.Add( current );

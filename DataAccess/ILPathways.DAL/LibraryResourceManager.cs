@@ -62,23 +62,24 @@ namespace ILPathways.DAL
         private bool Delete( int libraryResourceId, int fromCollectionId, int resourceIntId, ref string statusMessage )
         {
             bool successful = false;
-
-            SqlParameter[] sqlParameters = new SqlParameter[ 3 ];
-            sqlParameters[ 0 ] = new SqlParameter( "@LibraryResourceId", libraryResourceId );
-            sqlParameters[ 1 ] = new SqlParameter( "@SourceLibrarySectionId", fromCollectionId );
-            sqlParameters[ 2 ] = new SqlParameter( "@ResourceIntId", resourceIntId );
-
-            try
+            using ( SqlConnection conn = new SqlConnection( ContentConnection() ) )
             {
-                SqlHelper.ExecuteNonQuery( ContentConnection(), CommandType.StoredProcedure, DELETE_PROC, sqlParameters );
-                successful = true;
-            }
-            catch ( Exception ex )
-            {
-                LogError( ex, className + ".Delete() " );
-                statusMessage = className + "- Unsuccessful: Delete(): " + ex.Message.ToString();
+                SqlParameter[] sqlParameters = new SqlParameter[ 3 ];
+                sqlParameters[ 0 ] = new SqlParameter( "@LibraryResourceId", libraryResourceId );
+                sqlParameters[ 1 ] = new SqlParameter( "@SourceLibrarySectionId", fromCollectionId );
+                sqlParameters[ 2 ] = new SqlParameter( "@ResourceIntId", resourceIntId );
 
-                successful = false;
+                try
+                {
+                    SqlHelper.ExecuteNonQuery( conn, CommandType.StoredProcedure, DELETE_PROC, sqlParameters );
+                    successful = true;
+                }
+                catch ( Exception ex )
+                {
+                    LogError( ex, className + string.Format( ".Delete(libraryResourceId: {0}, fromCollectionId: {1}, resourceIntId: {2}) ", libraryResourceId, fromCollectionId, resourceIntId ) );
+                    statusMessage = className + "- Unsuccessful: Delete(): " + ex.Message.ToString();
+                    successful = false;
+                }
             }
             return successful;
         }//
@@ -429,7 +430,7 @@ namespace ILPathways.DAL
         /// <param name="user"></param>
         /// <param name="resourceIntId"></param>
         /// <returns></returns>
-        public bool IsResourceInLibrary( IWebUser user, int resourceIntId )
+        private bool IsResourceInLibrary( IWebUser user, int resourceIntId )
         {
             try
             {
@@ -450,7 +451,7 @@ namespace ILPathways.DAL
             }
         }//
 
-        public bool IsResourceInLibrary( int libraryId, int resourceIntId )
+        private bool IsResourceInLibrary( int libraryId, int resourceIntId )
         {
             try
             {
@@ -520,7 +521,30 @@ namespace ILPathways.DAL
             return list;
         }//
 
+        /// <summary>
+        /// Return list of all resources for a library section
+        /// </summary>
+        /// <param name="sectionId"></param>
+        /// <returns></returns>
+        public List<LibraryResource> SelectResourcesRequiringApproval( int libraryId )
+        {
 
+            List<LibraryResource> list = new List<LibraryResource>();
+            try
+            {
+                int pTotalRows = 0;
+                string pFilter = string.Format( "(LibraryId = {0} AND IsActive = 0 ) ", libraryId );
+
+                list = SearchList( pFilter, "", 1, 5000, ref pTotalRows );
+
+            }
+            catch ( Exception ex )
+            {
+                LogError( ex, className + ".SelectAllResourcesForSection() exception for sectionId: " + libraryId.ToString() );
+
+            }
+            return list;
+        }//
         #endregion
 
 
@@ -548,6 +572,9 @@ namespace ILPathways.DAL
                             ref List<int> libList,
                             ref List<int> collList )
         {
+
+            DoTrace( 6, string.Format( className + ".SelectAllLibrariesAndSectionsForResource() : {0}", resourceIntId ) );
+
             bool found = false;
             SqlParameter[] sqlParameters = new SqlParameter[ 1 ];
             sqlParameters[ 0 ] = new SqlParameter( "@ResourceIntId", resourceIntId );
@@ -593,7 +620,7 @@ namespace ILPathways.DAL
                 }
                 catch ( Exception ex )
                 {
-                    LogError( ex, className + ".PopulateAllLibrariesCollections() " );
+                    LogError( ex, className + ".SelectAllLibrariesAndSectionsForResource() " );
                     return false;
 
                 }
@@ -701,7 +728,7 @@ namespace ILPathways.DAL
             LibraryResource entity = FillLazy( dr );
 
             //library
-            entity.ResourceLibrary.IsPublic = GetRowColumn( dr, "IsPublic", false );
+           // entity.ResourceLibrary.IsPublic = GetRowColumn( dr, "IsPublic", false );
             entity.ResourceLibrary.IsDiscoverable = GetRowColumn( dr, "IsDiscoverable", false );
             entity.ResourceLibrary.LibraryTypeId = GetRowColumn( dr, "LibraryTypeId", 0 );
             entity.ResourceLibrary.LibraryType = GetRowColumn( dr, "LibraryType", "" );
@@ -725,11 +752,23 @@ namespace ILPathways.DAL
             if ( entity.Id == 0 )
                 entity.Id = GetRowColumn( dr, "Id", 0 );
 
+            entity.LibraryId = GetRowColumn( dr, "LibraryId", 0 );
             entity.LibrarySectionId = GetRowColumn( dr, "LibrarySectionId", 0 );
+            entity.CollectionTitle = GetRowColumn( dr, "LibrarySection", "" );
+
+            entity.Title = GetRowPossibleColumn( dr, "Title", "" );
+            entity.Description = GetRowPossibleColumn( dr, "Description", "" );
+            entity.SortTitle = GetRowPossibleColumn( dr, "SortTitle", "" );
+            entity.ResourceUrl = GetRowPossibleColumn( dr, "ResourceUrl", "" );
             entity.ResourceIntId = GetRowColumn( dr, "ResourceIntId", 0 );
+            entity.ResourceVersionIntId = GetRowColumn( dr, "ResourceVersionIntId", 0 );
+            entity.SetImageUrls();
+
             entity.Created = GetRowColumn( dr, "DateAddedToCollection", System.DateTime.MinValue );
             entity.CreatedById = GetRowColumn( dr, "libResourceCreatedById", 0 );
-
+            entity.CreatedBy = GetRowPossibleColumn( dr, "CreatedBy", "" );
+            entity.CreatedByImageUrl = GetRowPossibleColumn( dr, "CreatedByImageUrl", "" );
+            entity.ProfileUrl = string.Format( "/Profile/{0}/{1}", entity.CreatedById, entity.CreatedBy.Replace(" ","") );
             return entity;
         }//
 
@@ -738,7 +777,7 @@ namespace ILPathways.DAL
             LibraryResource entity = FillLazy( dr );
 
             //library
-            entity.ResourceLibrary.IsPublic = GetRowColumn( dr, "IsPublic", false );
+            //entity.ResourceLibrary.IsPublic = GetRowColumn( dr, "IsPublic", false );
             entity.ResourceLibrary.IsDiscoverable = GetRowColumn( dr, "IsDiscoverable", false );
             entity.ResourceLibrary.LibraryTypeId = GetRowColumn( dr, "LibraryTypeId", 0 );
             entity.ResourceLibrary.LibraryType = GetRowColumn( dr, "LibraryType", "" );
@@ -763,7 +802,14 @@ namespace ILPathways.DAL
                 entity.Id = GetRowColumn( dr, "Id", 0 );
 
             entity.LibrarySectionId = GetRowColumn( dr, "LibrarySectionId", 0 );
+
+            entity.Title = GetRowPossibleColumn( dr, "Title", "" );
+            entity.SortTitle = GetRowPossibleColumn( dr, "SortTitle", "" );
+            entity.ResourceUrl = GetRowPossibleColumn( dr, "ResourceUrl", "" );
             entity.ResourceIntId = GetRowColumn( dr, "ResourceIntId", 0 );
+            entity.ResourceVersionIntId = GetRowColumn( dr, "ResourceVersionIntId", 0 );
+            entity.SetImageUrls();
+
             entity.Created = GetRowColumn( dr, "DateAddedToCollection", System.DateTime.MinValue );
             entity.CreatedById = GetRowColumn( dr, "libResourceCreatedById", 0 );
 

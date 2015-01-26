@@ -10,15 +10,16 @@
     $("#ioerSearchBar").on("keyup", function (event) {
         var bar = $("#ioerSearchBar");
         event.stopPropagation();
-        if (event.which == 13 && bar.val().length > 0) {
-            doIOERSearch();
+        if ((event.which == 13 || event.keyCode == 13) && bar.val().length > 0) {
+          doIOERSearch();
         }
+        return false;
     });
     $("#ioerSearchButton").on("click", function () {
         doIOERSearch();
     });
 }
 function doIOERSearch() {
-        window.open("http://ioer.ilsharedlearning.org/?q=" + encodeURIComponent($("#ioerSearchBar").val()));
+        window.open("http://ioer.ilsharedlearning.org/Search.aspx?q=" + encodeURIComponent($("#ioerSearchBar").val()));
     
 }

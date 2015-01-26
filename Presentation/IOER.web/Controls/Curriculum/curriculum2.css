@@ -1,0 +1,33 @@
+﻿/* Big Stuff */
+#container { min-height: 500px; }
+.columnContainer { white-space: nowrap; word-spacing: 0; }
+.columnContainer * { white-space: initial; word-spacing: initial; }
+.columnContainer:after { content: " "; display: block; clear: both; }
+.columnContainer .column { display: inline-block; vertical-align: top; }
+
+/* Page Columns */
+.pageColumnContainer { padding-right: 405px; }
+#details { width: 400px; float: right; margin-right: -405px; }
+#details input, #details textarea, #details select { width: 100%; margin-bottom: 5px; }
+#details input[type=checkbox], #details input[type=radio] { width: initial; }
+#details input[type=file] { padding: 0; }
+#details .lightbox { border: 1px solid #CCC; padding: 5px 5px 0 5px; margin: 5px -5px -5px 0px; border-radius: 5px; margin-bottom: 5px; }
+#details textarea { min-height: 5em; max-height: 20em; resize: vertical; }
+#details #curriculumDetails, #details #nodeDetails { display: none; }
+#details #curriculumDetails.showing, #details #nodeDetails.showing { display: block; }
+
+/* Nodes */
+.node { margin-bottom: 5px; }
+.node.create { position: relative; height: 30px; padding: 4px 95px 4px 105px; }
+.node.create .notation { position: absolute; top: 0; left: 0; bottom: 0; width: 100px; background-color: #DDD; color: #999; font-weight: bold; padding: 5px; border-radius: 5px 0 0 5px; overflow: hidden; text-overflow: ellipsis; }
+.node.create .nodeTitle { width: 100%; overflow: hidden; text-overflow: ellipsis; }
+.node.create .nodeButtons { position: absolute; top: 0; right: 0; bottom: 0; width: 90px; text-align: right; }
+.node.create .nodeButton { width: 60px; height: 100%; border-width: 1px; }
+.node.create .nodeButton.nodeAdd { width: 60px; }
+.node.create .nodeButtons .column { border-radius: 0; }
+.node.create .nodeButtons .column:last-child { border-radius: 0 5px 5px 0; }
+#addNode { padding-right: 65px; }
+
+
+/* Miscellaneous */
+#btnHelp { width: auto; float: right; margin: 5px 0; }

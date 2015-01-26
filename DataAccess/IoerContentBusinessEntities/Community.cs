@@ -17,7 +17,7 @@ namespace IoerContentBusinessEntities
         public Community()
         {
             this.Community_Member = new HashSet<Community_Member>();
-            this.Community_Posting = new HashSet<Community_Posting>();
+            this.Community_PostItem = new HashSet<Community_PostItem>();
         }
     
         public int Id { get; set; }
@@ -26,8 +26,17 @@ namespace IoerContentBusinessEntities
         public Nullable<int> ContactId { get; set; }
         public Nullable<System.DateTime> Created { get; set; }
         public string ImageUrl { get; set; }
+        public Nullable<int> CreatedById { get; set; }
+        public Nullable<System.DateTime> LastUpdated { get; set; }
+        public Nullable<int> LastUpdatedById { get; set; }
+        public Nullable<bool> IsActive { get; set; }
+        public Nullable<int> OrgId { get; set; }
+        public int PublicAccessLevel { get; set; }
+        public int OrgAccessLevel { get; set; }
     
         public virtual ICollection<Community_Member> Community_Member { get; set; }
-        public virtual ICollection<Community_Posting> Community_Posting { get; set; }
+        public virtual ICollection<Community_PostItem> Community_PostItem { get; set; }
+        public virtual Codes_LibraryAccessLevel Codes_LibraryAccessLevel { get; set; }
+        public virtual Codes_LibraryAccessLevel Codes_LibraryAccessLevel1 { get; set; }
     }
 }

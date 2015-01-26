@@ -11,11 +11,13 @@ using System.Web.UI.WebControls;
 using System.Web.UI.HtmlControls;
 
 using EmailHelper = ILPathways.Utilities.EmailManager;
-using MyManager = ILPathways.DAL.GroupManager;
+using MyManager = Isle.BizServices.GroupServices;
 using ILPathways.Business;
 using ILPathways.classes;
 using ILPathways.Controllers;
-using ILPathways.DAL;
+//using ILPathways.DAL;
+using Isle.BizServices;
+
 using ILPathways.Library;
 using ILPathways.Utilities;
 using LRDAL = LRWarehouse.DAL;
@@ -311,7 +313,7 @@ namespace ILPathways.Admin.Groups
         /// <param name="groupCode"></param>
         private void Get( string groupCode )
         {
-            controller.CurrentGroup = GroupManager.GetByCode( groupCode );
+            controller.CurrentGroup = MyManager.GetByCode( groupCode );
             //HandleGroupRequest();
         } //
 
@@ -321,7 +323,7 @@ namespace ILPathways.Admin.Groups
         /// <param name="recId"></param>
         private void Get( int recId )
         {
-            controller.CurrentGroup = GroupManager.Get( recId );
+            controller.CurrentGroup = MyManager.Get( recId );
             try
             {
                 //detailPane.ToolTip = CurrentGroup.GroupName;
@@ -474,17 +476,17 @@ namespace ILPathways.Admin.Groups
 
             if ( ddlGroupTypeList.SelectedIndex > 0 )
             {
-                filter += BaseDataManager.FormatSearchItem( filter, "GroupTypeId", ddlGroupTypeList.SelectedValue.ToString(), booleanOperator );
+                filter += LRDAL.BaseDataManager.FormatSearchItem( filter, "GroupTypeId", ddlGroupTypeList.SelectedValue.ToString(), booleanOperator );
 
             }
             else if ( DefaultGroupTypeId > 0 && groupTypePanel.Visible == false )
             {
-                filter += BaseDataManager.FormatSearchItem( filter, "GroupTypeId", DefaultGroupTypeId, booleanOperator );
+                filter += LRDAL.BaseDataManager.FormatSearchItem( filter, "GroupTypeId", DefaultGroupTypeId, booleanOperator );
             }
 
             if ( GroupFilter.Length > 0 )
             {
-                filter += BaseDataManager.FormatSearchItem( filter, GroupFilter, booleanOperator );
+                filter += LRDAL.BaseDataManager.FormatSearchItem( filter, GroupFilter, booleanOperator );
             }
 
 
@@ -498,7 +500,7 @@ namespace ILPathways.Admin.Groups
                 string where = " (groupOwner.LastName like '" + keyword + "' OR groupOwner.FirstName like '" + keyword
                                 + "' OR Title like '" + keyword
                                 + "' OR GroupCode like '" + keyword + "') ";
-                filter += BaseDataManager.FormatSearchItem( filter, where, booleanOperator );
+                filter += LRDAL.BaseDataManager.FormatSearchItem( filter, where, booleanOperator );
             }
 
             //TODO - add search for members
@@ -509,15 +511,15 @@ namespace ILPathways.Admin.Groups
             //{
             //  //status = this.ddlStatus.SelectedValue.ToString();
             //  statusId = Int32.Parse( this.ddlStatus.SelectedValue.ToString() );
-            //  filter += BaseDataManager.FormatSearchItem( filter, "StatusId", statusId, booleanOperator );
+            //  filter += LRDAL.BaseDataManager.FormatSearchItem( filter, "StatusId", statusId, booleanOperator );
             //}
 
             //if ( IsPublicPage == true )
             //{
-            //  filter += BaseDataManager.FormatSearchItem( filter, publicFilter.Text, booleanOperator );
+            //  filter += LRDAL.BaseDataManager.FormatSearchItem( filter, publicFilter.Text, booleanOperator );
             //}
             //if ( CurrentUser.TopAuthorization < 4 && filter.Length == 0 )
-            //  filter += BaseDataManager.FormatSearchItem( filter, this.defaultFilter.Text, booleanOperator );
+            //  filter += LRDAL.BaseDataManager.FormatSearchItem( filter, this.defaultFilter.Text, booleanOperator );
 
             if ( this.IsTestEnv() )
             {
@@ -799,7 +801,7 @@ namespace ILPathways.Admin.Groups
         {
 
             //DataSet ds = DatabaseManager.GetCodeValues( "en", "GroupType", "SortOrder" );
-            //GroupManager.PopulateList( ddlGroupTypeList, ds, "StringValue", "StringValue", "Select a Group Type" );
+            //MyManager.PopulateList( ddlGroupTypeList, ds, "StringValue", "StringValue", "Select a Group Type" );
 
         } //
 

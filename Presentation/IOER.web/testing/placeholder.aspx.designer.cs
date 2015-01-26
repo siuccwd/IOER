@@ -19,6 +19,6 @@ namespace ILPathways.testing {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ILPathways.LRW.controls.ESLibrary2 TestController;
+        protected global::ILPathways.Controls.Admin.BigAdmin1 TestController;
     }
 }

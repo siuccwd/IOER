@@ -17,6 +17,7 @@ namespace IoerContentBusinessEntities
         public Document_Version()
         {
             this.Community_PostingDocument = new HashSet<Community_PostingDocument>();
+            this.Contents = new HashSet<Content>();
         }
     
         public System.Guid RowId { get; set; }
@@ -33,7 +34,9 @@ namespace IoerContentBusinessEntities
         public int CreatedById { get; set; }
         public System.DateTime LastUpdated { get; set; }
         public int LastUpdatedById { get; set; }
+        public string FilePath { get; set; }
     
         public virtual ICollection<Community_PostingDocument> Community_PostingDocument { get; set; }
+        public virtual ICollection<Content> Contents { get; set; }
     }
 }

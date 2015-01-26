@@ -10,19 +10,23 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 
 using AjaxControlToolkit;
-
+using Obout.Ajax.UI.TreeView;
 using GDAL = Isle.BizServices;
 using ILPathways.Business;
+using ILPathways.Common;
 using ILPathways.Controllers;
 
 using ILPathways.Library;
 using ILPathways.Utilities;
 using Isle.BizServices;
+using Isle.DTO;
 using LRWarehouse.DAL;
 using LRWarehouse.Business;
 using LDAL = LRWarehouse.DAL;
 using BDM = LRWarehouse.DAL.BaseDataManager;
 using AppUser = LRWarehouse.Business.Patron; //ILPathways.Business.AppUser;
+
+
 
 namespace ILPathways.Controls.Content
 {
@@ -32,12 +36,16 @@ namespace ILPathways.Controls.Content
         public string selectedTab = "";
         public string previewID;
         public string cleanTitle;
+        public string userProxyId { get; set; }
+
         //public string currentConditionOfUse;
         //public string conditionsOfUse_summaries;
         //public string conditionsOfUse_urls;
         //public string conditionsOfUse_iconURLs;
 
         ContentServices myManager = new ContentServices();
+        CurriculumServices crcManager = new CurriculumServices();
+        
 
         #region Properties
         /// <summary>
@@ -48,6 +56,9 @@ namespace ILPathways.Controls.Content
             get { return this.txtFormSecurityName.Text; }
             set { this.txtFormSecurityName.Text = value; }
         }
+        /// <summary>
+        /// Get/Set current Content item
+        /// </summary>
         protected ContentItem CurrentRecord
         {
             get { return ViewState[ "CurrentRecord" ] as ContentItem; }
@@ -57,17 +68,26 @@ namespace ILPathways.Controls.Content
 
         protected void Page_Load( object sender, EventArgs e )
         {
+            if ( IsUserAuthenticated() == false )
+            {
+                Stage1Items.Visible = false;
+                loginMessage.Visible = true;
+
+                SetConsoleErrorMessage( "Error: you are not signed in (your session may have timed out). Please sign in and try again." );
+                Response.Redirect( "/Account/Login.aspx?nextUrl=/My/Author.aspx", true );
+                return;
+            }
+
+            CurrentUser = GetAppUser();
+            userProxyId = "var userProxyId = \"" + CurrentUser.ProxyId.ToString() + "\";";
+
             if ( !IsPostBack )
             {
                 InitializeForm();
 
             }
-            else if ( IsUserAuthenticated() == false )
-            {
-                SetConsoleErrorMessage( "Error: you are not signed in (your session may have timed out). Please sign in and try again." );
-                Response.Redirect( Request.RawUrl.ToString(), true );
-                return;
-            }
+  
+          
             //regardless:
             //populateConditionsOfUseData();
             //conditionsSelector.PopulateItems();
@@ -75,7 +95,7 @@ namespace ILPathways.Controls.Content
             if ( string.IsNullOrEmpty( txtTitle.Text ) )
                 cleanTitle = "";
             else
-                cleanTitle = new PublishController().FormatFriendlyTitle( this.txtTitle.Text );
+                cleanTitle = ResourceBizService.FormatFriendlyTitle( this.txtTitle.Text );
             if ( Request.Form[ "__EVENTTARGET" ] != null && Request.Form[ "__EVENTTARGET" ] == "btnRemRef" )
             {
                 DeleteReference( null, null );
@@ -84,41 +104,27 @@ namespace ILPathways.Controls.Content
             {
                 DeleteAttachment( null, null );
             }
+            if ( Request.Form[ "__EVENTTARGET" ] != null && Request.Form[ "__EVENTTARGET" ] == "btnRemNodeAtt" )
+            {
+                DeleteNodeAttachment( null, null );
+            }
+            
         }//
         protected void InitializeForm()
         {
-            //User Authentication
-            if ( IsUserAuthenticated() )
+
+            //check if authorized, if not found, will check by orgId
+            this.FormPrivileges = GDAL.SecurityManager.GetGroupObjectPrivileges( CurrentUser, FormSecurityName );
+
+            noNodePanel.Visible = true;
+            nodePanel.Visible = false;
+            //}
+            if ( this.FormPrivileges.CanCreate() )
             {
+                Stage1Items.Visible = true;
+                loginMessage.Visible = false;
 
-                CurrentUser = GetAppUser();
-                //check if authorized, if not found, will check by orgId
-                this.FormPrivileges = GDAL.SecurityManager.GetGroupObjectPrivileges( CurrentUser, FormSecurityName );
-
-
-                //}
-                if ( this.FormPrivileges.CanCreate() )
-                {
-                    Stage1Items.Visible = true;
-                    loginMessage.Visible = false;
-
-                    CurrentRecord = new ContentItem();
-                }
-                else
-                {
-                    //display message, and lock down
-                    Stage1Items.Visible = false;
-                    loginMessage.Visible = true;
-                }
-
-                //= Add attribute to btnDelete to allow client side confirm
-                btnDelete.Attributes.Add( "onClick", "return confirmDelete(this);" );
-                btnUnPublish.Attributes.Add( "onClick", "return confirmUnPublish(this);" );
-                this.btnSetInactive.Attributes.Add( "onClick", "return confirmSetInactive(this);" );
-                this.btnPublish.Attributes.Add( "onClick", "return confirmPublish(this);" );
-
-                PopulateControls();
-                CheckRecordRequest();
+                CurrentRecord = new ContentItem();
             }
             else
             {
@@ -126,9 +132,34 @@ namespace ILPathways.Controls.Content
                 Stage1Items.Visible = false;
                 loginMessage.Visible = true;
             }
+            if ( WebUser.UserName == "mparsons" )
+            {
+                nodeKeyPanel.Visible = true;
+            }
+            //= Add attribute to btnDelete to allow client side confirm
+            btnDelete.Attributes.Add( "onClick", "return confirmDelete(this);" );
+            btnUnPublish.Attributes.Add( "onClick", "return confirmUnPublish(this);" );
+            this.btnSetInactive.Attributes.Add( "onClick", "return confirmSetInactive(this);" );
+            this.btnPublish.Attributes.Add( "onClick", "return confirmPublish(this);" );
 
+            PopulateControls();
+            CheckRecordRequest();
+  
         }
+        protected void Page_PreRender( object sender, EventArgs e )
+        {
+            LoggingHelper.DoTrace( 6, thisClassName + "Page_PreRender" );
+            //for tracing
+            try
+            {
+                
+            }
+            catch
+            {
+                //no action
+            }
 
+        }//
         #region retrieval
         /// <summary>
         /// Check the request type for the form
@@ -149,15 +180,7 @@ namespace ILPathways.Controls.Content
             {
                 this.Get( id );
             }
-            else
-            {
-                //
-
-                //if ( btnNew.Enabled )
-                //    HandleNewRequest();
-            }
-
-
+           
         }	// End 
 
         /// <summary>
@@ -235,16 +258,20 @@ namespace ILPathways.Controls.Content
             SetTemplates();
 
             Stage2Items.Visible = false;
-            //Stage2Items.Visible = false;
+            
             tabNav.Visible = false;
             statusDiv.Visible = false;
             //do any defaults. 
             entity.IsActive = true;
             entity.Status = "Draft";
             entity.HasChanged = false;
-            templatesPanel.Visible = true;
+           // templatesPanel.Visible = true;
             ddlIsOrganizationContent.Enabled = true;
             btnPublish.Visible = false;
+
+            noNodePanel.Visible = true;
+            nodePanel.Visible = false;
+
             PopulateForm( entity );
 
             //reset any controls or buttons not handled in the populate method
@@ -260,23 +287,39 @@ namespace ILPathways.Controls.Content
         private void PopulateForm( ContentItem entity )
         {
             CurrentRecord = entity;
-
+            LoggingHelper.DoTrace( 6, thisClassName + ".PopulateForm(): " + entity.Id );
             //TODO - determine if user has access to this record
             //
+            bool isReadOnly = false;
             if ( entity.Id > 0 )
             {
-                if ( FormPrivileges.WritePrivilege > ( int ) ILPathways.Business.EPrivilegeDepth.Region )
+                if ( FormPrivileges.WritePrivilege > ( int ) ILPathways.Business.EPrivilegeDepth.Region
+                    || entity.CreatedById == WebUser.Id )
                 {
-                    //carte blanche
+                    //OK
                 }
-                else if ( entity.CreatedById != WebUser.Id )
+                else 
                 {
-                    //not author, set readonly, or reject?
-                    containerPanel.Visible = false;
-                    SetConsoleErrorMessage( "Only the original author may make updates to this content!" );
+                    ContentPartner partner = ContentServices.ContentPartner_Get( entity.Id, WebUser.Id);
+                    if (partner != null && partner.PartnerTypeId > 0) 
+                    {
+                        //can access, now is readonly or editable?
+                        if ( partner.PartnerTypeId < 2 )
+                        {
+                            isReadOnly = true;
+                            //this will have to bubble down to nodes
+                        }
+                    }
+                    else
+                    {
+                        //not author, set readonly, or reject?
+                        containerPanel.Visible = false;
+                        SetConsoleErrorMessage( "Only the original author or designated collaborators may make updates to this content!" );
+                    }
                 }
-
             }
+
+
             this.txtId.Text = entity.Id.ToString();
             this.txtTitle.Text = entity.Title;
             this.txtDescription.Text = entity.Summary;
@@ -305,12 +348,12 @@ namespace ILPathways.Controls.Content
             {
                 //not sure if will allow template selection for existing record
                 templatesPanel.Visible = false;
-                ddlContentType.Enabled = false;
+                ddlContentType.Visible = false;
                 //Page Title
                 Page.Title = entity.Title + " | ISLE OER";
                 lblContentType.Text = entity.ContentType;
                 lblContentType.Visible = true;
-                ddlContentType.Visible = false;
+                
 
                 //if orgId > 0, may want to have an indication that org is the owner??
                 //for now always disable. changing could be complicated
@@ -319,13 +362,14 @@ namespace ILPathways.Controls.Content
                 {
                     ddlIsOrganizationContent.SelectedIndex = 1;
                     ddlIsOrganizationContent.Enabled = false;
-                    if ( entity.ResourceVersionId == 0 )
+                    if ( entity.HasResourceId() == false )
                     {
                         //never published
                         btnPublish.Visible = true;
                         btnPublish.CommandName = "PublishNew";
                     }
-                    else if ( entity.ResourceVersionId > 0 && entity.StatusId == ContentItem.REVISIONS_REQUIRED_STATUS )
+                    else if ( entity.HasResourceId() == true 
+                        && entity.StatusId == ContentItem.REVISIONS_REQUIRED_STATUS )
                     {
                         btnPublish.Visible = true;
                         btnPublish.CommandName = "PublishSubmit";
@@ -337,7 +381,7 @@ namespace ILPathways.Controls.Content
                     if ( entity.StatusId < ContentItem.PUBLISHED_STATUS )
                     {
                         btnPublish.Visible = true;
-                        if ( entity.ResourceVersionId > 0 )
+                        if ( entity.HasResourceId() == true )
                         {
                             btnPublish.CommandName = "PublishUpdate";
                             this.btnPublish.Attributes.Remove( "onClick" );
@@ -350,8 +394,26 @@ namespace ILPathways.Controls.Content
                     }
                 }
 
-                Stage2Items.Visible = true;
-                tabNav.Visible = true;
+
+                if ( FormPrivileges.CanDelete() )
+                {
+                    btnDelete.Visible = true;
+                }
+                btnNew.Visible = true;
+                //set after content item exists
+                FileResourceController.PathParts parts = FileResourceController.DetermineDocumentPathUsingParentItem( entity );
+                string documentFolder = parts.filePath;
+                string relativePath = parts.url;
+
+                //string documentFolder = FileResourceController.DetermineDocumentPath( entity );
+                //string relativePath = FileResourceController.GetRelativeUrlPath( entity );
+                string baseUrl = UtilityManager.GetAppKeyValue( "path.MapContentPath", "/ContentDocs/" );
+
+                string upload = baseUrl + relativePath + "/";
+
+                //myImmediateImageInsert.UploadFolder = upload;  // "/ContentDocs/"; //documentFolder;
+
+                //?? ==> n
                 statusDiv.Visible = true;
                 if ( entity.StatusId == ContentItem.PUBLISHED_STATUS )
                 {
@@ -364,35 +426,28 @@ namespace ILPathways.Controls.Content
                     this.btnSetInactive.Visible = true;
                 }
 
-                //show the finish button
-                //btnFinish.Visible = true;
-                //btnFinish2.Visible = true;
                 historyPanel.Visible = true;
                 this.lblHistory.Text = entity.HistoryTitle();
+                HandleTabsVisibility();
 
-                //get all supplements
-                SetAttachmentList( entity.Id );
-                //get all references
-                SetReferenceList( entity.Id );
+                //============== handle different types
+                if ( entity.TypeId == ContentItem.DOCUMENT_CONTENT_ID )
+                {
+                    PopulateDocumentContentType( entity );
+                }
+                else if ( entity.IsHierarchyType )
+                {
+                    PopulateCurriculumContentType( entity );
+                }
+                else
+                {
+                    Stage2Items.Visible = true;
+                    HandleOtherContentType( entity );
+                }
+
                 //set preview
                 ShowPreview( entity );
 
-                if ( FormPrivileges.CanDelete() )
-                {
-                    btnDelete.Visible = true;
-                }
-                btnNew.Visible = true;
-
-                //set after content item exists
-                string documentFolder = FileResourceController.DetermineDocumentPath( entity );
-                string relativePath = FileResourceController.GetRelativeUrlPath( entity );
-                string baseUrl = UtilityManager.GetAppKeyValue( "path.MapContentPath", "/Content/" );
-
-                string upload = baseUrl + relativePath + "/";
-
-                myImmediateImageInsert.UploadFolder = upload;  // "/ContentDocs/"; //documentFolder;
-                //ib1.GalleryFolders = documentFolder;
-                //ib1.ManagedFolders = documentFolder;
             }
             else
             {
@@ -411,9 +466,85 @@ namespace ILPathways.Controls.Content
                 ltlAttachmentsList.Text = "";
                 this.ltlReferencesList.Text = "";
                 ddlContentType.Enabled = true;
+
+                FileContentItem.Visible = false;
             }
 
         }//
+        void PopulateDocumentContentType( ContentItem entity )
+        {
+            LoggingHelper.DoTrace( 6, thisClassName + ".PopulateDocumentContentType(): " + entity.Id );
+            btnSave.Text = "Save";
+            //note only handling basic file update, not republishing!
+
+            if ( entity.RelatedDocument != null && entity.RelatedDocument.HasValidRowId() )
+            {
+                txtDocumentRowId2.Text = entity.DocumentRowId.ToString();
+                fileContentUrl.Text = entity.DocumentUrl;
+
+                //check if file exists on server, if not it will be downloaded
+                string fileUrl = FileResourceController.ValidateDocumentOnServer( entity, entity.RelatedDocument );
+                if ( fileUrl.Length > 10 )
+                {
+
+                    contentFileName.Text = entity.RelatedDocument.FileName;
+                    contentFileDescription.Text = entity.Summary;
+                    linkContentFile.NavigateUrl = fileUrl;
+                    
+                }
+                else
+                    contentFileName.Text = "Sorry issue encountered locating the related document.<br/>" + entity.Message;
+            }
+
+        }//
+        void PopulateCurriculumContentType( ContentItem entity )
+        {
+            try
+            {
+                entity = crcManager.GetCurriculumOutlineForEditOld( entity.Id );
+
+                ContentNode nodes = crcManager.GetCurriculumOutlineForEdit( entity.Id );
+                //hmmm, if an actual hierarch type, only want to offer outline create once
+                //so if has children:
+                //  - not curriculm - use tree route ==> suggests cannot create a new hierarchy under curr?
+                if ( entity.HasChildItems || entity.TypeId != ContentItem.CURRICULUM_CONTENT_ID )
+                {
+                    PopulateTree( entity );
+
+                    if ( entity.TypeId != ContentItem.CURRICULUM_CONTENT_ID )
+                        this.PopulateNode( entity.Id );
+                    else
+                    {
+                        newsPanel.Visible = true;
+                    }
+                }
+                else
+                {
+                    curriculumIntroPanel.Visible = true;
+                    treePanel.Visible = false;
+                    nodePanel.Visible = false;
+                    noNodePanel.Visible = false;
+                }
+            }
+            catch ( Exception ex )
+            {
+                LoggingHelper.LogError( ex, thisClassName + ".PopulateCurriculumContentType() - Unexpected error encountered" );
+                this.SetConsoleErrorMessage( "Unexpected error encountered - Close this form and try again. (System Admin has been notified)<br/>" + ex.ToString() );
+            }
+        }//
+        void HandleOtherContentType( ContentItem entity )
+        {
+
+            //get all supplements
+            SetAttachmentList( entity.Id );
+            //get all references
+            SetReferenceList( entity.Id );
+         
+
+            //ib1.GalleryFolders = documentFolder;
+            //ib1.ManagedFolders = documentFolder;
+        }//
+
         void ShowPreview( ContentItem entity )
         {
 
@@ -423,15 +554,20 @@ namespace ILPathways.Controls.Content
             if ( string.IsNullOrEmpty( txtTitle.Text ) )
                 cleanTitle = "";
             else
-                cleanTitle = new PublishController().FormatFriendlyTitle( this.txtTitle.Text );
+                cleanTitle = ResourceBizService.FormatFriendlyTitle( this.txtTitle.Text );
         }
 
         #endregion
 
         #region Form actions
-
+   protected void btnSaveWeb_Click( object sender, EventArgs e )
+        {
+            btnSave_Click( sender, e );
+            //selectedTab = ltlAttachmentsTabName.Text;
+        }
         protected void btnSave_Click( object sender, EventArgs e )
         {
+            LoggingHelper.DoTrace( 6, thisClassName + "btnSaveWeb_Click" );
             //validate
             if ( ValidateSummary() & this.IsFormValid() )
             {
@@ -442,11 +578,10 @@ namespace ILPathways.Controls.Content
                 //hide cancel
 
                 //enable other sections
-                Stage2Items.Visible = true;
-                tabNav.Visible = true;
+                HandleTabsVisibility();
+               
                 statusDiv.Visible = true;
-                //take the user to the next step
-                selectedTab = ltlWebContentTabName.Text;
+                
 
                 //show the finish button
                 //btnFinish.Visible = true;
@@ -454,18 +589,52 @@ namespace ILPathways.Controls.Content
             }
 
             //hide cancel
+      }
 
-        }
 
-        protected void btnSaveWeb_Click( object sender, EventArgs e )
+        protected void HandleTabsVisibility()
         {
-            btnSave_Click( sender, e );
-            //selectedTab = ltlAttachmentsTabName.Text;
+            //take the user to the next step
+            selectedTab = ltlWebContentTabName.Text;
+
+            if ( CurrentRecord.TypeId == ContentItem.DOCUMENT_CONTENT_ID )
+            {
+                FileContentItem.Visible = true;
+                tabNavContentFile.Visible = true;
+                tabNav.Visible = false;
+                //==> overide
+                selectedTab = ltlFileContentTabName.Text;
+            }
+            else if ( CurrentRecord.IsHierarchyType )
+            {
+                Stage2Items.Visible = true;
+                tabNav.Visible = false;
+                attachmentsPanel.Visible = false;
+                referencesPanel.Visible = false;
+                tabNavCurriculum.Visible = true;
+                CurriculumItem.Visible = true;
+                selectedTab = ltlCurriculumTabName.Text;
+            }
+            else
+            {
+                Stage2Items.Visible = true;
+                tabNav.Visible = true;
+                referencesPanel.Visible = true;
+                this.attachmentsPanel.Visible = true;
+            }
         }
+
+     
         protected void btnSaveWebContinue_Click( object sender, EventArgs e )
         {
             btnSave_Click( sender, e );
-            selectedTab = ltlAttachmentsTabName.Text;
+            if ( CurrentRecord.TypeId == ContentItem.DOCUMENT_CONTENT_ID )
+                selectedTab = ltlAttachmentsTabName.Text;
+            else if ( CurrentRecord.TypeId >= ContentItem.CURRICULUM_CONTENT_ID
+                && CurrentRecord.TypeId < ContentItem.ACTIVITY_CONTENT_ID )
+                selectedTab = ltlCurriculumTabName.Text;
+            else 
+                selectedTab = ltlAttachmentsTabName.Text;
         }
         protected void btnPublish2_Click( object sender, EventArgs e )
         {
@@ -542,7 +711,7 @@ namespace ILPathways.Controls.Content
                 Session.Add( "authoredResourceURL", Request.Url.Scheme + "://" + Request.Url.Host + port
                                                 + string.Format( litPreviewUrlTemplate.Text, CurrentRecord.RowId.ToString() ) );
             else
-                Session.Add( "authoredResourceURL", UtilityManager.FormatAbsoluteUrl( string.Format( litPreviewUrlTemplate.Text, CurrentRecord.Id, new PublishController().FormatFriendlyTitle( CurrentRecord.Title ) ), false ) );
+                Session.Add( "authoredResourceURL", UtilityManager.FormatAbsoluteUrl( string.Format( litPreviewUrlTemplate.Text, CurrentRecord.Id, ResourceBizService.FormatFriendlyTitle( CurrentRecord.Title ) ), false ) );
 
             Response.Redirect( "/Publish.aspx?rid=" + CurrentRecord.RowId.ToString(), true );
             //redirectTarget = Request.Url.Scheme + "://" + Request.Url.Host + ":" + Request.Url.Port + "/Publish.aspx";
@@ -575,6 +744,8 @@ namespace ILPathways.Controls.Content
 
         private void UpdateForm( int newStatusId )
         {
+
+            LoggingHelper.DoTrace( 6, thisClassName + "UpdateForm" );
             int id = 0;
             string statusMessage = "";
             string action = "";
@@ -620,6 +791,7 @@ namespace ILPathways.Controls.Content
                 }
                 else
                 {
+                    LoggingHelper.DoTrace( 6, thisClassName + "UpdateForm - get: id=" + id.ToString() );
                     // get current record 
                     entity = myManager.Get( id );
                     action = "Update";
@@ -666,7 +838,7 @@ namespace ILPathways.Controls.Content
                 if ( newStatusId == ContentItem.INACTIVE_STATUS )
                 {
                     //reset rvid
-                    entity.ResourceVersionId = 0;
+                    entity.ResourceIntId = 0;
                 }
 
                 entity.LastUpdated = System.DateTime.Now;
@@ -688,7 +860,9 @@ namespace ILPathways.Controls.Content
                 }
                 else
                 {
+                    LoggingHelper.DoTrace( 6, thisClassName + "UpdateForm - before update" );
                     statusMessage = myManager.Update( entity );
+                    LoggingHelper.DoTrace( 6, thisClassName + "UpdateForm - after update" );
                 }
 
 
@@ -700,6 +874,7 @@ namespace ILPathways.Controls.Content
 
                     if ( currentStatusId != entity.StatusId || newStatusId > 0 )
                     {
+                        LoggingHelper.DoTrace( 6, thisClassName + "UpdateForm - doing get" );
                         Get( entity.Id );
                     }
                     if ( newStatusId != ContentItem.INACTIVE_STATUS )
@@ -717,7 +892,11 @@ namespace ILPathways.Controls.Content
                 this.SetConsoleErrorMessage( "Unexpected error encountered - Close this form and try again. (System Admin has been notified)<br/>" + ex.ToString() );
             }
         }
-
+        /// <summary>
+        /// Set the status of the current item
+        /// </summary>
+        /// <param name="entity"></param>
+        /// <returns></returns>
         protected int DetermineStatus( ContentItem entity )
         {
             /*initial status = 2
@@ -739,19 +918,27 @@ namespace ILPathways.Controls.Content
             {
                 //is published. If approval is required, set to in progress, and what else
                 //may need something to allow auto approve after initial approve, or at some point in time
-                if ( entity.IsOrgContent() )
+
+                if (entity.TypeId == ContentItem.DOCUMENT_CONTENT_ID || entity.IsHierarchyType)
                 {
-                    statusId = ContentItem.INPROGRESS_STATUS;
-                    //popup message
+                    //leave as is
                 }
                 else
                 {
-                    //no action. Probably don't want to arbitrarily change status. Provide an overt action
+                    if (entity.IsOrgContent())
+                    {
+                        statusId = ContentItem.INPROGRESS_STATUS;
+                        //popup message
+                    }
+                    else
+                    {
+                        //no action. Probably don't want to arbitrarily change status. Provide an overt action
+                    }
                 }
             }
 
             return statusId;
-        }
+        } //
 
         protected void btnNew_Click( object sender, EventArgs e )
         {
@@ -774,47 +961,53 @@ namespace ILPathways.Controls.Content
                 if ( myManager.Delete( id, ref statusMessage ) )
                 {
                     //TODO - need to delete LR related stuff!
-                    if ( CurrentRecord.ResourceVersionId > 0 )
+                    if (CurrentRecord.HasResourceId())
                     {
-                        ResourceVersion entity = new ResourceVersionManager().Get( CurrentRecord.ResourceVersionId );
-                        if ( entity != null && entity.Id > 0 )
-                        {
-                            try
-                            {
-                                new ResourceVersionManager().SetActiveState( false, CurrentRecord.ResourceVersionId );
-                                string response = "";
-                                var esManager = new ElasticSearchManager();
-                                new ElasticSearchManager().DeleteByVersionID( CurrentRecord.ResourceVersionId, ref response );
-                                extraMessage = "Resource Deactivated";
-                            }
-                            catch ( Exception ex )
-                            {
-                                extraMessage = "There was a problem deactivating the Resource: " + ex.ToString();
-                            }
+                        ResourceBizService.Resource_SetInactive( CurrentRecord.ResourceIntId, ref statusMessage );
+                        //ResourceVersion entity = new ResourceVersionManager().GetByResourceId( CurrentRecord.ResourceIntId );
+                        //if ( entity != null && entity.Id > 0 )
+                        //{
+                        //    try
+                        //    {
+                        //        new ResourceVersionManager().SetActiveState( false, entity.Id );
+                        //        string response = "";
+                        //        var esManager = new ElasticSearchManager();
+                        //        //new ElasticSearchManager().DeleteByVersionID( CurrentRecord.ResourceVersionId, ref response );
+                        //        new ElasticSearchManager().DeleteResource( CurrentRecord.ResourceIntId );
+                        //        extraMessage = "Resource Deactivated";
+                        //    }
+                        //    catch ( Exception ex )
+                        //    {
+                        //        extraMessage = "There was a problem deactivating the Resource: " + ex.ToString();
+                        //    }
 
 
+                        //    //note can have a RV id not not be published to LR. Need to check for a resource docid
+                        //    if ( entity.LRDocId != null && entity.LRDocId.Length > 10 )
+                        //    {
+                        //        //post request to delete ==> this process would take care of actual delete of the Resource hierarchy
+                        //        if (IsTestEnv()) 
+                        //            extraMessage = "<br/>( WELL ALMOST - NEED TO ADD CODE TO REMOVE FROM THE LR, AND DO PHYSICAL DELETE OF THE RESOURCE HIERARCHY - JEROME)";
+                        //    }
 
-                            //string status = new ResourceManager().SetResourceActiveState( false, CurrentRecord.ResourceVersionId );
-                            //note can have a RV id not not be published to LR. Need to check for a resource docid
-                            if ( entity.LRDocId != null && entity.LRDocId.Length > 10 )
-                            {
-                                //post request to delete ==> this process would take care of actual delete of the Resource hierarchy
-                                if (IsTestEnv()) 
-                                    extraMessage = "<br/>( WELL ALMOST - NEED TO ADD CODE TO REMOVE FROM THE LR, AND DO PHYSICAL DELETE OF THE RESOURCE HIERARCHY - JEROME)";
-                            }
-
-                        }
+                        //}
                     }
 
                     this.SetConsoleSuccessMessage( "Delete of record was successful " + extraMessage );
 
-                    this.ResetForm();
+                    Response.Redirect( "/My/Authored.aspx", true );
+                    //this.ResetForm();
+
                 }
                 else
                 {
                     this.SetConsoleErrorMessage( statusMessage );
                 }
 
+            }
+            catch ( System.Threading.ThreadAbortException tex )
+            {
+                //ignore this on redirect
             }
             catch ( System.Exception ex )
             {
@@ -837,6 +1030,7 @@ namespace ILPathways.Controls.Content
         {
             int id = 0;
             Int32.TryParse( this.txtId.Text, out id );
+            string statusMessage = "";
 
             if ( id > 0 )
             {
@@ -844,7 +1038,7 @@ namespace ILPathways.Controls.Content
                 if ( ValidateSummary() & this.IsFormValid() )
                 {
                     //save rvid for later
-                    int rvid = CurrentRecord.ResourceVersionId;
+                    int resid = CurrentRecord.ResourceIntId;
 
                     this.UpdateForm( ContentItem.INACTIVE_STATUS );
                     //probably need a check that update was successful
@@ -852,21 +1046,24 @@ namespace ILPathways.Controls.Content
                     //TODO - should a history record be created?
 
                     string extraMessage = "";
-                    if ( rvid > 0 )
+                    if ( resid > 0 )
                     {
-                        ResourceVersion entity = new ResourceVersionManager().Get( rvid );
-                        if ( entity != null && entity.Id > 0 )
-                        {
-                            string status = new ResourceManager().SetResourceActiveState( false, rvid );
-                            //note can have a RV id not not be published to LR. Need to check for a resource docid
-                            if ( entity.LRDocId != null && entity.LRDocId.Length > 10 )
-                            {
-                                //need to call methods to remove from LR
-                                //==> this process would take care of actual delete of the Resource hierarchy
-                                extraMessage = "<br/>( WELL ALMOST - NEED TO ADD CODE TO REMOVE FROM THE LR, AND DO PHYSICAL DELETE OF THE RESOURCE HIERARCHY - JEROME)";
-                            }
+                        ResourceBizService.Resource_SetInactive( resid, ref statusMessage );
 
-                        }
+                        //ResourceVersion entity = new ResourceVersionManager().GetByResourceId( resid );
+                        //if ( entity != null && entity.Id > 0 )
+                        //{
+                        //    string status = new ResourceManager().SetResourceActiveState( entity.ResourceIntId, false );
+                        //    //note can have a RV id not not be published to LR. Need to check for a resource docid
+                        //    if ( entity.LRDocId != null && entity.LRDocId.Length > 10 )
+                        //    {
+                        //        //need to call methods to remove from LR
+                        //        //==> this process would take care of actual delete of the Resource hierarchy
+                        //        if ( IsTestEnv() )
+                        //            extraMessage = "<br/>( WELL ALMOST - NEED TO ADD CODE TO REMOVE FROM THE LR, AND DO PHYSICAL DELETE OF THE RESOURCE HIERARCHY - JEROME)";
+                        //    }
+
+                        //}
                     }
                     this.SetConsoleSuccessMessage( "Record was set to inactive. " + extraMessage );
                 }
@@ -1042,7 +1239,7 @@ namespace ILPathways.Controls.Content
                 entity.RelatedDocument = doc;
 
                 //check if file exists on server, if not it will be downloaded
-                lblDocumentLink.NavigateUrl = ValidateDocumentOnServer( CurrentRecord, doc );
+                lblDocumentLink.NavigateUrl = FileResourceController.ValidateDocumentOnServer( CurrentRecord, doc );
             }
             else
             {
@@ -1080,11 +1277,6 @@ namespace ILPathways.Controls.Content
 
             //do upload
 
-            CurrentUser = GetAppUser();
-
-            //string statusMessage = "";
-            //bool isValid = HandleDocument( CurrentRecord, CurrentUser, true, ref statusMessage );
-
             selectedTab = ltlAttachmentsTabName.Text;
         }
 
@@ -1105,6 +1297,26 @@ namespace ILPathways.Controls.Content
         {
             bool isValid = true;
             StringBuilder errorBuilder = new StringBuilder( "" );
+
+            // Scan the file first.  If there's a virus, don't allow the upload!
+            string scanResult = "OK";
+            VirusScanner virScan = new VirusScanner();
+            scanResult = virScan.Scan( fileUpload.FileBytes );
+
+            if (scanResult.IndexOf("ERROR") > -1)
+            {
+                errorBuilder.Append("An error occurred while scanning the uploaded file for viruses.");
+                isValid = false;
+            }
+            else if (scanResult == "Infected")
+            {
+                errorBuilder.Append("The file you are uploading appears to be infected with a virus! Please remove the infection before attempting to upload again.");
+                isValid = false;
+            }
+            else if (scanResult == "no scan done")
+            {
+                SetConsoleInfoMessage("The uploaded file was not scanned for viruses.");
+            }
 
             if ( this.txtFileTitle.Text.Trim().Length < 10 )
             {
@@ -1278,6 +1490,16 @@ namespace ILPathways.Controls.Content
 
             selectedTab = ltlAttachmentsTabName.Text;
         }
+
+        /// <summary>
+        /// Handle document content
+        /// </summary>
+        /// <param name="parentEntity"></param>
+        /// <param name="attachment"></param>
+        /// <param name="user"></param>
+        /// <param name="uploadOnly"></param>
+        /// <param name="statusMessage"></param>
+        /// <returns></returns>
         protected bool HandleDocument( ContentItem parentEntity, ContentSupplement attachment, Patron user, bool uploadOnly, ref string statusMessage )
         {
             bool isValid = true;
@@ -1349,13 +1571,17 @@ namespace ILPathways.Controls.Content
                     entity.CleanFileName();
 
                     //LoggingHelper.DoTrace( 5, thisClassName + " HandleDocument(). calling DetermineDocumentPath" );
-                    string documentFolder = FileResourceController.DetermineDocumentPath( parentEntity );
+                    //string documentFolder = FileResourceController.DetermineDocumentPath( parentEntity );
+                    FileResourceController.PathParts parts = FileResourceController.DetermineDocumentPathUsingParentItem( parentEntity );
+                    string documentFolder = parts.filePath;
+                    entity.URL = parts.url;
+
                     // LoggingHelper.DoTrace( 5, thisClassName + " - uploading to " + documentFolder );
-                    entity.URL = FileResourceController.DetermineDocumentUrl( parentEntity, entity.FileName );
+                    //entity.URL = FileResourceController.DetermineDocumentUrl( parentEntity, entity.FileName );
                     attachment.ResourceUrl = entity.URL;
 
                     //try separating following to insulate from file privileges issues
-                    UploadFile( documentFolder, entity.FileName );
+                    UploadFile( fileUpload, documentFolder, entity.FileName );
                     //rewind for db save
                     fileUpload.PostedFile.InputStream.Position = 0;
                     Stream fs = fileUpload.PostedFile.InputStream;
@@ -1424,14 +1650,14 @@ namespace ILPathways.Controls.Content
                 attachment.DocumentRowId = entity.RowId;
                 attachment.RelatedDocument = entity;
 
-                ValidateDocumentOnServer( parentEntity, entity );
+                FileResourceController.ValidateDocumentOnServer( parentEntity, entity );
             }
 
             return isValid;
 
         }//
 
-        private void UploadFile( string documentFolder, string filename )
+        private void UploadFile( FileUpload uploadCtrl, string documentFolder, string filename )
         {
             try
             {
@@ -1441,7 +1667,7 @@ namespace ILPathways.Controls.Content
                 //string diskFile = MapPath( documentFolder ) + "\\" + entity.FileName;
 
                 LoggingHelper.DoTrace( 5, thisClassName + " UploadFile(). doing SaveAs" );
-                fileUpload.SaveAs( diskFile );
+                uploadCtrl.SaveAs( diskFile );
 
             }
             catch ( Exception ex )
@@ -1450,33 +1676,33 @@ namespace ILPathways.Controls.Content
             }
         }//
 
-        private string ValidateDocumentOnServer( ContentItem parentEntity, DocumentVersion doc )
-        {
-            string fileUrl = "";
+        //private string ValidateDocumentOnServer( ContentItem parentEntity, DocumentVersion doc )
+        //{
+        //    string fileUrl = "";
 
-            try
-            {
-                string documentFolder = FileResourceController.DetermineDocumentPath( parentEntity );
-                string message = FileSystemHelper.HandleDocumentCaching( documentFolder, doc );
-                if ( message == "" )
-                {
-                    //blank returned message means ok
-                    fileUrl = FileResourceController.DetermineDocumentUrl( parentEntity, doc.FileName );
-                }
-                else
-                {
-                    //error, should return a message
-                    this.SetConsoleErrorMessage( message );
-                }
-            }
-            catch ( Exception ex )
-            {
-                LoggingHelper.LogError( ex, thisClassName + ".ValidateDocumentOnServer() - Unexpected error encountered while retrieving document" );
+        //    try
+        //    {
+        //        string documentFolder = FileResourceController.DetermineDocumentPath( parentEntity );
+        //        string message = FileSystemHelper.HandleDocumentCaching( documentFolder, doc );
+        //        if ( message == "" )
+        //        {
+        //            //blank returned message means ok
+        //            fileUrl = FileResourceController.DetermineDocumentUrl( parentEntity, doc.FileName );
+        //        }
+        //        else
+        //        {
+        //            //error, should return a message
+        //            this.SetConsoleErrorMessage( message );
+        //        }
+        //    }
+        //    catch ( Exception ex )
+        //    {
+        //        LoggingHelper.LogError( ex, thisClassName + ".ValidateDocumentOnServer() - Unexpected error encountered while retrieving document" );
 
-                this.SetConsoleErrorMessage( "Unexpected error encountered - Close this form and try again. (System Admin has been notified)<br/>" + ex.ToString() );
-            }
-            return fileUrl;
-        }//
+        //        this.SetConsoleErrorMessage( "Unexpected error encountered - Close this form and try again. (System Admin has been notified)<br/>" + ex.ToString() );
+        //    }
+        //    return fileUrl;
+        //}//
 
         private bool IsUploadValid()
         {
@@ -1519,9 +1745,22 @@ namespace ILPathways.Controls.Content
         /// </summary>
         protected bool IsFilePresent()
         {
+            //bool isPresent = false;
+
+            //if ( fileUpload.HasFile || fileUpload.FileName != "" )
+            //{
+            //    isPresent = true;
+
+            //}
+
+            return IsFilePresent( fileUpload );
+        }//
+
+        protected bool IsFilePresent( FileUpload fileControl)
+        {
             bool isPresent = false;
 
-            if ( fileUpload.HasFile || fileUpload.FileName != "" )
+            if ( fileControl.HasFile || fileControl.FileName != "" )
             {
                 isPresent = true;
 
@@ -1529,7 +1768,6 @@ namespace ILPathways.Controls.Content
 
             return isPresent;
         }//
-
 
         #endregion
 
@@ -1755,6 +1993,155 @@ namespace ILPathways.Controls.Content
         }
         #endregion
 
+        #region === content type of document ========================
+
+        protected void btnContentFileUpload_Click( object sender, EventArgs e )
+        {
+            selectedTab = this.ltlFileContentTabName.Text;
+            string statusMessage = "";
+            //validate
+            if ( contentFileUpload.HasFile == false || contentFileUpload.FileName == "" )
+            {
+                SetConsoleErrorMessage( "Please select a file before clicking upload" );
+
+                return;
+            }
+            //do upload
+            //????
+            CurrentUser = GetAppUser();
+            
+            DocumentVersion docVersion = new DocumentVersion();
+            string documentRowId = this.txtDocumentRowId2.Text;
+            if ( documentRowId.IndexOf("00000000-") > -1
+                || documentRowId.Length != 36
+                || docVersion.IsValidRowId( new Guid( documentRowId ) ) == false )
+            {
+                //not normal but may be necessary for workaround
+                docVersion.CreatedById = WebUser.Id;
+                docVersion.Created = System.DateTime.Now;
+
+                FileResourceController.CreateDocument( contentFileUpload, docVersion, CurrentRecord.OrgId, ref statusMessage );
+
+                CurrentRecord.DocumentUrl = docVersion.URL;
+                CurrentRecord.DocumentRowId = docVersion.RowId;
+                CurrentRecord.LastUpdated = System.DateTime.Now;
+                CurrentRecord.LastUpdatedById = WebUser.Id;		//include for future use
+                CurrentRecord.LastUpdatedBy = WebUser.FullName();
+                //change status???
+                int currentStatusId = CurrentRecord.StatusId;
+                CurrentRecord.StatusId = DetermineStatus( CurrentRecord );
+                statusMessage = myManager.Update( CurrentRecord );
+                if ( statusMessage.Equals( "successful" ) )
+                {
+                    this.SetConsoleSuccessMessage( "Successfully added file!" );
+                    contentFileName.Text = CurrentRecord.RelatedDocument.FileName;
+                    contentFileDescription.Text = CurrentRecord.Summary;
+                    linkContentFile.NavigateUrl = CurrentRecord.DocumentUrl;
+                }
+                else
+                {
+                    this.SetConsoleErrorMessage( "Error encountered attempting to update this item: " + statusMessage );
+                }
+
+                return;
+            }
+            else
+            {
+
+                docVersion = myManager.DocumentVersionGet( documentRowId );
+            }
+            docVersion.LastUpdatedById = CurrentUser.Id;
+
+            try
+            {
+                int maxFileSize = UtilityManager.GetAppKeyValue( "maxDocumentSize", 4000000 );
+                //TODO - if an image, do a resize
+                if ( FileResourceController.IsFileSizeValid( contentFileUpload, maxFileSize ) == false )
+                {
+                    SetConsoleErrorMessage( string.Format( "Error the selected file exceeds the size limits ({0} bytes).", maxFileSize ) );
+                    return ;
+                }
+
+                docVersion.MimeType = contentFileUpload.PostedFile.ContentType;
+                //keeping the same file name
+                //docVersion.FileName = contentFileUpload.FileName;
+                docVersion.FileDate = System.DateTime.Now;
+
+                string sFileType = System.IO.Path.GetExtension( docVersion.FileName );
+                sFileType = sFileType.ToLower();
+
+                docVersion.FileName = System.IO.Path.ChangeExtension( docVersion.FileName, sFileType );
+
+                //probably want to fix filename to standardize
+                //should already be clean, so skip to avoid unexpected name changes
+                //docVersion.CleanFileName();
+
+                //LoggingHelper.DoTrace( 5, thisClassName + " HandleDocument(). calling DetermineDocumentPath" );
+                FileResourceController.PathParts parts = FileResourceController.DetermineDocumentPathUsingParentItem( CurrentRecord );
+
+                docVersion.URL = FileResourceController.FormatPartsFullUrl( parts, docVersion.FileName );
+                //docVersion.URL = FileResourceController.DetermineDocumentUrl( CurrentRecord, docVersion.FileName );
+
+                //don't update url, just incase
+                CurrentRecord.DocumentUrl = docVersion.URL;
+
+                //try separating following to insulate from file privileges issues
+                UploadFile( contentFileUpload, parts.filePath, docVersion.FileName );
+                //rewind for db save
+                contentFileUpload.PostedFile.InputStream.Position = 0;
+                Stream fs = contentFileUpload.PostedFile.InputStream;
+
+                docVersion.ResourceBytes = fs.Length;
+                byte[] data = new byte[ fs.Length ];
+                fs.Read( data, 0, data.Length );
+                fs.Close();
+                fs.Dispose();
+                docVersion.SetResourceData( docVersion.ResourceBytes, data );
+
+                statusMessage = myManager.DocumentVersionUpdate( docVersion );
+                if ( statusMessage.Equals( "successful" ) )
+                {
+
+                    linkContentFile.Visible = true;
+
+                    //update CI
+                    ContentItem entity = myManager.Get( CurrentRecord.Id );
+                    entity.LastUpdated = System.DateTime.Now;
+                    entity.LastUpdatedById = WebUser.Id;		//include for future use
+                    entity.LastUpdatedBy = WebUser.FullName();
+                    //change status???
+                    int currentStatusId = entity.StatusId;
+                    entity.StatusId = DetermineStatus( entity );
+                    statusMessage = myManager.Update( entity );
+                    if ( statusMessage.Equals( "successful" ) )
+                    {
+                        this.SetConsoleSuccessMessage( "Successfully updated file!" );
+
+                        contentFileName.Text = entity.RelatedDocument.FileName;
+                        contentFileDescription.Text = entity.Summary;
+                        linkContentFile.NavigateUrl = entity.DocumentUrl;
+
+                    }
+                    else
+                    {
+                        this.SetConsoleErrorMessage( "Error encountered attempting to update this item: " + statusMessage );
+                    }
+
+                }
+                else
+                {
+                    linkContentFile.Visible = false;
+                }
+            }
+            catch ( Exception ex )
+            {
+                SetConsoleErrorMessage( "Unexpected error occurred while attempting to upload your file.<br/>" + ex.Message );
+                LoggingHelper.LogError( ex, thisClassName + "btnContentFileUpload_Click()" );
+                return;
+            }
+        }
+
+        #endregion
         #region Housekeeping
         /// <summary>
         /// Populate form controls
@@ -1766,7 +2153,7 @@ namespace ILPathways.Controls.Content
             string booleanOperator = "AND";
             //check if already has a home content
             string filter = "";
-            string where = string.Format( "([TypeId] = 20 AND base.CreatedById = {0}) ", CurrentUser.Id );
+            string where = string.Format( "([TypeId] = 20 AND base.CreatedById = {0}) ", WebUser.Id );
             filter = BDM.FormatSearchItem( filter, where, booleanOperator );
             int pTotalRows = 0;
             DataSet ds = myManager.Search( filter, "", 1, 25, ref pTotalRows );
@@ -1785,40 +2172,45 @@ namespace ILPathways.Controls.Content
         private void SetContentType()
         {
             //may only allow on first create?
-            DataSet ds = myManager.ContentType_Select();
-            if ( DatabaseManager.DoesDataSetHaveRows( ds ) )
-            {
-                templatesPanel.Visible = true;
-                BDM.PopulateList( this.ddlContentType, ds, "Id", "Title", "Select type" );
-            }
+            List<CodeItem> list = myManager.ContentType_ActiveList();
+            //
+            BDM.PopulateList( this.ddlNodeContentType, list, "Id", "Title", "" );
+
         }
+
         private void SetContentType2( bool hasHomeContent )
         {
+
+            List<CodeItem> list2 = myManager.ContentType_TopLevelActiveList();
+            BDM.PopulateList( this.ddlContentType, list2, "Id", "Title", "Select type" );
+
+
             //may only allow on first create?
-            DataSet ds = myManager.ContentType_Select();
-            if ( DatabaseManager.DoesDataSetHaveRows( ds ) )
-            {
-                templatesPanel.Visible = true;
-                ListItem item = new ListItem( "Select type", "0" );
-                ddlContentType.Items.Add( item );
+            //DataSet ds = myManager.ContentType_Select();
+            //if ( DatabaseManager.DoesDataSetHaveRows( ds ) )
+            //{
+            //    //templatesPanel.Visible = true;
+            //    ListItem item = new ListItem( "Select type", "0" );
+            //    ddlContentType.Items.Add( item );
 
-                foreach ( DataRow dr in ds.Tables[ 0 ].Rows )
-                {
-                    string id = BDM.GetRowColumn( dr, "Id", "0" );
-                    string title = BDM.GetRowColumn( dr, "Title", "-" );
+            //    foreach ( DataRow dr in ds.Tables[ 0 ].Rows )
+            //    {
+            //        string id = BDM.GetRowColumn( dr, "Id", "0" );
+            //        string title = BDM.GetRowColumn( dr, "Title", "-" );
 
-                    item = new ListItem( title, id );
-                    if ( id == "20" && hasHomeContent )
-                        item.Enabled = false;
-                    else
-                        item.Enabled = true;
+            //        item = new ListItem( title, id );
+            //        if ( id == "20" && hasHomeContent )
+            //            item.Enabled = false;
+            //        else
+            //            item.Enabled = true;
 
-                    ddlContentType.Items.Add( item );
-                }
-                ddlContentType.SelectedIndex = 0;
-                //PopulateList2( this.ddlContentType, ds, "Id", "Title", "Select type" );
-            }
+            //        ddlContentType.Items.Add( item );
+            //    }
+            //    ddlContentType.SelectedIndex = 0;
+            //PopulateList2( this.ddlContentType, ds, "Id", "Title", "Select type" );
+            //
         }
+        
 
         private void SetTemplates()
         {
@@ -1826,7 +2218,7 @@ namespace ILPathways.Controls.Content
             DataSet ds = myManager.SelectOrgTemplates( CurrentUser.OrgId );
             if ( DatabaseManager.DoesDataSetHaveRows( ds ) )
             {
-                templatesPanel.Visible = true;
+                //templatesPanel.Visible = true;
                 BDM.PopulateList( this.ddlTemplates, ds, "Id", "Title", "Select template" );
             }
         }
@@ -1876,7 +2268,7 @@ namespace ILPathways.Controls.Content
             DataSet ds2 = ds.Copy();
 
             BDM.PopulateList( this.ddlPrivacyLevel, ds, "Id", "Title", "Select access level" );
-
+            BDM.PopulateList( this.ddlNodePrivacyLevel, ds, "Id", "Title");
             BDM.PopulateList( this.ddlAttachmentPrivacyLevel, ds2, "Id", "Title", "Select >>" );
         }
 
@@ -1908,7 +2300,7 @@ namespace ILPathways.Controls.Content
                     //    supplements.Text += "<br/>(test only): " + item.RelatedDocument.FileName;
 
                     //check if file exists on server, if not it will be downloaded
-                    string fileUrl = ValidateDocumentOnServer( CurrentRecord, item.RelatedDocument );
+                    string fileUrl = FileResourceController.ValidateDocumentOnServer( CurrentRecord, item.RelatedDocument );
                     if ( fileUrl.Length > 10 )
                     {
                         resourceUrl = fileUrl;
@@ -1924,8 +2316,9 @@ namespace ILPathways.Controls.Content
                     resourceUrl
                 };
                 ltlAttachmentsList.Text = ltlAttachmentsList.Text +
+                        String.Format( ltlAppliedAttachmentTemplate.Text, arguments );
                     //String.Format( ltlAppliedAttachmentTemplate.Text, DatabaseManager.GetRowColumn( dr, "Title" ), DatabaseManager.GetRowColumn( dr, "Description" ), DatabaseManager.GetRowColumn( dr, "PrivilegeType" ) );
-                    String.Format( ltlAppliedAttachmentTemplate.Text, arguments );
+                    
             }
         }
         private void SetAttachmentList2( int parentId )
@@ -2056,6 +2449,11 @@ namespace ILPathways.Controls.Content
                 SetConsoleErrorMessage( "You must select or enter a URL in the Usage Rights section." );
                 isValid = false;
             }
+            if ( ddlPrivacyLevel.SelectedIndex < 1 ) 
+            {
+                SetConsoleErrorMessage( "You must select a privacy setting (Who can access this resource?)." );
+                isValid = false;
+            }
 
             return isValid;
         }
@@ -2093,5 +2491,897 @@ namespace ILPathways.Controls.Content
 
         #endregion
 
+    
+        #region ============== curriculum ==================================
+        protected void btnCreateHierarchy_Click( object sender, EventArgs e )
+        {
+            int modules = 10;
+            int units = 3;
+            int lessons = 3;
+            int activities = 0;
+
+            Int32.TryParse( ddlModules.SelectedValue, out modules );
+            Int32.TryParse( ddlUnits.SelectedValue, out units );
+            Int32.TryParse( ddlLessons.SelectedValue, out lessons );
+            Int32.TryParse( ddlActivities.SelectedValue, out activities );
+
+            ContentItem hier = new ContentServices().CreateHierarchy( CurrentRecord.Id, modules, units, lessons, activities );
+            if ( hier != null && hier.Id > 0 && hier.HasChildItems )
+            {
+                CurrentRecord.ChildItems = hier.ChildItems;
+                curriculumIntroPanel.Visible = false;
+                treePanel.Visible = true;
+                noNodePanel.Visible = true;
+                selectedTab = ltlCurriculumTabName.Text;
+
+                PopulateTree( CurrentRecord.Id );
+            }
+            else
+            {
+                //error?
+            }
+  }
+        private void PopulateTree( int contentId )
+        {
+            ContentItem entity = crcManager.GetCurriculumOutlineForEditOld( contentId );
+            this.PopulateTree( entity );
+
+            //ContentNode nodes = crcManager.GetCurriculumOutlineForEdit( contentId );
+            //this.PopulateTree( nodes );
+       
+        }
+        private void PopulateTree( ContentNode entity )
+        {
+            this.OBTreeview.Nodes.Clear();
+            //get top level
+            
+            bool showAll = true;
+
+            foreach ( ContentNode child in entity.ChildNodes )
+            {
+                Node node = new Node();
+
+                if ( child.IsPublished )
+                    node.Text = child.Title;
+                else
+                    node.Text = child.Title + " (not published )";
+
+                node.Value = child.Id.ToString();
+                this.OBTreeview.Nodes.Add( node );
+
+                if ( showAll )
+                {
+                    this.PopulateChildren( node, child );
+                }
+            }
+        }
+        private void PopulateChildren( Node parent, ContentNode entity )
+        {
+            foreach ( ContentNode child in entity.ChildNodes )
+            {
+                Node node = new Node();
+
+                if ( child.IsPublished )
+                    node.Text = child.Title;
+                else
+                    node.Text = child.Title + " (not published )";
+
+                node.Value = child.Id.ToString();
+
+                parent.ChildNodes.Add( node );
+                if ( child.ChildNodes != null && child.ChildNodes.Count > 0 )
+                    this.PopulateChildren( node, child );
+
+            }
+
+
+        }
+        private void PopulateTree( ContentItem entity )
+        {
+            this.OBTreeview.Nodes.Clear();
+            //get top level
+
+            bool showAll = true;
+
+            foreach ( ContentItem child in entity.ChildItems )
+            {
+                Node node = new Node();
+
+                if ( child.StatusId == 5 )
+                    node.Text = child.Title;
+                else
+                    node.Text = child.Title + " (" + child.Status + ")";
+
+                node.Value = child.Id.ToString();
+                this.OBTreeview.Nodes.Add( node );
+
+                if ( showAll )
+                {
+                    this.PopulateChildren( node, child );
+                }
+            }
+        }
+        private void PopulateChildren( Node parent, ContentItem entity )
+        {
+            foreach ( ContentItem child in entity.ChildItems )
+            {
+                Node node = new Node();
+
+                if ( child.StatusId == 5 )
+                    node.Text = child.Title;
+                else
+                    node.Text = child.Title + " (" + child.Status + ")";
+
+                node.Value = child.Id.ToString();
+
+                parent.ChildNodes.Add( node );
+                if ( child.ChildItems != null && child.ChildItems.Count > 0 )
+                    this.PopulateChildren( node, child );
+
+            }
+
+
+        }
+
+        /// <summary>
+        /// handle  click
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        protected void OBTreeview_SelectedTreeNodeChanged( object sender, NodeEventArgs e )
+        {
+            nodeId.Text = e.Node.Value;
+            int id = 0;
+            selectedTab = ltlCurriculumTabName.Text;
+
+            if ( Int32.TryParse( e.Node.Value, out id ) )
+            {
+                PopulateNode( id );
+            }
+        }
+
+        private void PopulateNode( int id )
+        {
+            lblFileList.Text = "";
+            noNodePanel.Visible = false;
+            nodePanel.Visible = true;
+
+            ContentItem entity = new CurriculumServices().GetCurriculumNodeForEdit( id, CurrentUser );
+            //key info
+            nodeId.Text = entity.Id.ToString();
+            this.parentNodeId.Text = entity.ParentId.ToString();
+            this.nodeSortOrder.Text = entity.SortOrder.ToString();
+            contentTypeId.Text = entity.TypeId.ToString();
+            lblNodeStatus.Text = entity.Status;
+            lblResourceId.Text = entity.ResourceIntId.ToString();
+
+            txtNodeTitle.Text = entity.Title;
+            txtNodeDescription.Text = entity.Description;
+            lblNodeContentType.Text = entity.ContentType;
+            txtTimeframe.Text = entity.Timeframe;
+
+            this.SetListSelection( this.ddlNodePrivacyLevel, entity.PrivilegeTypeId.ToString() );
+
+            nodeNavSection.Text = string.Format( litNodeViewTemplate.Text, entity.RowId.ToString(), entity.Id, ResourceBizService.FormatFriendlyTitle( entity.Title ), entity.ContentType );
+            if ( entity.HasResourceId() == false )
+            {
+                nodeNavSection.Text += "&nbsp;" +  string.Format( litNodePublishTemplate.Text, entity.Id, entity.ContentType );
+            }
+            else
+            {
+                nodeNavSection.Text += string.Format( litNodeViewTags.Text, entity.ResourceIntId, ResourceBizService.FormatFriendlyTitle( entity.Title ), entity.ContentType );
+            }
+            nodeNavSection.Visible = true;
+
+            litFrame.Text = string.Format( "<iframe id=\"contributeFrame\" runat=\"server\" src=\"/Contribute/?mode=upload&nodeId={0}&hh=temp&doingLRPublish=no\" class='contributeIframe'  ></iframe>", id.ToString() );
+
+            //set buttons
+            btnUpdateNode.Visible = true;
+            nodeButtons.Visible = true;
+            if ( entity.TypeId < ContentItem.ACTIVITY_CONTENT_ID )
+            {
+                string childNode = "child node";
+                if ( entity.TypeId == ContentItem.MODULE_CONTENT_ID )
+                    childNode = "Unit";
+                else if ( entity.TypeId == ContentItem.UNIT_CONTENT_ID )
+                    childNode = "Lesson";
+                else if ( entity.TypeId == ContentItem.LESSON_CONTENT_ID )
+                    childNode = "Activity";
+                //how to add assessments?
+
+                this.btnAddChildNode.Text = string.Format( "Add {0} below this {1}", childNode, entity.ContentType );
+                btnAddChildNode.Visible = true;
+            }
+            else
+                btnAddChildNode.Visible = false;
+
+            this.btnUpdateNode.Text = string.Format( "Save {0}", entity.ContentType );
+            this.btnDeleteNode.Text = string.Format( "Delete {0}", entity.ContentType );
+
+            this.btnInsertNode.Text = string.Format("Insert {0} before this {0}", entity.ContentType);
+            this.btnAppendNode.Text = string.Format( "Add {0} after this {0}", entity.ContentType );
+
+            if (btnDeleteNode.Enabled == true)
+                btnDeleteNode.Visible = true;
+            txtAutoDocumentRowId.Text = "";
+            autodocPanel.Visible = false;
+            if ( entity.IsValidRowId( entity.DocumentRowId ) )
+            {
+                txtAutoDocumentRowId.Text = entity.DocumentRowId.ToString();
+                if ( entity.RelatedDocument == null )
+                    entity.RelatedDocument = myManager.DocumentVersionGet( entity.DocumentRowId );
+
+                if ( entity.RelatedDocument != null )
+                {
+                    autodocPanel.Visible = true;
+                    autodocFileName.Text = entity.RelatedDocument.FileName;
+                    autodocLink.NavigateUrl = FileResourceController.ValidateDocumentOnServer( entity, entity.RelatedDocument );
+                }
+            }
+            if ( entity.HasChildItems )
+            {
+                foreach ( ContentItem item in entity.ChildItems )
+                {
+                    if ( item.TypeId == ContentItem.DOCUMENT_CONTENT_ID )
+                        PopulateDocument( item );
+                }
+            }
+
+            lblStandardsList.Text = "";
+
+            if ( entity.HasChildStandards )
+            {
+                foreach ( Content_StandardSummary item in entity.ContentStandards )
+                {
+                    PopulateStandard( item );
+                }
+            }
+        }
+        private string GetNodeLabel( int typeId )
+        {
+            string title = "Child Node";
+            if ( typeId == ContentItem.MODULE_CONTENT_ID )
+                title = "Module";
+            else if ( typeId == ContentItem.UNIT_CONTENT_ID )
+                title = "Unit";
+            else if ( typeId == ContentItem.LESSON_CONTENT_ID )
+                title = "Lesson";
+            else if ( typeId == ContentItem.ACTIVITY_CONTENT_ID )
+                title = "Activity";
+            else if ( typeId == ContentItem.ASSESSMENT_CONTENT_ID )
+                title = "Assessment";
+
+            return title;
+        }
+        private void PopulateDocument( ContentItem entity )
+        {
+            string docUrl = "";
+            if ( entity.DocumentUrl != null && entity.IsValidRowId( entity.DocumentRowId ))
+            {
+                //if ( IsTestEnv() )
+                //    supplements.Text += "<br/>(test only): " + item.RelatedDocument.FileName;
+
+                //check if file exists on server, if not it will be downloaded
+                string fileUrl = FileResourceController.ValidateDocumentOnServer( entity, entity.RelatedDocument );
+                if ( fileUrl.Length > 10 )
+                {
+
+                    if ( IsUserAuthenticated() == false && entity.PrivilegeTypeId != 1 )
+                    {
+                        //lblFileList.Text += string.Format( "<h2>{0}</h2>Private document, viewing is prohibited.", entity.RelatedDocument.Title );
+                        docUrl = "#"; ;
+                    }
+                    else
+                    {
+                        //lblFileList.Text += "<p>" + string.Format( docLinkTemplate.Text, fileUrl, entity.RelatedDocument.Title ) + "</p>";
+                        docUrl = fileUrl;
+                    }
+                }
+                else
+                {
+                    lblFileList.Text += "<br/>Sorry issue encountered locating the related document.";
+                    docUrl = "#"; ;
+                }
+
+                string[] arguments = new string[] {
+                    entity.Title,
+                    entity.PrivilegeType,
+                    entity.RowId.ToString(),
+                    entity.Id.ToString(),
+                    docUrl,
+                    entity.ResourceFriendlyUrl
+                };
+                lblFileList.Text = lblFileList.Text + String.Format( ltlNodeAttachmentTemplate.Text, arguments );
+            }
+        }//
+
+        private void PopulateStandard( Content_StandardSummary entity )
+        {
+
+            string[] arguments = new string[] {
+                    entity.NotationCode,
+                    entity.Description,
+                    entity.AlignmentType,
+                    entity.StandardUsage
+                    ,entity.Id.ToString()
+                };
+            lblStandardsList.Text = lblStandardsList.Text + String.Format( standardsTemplate.Text, arguments );
+        }//
+
+        /// <summary>
+        /// insert a node before current:
+        /// - retain the parentnodeId
+        /// - get sort order and subtract 2
+        /// - retain content type
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        protected void btnInsertNode_Click( object sender, EventArgs e )
+        {
+
+            ResetNode();
+            SetSortOrder( -2 );
+          //  SetConsoleErrorMessage( "Inserting nodes is not implemented yet." );
+        }
+        /// <summary>
+        /// Add node after current:
+        /// - retain the parentnodeId
+        /// - get sort order and add 2
+        /// - retain content type
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        protected void btnAppendNode_Click( object sender, EventArgs e )
+        {
+            ResetNode();
+
+            SetSortOrder( 3 );
+           // SetConsoleErrorMessage( "Appending nodes is not implemented yet." );
+        }
+
+        protected void btnAddChildNode_Click( object sender, EventArgs e )
+        {
+            this.parentNodeId.Text = nodeId.Text;
+            int typeId= Int32.Parse( this.contentTypeId.Text );
+            typeId += 2;
+            contentTypeId.Text = typeId.ToString();
+            ResetNode();
+            this.btnUpdateNode.Text = string.Format( "Save {0}", GetNodeLabel( typeId ) );
+
+            nodeSortOrder.Text = "5";
+           // SetConsoleErrorMessage( "Adding child nodes is not implemented yet." );
+        }
+
+
+        protected void btnDeleteNode_Click( object sender, EventArgs e )
+        {
+            selectedTab = ltlCurriculumTabName.Text;
+            if (this.btnDeleteNode.Enabled == false)
+                SetConsoleErrorMessage( "Deleting nodes is not implemented yet." );
+
+            int id = 0;
+            try
+            {
+                string statusMessage = "";
+                string extraMessage = "";
+                id = int.Parse( this.nodeId.Text );
+
+                if ( myManager.Delete( id, ref statusMessage ) )
+                {
+                    //not sure about cascading deletes
+
+
+                    if ( CurrentRecord.HasResourceId() == true)
+                    {
+                        ResourceVersion entity = new ResourceVersionManager().GetByResourceId( CurrentRecord.ResourceIntId );
+                        if ( entity != null && entity.Id > 0 )
+                        {
+                            try
+                            {
+                                new ResourceVersionManager().SetActiveState( false, entity.Id);
+                                string response = "";
+                                var esManager = new ElasticSearchManager();
+                                //new ElasticSearchManager().DeleteByVersionID( CurrentRecord.ResourceVersionId, ref response );
+                                new ElasticSearchManager().DeleteResource( CurrentRecord.ResourceIntId );
+                                extraMessage = "Resource Deactivated";
+
+                                ActivityBizServices.SiteActivityAdd( "Resource", "Deactivate", string.Format( "Resource ID: {0} was deactivated by {1} from author tool.", CurrentRecord.ResourceIntId, WebUser.FullName() ), WebUser.Id, 0, CurrentRecord.ResourceIntId );
+                            }
+                            catch ( Exception ex )
+                            {
+                                extraMessage = "There was a problem deactivating the Resource: " + ex.ToString();
+                            }
+
+
+                            //string status = new ResourceManager().SetResourceActiveState( false, CurrentRecord.ResourceVersionId );
+                            //note can have a RV id not not be published to LR. Need to check for a resource docid
+                            if ( entity.LRDocId != null && entity.LRDocId.Length > 10 )
+                            {
+                                //post request to delete ==> this process would take care of actual delete of the Resource hierarchy
+                                if ( IsTestEnv() )
+                                    extraMessage = "<br/>( WELL ALMOST - NEED TO ADD CODE TO REMOVE FROM THE LR, AND DO PHYSICAL DELETE OF THE RESOURCE HIERARCHY - JEROME)";
+                            }
+
+                        }
+                    }
+
+                    this.SetConsoleSuccessMessage( "Delete of record was successful " + extraMessage );
+                    
+                    this.ResetNode();
+                    PopulateTree( CurrentRecord.Id );
+                    noNodePanel.Visible = true;
+                    nodePanel.Visible = false;
+                }
+                else
+                {
+                    this.SetConsoleErrorMessage( statusMessage );
+                }
+
+            }
+            catch ( System.Exception ex )
+            {
+                LoggingHelper.LogError( ex, thisClassName + ".btnDeleteNode_Click() - Unexpected error encountered" );
+                this.SetConsoleErrorMessage( "Unexpected error encountered - Close this form and try again. (System Admin has been notified)<br/>" + ex.ToString() );
+            }
+        }
+
+        protected void ResetNode()
+        {
+            selectedTab = ltlCurriculumTabName.Text;
+
+            nodeId.Text = "0";
+            ContentItem entity = new ContentItem();
+            txtNodeTitle.Text = entity.Title;
+            txtNodeDescription.Text = entity.Description;
+            //May leave content type for some guidance, or maybe pass current
+            //lblNodeContentType.Text = entity.ContentType;
+            litFrame.Text = "";
+            lblFileList.Text = "";
+            lblNodeStatus.Text = "";
+            nodeNavSection.Visible = false;
+            nodeNavSection.Text = "";
+            txtTimeframe.Text = "";
+            //set buttons
+            btnDeleteNode.Visible = false;
+            nodeButtons.Visible = false;
+         }
+
+        /// <summary>
+        /// Update sort order
+        /// </summary>
+        /// <param name="increment">Can be negative</param>
+        protected void SetSortOrder( int increment)
+        {
+            if ( IsInteger( nodeSortOrder.Text ) )
+            {
+                int current = Int32.Parse( nodeSortOrder.Text );
+                current = current + increment;
+                //should check for negatives 
+                nodeSortOrder.Text = current.ToString();
+            }
+            else
+            {
+
+                nodeSortOrder.Text = "10";
+            }
+        }
+
+        protected void btnUpdateNode_Click( object sender, EventArgs e )
+        {
+
+            selectedTab = ltlCurriculumTabName.Text;
+
+            //validate
+            if ( ValidateNode()  )
+            {
+                //save
+                this.UpdateNode();
+               //stay put for now
+
+            }
+        }
+
+        protected bool ValidateNode()
+        {
+            bool isValid = true;
+
+            //Title
+            txtNodeTitle.Text = txtNodeTitle.Text.Trim().Replace( "<", "&lt;" ).Replace( ">", "&gt;" );
+            if ( txtNodeTitle.Text.Length < int.Parse( ltlMinTxtTitleLength.Text ) )
+            {
+                SetConsoleErrorMessage( "You must enter a Title of meaningful length." );
+                isValid = false;
+            }
+
+            //Description
+            txtNodeDescription.Text = txtNodeDescription.Text.Replace( "<", "&lt;" ).Replace( ">", "&gt;" );
+            if ( txtNodeDescription.Text.Length < int.Parse( ltlMinTxtDescriptionLength.Text ) )
+            {
+                SetConsoleErrorMessage( "You must enter a Description of meaningful length." );
+                isValid = false;
+            }
+            if ( ddlNodePrivacyLevel.SelectedIndex < 1 )
+            {
+                SetConsoleErrorMessage( "You must select a privacy setting (Who can access this resource?)." );
+                isValid = false;
+            }
+            return isValid;
+        }
+
+        private void UpdateNode()
+        {
+            int id = 0;
+            int typeId = 10;
+            int sortOrder = 10;
+            string statusMessage = "";
+            string action = "";
+            ContentItem entity = new ContentItem();
+            int parentId = 0;
+            if ( Int32.TryParse( this.parentNodeId.Text, out parentId ) == false )
+            {
+                SetConsoleErrorMessage( "ERROR: a parentId has not been set for a new record - strange.>br/>Try selecting the parent node again, and then start a new item." );
+                return;
+            }
+            try
+            {
+                Int32.TryParse( this.nodeId.Text, out id );
+
+
+                if ( id == 0 )
+                {
+                    entity.Id = 0;
+                    entity.ParentId = parentId;
+                    Int32.TryParse( this.contentTypeId.Text, out typeId );
+                    Int32.TryParse( this.nodeSortOrder.Text, out sortOrder );
+
+                    entity.CreatedById = WebUser.Id;		
+                    entity.CreatedBy = WebUser.FullName();
+                    entity.Created = System.DateTime.Now;
+
+                    entity.SortOrder = sortOrder;
+                    action = "Create";
+                    entity.IsActive = true;
+                    //TBD
+                    //once we have multiple buttons, use parm to indicate levels
+                    entity.TypeId = typeId;
+
+                    entity.IsOrgContentOwner = CurrentRecord.IsOrgContentOwner;
+                    entity.StatusId = ContentItem.INPROGRESS_STATUS;
+                    entity.PrivilegeTypeId = CurrentRecord.PrivilegeTypeId;
+                    entity.ConditionsOfUseId = CurrentRecord.ConditionsOfUseId;
+
+                    entity.IsPublished = false;
+                    entity.IsOrgContentOwner = CurrentRecord.IsOrgContentOwner;
+                    entity.OrgId = CurrentRecord.OrgId;
+                    //entity.ResourceVersionId = 0;
+
+                    entity.RowId = Guid.NewGuid();
+                    entity.UseRightsUrl = CurrentRecord.UseRightsUrl;
+
+                }
+                else
+                {
+                    // get current record 
+                    //don't really want full hierarchy here????????
+                    entity = myManager.Get( id );
+                    action = "Update";
+                }
+                
+                /* assign form fields 			 */
+                entity.Title = this.txtNodeTitle.Text;
+                entity.Summary = this.txtNodeDescription.Text;
+                entity.Description = this.txtNodeDescription.Text;
+                entity.PrivilegeTypeId = int.Parse( this.ddlNodePrivacyLevel.SelectedValue.ToString() );
+                entity.Timeframe = txtTimeframe.Text;
+
+                entity.LastUpdated = System.DateTime.Now;
+                entity.LastUpdatedById = WebUser.Id;	
+                entity.LastUpdatedBy = WebUser.FullName();	//include for future use
+
+                if ( IsFilePresent( autodocUpload ) )
+                {
+                    bool isValid = HandleUpload( entity );
+                    if ( isValid )
+                    {
+                        //will have been set in HandleDocument
+                    }
+                    else
+                    {
+                        //problem, should have displayed a message
+                        return;
+                    }
+                }
+                //call insert/update
+                int entityId = 0;
+                if ( entity.Id == 0 )
+                {
+                    entityId = myManager.Create_ef( entity, ref statusMessage );
+                    if ( entityId > 0 )
+                    {
+                        entity.Id = entityId;
+                        this.nodeId.Text = entityId.ToString();
+                        //reget the whole record, for rowId
+                        //entity = myManager.Get( entityId );
+                    }
+                }
+                else
+                {
+                    statusMessage = myManager.Update( entity );
+                }
+
+
+                if ( statusMessage.Equals( "successful" ) )
+                {
+                    //get new/updated standards
+                    //this could actually have a separate save
+                    HandleStandardsUpdate( entity.Id );
+
+                    //refresh tree
+                    PopulateTree( CurrentRecord.Id );
+                    PopulateNode( entity.Id );
+                    this.SetConsoleSuccessMessage( action + " was successful for: " + entity.Title );
+                    if ( action == "Create" )
+                    {
+                        litFrame.Text = string.Format( "<iframe id=\"contributeFrame\" runat=\"server\" src=\"/Contribute/?mode=upload&nodeId={0}&hh=temp&doingLRPublish=no\" width='400' height='600' ></iframe>", entity.Id.ToString() );
+                    }
+                }
+                else
+                {
+                    this.SetConsoleErrorMessage( statusMessage );
+                }
+
+            }
+            catch ( System.Exception ex )
+            {
+                LoggingHelper.LogError( ex, thisClassName + ".UpdateNode() - Unexpected error encountered" );
+                this.SetConsoleErrorMessage( "Unexpected error encountered - Close this form and try again. (System Admin has been notified)<br/>" + ex.ToString() );
+            }
+        }
+        protected bool HandleUpload( ContentItem entity )
+        {
+            bool isValid = true;
+            string statusMessage = "";
+
+            DocumentVersion docVersion = new DocumentVersion();
+            //or from entity?
+            if ( entity.IsValidRowId( entity.DocumentRowId ) )
+            {
+                //create the doc version, and add the entity
+                docVersion.CreatedById = WebUser.Id;
+                docVersion.Created = System.DateTime.Now;
+                docVersion.Title = entity.Title;
+                //should be using org rowid!
+                //bool isOk = FileResourceController.CreateDocument( autodocUpload, docVersion, entity.OrgId, ref statusMessage );
+                //if ( isOk )
+                //{
+
+                //    entity.DocumentUrl = docVersion.URL;
+                //    entity.DocumentRowId = docVersion.RowId;
+
+                //    txtAutoDocumentRowId.Text = docVersion.RowId.ToString();
+                //    autodocFileName.Text = docVersion.FileName;
+                //    autodocLink.NavigateUrl = entity.DocumentUrl;
+
+                //}
+                //return isOk;
+                //=============================
+            }
+            else
+            {
+
+                docVersion = myManager.DocumentVersionGet( entity.DocumentRowId );
+                //if replacing, may want to delete old file name
+                //or will we want to attempt a default file name based on the current node?
+            }
+            docVersion.LastUpdatedById = CurrentUser.Id;
+
+            try
+            {
+                bool isOk = FileResourceController.CreateDocument( autodocUpload, docVersion, entity.OrgId, ref statusMessage );
+
+                if ( isOk )
+                {
+
+                    autodocPanel.Visible = true;
+                    entity.DocumentUrl = docVersion.URL;
+                    entity.DocumentRowId = docVersion.RowId;
+
+                    txtAutoDocumentRowId.Text = docVersion.RowId.ToString();
+                    autodocFileName.Text = docVersion.FileName;
+                    autodocLink.NavigateUrl = entity.DocumentUrl;
+
+                }
+                else
+                {
+                    linkContentFile.Visible = false;
+                }
+            }
+            catch ( Exception ex )
+            {
+                SetConsoleErrorMessage( "Unexpected error occurred while attempting to upload your file.<br/>" + ex.Message );
+                LoggingHelper.LogError( ex, thisClassName + "HandleUpload" );
+                return false;
+            }
+
+            return isValid;
+        }
+
+
+        protected void btnPublishNode_Click( object sender, EventArgs e )
+        {
+
+            //steps
+            //- try to get tags from nearest parent, not just curriculum
+            //- will not do LR, just to database and ES
+        }
+
+
+        private void DeleteNodeAttachment( object sender, System.EventArgs e )
+        {
+            //Response.Write ( "You Clicked on " + Request.Form[ "__EVENTARGUMENT" ].ToString () );
+            string key = Request.Form[ "__EVENTARGUMENT" ].ToString();
+
+            int id = Int32.Parse( key );
+            DeleteNodeAttachment( id );
+        }
+        private void DeleteNodeAttachment( int id )
+        {
+            string statusMessage = "";
+            selectedTab = ltlCurriculumTabName.Text;
+            int nodeId = int.Parse( this.nodeId.Text );
+            //get the item for later processing
+            ContentItem item = myManager.Get( id );
+
+            try
+            {
+                if ( new ContentServices().ContentConnectorDelete( nodeId, id, ref statusMessage ) )
+                {
+                    RemoveServerFile( item );
+
+                    //reset mode as needed for removed records
+                    SetConsoleSuccessMessage( "Document was removed from this section, and deleted from the site." );
+                    PopulateNode( nodeId );
+                    
+                }
+                else
+                {
+                    SetConsoleErrorMessage( "Error was encountered attempting to delete the attachment:<br/>" + statusMessage );
+                }
+            }
+            catch ( System.Exception ex )
+            {
+                LoggingHelper.LogError( ex, thisClassName + ".DeleteNodeAttachment() - Unexpected error encountered" );
+                this.SetConsoleErrorMessage( "Unexpected error encountered - Close this form and try again. (System Admin has been notified)<br/>" + ex.ToString() );
+            }
+
+        }
+        private void RemoveServerFile( ContentItem entity )
+        {
+            if ( entity.DocumentUrl != null && entity.IsValidRowId( entity.DocumentRowId ))
+            {
+                string documentFolder = entity.RelatedDocument.FilePath;    // FileResourceController.DetermineDocumentPath( entity );
+                if ( FileSystemHelper.DeleteDocumentFromServer( documentFolder, entity.RelatedDocument ) == false)
+                {
+                    //just notify admin
+                    LoggingHelper.LogError( thisClassName + "RemoveServerFile. Apparantly the request to remove a file from the server failed?<br/>" + entity.DocumentUrl, true );
+                    
+                }
+            }
+
+        }
+        #endregion
+
+        protected void btnAutodocUpload_Click( object sender, EventArgs e )
+        {
+            //validate
+            if ( autodocUpload.HasFile == false || autodocUpload.FileName == "" )
+            {
+                SetConsoleErrorMessage( "Please select a file before clicking upload" );
+                selectedTab = ltlCurriculumTabName.Text;
+                return;
+
+            }
+
+            LoggingHelper.DoTrace( 6, thisClassName + " btnAutodocUpload_Click" );
+
+            //do upload
+        }
+
+        protected void btnCreateIsbeCurriculum_Click( object sender, EventArgs e )
+        {
+            int modules = 3;
+            Int32.TryParse( ddlModules.SelectedValue, out modules );
+
+            ContentItem hier = CurriculumServices.CreateIsbeHierarchy( CurrentRecord.Id, modules );
+            if ( hier != null && hier.Id > 0 && hier.HasChildItems )
+            {
+                CurrentRecord.ChildItems = hier.ChildItems;
+                curriculumIntroPanel.Visible = false;
+                treePanel.Visible = true;
+                noNodePanel.Visible = true;
+                selectedTab = ltlCurriculumTabName.Text;
+
+                PopulateTree( CurrentRecord.Id );
+            }
+            else
+            {
+                //error?
+            }
+        }
+
+        protected void HandleStandardsUpdate( int contentId )
+        {
+            List<JSONStandard> list = GetPublishedStandards();
+
+            if ( list != null && list.Count > 0 )
+            {
+                ContentStandard cs = new ContentStandard();
+                List<ContentStandard> standards = new List<ContentStandard>();
+                foreach ( JSONStandard js in list )
+                {
+                    cs = new ContentStandard();
+                    cs.ContentId = contentId;
+                    cs.StandardId = js.standardID;
+                    cs.AlignmentTypeCodeId = js.alignmentTypeID;
+                    cs.UsageTypeId = js.usageTypeID;
+                    cs.CreatedById = WebUser.Id;
+
+                    standards.Add( cs );
+                }
+
+                int added = CurriculumServices.ContentStandard_Add( standards );
+                //check if addedd equals expected
+                if ( added != standards.Count )
+                {
+                    SetConsoleErrorMessage( string.Format( "Oh Oh - the number of standards to be added is: {0}, but he actual number of standards added was: {1}", standards.Count, added ));
+                }
+            }
+        } //
+
+        protected List<JSONStandard> GetPublishedStandards()
+        {
+          try
+          {
+            return new System.Web.Script.Serialization.JavaScriptSerializer().Deserialize<List<JSONStandard>>( hdnStandards.Value );
+          }
+          catch ( Exception ex )
+          {
+            LoggingHelper.LogError( ex, "Error deserializing Standards", false );
+            return new List<JSONStandard>();
+          }
+        }
+        protected class JSONStandard
+        {
+          public int standardID { get; set; }
+          public string code { get; set; }
+          public int alignmentTypeID { get; set; }
+          public int usageTypeID { get; set; }
+        }
+
+        protected void newsSaveButton_Click( object sender, EventArgs e )
+        {
+            string message = this.newsEditor.EditPanel.Content;
+            int id = 0;
+            Int32.TryParse( this.newsId.Text, out id );
+            if ( id == 0 )
+            {
+                id = new CurriculumServices().Curriculum_AddHistory( CurrentRecord.Id, message, WebUser.Id );
+                SetConsoleSuccessMessage( "Added cuuriculum new item." );
+                this.newsId.Text = id.ToString();
+            }
+            else
+            {
+                new CurriculumServices().Curriculum_UpdateHistory( id, message, WebUser.Id );
+                SetConsoleSuccessMessage( "Updated cuuriculum new item." );
+            }
+            
+        }
+
+        protected void addNewNewsButton_Click( object sender, EventArgs e )
+        {
+            this.newsId.Text = "0";
+            this.newsEditor.EditPanel.Content = "";
+        }
+       
     }
 }

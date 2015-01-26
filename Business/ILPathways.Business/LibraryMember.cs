@@ -11,6 +11,7 @@ namespace ILPathways.Business
     [Serializable]
     public class LibraryMember : BaseBusinessDataEntity
     {
+        public static int LIBRARY_MEMBER_TYPE_ID_PENDING = 0;
         public static int LIBRARY_MEMBER_TYPE_ID_READER = 1;
         public static int LIBRARY_MEMBER_TYPE_ID_CONTRIBUTOR = 2;
         public static int LIBRARY_MEMBER_TYPE_ID_EDITOR = 3;
@@ -22,6 +23,7 @@ namespace ILPathways.Business
             MemberName = "";
             MemberSortName = "";
             MemberType = "None";
+            OrgMemberType = "";
         }
 
 
@@ -48,7 +50,9 @@ namespace ILPathways.Business
             }
           }
         }
+        public string Library { get; set; }
 
+        private int _userId;
         /// <summary>
         /// Gets/Sets member UserId
         /// </summary>
@@ -56,15 +60,15 @@ namespace ILPathways.Business
         {
           get
           {
-              return this.CreatedById;
+              return this._userId;
           }
           set
           {
-              if ( this.CreatedById == value )
+              if ( this._userId == value )
               {
               //Ignore set
             } else {
-                this.CreatedById = value;
+                this._userId = value;
               HasChanged = true;
             }
           }
@@ -125,9 +129,65 @@ namespace ILPathways.Business
         #region Parent/others
         public Library ParentLibrary { get; set; }
 
-        public string MemberType{ get; set; }
+        private string _memberType = "";
+        public string MemberType
+        {
+            get
+            {
+                if ( _memberType != null && _memberType.Length > 0 )
+                    return this._memberType;
+                else
+                {
+                    if ( MemberTypeId == LIBRARY_MEMBER_TYPE_ID_READER ) _memberType = "Reader";
+                    else if ( MemberTypeId == LIBRARY_MEMBER_TYPE_ID_CONTRIBUTOR ) _memberType = "Contributor";
+                    else if ( MemberTypeId == LIBRARY_MEMBER_TYPE_ID_EDITOR ) _memberType = "Editor";
+                    else if ( MemberTypeId == LIBRARY_MEMBER_TYPE_ID_ADMIN ) _memberType = "Administrator";
+                    else if ( MemberTypeId == LIBRARY_MEMBER_TYPE_ID_PENDING ) _memberType = "Pending";
+                    else _memberType = "Unknown";
+
+                    return this._memberType;
+                }
+            }
+            set
+            {
+                if ( this._memberType != value )
+                {
+                    this._memberType = value;
+                    HasChanged = true;
+                }
+            }
+        }
+        /// <summary>
+        /// Set member type. Usually called after db read that doesn't include it.
+        /// </summary>
+        public void SetMemberType()
+        {
+            this._memberType = "";
+
+            if ( MemberTypeId == 1 ) _memberType = "Reader";
+            else if ( MemberTypeId == 2 ) _memberType = "Contributor";
+            else if ( MemberTypeId == 3 ) _memberType = "Editor";
+            else if ( MemberTypeId == 4 ) _memberType = "Administrator";
+            else if ( MemberTypeId == 0 ) _memberType = "Pending";
+            else _memberType = "Unknown";
+        }
+
+        public AppUser Member { get; set; }
+
         public string MemberName { get; set; }
+        public string MemberEmail { get; set; }
         public string MemberSortName { get; set; }
+        public string MemberHomeUrl { get; set; }
+        public string MemberImageUrl { get; set; }
+        public string Organization { get; set; }
+        public int OrganizationId { get; set; }
+
+        /// <summary>
+        /// Is an org mbr - true if the current user is a member of the organization
+        /// </summary>
+        public bool IsAnOrgMbr { get; set; }
+        public string OrgMemberType { get; set; }
+        public int OrgMemberTypeId { get; set; }
         #endregion
     }
 }

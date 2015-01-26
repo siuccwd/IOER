@@ -1,6 +1,6 @@
 ﻿<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="Responsive2.master.cs" Inherits="ILPathways.Masters.Responsive2" %>
 
-<%@ Register TagPrefix="uc1" TagName="HeaderControl" Src="/Controls/Includes/Header6.ascx" %>
+<%@ Register TagPrefix="uc1" TagName="HeaderControl" Src="/Controls/Includes/Header7.ascx" %>
 <%@ Register TagPrefix="uc1" TagName="Footer" Src="/Controls/Includes/footer3.ascx" %>
 <%@ Register TagPrefix="uc1" TagName="systemMessageLine" Src="/Controls/Includes/SystemMessageLine.ascx" %>
 
@@ -9,7 +9,13 @@
 <head id="Head1" runat="server">
     <title></title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js" type="text/javascript"></script>
+    <script type="text/javascript">
+    //kludge for IE9
+    if (window.console === undefined) {
+        console = { log: function () { } };
+    }
+    </script>
+    <script src="/Scripts/jquery-1.10.2.min.js"></script>
     <link rel="Stylesheet" type="text/css" href="/Styles/ISLE.css" />
     <link href="/Styles/CustomControls.css" rel="stylesheet" type="text/css" />
 

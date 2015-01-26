@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Configuration;
@@ -11,6 +12,7 @@ using System.Web.UI;
 using Microsoft.ApplicationBlocks.Data;
 using ILPathways.Business;
 //using LRWarehouse.Business;
+using ILPathways.Common;
 
 namespace ILPathways.DAL
 {
@@ -191,7 +193,68 @@ namespace ILPathways.DAL
         /// <param name="currentUser"></param>
         /// <param name="pObjectName">Control name, or channel, etc.</param>
         /// <returns></returns>
-        public static ApplicationRolePrivilege GetGroupObjectPrivileges( IWebUser currentUser, string pObjectName )
+        public static ApplicationRolePrivilege GetUserGroupObjectPrivileges( IWebUser currentUser, string pObjectName )
+        {
+            ApplicationRolePrivilege entity = new ApplicationRolePrivilege();
+            if ( currentUser == null || currentUser.Id == 0 )
+                return entity;
+            bool hasOrgs = false;
+
+            try
+            {
+                SqlConnection sqlConnection = new SqlConnection( GatewayConnectionRO() );
+                sqlConnection.Open();
+
+                entity = GetGroupObjectPrivileges( sqlConnection, currentUser.Id, pObjectName );
+
+                //need to ensure a check has been made to fill orgs!
+                if ( currentUser.OrgId > 0 || ( currentUser.OrgMemberships != null && currentUser.OrgMemberships.Count > 0 ) )
+                    hasOrgs = true;
+
+                //If privileges were found, RoleId is set to GroupId
+                //probably need to check regardless - in case higher privileges thru org
+                if ( entity.RoleId == 0 || hasOrgs )
+                {
+                    DoTrace( 2, className + "GetUserGroupObjectPrivileges. HasOrgs: " + hasOrgs.ToString() );
+                   
+                    bool mainOrgInList = false;
+                    string orgList = "";
+                    foreach ( OrganizationMember org in currentUser.OrgMemberships )
+                    {
+                        orgList += org.Id.ToString() + ",";
+                        if ( currentUser.OrgId == org.Id )
+                            mainOrgInList = true;
+                    }
+
+                    if ( currentUser.OrgId > 0 && mainOrgInList == false )
+                        orgList += currentUser.OrgId.ToString() + ",";
+
+                    //trim trailing comma
+                    orgList = orgList.TrimEnd( ',' );
+
+                    entity = GetGroupOrglistObjectPrivileges( sqlConnection, entity, orgList, pObjectName );
+                        
+                }
+                sqlConnection.Close();
+                sqlConnection.Dispose();
+                sqlConnection = null;
+                return entity;
+            }
+            catch ( Exception ex )
+            {
+                LogError( ex, className + ".GetGroupObjectPrivileges(IWebUser user, string objectName: " + pObjectName + ") " );
+                return entity;
+            }
+        }//
+
+
+        /// <summary>
+        /// Retrieve the privileges for the provided user (actually their highest role) and an object. If the object name is blank, default privileges will be returned
+        /// </summary>
+        /// <param name="currentUser"></param>
+        /// <param name="pObjectName">Control name, or channel, etc.</param>
+        /// <returns></returns>
+        public static ApplicationRolePrivilege GetGroupObjectPrivilegesOLD( IWebUser currentUser, string pObjectName )
         {
             ApplicationRolePrivilege entity = new ApplicationRolePrivilege();
             if ( currentUser == null )
@@ -208,7 +271,10 @@ namespace ILPathways.DAL
                 if ( entity.RoleId == 0 )
                 {
                     if ( currentUser.OrgId > 0 )
-                        entity = GetGroupOrgObjectPrivileges( sqlConnection, currentUser.OrgId, pObjectName );
+                    {
+                        ApplicationRolePrivilege userPrivilege = new ApplicationRolePrivilege();
+                        entity = GetGroupOrgObjectPrivileges( sqlConnection, userPrivilege, currentUser.OrgId, pObjectName );
+                    }
                 }
                 sqlConnection.Close();
                 sqlConnection.Dispose();
@@ -243,7 +309,7 @@ namespace ILPathways.DAL
 
                 if ( entity.RoleId == 0 )
                 {
-                    if (currentUser.OrgId > 0)
+                    if ( currentUser.OrgId > 0 )
                         entity = GetGroupOrgObjectPrivileges( sqlConnection, currentUser.OrgId, pObjectName );
                 }
                 sqlConnection.Close();
@@ -256,8 +322,7 @@ namespace ILPathways.DAL
                 LogError( ex, className + ".GetGroupObjectPrivileges(int id, string objectName: " + pObjectName + ") " );
                 return entity;
             }
-		}//
-
+        }//
 
 		/// <summary>
 		/// Get Group Object Privileges
@@ -363,7 +428,7 @@ namespace ILPathways.DAL
 								entity.RoleId = GetRowColumn( drdr, "groupId", 0 );
 								entity.Description = GetRowColumn( drdr, "Description", "" );
 
-								entity.Sequence = GetRowColumn( drdr, "sequence", 0 );
+								entity.Sequence = GetRowPossibleColumn( drdr, "sequence", 0 );
 							}
 						}
 
@@ -382,32 +447,149 @@ namespace ILPathways.DAL
 
 		}//
 
+		#endregion
+
+        #region Get privileges by group, organization
         /// <summary>
-        /// Future - ma be more flexible to use rowId???
+        /// Retrieve the privileges for the provided organization and an object. If the object name is blank, default privileges will be returned
         /// </summary>
-        /// <param name="sqlConnection"></param>
-        /// <param name="userRowId"></param>
-        /// <param name="objectName"></param>
+        /// <param name="org"></param>
+        /// <param name="pObjectName">Control name, or channel, etc.</param>
         /// <returns></returns>
-        public static ApplicationRolePrivilege GetGroupObjectPrivileges( SqlConnection sqlConnection, string userRowId, string objectName )
+        public static ApplicationRolePrivilege GetGroupOrgObjectPrivileges( Organization org, string pObjectName )
         {
+            return GetGroupOrgObjectPrivileges( org.Id, pObjectName );
+        }//
+
+        /// <summary>
+        /// Get Group Object Privileges for organization
+        /// </summary>
+        /// <param name="connectionString">database connection string - passed in to allow flexibility between edit and production environments</param>
+        /// <param name="orgId">PK to org for passed connection</param>
+        /// <param name="objectName">Name of object to check</param>
+        /// <returns></returns>
+        public static ApplicationRolePrivilege GetGroupOrgObjectPrivileges( int orgId, string pObjectName )
+        {
+            ApplicationRolePrivilege entity = new ApplicationRolePrivilege();
+            if ( orgId == 0 )
+                return entity;
+
+            try
+            {
+                SqlConnection sqlConnection = new SqlConnection( GatewayConnectionRO() );
+                sqlConnection.Open();
+
+                entity = GetGroupOrgObjectPrivileges( sqlConnection, orgId, pObjectName );
+                sqlConnection.Close();
+                sqlConnection.Dispose();
+                sqlConnection = null;
+                return entity;
+            }
+            catch ( Exception ex )
+            {
+                LogError( ex, className + ".GetGroupOrgObjectPrivileges(IWebUser user, string objectName: " + pObjectName + ") " );
+                return entity;
+            }
+        }
+
+        /// <summary>
+        /// Get Group Object Privileges for organization
+        /// </summary>
+        /// <param name="connectionString">database connection string - passed in to allow flexibility between edit and production environments</param>
+        /// <param name="orgId">PK to org for passed connection</param>
+        /// <param name="objectName">Name of object to check</param>
+        /// <returns></returns>
+        public static ApplicationRolePrivilege GetGroupOrgObjectPrivileges( string connectionString, int orgId, string objectName )
+        {
+            ApplicationRolePrivilege userPrivilege = new ApplicationRolePrivilege();
+            string orgList = orgId.ToString();
+            SqlConnection sqlConnection = new SqlConnection( connectionString );
+            sqlConnection.Open();
+            ApplicationRolePrivilege entity = GetGroupOrglistObjectPrivileges( sqlConnection, userPrivilege, orgList, objectName );
+
+            sqlConnection.Close();
+            sqlConnection.Dispose();
+            sqlConnection = null;
+            return entity;
+   }
+
+        /// <summary>
+        /// Get Group Object Privileges for organization
+        /// </summary>
+        /// <param name="connectionString">database connection string - passed in to allow flexibility between edit and production environments</param>
+        /// <param name="orgId">PK to org for passed connection</param>
+        /// <param name="objectName">Name of object to check</param>
+        /// <returns></returns>
+        public static ApplicationRolePrivilege GetGroupOrgObjectPrivileges( SqlConnection sqlConnection, int orgId, string objectName )
+        {
+            string orgList = orgId.ToString();
+            ApplicationRolePrivilege userPrivilege = new ApplicationRolePrivilege();
+            return GetGroupOrglistObjectPrivileges( sqlConnection, userPrivilege, orgList, objectName );
+   }
+
+        /// <summary>
+        /// Get Group Object Privileges for organization list
+        /// </summary>
+        /// <param name="connectionString">database connection string - passed in to allow flexibility between edit and production environments</param>
+        /// <param name="orgList">list of orgIds for passed connection</param>
+        /// <param name="objectName">Name of object to check</param>
+        /// <returns></returns>
+        //public static ApplicationRolePrivilege GetGroupOrglistObjectPrivileges( SqlConnection sqlConnection, string orgList, string objectName )
+        //{
+        //    ApplicationRolePrivilege userPrivilege = new ApplicationRolePrivilege();
+
+        //    return GetGroupOrglistObjectPrivileges( sqlConnection, userPrivilege, orgList, objectName );
+        //}
+
+        /// <summary>
+        /// Get Group Object Privileges for organization list
+        /// </summary>
+        /// <param name="connectionString">database connection string - passed in to allow flexibility between edit and production environments</param>
+        /// <param name="userPrivilege">ApplicationRolePrivilege previously for user</param>
+        /// <param name="orgList">list of orgIds for passed connection</param>
+        /// <param name="objectName">Name of object to check</param>
+        /// <returns></returns>
+        public static ApplicationRolePrivilege GetGroupOrglistObjectPrivileges( SqlConnection sqlConnection, ApplicationRolePrivilege userPrivilege, string orgList, string objectName )
+        {
+            DoTrace( 2, className + "GetGroupOrgObjectPrivileges. orgList: " + orgList.ToString() );
 
             ApplicationRolePrivilege entity = new ApplicationRolePrivilege();
-            if ( userRowId.Trim().Length == 0 )
+            if ( orgList.Trim().Length == 0 )
                 return entity;
             entity.CanView = false;
             bool firstRow = true;
 
+            //prepopulate if userPrivilege appears populated
+            if ( userPrivilege != null && userPrivilege.RoleId > 0 )
+            {
+                firstRow = false;
+
+                entity.RoleId = userPrivilege.RoleId;
+                entity.SubObjectId = userPrivilege.SubObjectId;
+                entity.SubObjectName = userPrivilege.SubObjectName;
+                entity.Description = userPrivilege.Description;
+                entity.Sequence = userPrivilege.Sequence;
+                entity.CreatePrivilege = userPrivilege.CreatePrivilege;
+                entity.ReadPrivilege = userPrivilege.ReadPrivilege;
+                entity.WritePrivilege = userPrivilege.WritePrivilege;
+                entity.DeletePrivilege = userPrivilege.DeletePrivilege;
+                entity.AppendPrivilege = userPrivilege.AppendPrivilege;
+                entity.AppendToPrivilege = userPrivilege.AppendToPrivilege;
+                entity.AssignPrivilege = userPrivilege.AssignPrivilege;
+                entity.ApprovePrivilege = userPrivilege.ApprovePrivilege;
+                entity.SharePrivilege = userPrivilege.SharePrivilege; 
+            }
+
             try
             {
-                //determine if user is in a group with access to the object 
+                //determine if org is in a group with access to the object 
 
 
                 SqlParameter[] sqlParameters = new SqlParameter[ 2 ];
-                sqlParameters[ 0 ] = new SqlParameter( "@UserId", userRowId );
-                sqlParameters[ 1 ] = new SqlParameter( "@ObjectName", objectName );
+                sqlParameters[ 0 ] = new SqlParameter( "@ObjectName", objectName );
+                sqlParameters[ 1 ] = new SqlParameter( "@OrgList", orgList );
 
-                SqlDataReader drdr = SqlHelper.ExecuteReader( sqlConnection, "AppObject_Group_UserRowIdPrivileges_Select", sqlParameters );
+                SqlDataReader drdr = SqlHelper.ExecuteReader( sqlConnection, "AppObject_Group_OrgListPrivileges_Select", sqlParameters );
 
                 if ( drdr.HasRows )
                 {
@@ -468,7 +650,7 @@ namespace ILPathways.DAL
                                 entity.RoleId = GetRowColumn( drdr, "groupId", 0 );
                                 entity.Description = GetRowColumn( drdr, "Description", "" );
 
-                                entity.Sequence = GetRowColumn( drdr, "sequence", 0 );
+                                entity.Sequence = GetRowPossibleColumn( drdr, "sequence", 0 );
                             }
                         }
 
@@ -482,103 +664,21 @@ namespace ILPathways.DAL
             }
             catch ( Exception e )
             {
-                LogError( className + ".GetGroupObjectPrivileges(SqlConnection sqlConnection, int userId, string objectName: " + objectName + "): " + e.ToString() );
+                LogError( className + ".GetGroupOrgObjectPrivileges(SqlConnection , ApplicationRolePrivilege , string orgList, string objectName " + objectName + "): " + e.ToString() );
                 return entity;
             }
 
         }//
 
-		#endregion
-
-        #region Get privileges by group, organization
         /// <summary>
-        /// Retrieve the privileges for the provided user (actually their highest role) and an object. If the object name is blank, default privileges will be returned
+        /// Get Group Object Privileges for an organization 
         /// </summary>
-        /// <param name="currentUser"></param>
-        /// <param name="pObjectName">Control name, or channel, etc.</param>
+        /// <param name="sqlConnection"></param>
+        /// <param name="userPrivilege"></param>
+        /// <param name="orgId"></param>
+        /// <param name="objectName"></param>
         /// <returns></returns>
-        public static ApplicationRolePrivilege GetGroupOrgObjectPrivileges( Organization org, string pObjectName )
-        {
-            ApplicationRolePrivilege entity = new ApplicationRolePrivilege();
-            if ( org == null )
-                return entity;
-
-            try
-            {
-                SqlConnection sqlConnection = new SqlConnection( GatewayConnectionRO() );
-                sqlConnection.Open();
-
-                entity = GetGroupOrgObjectPrivileges( sqlConnection, org.Id, pObjectName );
-                sqlConnection.Close();
-                sqlConnection.Dispose();
-                sqlConnection = null;
-                return entity;
-            }
-            catch ( Exception ex )
-            {
-                LogError( ex, className + ".GetGroupOrgObjectPrivileges(Organization org, string objectName: " + pObjectName + ") " );
-                return entity;
-            }
-        }//
-
-        /// <summary>
-        /// Get Group Object Privileges
-        /// </summary>
-        /// <param name="connectionString">database connection string - passed in to allow flexibility between edit and production environments</param>
-        /// <param name="userId">PK to vos_user for passed connection</param>
-        /// <param name="objectName">Name of object to check</param>
-        /// <returns></returns>
-        public static ApplicationRolePrivilege GetGroupOrgObjectPrivileges( int orgId, string pObjectName )
-        {
-            ApplicationRolePrivilege entity = new ApplicationRolePrivilege();
-            if ( orgId == 0 )
-                return entity;
-
-            try
-            {
-                SqlConnection sqlConnection = new SqlConnection( GatewayConnectionRO() );
-                sqlConnection.Open();
-
-                entity = GetGroupOrgObjectPrivileges( sqlConnection, orgId, pObjectName );
-                sqlConnection.Close();
-                sqlConnection.Dispose();
-                sqlConnection = null;
-                return entity;
-            }
-            catch ( Exception ex )
-            {
-                LogError( ex, className + ".GetGroupOrgObjectPrivileges(IWebUser user, string objectName: " + pObjectName + ") " );
-                return entity;
-            }
-        }
-
-        /// <summary>
-        /// Get Group Object Privileges
-        /// </summary>
-        /// <param name="connectionString">database connection string - passed in to allow flexibility between edit and production environments</param>
-        /// <param name="userId">PK to vos_user for passed connection</param>
-        /// <param name="objectName">Name of object to check</param>
-        /// <returns></returns>
-        public static ApplicationRolePrivilege GetGroupOrgObjectPrivileges( string connectionString, int orgId, string objectName )
-        {
-            SqlConnection sqlConnection = new SqlConnection( connectionString );
-            sqlConnection.Open();
-            ApplicationRolePrivilege entity = GetGroupOrgObjectPrivileges( sqlConnection, orgId, objectName );
-
-            sqlConnection.Close();
-            sqlConnection.Dispose();
-            sqlConnection = null;
-            return entity;
-        }
-
-        /// <summary>
-        /// Get Group Object Privileges
-        /// </summary>
-        /// <param name="connectionString">database connection string - passed in to allow flexibility between edit and production environments</param>
-        /// <param name="userId">PK to vos_user for passed connection</param>
-        /// <param name="objectName">Name of object to check</param>
-        /// <returns></returns>
-        public static ApplicationRolePrivilege GetGroupOrgObjectPrivileges( SqlConnection sqlConnection, int orgId, string objectName )
+        public static ApplicationRolePrivilege GetGroupOrgObjectPrivileges( SqlConnection sqlConnection, ApplicationRolePrivilege userPrivilege, int orgId, string objectName )
         {
 
             ApplicationRolePrivilege entity = new ApplicationRolePrivilege();
@@ -587,14 +687,36 @@ namespace ILPathways.DAL
             entity.CanView = false;
             bool firstRow = true;
 
+            //prepopulate if userPrivilege appears populated
+            if ( userPrivilege != null && userPrivilege.RoleId > 0 )
+            {
+                firstRow = false;
+
+                entity.RoleId = userPrivilege.RoleId;
+                entity.SubObjectId = userPrivilege.SubObjectId;
+                entity.SubObjectName = userPrivilege.SubObjectName;
+                entity.Description = userPrivilege.Description;
+                entity.Sequence = userPrivilege.Sequence;
+                entity.CreatePrivilege = userPrivilege.CreatePrivilege;
+                entity.ReadPrivilege = userPrivilege.ReadPrivilege;
+                entity.WritePrivilege = userPrivilege.WritePrivilege;
+                entity.DeletePrivilege = userPrivilege.DeletePrivilege;
+                entity.AppendPrivilege = userPrivilege.AppendPrivilege;
+                entity.AppendToPrivilege = userPrivilege.AppendToPrivilege;
+                entity.AssignPrivilege = userPrivilege.AssignPrivilege;
+                entity.ApprovePrivilege = userPrivilege.ApprovePrivilege;
+                entity.SharePrivilege = userPrivilege.SharePrivilege;
+            }
+
             try
             {
-                //determine if user is in a group with access to the object 
+                //determine if org is in a group with access to the object 
 
 
                 SqlParameter[] sqlParameters = new SqlParameter[ 2 ];
                 sqlParameters[ 0 ] = new SqlParameter( "@OrgId", orgId );
                 sqlParameters[ 1 ] = new SqlParameter( "@ObjectName", objectName );
+
 
                 SqlDataReader drdr = SqlHelper.ExecuteReader( sqlConnection, "AppObject_Group_OrgPrivileges_Select", sqlParameters );
 
@@ -657,7 +779,7 @@ namespace ILPathways.DAL
                                 entity.RoleId = GetRowColumn( drdr, "groupId", 0 );
                                 entity.Description = GetRowColumn( drdr, "Description", "" );
 
-                                entity.Sequence = GetRowColumn( drdr, "sequence", 0 );
+                                entity.Sequence = GetRowPossibleColumn( drdr, "sequence", 0 );
                             }
                         }
 
@@ -671,113 +793,7 @@ namespace ILPathways.DAL
             }
             catch ( Exception e )
             {
-                LogError( className + ".GetGroupOrgObjectPrivileges(SqlConnection sqlConnection, int userId, string objectName: " + objectName + "): " + e.ToString() );
-                return entity;
-            }
-
-        }//
-
-        /// <summary>
-        /// Future - ma be more flexible to use rowId???
-        /// </summary>
-        /// <param name="sqlConnection"></param>
-        /// <param name="userRowId"></param>
-        /// <param name="objectName"></param>
-        /// <returns></returns>
-        public static ApplicationRolePrivilege GetGroupOrgObjectPrivileges( SqlConnection sqlConnection, string rowId, string objectName )
-        {
-
-            ApplicationRolePrivilege entity = new ApplicationRolePrivilege();
-            if ( rowId.Trim().Length == 0 )
-                return entity;
-            entity.CanView = false;
-            bool firstRow = true;
-
-            try
-            {
-                //determine if user is in a group with access to the object 
-
-
-                SqlParameter[] sqlParameters = new SqlParameter[ 2 ];
-                sqlParameters[ 0 ] = new SqlParameter( "@RowId", rowId );
-                sqlParameters[ 1 ] = new SqlParameter( "@ObjectName", objectName );
-
-                SqlDataReader drdr = SqlHelper.ExecuteReader( sqlConnection, "AppObject_Group_OrgRowIdPrivileges_Select", sqlParameters );
-
-                if ( drdr.HasRows )
-                {
-                    while ( drdr.Read() )
-                    {
-                        if ( firstRow )
-                        {
-                            entity.RoleId = GetRowColumn( drdr, "groupId", 0 );
-                            entity.SubObjectId = 0;	// GetRowColumn(drdr, "SubObjectId", 0);
-
-                            entity.SubObjectName = "";	// GetRowColumn(drdr, "SubObjectName", "");
-                            entity.Description = GetRowColumn( drdr, "Description", "" );
-
-                            entity.Sequence = 1;	// GetRowColumn( drdr, "sequence", 0 );
-                            entity.CreatePrivilege = GetRowColumn( drdr, "createPrivilege", 0 );
-                            entity.ReadPrivilege = GetRowColumn( drdr, "readPrivilege", 0 );
-                            entity.WritePrivilege = GetRowColumn( drdr, "writePrivilege", 0 );
-                            entity.DeletePrivilege = GetRowColumn( drdr, "deletePrivilege", 0 );
-                            entity.AppendPrivilege = GetRowColumn( drdr, "appendPrivilege", 0 );
-                            entity.AppendToPrivilege = GetRowColumn( drdr, "appendToPrivilege", 0 );
-                            entity.AssignPrivilege = GetRowColumn( drdr, "assignPrivilege", 0 );
-                            entity.ApprovePrivilege = GetRowColumn( drdr, "approvePrivilege", 0 );
-                            entity.SharePrivilege = GetRowColumn( drdr, "sharePrivilege", 0 );
-                        }
-                        else
-                        {
-                            //check if next row has higher privileges
-                            entity.HasChanged = false;
-                            if ( entity.CreatePrivilege < GetRowColumn( drdr, "createPrivilege", 0 ) )
-                                entity.CreatePrivilege = GetRowColumn( drdr, "createPrivilege", 0 );
-
-                            if ( entity.ReadPrivilege < GetRowColumn( drdr, "readPrivilege", 0 ) )
-                                entity.ReadPrivilege = GetRowColumn( drdr, "readPrivilege", 0 );
-
-                            if ( entity.WritePrivilege < GetRowColumn( drdr, "writePrivilege", 0 ) )
-                                entity.WritePrivilege = GetRowColumn( drdr, "writePrivilege", 0 );
-
-                            if ( entity.DeletePrivilege < GetRowColumn( drdr, "deletePrivilege", 0 ) )
-                                entity.DeletePrivilege = GetRowColumn( drdr, "deletePrivilege", 0 );
-
-                            if ( entity.AppendPrivilege < GetRowColumn( drdr, "appendPrivilege", 0 ) )
-                                entity.AppendPrivilege = GetRowColumn( drdr, "appendPrivilege", 0 );
-
-                            if ( entity.AppendToPrivilege < GetRowColumn( drdr, "appendToPrivilege", 0 ) )
-                                entity.AppendToPrivilege = GetRowColumn( drdr, "appendToPrivilege", 0 );
-
-                            if ( entity.AssignPrivilege < GetRowColumn( drdr, "assignPrivilege", 0 ) )
-                                entity.AssignPrivilege = GetRowColumn( drdr, "assignPrivilege", 0 );
-
-                            if ( entity.ApprovePrivilege < GetRowColumn( drdr, "approvePrivilege", 0 ) )
-                                entity.ApprovePrivilege = GetRowColumn( drdr, "approvePrivilege", 0 );
-
-                            if ( entity.SharePrivilege < GetRowColumn( drdr, "sharePrivilege", 0 ) )
-                                entity.SharePrivilege = GetRowColumn( drdr, "sharePrivilege", 0 );
-
-                            if ( entity.HasChanged )
-                            {
-                                entity.RoleId = GetRowColumn( drdr, "groupId", 0 );
-                                entity.Description = GetRowColumn( drdr, "Description", "" );
-
-                                entity.Sequence = GetRowColumn( drdr, "sequence", 0 );
-                            }
-                        }
-
-                        //break;
-                    }
-                }
-                drdr.Close();
-                drdr = null;
-                return entity;
-
-            }
-            catch ( Exception e )
-            {
-                LogError( className + ".GetGroupOrgObjectPrivileges(SqlConnection sqlConnection, int userId, string objectName: " + objectName + "): " + e.ToString() );
+                LogError( className + ".GetGroupOrgObjectPrivileges(SqlConnection sqlConnection, ApplicationRolePrivilege, int orgId, string objectName: " + objectName + "): " + e.ToString() );
                 return entity;
             }
 

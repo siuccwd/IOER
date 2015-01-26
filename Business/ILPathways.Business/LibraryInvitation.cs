@@ -161,7 +161,7 @@ namespace ILPathways.Business
 
         private int _addToOrgId;
         /// <summary>
-        /// Gets/Sets AddToOrgId- invitee will be added to org on accespt
+        /// Gets/Sets AddToOrgId- invitee will be added to org on accept
         /// </summary>
         public int AddToOrgId
         {
@@ -206,6 +206,11 @@ namespace ILPathways.Business
                 }
             }
         }
+
+        /// <summary>
+        /// CSV list of organization roles to add for a new mbr (typically used for new user that is self registering)
+        /// </summary>
+        public string OrgMbrRoles { get; set; }
 
         /// <summary>
         /// Optionally include a starting url on confirmation

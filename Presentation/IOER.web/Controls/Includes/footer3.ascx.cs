@@ -13,6 +13,7 @@ namespace ILPathways.Controls.Includes
         protected void Page_Load( object sender, EventArgs e )
         {
             thisYear = System.DateTime.Now.Year.ToString();
+            txtServer.Text = ILPathways.Utilities.UtilityManager.GetAppKeyValue( "serverName", "" );
         }
     }
 }

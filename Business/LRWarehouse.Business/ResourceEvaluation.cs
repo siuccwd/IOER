@@ -13,13 +13,10 @@ namespace LRWarehouse.Business
             get { return this._resourceIntId; }
             set { this._resourceIntId = value; }
         }
+        public int ResourceStandardId { get; set; }
+        public int Score { get; set; }
 
-        private int _standardId;
-        public int StandardId
-        {
-            get { return this._standardId; }
-            set { this._standardId = value; }
-        }
+        public int StandardId { get; set; }
 
         private int _rubricId;
         public int RubricId

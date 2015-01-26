@@ -22,7 +22,7 @@ namespace IoerContentBusinessEntities
         public Nullable<bool> IsDiscoverable { get; set; }
         public Nullable<bool> IsPublic { get; set; }
         public Nullable<int> LibraryCreatedById { get; set; }
-        public Nullable<int> LibrarySectionId { get; set; }
+        public int LibrarySectionId { get; set; }
         public int SectionTypeId { get; set; }
         public string LibrarySection { get; set; }
         public string LibrarySectionType { get; set; }
@@ -31,10 +31,12 @@ namespace IoerContentBusinessEntities
         public Nullable<bool> AreContentsReadOnly { get; set; }
         public int LibraryResourceId { get; set; }
         public int ResourceIntId { get; set; }
-        public Nullable<System.DateTime> DateAddedToCollection { get; set; }
+        public System.DateTime DateAddedToCollection { get; set; }
         public Nullable<System.DateTime> ResourceCreated { get; set; }
         public Nullable<int> libResourceCreatedById { get; set; }
         public string Title { get; set; }
         public int ResourceVersionIntId { get; set; }
+        public Nullable<bool> IsActive { get; set; }
+        public Nullable<int> LibraryResourceCount { get; set; }
     }
 }

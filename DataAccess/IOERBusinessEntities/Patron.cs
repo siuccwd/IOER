@@ -14,6 +14,12 @@ namespace IOERBusinessEntities
     
     public partial class Patron
     {
+        public Patron()
+        {
+            this.Patron_Following = new HashSet<Patron_Following>();
+            this.Patron_Following1 = new HashSet<Patron_Following>();
+        }
+    
         public int Id { get; set; }
         public string UserName { get; set; }
         public string Password { get; set; }
@@ -25,7 +31,10 @@ namespace IOERBusinessEntities
         public Nullable<System.DateTime> LastUpdated { get; set; }
         public Nullable<int> LastUpdatedById { get; set; }
         public System.Guid RowId { get; set; }
+        public string IsleIdentifier { get; set; }
     
         public virtual Patron_Profile Patron_Profile { get; set; }
+        public virtual ICollection<Patron_Following> Patron_Following { get; set; }
+        public virtual ICollection<Patron_Following> Patron_Following1 { get; set; }
     }
 }

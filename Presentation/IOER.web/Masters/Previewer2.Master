@@ -1,0 +1,62 @@
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="Previewer2.master.cs" Inherits="ILPathways.Masters.Previewer2" %>
+<%@ Register TagName="HeaderControl" TagPrefix="uc1" Src="/Controls/Includes/Header7.ascx" %>
+
+<!DOCTYPE html>
+
+<html>
+  <head runat="server">
+    <title></title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js" type="text/javascript"></script>
+    <link rel="Stylesheet" type="text/css" href="/Styles/ISLE.css" />
+		<link rel="Stylesheet" type="text/css" href="/Styles/common2.css" />
+
+    <style type="text/css">
+      html, body, form { height: 100%; }
+      body { margin: 0; padding: 0; }
+      #masterColumns { position: absolute; top: 126px; left: 0; right: 0; bottom: 0; min-width: 300px; }
+      .masterColumn { position: absolute; top: 0; bottom: 0; }
+      #tool { left: 0; width: 350px; overflow-x: hidden; overflow-y: auto; }
+      #frame { left: 351px; right: 0; }
+      #previewFrame { width: 100%; height: 100%; margin-bottom: -4px; border: none; background-color: #EEE; }
+      #toolFrameSwapper { display: block; height: 30px; white-space: nowrap; display: none; position: absolute; bottom: 0; left: 0; right: 0; }
+      #toolFrameSwapper a { display: inline-block; width: 50%; margin-right: -4px; text-align: center; height: 30px; line-height: 30px; font-size: 25px; font-weight: bold; background-color: #3572B8; color: #FFF; }
+      #toolFrameSwapper a:hover, #toolFrameSwapper a:focus { background-color: #FF5707; color: #FFF; }
+      #toolFrameSwapper a.selected { background-color: #4AA394; }
+
+      @media screen and (max-width: 750px) {
+        #tool, #frame { left: 0; right: 0; bottom: 31px; }
+        #toolFrameSwapper { display: block; }
+        .masterColumn { display: none; }
+        .masterColumn.visible { display: block; }
+      }
+    </style>
+    <script type="text/javascript">
+      function showMasterColumn(link, target) {
+        $(".masterColumn").removeClass("visible");
+        $("#toolFrameSwapper a").removeClass("selected");
+        $("#toolFrameSwapper a[data-name=" + link + "]").addClass("selected");
+        $(".masterColumn#" + target).addClass("visible");
+      }
+    </script>
+
+    <asp:ContentPlaceHolder ID="HeadContent" runat="server" />
+  </head>
+  <body>
+    <form id="form1" runat="server">
+      <uc1:HeaderControl ID="header" runat="server" />
+      <div id="masterColumns">
+        <div id="tool" class="masterColumn visible">
+          <asp:ContentPlaceHolder ID="BodyContent" runat="server" />
+        </div>
+        <div id="frame" class="masterColumn">
+          <iframe id="previewFrame" src="" sandbox="allow-scripts"></iframe>
+        </div>
+        <div id="toolFrameSwapper">
+          <a href="#" data-name="linkTool" onclick="showMasterColumn('linkTool', 'tool'); return false;" class="selected">Tool</a>
+          <a href="#" data-name="linkFrame" onclick="showMasterColumn('linkFrame', 'frame'); return false;">Preview</a>
+        </div>
+      </div>
+    </form>
+  </body>
+</html>

@@ -12,11 +12,13 @@ using ILPathways.classes;
 using MyManager = Isle.BizServices.ContentServices;
 using AcctManager = Isle.BizServices.AccountServices;
 using GroupManager = Isle.BizServices.GroupServices;
+using OrgManager = Isle.BizServices.OrganizationBizService;
 using ILPLibrary = ILPathways.Library;
 using ILPathways.Controllers;
 using ILPathways.Utilities;
 using GDAL = Isle.BizServices;
 using LDAL = LRWarehouse.DAL;
+using BDM = LRWarehouse.DAL.BaseDataManager;
 
 namespace ILPathways.Controls.Content
 {
@@ -25,8 +27,6 @@ namespace ILPathways.Controls.Content
         const string thisClassName = "ContentSearch";
         string filterDesc = "";
         MyManager myManager = new MyManager();
-
-
 
         #region Properties
         /// <summary>
@@ -148,20 +148,7 @@ namespace ILPathways.Controls.Content
                 return _authorSearch;
             }
         }
-        //protected bool IsOrgApprover
-        //{
-        //    get
-        //    {
-        //        if ( Session[ "IsOrgApprover" ] == null )
-        //            Session[ "IsOrgApprover" ] = false;
-
-        //        if ( IsInteger( Session[ "IsOrgApprover" ].ToString() ) )
-        //            return bool.Parse( Session[ "IsOrgApprover" ].ToString() );
-        //        else
-        //            return 0;
-        //    }
-        //    set { Session[ "IsOrgApprover" ] = value; }
-        //}//
+        
         #endregion
 
         protected void Page_Load( object sender, EventArgs e )
@@ -197,6 +184,9 @@ namespace ILPathways.Controls.Content
                 FormPrivileges.SetReadOnly();
                 FormPrivileges.ReadPrivilege = 1;
                 FormPrivileges.CreatePrivilege = 0;
+
+                if ( showingContentTypeFilters.Text == "yes" )
+                    contentTypePanel.Visible = true;
             }
 
             //set grid defaults (variables are in base control)
@@ -213,14 +203,17 @@ namespace ILPathways.Controls.Content
             CheckRequest();
             //if ( CustomFilter.Length == 0 )
             //{
-            //    //set default filters, if logged in 
+
+            
             DoSearch();
+            
             //}
         }	// End 
 
 
         protected void CheckRequest()
         {
+            string type = GetRequestKeyValue( "t" );
             if ( AuthorSearch.Length > 0 )
             {
                 CustomFilter = string.Format( "auth.Fullname = '{0}' ", AuthorSearch );
@@ -228,6 +221,10 @@ namespace ILPathways.Controls.Content
             else if ( District.Length > 0 )
             {
                 CustomFilter = string.Format( "base.Organization = '{0}' ", District );
+            }
+            else if ( type == "Curriculum" )
+            {
+                CustomFilter = string.Format( " base.TypeId in ({0})", "50" );
             }
         }	// End 
 
@@ -243,7 +240,7 @@ namespace ILPathways.Controls.Content
                 CurrentUser.ParentOrgId = 0;
                 //get has not been attempted, do now
                 string statusMessage = string.Empty;
-                Organization org = AcctManager.GetOrganization( CurrentUser, ref statusMessage );
+                Organization org = OrgManager.GetOrganization( CurrentUser, ref statusMessage );
                 if ( org != null && org.Id > 0 )
                 {
                     CurrentUser.ParentOrgId = org.ParentId;
@@ -252,21 +249,37 @@ namespace ILPathways.Controls.Content
                 this.WebUser = CurrentUser;
             }
 
-            // get form privileges TODO are there any for basic search?, if not don't call
-            FormPrivileges = GDAL.SecurityManager.GetGroupObjectPrivileges( CurrentUser, FormSecurityName );
-            if ( CurrentUser.UserName == "mparsons" )
-            {
-                FormPrivileges.SetAdminPrivileges();
-            }
 
-            ApplicationRolePrivilege authPriv = GDAL.SecurityManager.GetGroupObjectPrivileges( CurrentUser, txtAuthorSecurityName.Text );
-            if ( authPriv.CanCreate() )
+            //LoggingHelper.DoTrace( 2, "%%%%%%%% ContentSearch.HandleMyAuthored - calling GetGroupObjectPrivileges" );
+            FormPrivileges = new ApplicationRolePrivilege();
+            try
             {
-                authoringPanel.Visible = true;
-                if ( authPriv.WritePrivilege > ( int ) ILPathways.Business.EPrivilegeDepth.Region )
+                // get form privileges TODO are there any for basic search?, if not don't call
+                // setting FormSecurityName t0oblank will essentually allow updates
+                FormPrivileges = GDAL.SecurityManager.GetGroupObjectPrivileges( WebUser, FormSecurityName );
+                //LoggingHelper.DoTrace( 2, "%%%%%%%% ContentSearch.HandleMyAuthored - AFTER GetGroupObjectPrivileges" );
+                if ( CurrentUser.UserName == "mparsons" )
+                {
                     FormPrivileges.SetAdminPrivileges();
-            }
+                    contentTypePanel.Visible = true;
+                }
+                if ( showingContentTypeFilters.Text == "yes" )
+                    contentTypePanel.Visible = true;
 
+
+                // setting txtAuthorSecurityName to blank will essentually allow updates
+                ApplicationRolePrivilege authPriv = GDAL.SecurityManager.GetGroupObjectPrivileges( WebUser, txtAuthorSecurityName.Text );
+                if ( authPriv.CanCreate() )
+                {
+                    authoringPanel.Visible = true;
+                    if ( authPriv.WritePrivilege > ( int ) ILPathways.Business.EPrivilegeDepth.Region )
+                        FormPrivileges.SetAdminPrivileges();
+                }
+            }
+            catch ( Exception ex )
+            {
+                LoggingHelper.LogError( ex, "ContentSearch.HandleMyAuthored" );
+            }
 
             if ( GroupManager.IsUserAnyOrgApprover( CurrentUser.Id ) )
             {
@@ -505,6 +518,8 @@ namespace ILPathways.Controls.Content
             //date filters
             FormatDatesFilter( booleanOperator, ref filter );
 
+            FormatContentTypeFilter( cbxContentType, booleanOperator, ref filter, ref filterDesc );
+
             if ( CustomFilter.Length > 0 )
             {
                 //skip for now, checking below==> address with future custom filters
@@ -611,7 +626,7 @@ namespace ILPathways.Controls.Content
             string where = "";
             string selDesc = "";
             CurrentUser = GetAppUser();
-
+            //me
             if ( listCreatedBy.SelectedIndex == 0 )
             {
                 where = string.Format( "(base.CreatedById = {0}) ", CurrentUser.Id );
@@ -620,9 +635,13 @@ namespace ILPathways.Controls.Content
             else if ( listCreatedBy.SelectedIndex == 1 )
             {
                 //my org
+                //TODO - need to used org mbrs now
+                //and content.Partner
+                //not sure if should be limited to only published?
                 if ( CurrentUser.OrgId > 0 )
                 {
-                    where = string.Format( "(base.CreatedById = {0}) ", CurrentUser.Id );
+                    //where = string.Format( "(base.CreatedById = {0}) ", CurrentUser.Id );
+                    where = FormatPersonalAccess( CurrentUser.Id );
                     where += string.Format( "OR ((base.OrgId = {0} OR auth.OrganizationId = {0}) AND base.StatusId = 5) ", CurrentUser.OrgId );
                     selDesc = "Created by my organization";
                 }
@@ -637,7 +656,8 @@ namespace ILPathways.Controls.Content
                 //my district
                 if ( CurrentUser.OrgId > 0 )
                 {
-                    where = string.Format( "(base.CreatedById = {0}) ", CurrentUser.Id );
+                    //where = string.Format( "(base.CreatedById = {0}) ", CurrentUser.Id );
+                    where = FormatPersonalAccess( CurrentUser.Id );
                     where += string.Format( "OR (base.StatusId = 5 " +
                                                 "AND ( (base.OrgId = {0} OR base.ParentOrgId = {0} OR auth.OrganizationId = {0})   ", CurrentUser.OrgId );
                     if ( CurrentUser.ParentOrgId > 0 )
@@ -661,7 +681,7 @@ namespace ILPathways.Controls.Content
                 {
                     if ( CurrentUser.OrgId > 0 )
                     {
-                        where = string.Format( "(base.CreatedById = {0}) ", CurrentUser.Id );
+                        where = FormatPersonalAccess( CurrentUser.Id );
                         where += string.Format( "OR (base.StatusId = 5 " +
                                                     "AND ( (base.OrgId = {0} OR base.ParentOrgId = {0} OR auth.OrganizationId = {0})   ", CurrentUser.OrgId );
                         if ( CurrentUser.ParentOrgId > 0 )
@@ -693,6 +713,13 @@ namespace ILPathways.Controls.Content
             }
         }
 
+        private string FormatPersonalAccess( int userid  )
+        {
+            string where = string.Format("( createdById = {0} OR "
+                        + "(base.ContentId in (SELECT [ContentId] FROM [dbo].[Content.Partner] where  [UserId] = {0} and [PartnerTypeId] > 0) ) ) ", userid);
+            return where;
+        }
+
         private void FormatDatesFilter( string booleanOperator, ref string filter )
         {
             DateTime endDate;
@@ -720,6 +747,37 @@ namespace ILPathways.Controls.Content
             filterDesc = filterDesc + "<div class='searchSection isleBox'>" + selDesc + "</div>";
         }
 
+        public void FormatContentTypeFilter( CheckBoxList cbxl, string booleanOperator, ref string filter, ref string filterDesc )
+        {
+            string csv = "";
+            string selDesc = "";
+            string comma = "";
+            foreach ( ListItem li in cbxl.Items )
+            {
+                if ( li.Selected )
+                {
+                    if ( li.Value != "0" )
+                    {
+                        csv += li.Value + ",";
+                        selDesc += comma + li.Text;
+                        comma = ", ";
+                    }
+                }
+            }
+            if ( csv.Length > 0 )
+            {
+                csv = csv.Substring( 0, csv.Length - 1 );
+
+                string where = string.Format( " base.TypeId in ({0})", csv );
+                filter += BDM.FormatSearchItem( filter, where, booleanOperator );
+                filterDesc = filterDesc + "<div class='searchSection isleBox'>" + selDesc + "</div>";
+            }
+            else
+            {
+                //
+                filter += BDM.FormatSearchItem( filter, txtTypeFilter.Text, booleanOperator );
+            }
+        }
         /// <summary>
         /// no longer used
         /// </summary>
@@ -733,6 +791,9 @@ namespace ILPathways.Controls.Content
                 {
                     bool allowingEdit = false;
                     if ( FormPrivileges.WritePrivilege > ( int ) ILPathways.Business.EPrivilegeDepth.Region )
+                        allowingEdit = true;
+                    string partnerList = ( ( DataRowView ) e.Row.DataItem )[ "PartnerList" ].ToString();
+                    if ( IsUserAPartner( partnerList, CurrentUser.Id.ToString() ) )
                         allowingEdit = true;
 
                     if ( IsMyAuthoredView == true )
@@ -774,13 +835,75 @@ namespace ILPathways.Controls.Content
                 }
             }
         }//
+        bool IsUserAPartner(string partnerList, string userId)
+        {
+            bool yes = false;
+            if (partnerList == null || partnerList.Trim().Length ==0)
+                return false;
+
+            string[] partners = partnerList.Split( new char[] { ',' } );
+            foreach ( string partner in partners )
+            {
+                if ( partner == userId )
+                {
+                    yes = true;
+                    break;
+                }
+            }
+            return yes;
+        }
+        public string DebugStuff( string contentType )
+        {
+            string text = "";
+            if ( showingContentTypeFilters.Text == "yes"
+                || (IsUserAuthenticated() && WebUser.UserName == "mparsons" ))
+            {
+                text = "<br/>" + contentType;
+            }
+            return text;
+        }//
+        public string SetEditUrl( string type, string rowId, string contentId )
+        {
+            string template = "/My/{0}.aspx?rid={1}";
+            if ( type.ToLower().Equals("document"))
+                return string.Format(template, "DocumentEditor", rowId);
+
+            else if ( type.ToLower().Equals( "LearningList" ) )
+                return string.Format( "/My/LearningList/{0}/Edit", contentId );
+
+            else if ( type.ToLower().Equals( "curriculum" ) )
+                return string.Format( "/My/LearningList/{0}/Edit", contentId );
+            else
+                return string.Format( template, "Author", rowId );
+        }//
+
+        public string SetPublicUrl( string typeId, string contentId, string title, string parent )
+        {
+            string template = litConentPublicUrl.Text;
+            string currTemplate = litCurriculumPublicUrl.Text;
+            string urlTitle = CleanTitle( title );
+            int parentId = 0;
+            Int32.TryParse( parent, out parentId );
+            //need to check if part of a curriculum
+            //update search to provide
+            if ( typeId.Equals( "40" ) )
+                if ( parentId > 0 )
+                    return string.Format( currTemplate, parentId, urlTitle, title );
+                else
+                    return string.Format( template, contentId, urlTitle, title );
+
+            else if ( "50 52 54 56 ".IndexOf( typeId ) > -1)
+                return string.Format( currTemplate, contentId, urlTitle, title );
+            else
+                return string.Format( template, contentId, urlTitle, title );
+        }//
 
         public string CleanTitle( string text )
         {
             if ( string.IsNullOrEmpty( text ) )
                 return "";
             else
-                return new PublishController().FormatFriendlyTitle( text );
+                return GDAL.ResourceBizService.FormatFriendlyTitle( text );
         }//
 
         public string CleanDescription( string description, int characters )
@@ -896,9 +1019,18 @@ namespace ILPathways.Controls.Content
             }
             else
             {
-                GridViewSortDirection = System.Web.UI.WebControls.SortDirection.Ascending;
+                if ( newSortExpression.ToLower().IndexOf("lastupdated") > -1 )
+                {
+                    GridViewSortDirection = System.Web.UI.WebControls.SortDirection.Descending;
+                    sortTerm = newSortExpression + " DESC";
+                }
+                else
+                {
+                    GridViewSortDirection = System.Web.UI.WebControls.SortDirection.Ascending;
+                    sortTerm = newSortExpression + " ASC";
+                }
+
                 GridViewSortExpression = newSortExpression;
-                sortTerm = newSortExpression + " ASC";
             }
             if ( newSortExpression.ToLower() != "title" )
             {
@@ -1022,9 +1154,26 @@ namespace ILPathways.Controls.Content
         {
             //
             InitializePageSizeList();
+            SetContentType();
 
         } //
+        private void SetContentType()
+        {
+            DataSet ds = myManager.ContentType_Select();
 
+            if ( BDM.DoesDataSetHaveRows( ds ) )
+            {
+                foreach ( DataRow dr in ds.Tables[ 0 ].Rows )
+                {
+                    ListItem item = new ListItem();
+                    
+                    item.Text = BDM.GetRowColumn( dr, "Title" );
+                    item.Value = BDM.GetRowColumn( dr, "Id" );
+
+                    this.cbxContentType.Items.Add( item );
+                }
+            }
+        }
         #endregion
 
     }

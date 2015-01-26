@@ -1,5 +1,6 @@
 ﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="ElasticSearch3.ascx.cs" Inherits="ILPathways.LRW.controls.ElasticSearch3" %>
 <%@ Register TagPrefix="uc1" TagName="StandardsBrowser" Src="/LRW/controls/StandardsBrowser5.ascx" %>
+<%@ Register TagPrefix="uc1" TagName="StandardsBrowser7" Src="/Controls/StandardsBrowser7.ascx" %>
 
 <% 
   //Easy CSS colors
@@ -15,7 +16,7 @@
 %>
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>ISLE Open Education Resources Search</title>
+    <title>ISLE Open Educational Resources Search</title>
     <!-- Externally-loaded stuff -->
     <script src="/Scripts/paradataRenderer.js"></script>
     <link rel="Stylesheet" type="text/css" href="/Styles/paradataRenderer.css" />
@@ -41,27 +42,28 @@
       .thumbnail p { text-align: center; font-weight: bold; font-size: 24px; padding-top: 25px; }
       #options { padding: 5px; position: relative; }
       #resultCount { text-align: center; padding: 5px; }
-      #btnActiveFiltersReset, #btnResetSearch { width: 100%; font-weight: bold; padding: 5px; margin: 5px 0; }
+      #btnActiveFiltersReset, #btnResetSearch { display: inline-block; font-weight: bold; padding: 5px; vertical-align: top; }
       #display select { margin: 2px 0; padding: 2px; }
-      #activeFiltersList .activeList { margin-bottom: 10px; }
-      #activeFiltersList .activeList .activeFilterItem:first-child { border-top-left-radius: 5px; border-top-right-radius: 5px; }
-      #activeFiltersList .activeList .activeFilterItem:last-child { border-bottom-left-radius: 5px; border-bottom-right-radius: 5px; }
-      .activeFilterItem { margin: 1px 0; border: 1px solid #D55; min-height: 24px; padding: 2px; overflow: hidden; }
+      #activeFiltersList { display: inline; }
+      #activeFiltersList .activeList { margin-bottom: 10px; display: inline; }
+      /*#activeFiltersList .activeList .activeFilterItem:first-child { border-top-left-radius: 5px; border-top-right-radius: 5px; }
+      #activeFiltersList .activeList .activeFilterItem:last-child { border-bottom-left-radius: 5px; border-bottom-right-radius: 5px; }*/
+      .activeFilterItem { margin: 1px 0; border: 1px solid #D55; min-height: 28px; padding: 2px; overflow: hidden; display: inline-block; border-radius: 5px; vertical-align: top; }
       .activeFilterItem a, .filterBox .closeBox { float: right; margin: 0 0 2px 2px; display: inline-block; width: 20px; height: 20px; line-height: 20px; font-weight: bold; background-color: #D55; color: #FFF; border-radius: 5px; box-shadow: 0 5px 10px -5px #FFF inset; text-align: center; }
       .activeFilterItem a:hover, .activeFilterItem a:focus, .filterBox .closeBox:hover, .filterBox .closeBox:focus { background-color: #F00; }
       
       .paginator { background-color: #EEE; padding: 5px; border-radius: 5px; text-align: center; margin: 5px auto; display: none; }
       .paginator a { display: inline-block; min-width: 30px; height: 30px; line-height: 30px; padding: 0 5px; margin: 2px; border-radius: 5px; }
       
-      .result_list .paradata { position: absolute; bottom: 0; box-shadow: 0 0 225px 0px #333 inset; color: #FFF; display: block; }
-      .result_grid .paradata { height: 60px; }
+      .result_list .paradata { position: absolute; bottom: 0; box-shadow: 0 0 225px 0px #333 inset; color: #FFF; display: block; margin-left: 0; }
+      .result_grid .paradata { height: 60px; margin-left: 0; }
       
       /* Results Rendering */
       .resultList { text-align: center; font-size: 0; }
       .result { text-align: left; font-size: 16px; }
       /*.result .thumbnailLink { display: block; width: 200px; height: 150px; position: relative; }*/
       
-      .result_list { margin: 0; padding: 5px 5px 50px 5px; border-radius: 5px; }
+      .result_list { margin: 0; padding: 5px 5px 50px 5px; border-radius: 5px; position: relative; }
       .result_list .thumbnailLink { float: right; margin-left: 5px; box-shadow: 0 0 10px #CCC; position: relative; width: 200px; background-color: #EEE; }
       .result_list .miniMetadata { clear: both; color: #555; font-style: italic; }
       .result_list h2 { font-size: 20px; }
@@ -104,12 +106,13 @@
       .mainMetadata h3 { color: #777; font-style: italic; font-weight: normal; }
       .created { float: right; display: inline-block; }
       
-      #standardsBrowser a { border: none; }
-      #standardsBrowser #gradeLevelSelector a { margin: 0.5px -1.5px; }
       .activeFilterItem a[data-group=libraryIDs], .activeFilterItem a[data-group=collectionIDs] { display: none; }
 
       #ddls { text-align: center; }
       #ddls select { width: 31%; margin: 1px 0.5%; }
+
+      .previewerButton { background-color: #3572B8; color: #FFF; padding: 2px 5px; border-radius: 5px; border-width: 1px; display: block; position: absolute; top: 8px; right: 8px; }
+      .previewerButton:hover, .previewerButton:focus { background-color: #FF5707; cursor: pointer; }
     </style>
     <!-- Themes and colors -->
     <style type="text/css">
@@ -176,7 +179,7 @@
       @media screen and (max-width: 650px) {
         .result_list .paradata li { max-width: 25px; text-align: right; transform: scale(.75, .75); -webkit-transform: scale(.75, .75); }
       }
-      @media screen and (min-width: 800px) {
+      @media screen and (min-width: 5000px) {
         #filters { position: relative; width: 100%; }
         #filters #filterLinks { display: block; }
         #filters .filterBox { width: 300px; left: 195px; }
@@ -211,7 +214,22 @@
       @media screen and (min-width:980px) {
         #container { padding-left: 50px; }
       }
-
+      /* Mobile override fixes */
+      @media screen and (min-width: 500px) {
+        #options #filters .filterBox { width: 300px; }
+        #options { width: 24%; display: inline-block; vertical-align: top; background-color: transparent; padding: 0; margin: 1px 0; }
+        #ddls { width: 74%; display: inline-block; vertical-align: top; }
+        #ddls select { height: 30px; margin-top: 3px; }
+        #ioerResults { transition: padding 0.2s; -webkit-transition: padding 0.2s; }
+        #filters > h2, .filterBox > h2 { margin-top: -5px; }
+        .filterBox .closeBox { margin-top: 0; }
+      }
+      @media screen and (max-width: 1024px) {
+        .result_grid { width: 31%; }
+      }
+      @media screen and (max-width: 500px) {
+        .result_grid { width: 48%; }
+      }
     </style>
 
     <!-- Global variables -->
@@ -219,7 +237,7 @@
       var pageSize = 20;
       var currentPage = 1;
       var renderMode = "list";
-      var sortMode = { field: "timestamp", order: "desc" };
+      var sortMode = { field: "intID", order: "desc" };
       var requests = [];
       var countDown = -1;
       var responsiveSize = "large";
@@ -243,7 +261,8 @@
       var autoTextFilters = [
         { terms: ["freesound", "free sound", "sound"], filter: "-freesound", applied: true },
         { terms: ["delete"], filter: "-delete", applied: true },
-        { terms: ["bookshare"], filter: "-bookshare", applied: true }
+        { terms: ["bookshare"], filter: "-bookshare", applied: true },
+        { terms: ["Smarter Balanced Assessment Consortium"], filter: "-\"Smarter Balanced Assessment Consortium\"", applied: true }
       ];
       var thumbDivTypes = [
         /*{ match: ".doc", text: ".doc File" },
@@ -253,17 +272,21 @@
         { match: ".pptx", text: ".pptx File" },
         { match: ".xlsx", text: ".xlsx File" },
         //{ match: ".pdf", text: ".pdf File" },*/
-        { match: ".swf", text: ".swf File" },
+        //{ match: ".swf", text: ".swf File" },
         { match: "localhost", text: "Test Data" }
       ];
       var thumbIconTypes = [
-        { match: ".pdf", header: "Adobe PDF", file: "filethumb_pdf_200x150.png" },
-        { match: ".doc", header: "Microsoft Word Document", file: "filethumb_docx_200x150.png" },
+        //{ match: ".pdf", header: "Adobe PDF", file: "filethumb_pdf_200x150.png" },
+        /*{ match: ".doc", header: "Microsoft Word Document", file: "filethumb_docx_200x150.png" },
         { match: ".docx", header: "Microsoft Word Document", file: "filethumb_docx_200x150.png" },
         { match: ".ppt", header: "Microsoft PowerPoint Document", file: "filethumb_pptx_200x150.png" },
         { match: ".pptx", header: "Microsoft PowerPoint Document", file: "filethumb_pptx_200x150.png" },
         { match: ".xls", header: "Microsoft Excel Spreadsheet", file: "filethumb_xlsx_200x150.png" },
-        { match: ".xlsx", header: "Microsoft Excel Spreadsheet", file: "filethumb_xlsx_200x150.png" },
+        { match: ".xlsx", header: "Microsoft Excel Spreadsheet", file: "filethumb_xlsx_200x150.png" },*/
+        { match: ".zip", header: "Archive File", file: "icon_zip_400x300.png" },
+        { match: ".rar", header: "Archive File", file: "icon_zip_400x300.png" },
+        { match: ".7z", header: "Archive File", file: "icon_zip_400x300.png" },
+        { match: ".tar", header: "Archive File", file: "icon_zip_400x300.png" }
       ];
 
       var debugResults = {};
@@ -282,27 +305,35 @@
         $("#pageTitle").css("font-size", 100 + (width / 10) + "%");
 
         responsiveSize =
+          //(width >= 1950) ? "beyondHD" :
           (width >= 1500) ? "extraLarge" :
           (width >= 1000) ? "large" :
           (width >= 800) ? "medium" :
-          (width >= 600) ? "small" : 
+          (width >= 500) ? "small" : 
           "tiny";
 
         initFadeCollapse();
 
+        //Call these constantly while resizing
         if (responsiveSize == "small" || responsiveSize == "tiny") {
-          //Call these constantly while changing
-          $("#filters .filterBox").width($("#options").width() - $("#filters").outerWidth());
-          $("#filters .filterBox[data-filtername=standardsBrowser]").width($("#options").outerWidth() - 10);
+          //$("#filters .filterBox").width($("#options").width() - $("#filters").outerWidth());
+          //$("#filters .filterBox[data-filtername=standardsBrowser]").width($("#options").outerWidth() - 10);
+          if (responsiveSize == "tiny") {
+            $("#filters .filterBox").css("left", "60px");
+            $("#filters .filterBox").width($("#searchBarBox").outerWidth() - 70);
+          }
+          else {
+            $("#filters .filterBox").css("left", "160px");
+            $("#filters .filterBox").width($("#searchBarBox").outerWidth() - $("#filters").outerWidth() - 10);
+          }
+          $("#filters .filterBox[data-filtername=standardsBrowser]").width($("#searchBarBox").outerWidth() - 10);
           $("#filters .filterBox[data-filtername=standardsBrowser]").css("left", "0");
-          //$("#search").width($("#options").outerWidth());
         }
         else {
           $("#filters .filterBox").width(300);
-          $("#filters .filterBox[data-maxwidth=true]").width($("#search").width() * 0.9);
-          //$("#search").width(width - $("#options").outerWidth() - (width <= 970 ? 30 : 80));
-          $("#filters .filterBox[data-filtername=standardsBrowser]").css("left", "190px");
-
+          $("#filters .filterBox[data-maxwidth=true]").width($("#searchBarBox").outerWidth() - 170);
+          $("#filters .filterBox[data-filtername=standardsBrowser]").css("left", "160px");
+          $("#filters .filterBox").css("left", "160px");
         }
 
         var divheight = ($("div.thumbnail").first().width() / 300) * 225;
@@ -311,12 +342,11 @@
         if (currentResponsiveSize != responsiveSize) {
           currentResponsiveSize = responsiveSize;
           //Only call these when the size type changes
-          console.log(currentResponsiveSize);
 
           //move the search bar on small/tiny mode
-          if (responsiveSize == "small" || responsiveSize == "tiny") {
+          if (responsiveSize == "small" || responsiveSize == "tiny" || responsiveSize == "medium" || responsiveSize == "large" || responsiveSize == "extraLarge") {
             if ($("#searchBarBox").attr("data-responsivemode") == "normal") {
-              $("#searchBarBox").insertBefore("#options"); //moves the bar between the header and filters
+              //$("#searchBarBox").insertBefore("#options"); //moves the bar between the header and filters
               $("#searchBarBox").attr("data-responsivemode", "compact");
               initSearchBar();
               //$("#ddlRendering option").attr("selected", "false");
@@ -326,9 +356,9 @@
             }
             hideFiltering();
           }
-                else if (responsiveSize != "small" && responsiveSize != "tiny") {
+          else if (responsiveSize != "small" && responsiveSize != "tiny") {
             if ($("#searchBarBox").attr("data-responsivemode") == "compact") {
-              $("#searchBarBox").prependTo("#search");
+              //$("#searchBarBox").prependTo("#search");
               $("#searchBarBox").attr("data-responsivemode", "normal");
               initSearchBar();
               //$("#ddlRendering option").attr("selected", "false");
@@ -421,11 +451,16 @@
         $("#btnShowFilterLinks").on("click", function () {
           if ($("#filters").attr("data-showing") == "true") {
             hideFiltering();
+            $("#ioerResults").css("padding-left", "0");
           }
           else {
             showFilterLinks();
-            $(this).html("Done");
+            $("#ioerResults").css("padding-left", "165px");
           }
+          if (responsiveSize == "small" || responsiveSize == "tiny") {
+            $("#ioerResults").css("padding-left", "0");
+          }
+          $(window).trigger("resize");
           return false;
         });
 
@@ -441,7 +476,7 @@
         setTimeout(function () {
           //Default to English
           $("a[data-name=English]").trigger("click");
-          countDown = -1;
+          //countDown = -1;
 
           //Handle incoming query
           var params = window.location.search.substr(1).split("&");
@@ -458,7 +493,7 @@
               resetCountDown();
             }
             else if (params[i].substr(0, 4) == "pub=") {
-              $("#searchBar").val(decodeURIComponent(params[i].substr(4)));
+              $("#searchBar").val("infields[publisher]:" + decodeURIComponent(params[i].substr(4)));
               resetCountDown();
             }
             else if (params[i].substr(0, 5) == "sort=") {
@@ -471,12 +506,20 @@
           }
         }, 50);
 
+        //Handle external frame
+        if (typeof (parent.hasSelector) == "function") {
+          $("#template_result_list a").removeAttr("target");
+        }
+
+        //Fix weird error
+        $("#ddls").appendTo("#searchBarBox");
+
+        resetCountDown();
       });
 
       function hideFiltering() {
         hideFilterLinks();
         hideFilters();
-        $("#btnShowFilterLinks").html("Filters...");
       }
 
       function clearSearchBar() { $("#searchBar").val("").trigger("keyup"); return false; }
@@ -546,13 +589,13 @@
       //Toggle displaying the filters for mobile
       function showFilterLinks() {
         $("#filterLinks").show();
-        $("#activeFilters").show();
+        //$("#activeFilters").show();
         $("#filters").show();
         $("#filters").attr("data-showing", "true");
       }
       function hideFilterLinks() {
         $("#filterLinks").hide();
-        $("#activeFilters").hide();
+        //$("#activeFilters").hide();
         $("#filters").hide();
         $("#filters").attr("data-showing", "false");
       } 
@@ -654,7 +697,10 @@
     <script type="text/javascript">
       function doSearch() {
         $(window).resize();
-        var searchText = processText($("#searchBar").val());
+        var searching = getTargetFields($("#searchBar").val());
+        var searchText = searching.searchText;
+        var targetFields = searching.targetFields;
+        searchText = processText(searchText);
         if (extraStandards.length > 0) {
           var standardsFound = false;
           for (i in activeFiltering.idFilters) {
@@ -668,12 +714,48 @@
             activeFiltering.idFilters.push(standardsFilter);
           }
         }
-        var queryInfo = { query: { searchText: searchText, narrowingOptions: activeFiltering, sort: sortMode, start: ((currentPage - 1) * pageSize), size: pageSize } };
-        doAjax("ElasticSearchService.asmx", "DoSearch3", queryInfo, loadResults, true);
+        var queryInfo = { query: { searchText: searchText, narrowingOptions: activeFiltering, sort: sortMode, start: ((currentPage - 1) * pageSize), size: pageSize }, targetFields: targetFields };
+        console.log(queryInfo);
+        doAjax("ElasticSearchService.asmx", "DoSearch4", queryInfo, loadResults, true);
+      }
+
+      //Check for field targets
+      function getTargetFields(text) {
+        if (text.indexOf("infields[") == 0) {
+          var parts = text.split("]:");
+          var rest = "";
+          for (var i = 1; i < parts.length; i++) {
+            rest += parts[i];
+          }
+          return { targetFields: parts[0].replace("infields[", ""), searchText: rest };
+        }
+        else {
+          return { targetFields: "", searchText: text };
+        }
+
       }
 
       //Apply automatic text filtering
       function processText(text) {
+        if(text == ""){ text = "* "; }
+        var appliedTextFilters = "";
+        try {
+          //Apply auto filters if the terms aren't part of the query
+          for (i in autoTextFilters) {
+            for (j in autoTextFilters[i].terms) {
+              if (text.indexOf(autoTextFilters[i].terms[j]) > -1) {
+                autoTextFilters[i].applied = false;
+              }
+            }
+            if (autoTextFilters[i].applied) {
+              appliedTextFilters += " " + autoTextFilters[i].filter;
+            }
+          }
+        }
+        catch (e) { }
+        return text + appliedTextFilters;
+      }
+      function processTextOLD(text) {
         var output = "";
         var appliedTextFilters = "";
         //Basic replacement
@@ -684,8 +766,17 @@
           }
         }
         //Helps with partial matching
-        if (temp.length == 1 && temp[0].indexOf(".") == -1) {
-          output = temp[0] + "*";
+        if (temp.length == 1) { //ensure there is data
+          console.log(temp[0].indexOf("."));
+          if (temp[0].indexOf(".") == -1) { //If the user isn't looking for a standard, add an asterisk
+            output = temp[0] + "*";
+          }
+          else if (temp[0].indexOf(".") > -1 && temp[0].indexOf('\\"') == -1) { //If the user is probably looking for a standard, add quotes if necessary
+            output = '\\"' + temp[0] + '\\"';
+          }
+          else { //Otherwise just pass the text along
+            output = temp[0]; 
+          }
         }
         else {
           for (i in temp) {
@@ -710,7 +801,7 @@
       }
 
       function searchFor(text) {
-        $("#searchBar").val(text)
+        $("#searchBar").val('"' + text + '"')
         $("#searchBar").trigger("keyup");
       }
     </script>
@@ -857,14 +948,22 @@
               .replace(/{list}/g, list)
           );
         }
+        if ($("#activeFiltersList").text() != "") {
+          $("#btnActiveFiltersReset").show();
+        }
+        else {
+          $("#btnActiveFiltersReset").hide();
+        }
+
       }
 
       function removeFilter(box) {
         var item = $(box);
         $(".filterBox[data-filtername='" + item.attr("data-group") + "'] .list a[data-name='" + item.attr("data-name") + "'][data-id=" + item.attr("data-id") + "]").attr("data-selected", "false");
-            if (item.attr("data-group") == "standardIDs") {
+        if (item.attr("data-group") == "standardIDs") {
           //removeSelectedItem(item.attr("data-id"));
-          removeStandard(parseInt(item.attr("data-id")));
+          //removeStandard(parseInt(item.attr("data-id")));
+          $(window).trigger("SB7removeStandard", [parseInt(item.attr("data-id"))]);
         }
         updateNarrowing();
         return false;
@@ -900,25 +999,15 @@
           }
           $("#ioerResults .resultList").css({ "opacity": 0 }).animate({ "opacity": 1 }, 250);
           resultHits = info.hits.total;
-
-          //For standards browser
-          if ($("#selectedStandards .selectedStandard").length > 0) {
-            $("#standardsBrowserExternalMessage").html("<a class=\"sbFoundResultsLink\" href=\"#\" onclick=\"showFilter(''); return false;\">Click to see all " + info.hits.total + " result(s).</a>");
-          }
-          else {
-            $("#standardsBrowserExternalMessage").html("");
-          }
+          
         }
         else {
           $("#ioerResults #resultCount").html("Sorry, no results found. We recommend trying different filtering options or search terms.");
           $("#ioerResults .resultList").html("");
           resultHits = 0;
-
-          //For standards browser
-          $("#standardsBrowserExternalMessage").html("<div class=\"sbFoundNoResults\">Sorry, no results found. We recommend removing filters or search terms. Or, try a different standard.</div>");
-          $("#standardsBrowserExternalMessage").hide().fadeIn();
-
         }
+
+        $(window).trigger("resultsLoaded", [info.hits.total]);
 
         updatePaginator(info.hits.total);
         //Temporary patch
@@ -1068,14 +1157,14 @@
 
       function pickThumbnail(data) {
         for (i in thumbDivTypes) {
-          if (data.url.indexOf(thumbDivTypes[i].match) > -1) {
+          if (data.url.indexOf(thumbDivTypes[i].match) > 15) {
             return $("#template_thumbdiv").html()
               .replace(/{header}/g, thumbDivTypes[i].header)
               .replace(/{text}/g, thumbDivTypes[i].text)
           }
         }
         for (i in thumbIconTypes) {
-            if (data.url.indexOf(thumbIconTypes[i].match) > -1) {
+            if (data.url.indexOf(thumbIconTypes[i].match) > 15) {
                 return $("#template_FileThumbnail").html()
                   .replace(/{header}/g, thumbIconTypes[i].header)
                   .replace(/{file}/g, thumbIconTypes[i].file)
@@ -1113,6 +1202,16 @@
         extraStandards = extraChildren;
         updateAppliedStandards(items);
       }
+      function external_applyStandardsV7(items, extraChildren) {
+        extraStandards = [];
+        for (i in extraChildren) {
+          extraStandards.push({ text: "", id: extraChildren[i] });
+        }
+        for (i in items) {
+          items[i].code = (items[i].code == null || items[i].code == undefined || items[i].code == "" || items[i].code == "null") ? items[i].description : items[i].code;
+        }
+        updateAppliedStandards(items);
+      }
         function updateAppliedStandards(items) {
         console.log(items);
         standardsFilter = { field: "standardIDs", title: "Learning Standards", es: "standardIDs", items: [] };
@@ -1124,120 +1223,152 @@
       }
 
     </script>
+    <script type="text/javascript">
+      //Standards Browser 7 Functionality
+      var SB7mode = "search";
+      $(window).on("SB7search", function (event, selected, all) {
+        external_applyStandardsV7(selected, all);
+      });
+      $(window).on("SB7showResults", function () {
+        hideFilters();
+      });
+    </script>
+    <script type="text/javascript">
+      //Experimental
+      function preview(id){
+        for(i in debugResults.hits.hits){
+          var item = debugResults.hits.hits[i];
+          if(item._source.intID == id){
+            var src = item._source;
+            console.log(src);
+            rp.open({
+              intID: src.intID,
+              title: src.title,
+              publisher: src.publisher,
+              created: src.created,
+              url: src.url
+            });
+            break;
+          }
+        }
+      }
+    </script>
 
     <div id="container">
       <h1 class="isleH1" id="pageTitle">ISLE Open Education Resources Search</h1>
-      <div id="options">
-        <a href="#" id="btnShowFilterLinks">Filters...</a>
-        <!-- Filters -->
-        <div id="filters" data-showing="true">
-          <h2>Filters...</h2>
-          <div id="filterLinks">
-            <a href="#" data-name="standardsBrowser">Standards Browser</a>
-            <a href="#" data-name="gradeLevel">Grade Level</a>
-            <a href="#" data-name="subject">K-12 Subjects</a>
-            <a href="#" data-name="accessRights">Access Rights</a>
-            <a href="#" data-name="careerCluster">Career Cluster</a>
-            <a href="#" data-name="educationalUse">Educational Use</a>
-            <a href="#" data-name="endUser">End User</a>
-            <a href="#" data-name="groupType">Group Type</a>
-            <a href="#" data-name="language">Language</a>
-            <a href="#" data-name="mediaType">Media Type</a>
-            <a href="#" data-name="resourceType">Resource Type</a>
-            <a href="#" data-name="searchTips">Search Tips</a>
-          </div><!-- /filterLinks -->
-          <div id="filterContents">
-            <div class="filterBox" data-filtername="searchTips" data-maxwidth="true">
-              <a href="#" class="closeBox">X</a>
-              <h2>Search Tips</h2>
-              <p>You can wrap phrases in double quotes ( " ) to search for whole phrases:</p>
-              <ul>
-                <li><a href="#" onclick="searchFor(this.innerHTML)">"3rd grade" literacy</a> <span>(Literacy Resources for Third-Graders)</span></li>
-                <li><a href="#" onclick="searchFor(this.innerHTML)">"pythagorean theorem"</a></li>
-                <li><a href="#" onclick="searchFor(this.innerHTML)">"dinosaur footprints"</a></li>
-              </ul>
-              <p>You can use + or - to require/exclude words or phrases:</p>
-              <ul>
-                <li><a href="#" onclick="searchFor(this.innerHTML)">+trees -forest</a> <span>(Finds Resources about trees, avoiding Resources about forests)</span></li>
-                <li><a href="#" onclick="searchFor(this.innerHTML)">formula -chemistry</a> <span>(Finds Non-Chemistry Resources about Formulas)</span></li>
-                <li><a href="#" onclick="searchFor(this.innerHTML)">formula +chemistry</a> <span>(Finds Only Chemistry Resources about Formulas)</span></li>
-                <li><a href="#" onclick="searchFor(this.innerHTML)">geometry +"isosceles triangle"</a> <span>(Finds Geometry Resources focusing on Isosceles Triangles)</span></li>
-              </ul>
-              <p>You can use | to look for one term/phrase or another:</p>
-              <ul>
-                <li><a href="#" onclick="searchFor(this.innerHTML)">math|english</a></li>
-                <li><a href="#" onclick="searchFor(this.innerHTML)">trees forest|math</a></li>
-                <li><a href="#" onclick="searchFor(this.innerHTML)">"civil rights"|"civil engineering"</a> <span>(Finds Civil Rights or Civil Engineering Resources)</span></li>
-              </ul>
-              <p>Put them together. Go nuts!</p>
-              <ul>
-                <li><a href="#" onclick="searchFor(this.innerHTML)">"grade 3" geometry -triangles</a> <span>(Finds Grade 3 Geometry Resources about things other than Triangles)</span></li>
-                <li><a href="#" onclick="searchFor(this.innerHTML)">"charles dickens" +"christmas carol" film|video</a> <span>(Finds film or video Resources about Charles Dickens' <u>A Christmas Carol</u>)</span></li>
-                <li><a href="#" onclick="searchFor(this.innerHTML)">history|biography +war -ww2 -"world war 2" -"world war II"</a> <span>(Finds History or Biography Resources about war, but not about World War 2)</span></li>
-                <li><a href="#" onclick="searchFor(this.innerHTML)">+free math "grade 3"|"third grade"|"3rd grade" game|activity -test -quiz application/software student</a> <span>(Finds Free Math Resources for Third Graders that are Games or Activities but not Tests or Quizzes, and is software meant for students.)</span></li>
-              </ul>
-            </div>
-            <div class="filterBox" data-filtername="standardsBrowser" data-maxwidth="true">
-              <a href="#" class="closeBox">X</a>
-              <h2>Standards Browser</h2>
-              <uc1:StandardsBrowser ID="sBrowser" runat="server" mode="search" isWidget="false" />
-            </div>
-            <div class="filterBox" data-filtername="subject">
-              <a href="#" class="closeBox">X</a>
-              <h2>K-12 Subject</h2>
-              <div class="list" data-type="text" data-group="subject" data-title="K-12 Subject">
-                <a href="#" data-selected="false" onclick="toggleCBXLI(this);return false;" data-id="0" data-name="Mathematics">Mathematics</a>
-                <a href="#" data-selected="false" onclick="toggleCBXLI(this);return false;" data-id="0" data-name="English Language Arts">English Language Arts</a>
-                <a href="#" data-selected="false" onclick="toggleCBXLI(this);return false;" data-id="0" data-name="Science">Science</a>
-                <a href="#" data-selected="false" onclick="toggleCBXLI(this);return false;" data-id="0" data-name="Social Studies">Social Studies</a>
-                <a href="#" data-selected="false" onclick="toggleCBXLI(this);return false;" data-id="0" data-name="Arts">Arts</a>
-                <a href="#" data-selected="false" onclick="toggleCBXLI(this);return false;" data-id="0" data-name="World Languages">World Languages</a>
-                <a href="#" data-selected="false" onclick="toggleCBXLI(this);return false;" data-id="0" data-name="Health">Health</a>
-                <a href="#" data-selected="false" onclick="toggleCBXLI(this);return false;" data-id="0" data-name="Physical Education">Physical Education</a>
-                <a href="#" data-selected="false" onclick="toggleCBXLI(this);return false;" data-id="0" data-name="Technology">Technology</a>
-              </div>
-            </div>
-          </div><!-- /filter Contents -->
-          <div id="activeFilters">
-            <div id="activeFiltersList"></div>
-            <input type="button" id="btnActiveFiltersReset" onclick="resetFilters()" value="Clear Filters" />
-            <input type="button" id="btnResetSearch" onclick="resetSearch()" value="Reset Search" />
-          </div>
-        </div><!-- /filters -->
-        <!--<div id="display">
-          <h2>Display</h2>
-          <select id="ddlSorting2">
-            <option data-val="relevancy" value="|">Relevancy</option>
-            <option data-val="newest" value="timestamp|desc" selected="selected">Newest First</option>
-            <option data-val="oldest" value="timestamp|asc">Oldest First</option>
-            <option data-val="liked" value="likeCount|desc">Most Liked</option>
-            <option data-val="disliked" value="dislikeCount|desc">Most Disliked</option>
-            <option data-val="rated" value="evaluationScoreTotal|desc">Best Rated</option>
-            <option data-val="viewed" value="viewsCount|desc">Most Visited</option>
-            <option data-val="favorites" value="favorites|desc">Most Favorited</option>
-            <option data-val="comments" value="commentsCount|desc">Most Commented On</option>
-          </select>
-          <select id="ddlDisplayCount2">
-            <option selected="selected" value="20">Show 20 Items</option>
-            <option value="50">Show 50 Items</option>
-            <option value="100">Show 100 Items</option>
-          </select>
-          <select id="ddlRendering2">
-            <option value="list" selected="selected">List View</option>
-            <option value="grid">Grid View</option>
-            <option value="compact">Text-only View</option>
-          </select>
-        </div>--><!-- /display -->
-      </div><!-- /leftColumn -->
+      <!-- /leftColumn -->
       <div id="search">
         <div id="searchBarBox" data-responsivemode="normal">
           <input type="text" id="searchBar" placeholder="Start typing to Search..." />
           <a href="#" onclick="clearSearchBar(); return false;" id="searchBarX">X</a>
+          <div id="activeFilters">
+            <div id="activeFiltersList"></div>
+            <input type="button" id="btnActiveFiltersReset" onclick="resetFilters()" style="display:none;" value="Clear Filters" />
+            <!--<input type="button" id="btnResetSearch" onclick="resetSearch()" value="Reset Search" />-->
+          </div>
+          <div id="options">
+            <a href="#" id="btnShowFilterLinks">Filters...</a>
+            <!-- Filters -->
+            <div id="filters" data-showing="true">
+              <h2>Filters...</h2>
+              <div id="filterLinks">
+                <!--<a href="#" data-name="standardsBrowser">Standards Browser</a>-->
+                <a href="#" data-name="standardsBrowser">Standards Browser</a>
+                <a href="#" data-name="gradeLevel">Grade Level</a>
+                <a href="#" data-name="subject">K-12 Subjects</a>
+                <a href="#" data-name="accessRights">Access Rights</a>
+                <a href="#" data-name="careerCluster">Career Cluster</a>
+                <a href="#" data-name="educationalUse">Educational Use</a>
+                <a href="#" data-name="endUser">End User</a>
+                <a href="#" data-name="groupType">Group Type</a>
+                <a href="#" data-name="language">Language</a>
+                <a href="#" data-name="mediaType">Media Type</a>
+                <a href="#" data-name="resourceType">Resource Type</a>
+                <a href="#" data-name="searchTips">Search Tips</a>
+              </div><!-- /filterLinks -->
+              <div id="filterContents">
+                <div class="filterBox" data-filtername="searchTips" data-maxwidth="true">
+                  <a href="#" class="closeBox">X</a>
+                  <h2>Search Tips</h2>
+                  <p>You can wrap phrases in double quotes ( " ) to search for whole phrases:</p>
+                  <ul>
+                    <li><a href="#" onclick="searchFor(this.innerHTML)">"3rd grade" literacy</a> <span>(Literacy Resources for Third-Graders)</span></li>
+                    <li><a href="#" onclick="searchFor(this.innerHTML)">"pythagorean theorem"</a></li>
+                    <li><a href="#" onclick="searchFor(this.innerHTML)">"dinosaur footprints"</a></li>
+                  </ul>
+                  <p>You can use + or - to require/exclude words or phrases:</p>
+                  <ul>
+                    <li><a href="#" onclick="searchFor(this.innerHTML)">+trees -forest</a> <span>(Finds Resources about trees, avoiding Resources about forests)</span></li>
+                    <li><a href="#" onclick="searchFor(this.innerHTML)">formula -chemistry</a> <span>(Finds Non-Chemistry Resources about Formulas)</span></li>
+                    <li><a href="#" onclick="searchFor(this.innerHTML)">formula +chemistry</a> <span>(Finds Only Chemistry Resources about Formulas)</span></li>
+                    <li><a href="#" onclick="searchFor(this.innerHTML)">geometry +"isosceles triangle"</a> <span>(Finds Geometry Resources focusing on Isosceles Triangles)</span></li>
+                  </ul>
+                  <p>You can use | to look for one term/phrase or another:</p>
+                  <ul>
+                    <li><a href="#" onclick="searchFor(this.innerHTML)">math|english</a></li>
+                    <li><a href="#" onclick="searchFor(this.innerHTML)">trees forest|math</a></li>
+                    <li><a href="#" onclick="searchFor(this.innerHTML)">"civil rights"|"civil engineering"</a> <span>(Finds Civil Rights or Civil Engineering Resources)</span></li>
+                  </ul>
+                  <p>Put them together. Go nuts!</p>
+                  <ul>
+                    <li><a href="#" onclick="searchFor(this.innerHTML)">"grade 3" geometry -triangles</a> <span>(Finds Grade 3 Geometry Resources about things other than Triangles)</span></li>
+                    <li><a href="#" onclick="searchFor(this.innerHTML)">"charles dickens" +"christmas carol" film|video</a> <span>(Finds film or video Resources about Charles Dickens' <u>A Christmas Carol</u>)</span></li>
+                    <li><a href="#" onclick="searchFor(this.innerHTML)">history|biography +war -ww2 -"world war 2" -"world war II"</a> <span>(Finds History or Biography Resources about war, but not about World War 2)</span></li>
+                    <li><a href="#" onclick="searchFor(this.innerHTML)">+free math "grade 3"|"third grade"|"3rd grade" game|activity -test -quiz application/software student</a> <span>(Finds Free Math Resources for Third Graders that are Games or Activities but not Tests or Quizzes, and is software meant for students.)</span></li>
+                  </ul>
+                </div>
+                <div class="filterBox" data-filterName="standardsBrowser" data-maxwidth="true">
+                  <a href="#" class="closeBox">X</a>
+                  <h2>Standards Browser</h2>
+                  <uc1:StandardsBrowser7 ID="sBrowser7" runat="server" mode="search" />
+                </div>
+                <div class="filterBox" data-filtername="subject">
+                  <a href="#" class="closeBox">X</a>
+                  <h2>K-12 Subject</h2>
+                  <div class="list" data-type="text" data-group="subject" data-title="K-12 Subject">
+                    <a href="#" data-selected="false" onclick="toggleCBXLI(this);return false;" data-id="0" data-name="Mathematics">Mathematics</a>
+                    <a href="#" data-selected="false" onclick="toggleCBXLI(this);return false;" data-id="0" data-name="English Language Arts">English Language Arts</a>
+                    <a href="#" data-selected="false" onclick="toggleCBXLI(this);return false;" data-id="0" data-name="Science">Science</a>
+                    <a href="#" data-selected="false" onclick="toggleCBXLI(this);return false;" data-id="0" data-name="Social Studies">Social Studies</a>
+                    <a href="#" data-selected="false" onclick="toggleCBXLI(this);return false;" data-id="0" data-name="Arts">Arts</a>
+                    <a href="#" data-selected="false" onclick="toggleCBXLI(this);return false;" data-id="0" data-name="World Languages">World Languages</a>
+                    <a href="#" data-selected="false" onclick="toggleCBXLI(this);return false;" data-id="0" data-name="Health">Health</a>
+                    <a href="#" data-selected="false" onclick="toggleCBXLI(this);return false;" data-id="0" data-name="Physical Education">Physical Education</a>
+                    <a href="#" data-selected="false" onclick="toggleCBXLI(this);return false;" data-id="0" data-name="Technology">Technology</a>
+                  </div>
+                </div>
+              </div><!-- /filter Contents -->
+            </div><!-- /filters -->
+            <!--<div id="display">
+              <h2>Display</h2>
+              <select id="ddlSorting2">
+                <option data-val="relevancy" value="|">Relevancy</option>
+                <option data-val="newest" value="timestamp|desc" selected="selected">Newest First</option>
+                <option data-val="oldest" value="timestamp|asc">Oldest First</option>
+                <option data-val="liked" value="likeCount|desc">Most Liked</option>
+                <option data-val="disliked" value="dislikeCount|desc">Most Disliked</option>
+                <option data-val="rated" value="evaluationScoreTotal|desc">Best Rated</option>
+                <option data-val="viewed" value="viewsCount|desc">Most Visited</option>
+                <option data-val="favorites" value="favorites|desc">Most Favorited</option>
+                <option data-val="comments" value="commentsCount|desc">Most Commented On</option>
+              </select>
+              <select id="ddlDisplayCount2">
+                <option selected="selected" value="20">Show 20 Items</option>
+                <option value="50">Show 50 Items</option>
+                <option value="100">Show 100 Items</option>
+              </select>
+              <select id="ddlRendering2">
+                <option value="list" selected="selected">List View</option>
+                <option value="grid">Grid View</option>
+                <option value="compact">Text-only View</option>
+              </select>
+            </div>--><!-- /display -->
+          </div>          
           <div id="ddls" style="">
             <select id="ddlSorting">
               <option data-val="relevancy" value="|">Relevancy</option>
-              <option data-val="newest" value="timestamp|desc" selected="selected">Newest First</option>
-              <option data-val="oldest" value="timestamp|asc">Oldest First</option>
+              <option data-val="newest" value="intID|desc" selected="selected">Newest First</option>
+              <option data-val="oldest" value="intID|asc">Oldest First</option>
               <option data-val="liked" value="likeCount|desc">Most Liked</option>
               <option data-val="disliked" value="dislikeCount|desc">Most Disliked</option>
               <option data-val="rated" value="evaluationScoreTotal|desc">Best Rated</option>
@@ -1290,7 +1421,7 @@
 
       <div id="template_result_list">
         <div class="result result_list" data-vid="{vid}" data-intid="{intID}">
-          <a class="thumbnailLink" href="/IOER/{vid}/{simpleTitle}" target="_resultWindow">
+          <a class="thumbnailLink" href="/Resource/{intID}/{simpleTitle}" target="_resultWindow">
             {thumbnail}
             {paradata}
           </a>
@@ -1300,7 +1431,8 @@
             {cbxls}
           </div>
           <div class="data">
-            <h2><a href="/IOER/{vid}/{simpleTitle}" target="_resultWindow">{title}</a></h2>
+            <h2><a href="/Resource/{intID}/{simpleTitle}" target="_resultWindow">{title}</a></h2>
+            <%--<input type="button" class="previewerButton" onclick="preview({intID})" value="Preview" />--%>
             <div class="libraryControls"></div>
             <p class="fadeCollapse">
               {description}
@@ -1312,7 +1444,7 @@
 
       <div id="template_result_grid">
         <div class="result result_grid" data-vid="{vid}" data-intid="{intID}">
-          <a class="thumbnailLink" href="/IOER/{vid}/{simpleTitle}" target="_resultWindow">
+          <a class="thumbnailLink" href="/Resource/{intID}/{simpleTitle}" target="_resultWindow">
             {thumbnail}
             <h2>{title}</h2>
             {paradata}
@@ -1322,7 +1454,7 @@
 
       <div id="template_result_compact">
         <div class="result result_compact">
-          <h2><a href="/IOER/{vid}/{simpleTitle}" target="_resultWindow">{title}</a></h2>
+          <h2><a href="/Resource/{intID}/{simpleTitle}" target="_resultWindow">{title}</a></h2>
           <p class="fadeCollapse">
             {description}
           </p>
@@ -1330,11 +1462,11 @@
       </div>
 
       <div id="template_thumbnail">
-        <img id="imgThumbnail" runat="server" class="thumbnail" src="//ioer.ilsharedlearning.org/OERThumbs/thumb/{intID}-thumb.png" onerror="fixThumbnail({intID}, '{url}', this)" />
+        <img id="imgThumbnail" runat="server" class="thumbnail" src="//ioer.ilsharedlearning.org/OERThumbs/large/{intID}-large.png" onerror="fixThumbnail({intID}, '{url}', this)" />
       </div>
     
       <div id="template_FileThumbnail">
-        <img class="file thumbnail" src="/images/icons/filethumbs/{file}" alt="{header}" />
+        <img class="file thumbnail" src="/images/icons/{file}" alt="{header}" />
       </div>
 
       <div id="template_thumbdiv">
@@ -1345,7 +1477,7 @@
       </div>
 
       <div id="template_activeFilterList">
-        <h3>{group}</h3>
+        <!--<h3>{group}</h3>-->
         <div class="activeList">{list}</div>
       </div>
 

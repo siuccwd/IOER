@@ -25,7 +25,9 @@
             <tr><td></td><td><asp:Button ID="btnSubmitRegister" runat="server" Text="Login" OnClick="btnSubmitRegister_Click" /></td></tr>
         </table>
     <asp:Panel ID="hiddenStuff" runat="server" Visible="false">
-        <asp:Literal ID="defaultRedirect" runat="server" Text="http://ioer.ilsharedlearning.org/PortalSplash.aspx" />
-        <asp:Literal ID="profileRedirect" runat="server" Text="http://ioer.ilsharedlearning.org/Account/Profile.aspx" />
+        <asp:Literal ID="defaultRedirectOld" runat="server" Text="/PortalSplash.aspx" />
+        <asp:Literal ID="defaultRedirect" runat="server" Text="/Help/Guide.aspx" />
+        <asp:Literal ID="profileRedirect" runat="server" Text="/Account/Profile.aspx" />
         <asp:Literal ID="profileCreateMessage" runat="server" Text="Your account has been created.  You should complete your <a href='{0}' target='_blank'>profile</a> for maximum benefits." />
+        <asp:Literal ID="useProdHeaders" runat="server" Text="false" />
     </asp:Panel>

@@ -19,6 +19,13 @@ namespace IoerContentBusinessEntities
             this.Content_History = new HashSet<Content_History>();
             this.Content_Reference = new HashSet<Content_Reference>();
             this.Content_Supplement = new HashSet<Content_Supplement>();
+            this.Content_Resource = new HashSet<Content_Resource>();
+            this.Content1 = new HashSet<Content>();
+            this.Content_Like = new HashSet<Content_Like>();
+            this.Content_Partner = new HashSet<Content_Partner>();
+            this.Content_Standard = new HashSet<Content_Standard>();
+            this.Content_Subscription = new HashSet<Content_Subscription>();
+            this.Content_Tag = new HashSet<Content_Tag>();
         }
     
         public int Id { get; set; }
@@ -44,6 +51,11 @@ namespace IoerContentBusinessEntities
         public string UseRightsUrl { get; set; }
         public Nullable<System.Guid> DocumentRowId { get; set; }
         public string DocumentUrl { get; set; }
+        public Nullable<int> ParentId { get; set; }
+        public Nullable<int> SortOrder { get; set; }
+        public Nullable<int> ResourceIntId { get; set; }
+        public string Timeframe { get; set; }
+        public string ImageUrl { get; set; }
     
         public virtual Codes_ContentPrivilege Codes_ContentPrivilege { get; set; }
         public virtual Codes_ContentStatus Codes_ContentStatus { get; set; }
@@ -51,5 +63,14 @@ namespace IoerContentBusinessEntities
         public virtual ICollection<Content_Reference> Content_Reference { get; set; }
         public virtual ICollection<Content_Supplement> Content_Supplement { get; set; }
         public virtual ContentType ContentType { get; set; }
+        public virtual ICollection<Content_Resource> Content_Resource { get; set; }
+        public virtual ICollection<Content> Content1 { get; set; }
+        public virtual Content Content2 { get; set; }
+        public virtual ICollection<Content_Like> Content_Like { get; set; }
+        public virtual ICollection<Content_Partner> Content_Partner { get; set; }
+        public virtual ICollection<Content_Standard> Content_Standard { get; set; }
+        public virtual ICollection<Content_Subscription> Content_Subscription { get; set; }
+        public virtual ICollection<Content_Tag> Content_Tag { get; set; }
+        public virtual Document_Version Document_Version { get; set; }
     }
 }

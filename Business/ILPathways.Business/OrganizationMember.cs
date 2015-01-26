@@ -5,13 +5,14 @@ using System.Text;
 
 namespace ILPathways.Business
 {
+    [Serializable]
     public class OrganizationMember : BaseBusinessDataEntity
     {
 
         public static int MEMBERTYPE_ADMINISTRATION = 1;
         public static int MEMBERTYPE_EMPLOYEE = 2;
         public static int MEMBERTYPE_STUDENT = 3;
-        public static int MEMBERTYPE_CONTRACTOR = 4;
+        public static int MEMBERTYPE_EXTERNAL = 4;
 
         public static int MEMBERROLE_ADMINISTRATOR = 1;
         public static int MEMBERROLE_CONTENT_APPROVER = 2;
@@ -22,14 +23,40 @@ namespace ILPathways.Business
         {
             OrgMemberType = "";
             MemberRoles = new List<OrganizationMemberRole>();
+            FirstName = "";
+            LastName = "";
         }
     
         public int OrgId { get; set; }
         public int UserId { get; set; }
         public int OrgMemberTypeId { get; set; }
 
-        public string OrgMemberType { get; set; }
+        private string _orgMemberType = "";
+        public string OrgMemberType {
+            get
+            {
+                if ( _orgMemberType.Length == 0
+                    && OrgMemberTypeId > 0)
+                {
+                    if ( OrgMemberTypeId == 1 ) _orgMemberType = "Administration";
+                    else if ( OrgMemberTypeId == 2 ) _orgMemberType = "Employee";
+                    else if ( OrgMemberTypeId == 3 ) _orgMemberType = "Student";
+                    else if ( OrgMemberTypeId == 4 ) _orgMemberType = "Contractor";
+                }
+                    
+                return _orgMemberType;
+            }
+            set 
+            { 
+                this._orgMemberType = value; 
+            }
+        }
         public string Organization { get; set; }
+
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public string ImageUrl { get; set; }
+        public string UserProfileUrl { get; set; }
 
         #region Behaviours/helper methods
         /// <summary>
@@ -51,8 +78,15 @@ namespace ILPathways.Business
             else
                 return false;
         }
-
+        /// <summary>
+        /// Get/Set list of org member roles
+        /// </summary>
         public List<OrganizationMemberRole> MemberRoles { get; set; }
+
+        /// <summary>
+        /// Return true if user has an administration role
+        /// </summary>
+        /// <returns></returns>
         public bool HasAdministratorRole()
         {
             bool hasRole = false;
@@ -68,6 +102,11 @@ namespace ILPathways.Business
             }
             return hasRole;
         }
+
+        /// <summary>
+        /// Return true if user has an approver role
+        /// </summary>
+        /// <returns></returns>
         public bool HasContentApproverRole()
         {
             bool hasRole = false;
@@ -83,6 +122,11 @@ namespace ILPathways.Business
             }
             return hasRole; ;
         }
+
+        /// <summary>
+        /// Return true if user has a library administration role
+        /// </summary>
+        /// <returns></returns>
         public bool HasLibraryAdministratorRole()
         {
             bool hasRole = false;

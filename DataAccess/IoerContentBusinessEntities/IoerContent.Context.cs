@@ -54,9 +54,7 @@ namespace IoerContentBusinessEntities
         public DbSet<Library_Like> Library_Like { get; set; }
         public DbSet<Library_SectionComment> Library_SectionComment { get; set; }
         public DbSet<Library_SectionLike> Library_SectionLike { get; set; }
-        public DbSet<Library_Invitation> Library_Invitation { get; set; }
         public DbSet<Library_PartyComment> Library_PartyComment { get; set; }
-        public DbSet<ContentFile> ContentFiles { get; set; }
         public DbSet<Codes_LibraryAccessLevel> Codes_LibraryAccessLevel { get; set; }
         public DbSet<ActivityLog> ActivityLogs { get; set; }
         public DbSet<Codes_LibraryMemberType> Codes_LibraryMemberType { get; set; }
@@ -65,7 +63,41 @@ namespace IoerContentBusinessEntities
         public DbSet<Person_Following> Person_Following { get; set; }
         public DbSet<Community> Communities { get; set; }
         public DbSet<Community_Member> Community_Member { get; set; }
-        public DbSet<Community_Posting> Community_Posting { get; set; }
         public DbSet<Community_PostingDocument> Community_PostingDocument { get; set; }
+        public DbSet<Community_PostingSummary> Community_PostingSummary { get; set; }
+        public DbSet<Codes_PostingType> Codes_PostingType { get; set; }
+        public DbSet<Community_Posting> Community_Posting { get; set; }
+        public DbSet<Community_PostItem> Community_PostItem { get; set; }
+        public DbSet<Content_Resource> Content_Resource { get; set; }
+        public DbSet<Codes_CareerCluster> Codes_CareerCluster { get; set; }
+        public DbSet<Gateway_OrgSummary> Gateway_OrgSummary { get; set; }
+        public DbSet<LR_ConditionOfUse_Select> LR_ConditionOfUse_Select { get; set; }
+        public DbSet<LR_PatronOrgSummary> LR_PatronOrgSummary { get; set; }
+        public DbSet<ContentNodeSummary> ContentNodeSummaries { get; set; }
+        public DbSet<Resource_Standard> Resource_Standard { get; set; }
+        public DbSet<ContentConnector_ChildSummary> ContentConnector_ChildSummary { get; set; }
+        public DbSet<Curriculum_HierarchySummary> Curriculum_HierarchySummary { get; set; }
+        public DbSet<Library_Invitation> Library_Invitation { get; set; }
+        public DbSet<LR_ResourceVersion_Summary> LR_ResourceVersion_Summary { get; set; }
+        public DbSet<Library_FollowingSummary> Library_FollowingSummary { get; set; }
+        public DbSet<Library_MemberResourceSummary> Library_MemberResourceSummary { get; set; }
+        public DbSet<Library_MemberSummary> Library_MemberSummary { get; set; }
+        public DbSet<Library_ResourceTagUniqueFilters> Library_ResourceTagUniqueFilters { get; set; }
+        public DbSet<Codes_StandardUsage> Codes_StandardUsage { get; set; }
+        public DbSet<Content_Like> Content_Like { get; set; }
+        public DbSet<Content_Partner> Content_Partner { get; set; }
+        public DbSet<Content_Standard> Content_Standard { get; set; }
+        public DbSet<Content_Subscription> Content_Subscription { get; set; }
+        public DbSet<Content_Tag> Content_Tag { get; set; }
+        public DbSet<ContentStandard_Summary> ContentStandard_Summary { get; set; }
+        public DbSet<Codes_TagCategoryValue_Summary> Codes_TagCategoryValue_Summary { get; set; }
+        public DbSet<Content_TagSummary> Content_TagSummary { get; set; }
+        public DbSet<Content_LearningListSummary> Content_LearningListSummary { get; set; }
+        public DbSet<LearningList_MembersSummary> LearningList_MembersSummary { get; set; }
+        public DbSet<Content_DocumentSummary> Content_DocumentSummary { get; set; }
+        public DbSet<Codes_ContentPartnerType> Codes_ContentPartnerType { get; set; }
+        public DbSet<Curriculum_DistinctStandards> Curriculum_DistinctStandards { get; set; }
+        public DbSet<Community_MemberSummary> Community_MemberSummary { get; set; }
+        public DbSet<Content_ChildResourceSummary> Content_ChildResourceSummary { get; set; }
     }
 }

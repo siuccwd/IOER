@@ -77,8 +77,8 @@ namespace LRWarehouse.DAL
         public int Create( MyEntity entity, ref string statusMessage )
         {
             string resourceRowId = "";
-            if ( entity.ResourceId.ToString() != entity.DEFAULT_GUID )
-                resourceRowId = entity.ResourceId.ToString();
+            //if ( entity.ResourceId.ToString() != entity.DEFAULT_GUID )
+            //    resourceRowId = entity.ResourceId.ToString();
 
             return Create( entity.ResourceIntId, entity.CodeId, entity.OriginalValue, entity.CreatedById, resourceRowId, ref statusMessage );
         }
@@ -110,6 +110,16 @@ namespace LRWarehouse.DAL
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="pResourceId"></param>
+        /// <param name="pCodeId"></param>
+        /// <param name="pOriginalValue"></param>
+        /// <param name="pCreatedById"></param>
+        /// <param name="pResourceRowId">Now obsolete</param>
+        /// <param name="statusMessage"></param>
+        /// <returns></returns>
         public int Create( int pResourceId, int pCodeId, string pOriginalValue, int pCreatedById, string pResourceRowId, ref string statusMessage )
         {
             statusMessage = "successful";
@@ -128,7 +138,7 @@ namespace LRWarehouse.DAL
                 sqlParameters[ 1 ] = new SqlParameter( "@EducationUseId", pCodeId );
                 sqlParameters[ 2 ] = new SqlParameter( "@OriginalValue", pOriginalValue );
                 sqlParameters[ 3 ] = new SqlParameter( "@CreatedbyId", pCreatedById );
-                sqlParameters[ 4 ] = new SqlParameter( "@ResourceRowId", resourceRowId );
+                sqlParameters[ 4 ] = new SqlParameter( "@ResourceRowId", "" );
                 #endregion
 
                 SqlDataReader dr = SqlHelper.ExecuteReader( ConnString, CommandType.StoredProcedure, INSERT_PROC, sqlParameters );
@@ -281,7 +291,7 @@ namespace LRWarehouse.DAL
             try
             {
                 #region SqlParameters
-                SqlParameter[] parameters = new SqlParameter[5];
+                SqlParameter[] parameters = new SqlParameter[4];
                 parameters[0] = new SqlParameter("@ResourceIntId", entity.ResourceIntId);
                 parameters[1] = new SqlParameter("@EducationUseId", entity.CodeId);
                 parameters[2] = new SqlParameter("@OriginalValue", SqlDbType.VarChar);
@@ -297,8 +307,8 @@ namespace LRWarehouse.DAL
                 parameters[3] = new SqlParameter("@TotalRows", SqlDbType.Int);
                 parameters[3].Value = 0;
                 parameters[3].Direction = ParameterDirection.Output;
-                parameters[4] = new SqlParameter("@ResourceRowId", SqlDbType.UniqueIdentifier);
-                parameters[4].Value = entity.ResourceId;
+                //parameters[4] = new SqlParameter("@ResourceRowId", SqlDbType.UniqueIdentifier);
+                //parameters[4].Value = entity.ResourceId;
                 #endregion
 
                 DataSet ds = SqlHelper.ExecuteDataset(ConnString, CommandType.StoredProcedure, IMPORT_PROC, parameters);

@@ -15,7 +15,7 @@ namespace LRWarehouse.DAL
 {
     public class CodeTableManager : BaseDataManager
     {
-        static string className = "CodeTableManager";
+        static string thisClassName = "CodeTableManager";
 
         #region generic
         public static DataSet SelectCodes( string resourceTable, string titleField)
@@ -71,7 +71,7 @@ namespace LRWarehouse.DAL
             }
             catch ( Exception ex )
             {
-                LogError( ex, className + ".ConditionsOfUse_Select() " );
+                LogError( ex, thisClassName + ".ConditionsOfUse_Select() " );
 
                 return null;
             }
@@ -137,8 +137,8 @@ namespace LRWarehouse.DAL
             }
             catch ( Exception ex )
             {
-                LogError( ex, className + ".Get() " );
-                entity.Message = "Unsuccessful: " + className + ".Get(): " + ex.Message.ToString();
+                LogError( ex, thisClassName + ".Get() " );
+                entity.Message = "Unsuccessful: " + thisClassName + ".Get(): " + ex.Message.ToString();
                 entity.IsValid = false;
                 return entity;
 
@@ -170,7 +170,7 @@ namespace LRWarehouse.DAL
             }
             catch (Exception ex)
             {
-                LogError(className + ".GradeLevelGetByAgeRange(): " + ex.ToString());
+                LogError(thisClassName + ".GradeLevelGetByAgeRange(): " + ex.ToString());
                 status = ex.Message;
             }
 
@@ -196,6 +196,119 @@ namespace LRWarehouse.DAL
             entity.ToAge = GetRowColumn(dr, "ToAge", 0);
 
             return entity;
+        }
+        #endregion
+
+        #region Mapping tables ===
+
+        /// <summary>
+        /// Search for Map.CareerCluster data using passed parameters
+        /// - uses custom paging
+        /// - only requested range of rows will be returned
+        /// </summary>
+        /// <param name="pFilter"></param>
+        /// <param name="pOrderBy">Sort order of results. If blank, the proc should have a default sort order</param>
+        /// <param name="pStartPageIndex"></param>
+        /// <param name="pMaximumRows"></param>
+        /// <param name="pTotalRows"></param>
+        /// <returns></returns>
+        public static DataSet MapCareerCluster_Search( string pFilter, string pOrderBy, int pStartPageIndex, int pMaximumRows, ref int pTotalRows )
+        {
+            int outputCol = 4;
+            SqlParameter[] sqlParameters = new SqlParameter[ 5 ];
+            sqlParameters[ 0 ] = new SqlParameter( "@Filter", pFilter );
+            sqlParameters[ 1 ] = new SqlParameter( "@SortOrder", pOrderBy );
+            sqlParameters[ 2 ] = new SqlParameter( "@StartPageIndex", pStartPageIndex );
+            sqlParameters[ 3 ] = new SqlParameter( "@PageSize", pMaximumRows );
+
+            sqlParameters[ outputCol ] = new SqlParameter( "@TotalRows", SqlDbType.Int );
+            sqlParameters[ outputCol ].Direction = ParameterDirection.Output;
+
+            using ( SqlConnection conn = new SqlConnection( LRWarehouseRO() ) )
+            {
+                DataSet ds = new DataSet();
+                try
+                {
+                    ds = SqlHelper.ExecuteDataset( conn, CommandType.StoredProcedure, "[MapClusters.Search]", sqlParameters );
+                    //get output paramter
+                    string rows = sqlParameters[ outputCol ].Value.ToString();
+                    try
+                    {
+                        pTotalRows = Int32.Parse( rows );
+                    }
+                    catch
+                    {
+                        pTotalRows = 0;
+                    }
+
+                    if ( ds.HasErrors )
+                    {
+                        return null;
+                    }
+                    return ds;
+                }
+                catch ( Exception ex )
+                {
+                    LogError( ex, thisClassName + ".MapCareerCluster_Search() " );
+                    return null;
+                }
+            }
+        }
+
+
+        /// <summary>
+        /// Search for Map.K12Subject data using passed parameters
+        /// - uses custom paging
+        /// - only requested range of rows will be returned
+        /// </summary>
+        /// <param name="pFilter"></param>
+        /// <param name="pOrderBy">Sort order of results. If blank, the proc should have a default sort order</param>
+        /// <param name="pStartPageIndex"></param>
+        /// <param name="pMaximumRows"></param>
+        /// <param name="pTotalRows"></param>
+        /// <returns></returns>
+        public static DataSet MapK12Subject_Search( string pFilter, string pOrderBy, int pStartPageIndex, int pMaximumRows, ref int pTotalRows )
+        {
+            int outputCol = 4;
+            SqlParameter[] sqlParameters = new SqlParameter[ 5 ];
+            sqlParameters[ 0 ] = new SqlParameter( "@Filter", pFilter );
+            sqlParameters[ 1 ] = new SqlParameter( "@SortOrder", pOrderBy );
+            sqlParameters[ 2 ] = new SqlParameter( "@StartPageIndex", pStartPageIndex );
+            sqlParameters[ 3 ] = new SqlParameter( "@PageSize", pMaximumRows );
+
+            sqlParameters[ outputCol ] = new SqlParameter( "@TotalRows", SqlDbType.Int );
+            sqlParameters[ outputCol ].Direction = ParameterDirection.Output;
+
+            using ( SqlConnection conn = new SqlConnection( LRWarehouseRO() ) )
+            {
+                DataSet ds = new DataSet();
+                try
+                {
+                    ds = SqlHelper.ExecuteDataset( conn, CommandType.StoredProcedure, "[MapK12Subject.Search]", sqlParameters );
+                    //get output paramter
+                    string rows = sqlParameters[ outputCol ].Value.ToString();
+                    try
+                    {
+                        pTotalRows = Int32.Parse( rows );
+                    }
+                    catch
+                    {
+                        pTotalRows = 0;
+                    }
+
+                    if ( ds.HasErrors )
+                    {
+                        return null;
+                    }
+                    return ds;
+                }
+                catch ( Exception ex )
+                {
+                    LogError( ex, thisClassName + ".MapK12Subject_Search() " );
+                    return null;
+
+                }
+            }
         }
         #endregion
 

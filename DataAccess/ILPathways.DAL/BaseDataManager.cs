@@ -118,7 +118,7 @@ namespace ILPathways.DAL
             }
             catch ( Exception ex )
             {
-                conn = "Server=192.168.1.17\\ss2008DEV;database=IsleContent;User Id=lrAdmin;Password=work12Net16";
+                conn = "Server=192.168.1.17\\ss2008DEV;database=IsleContent;User Id=lrAdmin;Password=dev$I@er4";
             }
             return conn;
 
@@ -137,7 +137,7 @@ namespace ILPathways.DAL
             }
             catch ( Exception ex )
             {
-                conn = "Server=192.168.1.17\\ss2008DEV;database=IsleContent;User Id=lrReader;Password=work12Net16";
+                conn = "Server=192.168.1.17\\ss2008DEV;database=IsleContent;User Id=lrReader;Password=dev$I@er4";
             }
             return conn;
 

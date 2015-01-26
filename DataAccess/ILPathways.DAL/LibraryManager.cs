@@ -12,7 +12,7 @@ using System.Web.SessionState;
 using Microsoft.ApplicationBlocks.Data;
 
 using ILPathways.Business;
-
+using Isle.DTO;
 namespace ILPathways.DAL
 {
     public class LibraryManager : BaseDataManager
@@ -81,22 +81,22 @@ namespace ILPathways.DAL
         public Library CreateMyLibrary( IWebUser user, ref string statusMessage )
         {
             Library entity = new Library();
-            entity.Title = user.FullName() + "' - Personal library";
+            entity.Title = user.FullName() + "'s Personal library";
             entity.Description = "Personal library for " + user.FullName();
             entity.LibraryTypeId = LIBRARY_TYPE_PERSONAL_ID;
             entity.IsActive = true;
-            entity.IsDiscoverable = true;
-            entity.IsPublic = true;
-            entity.PublicAccessLevel = EObjectAccessLevel.ReadOnly;
-            entity.OrgAccessLevel = EObjectAccessLevel.ContributeWithApproval;
+            entity.IsDiscoverable = false;
+            entity.AllowJoinRequest = false;
+            entity.PublicAccessLevel = EObjectAccessLevel.None;
+            entity.OrgAccessLevel = EObjectAccessLevel.None;
             entity.CreatedById = user.Id;
-           
+            entity.RowId = Guid.NewGuid();
 
             int libId = Create( entity, ref statusMessage );
             entity.Id = libId;
             if ( libId > 0 )
             {
-
+                LibrarySectionManager.CreateDefault( libId, ref statusMessage );
             }
             //would it be logical to also create the default section??
             //the caller may want to do the default insert?
@@ -118,22 +118,12 @@ namespace ILPathways.DAL
 			try
 			{
 				#region parameters
-                //temp handling of transition from IsPublic
-                if ( entity.IsPublic && entity.PublicAccessLevel == 0 )
-                {
-                    entity.PublicAccessLevel = EObjectAccessLevel.ReadOnly;
-                }
-                if ( entity.IsPublic && entity.OrgAccessLevel == 0 )
-                {
-                    if (entity.LibraryTypeId == LIBRARY_TYPE_PERSONAL_ID)
-                        entity.OrgAccessLevel = EObjectAccessLevel.ReadOnly;
-                    else
-                        entity.OrgAccessLevel = EObjectAccessLevel.ContributeWithApproval;
-                }
+              
+
                 if ( entity.PublicAccessLevel > 0 )
                     entity.IsDiscoverable = true;
 
-                SqlParameter[] sqlParameters = new SqlParameter[ 10 ];
+                SqlParameter[] sqlParameters = new SqlParameter[ 11 ];
                 sqlParameters[ 0 ] = new SqlParameter( "@Title", entity.Title );
                 sqlParameters[ 1 ] = new SqlParameter( "@Description", entity.Description );
                 sqlParameters[ 2 ] = new SqlParameter( "@LibraryTypeId", entity.LibraryTypeId );
@@ -147,7 +137,7 @@ namespace ILPathways.DAL
                     entity.RowId = Guid.NewGuid();
 
                 sqlParameters[ 9 ] = new SqlParameter( "@RowId", entity.RowId );
-
+                sqlParameters[ 10 ] = new SqlParameter( "@AllowJoinRequest", entity.AllowJoinRequest );
 
 				#endregion
 
@@ -190,19 +180,8 @@ namespace ILPathways.DAL
 			{
 
 				#region parameters
-                //temp handling of transition from IsPublic
-                if ( entity.IsPublic && entity.PublicAccessLevel == 0 )
-                {
-                    entity.PublicAccessLevel = EObjectAccessLevel.ReadOnly;
-                }
-                if ( entity.IsPublic && entity.OrgAccessLevel == 0 )
-                {
-                    if ( entity.LibraryTypeId == LIBRARY_TYPE_PERSONAL_ID )
-                        entity.OrgAccessLevel = EObjectAccessLevel.ReadOnly;
-                    else
-                        entity.OrgAccessLevel = EObjectAccessLevel.ContributeWithApproval;
-                }
-                SqlParameter[] sqlParameters = new SqlParameter[ 8 ];
+                
+                SqlParameter[] sqlParameters = new SqlParameter[ 10 ];
                 sqlParameters[ 0 ] = new SqlParameter( "@Id", entity.Id );
                 sqlParameters[ 1 ] = new SqlParameter( "@Title", entity.Title );
                 sqlParameters[ 2 ] = new SqlParameter( "@Description", entity.Description );
@@ -211,6 +190,8 @@ namespace ILPathways.DAL
                 sqlParameters[ 5 ] = new SqlParameter( "@OrgAccessLevel", ( int )entity.OrgAccessLevel );
                 sqlParameters[ 6 ] = new SqlParameter( "@LastUpdatedById", entity.LastUpdatedById );
                 sqlParameters[ 7 ] = new SqlParameter( "@ImageUrl", entity.ImageUrl );
+                sqlParameters[ 8 ] = new SqlParameter( "@AllowJoinRequest", entity.AllowJoinRequest );
+                sqlParameters[ 9 ] = new SqlParameter( "@IsActive", entity.IsActive );
 
 				#endregion
 
@@ -439,6 +420,9 @@ namespace ILPathways.DAL
         public List<Library> Library_SelectListWithEditAccess( int libraryId, int pUserid )
         {
             List<Library> list = new List<Library>();
+            if ( pUserid == 0 )
+                return list;
+
             try
             {
                 DataSet ds = Library_SelectWithEditAccess( pUserid, libraryId );
@@ -481,7 +465,7 @@ namespace ILPathways.DAL
                 DataSet ds = new DataSet();
                 try
                 {
-                    ds = SqlHelper.ExecuteDataset( conn, CommandType.StoredProcedure, "[Library.SelectCanEdit]", sqlParameters );
+                    ds = SqlHelper.ExecuteDataset( conn, CommandType.StoredProcedure, "[Library.SelectCanEdit2]", sqlParameters );
 
                     if ( ds.HasErrors )
                     {
@@ -498,18 +482,23 @@ namespace ILPathways.DAL
             }
 		}
 
-
+        /// <summary>
+        /// Check if user has conribute access
+        /// -- need to know type and whether approval is needed
+        /// </summary>
+        /// <param name="libraryId"></param>
+        /// <param name="pUserid"></param>
+        /// <returns></returns>
         public bool DoesUserHaveContributeAccess( int libraryId, int pUserid )
         {
             bool canAccess = false;
-            List<Library> list = SelectListWithContributeAccess( pUserid, libraryId );
-
-            //List<Library> list = Library_SelectListWithEditAccess( pUserid );
-            if ( list == null || list.Count == 0 )
+            LibraryContributeDTO dto = new LibraryContributeDTO();
+            SelectListWithContributeAccess( dto, pUserid, libraryId );
+            if ( dto.libraries == null || dto.libraries.Count == 0 )
                 return canAccess;
             else
             {
-                foreach ( Library l in list )
+                foreach ( LibrarySummaryDTO l in dto.libraries )
                 {
                     if ( l.Id == libraryId )
                     {
@@ -518,13 +507,58 @@ namespace ILPathways.DAL
                     }
                 }
             }
+
+            //List<Library> list = SelectListWithContributeAccess( pUserid, libraryId );
+
+            //if ( list == null || list.Count == 0 )
+            //    return canAccess;
+            //else
+            //{
+            //    foreach ( Library l in list )
+            //    {
+            //        if ( l.Id == libraryId )
+            //        {
+            //            canAccess = true;
+            //            break;
+            //        }
+            //    }
+            //}
             return canAccess;
         }//
 
-        public List<Library> SelectListWithContributeAccess( int pUserid )
+        /// <summary>
+        /// Check if approval is required for user to add a resource to the library.
+        /// We are assuming at this point that user already has been identified as a contributor
+        /// </summary>
+        /// <param name="libraryId"></param>
+        /// <param name="pUserid"></param>
+        /// <returns></returns>
+        public bool IsLibraryApprovalRequired( int libraryId, int pUserid )
         {
-            return SelectListWithContributeAccess( pUserid, 0 );
+            bool needsApproval = true;
+            LibraryContributeDTO dto = new LibraryContributeDTO();
+            SelectListWithContributeAccess( dto, pUserid, libraryId );
+            if ( dto.libraries == null || dto.libraries.Count == 0 )
+                return needsApproval;
+            else
+            {
+                foreach ( LibrarySummaryDTO library in dto.libraries )
+                {
+                    if ( library.Id == libraryId )
+                    {
+                        needsApproval = library.UserNeedsApproval;
+                        break;
+                    }
+                }
+            }
+
+            return needsApproval;
         }//
+        public void SelectListWithContributeAccess( LibraryContributeDTO dto, int pUserid )
+        {
+            SelectListWithContributeAccess( dto, pUserid, 0 );
+        }//
+
         /// <summary>
         /// Select all libraries as LIST where user has contribute access. Includes:
         /// - personal
@@ -535,9 +569,13 @@ namespace ILPathways.DAL
         /// <param name="pLibraryId"></param>
         /// <param name="pUserid"></param>
         /// <returns></returns>
-        public List<Library> SelectListWithContributeAccess( int pUserid, int libraryId )
+        public void SelectListWithContributeAccess( LibraryContributeDTO dto, int pUserid, int libraryId )
         {
-            List<Library> list = new List<Library>();
+//            LibraryContributeDTO dto = new LibraryContributeDTO();
+            dto.libraries = new List<LibrarySummaryDTO>();
+            LibrarySummaryDTO dl = new LibrarySummaryDTO();
+
+            //List<Library> list = new List<Library>();
             try
             {
                 DataSet ds = SelectWithContributeAccess( pUserid, libraryId );
@@ -546,7 +584,90 @@ namespace ILPathways.DAL
                 {
                     foreach ( DataRow dr in ds.Tables[ 0 ].Rows )
                     {
-                        Library entity = Fill( dr );
+                        
+                        dl = new LibrarySummaryDTO();
+                        dl.Id = GetRowColumn( dr, "Id", 0 );
+                        dl.Title = GetRowColumn( dr, "Title", "missing" );
+                        dl.ImageUrl = GetRowColumn( dr, "ImageUrl", "" );
+                        dl.LibraryTypeId = GetRowColumn( dr, "LibraryTypeId", 0 );
+                        dl.LibraryType = GetRowColumn( dr, "LibraryType", "" );
+
+                        dl.IsPersonalLibrary = dl.LibraryTypeId == 1;
+                        dl.CreatedById = GetRowColumn( dr, "CreatedById", 0 );
+                        dl.PublicAccessLevel = GetRowColumn( dr, "PublicAccessLevel", 0 );
+                        dl.OrgAccessLevel = GetRowColumn( dr, "OrgAccessLevel", 0 );
+
+                        dl.AccessReason = GetRowColumn( dr, "AccessReason", "missing" );
+                        dl.UserHasExplicitAccess = GetRowColumn( dr, "UserHasExplicitAccess", false );
+                        dl.UserNeedsApproval = GetRowColumn( dr, "UserNeedsApproval", true );
+
+                        dto.libraries.Add( dl );
+
+                        //Library entity = Fill( dr );
+                        //if ( dl.IsPersonalLibrary && dl.CreatedById == pUserid )
+                        //{
+                        //    dl.UserHasExplicitAccess = true;
+                        //    dl.UserNeedsApproval = false;
+                        //}
+
+
+                        //list.Add( entity );
+                    }
+                }
+                //return list;
+            }
+            catch ( Exception ex )
+            {
+                LogError( ex, thisClassName + ".SelectListWithContributeAccess() " );
+                return;
+
+            }
+        }//
+
+        public List<Library> SelectLibrariesWithContributeAccess( int pUserid )
+        {
+            return SelectLibrariesWithContributeAccess( pUserid, 0 );
+        }//
+
+        /// <summary>
+        /// Select all libraries as LIST where user has contribute access. Includes:
+        /// - personal
+        /// - libraries where has curate access
+        /// - collections where has curate access
+        /// - org libraries with implicit access
+        /// </summary>
+        /// <param name="pLibraryId"></param>
+        /// <param name="pUserid"></param>
+        /// <returns></returns>
+        public List<Library> SelectLibrariesWithContributeAccess( int pUserid, int libraryId )
+        {
+
+            List<Library> list = new List<Library>();
+            Library entity;
+            try
+            {
+                DataSet ds = SelectWithContributeAccess( pUserid, libraryId );
+
+                if ( DoesDataSetHaveRows( ds ) )
+                {
+                    foreach ( DataRow dr in ds.Tables[ 0 ].Rows )
+                    {
+                        entity = new Library();
+                        entity.Id = GetRowColumn( dr, "Id", 0 );
+                        entity.Title = GetRowColumn( dr, "Title", "missing" );
+                        entity.Description = GetRowPossibleColumn( dr, "Description", "" );
+
+                        entity.ImageUrl = GetRowColumn( dr, "ImageUrl", "" );
+                        entity.LibraryTypeId = GetRowColumn( dr, "LibraryTypeId", 0 );
+                        entity.LibraryType = GetRowColumn( dr, "LibraryType", "" );
+
+                        entity.CreatedById = GetRowColumn( dr, "CreatedById", 0 );
+                        entity.PublicAccessLevel = ( EObjectAccessLevel ) GetRowColumn( dr, "PublicAccessLevel", 0 );
+                        entity.OrgAccessLevel = ( EObjectAccessLevel ) GetRowColumn( dr, "OrgAccessLevel", 0 );
+
+                        //entity.AccessReason = GetRowColumn( dr, "AccessReason", "missing" );
+                        //entity.UserHasExplicitAccess = GetRowColumn( dr, "UserHasExplicitAccess", false );
+                        //entity.UserNeedsApproval = GetRowColumn( dr, "UserNeedsApproval", true );
                         list.Add( entity );
                     }
                 }
@@ -554,7 +675,7 @@ namespace ILPathways.DAL
             }
             catch ( Exception ex )
             {
-                LogError( ex, thisClassName + ".SelectListWithContributeAccess() " );
+                LogError( ex, thisClassName + ".SelectLibrariesWithContributeAccess() " );
                 return null;
 
             }
@@ -580,7 +701,8 @@ namespace ILPathways.DAL
                 DataSet ds = new DataSet();
                 try
                 {
-                    ds = SqlHelper.ExecuteDataset( conn, CommandType.StoredProcedure, "[Library.SelectCanContribute]", sqlParameters );
+                    //14-06-28 mparsons - changed to use new version, now handles orgMembers properly
+                    ds = SqlHelper.ExecuteDataset( conn, CommandType.StoredProcedure, "[Library.SelectCanContribute2]", sqlParameters );
 
                     if ( ds.HasErrors )
                     {
@@ -729,6 +851,8 @@ namespace ILPathways.DAL
             
             entity.IsDiscoverable = GetRowColumn( dr, "IsDiscoverable", false );
 			entity.IsActive = GetRowColumn( dr, "IsActive", false );
+            entity.AllowJoinRequest = GetRowPossibleColumn( dr, "AllowJoinRequest", true );
+
             entity.ImageUrl = GetRowColumn( dr, "ImageUrl", "" );
 
             entity.LibraryTypeId = GetRowColumn( dr, "LibraryTypeId", 0 );
@@ -736,18 +860,19 @@ namespace ILPathways.DAL
             //entity.IsPublic = GetRowColumn( dr, "IsPublic", false );
             entity.PublicAccessLevel = ( EObjectAccessLevel )GetRowColumn( dr, "PublicAccessLevel", 0 );
             entity.OrgAccessLevel = ( EObjectAccessLevel )GetRowColumn( dr, "OrgAccessLevel", 0 );
-            if ( entity.PublicAccessLevel == 0 )
-                entity.IsPublic = false;
-            else
-                entity.IsPublic = true;
+            
 
             entity.OrgId = GetRowColumn( dr, "OrgId", 0 );
             entity.Organization = GetRowPossibleColumn( dr, "Organization", "" );
 
 			entity.Created = GetRowColumn( dr, "Created", System.DateTime.MinValue );
 			entity.CreatedById = GetRowColumn( dr, "CreatedById", 0 );
+            entity.CreatedBy = GetRowPossibleColumn( dr, "CreatedBy", "" );
+
 			entity.LastUpdated = GetRowColumn( dr, "LastUpdated", System.DateTime.MinValue );
 			entity.LastUpdatedById = GetRowColumn( dr, "LastUpdatedById", 0 );
+            entity.LastUpdatedBy = GetRowPossibleColumn( dr, "LastUpdatedBy", "" );
+
             string rowId = GetRowPossibleColumn( dr, "RowId", "" );
             if ( rowId.Length > 35 )
             {
@@ -775,6 +900,8 @@ namespace ILPathways.DAL
 
             entity.IsDiscoverable = GetRowColumn( dr, "IsDiscoverable", false );
             entity.IsActive = GetRowPossibleColumn( dr, "IsActive", true );
+            entity.AllowJoinRequest = GetRowPossibleColumn( dr, "AllowJoinRequest", true );
+
             entity.ImageUrl = GetRowColumn( dr, "ImageUrl", "" );
 
             entity.LibraryTypeId = GetRowColumn( dr, "LibraryTypeId", 0 );
@@ -783,10 +910,7 @@ namespace ILPathways.DAL
             //entity.IsPublic = GetRowColumn( dr, "IsPublic", false );
             entity.PublicAccessLevel = ( EObjectAccessLevel )GetRowColumn( dr, "PublicAccessLevel", 0 );
             entity.OrgAccessLevel = ( EObjectAccessLevel )GetRowColumn( dr, "OrgAccessLevel", 0 );
-            if ( entity.PublicAccessLevel == 0 )
-                entity.IsPublic = false;
-            else
-                entity.IsPublic = true;
+           
  
 
             entity.OrgId = GetRowColumn( dr, "OrgId", 0 );
@@ -794,8 +918,12 @@ namespace ILPathways.DAL
 
             entity.Created = GetRowColumn( dr, "Created", System.DateTime.MinValue );
             entity.CreatedById = GetRowColumn( dr, "CreatedById", 0 );
+            entity.CreatedBy = GetRowPossibleColumn( dr, "CreatedBy", "" );
+
             entity.LastUpdated = GetRowColumn( dr, "LastUpdated", System.DateTime.MinValue );
             entity.LastUpdatedById = GetRowColumn( dr, "LastUpdatedById", 0 );
+            entity.LastUpdatedBy = GetRowPossibleColumn( dr, "LastUpdatedBy", "" );
+
             string rowId = GetRowPossibleColumn( dr, "RowId", "" );
             if ( rowId.Length > 35 )
             {
@@ -808,6 +936,45 @@ namespace ILPathways.DAL
         #endregion
 
         #region ====== Library.Member ===============================================
+        public int LibraryMember_Create( int libraryId, int userId, int memberTypeId, int createdById, ref string statusMessage )
+        {
+            int newId = 0;
+
+            try
+            {
+                #region parameters
+
+                SqlParameter[] sqlParameters = new SqlParameter[ 4 ];
+                sqlParameters[ 0 ] = new SqlParameter( "@LibraryId", libraryId );
+                sqlParameters[ 1 ] = new SqlParameter( "@UserId", userId );
+                sqlParameters[ 2 ] = new SqlParameter( "@MemberTypeId", memberTypeId );
+                sqlParameters[ 3 ] = new SqlParameter( "@CreatedById", createdById );
+
+                #endregion
+
+                SqlDataReader dr = SqlHelper.ExecuteReader( ContentConnection(), CommandType.StoredProcedure, "[Library.MemberInsert]", sqlParameters );
+                if ( dr.HasRows )
+                {
+                    dr.Read();
+                    newId = int.Parse( dr[ 0 ].ToString() );
+                  
+                }
+                dr.Close();
+                dr = null;
+                statusMessage = "successful";
+
+            }
+            catch ( Exception ex )
+            {
+                //provide helpful info about failing entity
+                LogError( ex, thisClassName + string.Format( ".LibraryMember_Create() for libraryId: {0} and userId: {1}", libraryId, userId ) );
+                statusMessage = thisClassName + "- Unsuccessful: LibraryMember_Create(): " + ex.Message.ToString();
+
+            }
+
+            return newId;
+        }
+
         /// <summary>
         ///  Search for library members
         /// </summary>
@@ -854,12 +1021,20 @@ namespace ILPathways.DAL
                             item = new LibraryMember();
                             item.Id = GetRowColumn( dr, "Id", 0 );
                             item.ParentId = GetRowColumn( dr, "LibraryId", 0 );
+                            item.Library = GetRowColumn( dr, "Library", "" );
                             item.MemberTypeId = GetRowColumn( dr, "MemberTypeId", 0 );
                             item.MemberType = GetRowPossibleColumn( dr, "MemberType", "None" );
 
                             item.UserId = GetRowColumn( dr, "UserId", 0 );
                             item.MemberSortName = GetRowPossibleColumn( dr, "MemberSortName", "Missing" );
                             item.MemberName = GetRowPossibleColumn( dr, "MemberName", "Missing" );
+
+                            item.Organization = GetRowPossibleColumn( dr, "Organization", "" );
+                            item.OrganizationId = GetRowPossibleColumn( dr, "OrganizationId", 0 );
+
+                            item.IsAnOrgMbr = GetRowPossibleColumn( dr, "IsAnOrgMbr", false );
+                            item.OrgMemberTypeId = GetRowPossibleColumn( dr, "OrgMemberTypeId", 0 );
+                            item.OrgMemberType = GetRowPossibleColumn( dr, "OrgMemberType", "" );
 
                             item.Created = GetRowColumn( dr, "Created", System.DateTime.MinValue );
                             item.CreatedById = GetRowPossibleColumn( dr, "CreatedById", 0 );
@@ -1080,27 +1255,35 @@ namespace ILPathways.DAL
         {
             ObjectLike entity = new ObjectLike();
             entity.HasLikeEntry = false;
+            if ( userId == 0 || libraryId == 0 )
+                return entity;
+
             try
             {
-                SqlParameter[] sqlParameters = new SqlParameter[ 2 ];
-
-                sqlParameters[ 0 ] = new SqlParameter( "@LibraryId", libraryId );
-                sqlParameters[ 1 ] = new SqlParameter( "@UserId", userId );
-
-
-                SqlDataReader dr = SqlHelper.ExecuteReader( ContentConnection(), CommandType.StoredProcedure, "[Library.LikeGet]", sqlParameters );
-                if ( dr.HasRows )
+                using ( SqlConnection connection = new SqlConnection( ContentConnection() ) )
                 {
-                    while ( dr.Read() )
-                    {
-                        entity.Id = GetRowColumn( dr, "Id", 0 );
-                        entity.ParentId = GetRowColumn( dr, "LibraryId", 0 );
-                        entity.HasLikeEntry = true;
-                        entity.IsLike = GetRowColumn( dr, "IsLike", false );
-                        entity.Created = GetRowColumn (dr, "Created", entity.DefaultDate);
-                        entity.CreatedById = GetRowColumn( dr, "CreatedById", userId );
-                    }
+                    SqlParameter[] sqlParameters = new SqlParameter[ 2 ];
 
+                    sqlParameters[ 0 ] = new SqlParameter( "@LibraryId", libraryId );
+                    sqlParameters[ 1 ] = new SqlParameter( "@UserId", userId );
+
+
+                    SqlDataReader dr = SqlHelper.ExecuteReader( connection, CommandType.StoredProcedure, "[Library.LikeGet]", sqlParameters );
+                    if ( dr.HasRows )
+                    {
+                        while ( dr.Read() )
+                        {
+                            entity.Id = GetRowColumn( dr, "Id", 0 );
+                            entity.ParentId = GetRowColumn( dr, "LibraryId", 0 );
+                            entity.HasLikeEntry = true;
+                            entity.IsLike = GetRowColumn( dr, "IsLike", false );
+                            entity.Created = GetRowColumn( dr, "Created", entity.DefaultDate );
+                            entity.CreatedById = GetRowColumn( dr, "CreatedById", userId );
+                        }
+
+                    }
+                    dr.Close();
+                    dr = null;
                 }
 
             }

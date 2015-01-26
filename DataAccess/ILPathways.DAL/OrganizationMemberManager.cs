@@ -244,7 +244,7 @@ namespace ILPathways.DAL
             {
                 foreach ( DataRow dr in ds.Tables[ 0 ].DefaultView.Table.Rows )
                 {
-                    OrganizationMember org = Fill( dr );
+                    OrganizationMember org = Fill( dr, true );
                     list.Add( org );
                 } //end foreach
             }
@@ -282,7 +282,7 @@ namespace ILPathways.DAL
                 {
                     ds = SqlHelper.ExecuteDataset( conn, CommandType.StoredProcedure, "[Organization.MemberSearch]", sqlParameters );
 
-                    string rows = sqlParameters[ 3 ].Value.ToString();
+                    string rows = sqlParameters[ outputCol ].Value.ToString();
                     try
                     {
                         pTotalRows = Int32.Parse( rows );
@@ -316,7 +316,7 @@ namespace ILPathways.DAL
 		/// </summary>
 		/// <param name="dr">DataRow</param>
 		/// <returns>OrganizationMember</returns>
-		public static OrganizationMember Fill( DataRow dr )
+		public static OrganizationMember Fill( DataRow dr, bool fillingUser )
 		{
 			OrganizationMember entity = new OrganizationMember();
 
@@ -338,7 +338,12 @@ namespace ILPathways.DAL
                 entity.Created = GetRowPossibleColumn( dr, "Created", entity.DefaultDate );
             entity.CreatedById = GetRowPossibleColumn( dr, "CreatedById", 0 );
 
-            //entity.LastUpdated = DateTime.Parse( dr[ "LastUpdated" ].ToString() );
+            entity.LastUpdated = DateTime.Parse( dr[ "LastUpdated" ].ToString() );
+            if ( fillingUser )
+            {
+                entity.FirstName = GetRowColumn( dr, "FirstName", "none" );
+                entity.LastName = GetRowColumn( dr, "LastName", "none" );
+            }
             //entity.LastUpdatedById = GetRowPossibleColumn( dr, "LastUpdatedById", 0 );
 
 

@@ -99,6 +99,7 @@ namespace LRWarehouse.DAL
         /// Import
         /// the Insert is now the same as this essentially, so probably will not use
         /// May still be used by the process to resolve mapping issues, but likely to be called from a sproc
+        /// MP-removed ResourceId - obsolete
         /// </summary>
         /// <param name="entity"></param>
         /// <param name="statusMessage"></param>
@@ -116,7 +117,7 @@ namespace LRWarehouse.DAL
             {
                 #region parameters
                 SqlParameter[] sqlParameters = new SqlParameter[ 5 ];
-                sqlParameters[ 0 ] = new SqlParameter( "@ResourceId", entity.ResourceId );
+                sqlParameters[ 0 ] = new SqlParameter( "@ResourceId", "" ); //entity.ResourceId
                 sqlParameters[ 1 ] = new SqlParameter( "@ResourceTypeId", entity.CodeId );
                 sqlParameters[ 2 ] = new SqlParameter( "@OriginalValue", entity.OriginalValue );
                 sqlParameters[ outputCol ] = new SqlParameter( "@TotalRows", SqlDbType.Int );
@@ -151,7 +152,7 @@ namespace LRWarehouse.DAL
             }
             catch ( Exception ex )
             {
-                LogError( ex, className + string.Format( ".Import() for ResourceId: {0}, CodeId: {1}, Vale: {2}, and CreatedBy: {3}", entity.ResourceId.ToString(), entity.CodeId, entity.OriginalValue, entity.CreatedById ) );
+                LogError( ex, className + string.Format( ".Import() for ResourceId: {0}, CodeId: {1}, Vale: {2}, and CreatedBy: {3}", entity.ResourceIntId.ToString(), entity.CodeId, entity.OriginalValue, entity.CreatedById ) );
                 statusMessage = className + "- Unsuccessful: Import(): " + ex.Message.ToString();
             }
 
@@ -181,7 +182,7 @@ namespace LRWarehouse.DAL
             }
             catch ( Exception ex )
             {
-                LogError( ex, className + string.Format( ".Update() for ResourceId: {0}, CodeId: {1}, Vale: {2}, and UpdatedBy: {4}", entity.ResourceId.ToString(), entity.CodeId, entity.OriginalValue, entity.LastUpdatedById ) );
+                LogError( ex, className + string.Format( ".Update() for ResourceId: {0}, CodeId: {1}, Vale: {2}, and UpdatedBy: {4}", entity.ResourceIntId.ToString(), entity.CodeId, entity.OriginalValue, entity.LastUpdatedById ) );
                 message = className + "- Unsuccessful: Update(): " + ex.Message.ToString();
                 entity.Message = message;
                 entity.IsValid = false;

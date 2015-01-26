@@ -14,25 +14,27 @@
       }
     });
 
-    $("#email1, #email2").on("keyup change", function () {
-      doDoubleValidation($("#email1"), $("#email2"), validations.email);
+    $(".email1, .email2").on("keyup change", function () {
+      doDoubleValidation($(".email1"), $(".email2"), validations.email);
     });
-    $("#password1, #password2").on("keyup change", function () {
-      doDoubleValidation($("#password1"), $("#password2"), validations.password);
+    $(".password1, .password2").on("keyup change", function () {
+      console.log("fired");
+      doDoubleValidation($(".password1"), $(".password2"), validations.password);
     });
-    $("#firstName").on("keyup change", function () {
-      validateText($("#firstName"), validations.firstName);
+    $(".firstName").on("keyup change", function () {
+      validateText($(".firstName"), validations.firstName);
     });
-    $("#lastName").on("keyup change", function () {
-      validateText($("#lastName"), validations.lastName);
+    $(".lastName").on("keyup change", function () {
+      validateText($(".lastName"), validations.lastName);
     });
-    $("#jobTitle").on("keyup change", function () {
-      validateText($("#jobTitle"), validations.lastName);
+    $(".jobTitle").on("keyup change", function () {
+      validateText($(".jobTitle"), validations.jobTitle);
     });
-    $("#profile").on("keyup change", function () {
-      validateText($("#profile"), validations.lastName);
+    $(".txtProfile").on("keyup change", function () {
+      validateText($(".txtProfile"), validations.profile);
     });
 
+    $("form").removeAttr("onsubmit");
   }
 
   function doDoubleValidation(box1, box2, data) {
@@ -41,11 +43,13 @@
     var val2 = box2.val();
 
     if (val1.length == 0 && val2.length == 0) {
-      data.valid = false;
+      data.valid = true;
       updateValidations(data.group);
       return;
     }
 
+    console.log(val1);
+    console.log(val2);
     if (val1 == val2) {
       validateText(box1, data);
     }
@@ -60,6 +64,10 @@
     var val = box.val();
     var messageBox = $(data.message);
 
+    if (val == "") {
+      data.valid = true;
+      return;
+    }
     if (val == data.oldVal) {
       return;
     }
@@ -99,7 +107,11 @@
   }
 
   function validateAvatar() {
-    return $(".fileAvatar").val().length > 0;
+      if ($(".fileAvatar").val().length == 0)
+          return false;
+
+      $("#loader").show();
+    return true;
   }
 
   function validateProfile() {
@@ -133,7 +145,6 @@
 
   function successValidateText(result, data) {
     var message = $(data.message);
-    console.log(result);
     if (result.isValid) {
       data.valid = true;
       setVM(message, "green", data.data.fieldTitle + " is okay.");
@@ -150,8 +161,8 @@
     password: { group: "#account", message: "#validation_password", minLength: 5, valid: false, timer: null, method: "ValidatePassword", data: { text: "", fieldTitle: "Password" }, success: successValidateText, oldVal: "" },
     firstName: { group: "#account", message: "#validation_firstName", minLength: 1, valid: false, timer: null, method: "ValidateName", data: { text: "", fieldTitle: "First Name" }, success: successValidateText, oldVal: "" },
     lastName: { group: "#account", message: "#validation_lastName", minLength: 1, valid: false, timer: null, method: "ValidateName", data: { text: "", fieldTitle: "Last Name" }, success: successValidateText, oldVal: "" },
-    jobTitle: { group: "#profile", message: "#validation_jobTitle", minLength: 5, valid: false, timer: null, method: "ValidateText", data: { text: "", fieldTitle: "Job Title" }, success: successValidateText, oldVal: "" },
-    profile: { group: "#profile", message: "#validation_profile", minLength: 20, valid: false, timer: null, method: "ValidateText", data: { text: "", fieldTitle: "Profile" }, success: successValidateText, oldVal: "" }
+    jobTitle: { group: "#profile", message: "#validation_jobTitle", minLength: 5, valid: false, timer: null, method: "ValidateText", data: { text: "", minimumLength: 5, fieldTitle: "Job Title" }, success: successValidateText, oldVal: "" },
+    profile: { group: "#profile", message: "#validation_profile", minLength: 20, valid: false, timer: null, method: "ValidateText", data: { text: "", minimumLength: 20, fieldTitle: "Profile" }, success: successValidateText, oldVal: "" }
   };
 
 </script>
@@ -162,17 +173,27 @@
   .column { display: inline-block; vertical-align: top; width: 47%; margin: 10px 1%; text-align: left; max-width: 600px; }
   .grayBox { margin-bottom: 10px; }
 
-  .bigText label { width: 35%; text-align: right; }
-  .bigText input, .bigText select, .bigText textarea { width: 64%; margin-bottom: 10px; }
+  .bigText label { width: 33%; text-align: right; }
+  .bigText input, .bigText select, .bigText textarea, .bigText .displayDiv { width: 66%; margin-bottom: 10px; }
   .bigText input[type=submit] { width: 100%; }
   #avatar p { display: inline; }
-  #avatar img { max-width: 140px; max-height: 140px; height: 140px; width: 140px; display: inline-block; float: left; margin-right: 10px; border-radius: 5px; }
+  #avatar #profileAvatar { max-width: 140px; max-height: 140px; height: 140px; width: 140px; display: inline-block; float: left; margin-right: 10px; border-radius: 5px; background: transparent center center no-repeat; background-size: contain; }
   #avatar #clearFix { clear: both; }
   p.vm { text-align: left; max-height: 3em; padding: 0 5px 5px 35%; margin-top: 0; font-style: italic; color: #555; transition: max-height 1s; -webkit-transition: max-height 1s; font-size: 20px; }
   p.vm.red { color: #B03D25; }
   p.vm.green { color: #4AA394; }
   p.vm:empty { max-height: 0.2em; }
-
+  
+   #loader {
+        display:none; 
+        position:fixed;   
+        z-index:1000; 
+        height:100%; 
+        width:100%; 
+        top:0; 
+        left:0; 
+        background: rgba(255, 255, 255, .8) url('/images/icons/progress.gif') 50% 50% no-repeat; 
+    }
 
   @media screen and (max-width: 925px) {
     .bigText label { width: 100%; text-align: left; height: 20px; line-height: 20px; }
@@ -190,15 +211,15 @@
     <div class="grayBox bigText" id="account">
       <!-- Email, Password, Name -->
       <h2 class="header">Account Information</h2>
-      <label>New Email Address</label><input type="text" id="email1" data-validation="email" />
-      <label>Confirm New Email</label><input type="text" id="email2" data-validation="email" />
+      <label>Email Address</label><input type="text" id="email1" class="email1" data-validation="email" runat="server" />
+      <label>Confirm Email</label><input type="text" id="email2" class="email2" data-validation="email" runat="server" />
       <p class="vm" id="validation_email" data-validation="email"></p>
-      <label>New Password</label><input type="password" id="password1" data-validation="password" />
-      <label>Confirm Password</label><input type="password" id="password2" data-validation="password" />
+      <label>New Password</label><input type="password" id="password1" class="password1" data-validation="password" runat="server" />
+      <label>Confirm Password</label><input type="password" id="password2" class="password2" data-validation="password" runat="server" />
       <p class="vm" id="validation_password" data-validation="password"></p>
-      <label>Change First Name</label><input type="text" id="firstName" data-validation="firstName" />
+      <label>First Name</label><input type="text" id="firstName" class="firstName" data-validation="firstName" runat="server" />
       <p class="vm" id="validation_firstName" data-validation="firstName"></p>
-      <label>Change Last Name</label><input type="text" id="lastName" data-validation="lastName" />
+      <label>Last Name</label><input type="text" id="lastName" class="lastName" data-validation="lastName" runat="server" />
       <p class="vm" id="validation_lastName" data-validation="lastName"></p>
       <asp:Button runat="server" ID="btnUpdateAccount" OnClick="btnUpdateAccount_Click" Text="Update Account" CssClass="isleButton bgGreen" OnClientClick="validateAccount()" />
     </div>
@@ -207,22 +228,30 @@
     <div class="grayBox bigText" id="avatar">
       <!-- Avatar -->
       <h2 class="header">Profile Image</h2>
-      <img src="" />
-      <p>Profile Images should be square, roughly 140x140 pixels.</p>
+      <div id="profileAvatar" style="background-image:url('<%=avatarURL %>')"></div>
+      <p>Profile Images work best if they are square! We will resize your image for you if needed.</p>
       <div id="clearFix"></div>
       <label>Change Image</label><asp:FileUpload ID="fileAvatar" CssClass="fileAvatar" runat="server" />
-      <asp:Button runat="server" ID="btnUpdateAvatar" OnClick="btnUpdateAvatar_Click" Text="Update Image" CssClass="isleButton bgGreen" OnClientClick="validateAvatar()" />
+      <asp:Button runat="server" ID="btnUpdateAvatar" OnClick="btnUpdateAvatar_Click" Text="Update Profile Image" CssClass="isleButton bgGreen" OnClientClick="validateAvatar()" />
     </div><!-- /avatar -->
     <div class="grayBox bigText" id="profile">
       <!-- Interest, Org, Title, Desc, Image -->
       <h2 class="header">Profile Information</h2>
-      <label>Site Role</label><asp:DropDownList runat="server" ID="ddlPubRole" CssClass="ddlPubRole" />
-      <label>Organization</label><asp:TextBox ID="txtUserOrganization" Text="None" ReadOnly="true" Enabled="false" runat="server" />
-      <label>Job Title</label><input type="text" id="jobTitle" data-validation="jobTitle" />
+        <label>Organization</label><input type="text" id="lblOrg" readonly="true" class="jobTitle"  runat="server" />
+         <br />
+      <label>User Role</label><asp:DropDownList runat="server" ID="ddlPubRole" CssClass="ddlPubRole" />
+      <label>Job Title</label><input type="text" id="jobTitle" class="jobTitle" data-validation="jobTitle" runat="server" />
       <p class="vm" id="validation_jobTitle" data-validatio="jobTitle"></p>
-      <label>Job Profile</label><asp:TextBox runat="server" ID="txtProfile" TextMode="MultiLine" Rows="3" CssClass="txtProfile" />
+      <label>Job Profile</label><asp:TextBox runat="server" ID="txtProfile" class="txtProfile" TextMode="MultiLine" Rows="3" CssClass="txtProfile" />
       <p class="vm" id="validation_profile" data-validation="profile"></p>
       <asp:Button runat="server" ID="btnUpdateProfile" OnClick="btnUpdateProfile_Click" Text="Update Profile" CssClass="isleButton bgGreen" OnClientClick="validateProfile()" />
     </div>
   </div><!-- /profile -->
+
+<div id="loader"></div>
+</div>
+
+<div id="templates" runat="server" visible="false">
+  <asp:Literal ID="roleSelectTitle" runat="server">I will use this site as a ...</asp:Literal>
+  <asp:Literal ID="pubRoleSql" runat="server">SELECT [Id],[Title] FROM [dbo].[Codes.AudienceType] where [IsActive]=1 and IsPublishingRole= 1  order by [Title]</asp:Literal>
 </div>

@@ -22,6 +22,15 @@ namespace ILPathways.Masters {
         protected global::System.Web.UI.HtmlControls.HtmlHead Head1;
         
         /// <summary>
+        /// hints control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::ILPathways.SessionHints hints;
+        
+        /// <summary>
         /// litHidingAddThis control.
         /// </summary>
         /// <remarks>
@@ -29,6 +38,15 @@ namespace ILPathways.Masters {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Literal litHidingAddThis;
+        
+        /// <summary>
+        /// hdrPlaceholder control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.PlaceHolder hdrPlaceholder;
         
         /// <summary>
         /// HeadContent control.
@@ -55,7 +73,7 @@ namespace ILPathways.Masters {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ILPathways.Controls.Includes.Header6 header;
+        protected global::ILPathways.Controls.Includes.Header7 header;
         
         /// <summary>
         /// systemMessageLine control.

@@ -10,7 +10,9 @@ namespace ILPathways.Business
     {
        
         public Library()
-        { }
+        {
+            AllowJoinRequest = true;
+        }
 
 
         public static int PERSONAL_LIBRARY_ID = 1;
@@ -45,6 +47,17 @@ namespace ILPathways.Business
                 }
             }
         }
+
+        /// <summary>
+        /// Return a url friendly title
+        /// </summary>
+        public string FriendlyTitle
+        {
+            get
+            {
+                return UrlFriendlyTitle( this._title );
+            }
+        } //
 
         private string _description = "";
         /// <summary>
@@ -215,34 +228,25 @@ namespace ILPathways.Business
                 return ( int ) OrgAccessLevel;
             }
         }
-        private bool _isPublic;
-        /// <summary>
-        /// Gets/Sets IsPublic
-        /// </summary>
+
         public bool IsPublic
         {
             get
             {
                 //TODO - transition to use of PublicAccessLevel
-                if ( ( int )PublicAccessLevel > 0 )
+                if ( ( int ) PublicAccessLevel > 0 )
                     return true;
                 else
                     return false;
-                //return this._isPublic;
             }
-            set
-            {
-                if ( this._isPublic == value )
-                {
-                    //Ignore set
-                }
-                else
-                {
-                    this._isPublic = value;
-                    HasChanged = true;
-                }
-            }
+           
         }
+
+        /// <summary>
+        /// Gets/Sets AllowJoinRequest
+        /// if false, will not allow requests to join the library
+        /// </summary>
+        public bool AllowJoinRequest { get; set; }
 
         private string _imageUrl = "";
         /// <summary>
@@ -267,26 +271,18 @@ namespace ILPathways.Business
                 }
             }
         }
-		private Guid _documentRowId;
-		public Guid DocumentRowId
-		{
-			get
-			{
-				return this._documentRowId;
-			}
-			set
-			{
-				if ( this._documentRowId == value )
-				{
-					//Ignore set
-				}
-				else
-				{
-					this._documentRowId = value;
-					HasChanged = true;
-				}
-			}
-		}
+
+        public string FriendlyUrl
+        {
+            get
+            {
+                if ( Id == 0 )
+                    return "";
+                else
+                    return string.Format( "/Library/{0}/{1}", Id, this.FriendlyTitle );
+            }
+           
+        }
 		#endregion
 
 
@@ -299,26 +295,6 @@ namespace ILPathways.Business
                 return false;
         }
 
-        //DocumentVersion _doc;
-        //public DocumentVersion RelatedDocument
-        //{
-        //    get
-        //    {
-        //        return this._doc;
-        //    }
-        //    set
-        //    {
-        //        if ( this._doc == value )
-        //        {
-        //            //Ignore set
-        //        }
-        //        else
-        //        {
-        //            this._doc = value;
-        //            HasChanged = true;
-        //        }
-        //    }
-        //}
 		#endregion
 
 

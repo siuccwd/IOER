@@ -13,7 +13,7 @@ namespace ILPathways.LRW.controls
         protected void Page_Load( object sender, EventArgs e )
         {
             string imgUrl = ContentHelper.GetAppKeyValue( "cachedImagesUrl", "//ioer.ilsharedlearning.org/OERThumbs/" );
-            this.imgThumbnail.Src = imgUrl + "thumb/{intID}-thumb.png";
+            this.imgThumbnail.Src = imgUrl + "large/{intID}-large.png";
         }
     }
 }

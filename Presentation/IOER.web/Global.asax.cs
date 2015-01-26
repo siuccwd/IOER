@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using System.Web.Http;
 using System.Web.Routing;
 using System.Web.Security;
 using System.Web.SessionState;
@@ -19,14 +20,22 @@ namespace IllinoisPathways
             // Code that runs on application startup
 
             RegisterRoutes( RouteTable.Routes );
+
         }
 
         void RegisterRoutes( RouteCollection routes )
         {
+            //resources =======================================
             // Register a route for detail page
             routes.MapPageRoute(
-               "Detail Record",      // Route name
+               "RV Record",      // Route name
                "IOER/{RouteVID}/{*ItemTitle}",      // Route URL
+               "~/ResourceDetail.aspx" // Web page to handle route
+            );
+            //using resourceId
+            routes.MapPageRoute(
+               "Resource Record",      // Route name
+               "Resource/{RouteRID}/{*ItemTitle}",      // Route URL
                "~/ResourceDetail.aspx" // Web page to handle route
             );
             routes.MapPageRoute(
@@ -34,27 +43,20 @@ namespace IllinoisPathways
               "IOER2/{RouteVID}/{*ItemTitle}",      // Route URL
               "~/ResourceDetail2.aspx" // Web page to handle route
            );
-            // The {*ItemTitle} instructs the route to match all content after the first slash, which is needed b/c some titles names contain a slash or other special characters
-            // See http://forums.asp.net/p/1417546/3131024.aspx for more information
-
-            routes.MapPageRoute(
-                "Content Record",      // Route name
-                "CONTENT/{RouteID}/{*ItemTitle}",      // Route URL
-                "~/Repository/ResourcePage.aspx" // Web page to handle route
-             );
 
             //communites =======================================
+            routes.MapPageRoute(
+                 "Community Home",      // Route name
+                 "Community/{RouteID}/{*ItemTitle}",      // Route URL
+                 "~/Communities/Community.aspx" // Web page to handle route
+              );
+
             routes.MapPageRoute(
                 "Communities Home",
                 "Communities",     
                 "~/Communities/Default.aspx" 
              );
-            routes.MapPageRoute(
-                "Community Home",      // Route name
-                "Community/{RouteID}/{*ItemTitle}",      // Route URL
-                "~/Communities/Community.aspx" // Web page to handle route
-             );
-
+ 
             //search K12 content =========================================
             routes.MapPageRoute(
                "IOER Custom content",
@@ -67,12 +69,52 @@ namespace IllinoisPathways
                "K12/All",
                "~/Repository/Search.aspx"
             );
+            //search curriculum
+            routes.MapPageRoute(
+               "curriculum search",
+               "Curriculum",
+               "~/Repository/Search.aspx?t=curriculum"
+            );
             //K12 author's pages
             routes.MapPageRoute(
              "K12 Author Search",      // Route name
              "K12/Search/{OrgName}/{Author}",      // Route URL
              "~/Repository/Search.aspx" // Web page to handle route
             );
+            // The {*ItemTitle} instructs the route to match all content after the first slash, which is needed b/c some titles names contain a slash or other special characters
+            // See http://forums.asp.net/p/1417546/3131024.aspx for more information
+
+            routes.MapPageRoute(
+                "Content Record",      // Route name
+                "CONTENT/{RouteID}/{*ItemTitle}",      // Route URL
+                "~/Repository/ResourcePage.aspx" // Web page to handle route
+             );
+            routes.MapPageRoute(
+                "Curriculum Node",         //Route name
+                "Curriculum/{node}/{*title}",          //Route URL
+                "~/Controls/Curriculum/Default.aspx"         //Web page to handle route
+            );
+            //routes.MapPageRoute(
+            //    "Curriculum Node2",         //Route name
+            //    "Curriculum/{node}/{node2}/{*title}",          //Route URL
+            //    "~/Controls/Curriculum/Default.aspx"         //Web page to handle route
+            //);
+            routes.MapPageRoute( 
+                "Curriculum Editor",
+                "My/Curriculum/{node}/{*title}",
+                "~/My/Curriculum.aspx"
+            );
+            routes.MapPageRoute(
+                "Learning List Node",         //Route name
+                "LearningList/{node}/{*title}",          //Route URL
+                "~/Controls/Curriculum/Default.aspx"         //Web page to handle route
+            );
+            routes.MapPageRoute(
+                "Learning List Editor",
+                "My/LearningList/{node}/{*title}",
+                "~/My/Curriculum.aspx"
+            );
+
 
             //K12 author's home page
             routes.MapPageRoute(
@@ -96,7 +138,7 @@ namespace IllinoisPathways
             //library by name. Check org then personal
             routes.MapPageRoute(
              "Named Library",      // Route name
-             "LibraryOld/{*LbraryTitle}",      // Route URL
+             "Library_/{*LbraryTitle}",      // Route URL
              "~/Libraries/Library.aspx"             // Web page to handle route
             );
             routes.MapPageRoute(
@@ -110,8 +152,12 @@ namespace IllinoisPathways
                 "Library/{libID}/{*ItemTitle}",      // Route URL
                 "~/Libraries/Library.aspx" // Web page to handle route
              );
-
-                //Timeline =======================================
+            routes.MapPageRoute(
+                 "LibrariesSearch",      // Route name
+                 "Libraries/Search",      // Route URL
+                 "~/Libraries/Default.aspx"
+            );
+            //Timeline =======================================
             routes.MapPageRoute(
              "My Timeline",      // Route name
              "My/Timeline",      // Route URL
@@ -124,6 +170,62 @@ namespace IllinoisPathways
              "~/Activity/Default.aspx"             // Web page to handle route
             );
 
+            //people =======================================
+            routes.MapPageRoute(
+            "My Dashboard",      // Route name
+            "My/Dashboard",      // Route URL
+            "~/Pages/Dashboard.aspx?id=mine"    
+           );
+            routes.MapPageRoute(
+            "Profiles",      // Route name
+            "Profile/{userId}/{*ItemTitle}",      // Route URL
+            "~/Pages/Dashboard.aspx"    
+            );
+
+            //partners =======================================
+            routes.MapPageRoute(
+            "Organizations",      // Route name
+            "Organizations",      // Route URL
+            "~/Organizations/Default.aspx"
+            );
+
+            routes.MapPageRoute(
+             "Organization",      // Route name
+             "Organizations/{orgId}/{*ItemTitle}",      // Route URL
+             "~/Organizations/Organization.aspx"
+             );
+
+            routes.MapPageRoute(
+             "OrganizationTimeline",      // Route name
+             "Org/{orgId}/{*ItemTitle}",      // Route URL
+             "~/Activity/Default.aspx"            
+             );
+            routes.MapPageRoute(
+            "UnityPoint",      // Route name
+            "UnityPoint",      // Route URL
+            "~/Organizations/UnityPoint.aspx"
+           );
+            routes.MapPageRoute(
+             "Search",      // Route name
+             "Search",      // Route URL
+             "~/Search.aspx"
+            );
+            routes.MapPageRoute(
+             "Gooru",      // Route name
+             "gooruSearch",      // Route URL
+             "~/Pages/GooruSearch.aspx"
+            );
+            routes.MapPageRoute(
+             "GooruPlayer",      // Route name
+             "gooruResource",      // Route URL
+             "~/Pages/GooruPlayer.aspx"
+            );
+            //other =======================================
+            routes.MapPageRoute(
+            "ContactUs",
+            "ContactUs",
+            "~/Pages/ContactUs.aspx"
+            );
         }
 
         void Application_End( object sender, EventArgs e )
@@ -140,69 +242,88 @@ namespace IllinoisPathways
 
         void Session_Start( object sender, EventArgs e )
         {
-            //UtilityManager.DoTrace( mAppTraceLevel, "___ Session_Start Entry___" );	
-
-            //increment user count
-            //Application.Lock();
-            //Application["GuestUsers"] = Convert.ToInt32(Application["GuestUsers"]) + 1;
-            //Application.UnLock();
-            //UtilityManager.DoTrace(8,"User count update: Guests= " + Application["GuestUsers"].ToString() + " Registered= " + Application["RegisteredUsers"].ToString());
-
-            //Do we want to track the referer somehow??
-            string lRefererPage = "";
-            if ( Request.UrlReferrer != null )
+            try
             {
-                lRefererPage = Request.UrlReferrer.ToString();
-                //check for link to us parm
-                //??
-
-                //handle refers from illinoisworknet.com 
-                if ( lRefererPage.ToLower().IndexOf( ".illinoisworknet.com" ) > -1 )
+                //Do we want to track the referer somehow??
+                string lRefererPage = "";
+                if ( Request.UrlReferrer != null )
                 {
-                    //may want to keep reference to determine source of this condition. 
-                    //For ex. user may have let referring page get stale and so a new session was started when user returned! 
+                    lRefererPage = Request.UrlReferrer.ToString();
+                    //check for link to us parm
+                    //??
 
+                    //handle refers from illinoisworknet.com 
+                    if ( lRefererPage.ToLower().IndexOf( ".illinoisworknet.com" ) > -1 )
+                    {
+                        //may want to keep reference to determine source of this condition. 
+                        //For ex. user may have let referring page get stale and so a new session was started when user returned! 
+
+                    }
+                }
+                string ipAddress = this.GetUserIPAddress();
+                ///check for bots
+                ///bot, crawler, spider, slurp, crawling
+                string agent = Request.UserAgent != null ? Request.UserAgent : "none";
+                bool isBot = false;
+                if ( agent.ToLower().IndexOf( "bot" ) > -1
+                    || agent.ToLower().IndexOf( "spider" ) > -1
+                    || agent.ToLower().IndexOf( "slurp" ) > -1
+                    || agent.ToLower().IndexOf( "crawl" ) > -1
+                    )
+                    isBot = true;
+
+                if ( isBot == false )
+                {
+
+                    LoggingHelper.DoTrace( 2, string.Format( "Session_Start. referrer: {0}, agent: {1}, IP Address: ", lRefererPage, agent, ipAddress ) );
+
+                    string startMsg = "Session Started. SessionID: " + Session.SessionID;
+                    if ( lRefererPage.Length > 0 )
+                        startMsg += ", Referrer: " + lRefererPage;
+                    //string ipAddress = Request.ServerVariables[ "REMOTE_HOST" ] == null ? "unknown" : Request.ServerVariables[ "REMOTE_HOST" ];
+                    startMsg += ", IP Address: " + ipAddress;
+
+                    ActivityBizServices.SessionStartActivity( startMsg );
+
+                    //Log page visit
+                    if ( UtilityManager.GetAppKeyValue( "loggingPageVisits", "no" ) == "yes" )
+                    {
+                        //string path = Request.ServerVariables["SERVER_NAME"];
+
+                        string serverName = UtilityManager.GetAppKeyValue( "serverName" );
+
+                        GatewayServices.LogSessionStart( Session.SessionID.ToString(), serverName, startMsg, ipAddress );
+                    }
+                }
+                else
+                {
+                    LoggingHelper.DoTrace( string.Format( "Session_Start. Skipping bot: referrer: {0}, agent: {1}", lRefererPage, agent ) );
                 }
             }
-            string startMsg = "Session Started.";
-            if ( lRefererPage.Length > 0 )
-                startMsg += " Referrer: " + lRefererPage;
-
-            //Log page visit
-            if ( UtilityManager.GetAppKeyValue( "loggingPageVisits", "no" ) == "yes" )
+            catch ( Exception ex )
             {
-                //string path = Request.ServerVariables["SERVER_NAME"];
-    
-                string serverName = UtilityManager.GetAppKeyValue( "serverName" );
-
-                GatewayServices.LogSessionStart( Session.SessionID.ToString(), serverName, startMsg, Request.ServerVariables[ "REMOTE_HOST" ] );
-            }
-    
-            //optionally dump the request variables
-            if ( UtilityManager.GetAppKeyValue( "SessionShowRequestKeys", "no" ) == "yes" )
-            {
-               // string reqParms = GetRequestVariables();
-                //
-                //				string reqParms = "####### Request variables for Session = " +  Session.SessionID.ToString() + "\r\n";
-                //
-                //				foreach (string key in Request.ServerVariables.Keys) {
-                //					//Response.Write(String.Format("<b>{0}</b> = {1}<br>",  key, Request.ServerVariables[key]));
-                //
-                //					reqParms +=  "\r\n" + String.Format("<b>{0}</b> = {1}<br>",  key, Request.ServerVariables[key]);
-                //				}
-                //UtilityManager.DoTrace(12,reqParms);
+                LoggingHelper.LogError( ex, "Session_Start. =================" );
             }
 
-            /* Code ensures that users come in through default page only	
-              string startPage = Request.Url.ToString().ToLower();
-                if (!startPage.EndsWith("default.aspx") || !startPage.EndsWith("debugstartpage.htm"))
+        } //
+        private string GetUserIPAddress()
+        {
+            string ip = "unknown";
+            try
+            {
+                ip = Request.ServerVariables[ "HTTP_X_FORWARDED_FOR" ];
+                if ( ip == null || ip == "" || ip.ToLower() == "unknown" )
                 {
-                    Response.Redirect("~/default.aspx");   // prevent the user from bypassing the javascript check
-                }*/
+                    ip = Request.ServerVariables[ "REMOTE_ADDR" ];
+                }
+            }
+            catch ( Exception ex )
+            {
 
+            }
 
-        }
-
+            return ip;
+        } //
         void Session_End( object sender, EventArgs e )
         {
             // Code that runs when a session ends. 

@@ -44,7 +44,7 @@ namespace ILPathways.Services
       ret.name = user.FullName();
       ret.description = "demo profile info";
       ret.userGUID = user.RowId.ToString();
-      ret.avatarURL = "/images/isle.png";
+      ret.avatarURL = "/images/ioer_med.png";
 
       return ret;
     }

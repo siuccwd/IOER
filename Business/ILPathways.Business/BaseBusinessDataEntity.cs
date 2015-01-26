@@ -451,6 +451,17 @@ namespace ILPathways.Business
                 return true;
             }
         }
+        public bool IsValidRowId( Guid? guid )
+        {
+            if ( guid == null || guid.ToString() == DEFAULT_GUID )
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
 		/// <summary>
 		/// Return true if the passed Guid equals the initial value for a guid
 		/// </summary>
@@ -604,6 +615,39 @@ namespace ILPathways.Business
 
 		} // end 
 
+        /// <summary>
+        /// Format a title (such as for a library) to be url friendly
+        /// </summary>
+        /// <param name="title"></param>
+        /// <returns></returns>
+        public static string UrlFriendlyTitle( string title )
+        {
+            string encodedTitle = title.Replace( " - ", "-" );
+            encodedTitle = encodedTitle.Replace( " ", "_" );
+            encodedTitle = encodedTitle.Replace( "'", "" );
+            encodedTitle = encodedTitle.Replace( "&", "_" );
+            encodedTitle = encodedTitle.Replace( "#", "" );
+            encodedTitle = encodedTitle.Replace( "$", "S" );
+            encodedTitle = encodedTitle.Replace( "%", "percent" );
+            encodedTitle = encodedTitle.Replace( "^", "" );
+            encodedTitle = encodedTitle.Replace( "*", "" );
+            encodedTitle = encodedTitle.Replace( "+", "_" );
+            encodedTitle = encodedTitle.Replace( "~", "_" );
+            encodedTitle = encodedTitle.Replace( "`", "_" );
+            encodedTitle = encodedTitle.Replace( ":", "" );
+            encodedTitle = encodedTitle.Replace( ";", "" );
+            encodedTitle = encodedTitle.Replace( "?", "" );
+            encodedTitle = encodedTitle.Replace( "\"", "_" );
+            encodedTitle = encodedTitle.Replace( "\\", "_" );
+            encodedTitle = encodedTitle.Replace( "<", "_" );
+            encodedTitle = encodedTitle.Replace( ">", "_" );
+            encodedTitle = encodedTitle.Replace( "__", "_" );
+            encodedTitle = encodedTitle.Replace( "__", "_" );
+
+            return encodedTitle;
+        } //
+
+
 		/// <summary>
 		/// CreatedByTitle - Format created by date and userid
 		/// </summary>
@@ -652,7 +696,25 @@ namespace ILPathways.Business
 			return title;
 		} //
 
-		/// <summary>
+        /// <summary>
+        /// HistoryTitle - Format created by and updated by information in one line
+        /// </summary>
+        /// <returns></returns>
+        public virtual string HistoryTitle()
+        {
+            string createdTitle = this.CreatedByTitle();
+            string updatedTitle = this.UpdatedByTitle();
+            string title = "";
+
+            if ( createdTitle.Length > 0 ) title = "Created: " + createdTitle + " ";
+            if ( updatedTitle.Length > 0 ) title += "<br/>Last Updated: " + updatedTitle + " ";
+
+            return title;
+
+        }
+
+        #region === phone ======================================
+        /// <summary>
 		/// Strip special characters from a phone number
 		/// </summary>
 		/// <param name="phone"></param>
@@ -790,24 +852,10 @@ namespace ILPathways.Business
 				part3 = phone.Substring( 6, 4 );
 			}
 		}
+        #endregion
 
-		/// <summary>
-		/// HistoryTitle - Format created by and updated by information in one line
-		/// </summary>
-		/// <returns></returns>
-		public virtual string HistoryTitle()
-		{
-			string createdTitle = this.CreatedByTitle();
-			string updatedTitle = this.UpdatedByTitle();
-			string title = "";
-
-			if ( createdTitle.Length > 0 ) title = "Created: " + createdTitle + " ";
-			if ( updatedTitle.Length > 0 ) title += "Last Updated: " + updatedTitle + " ";
-
-			return title;
-
-		}
-		/// <summary>
+        #region XML - not really used ==========================
+        /// <summary>
 		/// XmlHeader	- Sets up a default Xml document header
 		/// </summary>
 		/// <returns>string representing an Xml header</returns>
@@ -870,8 +918,9 @@ namespace ILPathways.Business
 			//TODO: - do we have to handle nulls differently - that is skip?
 			return "    <" + attrName + ">" + attrValue + "</" + attrName + ">";
 		}
+        #endregion
 
-		/// <summary>
+        /// <summary>
 		/// format an HTML list - determines whether a break should be included
 		/// </summary>
 		/// <param name="list"></param>

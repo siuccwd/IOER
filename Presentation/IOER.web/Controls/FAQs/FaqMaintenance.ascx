@@ -263,7 +263,7 @@
 							<asp:label id="Label3"  associatedcontrolid="cbxFAQPathway" runat="server">Publish to Pathways</asp:label> 
 						</div>
 						<div class="dataColumn"> 
-							<wcl:skmCheckBoxList ID="cbxFAQPathway" runat="server"  RepeatColumns="1"></wcl:skmCheckBoxList>
+							<asp:CheckBoxList ID="cbxFAQPathway" runat="server"  RepeatColumns="1"></asp:CheckBoxList>
 					</div> 
 					</asp:Panel>	  
 						<!-- --> 

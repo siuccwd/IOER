@@ -12,7 +12,7 @@ namespace Isle.BizServices
 {
     public class GroupServices : ServiceHelper
     {
-        EFDAL.GatewayEntities1 ctx = new EFDAL.GatewayEntities1();
+        EFDAL.GatewayContext ctx = new EFDAL.GatewayContext();
 
         #region Groups
         public static bool Delete( int id, ref string statusMessage )

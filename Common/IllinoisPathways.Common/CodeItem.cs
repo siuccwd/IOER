@@ -21,6 +21,7 @@ namespace ILPathways.Common
             set { this._title = value; }
         }
         public string Description { get; set; }
+        public bool IsActive { get; set; }
         public int SortOrder { get; set; }
         public int WarehouseTotal { get; set; }
     }

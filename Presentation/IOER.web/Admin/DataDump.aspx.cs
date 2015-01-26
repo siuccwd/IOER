@@ -38,11 +38,12 @@ namespace ILPathways
             }
             else if ( Request.QueryString[ "mode" ] == "injectEvaluations" & Request.QueryString[ "auth" ] == "admin" )
             {
-                new ElasticSearchManager().RebuildAllEvaluations();
+                //new ElasticSearchManager().RebuildAllEvaluations();
             }
             else if ( Request.QueryString[ "mode" ] == "replaceResource" & Request.QueryString[ "auth" ] == "admin" )
             {
-                new ElasticSearchManager().CreateOrReplaceRecord( int.Parse( Request.QueryString[ "intID" ] ) );
+                //new ElasticSearchManager().CreateOrReplaceRecord( int.Parse( Request.QueryString[ "intID" ] ) );
+                new ElasticSearchManager().RefreshResource( int.Parse( Request.QueryString[ "intID" ] ) );
             }
         }
 
@@ -118,10 +119,11 @@ namespace ILPathways
             DataSet ds = DatabaseManager.DoQuery( "SELECT * FROM [Resource_Index]" );
             if ( DatabaseManager.DoesDataSetHaveRows( ds ) )
             {
-                eManager.DeleteEntireIndexContents();
-                eManager.BulkUpload( ds );
-                eManager.RebuildAllEvaluations(); //Ideally this would be taken care of by the database in the initial call instead
-                output.Text = "Finished at " + DateTime.Now.ToShortTimeString();
+                //eManager.DeleteEntireIndexContents();
+                //eManager.BulkUpload( ds );
+                //eManager.RebuildAllEvaluations(); //Ideally this would be taken care of by the database in the initial call instead
+                //output.Text = "Finished at " + DateTime.Now.ToShortTimeString();
+                output.Text = "No action taken - this process must be handled using external executable.";
             }
             else
             {
@@ -159,6 +161,8 @@ namespace ILPathways
                 listers[ i ].toWrite = "";
             }
 
+            File.WriteAllText( @"C:\elasticSearchJSON\lastrun.txt", "Running Async process at " + DateTime.Now.ToShortTimeString() + System.Environment.NewLine );
+
             //multi-threading really seems to hate keeping its mitts on its own variables, soooo...
             tasks[ 0 ] = new Task( () => listers[ 0 ].ListMaker() );
             tasks[ 0 ].Start();
@@ -188,31 +192,65 @@ namespace ILPathways
 
             public void ListMaker()
             {
-                int currentLineCount = 0;
-                JavaScriptSerializer serializer = new JavaScriptSerializer();
-                ResourceJSONManager manager = new ResourceJSONManager();
-
-                foreach ( DataRow dr in rows )
+                try
                 {
+                  int currentLineCount = 0;
+                  JavaScriptSerializer serializer = new JavaScriptSerializer();
+                  ResourceJSONManager manager = new ResourceJSONManager();
+
+
+
+
+
+
+                  string collectionName = "collection5";// UtilityManager.GetAppKeyValue( "elasticSearchCollection", "collection5" );
+
+
+
+
+
+
+
+
+                  //File.AppendAllText( @"C:\elasticSearchJSON\lastrun" + tracker + ".txt", "Beginning Task " + tracker + " at " + DateTime.Now.ToShortTimeString() + System.Environment.NewLine );
+                  //File.AppendAllText( @"C:\elasticSearchJSON\lastrun" + tracker + ".txt", "Task " + tracker + " has " + rows.Count() + " items." + System.Environment.NewLine );
+                  //File.AppendAllText( @"C:\elasticSearchJSON\numbers.txt", "Tracker " + tracker + ": " + currentLineCount + System.Environment.NewLine );
+                  //File.AppendAllText( @"C:\elasticSearchJSON\debug" + tracker + ".txt", "Made it to Debug 0" + System.Environment.NewLine );
+                  foreach ( DataRow dr in rows )
+                  {
+                    //File.AppendAllText( @"C:\elasticSearchJSON\debug" + tracker + ".txt", "Made it to Debug 1" + System.Environment.NewLine );
                     LRWarehouse.Business.ResourceJSONFlat flat = manager.GetJSONFlatFromDataRow( dr );
                     LRWarehouse.Business.ResourceJSONElasticSearch resource = manager.GetJSONElasticSearchFromJSONFlat( flat );
-
-                    string header = "{ \"index\": { \"_index\": \"collection5\", \"_type\": \"resource\", \"_id\": \"" + resource.versionID.ToString() + "\" } }";
+                    //File.AppendAllText( @"C:\elasticSearchJSON\debug" + tracker + ".txt", "Made it to Debug 2" + System.Environment.NewLine );
+                    //string header = string.Format( "{ \"index\": { \"_index\": \"{0}\", \"_type\": \"resource\", \"_id\": \"" + resource.versionID.ToString() + "\" } }", collectionName );
+                    string header = "{ \"index\": { \"_index\": \"" + collectionName + "\", \"_type\": \"resource\", \"_id\": \"" + resource.versionID + "\" } }";
+                    //File.AppendAllText( @"C:\elasticSearchJSON\debug" + tracker + ".txt", "Made it to Debug 3" + System.Environment.NewLine );
                     string jsonData = serializer.Serialize( resource );
+                    //File.AppendAllText( @"C:\elasticSearchJSON\debug" + tracker + ".txt", "Made it to Debug 4" + System.Environment.NewLine );
                     toWrite = toWrite + header + Environment.NewLine + jsonData + Environment.NewLine;
                     currentLineCount++;
+                    //File.AppendAllText( @"C:\elasticSearchJSON\numbers.txt", "Tracker " + tracker + ": " + currentLineCount + System.Environment.NewLine );
+
                     if ( currentLineCount > 499 )
                     {
-                        toWrite = toWrite.Replace( @"\n\t\t\t\t\t\t\t\t\t", " " ).Replace( @"          ", " " );
-                        //File.AppendAllText( @"C:\inetpub\wwwroot\vos_2010\Illinois Pathways\IllinoisPathways\IllinoisPathways\testing\json\resourceJSON" + tracker + ".json", toWrite );
-                        File.AppendAllText( @"C:\elasticSearchJSON\resourceJSON" + tracker + ".json", toWrite );
-                        currentLineCount = 0;
-                        toWrite = "";
+                      //File.AppendAllText( @"C:\elasticSearchJSON\lastrun.txt", "Updating File " + tracker + " at " + DateTime.Now.ToShortTimeString() + System.Environment.NewLine );
+                      toWrite = toWrite.Replace( @"\n\t\t\t\t\t\t\t\t\t", " " ).Replace( @"          ", " " );
+                      //File.AppendAllText( @"C:\inetpub\wwwroot\vos_2010\Illinois Pathways\IllinoisPathways\IllinoisPathways\testing\json\resourceJSON" + tracker + ".json", toWrite );
+                      File.AppendAllText( @"C:\elasticSearchJSON\resourceJSON" + tracker + ".json", toWrite );
+                      currentLineCount = 0;
+                      toWrite = "";
+                      //File.AppendAllText( @"C:\elasticSearchJSON\debug" + tracker + ".txt", "Made it to Debug 5" + System.Environment.NewLine );
                     }
+                  }
+                  //write any remaining data
+                  //File.AppendAllText( @"C:\inetpub\wwwroot\vos_2010\Illinois Pathways\IllinoisPathways\IllinoisPathways\testing\json\resourceJSON" + tracker + ".json", toWrite );
+                  File.AppendAllText( @"C:\elasticSearchJSON\resourceJSON" + tracker + ".json", toWrite );
+                  //File.AppendAllText( @"C:\elasticSearchJSON\debug" + tracker + ".txt", "Made it to Debug 6" + System.Environment.NewLine );
                 }
-                //write any remaining data
-                //File.AppendAllText( @"C:\inetpub\wwwroot\vos_2010\Illinois Pathways\IllinoisPathways\IllinoisPathways\testing\json\resourceJSON" + tracker + ".json", toWrite );
-                File.AppendAllText( @"C:\elasticSearchJSON\resourceJSON" + tracker + ".json", toWrite );
+                catch ( Exception ex )
+                {
+                  File.AppendAllText( @"C:\elasticSearchJSON\lastrun" + tracker + ".txt", "Task " + tracker + " suffered fatal error: " + ex.Message.ToString() + System.Environment.NewLine );
+                }
             }
         }
         #endregion

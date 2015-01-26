@@ -13,16 +13,21 @@ using MyManager = Isle.BizServices.ContentServices;
 using ILPathways.Business;
 using AppUser = LRWarehouse.Business.Patron; //ILPathways.Business.AppUser;
 using AcctManager = Isle.BizServices.AccountServices;
-
+using OrgManager = Isle.BizServices.OrganizationBizService;
+using Isle.BizServices;
 //prefer to prevent direct reference to LR
 using LRWarehouse.Business;
 using ResManager = Isle.BizServices.ResourceBizService;
 
 namespace ILPathways.Controls.Content
 {
+    /// <summary>
+    /// Handle display of a content item
+    /// - has special code for handling curriculum type
+    /// </summary>
     public partial class ContentDisplay : BaseUserControl
     {
-        const string thisClassName = "ResourcePage";
+        const string thisClassName = "ContentDisplay";
         MyManager myManager = new MyManager();
 
         #region Properties
@@ -41,7 +46,6 @@ namespace ILPathways.Controls.Content
         }
         public string resourceTitle;
         public string resourceSummary;
-        public string resourceFrameSource;
         public string redirectTarget;
 
         #endregion
@@ -70,10 +74,12 @@ namespace ILPathways.Controls.Content
                 CurrentUser = GetAppUser();
                 if ( CurrentUser.ParentOrgId == -1 )
                 {
+
+                    //TODO ********** need to use commmon method that handles org mbrs **********
                     CurrentUser.ParentOrgId = 0;
                     //get has not been attempted, do now
                     string statusMessage = string.Empty;
-                    Organization org = AcctManager.GetOrganization( CurrentUser, ref statusMessage );
+                    Organization org = OrgManager.GetOrganization( CurrentUser, ref statusMessage );
                     if ( org != null && org.Id > 0 )
                     {
                         CurrentUser.ParentOrgId = org.ParentId;
@@ -229,6 +235,26 @@ namespace ILPathways.Controls.Content
         ///</summary>
         private void PopulateForm( ContentItem entity )
         {
+           bool isHierarcyType = false;
+
+            if ( (entity.IsHierarchyType && entity.TypeId != ContentItem.CURRICULUM_CONTENT_ID)
+                || entity.TypeId == ContentItem.DOCUMENT_CONTENT_ID )
+            {
+                //if a hierarch type, get the top level in ordr to get the author info
+                //the curriculum handler will take care of displaying the correct node 
+                ContentItem topNode = myManager.GetTopNodeForHierarchy( entity );
+                if (topNode != null && topNode.Id > 0) 
+                {
+                    entity = topNode;
+                    isHierarcyType = true;
+                }
+
+                //int topId = myManager.GetTopIdForHierarchy( entity );
+                //if ( topId > 0 )
+                //{
+                //    entity = myManager.Get( topId );
+                //}
+            }
 
             CurrentRecordID = entity.Id;
             resourceTitle = entity.Title;
@@ -263,23 +289,32 @@ namespace ILPathways.Controls.Content
             detailPanel.Visible = true;
 
             lblPrivileges.Text = entity.PrivilegeType;
-            lblUsageRights.Text = entity.ConditionsOfUse;
-            if ( entity.ConditionsOfUseIconUrl.Length > 0 )
+            if ( entity.ConditionsOfUse != null )
             {
-                lblUsageRights.Text = string.Format( ccouImageLinkTemplate.Text, entity.ConditionsOfUseUrl, entity.ConditionsOfUseIconUrl, entity.ConditionsOfUse );
+                lblUsageRights.Text = entity.ConditionsOfUse;
+                if ( entity.ConditionsOfUseIconUrl.Length > 0 )
+                {
+                    lblUsageRights.Text = string.Format( ccouImageLinkTemplate.Text, entity.ConditionsOfUseUrl, entity.ConditionsOfUseIconUrl, entity.ConditionsOfUse );
 
+                }
             }
 
-            pageContent.Text = entity.Description;
-
-            resourceFrameSource = CurrentRecordID.ToString();
-            if ( entity.ResourceVersionId > 0 )
+            if ( entity.HasResourceId() )
             {
                 communityViewPanel.Visible = true;
-                ResourceVersion rv = ResManager.ResourceVersion_Get( entity.ResourceVersionId );
-                string url = new PublishController().FormatFriendlyResourceUrl( rv );
-                this.hlResourceVerionLink.NavigateUrl = url;    // string.Format( this.rvLink.Text, entity.ResourceVersionId );
 
+                //14-04 24 mp - the latter should already be in the entity?
+                string url = GetResourceUrl( entity );                
+                if ( url.Length > 5 )
+                {
+                    this.hlResourceVerionLink.NavigateUrl = url;   
+                }
+                else
+                {
+                    communityViewPanel.Visible = false;
+                    this.hlResourceVerionLink.NavigateUrl = "";
+                    hlResourceVerionLink.Text = "Not available";
+                }
             }
             else
             {
@@ -288,16 +323,21 @@ namespace ILPathways.Controls.Content
                 hlResourceVerionLink.Text = "Not available";
             }
 
-
-            //get attachments
-            PopulateSupplements( entity );
-            //get references
-            PopulateReferences( entity );
+            if ( entity.TypeId != ContentItem.DOCUMENT_CONTENT_ID )
+            {
+                //get attachments
+                PopulateSupplements( entity );
+                //get references
+                PopulateReferences( entity );
+            }
             //check for standards
-            if ( entity.ResourceVersionId > 0 )
-                PopulateStandards( entity );
+            if ( entity.IsHierarchyType == false )
+            {
+                if ( entity.HasResourceId() )
+                    PopulateStandards( entity );
+            }
 
-            if ( attachmentsPanel.Visible == false && referencesPanel.Visible == false && this.standardsPanel.Visible == false )
+            if ( attachmentsPanel.Visible == false && referencesPanel.Visible == false  )
                 supplementsPanel.Visible = false;
 
             buttonBox.Visible = false;
@@ -305,7 +345,7 @@ namespace ILPathways.Controls.Content
             {
                 //TODO - need to handle updates. ON update, will not be publishing/
                 //if has a LR RV record
-                if ( entity.ResourceVersionId == 0 && UserCanPublishThisResource( entity ) )
+                if ( entity.ResourceIntId == 0 && UserCanPublishThisResource( entity ) )
                 {
                     buttonBox.Visible = true;
                     publishSection.Visible = true;
@@ -336,6 +376,56 @@ namespace ILPathways.Controls.Content
                     approveSection.Visible = false;
                 }
             }
+
+            curriculumPanel.Visible = false;
+            if ( entity.IsHierarchyType == true )
+            {
+                summaryPanel.Visible = false;
+                curriculumPanel.Visible = true;
+                pageContent.Visible = false;
+                //curriculumContent.Text = entity.Description;
+            }
+            else
+            if ( entity.TypeId == ContentItem.DOCUMENT_CONTENT_ID )
+            {
+                //check if part of a curriculum
+                if ( myManager.IsNodePartOfCurriculum( entity ) )
+                {
+                    summaryPanel.Visible = false;
+                    curriculumPanel.Visible = true;
+                    pageContent.Visible = false;
+                }
+                else
+                {
+                    PopulateDocument( entity );
+                }
+            }
+            else
+            {
+                curriculumPanel.Visible = false;
+                if (entity.Description != null && entity.Description.Length > 5)
+                    pageContent.Text = entity.Description;
+                else 
+                    pageContent.Text = entity.Summary;
+            }
+        }//
+
+
+        private string GetResourceUrl( ContentItem entity )
+        {
+            string url = "";
+             if (entity.ResourceFriendlyUrl != null)
+                 url = entity.ResourceFriendlyUrl;
+             else 
+             {             
+                ResourceVersion rv = ResManager.ResourceVersion_GetByResourceId( entity.ResourceIntId );
+                if ( rv != null && rv.Id > 0 )
+                {
+                    url = ResourceBizService.FormatFriendlyResourceUrlByResId( rv.Title, rv.ResourceIntId );  
+                }
+             }
+
+            return url;
         }//
 
 
@@ -366,7 +456,7 @@ namespace ILPathways.Controls.Content
                 return false;
 
             //TODO - only caveat may be to allow a reviewer to see this view?
-            //       they would have to be authnticated with org admin status???
+            //       they would have to be authenticated with org admin status???
             if ( entity.PrivilegeTypeId == ContentItem.PUBLIC_PRIVILEGE )
                 return true;
 
@@ -404,8 +494,57 @@ namespace ILPathways.Controls.Content
         }//
 
 
+        private void PopulateDocument( ContentItem entity )
+        {
+
+            if ( entity.RelatedDocument != null && entity.RelatedDocument.HasValidRowId() )
+            {
+                //if ( IsTestEnv() )
+                //    supplements.Text += "<br/>(test only): " + item.RelatedDocument.FileName;
+
+                //check if file exists on server, if not it will be downloaded
+                //15-01-11 MP - need to ensure uses
+                string fileUrl = FileResourceController.ValidateDocumentOnServer( entity, entity.RelatedDocument );
+                if ( fileUrl.Length > 10 )
+                {
+                    bool isOwner = ( IsUserAuthenticated() && WebUser.Id == entity.CreatedById );
+
+                    if ( entity.PrivilegeTypeId == ContentItem.PUBLIC_PRIVILEGE || isOwner )
+                    {
+                        pageContent.Text += "<p>" + string.Format( docLinkTemplate.Text, fileUrl, entity.RelatedDocument.Title ) + "</p>";
+                    }
+                    else if ( IsUserAuthenticated() == false )
+                    {
+                        pageContent.Text += string.Format( "<h2>{0}</h2>Private document, viewing is not allowed for users who are not logged in.", entity.RelatedDocument.Title );
+                    }
+                    else if ( entity.PrivilegeTypeId >= ContentItem.MY_ORG_PRIVILEGE && WebUser.OrgId != entity.OrgId )
+                    {
+                        pageContent.Text += string.Format( "<h2>{0}</h2>Private document, viewing is only allowed for members of this organization ({1}).", entity.RelatedDocument.Title, entity.Organization );
+                    } //don't have a process for region/state ============================================
+                    //else if ( entity.PrivilegeTypeId > ContentItem.MY_ORG_PRIVILEGE )
+                    //{
+                    //    pageContent.Text += string.Format( "<h2>{0}</h2>Private document, viewing is prohibited.", entity.RelatedDocument.Title );
+                    //}
+                    else
+                    {
+                        //same org, ok for now
+                        pageContent.Text += "<p>" + string.Format( docLinkTemplate.Text, fileUrl, entity.RelatedDocument.Title ) + "</p>";
+                    }
+
+
+                }
+                else
+                {
+                    pageContent.Text += "<br/>Sorry issue encountered locating the related document.<br/>" + entity.Message;
+                }
+            }
+        }//
+
+
         private void PopulateSupplements( ContentItem entity )
         {
+            bool isOwner = ( IsUserAuthenticated() && WebUser.Id == entity.CreatedById );
+
             List<ContentSupplement> list = myManager.ContentSupplementsSelectList( entity.Id );
 
             if ( list.Count > 0 )
@@ -413,85 +552,98 @@ namespace ILPathways.Controls.Content
                 attachmentsPanel.Visible = true;
                 foreach ( ContentSupplement item in list )
                 {
-                    //supplements.Text += item.Title;
+                    //check if file exists on server, if not it will be downloaded
+                    //string fileUrl = ValidateDocumentOnServer( entity, item.RelatedDocument );
+                    string fileUrl = FileResourceController.ValidateSupplementDocumentOnServer( item, item.RelatedDocument, entity );
+
                     if ( item.PrivilegeTypeId > ContentItem.PUBLIC_PRIVILEGE )
                         supplements.Text += "Privilege: " + item.PrivilegeType + "<br/>";
 
                     if ( item.Description.Trim().Length > 0 )
                         supplements.Text += item.Description + "<br/>";
 
-                    if ( IsUserAuthenticated() == false &&
-                        ( entity.PrivilegeTypeId != 1 || item.PrivilegeTypeId != 1 ) )
+                    if ( fileUrl.Length > 10 )
                     {
 
-                        supplements.Text += "<br/>Private document, viewing is prohibited: " + item.Title;
-
-                    }
-                    else
-                    {
-                        if ( item.RelatedDocument != null && item.RelatedDocument.HasValidRowId() )
+                        if ( isOwner || ( entity.PrivilegeTypeId == ContentItem.PUBLIC_PRIVILEGE || item.PrivilegeTypeId == ContentItem.PUBLIC_PRIVILEGE ) )
                         {
-                            //if ( IsTestEnv() )
-                            //    supplements.Text += "<br/>(test only): " + item.RelatedDocument.FileName;
-
-                            //check if file exists on server, if not it will be downloaded
-                            string fileUrl = ValidateDocumentOnServer( entity, item.RelatedDocument );
-                            if ( fileUrl.Length > 10 )
+                            supplements.Text += "" + string.Format( docLinkTemplate.Text, fileUrl, item.Title ) + "<br/>";
+                        }
+                        else
+                        if ( IsUserAuthenticated() == false  )
+                        {
+                            supplements.Text += "<br/>Private document, viewing is not allowed for users who are not logged in: " + item.Title;
+                        }
+                        else if ( entity.PrivilegeTypeId >= ContentItem.MY_ORG_PRIVILEGE && WebUser.OrgId != entity.OrgId )
+                        {
+                            pageContent.Text += string.Format( "<h2>{0}</h2>Private document, viewing is only allowed for members of this organization ({1}).", item.Title, entity.Organization );
+                        } //don't have a process for region/state ============================================
+                        else
+                        {
+                            if ( showingImageAttachmentsInline.Text.Equals( "yes" ) )
                             {
-                                if ( showingImageAttachmentsInline.Text.Equals( "yes" ) )
-                                {
-                                    //would also need to check file size to ensure not excessive
-                                }
-                                /*if ( item.RelatedDocument.MimeType.ToLower().IndexOf("image") > -1
-                                    || fileUrl.ToLower().IndexOf( "jpg" ) > -1 )
-                                {
-                                    //show actual image
-                                    supplements.Text += string.Format( imageLinkTemplate.Text, item.RelatedDocument.RowId ) + "<br/>";
-                                }
-                                else*/
-                                supplements.Text += "" + string.Format( docLinkTemplate.Text, fileUrl, item.Title ) + "<br/>";
-
+                                //would also need to check file size to ensure not excessive
                             }
-                            else
-                                supplements.Text += "<br/>Sorry issue encountered locating the related document.";
+                            /*if ( item.RelatedDocument.MimeType.ToLower().IndexOf("image") > -1
+                                || fileUrl.ToLower().IndexOf( "jpg" ) > -1 )
+                            {
+                                //show actual image
+                                supplements.Text += string.Format( imageLinkTemplate.Text, item.RelatedDocument.RowId ) + "<br/>";
+                            }
+                            else*/
+                            supplements.Text += "" + string.Format( docLinkTemplate.Text, fileUrl, item.Title ) + "<br/>";
+
                         }
                     }
+                    else
+                        supplements.Text += "<br/>Sorry issue encountered locating the related document.";
 
                     supplements.Text += "<br/><hr><br/>";
                 }
 
             }
         }//
-        private string ValidateDocumentOnServer( ContentItem parentEntity, DocumentVersion doc )
-        {
-            string fileUrl = "";
-            try
-            {
+        //private string ValidateDocumentOnServer( ContentItem parentEntity, DocumentVersion doc )
+        //{
+        //    string fileUrl = "";
+        //    string documentFolder = "";
 
-                string documentFolder = FileResourceController.DetermineDocumentPath( parentEntity );
+        //    try
+        //    {
+        //        //should use filePath and fileName from doc
+        //        if ( doc.FileLocation().Length > 0 )
+        //        {
+        //            documentFolder = doc.FilePath;
+        //        }
+        //        else
+        //        {
 
-                string message = FileSystemHelper.HandleDocumentCaching( documentFolder, doc );
-                if ( message == "" )
-                {
-                    //blank returned message means ok
-                    fileUrl = FileResourceController.DetermineDocumentUrl( parentEntity, doc.FileName );
+        //            //string documentFolder = FileResourceController.DetermineDocumentPath( parentEntity );
+        //            FileResourceController.PathParts parts = FileResourceController.DetermineDocumentPathUsingParentItem( parentEntity );
+        //            documentFolder = parts.filePath;
+        //        }
+        //        string message = FileSystemHelper.HandleDocumentCaching( documentFolder, doc, true );
+        //        if ( message == "" )
+        //        {
+        //            //blank returned message means ok
+        //            fileUrl = FileResourceController.DetermineDocumentUrl( parentEntity, doc.FileName );
 
-                }
-                else
-                {
-                    //error, should return a message
-                    this.SetConsoleErrorMessage( message );
-                }
-            }
-            catch ( Exception ex )
-            {
-                LoggingHelper.LogError( ex, thisClassName + ".ValidateDocumentOnServer() - Unexpected error encountered while retrieving document" );
+        //        }
+        //        else
+        //        {
+        //            //error, should return a message
+        //            this.SetConsoleErrorMessage( message );
+        //        }
+        //    }
+        //    catch ( Exception ex )
+        //    {
+        //        LoggingHelper.LogError( ex, thisClassName + ".ValidateDocumentOnServer() - Unexpected error encountered while retrieving document" );
 
-                this.SetConsoleErrorMessage( "Unexpected error encountered - Close this form and try again. (System Admin has been notified)<br/>" + ex.ToString() );
-            }
+        //        this.SetConsoleErrorMessage( "Unexpected error encountered - Close this form and try again. (System Admin has been notified)<br/>" + ex.ToString() );
+        //    }
 
-            return fileUrl;
-        }//
+        //    return fileUrl;
+        //}//
 
         private void PopulateReferences( ContentItem entity )
         {
@@ -532,7 +684,7 @@ namespace ILPathways.Controls.Content
         {
             //Standards
             ResManager standardManager = new ResManager();
-            ResourceStandardCollection standardsList = standardManager.SelectResourceStandardsByVersion( entity.ResourceVersionId );
+            ResourceStandardCollection standardsList = standardManager.ResourceStandards_Select( entity.ResourceIntId );
 
             if ( standardsList != null && standardsList.Count > 0 )
             {
@@ -601,7 +753,7 @@ namespace ILPathways.Controls.Content
             string statusMessage = string.Empty;
             AppUser user = GetAppUser();
 
-            if ( ContentController.HandleApprovedAction( CurrentRecordID, user, ref statusMessage ) == true )
+            if ( PublishingServices.HandleApprovedAction( CurrentRecordID, user, ref statusMessage ) == true )
             {
                 SetConsoleSuccessMessage( "A notification of this approval was sent to the author of this resource. <br>" );
                 //refresh

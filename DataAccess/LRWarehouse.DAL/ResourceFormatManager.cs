@@ -296,7 +296,7 @@ namespace LRWarehouse.DAL
             }
             catch ( Exception ex )
             {
-                LogError( ex, className + string.Format( ".Import() for ResourceId: {0}, CodeId: {1}, Vale: {2}, and CreatedBy: {4}", entity.ResourceId.ToString(), entity.CodeId, entity.OriginalValue, entity.CreatedById ) );
+                LogError( ex, className + string.Format( ".Import() for ResourceId: {0}, CodeId: {1}, Vale: {2}, and CreatedBy: {4}", entity.ResourceIntId.ToString(), entity.CodeId, entity.OriginalValue, entity.CreatedById ) );
                 statusMessage = className + "- Unsuccessful: Import(): " + ex.Message.ToString();
             }
 
@@ -326,7 +326,7 @@ namespace LRWarehouse.DAL
             }
             catch ( Exception ex )
             {
-                LogError( ex, className + string.Format( ".Update() for ResourceId: {0}, CodeId: {1}, Vale: {2}, and UpdatedBy: {4}", entity.ResourceId.ToString(), entity.CodeId, entity.OriginalValue, entity.LastUpdatedById ) );
+                LogError( ex, className + string.Format( ".Update() for ResourceId: {0}, CodeId: {1}, Vale: {2}, and UpdatedBy: {4}", entity.ResourceIntId.ToString(), entity.CodeId, entity.OriginalValue, entity.LastUpdatedById ) );
                 message = className + "- Unsuccessful: Update(): " + ex.Message.ToString();
                 entity.Message = message;
                 entity.IsValid = false;

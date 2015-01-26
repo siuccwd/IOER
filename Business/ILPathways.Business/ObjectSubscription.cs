@@ -5,6 +5,7 @@ using System.Text;
 
 namespace ILPathways.Business
 {
+    [Serializable]
     public class ObjectSubscription : BaseBusinessDataEntity
     {
         public ObjectSubscription() {}

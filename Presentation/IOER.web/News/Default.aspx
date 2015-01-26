@@ -16,6 +16,8 @@
   </style>
   <ajaxToolkit:ToolkitScriptManager runat="Server" EnablePartialRendering="true" ID="ScriptManager1" />
   <div class="mainContent">
+      <h1 class="isleH1">Illinois Open Educational Resources News</h1>
+
   <uc2:News ID="News1" runat="server" 
       AllowingCategoriesPanelDisplay="no"
       NewsItemTemplateCode="IOERS"   

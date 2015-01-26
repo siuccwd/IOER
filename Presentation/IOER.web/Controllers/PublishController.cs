@@ -1,48 +1,78 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-
-
-using ILPathways.Library;
-using LRWarehouse.Business;
-using LRWarehouse.DAL;
-using Resource = LRWarehouse.Business.Resource;
-using Version = LRWarehouse.Business.ResourceVersion;
-using IOERUser = LRWarehouse.Business.Patron;
-
-using LearningRegistry.RDDD;
-using LearningRegistry;
 using System.IO;
-using ILPathways.Utilities;
+using System.Linq;
+using System.Threading;
+using System.Web;
 using System.Web.Script.Serialization;
 
-using System.Threading;
+using ILPathways.Library;
+using ILPathways.Utilities;
+using Isle.BizServices;
+using LearningRegistry;
+using LearningRegistry.RDDD;
+using LRWarehouse.Business;
+using LRWarehouse.DAL;
+using IOERUser = LRWarehouse.Business.Patron;
+using Resource = LRWarehouse.Business.Resource;
+using Thumbnailer = LRWarehouse.DAL.ResourceThumbnailManager;
+using Version = LRWarehouse.Business.ResourceVersion;
 
 namespace ILPathways.Controllers
 {
-  public class PublishController : BaseUserControl
+  class PublishController : BaseUserControl
   {
     public ResourceDataManager dataManager = new ResourceDataManager();
 
     #region Publish Methods
-    public void PublishToAll( Resource input, ref bool isSuccessful, ref string status, ref int versionID, ref int intID, ref string sortTitle, bool skipLRPublish )
+      /// <summary>
+      /// Publish a resource to:
+      /// - LR
+      /// - Database
+      /// - ElasticSearch
+      /// </summary>
+      /// <param name="input"></param>
+      /// <param name="isSuccessful"></param>
+      /// <param name="status"></param>
+      /// <param name="versionID"></param>
+      /// <param name="intID"></param>
+      /// <param name="sortTitle"></param>
+    /// <param name="updatingElasticSearch"></param>
+      /// <param name="skipLRPublish"></param>
+    public void PublishToAll( Resource input, 
+                ref bool isSuccessful, 
+                ref string status, 
+                ref int versionID, 
+                ref int intID, 
+                ref string sortTitle,
+                bool updatingElasticSearch,
+                bool skipLRPublish )
     {
       bool success = true;
       string tempStatus = "";
       string lrDocID = "";
+      string continueOnPublishError = UtilityManager.GetAppKeyValue( "continueOnPublishError", "yes" );
+
       //Publish to LR. This will give us an LR Doc ID
       if ( !skipLRPublish )
       {
         PublishToLearningRegistry( input, ref success, ref tempStatus, ref lrDocID );
         if ( !success && !new Services.WebDALService().IsLocalHost() )
         {
-          isSuccessful = false;
-          SetConsoleErrorMessage( "Error: " + tempStatus );
-          status = status + " " + tempStatus + " ";
-          versionID = 0;
-          return;
+            if ( continueOnPublishError == "no" )
+            {
+                isSuccessful = false;
+                SetConsoleErrorMessage( "Error: " + tempStatus );
+                status = status + " " + tempStatus + " ";
+                versionID = 0;
+                return;
+            }
+            else
+            {
+                EmailManager.NotifyAdmin( "Error during LR Publish", "Error: " + tempStatus + "<p>The error was encountered during the LR publish. The system continued with saving to the database and elastic search. </p>" );
+            }
         }
+
       }
       input.Version.LRDocId = lrDocID;
 
@@ -61,28 +91,32 @@ namespace ILPathways.Controllers
       input.Id = intID;
 
       //If successful, publish to ElasticSearch
-      PublishToElasticSearch( input, ref success, ref tempStatus );
-      if ( !success )
+      if ( updatingElasticSearch )
       {
-        isSuccessful = false;
-        SetConsoleErrorMessage( "Error: " + tempStatus );
-        status = status + " " + tempStatus + " ";
-        versionID = 0;
-        return;
+          PublishToElasticSearch( input, ref success, ref tempStatus );
+          if ( !success )
+          {
+              isSuccessful = false;
+              SetConsoleErrorMessage( "Error: " + tempStatus );
+              status = status + " " + tempStatus + " ";
+              versionID = 0;
+              return;
+          }
       }
-
       isSuccessful = true;
       status = "okay";
       SetConsoleSuccessMessage( "Successfully published the Resource" );
 
       //new ResourceThumbnailManager().CreateThumbnailAsynchronously( input.Id, input.ResourceUrl, false );
-      new ResourceThumbnailManager().CreateThumbnail( input.Id, input.ResourceUrl );
+      new Thumbnailer().CreateThumbnail( input.Id, input.ResourceUrl );
+
+      SendPublishNotification( (Patron) WebUser, input );
     }
 
-    public void PublishToLearningRegistry( Resource input, ref bool successful, ref string status, ref string lrDocID )
+    public lr_Envelope CreateLREnvelope( Resource input, ref bool successful, ref string status )
     {
       //Create payload
-      var payload =  new ResourceJSONManager().GetJSONLRMIFromResource( input );
+      var payload = new ResourceJSONManager().GetJSONLRMIFromResource( input );
 
       //Create document
       lr_document doc = new lr_document();
@@ -118,6 +152,16 @@ namespace ILPathways.Controllers
       lr_Envelope envelope = new lr_Envelope();
       envelope.documents.Add( doc );
 
+      return envelope;
+    }
+
+    public void PublishToLearningRegistry( Resource input, ref bool successful, ref string status, ref string lrDocID )
+    {
+      var envelope = CreateLREnvelope( input, ref successful, ref status );
+      PublishToLearningRegistry( envelope, ref successful, ref status, ref lrDocID );
+    }
+    public void PublishToLearningRegistry( lr_Envelope envelope, ref bool successful, ref string status, ref string lrDocID )
+    {
       //Do publish
       string node = UtilityManager.GetAppKeyValue( "learningRegistryNodePublish" ); //"https://node01.public.learningregistry.net", "http://sandbox.learningregistry.org/"
       string clientID = "info@siuccwd.com";
@@ -139,6 +183,7 @@ namespace ILPathways.Controllers
         lrDocID = "";
         status = "Failed to Publish: " + ex.Message;
       }
+
     }
 
     public void PublishToDatabase( Resource input, ref bool successful, ref string status, ref int versionID, ref int intID, ref string sortTitle )
@@ -187,6 +232,7 @@ namespace ILPathways.Controllers
         var standardManager = new ResourceStandardManager();
         foreach ( ResourceStandard standard in input.Standard )
         {
+          standard.ResourceIntId = intID;
           standardManager.Create( standard, ref status );
         }
 
@@ -207,7 +253,8 @@ namespace ILPathways.Controllers
       //Do create
       try
       {
-        new ElasticSearchManager().CreateOrReplaceRecord( input.Id );
+        //new ElasticSearchManager().CreateOrReplaceRecord( input.Id );
+        new ElasticSearchManager().RefreshResource( input.Id );
         successful = true;
         status = "okay";
       }
@@ -218,6 +265,22 @@ namespace ILPathways.Controllers
       }
     }
 
+    public void BuildSaveLRDocument( Resource input, ref bool successful, ref string status )
+    {
+      var envelope = CreateLREnvelope( input, ref successful, ref status );
+      var pending = new PublishPending()
+      {
+        ResourceId = input.Id,
+        ResourceVersionId = input.Version.Id,
+        Reason = "Resource requires approval.",
+        CreatedById = input.CreatedById,
+        LREnvelope = new JavaScriptSerializer().Serialize(envelope)
+      };
+
+      new ResourceManager().PublishPending_Create( pending, ref status );
+
+    }
+
     #endregion
 
     #region Helper Methods
@@ -225,9 +288,11 @@ namespace ILPathways.Controllers
     {
         string toEmail = UtilityManager.GetAppKeyValue( "contactUsMailTo", "info@ilsharedlearning.org" );
         string cc = UtilityManager.GetAppKeyValue( "onPublishCC", "" );
-        string bcc = UtilityManager.GetAppKeyValue( "systemAdminEmail", "mparsons@siuccwd.com" );
+        string bcc = UtilityManager.GetAppKeyValue( "appAdminEmail", "mparsons@siuccwd.com" );
+        string fromEmail = user.Email;
+
         string subject = string.Format( "IOER - New publish notification from: {0}", user.FullName() );
-        string body = string.Format( "<p>{0} published a new resource to the Learning Registry. </p>", user.FullName() );
+        string body = string.Format( "<p>{0} published a new resource to IOER. </p>", user.FullName() );
         if ( resource.Version != null )
         {
             body += "<br/>Resource: " + resource.Version.Title;
@@ -237,62 +302,16 @@ namespace ILPathways.Controllers
         body += "<br/><br/>Target Url: " + string.Format( "<a href='{0}'>{1}</a>", resource.ResourceUrl, resource.ResourceUrl );
 
         //string url = UtilityManager.FormatAbsoluteUrl( string.Format( "/ResourceDetail.aspx?vid={0}", resource.Version.Id ), true );
-        string title = FormatFriendlyTitle( resource.Version.Title );
-        string url2 = FormatFriendlyResourceUrl( resource.Version );   // UtilityManager.FormatAbsoluteUrl( string.Format( "/IOER/{0}/{1}", resource.Version.Id, title ), true );
+        //string title = FormatFriendlyTitle( resource.Version.Title );
+        string url2 = ResourceBizService.FormatFriendlyResourceUrl( resource.Version );   
+        
 
         body += "<br/><br/>Detail Url: " + string.Format( "<a href='{0}'>View published resource</a>", url2 );
 
         body += "<br/>From: " + user.EmailSignature();
         //string from = applicant.Email;
-        EmailManager.SendEmail( toEmail, toEmail, subject, body, cc, bcc );
+        EmailManager.SendEmail( toEmail, fromEmail, subject, body, cc, bcc );
     }
-    /// <summary>
-    /// Format a friendly url for resource
-    /// </summary>
-    /// <param name="entity"></param>
-    /// <returns></returns>
-    public string FormatFriendlyResourceUrl( ResourceVersion entity )
-    {
-        string title = FormatFriendlyTitle( entity.Title );
-        return UtilityManager.FormatAbsoluteUrl( string.Format( "/IOER/{0}/{1}", entity.Id, title ), true );
-    }
-
-    /// <summary>
-    /// Format a string for friendly url display
-    /// NOTE: with change to use the sort title, a number of the rules can be skipped
-    /// ==> note that we need to handle authored content first
-    /// </summary>
-    /// <param name="text"></param>
-    /// <returns></returns>
-    public string FormatFriendlyTitle( string text )
-    {
-        if ( text == null || text.Trim().Length == 0 )
-            return "";
-
-        string title = text;
-        title = title.Replace( " - ", "-" );
-        //convert
-        title = title.Replace( ".", "-" );
-        title = title.Replace( "%", "percent" );
-        //remove
-
-        title = title.Replace( "&#039;", "" );
-        title = title.Replace( ",", "" );
-        title = title.Replace( "'", "" );
-        title = title.Replace( "$", "" );
-        title = title.Replace( "+", "" );
-        title = title.Replace( "#", "" );
-        title = title.Replace( "?", "" );
-        title = title.Replace( ":", "" );
-        title = title.Replace( "\"", "" );
-        title = title.Replace( ")", "" );
-        title = title.Replace( "(", "" );
-
-        title = title.Replace( " ", "_" );
-
-        title = HttpUtility.HtmlEncode( title );
-        return title;
-    }//
 
     private void CreateMVFs( List<ResourceChildItem> input, ResourceDataManager.IResourceDataSubclass className, int intID, int createdByID )
     {

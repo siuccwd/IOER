@@ -202,7 +202,17 @@ namespace ILPathways.Business
 		#endregion
 
 		#region Helper Methods
-
+        /// <summary>
+        /// There may be occasions when a documentVersion is retrieved with the byte array (for speed efficiency)). This property can be used to determine if the actual resource needs to be fetched.
+        /// </summary>
+        /// <returns></returns>
+        public bool HasDocument()
+        {
+            if ( ResourceBytes > 0 )
+                return true;
+            else
+                return false;
+        }
        
 		/// <summary>
 		/// Assign the resource data from an object
@@ -237,12 +247,31 @@ namespace ILPathways.Business
             if ( FileName == null || FileName.Trim() == "" )
                 return;
 
+            FileName = FileName.Replace( " & ", " and " );
             FileName = FileName.Replace( " ", "_" );
+            
             FileName = FileName.Replace( "'", "" );
             FileName = FileName.Replace( "/", "_" );
             FileName = FileName.Replace( "\\", "_" );
             FileName = FileName.Replace( "#", "_" );
+            FileName = FileName.Replace( "&", "_" );
+        }
 
+        /// <summary>
+        /// Return absolute path to the file
+        /// </summary>
+        /// <returns></returns>
+        public string FileLocation()
+        {
+            if ( FileName == null || FileName.Trim() == "" )
+                return "";
+            if ( FilePath == null || FilePath.Trim() == "" )
+                return "";
+
+            if ( FilePath.Trim().EndsWith( "\\" ) )
+                return FilePath + FileName;
+            else 
+                return FilePath + "\\" + FileName;
         }
 		#endregion
 	} // end class 

@@ -38,8 +38,9 @@
       <HintPath>..\..\Library\Interop.Scripting.dll</HintPath>
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
-    <Reference Include="nClam">
-      <HintPath>..\..\packages\nClam.2.0.0.0\lib\net40-Client\nClam.dll</HintPath>
+    <Reference Include="nClam, Version=2.0.6.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\nClam.2.0.6.0\lib\net40-Client\nClam.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.configuration" />
@@ -75,9 +76,10 @@
       <Project>{cae031c2-7899-4cc3-9772-0787e65977a2}</Project>
       <Name>ILPathways.Business</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
+    <ProjectReference Include="..\google-safebrowse-v2-client\Safebrowsev2\SafebrowseV2.csproj">
+      <Project>{7da36d86-757e-48e3-8c82-545ee59cf820}</Project>
+      <Name>SafebrowseV2</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="bin\Debug\ILPathways.Business.dll" />
@@ -89,6 +91,9 @@
     <Content Include="bin\Release\ILPathways.Business.pdb" />
     <Content Include="bin\Release\ILPathways.Utilities.dll" />
     <Content Include="bin\Release\ILPathways.Utilities.pdb" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

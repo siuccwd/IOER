@@ -4,23 +4,24 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head runat="server">
-    <title>Illinois OERS Queries</title>
+    <title>IOER Queries</title>
     	<style type="text/css">
 		@import "/Styles/common.css";
 	</style>
 <style type="text/css">
-body { background-color: #808080; } 
+body { background-color: whitesmoke; } 
 .roundedPanel
 {	
-	width:90%;
-	background-color:aliceblue;
+	width:90%; padding: 5px;
+	background-color:coral;
 	color:black;
 	font-weight:bold;
 	border: 2px solid #000;
+    border-radius: 5px ;
 }
 .dataColumn {width: 500px; }  
 h1 { color: #fff;}
-a, a:visited { color: #fff;}
+a, a:visited { color: #000;}
 #rowCount { color: #000;}
 </style>
 
@@ -28,8 +29,10 @@ a, a:visited { color: #fff;}
 <body>
     <form id="form1" runat="server">
     <asp:ScriptManager ID="ScriptManager1" runat="server" />	
-    <div>
-    			<h1>Illinois OERS  Queries</h1>
+        <div style="margin: 0px 20px;">
+                			<h1>Illinois OER Queries</h1>
+    <div style="margin-left: 10px;">
+
 		<asp:HyperLink ID="workNetAdminReturnLink" NavigateUrl="/" runat="server" Visible="false" >Back</asp:HyperLink>			
 		
 		<br /><asp:HyperLink ID="closeLink" NavigateUrl="javascript:window.close();" runat="server" Visible="true"  Text="Close Form"></asp:HyperLink>
@@ -145,7 +148,7 @@ a, a:visited { color: #fff;}
 			</asp:panel>
 			
 			<asp:literal ID="showingTitleToAll" runat="server" Visible="false">yes</asp:literal>
-
+        </div>
 
     </form>
 </body>

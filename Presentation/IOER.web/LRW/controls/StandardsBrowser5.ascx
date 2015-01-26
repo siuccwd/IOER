@@ -456,7 +456,7 @@
             //Linking
             $("#searchLink").html("");
             if (widgetQuery.length > 0) {
-                $("#searchLink").html("<a href=\"http://ioer.ilsharedlearning.org/Search.aspx?sids=" + widgetQuery + "\" target=\"_blank\">Click Here to search for the items selected below</a>");
+                $("#searchLink").html("<a href=\"//ioer.ilsharedlearning.org/Search.aspx?sids=" + widgetQuery + "\" target=\"_blank\">Click Here to search for the items selected below</a>");
             }
 
         }

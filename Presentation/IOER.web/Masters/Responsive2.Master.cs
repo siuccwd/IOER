@@ -27,7 +27,14 @@ namespace ILPathways.Masters
                 hideHdr = SessionManager.Get( HttpContext.Current.Session, "HideHeader", "" );
             }
 
-            if ( hideHdr.Equals( "y" ) )
+            if ( hideHdr.Equals( "temp" ) )
+            {
+                //hide, but only for current
+                this.header.Visible = false;
+                pagefooter.Visible = false;
+
+            }
+            else if ( hideHdr.Equals( "y" ) )
             {
                 //this.header1.Visible = false;
                 this.header.Visible = false;

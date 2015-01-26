@@ -133,6 +133,17 @@ namespace ILPathways.Business
             }
         }
     }
+    /// <summary>
+    /// Return a url friendly title
+    /// </summary>
+    public string FriendlyTitle
+    {
+        get
+        {
+            return UrlFriendlyTitle( this._title);
+        }
+ 
+    }
     private string _description = "";
     /// <summary>
     /// Gets/Sets Description
@@ -289,6 +300,18 @@ namespace ILPathways.Business
         {
             ImageUrl = value.Trim();
         }
+    }
+
+    public string FriendlyUrl
+    {
+        get
+        {
+            if ( Id == 0 )
+                return "";
+            else
+                return string.Format( "/Library/Collection/{0}/{1}/{2}",LibraryId, Id, this.FriendlyTitle );
+        }
+
     }
     #endregion
 

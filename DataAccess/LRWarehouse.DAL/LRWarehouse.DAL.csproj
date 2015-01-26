@@ -34,15 +34,15 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Elasticsearch.Net, Version=1.0.0.0, Culture=neutral, PublicKeyToken=96c599bbe3e70f5d, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\Elasticsearch.Net.1.3.1\lib\Elasticsearch.Net.dll</HintPath>
+    </Reference>
     <Reference Include="Glimpse.Ado">
-      <HintPath>..\..\LR_Import\packages\Glimpse.Ado.1.7.0\lib\net40\Glimpse.Ado.dll</HintPath>
+      <HintPath>..\..\packages\Glimpse.Ado.1.7.3\lib\net40\Glimpse.Ado.dll</HintPath>
     </Reference>
     <Reference Include="Glimpse.Core">
-      <HintPath>..\..\LR_Import\packages\Glimpse.1.8.2\lib\net40\Glimpse.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.ApplicationBlocks.Data, Version=2.0.0.0, Culture=neutral">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\LR_Import\bin\Release\Microsoft.ApplicationBlocks.Data.dll</HintPath>
+      <HintPath>..\..\packages\Glimpse.1.8.6\lib\net40\Glimpse.Core.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.configuration" />
@@ -59,9 +59,11 @@
     <Compile Include="%40TemplateManager_GuidPK.cs" />
     <Compile Include="AuditReportingManager.cs" />
     <Compile Include="BaseDataManager.cs" />
+    <Compile Include="BlacklistedHostManager.cs" />
     <Compile Include="CleanseUrlManager.cs" />
     <Compile Include="CodeTableManager.cs" />
     <Compile Include="DatabaseManager.cs" />
+    <Compile Include="ElasticSearchManagerOLD.cs" />
     <Compile Include="ElasticSearchManager.cs" />
     <Compile Include="IResourceIntManager.cs" />
     <Compile Include="IResourceManager.cs" />
@@ -125,31 +127,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="bin\Debug\ILPathways.Business.dll" />
-    <Content Include="bin\Debug\ILPathways.Business.pdb" />
-    <Content Include="bin\Debug\ILPathways.Common.dll" />
-    <Content Include="bin\Debug\ILPathways.Common.pdb" />
-    <Content Include="bin\Debug\ILPathways.Utilities.dll" />
-    <Content Include="bin\Debug\ILPathways.Utilities.pdb" />
-    <Content Include="bin\Debug\LRWarehouse.Business.dll" />
-    <Content Include="bin\Debug\LRWarehouse.Business.pdb" />
-    <Content Include="bin\Debug\LRWarehouse.DAL.dll" />
-    <Content Include="bin\Debug\LRWarehouse.DAL.pdb" />
-    <Content Include="bin\Debug\Microsoft.ApplicationBlocks.Data.dll" />
-    <Content Include="bin\Debug\nClam.dll" />
-    <Content Include="bin\Release\ILPathways.Business.dll" />
-    <Content Include="bin\Release\ILPathways.Business.pdb" />
-    <Content Include="bin\Release\ILPathways.Common.dll" />
-    <Content Include="bin\Release\ILPathways.Common.pdb" />
-    <Content Include="bin\Release\ILPathways.Utilities.dll" />
-    <Content Include="bin\Release\ILPathways.Utilities.pdb" />
-    <Content Include="bin\Release\LRWarehouse.Business.dll" />
-    <Content Include="bin\Release\LRWarehouse.Business.pdb" />
-    <Content Include="bin\Release\LRWarehouse.DAL.dll" />
-    <Content Include="bin\Release\LRWarehouse.DAL.pdb" />
-    <Content Include="bin\Release\Microsoft.ApplicationBlocks.Data.dll" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

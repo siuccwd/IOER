@@ -64,6 +64,7 @@ a.textLink:hover {
 a img {
   border: none;
 }
+ul { margin-left: 20px; }
 
 input[type=text], input[type=password], select, textarea {
   border: 1px solid #CCC;
@@ -105,7 +106,7 @@ input[type=text], input[type=password], select, textarea {
   font-size: 18px;
   color: #E6E6E6;
 }
-.isleH3, .isleH3_Block, .isleH3 a, .isleH3_Block a {
+.isleH3, .isleH3_Block, .isleH3_SectionHdr, .isleH3 a, .isleH3_Block a {
   font-size: 16px;
   color: #4F4E4F;
   margin: 5px;
@@ -114,6 +115,20 @@ input[type=text], input[type=password], select, textarea {
   border-left: 10px solid #4F4E4F;
   border-radius: 5px;
   padding: 0 5px;
+  border-bottom: 2px solid #4F4F4F;
+  margin-left: 2px;
+}
+.isleH3, .isleH3_Block, .isleH3 a, .isleH3_Block a {
+  font-size: 16px;
+  color: #4F4E4F;
+  margin: 5px;
+}
+.isleH3_SectionHdr {
+  border-left: 10px solid #4F4E4F;
+  border-right: 10px solid #4F4E4F;
+  border-radius: 5px;
+  padding: 0 5px;
+  border-top: 2px solid #4F4F4F;
   border-bottom: 2px solid #4F4F4F;
   margin-left: 2px;
 }
@@ -336,13 +351,23 @@ input[type=text], input[type=password], select, textarea {
 }
 .successMessage a { color: #FFF; text-decoration: underline; }
 .successMessage a:hover, .successMessage a:focus { color: #FFF; text-shadow: 0 0 5px #FFF; }
+    .labelTop{
+        display: inline-block;
+        color: #000;
+        width: 90%;
+        padding: 0 2px 0 5px;
+        font-weight: bold;
+        font-size: 100%;
+        vertical-align: top;
+        text-align: left;
+    }
     .labelColumn {
         display: inline-block;
         color: #000;
         width: 150px;
         padding: 0 2px 0 5px;
         font-weight: bold;
-        font-size: 90%;
+        font-size: 100%;
         vertical-align: top;
         text-align: right;
     }

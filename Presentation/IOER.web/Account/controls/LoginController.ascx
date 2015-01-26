@@ -20,7 +20,7 @@
   #loginBox { margin: 50px auto; max-width: 500px; text-align: center; padding: 20px 10px 10px 10px; }
   #loginErrorMessage { background-color: #B03D25; color: #FFF; font-weight: bold; margin: 10px; max-width: 500px; }
   #loginBox label { width: 20%; text-align: right; }
-  #loginBox input[type=text], #loginBox input[type=password] { width: 78%; font-size: 30px; }
+  #loginBox input[type=text], #loginBox input[type=password] { width: 78%; }
   #loginBox input[type=button], #loginBox input[type=submit] { width: 46%; margin: 1%; }
   #loginBox * { margin-bottom: 10px; }
   #loginBox #forgotPasswordLink { font-weight: bold; color: #B03D25; display: block; }
@@ -34,7 +34,7 @@
   <h1 class="isleH1">IOER Login</h1>
   <div class="grayBox errorMessage bgRed" id="loginErrorMessage" runat="server"><%=errorMessage %></div>
   <div id="loginBox" class="grayBox bigText">
-    <label>User Name</label><asp:textbox runat="server" CssClass="textBox" id="txtUserName" name="userName" />
+    <label>Name/Email</label><asp:textbox runat="server" CssClass="textBox" id="txtUserName" name="userName" />
     <label>Password</label><asp:textbox runat="server" CssClass="textBox" TextMode="password" id="txtPassword" name="password" />
     <asp:Button CssClass="loginButton isleButton bgGreen" runat="server" ID="loginPathwaysButton" Text="Login" OnClientClick="validateLoginForm()" onclick="loginPathwaysButton_Click" />
     <input id="registerButton" type="button" class="loginButton isleButton bgGreen" onclick="window.location = '/Account/Register.aspx'" value="Register" />
@@ -47,4 +47,7 @@
   <asp:HiddenField runat="server" ID="hdnLinkedInID" Value="" />
   <br /><asp:Button width="145" CssClass="loginButton defaultButton" runat="server" ID="loginWorknetButton" Visible="false" Text="Login via workNet " OnClientClick="validateLoginForm()" onclick="loginWorknetButton_Click" /> 
 <asp:Literal ID="txtReturnUrl" runat="server" Visible="false">/</asp:Literal>
+    <asp:Literal ID="forcingNextUrlAsHttp" runat="server" Visible="false">yes</asp:Literal>
+<asp:Literal ID="autoCreateLibraryOnActivate" runat="server" Visible="false">yes</asp:Literal>
+<asp:Literal ID="libraryCreateMsg" runat="server" Visible="false">Your personal library was created. <br />To customize, <a href="/My/Library">navigate to My/Library</a>. Be sure to review the getting started guide for information on libraries</asp:Literal>
 </asp:Panel>

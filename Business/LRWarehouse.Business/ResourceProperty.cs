@@ -11,12 +11,20 @@ namespace LRWarehouse.Business
     public class ResourceProperty : BaseBusinessDataEntity
     {
         #region Properties
-        private Guid _resourceId;
-		public Guid ResourceId
-		{
-			get { return this._resourceId; }
-			set { this._resourceId = value; }
-		}
+        //private Guid _resourceId;
+        //public Guid ResourceId
+        //{
+        //    get { return this._resourceId; }
+        //    set { this._resourceId = value; }
+        //}
+
+        private int _resourceIntId;
+        public int ResourceIntId
+        {
+            get { return this._resourceIntId; }
+            set { this._resourceIntId = value; }
+        }
+
 
 		/// <summary>
 		/// future???
@@ -46,13 +54,6 @@ namespace LRWarehouse.Business
         {
             get { return this.Created; }
             set { this.Created = value; }
-        }
-
-        private int _resourceIntId;
-        public int ResourceIntId
-        {
-            get { return this._resourceIntId; }
-            set { this._resourceIntId = value; }
         }
 
         #endregion

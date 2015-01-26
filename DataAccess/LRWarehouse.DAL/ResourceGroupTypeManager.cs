@@ -93,9 +93,9 @@ namespace LRWarehouse.DAL
         }
         public int Create( MyEntity entity, ref string statusMessage )
         {
-            string resourceRowId = "";
-            if ( entity.ResourceId.ToString() != entity.DEFAULT_GUID )
-                resourceRowId = entity.ResourceId.ToString();
+            //string resourceRowId = "";
+            //if ( entity.ResourceId.ToString() != entity.DEFAULT_GUID )
+            //    resourceRowId = entity.ResourceId.ToString();
 
             return Create( entity.ResourceIntId, entity.CodeId, entity.CreatedById, ref statusMessage );
         }
@@ -295,7 +295,7 @@ namespace LRWarehouse.DAL
             try
             {
                 #region SqlParameters
-                SqlParameter[] parameters = new SqlParameter[5];
+                SqlParameter[] parameters = new SqlParameter[4];
                 parameters[0] = new SqlParameter("@ResourceIntId", entity.ResourceIntId);
                 parameters[1] = new SqlParameter("@GroupTypeId", entity.CodeId);
                 parameters[2] = new SqlParameter("@OriginalValue", SqlDbType.VarChar);
@@ -311,7 +311,7 @@ namespace LRWarehouse.DAL
                 parameters[3] = new SqlParameter("@TotalRows", 0);
                 parameters[3].Direction = ParameterDirection.Output;
                 parameters[3].Value = 0;
-                parameters[4] = new SqlParameter("@ResourceRowId", entity.ResourceId);
+                //parameters[4] = new SqlParameter("@ResourceRowId", entity.ResourceId);
                 #endregion
 
                 DataSet ds = SqlHelper.ExecuteDataset(ConnString, CommandType.StoredProcedure, IMPORT_PROC, parameters);

@@ -14,7 +14,7 @@ namespace Isle.BizServices
 {
     public class GatewayServices
     {
-        GatewayEntities1 ctx = new GatewayEntities1();
+        GatewayContext ctx = new GatewayContext();
 
         #region Groups
         public int CreateGroup( AppGroup entity )
@@ -146,6 +146,8 @@ namespace Isle.BizServices
             try
             {
                 ctx.AppVisitLogs.Add( log );
+                int count = ctx.SaveChanges();
+
                 if (showingTrace)
                     LoggingHelper.DoTrace( 1, string.Format( "session start: sId-{0}; Server-{1}; Comment-{2}; remoteIP-{3} ", sessionId, serverName, comment, remoteIP ));
             }
@@ -154,26 +156,7 @@ namespace Isle.BizServices
                 //log error and ignore
                 System.DateTime visitDate = System.DateTime.Now;
                 LoggingHelper.DoTrace( 1, string.Format( "session start: sId-{0}; Server-{1}; Comment-{2}; remoteIP-{3} ", sessionId, serverName, comment, remoteIP ) );
-                //string logEntry = sessionId + ","
-                //        + visitDate.ToString() + ","
-                //        + template + ","
-                //        + queryString + ",'"
-                //        + parmString + "',"
-                //        + isPostBack + ","
-                //        + userid + ","
-                //        + partner + ","
-                //        + "'" + comment + "',"
-                //        + remoteIP + ","
-                //        + officeId + ","
-                //        + serverName + ","
-                //        + pathway + ","
-                //        + lang + ","
-                //        + mainChannel + ","
-                //        + currentZip
-                //        ;
-
-                //LogError( e, "LogManager.LogPageVisit() Exception: See trace log for entry\r\n " + queryString );
-                //this.DoTrace( 1, "LogManager.LogPageVisit():\r\n " + logEntry );
+               
 
             }
         } //

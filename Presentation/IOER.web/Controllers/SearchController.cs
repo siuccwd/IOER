@@ -15,7 +15,6 @@ using ILPathways.Library;
 using ILPathways.Utilities;
 
 using LRWarehouse.DAL;
-using WebControlLibrary;
 
 
 namespace ILPathways.Controllers 
@@ -119,7 +118,7 @@ namespace ILPathways.Controllers
 
         #endregion
 
-        private void PopulateNarrowedCbxList( skmCheckBoxList cbxl, DataTable dt, string title )
+        private void PopulateNarrowedCbxList( CheckBoxList cbxl, DataTable dt, string title )
         {
 
             if ( dt != null && dt.Rows.Count > 0 )
@@ -225,22 +224,22 @@ namespace ILPathways.Controllers
         /// </summary>
 
 
-        public void PopulateClustersCbxList( skmCheckBoxList cbxl )
+        public void PopulateClustersCbxList( CheckBoxList cbxl )
         {
             ResourceCheckBoxFiller.FillCheckBoxListFromCareerClusters( cbxl, "FormattedTitle");
         }
 
-        public void PopulateAccessRightsList( skmCheckBoxList cbxl )
+        public void PopulateAccessRightsList( CheckBoxList cbxl )
         {
             ResourceCheckBoxFiller.FillCheckBoxList( cbxl, "Codes.AccessRights", "FormattedTitle", "SortOrder" );
         }
 
-        public void PopulateAlignmentTypeList( skmCheckBoxList cbxl )
+        public void PopulateAlignmentTypeList( CheckBoxList cbxl )
         {
             ResourceCheckBoxFiller.FillCheckBoxList( cbxl, "Codes.AlignmentType", "FormattedTitle", "FormattedTitle" );
         }
 
-        public void PopulateAudienceTypeList( skmCheckBoxList cbxl )
+        public void PopulateAudienceTypeList( CheckBoxList cbxl )
         {
             ResourceCheckBoxFiller.FillCheckBoxList( cbxl, "Codes.AudienceType", "FormattedTitle", "FormattedTitle", true );
         }
@@ -257,7 +256,7 @@ namespace ILPathways.Controllers
 
         }
 
-        public void PopulateGradeLevelCbxList( skmCheckBoxList cbxl )
+        public void PopulateGradeLevelCbxList( CheckBoxList cbxl )
         {
             ResourceCheckBoxFiller.FillCheckBoxList( cbxl, "Codes.GradeLevel", "FormattedTitle", "SortOrder", true );
         }
@@ -271,7 +270,7 @@ namespace ILPathways.Controllers
         {
             ResourceCheckBoxFiller.FillCheckBoxList( cbxl, "Codes.ItemType", "Title", "Title" );
         }
-        public void PopulateInteractivityTypeList( skmCheckBoxList cbxlGroupType )
+        public void PopulateInteractivityTypeList( CheckBoxList cbxlGroupType )
         {
             ResourceCheckBoxFiller.FillCheckBoxList( cbxlGroupType, "Codes.InteractivityType", "Title", "Title" );
         }
@@ -293,18 +292,18 @@ namespace ILPathways.Controllers
                 ddlLanguages.SelectedIndex = 1;
         } //
 
-        public void PopulateEducationLevelList( skmCheckBoxList cbxl )
+        public void PopulateEducationLevelList( CheckBoxList cbxl )
         {
             ResourceCheckBoxFiller.FillCheckBoxList( cbxl, "Codes.PathwaysEducationLevel", "FormattedTitle", "SortOrder" );
         }
 
-        public void PopulateResFormatsList( skmCheckBoxList cbxl )
+        public void PopulateResFormatsList( CheckBoxList cbxl )
         {
             ResourceCheckBoxFiller.FillCheckBoxList( cbxl, "Codes.ResourceFormat", "FormattedTitle", "FormattedTitle" );
         }
 
 
-        public void PopulateResTypeList( skmCheckBoxList cbxl )
+        public void PopulateResTypeList( CheckBoxList cbxl )
         {
             ResourceCheckBoxFiller.FillCheckBoxList( cbxl, "Codes.ResourceType", "FormattedTitle", "Title" );
         }

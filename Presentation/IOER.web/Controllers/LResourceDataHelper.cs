@@ -10,7 +10,7 @@ using System.Web.UI.WebControls;
 using ILPathways.Utilities;
 
 using LRWarehouse.DAL;
-using skmCheckBoxList = WebControlLibrary.skmCheckBoxList;
+
 
 namespace ILPathways.Controllers
 {
@@ -33,9 +33,9 @@ namespace ILPathways.Controllers
         /// </summary>
         /// <param name="pResourceId"></param>
         /// <param name="iManager">a IResourceManager</param>
-        /// <param name="currentList">a skmCheckBoxList</param>
+        /// <param name="currentList">a CheckBoxList</param>
         /// <returns></returns>
-        public DataSet PopulateCheckBoxList( string pResourceId, IResourceManager iManager, skmCheckBoxList currentList )
+        public DataSet PopulateCheckBoxList( string pResourceId, IResourceManager iManager, CheckBoxList currentList )
         {
             currentList.Items.Clear();
 
@@ -78,7 +78,7 @@ namespace ILPathways.Controllers
         public bool CheckBoxListUpdateItem( string pResourceId, 
                         IResourceManager iManager, 
                         DataSet currentTarget, 
-                        skmCheckBoxList currentList, 
+                        CheckBoxList currentList, 
                         int userId,
                         ref string statusMessage )
         {
@@ -154,7 +154,7 @@ namespace ILPathways.Controllers
         public DataSet CheckBoxListUpdateItem2( string pResourceId,
                         IResourceManager iManager,
                         DataSet currentTarget,
-                        skmCheckBoxList currentList,
+                        CheckBoxList currentList,
                         int userId,
                         ref string statusMessage )
         {
@@ -237,9 +237,9 @@ namespace ILPathways.Controllers
         /// </summary>
         /// <param name="pResourceId"></param>
         /// <param name="iManager">a IResourceManager</param>
-        /// <param name="currentList">a skmCheckBoxList</param>
+        /// <param name="currentList">a CheckBoxList</param>
         /// <returns></returns>
-        public DataSet PopulateCheckBoxList( int pResourceId, IResourceIntManager iManager, skmCheckBoxList currentList )
+        public DataSet PopulateCheckBoxList( int pResourceId, IResourceIntManager iManager, CheckBoxList currentList )
         {
             currentList.Items.Clear();
 
@@ -282,7 +282,7 @@ namespace ILPathways.Controllers
         public bool CheckBoxListUpdateItem( int pResourceId,
                         IResourceIntManager iManager,
                         DataSet currentTarget,
-                        skmCheckBoxList currentList,
+                        CheckBoxList currentList,
                         int userId,
                         ref string statusMessage )
         {
@@ -357,7 +357,7 @@ namespace ILPathways.Controllers
         public DataSet CheckBoxListUpdateApply( int pResourceId,
                         IResourceIntManager iManager,
                         DataSet currentTarget,
-                        skmCheckBoxList currentList,
+                        CheckBoxList currentList,
                         int userId,
                         ref string statusMessage )
         {

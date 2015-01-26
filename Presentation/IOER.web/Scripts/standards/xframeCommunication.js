@@ -8,8 +8,8 @@
 }
 
 function resizeIframePipe(e, pipeData) {
-    console.log("content changed");
     var url = getParam("helperUrl");
+    if (url == "") { return; }
     var view = (pipeData && pipeData.view) ? pipeData.view : getParam("view");
     var urlParams = url + "?height=" + $("#standardsBrowser").height() + (view ? "&view=" + view : "") + "&cacheb=" + Math.random();
 

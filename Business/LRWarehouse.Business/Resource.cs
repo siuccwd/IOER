@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Linq;
 using System.Text;
 using System.Xml;
 
@@ -17,12 +18,16 @@ namespace LRWarehouse.Business
         }
 
         #region === Properties ===
+       // public int Id { get; set; }
+
         private string _resourceUrl = "";
 		public string ResourceUrl
 		{
 			get { return this._resourceUrl; }
 			set { this._resourceUrl = value; }
 		}
+        
+        //public bool IsActive { get; set; }
 
         private int _viewCount;
         public int ViewCount
@@ -38,7 +43,15 @@ namespace LRWarehouse.Business
             set { this._favoriteCount = value; }
         }
 
+        //public System.DateTime Created { get; set; }
+        //public int CreatedById { get; set; }
+        
+        //public System.DateTime LastUpdated { get; set; }
+
+        //public System.Guid RowId { get; set; }
+
         private bool _hasPathwayGradeLevel = true;
+        [ObsoleteAttribute]
         public bool HasPathwayGradeLevel
         {
             get { return this._hasPathwayGradeLevel; }
@@ -47,7 +60,43 @@ namespace LRWarehouse.Business
         #endregion
 
 
-        #region external properties
+        #region external properties - single
+
+        private ResourceVersion _version = new ResourceVersion();
+        public ResourceVersion Version
+        {
+            get { return this._version; }
+            set { this._version = value; }
+        }
+
+        private List<ResourceChildItem> _interactivityType = new List<ResourceChildItem>();
+        public List<ResourceChildItem> InteractivityType
+        {
+            get { return this._interactivityType; }
+            set { this._interactivityType = value; }
+        }
+        
+        #endregion
+
+
+        #region ResourceTag properties
+        private  List<ResourceTag> _resourceTags = new List<ResourceTag>();
+        public List<ResourceTag> ResourceTags
+        {
+            get { return this._resourceTags; }
+            set { this._resourceTags = value; }
+        }
+
+        public List<ResourceTag> AccessTypeTags
+        {
+            get { return this._resourceTags; }
+            set { this._resourceTags = value; }
+        }
+        #endregion
+
+
+        #region resource child properties
+
         private List<ResourceChildItem> _relatedURL = new List<ResourceChildItem>();
         public List<ResourceChildItem> relatedURL
         {
@@ -62,13 +111,6 @@ namespace LRWarehouse.Business
             set { this._educationalUse = value; }
         }
 
-        private List<ResourceChildItem> _interactivityType = new List<ResourceChildItem>();
-        public List<ResourceChildItem> InteractivityType
-        {
-            get { return this._interactivityType; }
-            set { this._interactivityType = value; }
-        }
-
         private List<ResourceChildItem> _groupType = new List<ResourceChildItem>();
         public List<ResourceChildItem> GroupType
         {
@@ -76,19 +118,13 @@ namespace LRWarehouse.Business
             set { this._groupType = value; }
         }
 
-        private ResourceVersion _version = new ResourceVersion();
-        public ResourceVersion Version
-        {
-            get { return this._version; }
-            set { this._version = value; }
-        }
 
-        private ResourcePropertyCollection _property = new ResourcePropertyCollection();
-        public ResourcePropertyCollection Property
-        {
-            get { return this._property; }
-            set { this._property = value; }
-        }
+        //private ResourcePropertyCollection _property = new ResourcePropertyCollection();
+        //public ResourcePropertyCollection Property
+        //{
+        //    get { return this._property; }
+        //    set { this._property = value; }
+        //}
 
         private List<ResourceChildItem> _keyword = new List<ResourceChildItem>();
         public List<ResourceChildItem> Keyword
@@ -160,12 +196,12 @@ namespace LRWarehouse.Business
             set { this._language = value; }
         }
 
-        private CareerClusterCollection _cluster = new CareerClusterCollection();
-        public CareerClusterCollection Cluster
-        {
-            get { return this._cluster; }
-            set { this._cluster = value; }
-        }
+        //private CareerClusterCollection _cluster = new CareerClusterCollection();
+        //public CareerClusterCollection Cluster
+        //{
+        //    get { return this._cluster; }
+        //    set { this._cluster = value; }
+        //}
 
         private List<ResourceChildItem> _clusterMap = new List<ResourceChildItem>();
         public List<ResourceChildItem> ClusterMap

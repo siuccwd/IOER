@@ -65,7 +65,7 @@ namespace LRWarehouse.Business
             }
             else
             {
-                this._imageUrl = value.Trim();
+                this._imageUrl = ( value == null ) ? "" : value.Trim();
                 HasChanged = true;
             }
         }
@@ -86,7 +86,7 @@ namespace LRWarehouse.Business
         if (this._mainPhone == value) {
           //Ignore set
         } else {
-          this._mainPhone = value.Trim();
+            this._mainPhone = ( value == null ) ? "" : value.Trim();
           HasChanged = true;
         }
       }
@@ -107,7 +107,7 @@ namespace LRWarehouse.Business
         if (this._jobTitle == value) {
           //Ignore set
         } else {
-          this._jobTitle = value.Trim();
+            this._jobTitle = (value == null) ? "" : value.Trim();
           HasChanged = true;
         }
       }

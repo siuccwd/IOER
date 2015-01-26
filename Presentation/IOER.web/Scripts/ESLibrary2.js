@@ -7,6 +7,11 @@ $(document).ready(function () {
   showActiveTitle(); //Trigger the method that shows the currently selected (or hovered) collection
   setTimeout(updateNarrowing, 500); //Auto-search. updateNarrowing is in the ElasticSearch file, but loaded in memory when the document is ready, and thus accessible from here.
   setupAccessLevelDDLs();
+  expandCollapsePanels();
+
+  if (typeof (parent.hasSelector) == "function") {
+    $("<div style=\"text-align: center;\"><input type=\"button\" id=\"btnSendExternal\" onclick=\"sendResultsExternal()\" value=\"Send the Displayed Resources to External Site\" /></div>").insertAfter("#resultCount");
+  }
 });
 
 //Inserts the Library controls header into the search code
@@ -60,9 +65,10 @@ function renderCollections(data) {
     box.append(
       template
         .replace(/{id}/g, data[i].id)
-        .replace(/{iconURL}/g, "src=\"" + data[i].avatarURL + "\"")
+        //.replace(/{icon}/g, data[i].avatarURL )
         .replace(/{title}/g, data[i].title)
     );
+    box.find("a[data-collectionID=" + data[i].id + "] .iconImg").attr("src", data[i].avatarURL);
   }
 }
 //Setup the fancy hover effects and text output when the user highlights/tabs to the Library/collection avatars
@@ -91,19 +97,19 @@ function showActiveTitle() {
 }
 //Render the items in the Details panel
 function renderDetails() {
+  $("#btnAddDislike").remove(); //Possibly temporary
   var active = getActive(); //Get the active object, be it a collection or the library
   //Basics
   $("#detailsAvatar").attr("src","").css("background-image", "url('" + active.data.avatarURL + "')"); //Change the big avatar to match the active item's avatar
   $("#detailsContent .panelHeader").html(active.data.title); //Change the header text
   $("#detailsContent #description").html(active.data.description); //Change the description text
-  $("#detailsContent #shareBox").attr("data-isLibrary", active.isLibrary).attr("data-id", active.data.id); //Change HTML attributes of the shareBox div to indicate whether or not the active item is the Library, and its ID. These are used elsewhere.
 
   //Likes/Dislikes
   var likes = active.data.paradata.likes; 
   var dislikes = active.data.paradata.dislikes;
   var max = likes + dislikes;
-  var likePercent = "50%"; //Setting these initial values saves time later...
-  var dislikePercent = "50%";
+  var likePercent = "100%"; //Setting these initial values saves time later...
+  var dislikePercent = "0%";
   if (max > 0) { //...namely because you only have to bother with calculations if there are actually any ratings to consider 
     likePercent = ((likes / max) * 100) + "%";
     dislikePercent = ((dislikes / max) * 100) + "%";
@@ -133,38 +139,61 @@ function renderDetails() {
   else {
     $("#opinionButtons").html("<p class=\"middle\">Please login to Like or Dislike this Library.</p>");
   }
+}
+
+//Render the Share and Follow panel
+function renderShareFollow() {
+  var active = getActive(); //Get the active object, be it a collection or the library
+  $("#pnlShareFollow .panelHeader").html("Share &amp; Follow " + active.data.title); //Change the header text
+  $("#shareFollowContent #shareBox").attr("data-isLibrary", active.isLibrary).attr("data-id", active.data.id); //Change HTML attributes of the shareBox div to indicate whether or not the active item is the Library, and its ID. These are used elsewhere.
 
   //Share Link
   if (active.data.currentPublicAccessLevel > 0) {
     $("#shareBox").show();
-    $("#shareBox h4").html("Share this " + (active.isLibrary ? "Library:" : "Collection:")); //Changes the shareBox's header to "Share this Library" or "Share this Collection" as appropriate
+    $("#shareBox h4.shareLinkHeader").html("Share this " + (active.isLibrary ? "Library:" : "Collection:")); //Changes the shareBox's header to "Share this Library" or "Share this Collection" as appropriate
     var hrefs = window.location.href.split("/");
     $("#txtShareBox").val(hrefs[0] + "//" + hrefs[2] + "/Libraries/Library.aspx?id=" + libraryData.library.id + (active.isLibrary ? "" : "&col=" + active.data.id)); //Changes the share link to match the selected item
+
+    //Widget config
+    var box = $("#widgetConfigList");
+    box.html("");
+    for (i in libraryData.collections) {
+      var item = libraryData.collections[i];
+      if (item.currentPublicAccessLevel <= 3) {
+        console.log("adding collection");
+        box.append("<label for=\"w" + item.id + "\"><input type=\"checkbox\" id=\"w" + item.id + "\" value=\"" + item.id + "\"> " + item.title + "</label>");
+      }
+    }
+    box.find("input").on("click", function () {
+      updateWidgetLink();
+    });
   }
   else {
     $("#shareBox").hide();
   }
+  updateWidgetLink();
 
   //Following options
   $("#followBox h4").html("Follow this " + (active.isLibrary ? "Library:" : "Collection:"));
   if (userGUID == "") { //If the user isn't logged in, display a message in place of the DDL. This also replaces the DDL, since it won't be needed, since the user doesn't login via AJAX.
-    $("#detailsContent #followBox").html("<p class=\"middle\">Please Login to Follow this " + (active.isLibrary ? "Library" : "Collection") + ".</p>");
+    $("#shareFollowContent #followBox").html("<p class=\"middle\">Please Login to Follow this " + (active.isLibrary ? "Library" : "Collection") + ".</p>");
   }
   else if (libraryData.isMyLibrary) { //Otherwise, if the user is currently on their own library, eliminate the following options.
-    $("#detailsContent #followBox").html("");
+    $("#shareFollowContent #followBox").html("");
   }
   else if (libraryData.library.paradata.following > 0 && !active.isLibrary) { //If the active item is a collection and the user is already following the library, replace the following options with a message.
-    $("#detailsContent #followBox #followingMessage").show();
-    $("#detailsContent #followBox #followingControls").hide();
+    $("#shareFollowContent #followBox #followingMessage").show();
+    $("#shareFollowContent #followBox #followingControls").hide();
   }
   else { //Otherwise (the user is logged in and not viewing their own library), unset all existing following option selections and set the correct one. The unset happens because the HTML is not regenerated when a different collection is picked; it is merely tweaked here.
-    $("#detailsContent #followBox #followingMessage").hide();
-    $("#detailsContent #followBox #followingControls").show();
+    $("#shareFollowContent #followBox #followingMessage").hide();
+    $("#shareFollowContent #followBox #followingControls").show();
     $("#followingOptions option").attr("selected", false);
-    $("#followingOptions option[value=" + active.data.paradata.following + "]").prop("selected",true).attr("selected", "selected");
+    $("#followingOptions option[value=" + active.data.paradata.following + "]").prop("selected", true).attr("selected", "selected");
   }
 
 }
+
 
 //Render the Comments panel
 function renderComments() {
@@ -457,14 +486,14 @@ function showPanel(target) { //target = the name of the panel
   $(".panel").hide().removeClass("selected");
   $("#" + target).show().addClass("selected");
   $("#libraryHeaderContent").attr("data-collapsed", "false");
-  $("a[data-id=expandCollapse]").html("Less");
+  $("a[data-id=expandCollapse]").html("-");
   return false;
 }
 //Toggle collapsing the height of the panels
 function expandCollapsePanels() {
   var box = $("#libraryHeaderContent");
   box.attr("data-collapsed", box.attr("data-collapsed") == "true" ? "false" : "true");
-  $("a[data-id=expandCollapse]").html(box.attr("data-collapsed") == "true" ? "More" : "Less");
+  $("a[data-id=expandCollapse]").html(box.attr("data-collapsed") == "true" ? "Expand" : "Collapse");
   return false;
 }
 
@@ -498,6 +527,7 @@ function pickLibCol(item) {
   renderComments();
   renderSettings();
   renderFilters();
+  renderShareFollow();
   updateNarrowing(); //auto-search with the current object as a filter
   $("#searchBar").attr("placeholder", "Search " + item.title + "...");
   return false;
@@ -582,6 +612,47 @@ function showHideComments() {
     box.attr("data-collapsed", "true");
     $("#btnShowHideComments").css("box-shadow", "30px 0 30px 20px #EEE");
   }
+}
+
+function requestJoinLibrary() {
+  var val = $("#txtIJoinBecause").val();
+  if (val.trim().length < 20) {
+    alert("Please include a request of meaningful length.");
+    return;
+  }
+  
+  libraryAjax("RequestJoin", { userGUID: userGUID, libraryID: libraryData.library.id, message: val }, successRequestJoin, $("#btnRequestJoin"));
+}
+
+function sendResultsExternal() {
+  try {
+    for (i in debugResults.hits.hits) {
+      var current = debugResults.hits.hits[i]._source;
+      var data = {
+        version: current.versionID,
+        id: current.intID,
+        title: current.title,
+        thumbImage: ($(".result[data-vid=" + current.versionID + "] .thumbnailLink img").length > 0 ? $(".result[data-vid=" + current.versionID + "] .thumbnailLink img").attr("src") : ""),
+        thumbMessage: ($(".result[data-vid=" + current.versionID + "] .thumbnailDiv").length > 0 ? $(".result[data-vid=" + current.versionID + "] .thumbnailDiv").html() : "")
+      };
+      parent.addResource(data);
+    }
+  }
+  catch (e) { }
+}
+
+//Update the widget share link
+function updateWidgetLink() {
+  var link = $("#txtWidgetConfig");
+  var ids = "";
+  $("#widgetConfigList input:checked").each(function () {
+    ids += "," + $(this).attr("value");
+  });
+  if (ids.length > 1) {
+    ids = ids.substring(1);
+  }
+  var hrefs = window.location.href.split("/");
+  link.val("<iframe src=\"" + hrefs[0] + "//" + hrefs[2] + "/Widgets/Library?library=" + libraryData.library.id + "&collections=" + ids + "\"></iframe>");
 }
 
 /*   ---   ---   AJAX Functions   ---   ---   */
@@ -871,4 +942,20 @@ function successRenderAvatars(data) {
 
 function successAddLikeDislike(data) {
   refreshData(data);
+}
+
+function successRequestJoin(data) {
+  if (data.isValid) {
+    alert(data.data);
+    $("#joinInput").html("<p class=\"middle\">" + data.data + "</p>");
+  }
+  else {
+    alert(data.status);
+    if (data.extra) {
+      $("#joinInput").html("<p class=\"middle\">" + data.status + "</p>");
+    }
+    else {
+      $("#btnRequestJoin").removeAttr("disabled");
+    }
+  }
 }

@@ -74,6 +74,14 @@
 
 
             <asp:Label ID="lblMessage" runat="server"></asp:Label>
+
+        <div style="margin-top: 50px">
+            <h2>Delete from collection 6</h2>
+            <div class="labelColumn">resource Id</div>
+            <div class="dataColumn"><asp:TextBox ID="txtResourceId" runat="server" ></asp:TextBox></div>
+            <div><asp:Button ID="btnRemoveFromColl6" runat="server" Text="Remove from collection 6" OnClick="btnRemoveFromColl6_Click" /> </div>
+
+        </div>
 </asp:Panel>
 
 <asp:Panel ID="Panel1" runat="server" Visible="false">

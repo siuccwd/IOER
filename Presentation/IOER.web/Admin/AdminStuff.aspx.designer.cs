@@ -166,6 +166,24 @@ namespace ILPathways.Admin {
         protected global::System.Web.UI.WebControls.Label lblMessage;
         
         /// <summary>
+        /// txtResourceId control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox txtResourceId;
+        
+        /// <summary>
+        /// btnRemoveFromColl6 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnRemoveFromColl6;
+        
+        /// <summary>
         /// Panel1 control.
         /// </summary>
         /// <remarks>

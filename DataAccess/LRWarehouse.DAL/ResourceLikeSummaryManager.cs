@@ -16,6 +16,7 @@ namespace LRWarehouse.DAL
         const string INSERT_PROC = "[Resource.LikeSummaryInsert]";
         const string GET_PROC = "[Resource.LikeSummaryGet]";
         const string UPDATE_PROC = "[Resource.LikeSummaryUpdate]";
+        const string GET_FOR_DISPLAY_PROC = "[Resource.LikeGetDisplay]";
 
         public int Create(ResourceLikeSummary entity, ref string status)
         {
@@ -100,7 +101,7 @@ namespace LRWarehouse.DAL
                 parameter[1] = new SqlParameter("@UserId", userId);
                 #endregion
 
-                DataSet ds = SqlHelper.ExecuteDataset(ReadOnlyConnString, CommandType.StoredProcedure, "[Resource.LikeGetDisplay]", parameter);
+                DataSet ds = SqlHelper.ExecuteDataset( ReadOnlyConnString, CommandType.StoredProcedure, GET_FOR_DISPLAY_PROC, parameter );
                 if (DoesDataSetHaveRows(ds))
                 {
                     likeSummary = FillForDisplay(ds.Tables[0].Rows[0]);
@@ -123,6 +124,8 @@ namespace LRWarehouse.DAL
             likeSummary.DislikeCount = GetRowColumn(dr, "DislikeCount", 0);
             likeSummary.YouLikeThis = GetRowColumn(dr, "YouLikeThis", false);
             likeSummary.YouDislikeThis = GetRowColumn(dr, "YouDislikeThis", false);
+
+            likeSummary.HasRating = GetRowPossibleColumn( dr, "HasRating", false );
 
             return likeSummary;
         }

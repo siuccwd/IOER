@@ -34,12 +34,18 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="AutoMapper">
+      <HintPath>..\..\packages\AutoMapper.3.1.1\lib\net40\AutoMapper.dll</HintPath>
+    </Reference>
     <Reference Include="EntityFramework">
-      <HintPath>..\..\packages\EntityFramework.5.0.0\lib\net40\EntityFramework.dll</HintPath>
+      <HintPath>..\..\LR_Import\packages\EntityFramework.6.0.0\lib\net40\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer">
+      <HintPath>..\..\LR_Import\packages\EntityFramework.6.0.0\lib\net40\EntityFramework.SqlServer.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Data.Entity" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Security" />
     <Reference Include="System.Xml.Linq" />
@@ -49,19 +55,80 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AccountManager.cs" />
+    <Compile Include="Codes_AudienceType.cs">
+      <DependentUpon>ResourceModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Codes_CareerCluster.cs">
+      <DependentUpon>ResourceModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Codes_GradeLevel.cs">
+      <DependentUpon>ResourceModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Codes_Site.cs">
+      <DependentUpon>ResourceModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Codes_SiteTagCategory.cs">
+      <DependentUpon>ResourceModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Codes_SiteTagCategory_Summary.cs">
+      <DependentUpon>ResourceModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Codes_Subject.cs">
+      <DependentUpon>ResourceModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Codes_TagCategory.cs">
+      <DependentUpon>ResourceModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Codes_TagCategoryValue_summary.cs">
+      <DependentUpon>ResourceModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Codes_TagValue.cs">
+      <DependentUpon>ResourceModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Codes_TagValueKeyword.cs">
+      <DependentUpon>ResourceModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Codes_TextType.cs">
+      <DependentUpon>ResourceModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ConditionOfUse.cs">
+      <DependentUpon>ResourceModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="EFCodesManager.cs" />
+    <Compile Include="EFResourceManager.cs" />
     <Compile Include="EmailNotice.cs">
+      <DependentUpon>ResourceModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Evaluation.cs">
+      <DependentUpon>ResourceModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Evaluation_Dimension.cs">
       <DependentUpon>ResourceModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Patron.cs">
       <DependentUpon>ResourceModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Patron_Following.cs">
+      <DependentUpon>ResourceModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Patron_Profile.cs">
       <DependentUpon>ResourceModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Patron_ResourceSummary.cs">
+      <DependentUpon>ResourceModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Patron_Summary.cs">
+      <DependentUpon>ResourceModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Publish_Pending.cs">
+      <DependentUpon>ResourceModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Resource.cs">
       <DependentUpon>ResourceModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="ResourceContext.cs" />
     <Compile Include="ResourceModel.Context.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -77,7 +144,95 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>ResourceModel.edmx</DependentUpon>
     </Compile>
+    <Compile Include="ResourceTaggingManager.cs" />
+    <Compile Include="Resource_AssessmentType.cs">
+      <DependentUpon>ResourceModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Resource_Cluster.cs">
+      <DependentUpon>ResourceModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Resource_EducationUse.cs">
+      <DependentUpon>ResourceModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Resource_EvalDimensionsSummary.cs">
+      <DependentUpon>ResourceModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Resource_Evaluation.cs">
+      <DependentUpon>ResourceModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Resource_EvaluationSection.cs">
+      <DependentUpon>ResourceModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Resource_EvaluationsSummary.cs">
+      <DependentUpon>ResourceModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Resource_Format.cs">
+      <DependentUpon>ResourceModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Resource_GradeLevel.cs">
+      <DependentUpon>ResourceModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Resource_GroupType.cs">
+      <DependentUpon>ResourceModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Resource_IntendedAudience.cs">
+      <DependentUpon>ResourceModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Resource_ItemType.cs">
+      <DependentUpon>ResourceModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Resource_Keyword.cs">
+      <DependentUpon>ResourceModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Resource_Language.cs">
+      <DependentUpon>ResourceModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Resource_PublishedBy.cs">
+      <DependentUpon>ResourceModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Resource_ResourceType.cs">
+      <DependentUpon>ResourceModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Resource_Standard.cs">
+      <DependentUpon>ResourceModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Resource_StandardEvaluation.cs">
+      <DependentUpon>ResourceModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Resource_StandardEvaluationList.cs">
+      <DependentUpon>ResourceModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Resource_StandardEvaluationSummary.cs">
+      <DependentUpon>ResourceModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Resource_Subject.cs">
+      <DependentUpon>ResourceModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Resource_Tag.cs">
+      <DependentUpon>ResourceModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Resource_Text.cs">
+      <DependentUpon>ResourceModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Resource_Version.cs">
+      <DependentUpon>ResourceModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Resource_Version_Summary.cs">
+      <DependentUpon>ResourceModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="StandardBody.cs">
+      <DependentUpon>ResourceModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="StandardBody_Node.cs">
+      <DependentUpon>ResourceModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="StandardBody_NodeGradeLevel.cs">
+      <DependentUpon>ResourceModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="StandardBody_Subject.cs">
+      <DependentUpon>ResourceModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="System_GenerateLoginId.cs">
       <DependentUpon>ResourceModel.tt</DependentUpon>
     </Compile>
   </ItemGroup>
@@ -89,18 +244,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.Config" />
-    <None Include="bin\Debug\IOERBusinessEntities.dll.config" />
-    <None Include="bin\Release\IOERBusinessEntities.dll.config" />
-    <None Include="obj\Debug\build.force" />
-    <None Include="obj\Debug\DesignTimeResolveAssemblyReferencesInput.cache" />
-    <None Include="obj\Debug\edmxResourcesToEmbed\ResourceModel.csdl" />
-    <None Include="obj\Debug\edmxResourcesToEmbed\ResourceModel.msl" />
-    <None Include="obj\Debug\edmxResourcesToEmbed\ResourceModel.ssdl" />
-    <None Include="obj\Release\DesignTimeResolveAssemblyReferencesInput.cache" />
-    <None Include="obj\Release\edmxResourcesToEmbed\ResourceModel.csdl" />
-    <None Include="obj\Release\edmxResourcesToEmbed\ResourceModel.msl" />
-    <None Include="obj\Release\edmxResourcesToEmbed\ResourceModel.ssdl" />
-    <None Include="obj\Release\IOERBusinessEntities.csprojResolveAssemblyReference.cache" />
     <None Include="packages.config" />
     <None Include="ResourceModel.Context.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
@@ -120,25 +263,22 @@
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="bin\Debug\EntityFramework.dll" />
-    <Content Include="bin\Debug\EntityFramework.xml" />
-    <Content Include="bin\Debug\IOERBusinessEntities.dll" />
-    <Content Include="bin\Debug\IOERBusinessEntities.pdb" />
-    <Content Include="bin\Release\EntityFramework.dll" />
-    <Content Include="bin\Release\EntityFramework.xml" />
-    <Content Include="bin\Release\IOERBusinessEntities.dll" />
-    <Content Include="bin\Release\IOERBusinessEntities.pdb" />
-    <Content Include="obj\Debug\IOERBusinessEntities.csproj.FileListAbsolute.txt" />
-    <Content Include="obj\Debug\IOERBusinessEntities.dll" />
-    <Content Include="obj\Debug\IOERBusinessEntities.pdb" />
-    <Content Include="obj\Debug\TempPE\ResourceModel.cs.dll" />
-    <Content Include="obj\Debug\TempPE\ResourceModel.Designer.cs.dll" />
-    <Content Include="obj\Release\IOERBusinessEntities.csproj.FileListAbsolute.txt" />
-    <Content Include="obj\Release\IOERBusinessEntities.dll" />
-    <Content Include="obj\Release\IOERBusinessEntities.pdb" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="obj\Release\TempPE\" />
+    <ProjectReference Include="..\..\Business\LRWarehouse.Business\LRWarehouse.Business.csproj">
+      <Project>{e5d37489-c4fc-48c9-a714-5610610a27e4}</Project>
+      <Name>LRWarehouse.Business</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Common\ILPathways.Utilities\ILPathways.Utilities.csproj">
+      <Project>{949d7eb6-93e1-489f-a5e7-2d0d9086f720}</Project>
+      <Name>ILPathways.Utilities</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Services\Isle.DTO\Isle.DTO.csproj">
+      <Project>{a16be910-9990-48dc-a9de-f5985d50d09c}</Project>
+      <Name>Isle.DTO</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\LRWarehouse.DAL\LRWarehouse.DAL.csproj">
+      <Project>{5a3c08e1-cc85-4a82-bcc1-f43e54107b5b}</Project>
+      <Name>LRWarehouse.DAL</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

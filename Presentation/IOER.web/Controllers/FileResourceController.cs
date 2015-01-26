@@ -23,6 +23,9 @@ using LRWarehouse.Business;
 
 namespace ILPathways.Controllers
 {
+    /// <summary>
+    /// Class for handling file system related methods
+    /// </summary>
     public class FileResourceController
     {
 
@@ -31,7 +34,21 @@ namespace ILPathways.Controllers
         /// </summary>
         const string thisClassName = "Controllers.FileResourceController";
 
+        public struct PathParts
+        {
+            public string basePath;
+            public string root;
+            public string parent;
+            public string child;
 
+            public string filePath;
+            public string url;
+
+            public string delimiter;
+        }
+        /// <summary>
+        /// Instantiate
+        /// </summary>
         public FileResourceController()
         { }
 
@@ -136,6 +153,11 @@ namespace ILPathways.Controllers
             int maxFileSize = UtilityManager.GetAppKeyValue( "maxImageSize", 1000000 );
             return IsFileSizeValid( fileUpload, maxFileSize );
         }//
+        /// <summary>
+        /// Validate if file selected for upload is withing the max is allowed for the site
+        /// </summary>
+        /// <param name="fileUpload"></param>
+        /// <returns></returns>
         public static bool IsDocumentSizeValid( FileUpload fileUpload )
         {
             int maxFileSize = UtilityManager.GetAppKeyValue( "maxDocumentSize", 4000000 );
@@ -283,7 +305,16 @@ namespace ILPathways.Controllers
             return isValid;
         }//
 
-
+        /// <summary>
+        /// Resize image to upload to a max size and width
+        /// </summary>
+        /// <param name="entity"></param>
+        /// <param name="imageFileUpload"></param>
+        /// <param name="maxWidth"></param>
+        /// <param name="maxHeight"></param>
+        /// <param name="setToMaxWidth"></param>
+        /// <param name="saveToFile"></param>
+        /// <returns></returns>
         public static bool HandleImageResizingToWidth( IImage entity, FileUpload imageFileUpload, int maxWidth, int maxHeight, bool setToMaxWidth, bool saveToFile )
         {
             //the application must have update access to the related work folder
@@ -627,6 +658,12 @@ namespace ILPathways.Controllers
 
             return cropBmp;
         }
+        /// <summary>
+        /// Crop image to rectangle size
+        /// </summary>
+        /// <param name="bmp"></param>
+        /// <param name="selection"></param>
+        /// <returns></returns>
         public static Bitmap CropBitmap( Bitmap bmp, Rectangle selection )
         {
 
@@ -735,6 +772,11 @@ namespace ILPathways.Controllers
         #endregion
 
         #region Document methods
+        //public static int CreateContentItemWithFileOnly2( FileUpload fileUpload, ContentItem parentItem, ContentItem fileResource, ref string statusMessage )
+        //{
+
+        //}
+
         /// <summary>
         /// Upload related file, create a document version and Create a ContentFile
         /// </summary>
@@ -742,7 +784,7 @@ namespace ILPathways.Controllers
         /// <param name="fileResource"></param>
         /// <param name="statusMessage"></param>
         /// <returns></returns>
-        public static int CreateContentItemWithFileOnly( FileUpload fileUpload, ContentItem fileResource, ref string statusMessage )
+        public static int CreateContentItemWithFileOnly( FileUpload fileUpload, ContentItem parentItem, ContentItem fileResource, ref string statusMessage )
         {
             int fileId = 0;
             //valid fileResource
@@ -766,7 +808,19 @@ namespace ILPathways.Controllers
             entity.LastUpdatedById = fileResource.CreatedById;
             entity.Title = fileResource.Title;
 
-            if ( CreateDocument( fileUpload, entity, fileResource.OrgId, ref statusMessage ) == true )
+            if ( parentItem != null && parentItem.Id > 0 )
+            {
+                if ( CreateDocument( fileUpload, entity, fileResource.OrgId, ref statusMessage ) == true )
+                {
+                    fileResource.DocumentRowId = entity.RowId;
+                    fileResource.DocumentUrl = entity.ResourceUrl;
+                    fileId = new ContentServices().Create( fileResource, ref statusMessage );
+                }
+                else
+                {
+                    //reason should already be in the statusmessage
+                }
+            } else if ( CreateDocument( fileUpload, entity, parentItem, ref statusMessage ) == true )
             {
                 fileResource.DocumentRowId = entity.RowId;
                 fileResource.DocumentUrl = entity.ResourceUrl;
@@ -779,62 +833,17 @@ namespace ILPathways.Controllers
             return fileId;
 
         }
+    
         /// <summary>
-        /// Upload related file, create a document version and Create a ContentFile
-        /// </summary>
-        /// <param name="fileUpload"></param>
-        /// <param name="fileResource">ContentFile</param>
-        /// <param name="statusMessage"></param>
-        /// <returns></returns>
-        public static int CreateContentFile( FileUpload fileUpload, ContentFile fileResource, ref string statusMessage )
-        {
-            int fileId = 0;
-            //valid fileResource
-
-            if ( fileUpload.HasFile == false || fileUpload.FileName == "" )
-            {
-                // no file, skip - this only ok , if update
-                statusMessage = "Error no document";
-                return 0;
-            }
-            if ( fileResource.CreatedById == 0 )
-            {
-                statusMessage = "Error - the created by identifier must be assigned to the current user";
-                return 0;
-            }
-
-
-            DocumentVersion entity = new DocumentVersion();
-            entity.RowId = new Guid();
-            entity.CreatedById = fileResource.CreatedById;
-            entity.Created = System.DateTime.Now;
-            entity.LastUpdatedById = fileResource.CreatedById;
-            entity.Title = fileResource.Title;
-
-            if ( CreateDocument( fileUpload, entity, fileResource.OrgId, ref statusMessage ) == true )
-            {
-                fileResource.DocumentRowId = entity.RowId;
-                fileResource.DocumentUrl = entity.ResourceUrl;
-                fileId = new ContentServices().ContentFile_Create( fileResource, ref statusMessage );
-            }
-            else
-            {
-
-            }
-            return fileId;
-
-        }
-        /// <summary>
-        /// Upload a document to server and save in a DocumentVersion record
+        /// Upload a document to server and save/update in a DocumentVersion record
         /// NOT FOR USE WITH IMAGES!!
         /// </summary>
         /// <param name="fileUpload"></param>
-        /// <param name="fileResource">DocumentVersion containing at least: createdById, title</param>
-        /// <param name="createdById"></param>
-        /// <param name="orgId"></param>
+        /// <param name="entity">DocumentVersion containing at least: createdById, title</param>
+        /// <param name="parentItem"></param>
         /// <param name="statusMessage"></param>
         /// <returns></returns>
-        public static bool CreateDocument( FileUpload fileUpload, DocumentVersion entity, int owningOrgId, ref string statusMessage )
+        public static bool CreateDocument( FileUpload fileUpload, DocumentVersion entity, ContentItem parentItem, ref string statusMessage )
         {
             bool isValid = true;
 
@@ -845,6 +854,20 @@ namespace ILPathways.Controllers
                 // no file, skip - this only ok , if update
                 statusMessage = "Error no document";
                 return false;
+            }
+            string orgRowId = "";
+            if ( parentItem.OrgId > 0 )
+            {
+                if ( parentItem.HasOrg() )
+                {
+                    orgRowId = parentItem.ContentOrg.RowId.ToString();
+                }
+                else
+                {
+                    parentItem.ContentOrg = OrganizationBizService.EFGet( parentItem.OrgId );
+                    if ( parentItem.ContentOrg != null && parentItem.ContentOrg.Id > 0 )
+                        orgRowId = parentItem.ContentOrg.RowId.ToString();
+                }
             }
 
             try
@@ -868,14 +891,12 @@ namespace ILPathways.Controllers
                 //probably want to fix filename to standardize
                 entity.CleanFileName();
 
-                entity.FilePath = DetermineDocumentPath( entity.CreatedById, owningOrgId );
-                string url = DetermineDocumentUrl( entity.CreatedById, owningOrgId, entity.FileName );
+                PathParts parts = DetermineDocumentPathUsingParentItem( parentItem );
+                entity.FilePath = FormatPartsFilePath( parts );
+                string url = FormatPartsRelativeUrl( parts );
 
-                entity.ResourceUrl = url;
+                //string url = DetermineDocumentUrl( entity.CreatedById, parentItem.OrgId, orgRowId, entity.FileName );
 
-                //TODO - either make configurable, or always use guid for file name
-                //==> prevents collisions and eases updates
-                entity.FileName = entity.FileName;
                 entity.ResourceUrl = url;
 
                 UploadFile( fileUpload, entity.FilePath, entity.FileName );
@@ -890,22 +911,129 @@ namespace ILPathways.Controllers
                 fs.Dispose();
                 entity.SetResourceData( entity.ResourceBytes, data );
 
-                string documentId = myManager.DocumentVersionCreate( entity, ref statusMessage );
-                if ( documentId.Length > 0 )
+                if ( entity.HasValidRowId() )
                 {
-                    entity.RowId = new Guid( documentId );
-                    //fileResource.DocumentRowId = entity.RowId;
-                    statusMessage = "Successfully saved document!";
-
+                    statusMessage = myManager.DocumentVersionUpdate( entity );
                 }
                 else
                 {
-                    statusMessage = "Error - Document save failed: " + statusMessage;
-                    isValid = false;
+                    string documentId = myManager.DocumentVersionCreate( entity, ref statusMessage );
+                    if ( documentId.Length > 0 )
+                    {
+                        entity.RowId = new Guid( documentId );
+                        //fileResource.DocumentRowId = entity.RowId;
+                        statusMessage = "Successfully saved document!";
+                    }
+                    else
+                    {
+                        statusMessage = "Error - Document save failed: " + statusMessage;
+                        isValid = false;
+                    }
                 }
 
-                //store document for caller's user
-                //fileResource.RelatedDocument = entity;
+            }
+            catch ( Exception ex )
+            {
+                statusMessage = "Unexpected error occurred while attempting to upload your file.<br/>" + ex.Message;
+                return false;
+            }
+
+
+            return isValid;
+
+        }//
+
+        /// <summary>
+        /// Upload a document to server and save/update in a DocumentVersion record
+        /// NOT FOR USE WITH IMAGES!!
+        /// </summary>
+        /// <param name="fileUpload"></param>
+        /// <param name="entity"></param>
+        /// <param name="owningOrgId"></param>
+        /// <param name="statusMessage"></param>
+        /// <returns></returns>
+        public static bool CreateDocument( FileUpload fileUpload, DocumentVersion entity, int owningOrgId, ref string statusMessage )
+        {
+            bool isValid = true;
+
+            ContentServices myManager = new ContentServices();
+
+            if ( fileUpload.HasFile == false || fileUpload.FileName == "" )
+            {
+                // no file, skip - this only ok , if update
+                statusMessage = "Error no document";
+                return false;
+            }
+            string orgRowId = "";
+            if ( owningOrgId > 0 )
+            {
+                Organization org = OrganizationBizService.EFGet( owningOrgId );
+                if ( org != null && org.Id > 0 )
+                    orgRowId = org.RowId.ToString();
+            }
+
+            try
+            {
+                int maxFileSize = UtilityManager.GetAppKeyValue( "maxDocumentSize", 20000000 );
+                if ( FileResourceController.IsFileSizeValid( fileUpload, maxFileSize ) == false )
+                {
+                    statusMessage = string.Format( "Error the selected file exceeds the size limits ({0} bytes).", maxFileSize );
+                    return false;
+                }
+
+                entity.MimeType = fileUpload.PostedFile.ContentType;
+                entity.FileName = fileUpload.FileName;
+                entity.FileDate = System.DateTime.Now;
+
+                string sFileType = System.IO.Path.GetExtension( entity.FileName );
+                sFileType = sFileType.ToLower();
+
+                entity.FileName = System.IO.Path.ChangeExtension( entity.FileName, sFileType );
+
+                //probably want to fix filename to standardize
+                entity.CleanFileName();
+
+                PathParts parts = DetermineDocumentPath( entity.CreatedById, owningOrgId, orgRowId, "" );
+                entity.FilePath = FormatPartsFilePath( parts );
+                string url = FormatPartsRelativeUrl( parts );
+
+                //entity.FilePath = DetermineDocumentPath( entity.CreatedById, owningOrgId, orgRowId );
+                //string url = DetermineDocumentUrl( entity.CreatedById, owningOrgId, orgRowId, entity.FileName );
+
+                entity.ResourceUrl = url;
+
+                UploadFile( fileUpload, entity.FilePath, entity.FileName );
+                //rewind for db save
+                fileUpload.PostedFile.InputStream.Position = 0;
+                Stream fs = fileUpload.PostedFile.InputStream;
+
+                entity.ResourceBytes = fs.Length;
+                byte[] data = new byte[ fs.Length ];
+                fs.Read( data, 0, data.Length );
+                fs.Close();
+                fs.Dispose();
+                entity.SetResourceData( entity.ResourceBytes, data );
+
+                if ( entity.HasValidRowId() )
+                {
+                    statusMessage = myManager.DocumentVersionUpdate( entity );
+                }
+                else
+                {
+                    string documentId = myManager.DocumentVersionCreate( entity, ref statusMessage );
+                    if ( documentId.Length > 0 )
+                    {
+                        entity.RowId = new Guid( documentId );
+                        //fileResource.DocumentRowId = entity.RowId;
+                        statusMessage = "Successfully saved document!";
+                    }
+                    else
+                    {
+                        statusMessage = "Error - Document save failed: " + statusMessage;
+                        isValid = false;
+                    }
+                }
+
             }
             catch ( Exception ex )
             {
@@ -936,30 +1064,420 @@ namespace ILPathways.Controllers
             }
         }//
 
+        /// <summary>
+        /// Replace a document.
+        /// Only the file contents can change. The file name and url do NOT change.
+        /// </summary>
+        /// <param name="fileUpload"></param>
+        /// <param name="contentId"></param>
+        /// <param name="userId"></param>
+        /// <param name="statusMessage">Returns 'successful', if OK, else an error message.</param>
+        /// <returns>true if replacement was successful, else false</returns>
+        public bool ReplaceDocument( FileUpload fileUpload, int contentId, int userId, ref string statusMessage )
+        {
+            ContentManager mgr = new ContentManager();
+            DocumentVersion docVersion = new DocumentVersion();
+            ContentServices myManager = new ContentServices();
+            int maxFileSize = UtilityManager.GetAppKeyValue( "maxDocumentSize", 4000000 );
+            if ( IsFileSizeValid( fileUpload, maxFileSize ) == false )
+            {
+                statusMessage = string.Format( "Error the selected file exceeds the size limits ({0} bytes).", maxFileSize ) ;
+                return false;
+            }
+
+            ContentItem entity = mgr.Get( contentId );
+            if ( entity == null || entity.Id == 0 )
+            {
+                statusMessage = "Error: content item was not found ";
+                return false;
+            }
+            if ( entity.IsValidRowId(entity.DocumentRowId) == false )
+            {
+                statusMessage = "Error: a document is not associated with this content item ";
+                return false;
+            }
+
+            docVersion = myManager.DocumentVersionGet( entity.DocumentRowId );
+            return ReplaceDocument( fileUpload, entity, docVersion, userId, ref statusMessage );
+           }//
+
+        /// <summary>
+        /// Replace a document.
+        /// Only the file contents can change. The file name and url do NOT change.
+        /// TODO - need to check for change to the file type (extension)
+        /// </summary>
+        /// <param name="fileUpload"></param>
+        /// <param name="contentId"></param>
+        /// <param name="userId"></param>
+        /// <param name="statusMessage">Returns 'successful', if OK, else an error message.</param>
+        /// <returns>true if replacement was successful, else false</returns>
+        public bool ReplaceDocument( FileUpload fileUpload, ContentItem entity, DocumentVersion docVersion, int userId, ref string statusMessage )
+        {
+            ContentServices myManager = new ContentServices();
+
+            docVersion.LastUpdatedById = userId;
+            docVersion.FileDate = System.DateTime.Now;
+            docVersion.MimeType = fileUpload.PostedFile.ContentType;
+
+            if ( docVersion.FilePath == null || docVersion.FilePath.Trim().Length == 0 )
+            {
+                //need to derive the file path from url
+                //what it not resolved?
+                GetFilePathFromDocumentUrl( docVersion, entity, userId );
+            }
+            UploadFile( fileUpload, docVersion.FilePath, docVersion.FileName );
+            //rewind for db save
+            fileUpload.PostedFile.InputStream.Position = 0;
+            Stream fs = fileUpload.PostedFile.InputStream;
+
+            docVersion.ResourceBytes = fs.Length;
+            byte[] data = new byte[ fs.Length ];
+            fs.Read( data, 0, data.Length );
+            fs.Close();
+            fs.Dispose();
+            docVersion.SetResourceData( docVersion.ResourceBytes, data );
+
+            statusMessage = myManager.DocumentVersionUpdate( docVersion );
+            if ( statusMessage.Equals( "successful" ) )
+            {
+                ValidateDocumentOnServer( entity, docVersion, docVersion.FilePath );
+                return true;
+            }
+            else
+            {
+                statusMessage = "Error encountered: " + statusMessage;
+                return false;
+            }
+          
+        }
+
+        private static bool GetFilePathFromDocumentUrl( DocumentVersion doc, ContentItem entity, int userId )
+        {
+            bool isValid = false;
+            string baseFolder = UtilityManager.GetAppKeyValue( "path.ContentOutputPath", "C:\\IOER\\ContentDocs\\" );
+            if ( doc.URL == null || doc.URL.Trim().Length == 0 )
+            {
+                //should not happen? create the folder the traditional way
+                string orgRowId = "";
+                if ( entity.OrgId > 0 )
+                {
+                    Organization org = OrganizationBizService.EFGet( entity.OrgId );
+                    if ( org != null && org.Id > 0 )
+                        orgRowId = org.RowId.ToString();
+                }
+
+                PathParts parts = DetermineDocumentPath( userId, entity.OrgId, orgRowId, "" );
+                doc.FilePath = FormatPartsFilePath( parts );
+                doc.URL = FormatPartsRelativeUrl( parts );
+
+                //doc.FilePath = DetermineDocumentPath( userId, entity.OrgId, orgRowId );
+                //doc.URL = DetermineDocumentUrl( userId, entity.OrgId, orgRowId, doc.FileName );
+
+                EmailManager.NotifyAdmin( "Document found without a URL", string.Format( "ContentItem.Id: {0}, document RowId: {1}, userId: {2}", entity.Id, doc.RowId.ToString(), userId ) );
+                return true;
+            }
+
+            int filePos = doc.URL.ToLower().LastIndexOf( "/" );
+            if ( filePos > 0 )
+            {
+                //extract up to latter and prefix with base
+                string part = doc.URL.Substring( 0, filePos + 1 );
+                //this is an unfortunate assumption. but this step should not be necessary after a while.
+                //necessary as ContentDocs is prob part of baseFolder
+                part = part.Replace( "/ContentDocs", "" );
+                part = part.Replace( "/", "\\" );
+                part = part.Replace( "\\\\", "\\" );
+                doc.FilePath = baseFolder + part;
+                doc.FilePath = doc.FilePath.Replace( "\\ContentDocs\\ContentDocs", "\\ContentDocs" );
+                isValid = true;
+            }
+            else
+            {
+                //shoudn't happen, but what if?
+                string orgRowId = "";
+                if ( entity.OrgId > 0 )
+                {
+                    Organization org = OrganizationBizService.EFGet( entity.OrgId );
+                    if ( org != null && org.Id > 0 )
+                        orgRowId = org.RowId.ToString();
+                }
+                //doc.FilePath = DetermineDocumentPath( userId, entity.OrgId, orgRowId );
+                //doc.URL = DetermineDocumentUrl( userId, entity.OrgId, orgRowId, doc.FileName );
+
+                PathParts parts = DetermineDocumentPath( userId, entity.OrgId, orgRowId, "" );
+                doc.FilePath = FormatPartsFilePath( parts );
+                doc.URL = FormatPartsRelativeUrl( parts );
+
+                EmailManager.NotifyAdmin( "Document found with missing/strange URL", string.Format( "ContentItem.Id: {0}, document RowId: {1}, userId: {2}", entity.Id, doc.RowId.ToString(), userId ) );
+                return true;
+            }
+
+            return isValid;
+        }//
+
+        /// <summary>
+        /// Validate the related doc is on the server, and cache if not found
+        /// </summary>
+        /// <param name="parentEntity"></param>
+        /// <param name="doc"></param>
+        /// <returns>url to the file if found</returns>
+        public static string ValidateDocumentOnServer( ContentItem parentEntity, DocumentVersion doc )
+        {
+            string documentFolder = "";
+            if ( doc.FileLocation().Length > 0 )
+                documentFolder = doc.FilePath;
+            else
+            {
+                PathParts parts = DetermineDocumentPathUsingParentItem( parentEntity );
+                documentFolder = parts.filePath;
+            }
+
+            return ValidateDocumentOnServer( parentEntity, doc, documentFolder );
+        }//
+
+        /// <summary>
+        /// handle validation for a content supplement - contains the doc
+        /// TODO - update the filepath if not already existing
+        /// </summary>
+        /// <param name="docParent"></param>
+        /// <param name="doc"></param>
+        /// <param name="parentEntity"></param>
+        /// <returns></returns>
+        public static string ValidateSupplementDocumentOnServer( ContentSupplement docParent, DocumentVersion doc, ContentItem parentEntity )
+        {
+            PathParts parts = new PathParts();
+            string documentFolder = "";
+            bool assignedFolder = false;
+            string fileUrl = "";
+            string baseUrl = UtilityManager.GetAppKeyValue( "path.ContentOutputUrl", "/Content/" );
+            string basePath = UtilityManager.GetAppKeyValue( "path.ContentOutputPath" );
+            string filename = doc.FileName.ToLower();
+
+            try
+            {
+                //NOTE: the doc parent should be the main source of the url!
+                if ( doc.URL != null && doc.URL.Length > 10 )
+                {
+                    fileUrl = doc.URL;
+                    //do we need a doc folder check here?
+                    if ( doc.FilePath == null || doc.FilePath.Trim().Length < 5 )
+                    {
+                        documentFolder = FileSystemHelper.SetFilePathFromUrl( fileUrl, filename );
+                        if (documentFolder.Length > 5)
+                            assignedFolder = true;
+                    }
+                }
+                else if ( docParent.ResourceUrl != null && docParent.ResourceUrl.Length > 10 )
+                {
+                    fileUrl = docParent.ResourceUrl;
+                    //TODO - convert a resource url to a file path
+                    int start = fileUrl.ToLower().IndexOf( baseUrl.ToLower() );
+                    if ( start > -1 )
+                    {
+                        documentFolder = basePath + fileUrl.Substring( start + baseUrl.Length );
+                        documentFolder = documentFolder.Replace( "/", "\\" );
+                        //extract filename
+                        int pos = documentFolder.ToLower().IndexOf( filename );
+                        if ( pos > -1 )
+                        {
+                            documentFolder = documentFolder.Substring( 0, pos - 1 );
+                        }
+                        assignedFolder = true;
+                    }
+                }
+
+                //only do if ???
+                if ( doc.FileLocation().Length > 0 )
+                {
+                    if (assignedFolder ==false)
+                        documentFolder = doc.FilePath;
+                }
+                else if (documentFolder == "")
+                {
+                    //no file path exists, so...
+                    //determine if the orgRowId will be used
+                    string orgRowId = "";
+                    Organization org = OrganizationBizService.EFGet( parentEntity.OrgId );
+                    if ( org != null && org.Id > 0 )
+                        orgRowId = org.RowId.ToString();
+
+                    string childFolder = "";
+                    if ( parentEntity.HasValidRowId() )
+                        childFolder = parentEntity.RowId.ToString();
+
+                    parts = DetermineDocumentPath( parentEntity.CreatedById, parentEntity.OrgId, orgRowId, childFolder );
+                    documentFolder = parts.filePath;
+                    fileUrl = parts.url;
+                    fileUrl = baseUrl + parts.url + "/" + doc.FileName;
+                }
+
+                //TODO - may want pass option to overwrite file (rather than using false)
+                string message = FileSystemHelper.HandleDocumentCaching( documentFolder, doc, false );
+                if ( message == "" )
+                {
+                    //blank returned message means ok
+                    //handle url
+                    if ( fileUrl == null || fileUrl.Trim().Length < 10 )
+                    {
+                        //TODO - may be problem using parentEntity???
+                        fileUrl = DetermineDocumentUrl( parentEntity, doc.FileName );
+                    }
+
+                    if ( documentFolder.ToLower() != doc.FilePath.ToLower()
+                        || fileUrl.ToLower() != doc.URL.ToLower() )
+                    {
+                        //update
+                        doc.FilePath = documentFolder;
+                        doc.URL = fileUrl;
+                        //note ensure have full record - may want to just do a subset to make sure
+                        new DocumentServices().Document_Version_Update( doc );
+                    }
+                }
+                else
+                {
+                    //error, should return a message
+                    //this.SetConsoleErrorMessage( message );
+                    parentEntity.Message = message;
+                }
+            }
+            catch ( Exception ex )
+            {
+                LoggingHelper.LogError( ex, thisClassName + ".ValidateDocumentOnServer() - Unexpected error encountered while retrieving document" );
+
+
+            }
+            return fileUrl;
+        }//
+
+
+        /// <summary>
+        /// Validate the related doc is on the server, and cache if not found
+        /// </summary>
+        /// <param name="parentEntity"></param>
+        /// <param name="doc"></param>
+        /// <param name="documentFolder"></param>
+        /// <returns>url to the file if found</returns>
+        public static string ValidateDocumentOnServer( ContentItem parentEntity, DocumentVersion doc, string documentFolder )
+        {
+            string fileUrl = "";
+
+            try
+            {
+
+                string message = FileSystemHelper.HandleDocumentCaching( documentFolder, doc, true );
+                if ( message == "" )
+                {
+                    //blank returned message means ok
+
+                    if ( doc.URL != null || doc.URL.Length > 10 )
+                        fileUrl = doc.URL;
+                    else 
+                        fileUrl = DetermineDocumentUrl( parentEntity, doc.FileName );
+                }
+                else
+                {
+                    //error, should return a message
+                    //this.SetConsoleErrorMessage( message );
+                    parentEntity.Message = message;
+                }
+            }
+            catch ( Exception ex )
+            {
+                LoggingHelper.LogError( ex, thisClassName + ".ValidateDocumentOnServer() - Unexpected error encountered while retrieving document" );
+
+                
+            }
+            return fileUrl;
+        }//
         #endregion
 
         #region Authoring methods
-
-        public static string DetermineDocumentPath( ContentItem parentEntity )
+        /// <summary>
+        /// determine path using ContentItem for org and created by id
+        /// The child folder will be the parent entity guid, to prevent name collisions
+        /// SHOULD NOT USE WHERE A FILE PATH EXISTS IN DOCUMENT
+        /// </summary>
+        /// <param name="parentEntity"></param>
+        /// <returns></returns>
+        public static PathParts DetermineDocumentPathUsingParentItem( ContentItem parentEntity )
         {
+            //first check for existing/know path
+            if ( parentEntity.HasDocument() )
+            {
+                //fill path
+                PathParts parts = new PathParts();
+                parts.filePath = parentEntity.RelatedDocument.FilePath;
+                parts.url = parentEntity.RelatedDocument.URL;
+
+                parts.basePath = "";
+                parts.root = "";
+                parts.parent = "";
+                parts.child = "";
+
+                if (parts.filePath != null && parts.filePath.Trim().Length > 10)
+                    return parts;
+            }
+            else if ( parentEntity.DocumentRowId != null && parentEntity.IsValidRowId( parentEntity.DocumentRowId ) )
+            {
+                //WARNING - SHOULD NOT GET HERE. DON'T WANT TO CALL CALL TO DAO FROM HERE! or maybe?
+
+            }
             //determine if the orgRowId will be used
             string orgRowId = GetOrgRowid( parentEntity );
+            string childFolder = "";
+            if ( parentEntity.HasValidRowId() )
+                childFolder = parentEntity.RowId.ToString();
 
-            return DetermineDocumentPath( parentEntity.CreatedById, parentEntity.OrgId, orgRowId );
+            return DetermineDocumentPath( parentEntity.CreatedById, parentEntity.OrgId, orgRowId, childFolder );
         }//
+
+    
+        /// <summary>
+        /// determine path using ContentItem for org, and the provided author id
+        /// </summary>
+        /// <param name="parentEntity"></param>
+        /// <param name="authorId"></param>
+        /// <returns></returns>
+        //public static string DetermineDocumentPath( ContentItem parentEntity, int authorId )
+        //{
+        //    //determine if the orgRowId will be used
+        //    string orgRowId = GetOrgRowid( parentEntity );
+        //    string childFolder = "";
+        //    if ( parentEntity.HasValidRowId() )
+        //        childFolder = parentEntity.RowId.ToString();
+        //    PathParts parts = DetermineDocumentPath( authorId, parentEntity.OrgId, orgRowId, childFolder );
+
+        //    return FormatPartsFilePath( parts );
+        //}//
         public static string DetermineDocumentPath( ThisLibrary parentEntity )
         {
-            return DetermineDocumentPath( parentEntity.CreatedById, parentEntity.OrgId, "" );
-           
+            PathParts parts = DetermineDocumentPath( parentEntity.CreatedById, parentEntity.OrgId, "", "" );
+           return FormatPartsFilePath( parts );
         }//
         public static string DetermineDocumentPath( int createdById, int orgId )
         {
-            return DetermineDocumentPath( createdById, orgId, "" );
+            string orgRowId = "";
+            Organization org = OrganizationBizService.EFGet( orgId );
+            if ( org != null && org.Id > 0 )
+                orgRowId = org.RowId.ToString();
+
+            PathParts parts = DetermineDocumentPath( createdById, orgId, orgRowId, "" );
+            return FormatPartsFilePath( parts );
         }
-        public static string DetermineDocumentPath( int createdById, int orgId, string orgRowId )
+
+
+        public static PathParts DetermineDocumentPath( int createdById, int orgId, string orgRowId, string childFolder )
         {
+            PathParts parts = new PathParts();
+
             string path = "";
             string relativePath = "";
+            if ( childFolder != null && childFolder.Trim().Length > 0 )
+            {
+                childFolder = "\\" + childFolder;
+            }
+            else
+                childFolder = "";
 
             string orgPart = "";
             string userPart = "\\" + createdById.ToString();
@@ -969,12 +1487,125 @@ namespace ILPathways.Controllers
                     orgPart = orgRowId;
                 else
                     orgPart = orgId.ToString();
+
+                //if ( childFolder.Length > 0 )
+                //    relativePath = orgPart + childFolder;
+                //else
+                //    relativePath = orgPart + userPart;
+
+                parts.root = orgPart;
+                if ( childFolder.Length > 0 )
+                    parts.parent = childFolder;
+                else
+                    parts.parent = userPart;
+                parts.child = "";
             }
             else
             {
-                orgPart = "Personal";
+                //orgPart = "Personal";
+                //relativePath = orgPart + userPart + childFolder;
+
+                parts.root = "Personal";
+                parts.parent = userPart;
+                if ( childFolder.Length > 0 )
+                    parts.child = childFolder;
+                else
+                    parts.child = "";
             }
-            relativePath = orgPart + userPart;
+
+            //parts.filePath = parts.basePath + parts.root + parts.parent + parts.child;
+
+            //parts.url = "/" + parts.root + parts.parent + parts.child;
+
+            //path = GetContentPath( relativePath );
+
+            parts.filePath = FormatPartsFilePath( parts );
+            parts.url = FormatPartsRelativeUrl( parts );
+            return parts;
+        }//
+
+        public static string FormatPartsFilePath( PathParts parts )
+        {
+            //parts.filePath = parts.basePath;
+            //we assume the web.config values ends with \, but could check
+
+            parts.basePath = UtilityManager.GetAppKeyValue( "path.ContentOutputPath", "C:\\" );
+            //make sure file path is blank
+            parts.filePath = parts.basePath;
+
+            parts.filePath = AddPart( parts.filePath, parts.root );
+            parts.filePath = AddPart( parts.filePath, parts.parent );
+            parts.filePath = AddPart( parts.filePath, parts.child );
+
+            //if ( parts.root.Length > 0 )
+            //{
+            //    if ( parts.filePath.Trim().EndsWith( "\\" ) )
+            //        parts.filePath += parts.root;
+            //    else
+            //        parts.filePath += "\\" + parts.root;
+            //}
+
+            //if ( parts.parent.Length > 0 )
+            //    parts.filePath += "\\" + parts.parent;
+            //if ( parts.child.Length > 0 )
+            //    parts.filePath += "\\" + parts.child;
+
+            parts.filePath = parts.filePath.Replace( "\\\\", "\\" );
+            parts.parent = parts.parent.Replace( "\\\\", "\\" );
+
+            return parts.filePath;
+        }//
+
+        private static string AddPart( string basePart, string part )
+        {
+            if ( part == null || part.Trim().Length == 0 )
+                return basePart;
+
+            if ( basePart.Trim().EndsWith( "\\" ) )
+                basePart += part;
+            else
+                basePart += "\\" + part;
+
+            return basePart;
+        }//
+
+        public static string FormatPartsRelativeUrl( PathParts parts )
+        {
+            ///?????
+            string baseUrl = UtilityManager.GetAppKeyValue( "path.ContentOutputUrl", "/ContentDocs/" );
+
+            parts.url = baseUrl + parts.root + "/" + parts.parent;
+            if ( parts.child.Length > 0 )
+                parts.url += "/" + parts.child;
+
+            parts.url = parts.url.Replace( "\\", "/" );
+            parts.url = parts.url.Replace( "//", "/" );
+
+            return parts.url;
+        }//
+        public static string FormatPartsFullUrl( PathParts parts, string docFileName )
+        {
+            parts.url = "/" + parts.root + "/" + parts.parent;
+            if ( parts.child.Length > 0 )
+                parts.filePath += "/" + parts.child;
+
+            string baseUrl = UtilityManager.GetAppKeyValue( "path.ContentOutputUrl", "/ContentDocs/" );
+            string path = baseUrl + parts.url + "/" + docFileName;
+
+            return path;
+        }//
+
+        public static string DetermineDocumentPath( string parentFolder, string childFolder  )
+        {
+            string path = "";
+            string relativePath = "";
+            if ( parentFolder.Trim().EndsWith( "\\" ) == false )
+                parentFolder = parentFolder.Trim() + "\\";
+            if ( childFolder.Trim().EndsWith( "\\" ) == false )
+                childFolder = childFolder.Trim() + "\\";
+
+
+            relativePath = parentFolder + childFolder;
 
             path = GetContentPath( relativePath );
 
@@ -1028,12 +1659,13 @@ namespace ILPathways.Controllers
 
         /// <summary>
         /// return base system path for storing content related files using folderIdentifier
+        /// Assuming the base path contains the ending slash (\)
         /// </summary>
         /// <param name="folderIdentifier"></param>
         /// <returns></returns>
         public static string GetContentPath( string folderIdentifier )
         {
-            string baseFolder = UtilityManager.GetAppKeyValue( "path.ContentOutputPath", "C:\\Inetpub\\wwwroot\\VOS_2010\\ContentDocs\\" );
+            string baseFolder = UtilityManager.GetAppKeyValue( "path.ContentOutputPath", "C:\\" );
 
             return baseFolder + folderIdentifier;
 
@@ -1050,32 +1682,46 @@ namespace ILPathways.Controllers
             //get base path
             string path = "";
             string relativePath = "";
+            string orgRowId = "";
             if ( parentEntity.OrgId > 0 )
             {
                 if ( parentEntity.HasOrg() )
                     relativePath = GetRelativeUrlPath( parentEntity.CreatedById, parentEntity.OrgId, parentEntity.ContentOrg.RowId.ToString() );
                 else
-                    relativePath = GetRelativeUrlPath( parentEntity.CreatedById, parentEntity.OrgId, "" );
+                {
+                    Organization org = OrganizationBizService.EFGet( parentEntity.OrgId );
+                    if ( org != null && org.Id > 0 )
+                        orgRowId = org.RowId.ToString();
+                    relativePath = GetRelativeUrlPath( parentEntity.CreatedById, parentEntity.OrgId, orgRowId );
+                }
             }
             else
             {
                 relativePath = GetRelativeUrlPath( parentEntity.CreatedById, 0, "" );
             }
-            string baseUrl = UtilityManager.GetAppKeyValue( "path.ContentOutputUrl", "/Content/" );
+            string baseUrl = UtilityManager.GetAppKeyValue( "path.ContentOutputUrl", "/ContentDocs/" );
             path = baseUrl + relativePath + "/" + docFileName;
 
             return path;
         }//
+
         public static string DetermineDocumentUrl( ThisLibrary parentEntity, string docFileName )
         {
-            return DetermineDocumentUrl( parentEntity.CreatedById, parentEntity.OrgId, docFileName );
+            return DetermineDocumentUrl( parentEntity.CreatedById, parentEntity.OrgId, "", docFileName );
         }
         public static string DetermineDocumentUrl( IBaseObject parentEntity, int orgId, string docFileName )
         {
-            return DetermineDocumentUrl( parentEntity.CreatedById, orgId, docFileName );
-
+            string orgRowId = "";
+            if ( orgId > 0 )
+            {
+                Organization org = OrganizationBizService.EFGet( orgId );
+                if ( org != null && org.Id > 0 )
+                    orgRowId = org.RowId.ToString();
+            }
+            return DetermineDocumentUrl( parentEntity.CreatedById, orgId, orgRowId, docFileName );
         }//
-        public static string DetermineDocumentUrl( int createdById, int orgId, string docFileName )
+
+        public static string DetermineDocumentUrl( int createdById, int orgId, string orgRowId, string docFileName )
         {
             //get base path
             string path = "";
@@ -1085,7 +1731,11 @@ namespace ILPathways.Controllers
             string userPart = "/" + createdById.ToString();
             if ( orgId > 0 )
             {
-                orgPart = orgId.ToString();
+                if ( FormHelper.IsValidRowId( orgRowId ) )
+                    orgPart = orgRowId;
+                else
+                    orgPart = orgId.ToString();
+
             }
             else
             {
@@ -1097,6 +1747,11 @@ namespace ILPathways.Controllers
             path = baseUrl + relativePath + "/" + docFileName;
 
             return path;
+        }//
+
+        public static string DetermineMyImageUrl( int createdById, string docFileName )
+        {
+            return DetermineDocumentUrl( createdById, 0, "", docFileName );
         }//
 
         public static string GetRelativeUrlPath( ContentItem parentEntity )
@@ -1130,7 +1785,7 @@ namespace ILPathways.Controllers
 
         public static string GetOrgRowid( ContentItem parentEntity )
         {
-            if ( parentEntity == null )
+            if ( parentEntity == null || parentEntity.Id == 0)
                 return "";
 
             //determine if the orgRowId will be used
@@ -1143,6 +1798,13 @@ namespace ILPathways.Controllers
                     {
                         orgRowId = parentEntity.ContentOrg.RowId.ToString();
                     }
+                }
+                else
+                {
+                    //should retrieve just in case
+                    Organization org = OrganizationBizService.EFGet( parentEntity.OrgId );
+                    if ( org != null && org.Id > 0)
+                        orgRowId = org.RowId.ToString();
                 }
             }
 

@@ -7,6 +7,7 @@
 </asp:Content>
 
 <asp:Content ID="Content2" ContentPlaceHolderID="BodyContent" runat="server">
+    
 <uc1:librarySearch ID="libraryMgmt1" runat="server" />
 
 <%--      <uc1:librarySearch ID="libraryMgmt1" IsPersonalLibraryView="true" DisplayURL="/My/Library.aspx"  runat="server" />--%>

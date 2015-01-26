@@ -2,8 +2,6 @@
 
 <%@ Register Src="~/Account/controls/UserProfile.ascx" TagPrefix="uc1" TagName="UserProfile" %>
 
-<%@ Register Src="~/Account/controls/AccountRegisterUpdateController.ascx" TagPrefix="uc1" TagName="AccountRegisterUpdateController" %>
-
 
 <asp:Content ID="Content2" ContentPlaceHolderID="BodyContent" runat="server">
 <link href="/Styles/Isle_large.css" type="text/css" rel="stylesheet" />
@@ -18,7 +16,6 @@
 <ajaxToolkit:ToolkitScriptManager runat="Server" EnablePartialRendering="true" ID="ScriptManager1" />
   <div id="loginContainer" class="mainContent">
   <h1 class="isleH1">IOER User Profile</h1>
-    <uc1:AccountRegisterUpdateController runat="server" CurrentView="profile" ID="AccountRegisterUpdateController" Visible="false" />
       <uc1:UserProfile runat="server" id="UserProfile1" />
 </div>
 </asp:Content>

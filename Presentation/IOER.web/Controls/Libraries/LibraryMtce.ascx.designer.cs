@@ -229,6 +229,33 @@ namespace ILPathways.Controls.Libraries {
         protected global::System.Web.UI.WebControls.DropDownList ddlOrgAccessLevel;
         
         /// <summary>
+        /// joinRequestPanel1 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel joinRequestPanel1;
+        
+        /// <summary>
+        /// Label7 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label Label7;
+        
+        /// <summary>
+        /// rblAllowJoinRequest control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.RadioButtonList rblAllowJoinRequest;
+        
+        /// <summary>
         /// activePanel control.
         /// </summary>
         /// <remarks>
@@ -463,6 +490,15 @@ namespace ILPathways.Controls.Libraries {
         protected global::System.Web.UI.WebControls.Panel hiddenStuff;
         
         /// <summary>
+        /// formSecurityName control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Literal formSecurityName;
+        
+        /// <summary>
         /// txtDefaultLibraryTypeId control.
         /// </summary>
         /// <remarks>
@@ -488,14 +524,5 @@ namespace ILPathways.Controls.Libraries {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Literal txtLibraryImageTemplate;
-        
-        /// <summary>
-        /// Literal1 control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Literal Literal1;
     }
 }

@@ -31,22 +31,6 @@ namespace ILPathways.Services
         ResourceJSONManager jsonManager = new ResourceJSONManager();
 
         [WebMethod]
-        public TestObj getTestObj( TestObj input )
-        {
-            input.name = input.name + "_added";
-            input.age = input.age + 10;
-            input.items = new string[] {"test", "test2"};
-            return input;
-        }
-
-        public class TestObj
-        {
-            public string name = "";
-            public int age = 0;
-            public string[] items;
-        }
-
-        [WebMethod]
         public string GetByVersionID( string versionID )
         {
             dynamic container = new Dictionary<string, object>();
@@ -56,199 +40,27 @@ namespace ILPathways.Services
             query.Add( "term", term );
             container.Add( "query", query );
             string jsonQuery = serializer.Serialize( container );
-            return new ElasticSearchManager().DoElasticSearch( jsonQuery );
-        }
-
-        [WebMethod]
-        public string DoSearchWidget( string searchText, string pageSize )
-        {
-            HttpContext.Current.Response.AddHeader( "Access-Control-Allow-Origin", "*" );
-            if ( HttpContext.Current.Request.HttpMethod == "OPTIONS" )
-            {
-                HttpContext.Current.Response.AddHeader( "Access-Control-Allow-Origin", "file://" );
-                HttpContext.Current.Response.AddHeader( "Access-Control-Allow-Methods", "GET, POST, PUT, DELETE" );
-                HttpContext.Current.Response.AddHeader( "Access-Control-Allow-Headers", "Content-Type, Accept, x-csrf-token, Origin" );
-                HttpContext.Current.Response.AddHeader( "Access-Control-Max-Age", "1728000" );
-                HttpContext.Current.Response.End();
-            }
-            string returnText = DoSearch( searchText, "", pageSize, "0", "" );
-            return returnText;
-        }
-
-        [WebMethod]
-        public string DoSearchWidgetJSONP( string searchText, string pageSize, string jsoncallback )
-        {
-            HttpContext.Current.Response.AddHeader( "Access-Control-Allow-Origin", "*" );
-            if ( HttpContext.Current.Request.HttpMethod == "OPTIONS" )
-            {
-                HttpContext.Current.Response.AddHeader( "Access-Control-Allow-Methods", "GET, POST, OPTIONS" );
-                HttpContext.Current.Response.AddHeader( "Access-Control-Allow-Headers", "Content-Type, Accept" );
-                HttpContext.Current.Response.AddHeader( "Access-Control-Max-Age", "1728000" );
-                HttpContext.Current.Response.End();
-            }
-            string returnText = DoSearch( searchText, "", pageSize, "0", "" );
-            return returnText;
-        }
-
-        [WebMethod]
-        public string DoSearch( string searchText, string narrowingOptions, string pageSize, string offset, string sort )
-        {
-            //container - level 0
-            dynamic dContainer_0 = new Dictionary<string, object>();
-                //query - level 1
-                dynamic dQuery_1 = new Dictionary<string, object>();
-                    //filtered - level 2
-                    dynamic dFiltered_2 = new Dictionary<string, object>();
-                        //query - level 3
-                        dynamic dQuery_3 = new Dictionary<string, object>();
-                            //bool - level 4
-                            dynamic dBool_4 = new Dictionary<string, object>();
-                                //must - level 5
-                                dynamic dMust_5 = new Dictionary<string, object>();
-                                //should - level 5
-                                dynamic dShould_5 = new Dictionary<string, object>();
-                        //filter - level 3
-                        dynamic dFilter_3 = new Dictionary<string, object>();
-                            //bool - level 4
-                            dynamic dFilterBool_4 = new Dictionary<string, object>();
-                                //must - level 5 (array)
-
-                                    //terms - level 6
-
-                                        //ColumnNames - level 7 (array)
-                //highlight - level 1
-                dynamic dHighlight_1 = new Dictionary<string, object>();
-                //sort - level 1
-                dynamic dSort_1 = new Dictionary<string, object>();
-
-            //Setup query
-            if ( searchText == "" )
-            {
-                dynamic dMatchAll_6 = new Dictionary<string, object>();
-                dMust_5.Add( "match_all", dMatchAll_6 );
-                dBool_4.Add( "must", dMust_5 );
-            }
-            else
-            {
-                searchText = searchText
-                    .Replace( "(", "" ).Replace( ")", "" )
-                    .Replace( "<", "" ).Replace( ">", "" )
-                    .Replace( "{", "" ).Replace( "}", "" )
-                    .Replace( "\\", "" );
-
-                dynamic dMultiMatch_6 = new Dictionary<string, object>();
-                dMultiMatch_6.Add( "query", searchText );
-                dMultiMatch_6.Add( "use_dis_max", true );
-                dMultiMatch_6.Add( "default_operator", "and" );
-                dMultiMatch_6.Add( "fields", new string[] {
-                    "accessRights",
-                    "audiences",
-                    "clusters",
-                    "description",
-                    "gradeLevelAliases",
-                    "gradeLevels",
-                    "educationalUses",
-                    "groupTypes",
-                    "keywords",
-                    "languages",
-                    "mediaTypes",
-                    "notationParts",
-                    "publisher",
-                    "resourceTypes",
-                    "standardNotations",
-                    "subjects",
-                    "title",
-                    "url",
-                    "urlParts",
-                    "usageRights",
-                } );
-
-                dynamic dMatchPhrase_6 = new Dictionary<string, object>();
-                dynamic dDescription_7 = new Dictionary<string, object>();
-                dDescription_7.Add( "query", searchText );
-                dDescription_7.Add( "slop", 1 );
-                dDescription_7.Add( "boost", 5 );
-
-                dMatchPhrase_6.Add( "description", dDescription_7 );
-
-                dMust_5.Add( "query_string", dMultiMatch_6 );
-                dShould_5.Add( "match_phrase", dMatchPhrase_6 );
-
-                dBool_4.Add( "must", dMust_5 );
-                dBool_4.Add( "should", dShould_5 );
-            }
-
-            dQuery_3.Add( "bool", dBool_4 );
-            dFiltered_2.Add( "query", dQuery_3 );
-
-
-            //Setup filters
-            string[] fieldValuePairs = narrowingOptions.Split( new string[] { "|@|" }, StringSplitOptions.RemoveEmptyEntries );
-            dynamic dFiltersMust_5 = new Dictionary<string, object>[fieldValuePairs.Length];
-            for ( int i = 0 ; i < fieldValuePairs.Length ; i++ )
-            {
-                string[] temp = fieldValuePairs[i].Split( new string[] { "|~|" }, StringSplitOptions.RemoveEmptyEntries );
-                string fieldName = temp[ 0 ];
-                string[] values = temp[ 1 ].ToLower().Split( new string[] { "," }, StringSplitOptions.RemoveEmptyEntries );
-
-                dynamic dColumnNames_7 = new Dictionary<string, object>();
-                dColumnNames_7.Add( fieldName, values );
-                dynamic dTerm_6 = new Dictionary<string, object>();
-                dTerm_6.Add( "terms", dColumnNames_7 );
-                dFiltersMust_5[ i ] = dTerm_6;
-            }
-
-            if ( fieldValuePairs.Length > 0 )
-            {
-                dFilterBool_4.Add( "must", dFiltersMust_5 );
-                dFilter_3.Add( "bool", dFilterBool_4 );
-                dFiltered_2.Add( "filter", dFilter_3 );
-            }
-
-            //Sorting
-            if ( sort.Length > 1 )
-            {
-                string[] sorts = sort.Split( '|' );
-                dynamic dSortColumn_2 = new Dictionary<string, object>();
-                dSortColumn_2.Add( "order", sorts[ 1 ] );
-                dSortColumn_2.Add( "ignore_unmapped", "true" );
-                dSort_1.Add( sorts[ 0 ], dSortColumn_2 );
-            }
-
-            //add the prepared objects to the core object
-            dQuery_1.Add("filtered", dFiltered_2 );
-            if ( sort.Length > 1 )
-            {
-                dContainer_0.Add( "sort", dSort_1 );
-            }
-            dContainer_0.Add( "query", dQuery_1 );
-
-            //Setup the pagination and page size
-            dContainer_0.Add( "size", pageSize );
-            dContainer_0.Add( "from", offset );
-
-            string jsonQuery = serializer.Serialize( dContainer_0 );
-
-            ElasticSearchManager eManager = new ElasticSearchManager();
-            return eManager.DoElasticSearch( jsonQuery );
+            return new ElasticSearchManager().Search( jsonQuery );
         }
 
         [WebMethod]
         public void AddResourceView( string intID, string ID )
         {
             int userID = GetUserID( ID );
-            
-            new ResourceViewManager().Create( int.Parse( intID ), userID );
-            new ElasticSearchManager().AddResourceView( intID );
+            int id = int.Parse( intID );
+
+            new ResourceViewManager().Create( id, userID );
+            new ElasticSearchManager().RefreshResource( id );
         }
 
         [WebMethod]
         public void AddDetailView( string intID, string ID )
         {
             int userID = GetUserID( ID );
+            int id = int.Parse( intID );
 
-            new ResourceViewManager().CreateDetailPageView( int.Parse( intID ), userID );
-            new ElasticSearchManager().AddDetailView( intID );
+            new ResourceViewManager().CreateDetailPageView( id, userID );
+            new ElasticSearchManager().RefreshResource( id );
         }
 
         [WebMethod]
@@ -349,13 +161,232 @@ namespace ILPathways.Services
         }
 
         [WebMethod]
-        public string GetRecord( int versionID )
+        public string DoSearch3( JSONQuery2 query )
         {
-            return new ElasticSearchManager().GetByVersionID( versionID );
+          return DoSearch4( query, "" );
+        }
+
+        public List<JSONFilterV5> GetJSONFiltersV5()
+        {
+          //Get the data
+          var filters = new List<JSONFilterV5>();
+          var data = Isle.BizServices.CodeTableBizService.Site_SelectFilterCategories( 1 );
+
+          foreach ( var item in data )
+          {
+            //Populate the filter
+            var filter = new JSONFilterV5()
+            {
+              id = item.Id,
+              title = item.Title,
+              field = item.SchemaTag,
+            };
+            //Populate the tags in the filter
+            foreach ( var tag in item.TagValues )
+            {
+              var newTag = new JSONTagV5()
+              {
+                id = tag.id,
+                title = tag.title,
+                selected = false
+              };
+              filter.tags.Add( newTag );
+            }
+
+            filters.Add( filter );
+          }
+
+          return filters;
+        }
+        public class JSONFilterV5
+        {
+          public JSONFilterV5()
+          {
+            tags = new List<JSONTagV5>();
+          }
+          public int id { get; set; }
+          public string field { get; set; } //ElasticSearch index field name
+          public string title { get; set; }
+          public List<JSONTagV5> tags { get; set; }
+        }
+        public class JSONTagV5
+        {
+          public int id { get; set; }
+          public string title { get; set; }
+          public bool selected { get; set; }
+        }
+        
+        [WebMethod]
+        public string DoSearchV5( JSONQueryV5 query )
+        {
+          //Clean up text
+          query.text = query.text
+                .Replace( "(", "" ).Replace( ")", "" )
+                .Replace( "<", "" ).Replace( ">", "" )
+                .Replace( "{", "" ).Replace( "}", "" )
+                .Replace( "\\", "" );
+
+          //Get list of all filters
+          var filters = GetJSONFiltersV5();
+
+          //Determine which fields to do full-text searches on
+          var searchFields = new List<string>() { "title", "description", "url", "urlParts", "gradeLevelAliases", "standardAliases", "keywords", "creator", "publisher", "lrDocID" };
+          foreach ( var filter in filters )
+          {
+            searchFields.Add( filter.field + ".tags" );
+          }
+
+          //Create the object that gets sent to ElasticSearch
+          dynamic sendQuery = new
+          {
+            @bool = new
+            {
+              must = new List<object> 
+              {
+                new 
+                {
+                  query_string = new 
+                  {
+                    query = query.text,
+                    use_dis_max = true,
+                    default_operator = "and",
+                    fields = searchFields
+                  }
+                },
+                new 
+                {
+                  terms = new 
+                  {
+                    url = new string[] 
+                    {
+                      "http", "https", "ftp"
+                    }
+                  }
+                }
+              },
+              should = new List<object>
+              {
+                new 
+                {
+                  terms = new 
+                  {
+                    title = query.text.Split(' ').Where(m => m.IndexOf("-") != 0).ToList(),
+                    minimum_should_match = 1,
+                    boost = 10.0
+                  }
+                },
+                new 
+                {
+                  match_phrase = new 
+                  {
+                    title = new 
+                    {
+                      query = query.text,
+                      slop = 5,
+                      boost = 10.0
+                    }
+                  }
+                },
+                new 
+                {
+                  match_phrase = new 
+                  {
+                    description = new 
+                    {
+                      query = query.text,
+                      slop = 2,
+                      boost = 2.5
+                    }
+                  }
+                },
+                new 
+                {
+                  match_phrase = new 
+                  {
+                    keywords = new 
+                    {
+                      query = query.text,
+                      slop = 1,
+                      boost = 1.5
+                    }
+                  }
+                }
+              }
+            }
+          };
+
+          //Add the filters
+          foreach ( var item in query.filters )
+          {
+            var thing = new Dictionary<string, List<int>>();
+            thing.Add( item.field + ".ids", item.items );
+            sendQuery.@bool.must.Add(
+              new
+              {
+                terms = thing
+              }
+            );
+          }
+
+          //Holds the final result
+          dynamic jsonQ;
+
+          //Handle sorting - Only add the object if needed
+          if ( query.sort.Key != "" && query.sort.Value != "" )
+          {
+            jsonQ = new
+            {
+              sort = query.sort,
+              size = query.size,
+              from = query.start,
+              query = sendQuery
+            };
+          }
+          else
+          {
+            jsonQ = new
+            {
+              size = query.size,
+              from = query.start,
+              query = sendQuery
+            };
+          }
+
+          var jsonQuery = serializer.Serialize( jsonQ );
+
+          return new ElasticSearchManager().Search( jsonQuery, "collection6" );
+
+        }
+        public class JSONQueryV5
+        {
+          public JSONQueryV5() {
+            text = "*";
+            size = 20;
+            start = 0;
+            filters = new List<JSONQueryV5Filter>();
+            targetFields = new List<string>();
+            sort = new KeyValuePair<string, string>( "", "" );
+          }
+          public string text { get; set; }
+          public int size { get; set; }
+          public int start { get; set; }
+          public List<JSONQueryV5Filter> filters { get; set; }
+          public List<string> targetFields { get; set; }
+          public KeyValuePair<string, string> sort { get; set; }
+        }
+        public class JSONQueryV5Filter
+        {
+          public JSONQueryV5Filter()
+          {
+            field = "";
+            items = new List<int>();
+          }
+          public string field { get; set; }
+          public List<int> items { get; set; }
         }
 
         [WebMethod]
-        public string DoSearch3( JSONQuery2 query )
+        public string DoSearch4( JSONQuery2 query, string targetFields )
         {
             //Clean up query text
             query.searchText = query.searchText
@@ -375,6 +406,11 @@ namespace ILPathways.Services
 
             //Setup the list of fields to do full-text searches on
             string[] searchFields = new string[] { "accessRights", "audiences", "clusters", "creator", "description", "gradeLevelAliases", "gradeLevels", "educationalUses", "groupTypes", "keywords", "languages", "mediaTypes", "notationParts", "publisher", "resourceTypes", "standardNotations", "subjects", "submitter", "title", "url", "urlParts", "usageRights" };
+
+            if ( targetFields != "" )
+            {
+              searchFields = targetFields.Split( ',' );
+            }
 
             //This will hold required items
             List<object> mustListNew = new List<object>();
@@ -396,12 +432,12 @@ namespace ILPathways.Services
             //This is the JSON that gets sent to elasticSearch
             dynamic jsonQ = new
             {
-                sort = sorting,
-                query = new
+              sort = sorting,
+              query = new
+              {
+                @bool = new
                 {
-                    @bool = new
-                    {
-                        must = new List<object>
+                  must = new List<object>
                         {
                             new
                             {
@@ -424,8 +460,29 @@ namespace ILPathways.Services
                                 }
                             }
                         },
-                        should = new List<object>
+                  should = new List<object>
                         {
+                            new 
+                            {
+                                terms = new 
+                                {
+                                    title = query.searchText.Split(' ').Where(m => m.IndexOf("-") != 0).ToList(),
+                                    minimum_should_match = 1,
+                                    boost = 10.0
+                                }
+                            },
+                            new 
+                            {
+                                match_phrase = new 
+                                {
+                                    title = new 
+                                    {
+                                        query = query.searchText,
+                                        slop = 5,
+                                        boost = 10.0
+                                    }
+                                }
+                            },
                             new 
                             {
                                 match_phrase = new 
@@ -433,16 +490,28 @@ namespace ILPathways.Services
                                     description = new 
                                     {
                                         query = query.searchText,
+                                        slop = 2,
+                                        boost = 2.5
+                                    }
+                                }
+                            },
+                            new 
+                            {
+                                match_phrase = new 
+                                {
+                                    keywords = new 
+                                    {
+                                        query = query.searchText,
                                         slop = 1,
-                                        boost = 5
+                                        boost = 1.5
                                     }
                                 }
                             }
                         }
-                    }
-                },
-                size = query.size,
-                from = query.start
+                }
+              },
+              size = query.size,
+              from = query.start
             };
 
             //ID-based Narrowing options
@@ -466,7 +535,9 @@ namespace ILPathways.Services
             string jsonQuery = serializer.Serialize( jsonQ ).Replace( "\"sort\":{\"\":\"\"},", "" );
 
             ElasticSearchManager eManager = new ElasticSearchManager();
-            return eManager.DoElasticSearch( jsonQuery );
+            //return eManager.DoElasticSearch( jsonQuery );
+            //return new ElasticSearchManager2().Search( jsonQuery, "collection5" );
+            return new ElasticSearchManager().Search( jsonQuery );
         }
         public class JSONQuery2
         {
@@ -512,7 +583,7 @@ namespace ILPathways.Services
             public string field { get; set; }
             public string order { get; set; }
         }
-
+      /*
         [WebMethod]
         public string DoSearch2( JSONQuery query )
         {
@@ -580,11 +651,35 @@ namespace ILPathways.Services
                             {
                                 match_phrase = new 
                                 {
-                                    description = new 
+                                    title = new 
                                     {
                                         query = query.searchText,
                                         slop = 1,
+                                        boost = 10
+                                    }
+                                }
+                            },
+                            new 
+                            {
+                                match_phrase = new 
+                                {
+                                    description = new 
+                                    {
+                                        query = query.searchText,
+                                        slop = 3,
                                         boost = 5
+                                    }
+                                }
+                            },
+                            new 
+                            {
+                                match_phrase = new 
+                                {
+                                    keywords = new 
+                                    {
+                                        query = query.searchText,
+                                        slop = 8,
+                                        boost = 2
                                     }
                                 }
                             }
@@ -608,9 +703,51 @@ namespace ILPathways.Services
             string jsonQuery = serializer.Serialize( jsonQ );
 
             ElasticSearchManager eManager = new ElasticSearchManager();
-            return eManager.DoElasticSearch( jsonQuery );
+            //return eManager.DoElasticSearch( jsonQuery );
+            return eManager.Search( jsonQuery );
 
         }
+      */
+        [WebMethod]
+        public string DoAPISearch( string text, List<APIFilter> filters, APIOptions options )
+        {
+          var searcher = new JSONQuery2();
+          searcher.searchText = text;
+          searcher.sort.field = options.sortField;
+          searcher.sort.order = options.sortOrder;
+          searcher.start = options.start;
+          searcher.size = options.pageSize;
 
+          foreach ( APIFilter inputFilter in filters )
+          {
+            var item = new jsonFilter();
+            item.field = inputFilter.fieldName;
+            item.es = inputFilter.fieldName;
+            item.title = inputFilter.fieldName;
+
+            foreach ( int id in inputFilter.tagIDs )
+            {
+              var filterItem = new jsonFilterItem();
+              filterItem.id = id;
+              item.items.Add( filterItem );
+            }
+
+            searcher.narrowingOptions.idFilters.Add( item );
+          }
+
+          return DoSearch3( searcher );
+        }
+        public class APIFilter
+        {
+          public string fieldName { get; set; }
+          public List<int> tagIDs { get; set; }
+        }
+        public class APIOptions
+        {
+          public int start { get; set; }
+          public int pageSize { get; set; }
+          public string sortField { get; set; }
+          public string sortOrder { get; set; }
+        }
     }
 }

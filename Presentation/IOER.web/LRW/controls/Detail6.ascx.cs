@@ -9,10 +9,13 @@ using System.Web.UI.WebControls;
 using ILPathways.Utilities;
 using ILPathways.Library;
 using System.Web.Script.Serialization;
-using ILPathways.DAL;
+//using ILPathways.DAL;
+using Isle.BizServices;
+using Isle.DTO;
 using ILPathways.Business;
 using IPB = ILPathways.Business;
-using LRWarehouse.DAL;
+using MyManager = Isle.BizServices.ResourceBizService;
+
 using LRWarehouse.Business;
 
 using MyLibraryManager = Isle.BizServices.LibraryBizService;
@@ -27,6 +30,7 @@ namespace ILPathways.LRW.controls
         public string resourceText { get; set; }
         public string codeTables { get; set; }
         public bool isUserAdmin { get; set; }
+        public bool isUserAuthor { get; set; }
         public bool alreadyLoaded { get; set; }
 
         protected void Page_Load( object sender, EventArgs e )
@@ -38,7 +42,6 @@ namespace ILPathways.LRW.controls
           else
           {
             InitRecord();
-            InitUser();
             InitButtons();
           }
           alreadyLoaded = true;
@@ -46,19 +49,16 @@ namespace ILPathways.LRW.controls
 
         protected void InitRecord()
         {
+            var userGUID = "";
+            if ( IsUserAuthenticated() )
+            {
+                userGUID = WebUser.RowId.ToString();
+                //DoLibraryChecks( WebUser );
+            }
+
             if ( IsValidRecord() )
             {
-                var userGUID = "";
-                if ( IsUserAuthenticated() )
-                {
-                    userGUID = WebUser.RowId.ToString();
-                    //DoLibraryChecks( WebUser );
-                }
-                content.Visible = true;
-                error.Visible = false;
-                var serializer = new JavaScriptSerializer();
-                resourceText = "var resource = " + serializer.Serialize( new Services.DetailService6().LoadAllResourceData( resourceVersionID, userGUID ) ) + ";";
-                codeTables = "var codeTables = " + serializer.Serialize( new Services.DetailService6().GetCodeTables() ) + ";";
+                GetResource( resourceVersionID );
             }
             else
             {
@@ -66,12 +66,45 @@ namespace ILPathways.LRW.controls
                 error.Visible = true;
             }
         }
+
+        protected void GetResource( int resourceVersionID )
+        {
+            
+            content.Visible = true;
+            error.Visible = false;
+            var serializer = new JavaScriptSerializer();
+            if ( userGUID == null )  //Kludge fix for this getting dropped somehow
+            {
+              if ( IsUserAuthenticated() )
+              {
+                userGUID = WebUser.RowId.ToString();
+              }
+              else
+              {
+                userGUID = "";
+              }
+            }
+            
+            resourceText = "var resource = " + serializer.Serialize( new Services.DetailService6().LoadAllResourceData( resourceVersionID, userGUID ) ) + ";";
+            codeTables = "var codeTables = " + serializer.Serialize( new Services.DetailService6().GetCodeTables() ) + ";";
+        }
+
         protected bool IsValidRecord()
         {
+            
             resourceVersionID = FormHelper.GetRequestKeyValue( "vid", 0 );
-            if ( Page.RouteData.Values.Count > 0 )
+            if ( Page.RouteData.Values.Count > 0
+             && Page.RouteData.Values.ContainsKey( "RouteVID" ) )
             {
                 resourceVersionID = int.Parse( Page.RouteData.Values[ "RouteVID" ].ToString() );
+
+            } else if ( Page.RouteData.Values.Count > 0
+             && Page.RouteData.Values.ContainsKey( "RouteRID" ) )
+            {
+                resourceIntID = int.Parse( Page.RouteData.Values[ "RouteRID" ].ToString() );
+                ResourceVersion entity = MyManager.ResourceVersion_GetByResourceId( resourceIntID );
+                if ( entity != null && entity.Id > 0 )
+                    resourceVersionID = entity.Id;
             }
             else if (resourceVersionID == 0)
             {
@@ -79,19 +112,19 @@ namespace ILPathways.LRW.controls
                 //446014
                 if ( rId > 0 )
                 {
-                    ResourceVersion entity = new ResourceVersionManager().GetByResourceId( rId );
+                    ResourceVersion entity = MyManager.ResourceVersion_GetByResourceId( resourceIntID );
                     if ( entity != null && entity.Id > 0 )
                         resourceVersionID = entity.Id;
                 }
             }
 
-            if (resourceVersionID > 0)
+            if ( resourceVersionID > 0 )
             {
                 try
                 {
-                    
+
                     resourceIntID = 0;
-                    ResourceVersion entity = new ResourceVersionManager().Get( resourceVersionID );
+                    ResourceVersion entity = MyManager.ResourceVersion_Get( resourceVersionID );
                     var isActive = false;
                     if ( entity != null && entity.Id > 0 )
                     {
@@ -106,21 +139,14 @@ namespace ILPathways.LRW.controls
                     return false;
                 }
             }
+            else
+            {
+                litResourceId.Text = resourceIntID.ToString();
+            }
            
             return false;
         }
-        protected void InitUser()
-        {
-            isUserAdmin = false;
-            if ( IsUserAuthenticated() )
-            {
-                userGUID = WebUser.RowId.ToString();
-            }
-            else
-            {
-                userGUID = "";
-            }
-        }
+       
         protected void InitButtons()
         {
             btnStartUpdateMode.Visible = false;
@@ -129,24 +155,84 @@ namespace ILPathways.LRW.controls
             btnFinishUpdate.Visible = false;
             btnDeactivateResource.Visible = false;
             btnCancelChanges.Visible = false;
+            btnRegenerateThumbnail.Visible = false;
 
             if ( IsUserAuthenticated() )
             {
+                reportProblemContainer.Visible = true;
+
+                //get general privileges
                 FormPrivileges = SecurityManager.GetGroupObjectPrivileges( WebUser, txtFormSecurityName.Text );
+                if ( FormPrivileges.CanUpdate() == false &&  txtGeneralSecurity.Text == "" )
+                {
+                    //anyone can update
+                    FormPrivileges.SetOrgPrivileges();
+                }
+
+                //check if was the author, (or, next, if from same org)
+                ObjectMember mbr = MyManager.GetResourceAccess( resourceIntID, WebUser.Id );
+                isUserAuthor = false;
+                if ( mbr.MemberTypeId > 2 )
+                {
+                    //the following is not implemented yet. Will enable an author to update title and description
+                    isUserAuthor = true;
+                    FormPrivileges.SetOrgPrivileges();
+                }
+                
                 if ( FormPrivileges.CanUpdate() )
                 {
                     btnStartUpdateMode.Visible = true;
                     btnFinishUpdate.Visible = true;
                     btnReportProblem.Visible = true;
-                    reportProblemContainer.Visible = true;
                     btnCancelChanges.Visible = true;
                 }
 
-                if ( FormPrivileges.CreatePrivilege > ( int )EPrivilegeDepth.State )
+                if ( FormPrivileges.CreatePrivilege > ( int )EPrivilegeDepth.Region )
                 {
                     btnDeactivateResource.Visible = true;
+                    btnReActivateResource.Visible = true;
+                    btnRegenerateThumbnail.Visible = true;
+                    litResourceId.Visible = true;
                     isUserAdmin = true;
                 }
+            }
+        }
+
+
+
+        protected void btnReActivateResource_Click( object sender, EventArgs e )
+        {
+            if ( IsUserAuthenticated() )
+            {
+                userGUID = WebUser.RowId.ToString();
+                //DoLibraryChecks( WebUser );
+            }
+
+            //set active and then retrieve
+            string statusMessage = "";
+            int resourceIntID = 0;
+            if ( Int32.TryParse( litResourceId.Text, out resourceIntID ) )
+            {
+                if ( resourceIntID > 0 )
+                {
+                    ResourceVersion entity = MyManager.ResourceVersion_GetByResourceId( resourceIntID, false );
+                    if ( entity != null && entity.Id > 0 )
+                        resourceVersionID = entity.Id;
+
+                    if ( MyManager.ResourceVersion_SetActive( resourceVersionID, ref statusMessage ) )
+                    {
+                        //retrieve 
+                        GetResource( resourceVersionID );
+                    }
+                }
+                else
+                {
+                    SetConsoleErrorMessage( "Error a valid resource id was not found " );
+                }
+            }
+            else
+            {
+                SetConsoleErrorMessage( "Error a valid resource version id was not found " );
             }
         }
       

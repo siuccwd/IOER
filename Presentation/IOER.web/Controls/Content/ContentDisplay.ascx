@@ -1,5 +1,5 @@
 ﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="ContentDisplay.ascx.cs" Inherits="ILPathways.Controls.Content.ContentDisplay" %>
-
+<%@ Register TagPrefix="uc1" TagName="CurriculumDisplay" Src="/Controls/Curriculum/Curriculum1.ascx" %>
 
 <script type="text/javascript" language="javascript">var heightThreshhold = 150;</script>
 <script type="text/javascript" language="javascript" src="/Scripts/fadeCollapse.js"></script>
@@ -7,13 +7,13 @@
 
 <script type="text/javascript" language="javascript">
     $(document).ready(function () {
-
+      $("form").removeAttr("onsubmit");
         var target = "<%=redirectTarget %>";
 
       if (target != "") {
           window.location = target;
       }
-
+      
       //    setTimeout(function () {
       //      //alert($(".resourceFrame").contents().find("body").height());
       //      $(".resourceFrame").css("height", $(".resourceFrame").contents().find("body").height() + 10 + "px").prop("scrolling", "no");
@@ -36,7 +36,7 @@
   width: 200px;
 }
 .pageContent {
-  width: 720px;
+  width: 75%;
   display: inline-block;
   *display: inline;
   vertical-align: top;
@@ -71,6 +71,27 @@ a.showHideLink {
 .publishedStatus { background-color:Lime; color: #000; padding: 0 25px; }
 .declinedStatus { background-color:red; color: #fff; padding: 0 25px; }
 .requiresrevisionStatus { background-color:red; color: #fff; padding: 0 25px; }
+
+ /* Tabs */
+    #pageTabBox { margin: 0 5px; position: relative; padding-left: 50px;}
+    #pageTabBox a { 
+      display: inline-block;
+      font-weight: bold; 
+      color: #FFF; 
+      background-color: #3572B8; 
+      padding: 5px 5px;
+      border-radius: 5px 5px 0 0;
+    }
+    .panel {
+        min-height: 500px;
+        margin-left: 50px; padding: 10px;
+        border: #4AA394 1px solid;
+        border-radius: 5px;
+    }
+    #pageTabBox a.selected { background-color: #4AA394; }
+    #pageTabBox a:hover, #pageTabBox a:focus { background-color: #FF5707; }
+
+
 </style>
 
 <h1 class="isleH1"><%=resourceTitle %></h1>
@@ -82,9 +103,17 @@ a.showHideLink {
 <asp:Panel ID="detailPanel" runat="server" Visible="false">
 
 <div class="pageContent">
- <h2 >Summary</h2>
-  <p><%=resourceSummary %></p>
+    <asp:Panel ID="summaryPanel" runat="server">
+         <h2 >Summary</h2>
+         <p><%=resourceSummary %></p>
+
+    </asp:Panel>
+
 <asp:label id="pageContent" runat="server"></asp:label>
+<asp:Panel ID="curriculumPanel" runat="server" Visible="false">
+   
+    <uc1:CurriculumDisplay ID="curriculum" runat="server" />
+</asp:Panel>
 </div>
 <div class="isleBox column right">
   <div class="buttons" id="buttonBox" visible="false" runat="server">

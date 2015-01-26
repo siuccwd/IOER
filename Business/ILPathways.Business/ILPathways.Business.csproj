@@ -67,10 +67,15 @@
     <Compile Include="Community.cs" />
     <Compile Include="CommunityDocument.cs" />
     <Compile Include="CommunityPosting.cs" />
+    <Compile Include="CommunityPostItem.cs" />
     <Compile Include="ContentFile.cs" />
     <Compile Include="ContentItem.cs" />
+    <Compile Include="ContentPartner.cs" />
     <Compile Include="ContentReference.cs" />
+    <Compile Include="ContentResourceStandard.cs" />
+    <Compile Include="ContentStandard.cs" />
     <Compile Include="ContentSupplement.cs" />
+    <Compile Include="Content_StandardSummary.cs" />
     <Compile Include="DataItem.cs" />
     <Compile Include="DocumentVersion.cs" />
     <Compile Include="Enum\ELibraryMemberType.cs" />
@@ -114,12 +119,6 @@
     <Compile Include="Profile\PhoneNumber.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SqlQuery.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="bin\Debug\ILPathways.Business.dll" />
-    <Content Include="bin\Debug\ILPathways.Business.pdb" />
-    <Content Include="bin\Release\ILPathways.Business.dll" />
-    <Content Include="bin\Release\ILPathways.Business.pdb" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

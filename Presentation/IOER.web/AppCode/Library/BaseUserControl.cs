@@ -168,9 +168,10 @@ namespace ILPathways.Library
 
         public BaseUserControl()
         {
-            //
-            // TODO: Add constructor logic here
-            //
+            
+            FormPrivileges = new IPB.ApplicationRolePrivilege();
+            RecordPrivileges = new IPB.ApplicationRolePrivilege();
+
         }
 
         #region Methods that are cloned in the BaseAppPage
@@ -1413,7 +1414,12 @@ namespace ILPathways.Library
             return FormHelper.GetRequestKeyValue( parameter, defaultValue );
 
         } // end
-    
+        public bool GetRequestKeyValue( string parameter, bool defaultValue )
+        {
+            //centralizing
+            return FormHelper.GetRequestKeyValue( parameter, defaultValue );
+
+        } // end
         #endregion
 
         #region === Session handler methods ===

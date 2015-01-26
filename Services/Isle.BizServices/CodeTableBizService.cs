@@ -6,70 +6,125 @@ using System.Linq;
 using System.Text;
 using System.Web.UI.WebControls;
 
-
 using ILPathways.Common;
-using Isle.DataContracts;
+using Isle.DTO;
 using LRWarehouse.Business;
 using LRWarehouse.DAL;
 using LDBM = LRWarehouse.DAL.DatabaseManager;
+using ResBiz = IOERBusinessEntities;
 
 namespace Isle.BizServices
 {
     public class CodeTableBizService : ServiceHelper
     {
-        public CodeSearchResponse CodeTableSearch( CodeSearchRequest request )
+
+        #region ==== Site filter methods ====
+        public static CodesSite Site_SelectFilters( string siteName, bool mustHaveValues )
         {
-            DatabaseManager myManager = new DatabaseManager();
-           // int totalRows = 0;
-            string message = "";
-            CodeSearchResponse searchResponse = new CodeSearchResponse();
-            //ServiceHelper.DoTrace( 6, "Isle.BizServices.CodeTableSearch, table: " + request.TableName );
+            CodesSite site = ResBiz.EFCodesManager.Codes_Site_GetByTitle( siteName, mustHaveValues );
 
-            //search
-            DataSet ds = DatabaseManager.CodeTableSearch( request.TableName, request.IdColumn, request.TitleColumn, request.OrderBy, request.Filter, request.UseWarehouseTotalTitle );
-
-            List<CodesDataContract> dataContractList = new List<CodesDataContract>();
-            if ( DatabaseManager.DoesDataSetHaveRows( ds ) )
-            {
-                //check for error message
-                if ( ServiceHelper.HasErrorMessage( ds ) )
-                {
-                    message = ServiceHelper.GetWsMessage( ds );
-                    searchResponse.Error.Message += message + "; ";
-                    searchResponse.Status = StatusEnumDataContract.Failure;
-                }
-                else
-                {
-
-                    CodesDataContract dataContract;
-                    foreach ( DataRow dr in ds.Tables[ 0 ].DefaultView.Table.Rows )
-                    {
-                        int id = DatabaseManager.GetRowColumn( dr, request.IdColumn, 0 );
-                        string title = DatabaseManager.GetRowColumn( dr, request.TitleColumn, "" );
-
-                        dataContract = new CodesDataContract() { Id = id, Title = title };
-                        dataContract.TableName = request.TableName;
-                        dataContractList.Add( dataContract );
-
-                    } //end foreach
-                }
-            }
-
-
-            searchResponse.ResultList = dataContractList;
-            searchResponse.TableName = request.TableName;
-            searchResponse.ResultCount = dataContractList.Count;
-            searchResponse.TotalRows = dataContractList.Count;
-
-            return searchResponse;
-        }//
-
-        public static void PopulateGridPageSizeList( ref DropDownList list )
+            return site;
+        } //
+        public static CodesSite Site_SelectFilters( int siteId, bool mustHaveValues )
         {
-            DataSet ds = LDBM.GetCodeValues( "GridPageSize", "SortOrder" );
-            LDBM.PopulateList( list, ds, "StringValue", "StringValue", "Select Size" );
+            CodesSite site = ResBiz.EFCodesManager.Codes_Site_Get( siteId, mustHaveValues );
+
+            return site;
         } //
 
+        /// <summary>
+        /// Get a site,and list of filter categories
+        /// </summary>
+        /// <param name="siteId"></param>
+        /// <returns></returns>
+        public static Isle.DTO.Site Site_Get( int siteId )
+        {
+            return ResBiz.EFCodesManager.Codes_Site_Get( siteId );
+
+        } //
+        /// <summary>
+        /// Get all filter categories for a site
+        /// </summary>
+        /// <param name="siteId"></param>
+        /// <returns></returns>
+        public static List<Isle.DTO.SiteTagCategory> Site_SelectFilterCategories( int siteId )
+        {
+            return ResBiz.EFCodesManager.Codes_TagCategory_Fill( siteId );
+
+        } //
+
+        #endregion
+
+        #region === Site filter methods for WebApi ===========================================
+        public static SiteFiltersDTO Site_SelectAsDto( string siteName, bool mustHaveValues )
+        {
+            CodesSite site = ResBiz.EFCodesManager.Codes_Site_GetByTitle( siteName, mustHaveValues );
+
+            return TransformSite( site );
+        } //
+        public static SiteFiltersDTO Site_SelectAsDto( int siteId, bool mustHaveValues )
+        {
+            CodesSite site = ResBiz.EFCodesManager.Codes_Site_Get( siteId, mustHaveValues );
+
+            return TransformSite( site );
+        } //
+        public static SiteFiltersDTO TransformSite( CodesSite site )
+        {
+            SiteFiltersDTO siteFilters = new SiteFiltersDTO();
+            if ( site == null || site.Id == 0 || site.SiteTagCategories == null || site.SiteTagCategories.Count == 0)
+            {
+                siteFilters.IsValid = false;
+                siteFilters.Message = "No data";
+                return siteFilters;
+            }
+
+            siteFilters.Id = site.Id;
+            siteFilters.IsValid = true;
+            siteFilters.SiteName = site.Title;
+            siteFilters.FiltersCount = site.SiteTagCategories.Count;
+            siteFilters.FilterList = new List<SiteFiltersTagsDTO>();
+            SiteFiltersTagsDTO filter;
+            foreach ( CodesSiteTagCategory tag in site.SiteTagCategories )
+            {
+                filter = new SiteFiltersTagsDTO();
+                filter.Id = tag.Id;
+                filter.SiteId = tag.SiteId;
+                filter.CategoryId = tag.CategoryId;
+                filter.Title = tag.Title;
+                filter.Description = tag.Description;
+                filter.SchemaTag = tag.SchemaTag;
+                filter.SortOrder = tag.SortOrder;
+
+                if ( tag.TagCategory.TagValues != null && tag.TagCategory.TagValues.Count > 0 )
+                {
+                    filter.FilterValues = new List<SiteFilterValueDTO>();
+                    SiteFilterValueDTO fv;
+                    foreach ( CodesTagValue val in tag.TagCategory.TagValues )
+                    {
+                        fv = new SiteFilterValueDTO();
+                        fv.Id = val.Id;
+                        fv.CategoryId = val.CategoryId;
+                        fv.CodeId = val.CodeId;
+                        fv.Title = val.Title;
+                        fv.Description = val.Description;
+                        fv.SortOrder = val.SortOrder;
+                        fv.SchemaTag = val.SchemaTag;
+                        fv.WarehouseTotal = val.WarehouseTotal;
+
+                        filter.FilterValues.Add( fv );
+                    }
+
+                    siteFilters.FilterList.Add( filter );
+                }
+
+            }
+
+            return siteFilters;
+
+        }
+        #endregion
+
+        #region === generic handling of resource code tables ===
         /// <summary>
         /// Return values for a code table, optionally specify where to return all rows or only those with total used > 0
         /// </summary>
@@ -104,6 +159,9 @@ namespace Isle.BizServices
                     code.Description = GetRowColumn( row, "Description", "Missing" );
                     code.WarehouseTotal = GetRowColumn( row, "WarehouseTotal", 0 );
                     code.SortOrder = GetRowPossibleColumn( row, "SortOrder", 10 );
+
+                    if ( mustHaveValues == false || code.WarehouseTotal > 0 )
+                        list.Add( code );
                 }
             }
             return list;
@@ -116,5 +174,97 @@ namespace Isle.BizServices
             return ds;
 
         } //
+        #endregion
+
+        #region == Mapping searches =====================
+        /// <summary>
+        /// Map Career Cluster Search
+        /// </summary>
+        /// <param name="pFilter"></param>
+        /// <param name="pOrderBy"></param>
+        /// <param name="pStartPageIndex"></param>
+        /// <param name="pMaximumRows"></param>
+        /// <param name="pTotalRows"></param>
+        /// <returns></returns>
+        public static DataSet MapCareerCluster_Search( string pFilter, string pOrderBy, int pStartPageIndex, int pMaximumRows, ref int pTotalRows )
+        {
+
+            return CodeTableManager.MapCareerCluster_Search( pFilter, pOrderBy, pStartPageIndex, pMaximumRows, ref pTotalRows );
+        }
+
+        /// <summary>
+        /// Map K12 Subjectr Search
+        /// </summary>
+        /// <param name="pFilter"></param>
+        /// <param name="pOrderBy"></param>
+        /// <param name="pStartPageIndex"></param>
+        /// <param name="pMaximumRows"></param>
+        /// <param name="pTotalRows"></param>
+        /// <returns></returns>
+        public static DataSet MapK12Subject_Search( string pFilter, string pOrderBy, int pStartPageIndex, int pMaximumRows, ref int pTotalRows )
+        {
+
+            return CodeTableManager.MapK12Subject_Search( pFilter, pOrderBy, pStartPageIndex, pMaximumRows, ref pTotalRows );
+        }
+
+        #endregion
+
+        
+        public static void PopulateGridPageSizeList( ref DropDownList list )
+        {
+            DataSet ds = LDBM.GetCodeValues( "GridPageSize", "SortOrder" );
+            LDBM.PopulateList( list, ds, "StringValue", "StringValue", "Select Size" );
+        } //
+
+        #region == old methods
+        //public CodeSearchResponse CodeTableSearch( CodeSearchRequest request )
+        //{
+        //    DatabaseManager myManager = new DatabaseManager();
+        //    // int totalRows = 0;
+        //    string message = "";
+        //    CodeSearchResponse searchResponse = new CodeSearchResponse();
+        //    //ServiceHelper.DoTrace( 6, "Isle.BizServices.CodeTableSearch, table: " + request.TableName );
+
+        //    //search
+        //    DataSet ds = DatabaseManager.CodeTableSearch( request.TableName, request.IdColumn, request.TitleColumn, request.OrderBy, request.Filter, request.UseWarehouseTotalTitle );
+
+        //    List<CodesDataContract> dataContractList = new List<CodesDataContract>();
+        //    if ( DatabaseManager.DoesDataSetHaveRows( ds ) )
+        //    {
+        //        //check for error message
+        //        if ( ServiceHelper.HasErrorMessage( ds ) )
+        //        {
+        //            message = ServiceHelper.GetWsMessage( ds );
+        //            searchResponse.Error.Message += message + "; ";
+        //            searchResponse.Status = StatusEnumDataContract.Failure;
+        //        }
+        //        else
+        //        {
+
+        //            CodesDataContract dataContract;
+        //            foreach ( DataRow dr in ds.Tables[ 0 ].DefaultView.Table.Rows )
+        //            {
+        //                int id = DatabaseManager.GetRowColumn( dr, request.IdColumn, 0 );
+        //                string title = DatabaseManager.GetRowColumn( dr, request.TitleColumn, "" );
+
+        //                dataContract = new CodesDataContract() { Id = id, Title = title };
+        //                dataContract.TableName = request.TableName;
+        //                dataContractList.Add( dataContract );
+
+        //            } //end foreach
+        //        }
+        //    }
+
+
+        //    searchResponse.ResultList = dataContractList;
+        //    searchResponse.TableName = request.TableName;
+        //    searchResponse.ResultCount = dataContractList.Count;
+        //    searchResponse.TotalRows = dataContractList.Count;
+
+        //    return searchResponse;
+        //}//
+
+        #endregion
+
     }
 }

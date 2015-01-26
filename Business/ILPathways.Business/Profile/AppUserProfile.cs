@@ -41,6 +41,29 @@ namespace ILPathways.Business
                 }
             }
         }
+        private string _imageUrl = "";
+        /// <summary>
+        /// Gets/Sets ImageUrl
+        /// </summary>
+        public string ImageUrl
+        {
+            get
+            {
+                return this._imageUrl;
+            }
+            set
+            {
+                if ( this._imageUrl == value )
+                {
+                    //Ignore set
+                }
+                else
+                {
+                    this._imageUrl = ( value == null ) ? "" : value.Trim();
+                    HasChanged = true;
+                }
+            }
+        }
 
         private string _mainPhone = "";
         /// <summary>
@@ -60,7 +83,7 @@ namespace ILPathways.Business
                 }
                 else
                 {
-                    this._mainPhone = value.Trim();
+                    this._mainPhone = ( value == null ) ? "" : value.Trim();
                     HasChanged = true;
                 }
             }
@@ -84,11 +107,12 @@ namespace ILPathways.Business
                 }
                 else
                 {
-                    this._jobTitle = value.Trim();
+                    this._jobTitle = ( value == null ) ? "" : value.Trim();
                     HasChanged = true;
                 }
             }
         }
+
 
         private int _publishingRoleId;
         /// <summary>

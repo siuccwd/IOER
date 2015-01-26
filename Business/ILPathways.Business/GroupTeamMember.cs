@@ -5,6 +5,7 @@ using System.Text;
 
 namespace ILPathways.Business
 {
+    [Serializable]
     public class GroupTeamMember : BaseBusinessDataEntity
     {
         ///<summary>

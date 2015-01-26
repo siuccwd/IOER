@@ -71,14 +71,15 @@ namespace ILPathways.DAL
 		/// <param name="entity"></param>
 		/// <param name="statusMessage"></param>
 		/// <returns></returns>
-        public int Create( ContentItem entity, ref string statusMessage )
+        [Obsolete]
+        private int Create( ContentItem entity, ref string statusMessage )
 		{
 			int newId = 0;
-
+            NotifyAdmin( className + "Create()", string.Format("Call to an obsolete method. Title: {0}, userId: {1} ", entity.Title, entity.CreatedById) );
 			try
 			{
 				#region parameters
-                SqlParameter[] sqlParameters = new SqlParameter[14];
+                SqlParameter[] sqlParameters = new SqlParameter[17];
                 sqlParameters[0] = new SqlParameter("@TypeId", SqlDbType.Int);
                 sqlParameters[0].Value = entity.TypeId;
                 sqlParameters[1] = new SqlParameter("@Title",  entity.Title);
@@ -100,7 +101,9 @@ namespace ILPathways.DAL
 
                 sqlParameters[ 12 ] = new SqlParameter( "@DocumentUrl", entity.DocumentUrl );
                 sqlParameters[ 13 ] = new SqlParameter( "@DocumentRowId", entity.DocumentRowId.ToString() );
-
+                sqlParameters[ 14 ] = new SqlParameter( "@SortOrder", entity.SortOrder );
+                sqlParameters[ 15 ] = new SqlParameter( "@Timeframe", entity.Timeframe );
+                sqlParameters[ 16 ] = new SqlParameter( "@ParentId", entity.ParentId );
 				#endregion
 
                 SqlDataReader dr = SqlHelper.ExecuteReader( ContentConnection(), CommandType.StoredProcedure, INSERT_PROC, sqlParameters );
@@ -134,17 +137,17 @@ namespace ILPathways.DAL
 		/// </summary>
 		/// <param name="entity"></param>
 		/// <returns></returns>
-        public string Update( ContentItem entity )
+        [Obsolete]
+        private string Update( ContentItem entity )
 		{
 			string message = "successful";
 
 			try
 			{
-
+                NotifyAdmin( className + "Update()", string.Format( "Call to an obsolete method. Title: {0}, userId: {1} ", entity.Title, entity.LastUpdatedById ) );
 				#region parameters
-                SqlParameter[] sqlParameters = new SqlParameter[ 12 ];
-                sqlParameters[ 0 ] = new SqlParameter( "@Id", SqlDbType.Int );
-                sqlParameters[ 0 ].Value = entity.Id;
+                SqlParameter[] sqlParameters = new SqlParameter[ 18 ];
+                sqlParameters[ 0 ] = new SqlParameter( "@Id", entity.Id);
 
                 sqlParameters[ 1 ] = new SqlParameter( "@Title", entity.Title );
 
@@ -162,8 +165,13 @@ namespace ILPathways.DAL
 
                 sqlParameters[ 9 ] = new SqlParameter( "@LastUpdatedById", entity.LastUpdatedById );
                 sqlParameters[ 10 ] = new SqlParameter( "@UseRightsUrl", entity.UseRightsUrl );
-                sqlParameters[ 11 ] = new SqlParameter( "@ResourceVersionId", entity.ResourceVersionId );
-                //sqlParameters[ 12 ] = new SqlParameter( "@IsOrgContentOwner", entity.IsOrgContentOwner );
+                sqlParameters[ 11 ] = new SqlParameter( "@ResourceVersionId", 0);   //entity.ResourceVersionId );
+                sqlParameters[ 12 ] = new SqlParameter( "@DocumentUrl", entity.DocumentUrl );
+                sqlParameters[ 13 ] = new SqlParameter( "@DocumentRowId", entity.DocumentRowId.ToString() );
+                sqlParameters[ 14 ] = new SqlParameter( "@ResourceIntId", entity.ResourceIntId );
+                sqlParameters[ 15 ] = new SqlParameter( "@SortOrder", entity.SortOrder );
+                sqlParameters[ 16 ] = new SqlParameter( "@Timeframe", entity.Timeframe );
+                sqlParameters[ 17 ] = new SqlParameter( "@ParentId", entity.ParentId );
 				#endregion
 
 				SqlHelper.ExecuteNonQuery( ContentConnection(), UPDATE_PROC, sqlParameters );
@@ -172,7 +180,7 @@ namespace ILPathways.DAL
 			}
 			catch ( Exception ex )
 			{
-				LogError( ex, className + string.Format( ".Update() for Id: {0}, Title: {1} and LastUpdatedBy: {2}", entity.Id.ToString(), entity.Title.ToString(), entity.LastUpdatedBy ) );
+				LogError( ex, className + string.Format( ".Update() for Id: {0}, Title: {1} and LastUpdatedBy: {2}", entity.Id.ToString(), entity.Title.ToString(), entity.LastUpdatedById ) );
 				message = className + "- Unsuccessful: Update(): " + ex.Message.ToString();
 				entity.Message = message;
 				entity.IsValid = false;
@@ -188,7 +196,8 @@ namespace ILPathways.DAL
         /// <param name="id"></param>
         /// <param name="resourceVersionId"></param>
         /// <returns></returns>
-        public string UpdateResourceVersionId( int id, int resourceVersionId )
+        [Obsolete]
+        private string UpdateResourceVersionId( int id, int resourceVersionId )
         {
             string message = "successful";
 
@@ -215,6 +224,102 @@ namespace ILPathways.DAL
             return message;
 
         }//
+
+        /// <summary>
+        /// Update content item with related resourceIntId
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="resourceIntId"></param>
+        /// <returns></returns>
+        private string UpdateResourceIntId( int id, int resourceIntId )
+        {
+            string message = "successful";
+
+            try
+            {
+                #region parameters
+                SqlParameter[] sqlParameters = new SqlParameter[ 2 ];
+                sqlParameters[ 0 ] = new SqlParameter( "@Id", id );
+                sqlParameters[ 1 ] = new SqlParameter( "@ResourceIntId", resourceIntId );
+                #endregion
+
+                SqlHelper.ExecuteNonQuery( ContentConnection(), "[Content.UpdateResourceIntId]", sqlParameters );
+                message = "successful";
+
+            }
+            catch ( Exception ex )
+            {
+                LogError( ex, className + string.Format( ".UpdateResourceIntId() for Id: {0}, and resourceVersionId: {2}", id, resourceIntId ) );
+                message = className + "- Unsuccessful: UpdateResourceIntId(): " + ex.Message.ToString();
+
+            }
+
+            return message;
+
+        }//
+
+        /// <summary>
+        /// Set as a featured item
+        /// </summary>
+        /// <param name="parentId"></param>
+        /// <param name="contentId"></param>
+        /// <returns></returns>
+        public string SetAsFeaturedItem( int parentId, int contentId )
+        {
+            string message = "successful";
+
+            try
+            {
+                #region parameters
+                SqlParameter[] sqlParameters = new SqlParameter[ 2 ];
+                sqlParameters[ 0 ] = new SqlParameter( "@ParentId", parentId );
+                sqlParameters[ 1 ] = new SqlParameter( "@ContentId", contentId );
+                #endregion
+
+                SqlHelper.ExecuteNonQuery( ContentConnection(), "[Content.SetAsFeaturedItem]", sqlParameters );
+                message = "successful";
+
+            }
+            catch ( Exception ex )
+            {
+                LogError( ex, className + string.Format( ".SetAsFeaturedItem for parentId: {0}, contentId: {1}", parentId, contentId ));
+                message = className + "- Unsuccessful: SetAsFeaturedItem(): " + ex.Message.ToString();
+            }
+
+            return message;
+
+        }//
+
+        /// <summary>
+        /// Remove a featured item - sets sort order to zero
+        /// </summary>
+        /// <param name="contentId"></param>
+        /// <returns></returns>
+        public string RemoveFeaturedItem( int contentId )
+        {
+            string message = "successful";
+
+            try
+            {
+                #region parameters
+                SqlParameter[] sqlParameters = new SqlParameter[ 2 ];
+                sqlParameters[ 0 ] = new SqlParameter( "@ContentId", contentId );
+                sqlParameters[ 1 ] = new SqlParameter( "@SortOrder", 10 );
+                #endregion
+
+                SqlHelper.ExecuteNonQuery( ContentConnection(), "[Content.ChangeSortOrder]", sqlParameters );
+                message = "successful";
+
+            }
+            catch ( Exception ex )
+            {
+                LogError( ex, className + string.Format( ".RemoveFeaturedItem for contentId: {0}", contentId ) );
+                message = className + "- Unsuccessful: RemoveFeaturedItem(): " + ex.Message.ToString();
+            }
+
+            return message;
+
+        }//
 		#endregion
 
 		#region ====== Retrieval Methods ===============================================
@@ -225,6 +330,7 @@ namespace ILPathways.DAL
 		/// <returns></returns>
         public ContentItem Get( int pId )
 		{
+            DoTrace( 8, className + ".Get( int pId ) " + pId.ToString() );
             return Get( pId, "" );
 		}//
 
@@ -252,6 +358,7 @@ namespace ILPathways.DAL
                     // it should return only one record.
                     while ( dr.Read() )
                     {
+                        DoTrace( 8, className + ".Get( int pId, string pRowId ) doing fill "  );
                         entity = Fill( dr );
                     }
 
@@ -387,6 +494,8 @@ namespace ILPathways.DAL
 			entity.IsValid = true;
 
 			entity.Id = GetRowColumn( dr, "Id", 0 );
+            entity.ParentId = GetRowColumn( dr, "ParentId", 0 );
+
 			entity.Title = GetRowColumn( dr, "Title", "missing" );
             entity.Description = GetRowColumn( dr, "Description", "missing" );
             entity.Summary = GetRowColumn( dr, "Summary", "" );
@@ -409,18 +518,23 @@ namespace ILPathways.DAL
             entity.ConditionsOfUseUrl = GetRowColumn( dr, "ConditionsOfUseUrl", "" );
             entity.UseRightsUrl = GetRowColumn( dr, "UseRightsUrl", "" );
 
-            entity.ResourceVersionId = GetRowColumn( dr, "ResourceVersionId", 0 );
+            //entity.ResourceVersionId = GetRowColumn( dr, "ResourceVersionId", 0 );
+            entity.ResourceIntId = GetRowPossibleColumn( dr, "ResourceIntId", 0 );
+
+            entity.SortOrder = GetRowPossibleColumn( dr, "SortOrder", 10 );
             entity.DocumentUrl = GetRowPossibleColumn( dr, "DocumentUrl", "" );
+            entity.Timeframe = GetRowPossibleColumn( dr, "Timeframe", "" );
+            entity.ImageUrl = GetRowPossibleColumn( dr, "ImageUrl", "" );
 
             entity.IsOrgContentOwner = GetRowColumn( dr, "IsOrgContentOwner", false );
             entity.OrgId = GetRowColumn( dr, "OrgId", 0 );
             entity.Organization = GetRowColumn( dr, "Organization", "" );
 
             entity.ParentOrgId = GetRowColumn( dr, "ParentOrgId", 0 );
-            entity.ParentOrganization = GetRowColumn( dr, "ParentOrganization", "" );            
+            entity.ParentOrganization = GetRowColumn( dr, "ParentOrganization", "" );
 
-            //entity.Approved = GetRowColumn( dr, "Approved", System.DateTime.MinValue );
-            //entity.ApprovedById = GetRowColumn( dr, "ApprovedById", 0 );
+            //entity.Approved = GetRowPossibleColumn( dr, "Approved", System.DateTime.MinValue );
+            //entity.ApprovedById = GetRowPossibleColumn( dr, "ApprovedById", 0 );
 
 			entity.Created = GetRowColumn( dr, "Created", System.DateTime.MinValue );
 			entity.CreatedById = GetRowColumn( dr, "CreatedById", 0 );
@@ -436,9 +550,16 @@ namespace ILPathways.DAL
             }
 
             rowId = GetRowPossibleColumn( dr, "DocumentRowId", "" );
-            if ( rowId.Length > 35 )
+            if ( rowId.Length == 36 && rowId != entity.DEFAULT_GUID )
             {
+                DoTrace( 6, className + ".Fill( SqlDataReader dr ) get related document " );
                 entity.DocumentRowId = new Guid( rowId );
+                entity.RelatedDocument = DocumentStoreManager.Get( entity.DocumentRowId );
+                if ( entity.RelatedDocument != null && entity.RelatedDocument.HasValidRowId() )
+                {
+                    entity.FileName = entity.RelatedDocument.FileName;
+                    entity.FilePath = entity.RelatedDocument.FilePath;
+                }
             }
 			return entity;
 		}//

@@ -51,25 +51,25 @@ namespace ILPathways.Business
                 }
             }
         }
-        public int OrgContactId
-        {
-            get
-            {
-                return this._orgMemberId;
-            }
-            set
-            {
-                if ( this._orgMemberId == value )
-                {
-                    //Ignore set
-                }
-                else
-                {
-                    this._orgMemberId = value;
-                    HasChanged = true;
-                }
-            }
-        }
+        //public int OrgContactId
+        //{
+        //    get
+        //    {
+        //        return this._orgMemberId;
+        //    }
+        //    set
+        //    {
+        //        if ( this._orgMemberId == value )
+        //        {
+        //            //Ignore set
+        //        }
+        //        else
+        //        {
+        //            this._orgMemberId = value;
+        //            HasChanged = true;
+        //        }
+        //    }
+        //}
         private int _roleId;
         /// <summary>
         /// Gets/Sets RoleId

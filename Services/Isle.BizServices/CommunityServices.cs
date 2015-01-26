@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 
 using EFDAL = IoerContentBusinessEntities;
+using ILPathways.Common;
 using ILPathways.Utilities;
 using ILPathways.DAL;
 using ILPathways.Business;
@@ -14,14 +15,14 @@ namespace Isle.BizServices
     public class CommunityServices : ServiceHelper
     {
         private static string thisClassName = "CommunityServices";
-        EFDAL.IsleContentEntities ctx = new EFDAL.IsleContentEntities();
-
+     
         public CommunityServices()
 		{ }//
 
         #region == Community ==
         /// <summary>
         /// Get a community
+        /// Will return community including the most recent n posts (from web.config)
         /// </summary>
         /// <param name="communityId"></param>
         /// <returns></returns>
@@ -29,19 +30,81 @@ namespace Isle.BizServices
         {
             return EFDAL.EFCommunityManager.Community_Get( communityId );
         }
+        public static Community Community_Get( int communityId, int recentPosts )
+        {
+            return EFDAL.EFCommunityManager.Community_Get( communityId, recentPosts );
+        }
 
         /// <summary>
         /// Select all communities
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Community and the default nbr of recent posts</returns>
         public List<Community> Community_SelectAll()
         {
-            return EFDAL.EFCommunityManager.Community_GetAll();
+            return EFDAL.EFCommunityManager.Community_GetAll(5);
         }
+
+        public static List<CodeItem> Community_SelectList()
+        {
+            CodeItem ci = new CodeItem();
+            var eflist = EFDAL.EFCommunityManager.Community_GetAll( 5 );
+            List<CodeItem> list = new List<CodeItem>();
+            if ( eflist.Count > 0 )
+            {
+                foreach ( Community item in eflist )
+                {
+                    ci = new CodeItem();
+                    ci.Id = item.Id;
+                    ci.Title = item.Title;
+                    list.Add( ci );
+                }
+            }
+            return list;
+        }
+
+        /// <summary>
+        /// Select all communities
+        /// </summary>
+        /// <param name="recentPosts"></param>
+        /// <returns>Community and the requested nbr of recent posts</returns>
+        public List<Community> Community_SelectAll( int recentPosts )
+        {
+            return EFDAL.EFCommunityManager.Community_GetAll( recentPosts );
+        }
+        
+        #endregion
+
+
+        #region === Community_Member =====
+        public int Community_MemberAdd( int pCommunityId, int pUserId )
+        {
+            return new EFDAL.EFCommunityManager().CommunityMember_Add( pCommunityId, pUserId );
+        }//
+        public bool Community_MemberDelete( int pCommunityId, int pUserId )
+        {
+            return new EFDAL.EFCommunityManager().CommunityMember_Delete( pCommunityId, pUserId );
+        }//
+        public static bool Community_MemberIsMember( int pCommunityId, int pUserId )
+        {
+            return EFDAL.EFCommunityManager.CommunityMember_IsMember( pCommunityId, pUserId );
+        }//
         #endregion
 
 
         #region === Postings =====
+        /// <summary>
+        /// Add posting to selected list of communities
+        /// ==> assumes not used with replys
+        /// </summary>
+        /// <param name="communities"></param>
+        /// <param name="comment"></param>
+        /// <param name="pCreatedById"></param>
+        /// <returns></returns>
+        public static int PostingAdd( List<int> communities, string comment, int pCreatedById )
+        {
+            return EFDAL.EFCommunityManager.Community_AddPostings( communities, comment, pCreatedById );
+        }//
+
         /// <summary>
         /// add a posting
         /// </summary>
@@ -51,7 +114,7 @@ namespace Isle.BizServices
         /// <returns></returns>
         public static int PostingAdd( int pCommunityId, string comment, int pCreatedById )
         {
-            return EFDAL.EFCommunityManager.PostingAdd( pCommunityId, comment, pCreatedById, 0 );
+            return EFDAL.EFCommunityManager.Community_AddPosting( pCommunityId, comment, pCreatedById, 0 );
         }
 
         /// <summary>
@@ -64,7 +127,7 @@ namespace Isle.BizServices
         /// <returns></returns>
         public static int PostingAdd( int pCommunityId, string comment, int pCreatedById, int relatedPostingId )
         {
-            return EFDAL.EFCommunityManager.PostingAdd( pCommunityId, comment, pCreatedById, relatedPostingId );
+            return EFDAL.EFCommunityManager.Community_AddPosting( pCommunityId, comment, pCreatedById, relatedPostingId );
         }
 
         public static bool Posting_Delete( int id )
@@ -98,7 +161,7 @@ namespace Isle.BizServices
         /// <returns></returns>
         public static List<CommunityPosting> Posting_Select( int pCommunityId, int recordsMax )
         {
-            return EFDAL.EFCommunityManager.Posting_Select( pCommunityId, recordsMax );
+            return EFDAL.EFCommunityManager.PostingView_Select( pCommunityId, recordsMax );
         }
 
         /// <summary>

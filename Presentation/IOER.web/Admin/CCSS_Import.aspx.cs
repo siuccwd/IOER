@@ -40,13 +40,38 @@ namespace ILPathways.Admin
 
         public void submitButton_Click( object sender, EventArgs e )
         {
-            if ( lstForm.SelectedIndex == -1 || txtStandardsFile.Text.Length < 25 )
+            if ( lstForm.SelectedIndex < 1 )
             {
-                lblMessage.Text = "<b>ERROR: SELECT A STANDARD BODY AND ENTER A FILE PATH</b>";
+
+                lblMessage.Text = "<b>ERROR: A STANDARD BODY MUST BE SELECTED</b>";
                 return;
 
             }
-            ProcessFile( txtStandardsFile.Text );
+
+            if ( ddlStandardsFile.SelectedIndex < 1 && txtStandardsFile.Text.Length < 10 )
+            {
+                lblMessage.Text = "<b>ERROR: Select a standard OR enter a file path (absolute or relative to app_data. ex: /App_Data/D2589605.xml)</b>";
+                return;
+
+            } else if ( ddlStandardsFile.SelectedIndex > 0  && txtStandardsFile.Text.Length > 10 )
+            {
+                lblMessage.Text = "<b>ERROR: Select EITHER a standard OR enter a file path, not both</b>";
+                return;
+
+            }
+            string file = "";
+            if ( ddlStandardsFile.SelectedIndex > 0 )
+                file = ddlStandardsFile.SelectedItem.Text;
+            else
+                file = txtStandardsFile.Text;
+
+            if ( file.ToLower().StartsWith("/") || file.ToLower().StartsWith("app_data"))
+            {
+                //map path to ?
+                file = Server.MapPath( file );
+            }
+
+            ProcessFile( file );
         }
 
         public void ProcessFile( string file )
@@ -156,8 +181,9 @@ namespace ILPathways.Admin
 
                 //check if exists, for rerun??
 
-
                 item.ParentId = parentKey;
+
+                //some may not have domain/cluster. ie NHES will have Standard and performance indicator
                 if ( levelType == "" )
                 {
                     if ( parentKey == 0 )

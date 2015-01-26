@@ -180,9 +180,9 @@ margin-top: 15px; }
                     <h3>New Invitation</h3>
                     <p>You may invite people to:</p>
                     <ul>
-                        <li><strong>View</strong> the selected library (if not already publically available)</li>
+                        <li><strong>View</strong> the selected library (if not already publicly available)</li>
                         <li><strong>Contribute</strong> to the selected library (if the library does not already have open contributions (see library settings)</li>
-                        <li><strong>Curate</strong> the selected library. A curator can contribute to a library and may also perform administrative functions on the library - that is use this page to manager members, etc.</li>
+                        <li><strong>Curate</strong> the selected library. A curator can contribute to a library and may also perform administrative functions on the library - that is use this page to manage members, etc.</li>
                         <li><strong>Administer</strong> the selected library. An administrator has the same privileges as a curator, but may also add curators, and other administrators.</li>
                     </ul>
                     <p>You start by entering the email address of the invitee and library role. The system will first search for an existing account for the email. If an account has not yet been created for the invitee, you can choose to create a starting account. This will result in a easier registration process for the invitee. You can also specify if the invitee should be added to your organization. <br />NOTE: this function will soon be available from an organzation administration page and will ease managing library members.</p>

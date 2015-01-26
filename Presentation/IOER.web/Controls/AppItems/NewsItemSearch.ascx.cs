@@ -335,7 +335,7 @@ namespace ILPathways.Controls.AppItems
         {
             string id = this.GetRequestKeyValue( "id", "" ); ;
 
-            if ( id.Length > 0 )
+            if ( id.Length == 36 )
             {
                 searchSection.Visible = false;
                 this.Get( id );
@@ -426,7 +426,7 @@ namespace ILPathways.Controls.AppItems
             try
             {
                 Label txtPageTitle = ( Label ) FindChildControl( Page, "pageCustomTitle" );
-                Page.Master.Page.Title = "Illinois OERS - " + entity.Title;
+                Page.Master.Page.Title = "Illinois Open Educational Resources - " + entity.Title;
                 if ( txtPageTitle != null )
                     txtPageTitle.Text = entity.Title;
 

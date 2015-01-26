@@ -40,6 +40,15 @@ namespace ILPathways.LRW.controls {
         protected global::System.Web.UI.HtmlControls.HtmlAnchor addTab;
         
         /// <summary>
+        /// joinTab control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlAnchor joinTab;
+        
+        /// <summary>
         /// settingsPanel control.
         /// </summary>
         /// <remarks>
@@ -76,6 +85,15 @@ namespace ILPathways.LRW.controls {
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl addResourcesPanel;
         
         /// <summary>
+        /// joinLibraryPanel control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl joinLibraryPanel;
+        
+        /// <summary>
         /// searchControl control.
         /// </summary>
         /// <remarks>
@@ -101,6 +119,15 @@ namespace ILPathways.LRW.controls {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl noLibraryYet;
+        
+        /// <summary>
+        /// quickLibrary control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button quickLibrary;
         
         /// <summary>
         /// txtTitleNew control.
@@ -164,5 +191,14 @@ namespace ILPathways.LRW.controls {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label completionMessage;
+        
+        /// <summary>
+        /// libraryCreateMsg control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Literal libraryCreateMsg;
     }
 }

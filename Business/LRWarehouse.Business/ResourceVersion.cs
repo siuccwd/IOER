@@ -14,16 +14,16 @@ namespace LRWarehouse.Business
     {
 
         #region Properties
-        private Guid _resourceId;
-        public Guid ResourceId
-        {
-            get { return this._resourceId; }
-            set { this._resourceId = value; }
-        }
-        public string ResourceIdString
-        {
-            get { return this._resourceId.ToString(); }
-        }
+        //private Guid _resourceId;
+        //public Guid ResourceId
+        //{
+        //    get { return this._resourceId; }
+        //    set { this._resourceId = value; }
+        //}
+        //public string ResourceIdString
+        //{
+        //    get { return this._resourceId.ToString(); }
+        //}
 
         private int _resourceIntId;
         public int ResourceIntId
@@ -31,18 +31,11 @@ namespace LRWarehouse.Business
             get { return this._resourceIntId; }
             set { this._resourceIntId = value; }
         }
-        public Guid ResourceVersionId
-        {
-            get { return this.RowId; }
-            set { this.RowId = value; }
-        }
-
-		private string _lRDocId;
-		public string LRDocId
-		{
-			get { return this._lRDocId; }
-			set { this._lRDocId = value; }
-		}
+        //public Guid ResourceVersionId
+        //{
+        //    get { return this.RowId; }
+        //    set { this.RowId = value; }
+        //}
 
         private string _title = "";
 		public string Title
@@ -58,32 +51,37 @@ namespace LRWarehouse.Business
 			set { this._description = value; }
 		}
 
+        private string _lRDocId;
+        public string LRDocId
+        {
+            get { return this._lRDocId; }
+            set { this._lRDocId = value; }
+        }
+        public string DocId
+        {
+            get { return this._lRDocId; }
+            set { this._lRDocId = value; }
+        }
         private string _publisher = "";
 		public string Publisher
 		{
 			get { return this._publisher; }
 			set { this._publisher = value; }
 		}
-        private string _submitter = "";
-        public string Submitter
-        {
-            get { return this._submitter; }
-            set { this._submitter = value; }
-        }
 
         private string _creator = "";
-		public string Creator
-		{
-			get { return this._creator; }
-			set { this._creator = value; }
-		}
+        public string Creator
+        {
+            get { return this._creator; }
+            set { this._creator = value; }
+        }
 
         private string _rights = "";
-		public string Rights
-		{
-			get { return this._rights; }
-			set { this._rights = value; }
-		}
+        public string Rights
+        {
+            get { return this._rights; }
+            set { this._rights = value; }
+        }
 
         public int AccessRightsId { get; set; }
         private string _accessRights = "";
@@ -101,12 +99,6 @@ namespace LRWarehouse.Business
             set { this._interactivityType = value; }
         }
 
-        private string _typicalLearningTime = "";
-        public string TypicalLearningTime
-        {
-            get { return this._typicalLearningTime; }
-            set { this._typicalLearningTime = value; }
-        }
         /// <summary>
         /// Modified is typically the date a resource was modified in the Learning Registry.
         /// LastUpdateDate (in the base class) would the date a record was updated within the application
@@ -116,7 +108,12 @@ namespace LRWarehouse.Business
 			get { return this.LastUpdated; }
             set { this.LastUpdated = value; }
 		}
-
+        private string _submitter = "";
+        public string Submitter
+        {
+            get { return this._submitter; }
+            set { this._submitter = value; }
+        }
 
         public DateTime Imported
         {
@@ -124,11 +121,24 @@ namespace LRWarehouse.Business
             set { this.Created = value; }
         }
 
+        private string _typicalLearningTime = "";
+        public string TypicalLearningTime
+        {
+            get { return this._typicalLearningTime; }
+            set { this._typicalLearningTime = value; }
+        }
         private bool _isSkeletonFromParadata;
         public bool IsSkeletonFromParadata
         {
             get { return this._isSkeletonFromParadata; }
             set { this._isSkeletonFromParadata = value; }
+        }
+
+        private string _requirements = "";
+        public string Requirements
+        {
+            get { return this._requirements; }
+            set { this._requirements = value; }
         }
 
         private string _sortTitle = "";
@@ -145,12 +155,7 @@ namespace LRWarehouse.Business
             set { this._schema = value; }
         }
 
-        private string _requirements = "";
-        public string Requirements
-        {
-            get { return this._requirements; }
-            set { this._requirements = value; }
-        }
+      
         #endregion
 
         #region Helper Properties

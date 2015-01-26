@@ -46,7 +46,8 @@ namespace ILPathways.DAL
 		/// </summary>
 		/// <param name="org"></param>
 		/// <returns></returns>
-		public static Organization Create( Organization org, string pathway )
+        [Obsolete]
+		private static Organization Create( Organization org, string pathway )
 		{
 			org.IsValid = true;
 			org.Message = "";
@@ -103,7 +104,8 @@ namespace ILPathways.DAL
 		/// </summary>
 		/// <param name="org"></param>
 		/// <returns></returns>
-		public static Organization Update( Organization org )
+        [Obsolete]
+        private static Organization Update( Organization org )
 		{
 
 			//alternate may be to pass organization as reference and use a bool to indicate success or failure
@@ -155,7 +157,8 @@ namespace ILPathways.DAL
 		/// <param name="deletedBy">Perhaps use for logging??</param>
 		/// <param name="statusMessage"></param>
 		/// <returns></returns>
-		public static bool Delete( int id, string deletedBy, ref string statusMessage )
+        [Obsolete]
+        private static bool Delete( int id, string deletedBy, ref string statusMessage )
 		{
 			bool successful;
 
@@ -456,13 +459,16 @@ namespace ILPathways.DAL
             //entity.PrimaryContactId = GetRowColumn( dr, "primaryContactId", 0 );
 
             entity.IsActive = GetRowColumn( dr, "IsActive", false );
+            entity.IsIsleMember = GetRowPossibleColumn( dr, "IsIsleMember", false );
+
             entity.MainPhone = GetRowColumn( dr, "MainPhone", "" );
             entity.MainExtension = GetRowColumn( dr, "MainExtension", "" );
             entity.Fax = GetRowColumn( dr, "Fax", "" );
             entity.TTY = GetRowColumn( dr, "TTY", "" );
-            entity.WebSite = GetRowColumn( dr, "WebSite", "" );
-            entity.Email = GetRowColumn( dr, "Email", "" );
-            entity.LogoUrl = GetRowColumn( dr, "LogoUrl", "" );
+            entity.WebSite = GetRowPossibleColumn( dr, "WebSite", "" );
+            entity.Email = GetRowPossibleColumn( dr, "Email", "" );
+            entity.EmailDomain = GetRowPossibleColumn( dr, "EmailDomain", "" );
+            entity.LogoUrl = GetRowPossibleColumn( dr, "LogoUrl", "" );
 
             entity.Address1 = GetRowColumn( dr, "Address", "" );
             entity.Address2 = GetRowColumn( dr, "Address2", "" );
@@ -504,13 +510,16 @@ namespace ILPathways.DAL
             //entity.PrimaryContactId = GetRowColumn( dr, "primaryContactId", 0 );
 
             entity.IsActive = GetRowColumn( dr, "IsActive", false );
+            entity.IsIsleMember = GetRowColumn( dr, "IsIsleMember", false );
+
             entity.MainPhone = GetRowColumn( dr, "MainPhone", "" );
             entity.MainExtension = GetRowColumn( dr, "MainExtension", "" );
             entity.Fax = GetRowColumn( dr, "Fax", "" );
             entity.TTY = GetRowColumn( dr, "TTY", "" );
-            entity.WebSite = GetRowColumn( dr, "WebSite", "" );
-            entity.Email = GetRowColumn( dr, "Email", "" );
-            entity.LogoUrl = GetRowColumn( dr, "LogoUrl", "" );
+            entity.WebSite = GetRowPossibleColumn( dr, "WebSite", "" );
+            entity.Email = GetRowPossibleColumn( dr, "Email", "" );
+            entity.EmailDomain = GetRowColumn( dr, "EmailDomain", "" );
+            entity.LogoUrl = GetRowPossibleColumn( dr, "LogoUrl", "" );
 
             entity.Address1 = GetRowColumn( dr, "Address", "" );
             entity.Address2 = GetRowColumn( dr, "Address2", "" );

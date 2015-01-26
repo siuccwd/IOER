@@ -107,9 +107,9 @@ function doSafariFixes() {
   $("#searchType, #searchType label").css("width", "100%");
   $(".result .collections p").each(function () { $(this).width($(this).parent().width() - 125); });
   if (windowWidth <= 580) {
-    $("#rightColumn").width($("#rightColumn").css("width","100%"));
+        $("#rightColumn").width($("#rightColumn").css("width", "100%"));
   }
-  if(windowWidth > 950){
+    if (windowWidth > 950) {
     $(".result .data").each(function () { $(this).width($(this).parent().width() - 175); });
   }
   else if (windowWidth > 450) {
@@ -260,7 +260,7 @@ function loadResults(data, total) {
   var colTemplate = $("#template_collection").html();
   var list = $("#resultsList");
   list.addClass("hidden");
-
+  console.log(data);
   //Clear the results container
   list.html("");
 
@@ -271,11 +271,12 @@ function loadResults(data, total) {
 
     //Build the collection list for this result
     if (searchType == "libraries") {
+
       for (j in current.collections) {
         colList += colTemplate
           .replace(/{title}/g, current.collections[j].title)
-          .replace(/{iconURL}/g, ((current.collections[j].iconURL == "" || current.collections[j].iconURL == "defaultURL") ? "/images/isle.png" : current.collections[j].iconURL))
-          .replace(/{iconSRC}/g, ((current.collections[j].iconURL == "" || current.collections[j].iconURL == "defaultURL") ? "src=\"/images/isle.png\"" : "img src=\"" + current.collections[j].iconURL + "\""))
+          .replace(/{iconURL}/g, ((current.collections[j].iconURL == "" || current.collections[j].iconURL == "defaultURL") ? "/images/ioer_med.png" : current.collections[j].iconURL))
+          .replace(/{iconSRC}/g, ((current.collections[j].iconURL == "" || current.collections[j].iconURL == "defaultURL") ? "src=\"/images/ioer_med.png\"" : "img src=\"" + current.collections[j].iconURL + "\""))
           .replace(/{description}/g, current.collections[j].description)
           .replace(/{collectionURL}/g, current.collections[j].url)
       }
@@ -288,15 +289,20 @@ function loadResults(data, total) {
       resultTemplate
         .replace(/{title}/g, current.title)
         .replace(/{libraryID}/g, current.id)
-        .replace(/{iconURL}/g, ((current.iconURL == "" || current.iconURL == "defaultUrl") ? "/images/isle.png" : current.iconURL))
-        .replace(/{iconSRC}/g, ((current.iconURL == "" || current.iconURL == "defaultUrl") ? "src=\"/images/isle.png\"" : "img src=\"" + current.iconURL + "\""))
+        .replace(/{iconURL}/g, ((current.iconURL == "" || current.iconURL == "defaultUrl") ? "/images/ioer_med.png" : current.iconURL))
+        .replace(/{iconSRC}/g, ((current.iconURL == "" || current.iconURL == "defaultUrl") ? "src=\"/images/ioer_med.png\"" : "img src=\"" + current.iconURL + "\""))
         .replace(/{libraryURL}/g, current.url)
         .replace(/{description}/g, current.description)
         .replace(/{collections}/g, colList)
+            .replace(/{libraryTitle}/g, ((current.libraryTitle == null || current.libraryTitle == "") ? "" : current.libraryTitle))
+            .replace(/{orgTitle}/g, current.organization)
     );
     
     if (searchType == "collections") {
-      list.find(".collectionsTitle").remove();
+        list.find(".collectionsTitle").remove();
+        list.find(".orgTitle").remove();
+    } else {
+        list.find(".colLibraryTitle").remove();
     }
   }
 

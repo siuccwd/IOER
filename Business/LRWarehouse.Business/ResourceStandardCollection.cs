@@ -29,12 +29,12 @@ namespace LRWarehouse.Business
             {
                 switch ( holdProperty )
                 {
-                    case "resourceid":
-                        if ( rp.ResourceId.ToString() == stringToFind )
-                        {
-                            return rp;
-                        }
-                        break;
+                    //case "resourceid":
+                    //    if ( rp.ResourceId.ToString() == stringToFind )
+                    //    {
+                    //        return rp;
+                    //    }
+                    //    break;
                     case "standardnotationcode":
                         if ( rp.StandardNotationCode == stringToFind )
                         {
@@ -53,18 +53,18 @@ namespace LRWarehouse.Business
                             return rp;
                         }
                         break;
-                    case "alignmenttypecodeid":
-                        if ( rp.AlignmentTypeCodeId == int.Parse(stringToFind ) )
-                        {
-                            return rp;
-                        }
-                        break;
-                    case "alignmenttypevalue":
-                        if ( rp.AlignmentTypeValue == stringToFind )
-                        {
-                            return rp;
-                        }
-                        break;
+                    //case "alignmenttypecodeid":
+                    //    if ( rp.AlignmentTypeCodeId == int.Parse(stringToFind ) )
+                    //    {
+                    //        return rp;
+                    //    }
+                    //    break;
+                    //case "alignmenttypevalue":
+                    //    if ( rp.AlignmentTypeValue == stringToFind )
+                    //    {
+                    //        return rp;
+                    //    }
+                    //    break;
                 }
             } //foreach
             // not found
@@ -86,12 +86,12 @@ namespace LRWarehouse.Business
             {
                 switch ( holdProperty )
                 {
-                    case "resourceid":
-                        if ( rp.ResourceId.ToString() == stringToFind )
-                        {
-                            collection.Add( rp );
-                        }
-                        break;
+                    //case "resourceid":
+                    //    if ( rp.ResourceId.ToString() == stringToFind )
+                    //    {
+                    //        collection.Add( rp );
+                    //    }
+                    //    break;
                     case "standardnotationcode":
                         if ( rp.StandardNotationCode == stringToFind )
                         {
@@ -110,17 +110,17 @@ namespace LRWarehouse.Business
                             collection.Add( rp );
                         }
                         break;
-                    case "alignmenttypecodeid":
-                        if ( rp.AlignmentTypeCodeId == int.Parse( stringToFind ) )
-                        {
-                            collection.Add( rp );
-                        }
-                        break;
-                    case "alignmenttypevalue":
-                        if ( rp.AlignmentTypeValue == stringToFind )
-                        {
-                            collection.Add( rp );
-                        }
+                    //case "alignmenttypecodeid":
+                    //    if ( rp.AlignmentTypeCodeId == int.Parse( stringToFind ) )
+                    //    {
+                    //        collection.Add( rp );
+                    //    }
+                    //    break;
+                    //case "alignmenttypevalue":
+                    //    if ( rp.AlignmentTypeValue == stringToFind )
+                    //    {
+                    //        collection.Add( rp );
+                    //    }
                         break;
                 }
             } //foreach
@@ -134,20 +134,20 @@ namespace LRWarehouse.Business
             }
         }
 
-        public ResourceStandardCollection FindAllNew()
-        {
-            ResourceStandardCollection collection = new ResourceStandardCollection( this.Count );
-            Guid defaultGuid = new Guid( "00000000-0000-0000-0000-000000000000" );
+        //public ResourceStandardCollection FindAllNew()
+        //{
+        //    ResourceStandardCollection collection = new ResourceStandardCollection( this.Count );
+        //    Guid defaultGuid = new Guid( "00000000-0000-0000-0000-000000000000" );
 
-            foreach ( ResourceStandard entity in this )
-            {
-                if ( entity.RowId == null || entity.RowId == defaultGuid )
-                {
-                    collection.Add( entity );
-                }
-            }
+        //    foreach ( ResourceStandard entity in this )
+        //    {
+        //        if ( entity.RowId == null || entity.RowId == defaultGuid )
+        //        {
+        //            collection.Add( entity );
+        //        }
+        //    }
 
-            return collection;
-        }
+        //    return collection;
+        //}
     }
 }

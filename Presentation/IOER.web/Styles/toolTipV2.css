@@ -6,6 +6,7 @@
 .toolTipDiv .toolTipCloseButton { display: inline-block; position: absolute; top: 1px; right: 2px; display: inline-block; border-radius: 5px; background-color: #B03D25; color: #FFF; font-weight: bold; width: 20px; height: 20px; text-align: center; line-height: 20px; }
 .toolTipDiv .toolTipCloseButton:hover, .toolTipDiv .toolTipCloseButton:focus { background-color: #F00; }
 .toolTipDiv .toolTipRow { margin-bottom: 5px; }
+.toolTipDiv .toolTipContent > div { margin-bottom: 5px; white-space: normal; }
 @media screen and (max-width: 500px) {
   .toolTipDiv { max-width: 100%; }
 }

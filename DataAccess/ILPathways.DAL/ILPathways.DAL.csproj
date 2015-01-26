@@ -35,16 +35,15 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="EntityFramework">
-      <HintPath>..\..\packages\EntityFramework.5.0.0\lib\net40\EntityFramework.dll</HintPath>
+      <HintPath>..\..\packages\EntityFramework.6.1.2\lib\net40\EntityFramework.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.ApplicationBlocks.Data, Version=2.0.0.0, Culture=neutral">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Library\Microsoft.ApplicationBlocks.Data.dll</HintPath>
+    <Reference Include="EntityFramework.SqlServer">
+      <HintPath>..\..\packages\EntityFramework.6.1.2\lib\net40\EntityFramework.SqlServer.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Data.Entity" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Security" />
     <Reference Include="System.Web" />
@@ -94,32 +93,17 @@
       <Project>{cbb05737-7947-4ed9-8ed3-79d5c2a6597d}</Project>
       <Name>ILPathways.Common</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\Services\Isle.DTO\Isle.DTO.csproj">
+      <Project>{a16be910-9990-48dc-a9de-f5985d50d09c}</Project>
+      <Name>Isle.DTO</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="App.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="bin\Debug\EntityFramework.dll" />
-    <Content Include="bin\Debug\EntityFramework.xml" />
-    <Content Include="bin\Debug\ILPathways.Business.dll" />
-    <Content Include="bin\Debug\ILPathways.Business.pdb" />
-    <Content Include="bin\Debug\ILPathways.Common.dll" />
-    <Content Include="bin\Debug\ILPathways.Common.pdb" />
-    <Content Include="bin\Debug\ILPathways.DAL.dll" />
-    <Content Include="bin\Debug\ILPathways.DAL.pdb" />
-    <Content Include="bin\Debug\Microsoft.ApplicationBlocks.Data.dll" />
-    <Content Include="bin\Release\EntityFramework.dll" />
-    <Content Include="bin\Release\EntityFramework.xml" />
-    <Content Include="bin\Release\ILPathways.Business.dll" />
-    <Content Include="bin\Release\ILPathways.Business.pdb" />
-    <Content Include="bin\Release\ILPathways.Common.dll" />
-    <Content Include="bin\Release\ILPathways.Common.pdb" />
-    <Content Include="bin\Release\ILPathways.DAL.dll" />
-    <Content Include="bin\Release\ILPathways.DAL.pdb" />
-    <Content Include="bin\Release\Microsoft.ApplicationBlocks.Data.dll" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

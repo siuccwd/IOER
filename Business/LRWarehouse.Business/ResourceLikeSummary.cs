@@ -42,11 +42,14 @@ namespace LRWarehouse.Business
         //    set { this._lastUpdated = value; }
         //}
 
-        private bool _youLikeThis;
-        public bool YouLikeThis
+        /// <summary>
+        /// Get HasRating- will be true if current user has aleady rated the resource
+        /// </summary>
+        private bool _HasRating = false;
+        public bool HasRating
         {
-            get { return this._youLikeThis; }
-            set { this._youLikeThis = value; }
+            get { return this._HasRating; }
+            set { this._HasRating = value; }
         }
 
         private bool _youDislikeThis;
@@ -54,6 +57,13 @@ namespace LRWarehouse.Business
         {
             get { return this._youDislikeThis; }
             set { this._youDislikeThis = value; }
+        }
+
+        private bool _youLikeThis;
+        public bool YouLikeThis
+        {
+            get { return this._youLikeThis; }
+            set { this._youLikeThis = value; }
         }
     }
 }

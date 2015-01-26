@@ -11,6 +11,7 @@ using ILPathways.Library;
 using ILPathways.Utilities;
 using ILPathways.Business;
 using Isle.BizServices;
+using OrgMgr = Isle.BizServices.OrganizationBizService;
 
 namespace ILPathways.Account.controls
 {
@@ -53,12 +54,16 @@ namespace ILPathways.Account.controls
         string inviteId = FormHelper.GetRequestKeyValue( "invite" );
 
         //Check for Redirect URL and Saving in a property 
-        string rURL = "";
+        string rURL = defaultUrl.Text;
         if ( FormHelper.GetRequestKeyValue( "nextUrl" ) != "" )
         {
             rURL = FormHelper.GetRequestKeyValue( "nextUrl" );
             rURL = HttpUtility.UrlDecode( rURL );
-            rURL = UtilityManager.FormatAbsoluteUrl(rURL, false);
+            rURL = UtilityManager.FormatAbsoluteUrl( rURL, false );
+            ReturnURL = rURL;
+        }
+        else
+        {
             ReturnURL = rURL;
         }
         if ( inviteId.Length == 36 )
@@ -89,6 +94,8 @@ namespace ILPathways.Account.controls
                 this.confirmEmail.Value = Invitation.TargetEmail;
             }
             doImmediateConfirm.Text = "yes";
+            confirmMsg.Visible = false;
+
             //check for a next url
             if ( Invitation.StartingUrl != null && Invitation.StartingUrl.Length > 5 )
                 ReturnURL = Invitation.StartingUrl;
@@ -105,7 +112,7 @@ namespace ILPathways.Account.controls
 
     public void btnSubmit_Click( object sender, EventArgs e )
     {
-
+        LoggingHelper.DoTrace( 8, "registration.btnSubmit_Click" );
       if ( IsFormValid() )
       {
           AddUser();
@@ -196,15 +203,26 @@ namespace ILPathways.Account.controls
 
     private bool AddUser()
     {
+        LoggingHelper.DoTrace( 8, "registration.AddUser" );
         bool isValid = true;
         string status = "";
         var newUser = new Patron();
-      
-        newUser.Username = email.Value.Trim();
+
+        newUser.UserName = email.Value.Trim();
+        //default username to email prefix - will need a uniqueness check later
+        //or just do 
+        int pos = newUser.UserName.IndexOf( "@" );
+        if ( pos > -1 )
+        {
+            //newUser.Username = newUser.Username.Substring( 0, pos );
+        }
         newUser.FirstName = firstName.Value.Trim();
         newUser.LastName = lastName.Value.Trim();
         newUser.Email = email.Value.Trim();
-        newUser.IsActive = false;
+        if ( doImmediateConfirm.Text == "no" )
+            newUser.IsActive = false;
+        else
+            newUser.IsActive = true;
         newUser.Password = UtilityManager.Encrypt( password.Value );
 
         var newID = new Isle.BizServices.AccountServices().Create( newUser, ref status );
@@ -216,7 +234,8 @@ namespace ILPathways.Account.controls
         else
         {
             newUser.Id = newID;
-            ActivityBizServices.UserRegistration( newUser );
+            string ipAddress = this.GetUserIPAddress();
+            ActivityBizServices.UserRegistration( newUser, ipAddress );
 
             if ( doImmediateConfirm.Text == "no" )
             {
@@ -225,7 +244,7 @@ namespace ILPathways.Account.controls
                 //notify on new
                 SendConfirmationRequest( newID );
 
-                Response.Redirect( UtilityManager.FormatAbsoluteUrl( "/", false ) );
+                Response.Redirect( UtilityManager.FormatAbsoluteUrl( ReturnURL, false ) );
             }
             else
             {
@@ -235,38 +254,64 @@ namespace ILPathways.Account.controls
 
                 bool isSecure = false;
                 Patron user = new AccountServices().Get( newID );
-
-                if ( UtilityManager.GetAppKeyValue( "SSLEnable", "0" ) == "1" )
-                    isSecure = true;
-                string url = string.Format( autoActivateLink.Text, user.RowId.ToString() );
-                url = UtilityManager.FormatAbsoluteUrl( url, isSecure );
-                string nextUrl = "";
-                if ( ReturnURL != null && ReturnURL.Length > 5 )
-                    nextUrl = "&" + ReturnURL;
-                url += nextUrl;
+                this.WebUser = user;
 
                 if ( Invitation != null && Invitation.SeemsPopulated )
                 {
                     Invitation.TargetUserId = newID;
                     CompleteInvitation( Invitation, newUser );
+
+                    Response.Redirect( UtilityManager.FormatAbsoluteUrl( ReturnURL, false ), true );
                 }
                 else
                 {
-                    SetConsoleSuccessMessage( "Welcome to our system. Visit the <a href=\"/Help/Guide.aspx\">User Guide</a> for tips on getting started." );
+                    //not sure why doing proxy redirect??
+                    if ( UtilityManager.GetAppKeyValue( "SSLEnable", "0" ) == "1" )
+                        isSecure = true;
+                    string proxyId = new AccountServices().Create_RegistrationConfirmProxyLoginId( newID, ref status );
+
+                    string url = string.Format( autoActivateLink.Text, proxyId );
+                    url = UtilityManager.FormatAbsoluteUrl( url, isSecure );
+
+                    string nextUrl = "";
+                    if ( ReturnURL != null && ReturnURL.Length > 5 )
+                        nextUrl = "&" + ReturnURL;
+                    url += nextUrl;
+                    SetConsoleSuccessMessage( "Welcome to Illinois Open Educational Resources.<br/> Visit the <a href=\"/Help/Guide.aspx\">User Guide</a> for tips on getting started." );
+
+                    Response.Redirect( UtilityManager.FormatAbsoluteUrl( url, false ), true );
                 }
 
-                Response.Redirect( UtilityManager.FormatAbsoluteUrl( url, false ), true );
+                
             }
         }
         return isValid;
     }
+    private string GetUserIPAddress()
+    {
+        string ip = "";
+        try
+        {
+            ip = Request.ServerVariables[ "HTTP_X_FORWARDED_FOR" ];
+            if ( ip == null || ip == "" || ip.ToLower() == "unknown" )
+            {
+                ip = Request.ServerVariables[ "REMOTE_ADDR" ];
+            }
+        }
+        catch ( Exception ex )
+        {
+
+        }
+
+        return ip;
+    } //
 
     private void CompleteInvitation( LibraryInvitation entity, AppUser newUser )
     {
         string statusMessage = "";
         //update received - notify sender??
         entity.ResponseDate = System.DateTime.Now;
-        string welcomeMsg = "Welcome to our system. Visit the <a href=\"/Help/Guide.aspx\">User Guide</a> for tips on getting started." ;
+        string welcomeMsg = "Welcome to Illinois Open Educational Resources.<br/> Visit the <a href=\"/Help/Guide.aspx\">User Guide</a> for tips on getting started." ;
         if ( entity.LibMemberTypeId > 0 )
         {
             //add user as lib member 
@@ -293,25 +338,66 @@ namespace ILPathways.Account.controls
 
             int omid = OrganizationBizService.OrganizationMember_Create( om, ref statusMessage );
             if ( omid > 0 )
-                welcomeMsg +=  "- added to invited organzation" ;
+            {
+                welcomeMsg += "- added to invited organization";
 
-            //add profile
-            PatronProfile prof = new PatronProfile();
-            prof.UserId = newUser.Id;
-            prof.OrganizationId = entity.AddToOrgId;
-            new AccountServices().PatronProfile_Create( prof, ref statusMessage );
-            
+                //add profile
+                PatronProfile prof = new PatronProfile();
+                prof.UserId = newUser.Id;
+                prof.OrganizationId = entity.AddToOrgId;
+                new AccountServices().PatronProfile_Create( prof, ref statusMessage );
+
+                //check for roles
+                if ( Invitation.OrgMbrRoles != null && Invitation.OrgMbrRoles.Length > 0 )
+                {
+                    HandleOrgMbrRoles( omid, Invitation );
+                }
+            }
+            else
+            {
+                LoggingHelper.LogError( "Registration2.CompleteInvitation() Failed to add user as org mbr. Reason: " + statusMessage, true );
+            }
+
         }
         Invitation.ResponseDate = System.DateTime.Now;
         Invitation.IsActive = false;
         bool update = new LibraryBizService().LibraryInvitation_Update( Invitation );
         SetConsoleSuccessMessage( welcomeMsg );
     }
+    private void HandleOrgMbrRoles( int orgMbrId, LibraryInvitation invitation )
+    {
+        OrganizationMemberRole role = new OrganizationMemberRole();
+        string statusMessage = "";
+        string[] roles = invitation.OrgMbrRoles.Split( ',' );
+
+        foreach ( string item in roles )
+        {
+            role = new OrganizationMemberRole();
+            role.OrgMemberId = orgMbrId;
+            role.RoleId = Int32.Parse( item );
+            role.CreatedById = invitation.CreatedById;
+            if ( orgMbrId > 0 )
+            {
+                int id = OrgMgr.OrganizationMemberRole_Create( role, ref statusMessage );
+                if ( id > 0 )
+                    LoggingHelper.DoTrace( 5, "Registration2.HandleOrgMbrRoles. Success add new org roleId of " + item );
+                else
+                {
+                    LoggingHelper.DoTrace( 5, "Registration2.HandleOrgMbrRoles. ERROR do not add requested org role: " + item + ", reason: " + statusMessage );
+                    LoggingHelper.LogError( string.Format("Registration2.HandleOrgMbrRoles() Failed to add org mbr role: {0} for user: {1}, org mbrId: {2}, org: {3}. Reason: {4}", item, WebUser.Email, orgMbrId, invitation.AddToOrgId, statusMessage), true );
+                }
+            }
+        }
+
+    }
 
     private void SendConfirmationRequest( int userId )
     {
         //retrieve user to get rowId
         AppUser applicant = new Isle.BizServices.AccountServices().Get( userId );
+        string statusMessage = "";
+
+
 
         string toEmail = applicant.Email;
         string bcc = UtilityManager.GetAppKeyValue( "systemAdminEmail", "mparsons@siuccwd.com" );
@@ -323,7 +409,8 @@ namespace ILPathways.Account.controls
 
         if ( UtilityManager.GetAppKeyValue( "SSLEnable", "0" ) == "1" )
             isSecure = true;
-        string url = string.Format( activateLink.Text, applicant.RowId.ToString() );
+        string proxyId = new AccountServices().Create_ProxyLoginId( applicant.Id, "Registration Confirmation", ref statusMessage );
+        string url = string.Format( activateLink.Text, proxyId );
         url = UtilityManager.FormatAbsoluteUrl( url, isSecure );
 
         string subject = string.Format( "IOER - registration confirmation: {0}", applicant.FullName() );

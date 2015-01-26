@@ -286,28 +286,28 @@ namespace LRWarehouse.DAL
         private string Create( ResourceCluster entity )
         {
             string status = "successful";
-            try
-            {
-                ResourceCluster exists = Get(entity.ResourceId.ToString(), entity.ClusterId);
-                //coordinate switchover
-                //ResourceCluster exists = Get( entity.ResourceIntId, entity.ClusterId );
+            //try
+            //{
+            //    ResourceCluster exists = Get(entity.ResourceIntId, entity.ClusterId);
+            //    //coordinate switchover
+            //    //ResourceCluster exists = Get( entity.ResourceIntId, entity.ClusterId );
 
-                if ( exists == null || exists.IsValid == false)
-                {
-                    SqlParameter[] sqlParameters = new SqlParameter[ 3 ];  
-                    sqlParameters[ 0 ] = new SqlParameter( "@ResourceId", entity.ResourceId );
-                    sqlParameters[ 1 ] = new SqlParameter( "@ClusterId", entity.ClusterId );
-                    sqlParameters[ 2 ] = new SqlParameter( "@CreatedById", entity.CreatedById );
-                    //sqlParameters[ 3 ] = new SqlParameter( "@ResourceIntId", entity.ResourceIntId );
+            //    if ( exists == null || exists.IsValid == false)
+            //    {
+            //        SqlParameter[] sqlParameters = new SqlParameter[ 3 ];  
+            //        sqlParameters[ 0 ] = new SqlParameter( "@ResourceId", entity.ResourceId );
+            //        sqlParameters[ 1 ] = new SqlParameter( "@ClusterId", entity.ClusterId );
+            //        sqlParameters[ 2 ] = new SqlParameter( "@CreatedById", entity.CreatedById );
+            //        //sqlParameters[ 3 ] = new SqlParameter( "@ResourceIntId", entity.ResourceIntId );
 
-                    SqlHelper.ExecuteNonQuery(ConnString, CommandType.StoredProcedure, "[Resource.ClusterInsert]", sqlParameters);
-                }
-            }
-            catch (Exception ex)
-            {
-                LogError(ex, className + ".Create: ");
-                status = ex.Message;
-            }
+            //        SqlHelper.ExecuteNonQuery(ConnString, CommandType.StoredProcedure, "[Resource.ClusterInsert]", sqlParameters);
+            //    }
+            //}
+            //catch (Exception ex)
+            //{
+            //    LogError(ex, className + ".Create: ");
+            //    status = ex.Message;
+            //}
 
             return status;
         }

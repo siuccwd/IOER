@@ -91,42 +91,35 @@ namespace LRWarehouse.DAL
             {
 
                 #region parameters
-                SqlParameter[] sqlParameters = new SqlParameter[18];
-                sqlParameters[0] = new SqlParameter("@ResourceId", SqlDbType.UniqueIdentifier);
-                sqlParameters[0].Value = entity.ResourceId;
-                sqlParameters[ 1 ] = new SqlParameter( "@DocId", entity.LRDocId);
-                sqlParameters[ 2 ] = new SqlParameter( "@Title", entity.Title);
-                sqlParameters[ 3 ] = new SqlParameter( "@Description", entity.Description);
-                sqlParameters[ 4 ] = new SqlParameter( "@Publisher", entity.Publisher);
-                sqlParameters[ 5 ] = new SqlParameter( "@Creator",  entity.Creator);
-                sqlParameters[ 6 ] = new SqlParameter( "@Rights", entity.Rights);
-                sqlParameters[ 7 ] = new SqlParameter( "@AccessRights", entity.AccessRights );
-                sqlParameters[ 8 ] = new SqlParameter( "@Modified", SqlDbType.DateTime );
+                SqlParameter[] sqlParameters = new SqlParameter[17];
+                sqlParameters[ 0 ] = new SqlParameter( "@DocId", entity.LRDocId);
+                sqlParameters[ 1 ] = new SqlParameter( "@Title", entity.Title);
+                sqlParameters[ 2 ] = new SqlParameter( "@Description", entity.Description);
+                sqlParameters[ 3 ] = new SqlParameter( "@Publisher", entity.Publisher);
+                sqlParameters[ 4 ] = new SqlParameter( "@Creator",  entity.Creator);
+                sqlParameters[ 5 ] = new SqlParameter( "@Rights", entity.Rights);
+                sqlParameters[ 6 ] = new SqlParameter( "@AccessRights", entity.AccessRights );
+                sqlParameters[ 7 ] = new SqlParameter( "@Modified", SqlDbType.DateTime );
                 System.DateTime date;
                 if ( entity.Modified > entity.DefaultDate )
                     date = entity.Modified;
                 else
                     date = DateTime.Now;
-                sqlParameters[ 8 ].Value = date;
-                sqlParameters[ 9 ] = new SqlParameter( "@Submitter", SqlDbType.VarChar );
-                sqlParameters[ 9 ].Size = 100;
-                sqlParameters[ 9 ].Value = entity.Submitter;
-                sqlParameters[ 10 ] = new SqlParameter( "@Created", SqlDbType.DateTime );
+                sqlParameters[ 7 ].Value = date;
+                sqlParameters[ 8 ] = new SqlParameter( "@Submitter", entity.Submitter);
+                sqlParameters[ 9 ] = new SqlParameter( "@Created", SqlDbType.DateTime );
                 if ( entity.Created > entity.DefaultDate )
                     date = entity.Created;
                 else
                     date = DateTime.Now;
-                sqlParameters[ 10 ].Value = date;   // DateTime.Now;// entity.Created;
-                sqlParameters[ 11 ] = new SqlParameter( "@TypicalLearningTime", SqlDbType.VarChar );
-                sqlParameters[ 11 ].Size = 50;
-                sqlParameters[ 11 ].Value = entity.TypicalLearningTime;
-                sqlParameters[ 12 ] = new SqlParameter( "@IsSkeletonFromParadata", SqlDbType.Bit );
-                sqlParameters[ 12 ].Value = entity.IsSkeletonFromParadata;
-                sqlParameters[ 13 ] = new SqlParameter( "@Schema", entity.Schema );
-                sqlParameters[ 14 ] = new SqlParameter( "@AccessRightsId", entity.AccessRightsId );
-                sqlParameters[ 15 ] = new SqlParameter( "@InteractivityTypeId", entity.InteractivityTypeId );
-                sqlParameters[ 16 ] = new SqlParameter( "@ResourceIntId", entity.ResourceIntId );
-                sqlParameters[ 17 ] = new SqlParameter( "@Requirements", entity.Requirements );
+                sqlParameters[ 9 ].Value = date;   // DateTime.Now;// entity.Created;
+                sqlParameters[ 10 ] = new SqlParameter( "@TypicalLearningTime", entity.TypicalLearningTime);
+                sqlParameters[ 11 ] = new SqlParameter( "@IsSkeletonFromParadata", entity.IsSkeletonFromParadata);
+                sqlParameters[ 12 ] = new SqlParameter( "@Schema", entity.Schema );
+                sqlParameters[ 13 ] = new SqlParameter( "@AccessRightsId", entity.AccessRightsId );
+                sqlParameters[ 14 ] = new SqlParameter( "@InteractivityTypeId", entity.InteractivityTypeId );
+                sqlParameters[ 15 ] = new SqlParameter( "@ResourceIntId", entity.ResourceIntId );
+                sqlParameters[ 16 ] = new SqlParameter( "@Requirements", entity.Requirements );
                 #endregion
 
                 SqlDataReader dr = SqlHelper.ExecuteReader( connectionString, CommandType.StoredProcedure, INSERT_PROC, sqlParameters );
@@ -289,26 +282,25 @@ namespace LRWarehouse.DAL
 
             try
             {
-                SqlParameter[] parameters = new SqlParameter[ 19 ];
+                SqlParameter[] parameters = new SqlParameter[ 18 ];
                 parameters[ 0 ] = new SqlParameter( "@RowId", resourceVersion.RowId );
-                parameters[ 1 ] = new SqlParameter( "@ResourceId", resourceVersion.ResourceId );
-                parameters[ 2 ] = new SqlParameter( "@DocId", resourceVersion.LRDocId );
-                parameters[ 3 ] = new SqlParameter( "@Title", resourceVersion.Title );
-                parameters[ 4 ] = new SqlParameter( "@Description", resourceVersion.Description );
-                parameters[ 5 ] = new SqlParameter( "@Publisher", resourceVersion.Publisher );
-                parameters[ 6 ] = new SqlParameter( "@Creator", resourceVersion.Creator );
-                parameters[ 7 ] = new SqlParameter( "@Rights", resourceVersion.Rights );
-                parameters[ 8 ] = new SqlParameter( "@AccessRights", resourceVersion.AccessRights );
-                parameters[ 9 ] = new SqlParameter( "@Modified", resourceVersion.Modified );
-                parameters[ 10 ] = new SqlParameter( "@Submitter", resourceVersion.Submitter );
-                parameters[ 11 ] = new SqlParameter( "@Created", resourceVersion.Created );
-                parameters[ 12 ] = new SqlParameter( "@TypicalLearningTime", resourceVersion.TypicalLearningTime );
-                parameters[ 13 ] = new SqlParameter( "@IsSkeletonFromParadata", resourceVersion.IsSkeletonFromParadata );
-                parameters[ 14 ] = new SqlParameter( "@Schema", resourceVersion.Schema );
-                parameters[ 15 ] = new SqlParameter( "@AccessRightsId", resourceVersion.AccessRightsId );
-                parameters[ 16 ] = new SqlParameter( "@InteractivityTypeId", resourceVersion.InteractivityTypeId );
-                parameters[ 17 ] = new SqlParameter( "@InteractivityType", resourceVersion.InteractivityType );
-                parameters[ 18 ] = new SqlParameter( "@ResourceIntId", resourceVersion.ResourceIntId );
+                parameters[ 1 ] = new SqlParameter( "@DocId", resourceVersion.LRDocId );
+                parameters[ 2 ] = new SqlParameter( "@Title", resourceVersion.Title );
+                parameters[ 3 ] = new SqlParameter( "@Description", resourceVersion.Description );
+                parameters[ 4 ] = new SqlParameter( "@Publisher", resourceVersion.Publisher );
+                parameters[ 5 ] = new SqlParameter( "@Creator", resourceVersion.Creator );
+                parameters[ 6 ] = new SqlParameter( "@Rights", resourceVersion.Rights );
+                parameters[ 7 ] = new SqlParameter( "@AccessRights", resourceVersion.AccessRights );
+                parameters[ 8 ] = new SqlParameter( "@Modified", resourceVersion.Modified );
+                parameters[ 9 ] = new SqlParameter( "@Submitter", resourceVersion.Submitter );
+                parameters[ 10 ] = new SqlParameter( "@Created", resourceVersion.Created );
+                parameters[ 11 ] = new SqlParameter( "@TypicalLearningTime", resourceVersion.TypicalLearningTime );
+                parameters[ 12 ] = new SqlParameter( "@IsSkeletonFromParadata", resourceVersion.IsSkeletonFromParadata );
+                parameters[ 13 ] = new SqlParameter( "@Schema", resourceVersion.Schema );
+                parameters[ 14 ] = new SqlParameter( "@AccessRightsId", resourceVersion.AccessRightsId );
+                parameters[ 15 ] = new SqlParameter( "@InteractivityTypeId", resourceVersion.InteractivityTypeId );
+                parameters[ 16 ] = new SqlParameter( "@InteractivityType", resourceVersion.InteractivityType );
+                parameters[ 17 ] = new SqlParameter( "@ResourceIntId", resourceVersion.ResourceIntId );
 
                 SqlHelper.ExecuteNonQuery( ConnString, CommandType.StoredProcedure, "[Resource.Version_Import]", parameters );
             }
@@ -340,7 +332,7 @@ namespace LRWarehouse.DAL
             }
             catch ( Exception ex )
             {
-                LogError( thisClassName + ".SetResourceActiveState(): " + ex.ToString() );
+                LogError( thisClassName + ".SetActiveState(): " + ex.ToString() );
                 status = ex.Message;
             }
             return status;
@@ -410,7 +402,7 @@ namespace LRWarehouse.DAL
                 string filter = string.Format( "(lr.[ResourceIntId] = {0} )", resourceId );
                 int pTotalRows = 0;
                 //order by msut be in select, and date is not, so just go with the flow, assuming dups will be removed in future
-                string orderBy = "";    // "lr.Modified DESC";
+                string orderBy = "lr.ResourceVersionIntId DESC";    // "lr.Modified DESC";
 
                 DataSet ds = searchMgr.Search( filter, orderBy, 1, 100, false, ref pTotalRows );
 
@@ -454,6 +446,7 @@ namespace LRWarehouse.DAL
             LRManager searchMgr = new LRManager();
             try
             {
+                pUrl = HandleApostrophes( pUrl );
                 string filter = string.Format( "(lr.[ResourceUrl] = '{0}')", pUrl );
                 int pTotalRows = 0;
                 string orderBy = "ResourceVersionIntId DESC ";
@@ -589,30 +582,57 @@ namespace LRWarehouse.DAL
         /// </summary>
         /// <param name="filter"></param>
         /// <returns></returns>
-        public DataSet Select( string filter )
+        public DataSet Select( string filter, int maxTries = 1 )
         {
             if ( filter.Length > 0 && filter.ToLower().IndexOf( "where" ) != 0 )
             {
                 filter = "WHERE " + filter;
             }
-            try
+            int tries = 0;
+            bool isSuccessful = false;
+            while (!isSuccessful && tries < maxTries)
             {
-                SqlParameter[] sqlParameters = new SqlParameter[ 1 ];
-                sqlParameters[ 0 ] = new SqlParameter( "@Filter", filter );
-                DataSet ds = SqlHelper.ExecuteDataset( ReadOnlyConnString, CommandType.StoredProcedure, "[Resource.VersionSelect]", sqlParameters );
-                if ( DoesDataSetHaveRows( ds ) )
+                try
                 {
-                    return ds;
+                    tries++;
+                    // SqlHelper class does not let you alter the timeout (20s), so we have to do this the old way to avoid timeouts.
+                    DataSet ds = new DataSet();
+                    using (SqlConnection conn = new SqlConnection(ReadOnlyConnString))
+                    {
+                        SqlCommand cmd = new SqlCommand("[Resource.VersionSelect]", conn);
+                        cmd.Parameters.AddWithValue("@Filter", filter);
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.CommandTimeout = 60; // Set timeout for 60 seconds instead of 20
+
+                        SqlDataAdapter da = new SqlDataAdapter();
+                        da.SelectCommand = cmd;
+                        da.Fill(ds);
+                        if (DoesDataSetHaveRows(ds))
+                        {
+                            isSuccessful = true;
+                            return ds;
+                        }
+                        else
+                        {
+                            isSuccessful = true;
+                            return null;
+                        }
+                    }
                 }
-                else
+                catch (Exception ex)
                 {
-                    return null;
+                    if (tries < maxTries)
+                    {
+                        Console.WriteLine(string.Format("Sleeping 2 minutes and retrying {0}", filter));
+                        System.Threading.Thread.Sleep(120000); // Sleep 2 minutes, then try again
+                    }
+                    else
+                    {
+                        throw ex; // Have tried 4 times, it still doesn't work, throw the exception.
+                    }
                 }
             }
-            catch ( Exception ex )
-            {
-                throw ex;
-            }
+            return null;
         }
 
         /// <summary>

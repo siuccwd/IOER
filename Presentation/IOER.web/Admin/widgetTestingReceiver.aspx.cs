@@ -17,7 +17,8 @@ namespace ILPathways.Admin
             JavaScriptSerializer serializer = new JavaScriptSerializer();
             jsonRequest req = serializer.Deserialize<jsonRequest>( data );
             Services.ElasticSearchService search = new Services.ElasticSearchService();
-            string result = search.DoSearchWidget( req.searchText, req.pageSize );
+            //string result = search.DoSearchWidget( req.searchText, req.pageSize );
+            string result = "";
             output.Text = "isleSearch.updateResults(" + result + ");";
         }
     }

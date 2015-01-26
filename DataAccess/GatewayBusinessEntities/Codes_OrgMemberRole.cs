@@ -22,6 +22,7 @@ namespace GatewayBusinessEntities
         public int Id { get; set; }
         public string Title { get; set; }
         public Nullable<System.DateTime> Created { get; set; }
+        public Nullable<bool> IsActive { get; set; }
     
         public virtual ICollection<Organization_MemberRole> Organization_MemberRole { get; set; }
     }

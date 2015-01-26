@@ -60,7 +60,7 @@
     position: absolute;
     height: 100%;
     left: 400px;
-    top: 80px;
+    top: 105px;
     border: none;
     background-color: <%=css_white %>;
     min-width: 450px;
@@ -72,7 +72,7 @@
     width: 400px;
     background-color: #FFF;
     position: absolute;
-    top: 80px;
+    top: 105px;
     left: 0;
     overflow-y: scroll;
     overflow-x: hidden;
@@ -99,7 +99,7 @@
   .flyout {
     position: fixed;
     right: 50px;
-    top: 80px;
+    top: 105px;
     min-width: 200px;
     
   }
@@ -369,7 +369,7 @@
   
   /* Page Message Panel */
   #pageMessagePanel {
-    top: 80px;
+    top: 105px;
     right: 50px;
     max-width: 300px;
     z-index: 10000;
@@ -988,7 +988,7 @@ if("<%=sandboxText %>" == "true"){
     }
 
     function resizeFrame() {
-        var desiredHeight = jWindow.height() - 80;
+        var desiredHeight = jWindow.height() - 105;
         $("#previewFrame").width(jWindow.width() - 400).height(desiredHeight);
         $(".toolContainer").height(desiredHeight);
 
@@ -1288,6 +1288,7 @@ if("<%=sandboxText %>" == "true"){
         <a class="quickSubject" href="javascript:void('')">World Languages</a>
         <a class="quickSubject" href="javascript:void('')">Health</a>
         <a class="quickSubject" href="javascript:void('')">Physical Education</a>
+          <a class="quickSubject" href="javascript:void('')">Career Development</a>
         <input type="text" id="tagEntry_subjects" maxlength="50" class="txtBox tagEntry" placeholder="Enter Subjects separated by pressing Enter or with a comma" />
         <ul class="tagList" id="tags_subjects"></ul>
 

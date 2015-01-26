@@ -1,0 +1,188 @@
+﻿  /* Header */
+  #content { position: relative; min-height: 500px; }
+  #curriculumHeader { position: relative; padding-left: 140px; min-height: 100px; margin-bottom: 10px; }
+  #curriculumAvatar { display: block; position: absolute; left: 0; top: 0; height: 100px; width: 133px; background: transparent url('') center center no-repeat; background-size: contain; background-color: #EEE; border-radius: 5px; overflow: hidden; }
+  #btnShowTools { display: block; width: auto; padding: 10px; float: left; margin: 5px; }
+  #breadcrumbs { display: inline; }
+  #breadcrumbs a { display: inline-block; }
+  #breadcrumbs a:hover, #breadcrumbs a:focus { text-decoration: underline; }
+  #breadcrumbs .separator { font-weight: bold; font-size: 120%; }
+  #breadcrumbs .separator:last-child { display: none; }
+
+  /* Content */
+  #node { padding: 0 10px; min-height: 300px; }
+  #node h2 { font-size: 26px; }
+  #node h3 { font-size: 20px; }
+  #node #leftColumn h3 { background-color: #EEE; border-radius: 5px; padding: 2px 5px; margin: 10px 0 5px 0; }
+  #node #leftColumn, #node #rightColumn { display: inline-block; vertical-align: top; }
+  #node #leftColumn { width: 65%; }
+  #node #rightColumn { width: 35%; padding-left: 5px; }
+  #node #nodeDescription { margin-bottom: 10px; overflow: hidden; }
+  #node .subNodes a { font-weight: bold; font-size: 120%; }
+  #node .subNodes a:hover, #node .subNodes a:focus { text-decoration: underline; }
+  #node .subNodes p { padding-left: 10px; }
+  #node .subNodes .subNode.current { border: 1px solid #DDD; border-radius: 5px; padding-left: 5px; padding-right: 5px; margin-left: -5px; margin-right: -5px; background-color: #DDD; }
+  #node #resourcesBox, #node #filesBox { margin-bottom: 10px; }
+
+  /* Files stuff */
+  #filesBox.centered #resources { text-align: center; }
+  #filesBox.scrolling #resources { white-space: nowrap; overflow-x: auto; text-align: left; background-color: #EFEFEF; background: linear-gradient(#F0F0F0, #FFF); padding: 5px; border-radius: 5px; }
+  #filesBox.scrolling #resources .file { box-shadow: 0 0 15px -3px #555; }
+  #filesBox.scrolling #resources * { white-space: normal; }
+  .file { display: inline-block; vertical-align: top; width: 200px; min-height: 215px; text-align: center; position: relative; margin: 5px; }
+  .file img { width: 100%; border-radius: 5px; overflow: hidden; background: transparent url('') center center no-repeat; background-size: contain; }
+  .file div { min-height: 3.5em; }
+  .file .iconButton { opacity: 0.6; background: url('/images/icons/icon_search.png') center center no-repeat; background-size: contain; width: 50px; height: 50px; border-radius: 50%; background-color: rgba(255,255,255,0.8); position: absolute; top: 5px; right: 5px; border: none; transition: opacity 0.5s, box-shadow 0.1s; }
+  .file:hover .iconButton, .file:focus .iconButton, .file .iconButton:hover, .file .iconButton:focus { opacity: 1; }
+  .file .iconButton:hover, .file .iconButton:focus { box-shadow: 0 0 10px -2px #FF6A00 inset, 0 0 10px -2px #FF6A00; }
+  .file .iconButton.tags { top: 65px; background-image: url('/images/icons/icon_tag.png'); }
+  .downloadFilesLink { font-size: inherit; float: right; margin-right: 50px; }
+  .downloadFilesLink img { height: 20px; width: 20px; vertical-align: middle; margin-top: -4px;  }
+  .file.private p { padding: 50px 10px; }
+  
+
+  /* Overlay */
+  #tools { 
+    display: none;
+    z-index: 100;
+    position: absolute; top: 100px; left: 10%; right: 10%; 
+    margin: 0 auto 50px auto; 
+    max-width: 950px; 
+    min-width: 300px;
+    overflow: auto; 
+    background-color: #EEE; 
+    border-radius: 5px; 
+    box-shadow: 0 0 25px -5px #000; 
+    padding-left:175px;
+    min-height: 250px;
+    transition: left 1s;
+
+  }
+  #tools #buttons { text-align: center; width: 150px; position: absolute; top: 30px; left: 5px; }
+  #tools > .header { margin-left: -175px; }
+  #tools #buttons input { width: 150px; margin-bottom: 3px; white-space: normal; }
+  #tools #buttons input.selected { background-color: #4AA394; }
+  #tools .tab { display: none; }
+  #tools .tab.showing { display: block; }
+  #tools #demoNodes i { color: #5A5; }
+  #tools ul { margin-bottom: 10px; }
+  #tools h3, #tools .column h3  { font-size: 110%; }
+  #tools a:hover, #tools a:focus { text-decoration: underline; }
+  #tools .widgetLink { width: 100%; background-image: linear-gradient(#EFEFEF, #FFF); margin-bottom: 25px; }
+  #tools .widgetLink:hover { cursor: pointer; }
+  #tools .columns * { font-size: initial; white-space: normal; }
+  #tools .columns, #tools .column.columns { font-size: 0; white-space: nowrap; }
+  #tools .column { display: inline-block; vertical-align: top; }
+  #tools #communityLeftColumn { width: 67%; }
+  #tools #communityRightColumn { width: 33%; padding-left: 10px; }
+  #tools #txtComment { width: 100%; height: 5em; min-height: 3em; max-height: 20em; resize: vertical; }
+  #tools #likes { width: 100%; margin-bottom: 10px; }
+  #tools .likeBox { margin-bottom: 5px; }
+  #tools .likeBox input { width: 40%; }
+  #tools .likeBox span { text-align: right; padding-right: 5px; line-height: 25px; }
+  #tools .likeBox .column { width: 60%; }
+  #tools .likeBox .grayMessage { display: inline-block; padding: 0; width: 40%; }
+  #tools #ddlTimelineSubscribe { width: 74%; margin-right: 1%; }
+  #tools #btnFollow { width: 24%; }
+  #tools #tab_curriculumMap a { font-size: inherit; }
+  #tools #tab_curriculumMap > .layer > li { font-size: 150%; font-weight: bold; }
+  #tools #tab_curriculumMap > .layer > .layer > li { font-size: 125%; font-weight: bold; }
+  #tools #tab_curriculumMap > .layer > .layer > .layer > li { font-size: 110%; font-weight: bold; }
+  #tools #tab_curriculumMap li.current { display: block; padding: 2px 5px; background-color: #DDD; border-radius: 5px; position: relative; margin-left: -5px; }
+  #tools #tab_curriculumMap li.current:before, #rightColumn .subNode.current:before { content: " You are Here"; display: inline; float: right; color: #555; font-weight: normal; font-style: italic; margin-left: 5px; }
+  #tools #tab_curriculumMap input.curriculumExpandCollapseButton { width: 20px; margin-right: 5px; }
+  #tools #tab_curriculumMap #btnCurriculumExpandCollapseAll { width: auto; float: right; margin-top: -1px; }
+  #tools .comment, #tools #timelineContent .event { border-radius: 5px; border: 1px solid #CCC; margin: 5px 0; }
+  #tools .comment .name, #tools #timelineContent .event .date { background-color: #DDD; padding: 2px 5px; font-weight: bold; }
+  #tools .comment .date { float: right; font-weight: normal; font-style: italic; margin: 0 5px; }
+  #tools .comment .text, #tools #timelineContent .event .text { padding: 5px; }
+
+  /* Previewer */
+  body.previewing div[class*='at4'] { display: none; }
+  #previewerOverlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 100000; background-color: rgba(0,0,0,0.2); }
+  #previewer { margin: 2% auto; width: 90%; height: 90%; padding-top: 30px; }
+  #previewer .header { margin-top: -30px; }
+  #previewer .header img { height: 18px; width: 18px; vertical-align: middle; margin-top: -4px; }
+  #previewerFrame { width: 100%; height: 100%; }
+  #previewer .header a { font-size: inherit; color: inherit; text-decoration: underline; }
+  #previewer #btnPreviewerNext, #previewer #btnPreviewerPrevious { display: block; position: absolute; top: 50%; width: 40px; height: 40px; line-height: 34px; font-size: 34px; border-radius: 50%; border-width: 1px; }
+  #previewer #btnPreviewerNext { right: 2%; border-radius: 2px 50% 50% 2px; }
+  #previewer #btnPreviewerPrevious { left: 2%; border-radius: 50% 2px 2px 50%; }
+
+  /* Featured Preview */
+  #featuredPreviewFrame { height: 800px; width: 100%; border: none; background-color: #EEE; border-radius: 5px; overflow: hidden; }
+
+  /* Standards */
+  .standardsList, .standardText { padding: 2px; }
+  .standardsList input, .btnOpenMap { margin: 2px; border: none; background-color: transparent; color: #3572B8; }
+  .standardsList input { font-weight: bold; font-size: 110%; }
+  .standardsList input:hover, .standardsList input:focus, .btnOpenMap { cursor: pointer; text-decoration: underline; color: #4C98CC; }
+  .standardsList li { display: inline-block; vertical-align: top; width: 48%; margin-right: -4px; }
+  .standardText { display: none; padding-right: 10px; margin-bottom: 5px; }
+  #btnToggleAllStandards { float: right; display: inline-block; width: auto; margin-top: -1px; margin-left: 10px; }
+  #standardsLevelButtons { white-space: nowrap; text-align: center; }
+  #standardsLevelButtons input { display: inline-block; vertical-align: top; width: 32.1%; }
+  .standardsLevel { display: none; }
+  .standardsLevel.showing { display: block; }
+  /* CSS Columns - may need to remove */
+  .standardsList { -webkit-column-count: 2; -moz-column-count: 2; column-count: 2; }
+  .standardsList li { width: 100%; }
+  /* End Columns */
+  #standardsLevelButtons input { border-radius: 5px 5px 0 0; border-bottom-width: 0; padding-bottom: 5px; }
+  #alignedStandards .stdMajor { background-color: #484; }
+  #alignedStandards .stdSupporting { background-color: #48A; }
+  #alignedStandards .stdAdditional { background-color: #CB2; }
+
+  /* Misc */
+  .grayMessage { color: #555; font-style: italic; padding: 10px 5px; }
+  #tools .grayMessage, #rightColumn .grayMessage { text-align: center; }
+  #btnOpenMap { font-style: inherit; }
+  #rightColumn .downloadFilesLink { display: block; padding: 5px; margin: 0 0 5px 0; float: none; text-align: center; }
+  #rightColumn .mid { margin-top: 15px; }
+  #rightColumn .mid:nth-child(2) { margin-top: -5px; }
+  #rightColumn .grayBox { margin-bottom: 15px; }
+  #cssDetector { content: "fullWidth"; }
+  #siblingButtons { margin-top: 10px; }
+  #siblingButtons:after { content: " "; display: block; clear: both; }
+  #siblingButtons input { width: 48%; }
+  #btnPrevNode { float: left; }
+  #btnNextNode { float: right; }
+  .previewerLink { float: right; display: block; font-weight: normal; font-style: italic; margin: 0 5px; }
+  .previewerLink input { width: auto; display: inline; font-weight: normal; }
+  #officePreviewerLink { display: none; }
+  .mainLoginLink { float: right; font-weight: bold; color: #FFF; margin: 2px 10px 2px 5px; }
+  .mainLoginLink:hover, .mainLoginLink:focus { color: #FFF; }
+
+  /* Mobile */
+  @media screen and (max-width: 980px){
+    #tools { left: 2%; right: 2%; }
+  }
+  @media screen and (max-width: 800px) {
+    #previewer { padding-top: 55px; }
+    #previewer .header { height: 50px; margin-top: -55px; }
+  }
+  @media screen and (max-width: 775px) {
+    #tools #communityLeftColumn, #tools #communityRightColumn { display: block; width: 100%; }
+    #tools #communityRightColumn { padding-left: 0; }
+    #node #leftColumn, #node #rightColumn { display: block; width: 100%; margin-bottom: 20px; }
+    #node #rightColumn { padding-left: 0; }
+    #cssDetector { content: "775"; }
+  }
+  @media screen and (max-width: 675px) {
+    #btnShowTools { width: 100%; float: none; margin: 0 0 10px 0; }
+  }
+  @media screen and (max-width: 550px) {
+    #tools #likeBox_curriculum, #tools #likeBox_node { width: 100%; display: block; margin-bottom: 5px; }
+    .standardsList, #standardsText, .standardsList li { width: 100%; display: block; }
+    #tools #buttons { width: 100%; display: block; position: static; }
+    #tools { padding-left: 10px; }
+    .standardsList { -webkit-column-count: initial; -moz-column-count: initial; column-count: initial; }
+  }
+  @media screen and (max-width: 475px) {
+    #filesBox.grid .file { width: 90%; margin: 5px auto; display: block; }
+  }
+  @media screen and (max-width: 450px) {
+    #curriculumAvatar { position: static; width: 250px; height: 225px; margin: 5px auto; }
+    #curriculumHeader { padding-left: 0; }
+    #tools #buttons input { width: 100%; }
+  }

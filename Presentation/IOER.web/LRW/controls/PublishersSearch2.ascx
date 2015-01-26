@@ -26,7 +26,7 @@
 <!--Major page elements -->
 <style type="text/css">
 #container {
-  margin-left: auto; margin-right: auto; width: 75%;
+  margin-left: auto; margin-right: auto; width: 100%; max-width: 800px;
 }
 .pager {
   min-height: 20px;
@@ -36,16 +36,20 @@
 }
 .txtKeyword {
   display: block;
-  width: 50%;
+  width: 100%;
   margin: 10px auto;
   font-size: 130%;
 }
+  .PagerContainerTable td { display: inline-block; margin: 2px -4px 2px 0; }
 </style>
 <style type="text/css">
 
 @media screen and (max-width: 900px) {
 #container { width: 95%; margin: 5px; }
 
+}
+@media screen and (max-width: 800px){
+  .PagerContainerTable { clear: both; margin: 2px auto; }
 }
 </style>
 
@@ -131,7 +135,7 @@
           </div>
 			  </ItemTemplate>
 		  </asp:TemplateField>	
-		  <asp:TemplateField HeaderText="Resources Count"  sortexpression="ResourceTotal" ItemStyle-HorizontalAlign="Right">
+		  <asp:TemplateField HeaderText="Resources"  sortexpression="ResourceTotal" ItemStyle-HorizontalAlign="Right">
 			  <ItemTemplate>
 				  <%# Eval( "ResourceTotal" )%>
 			  </ItemTemplate>
@@ -158,7 +162,7 @@
 <asp:Literal ID="doingAutoSearch" runat="server" Visible="false">yes</asp:Literal>
     <asp:Literal ID="includeCreator" runat="server" Visible="false">no</asp:Literal>
 	<asp:Literal ID="publisherDisplayTemplate" runat="server" Visible="false">
-  <strong><a href="/Search.aspx?pub={0}" >{0}</a></strong> &nbsp;<a href="/Search.aspx?pub={0}" target="_blank">Open in new window</a>
+  <strong><a href="/Search.aspx?pub={0}" target="result">{0}</a></strong>
   
   </asp:Literal>
   	<asp:Literal ID="defaultSearchOrderBy" runat="server" Visible="false">[ResourceTotal] desc, Publisher</asp:Literal>

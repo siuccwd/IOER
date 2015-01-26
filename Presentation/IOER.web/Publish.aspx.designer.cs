@@ -13,30 +13,12 @@ namespace ILPathways {
     public partial class Publish {
         
         /// <summary>
-        /// form1 control.
+        /// PublisherControl control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlForm form1;
-        
-        /// <summary>
-        /// publisher control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::ILPathways.LRW.controls.PublishResource_Narrow2 publisher;
-        
-        /// <summary>
-        /// NullButton control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Button NullButton;
+        protected global::ILPathways.Controls.Publish3 PublisherControl;
     }
 }

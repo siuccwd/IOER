@@ -226,7 +226,7 @@
   <h1 class="isleH1">IOER Registration</h1>
   <p class="intro">An IOER account will allow you to create, share, evaluate, and collaborate on career and education Resources.
   </p>
-    <div id="confirmMsg" class="infoMessage" >
+    <div id="confirmMsg" class="infoMessage" runat="server" >
       
             <h2>A confirmation of your email address is required.</h2>
             <ul style="text-align:left; margin-left: 50px;">
@@ -247,7 +247,7 @@
     <p id="validation_email" class="vm"></p>
     <label>Password</label><input type="password" id="password" class="password" runat="server" autocomplete="off" />
     <label>Confirm Password</label><input type="password" id="confirmPassword" class="confirmPassword" runat="server" autocomplete="off" />
-    <p id="validation_password" class="vm"></p>
+    <p id="validation_password" class="vm" style="min-height:50px;"></p>
     <label>First Name</label><input type="text" id="firstName" class="firstName" data-name="firstName" runat="server" />
     <p id="validation_firstName" class="vm"></p>
     <label>Last Name</label><input type="text" id="lastName" class="lastName" data-name="lastName" runat="server" />
@@ -256,6 +256,8 @@
   <div class="grayBox step bigText">
     <p class="final">By creating an account, you confirm you are 13 years old or older, and you agree to the ISLE <a class="textLink" href="//ilsharedlearning.org/Pages/ISLE-Privacy-Policy.aspx" target="_blank">Privacy Policy</a> and <a class="textLink" href="//ilsharedlearning.org/Pages/ISLE-Terms-of-Use.aspx">Terms of Use</a>.</p>
     <asp:Button ID="btnSubmit" runat="server" OnClick="btnSubmit_Click" OnClientClick="validatePage()" CssClass="btnSubmit isleButton bgGreen" Text="I Agree. Create My Account!" />
+       <asp:Button ID="Button1" Visible="false"  runat="server" OnClick="btnSubmit_Click"  CssClass="btnSubmit isleButton bgGreen" Text="I Agree. Create My Account!" />
+
     <p id="processing">Processing, Please wait...</p>
     <p id="preButtonMessage">One or more of the required fields above hasn't been completed yet. Please double-check!</p>
   </div>
@@ -267,11 +269,13 @@
 <asp:Literal ID="sendInfoEmailOnRegistration" runat="server">yes</asp:Literal>
 <asp:Literal ID="doImmediateConfirm" runat="server">no</asp:Literal>
 <asp:Literal ID="prefillingEmailIfFound" runat="server">no</asp:Literal>
-<asp:Literal ID="activateLink" runat="server" >/Account/Login.aspx?g={0}&a=activate</asp:Literal>
-<asp:Literal ID="autoActivateLink" runat="server" >/Account/Login.aspx?g={0}&a=autoactivate</asp:Literal>
-<asp:Literal ID="activateLink1" runat="server" >/Account/Profile.aspx?g={0}&a=activate</asp:Literal>
+<asp:Literal ID="activateLink" runat="server" >/Account/Login.aspx?pg={0}&a=activate</asp:Literal>
+<asp:Literal ID="autoActivateLink" runat="server" >/Account/Login.aspx?pg={0}&a=autoactivate</asp:Literal>
+<asp:Literal ID="defaultUrl" runat="server" >/Account/Success.aspx</asp:Literal>
+
 <asp:Literal ID="txtReturnUrl" runat="server" Visible="false">/</asp:Literal>
-<asp:Label ID="registerSuccessMsg" runat="server"><span style="background-color: #fff;color: #000;">A confirmation of your email address is required.</span> <ul><li>An email was sent to your address with a link to complete registration.</li><li>Upon completing registration your account will be activated.</li><li>If you do not receive an email, be sure to check your junk mail folder.</li></ul></asp:Label>
+<asp:Label ID="registerSuccessMsg" runat="server">Thank you for registering<br />Check your email for your activation email</asp:Label>
+<asp:Label ID="registerSuccessMsgFull" runat="server"><span style="background-color: #fff;color: #000;">A confirmation of your email address is required.</span> <ul><li>An email was sent to your address with a link to complete registration.</li><li>Upon completing registration your account will be activated.</li><li>If you do not receive an email, be sure to check your junk mail folder.</li></ul></asp:Label>
 <!-- The MS-Word formatted message. Needs to be tested -->
 <asp:Label ID="confirmMessage" runat="server">
   <div>

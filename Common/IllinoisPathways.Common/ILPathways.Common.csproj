@@ -34,10 +34,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.ApplicationBlocks.Data, Version=2.0.0.0, Culture=neutral">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Library\Microsoft.ApplicationBlocks.Data.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
@@ -58,6 +54,7 @@
     <Compile Include="Enum\UserTypeEnum.cs" />
     <Compile Include="ErrorConstants.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SQLHelper.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="bin\Debug\ILPathways.Common.dll" />

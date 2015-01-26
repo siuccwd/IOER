@@ -71,14 +71,16 @@
 		
 		<div class="splashItem" id="search">
 			<h2>Search</h2>
-			<a target="_blank" href="/Search.aspx" >Resources</a>
-			<a target="_blank" href="/Libraries/Default.aspx" >Libraries</a>
-			<a target="_blank" href="/Publishers.aspx" >Publishers</a>
+			<a target="_blank" href="/Search" >ISLE Resources</a>
+			<a target="_blank" href="/Libraries/Search" >ISLE Libraries</a>
+            <a target="_blank" href="/gooruSearch" >gooru Resources (beta)</a>
+			<!--<a target="_blank" href="/Publishers.aspx" >Publishers</a>-->
 			<img src="/images/icons/icon_search_med.png" />
 		</div>
 		<div class="splashItem" id="contribute">
-			<h2>Contribute</h2>
-      <a target="_blank" href="/Contribute/">Contribute Resources</a>
+			<h2>Share</h2>
+            <a target="_blank" href="/Contribute/">Share Resources</a>
+            <a target="_blank" href="/Community/1/ISLE_Community" class="navLink">Communities</a>
 			<!--<a target="_blank" href="/Publish.aspx" >Tag Resource</a>
 			<a target="_blank" href="/My/Author.aspx" >Create Resource</a>-->
 			<img src="/images/icons/icon_create_med.png" />
@@ -94,10 +96,11 @@
 			<h2>My IOER</h2>
 			<a target="_blank" href="/Account/Login.aspx" id="loginLink" runat="server" >Login</a>
       <a target="_blank" href="/Account/Register.aspx" id="registerLink" runat="server" >Register</a>
-			<a target="_blank" href="/My/Library" id="myLibraryLink" runat="server" >My Library</a>
+      <a target="_blank" href="/My/Dashboard" id="myDashboardLink" runat="server">My Dashboard</a>
+			<!--<a target="_blank" href="/My/Library" id="myLibraryLink" runat="server" >My Library</a>
 			<a target="_blank" href="/My/Favorites.aspx" id="myFollowedLink" runat="server" >Libraries I follow</a>
       <a target="_blank" href="/My/Timeline/" id="myNetworkLink" runat="server">My IOER Timeline</a>
-			<a target="_blank" href="/My/Authored.aspx" id="myCreatedLink" runat="server" >My Resources</a>
+			<a target="_blank" href="/My/Authored.aspx" id="myCreatedLink" runat="server" >My Resources</a>-->
 			<img src="/images/icons/icon_library_med.png" />
 		</div>
 		

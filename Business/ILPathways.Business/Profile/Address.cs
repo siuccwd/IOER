@@ -324,20 +324,21 @@ namespace ILPathways.Business
 		/// <returns></returns>
 		public string AddressString()
 		{
-			string address = "";
+            string address = Address1.Length > 0 ? Address1 : "";
+
+            if ( Address2.Length > 0 )
+                address += " " + Address2;
 
 			//a valid address needs to have a city
 			if ( City.Length > 0 )
 			{
-				address = Address1;
-
-				if ( Address2.Length > 0 )
-					address += " " + Address2;
-
-				address += ", " + City + "," + this.State + " ";
+				address += address.Length > 0 ? ", " + City : City ;
 			}
+            if ( State.Length > 0 )
+                address += address.Length > 0 ? ", " + State : this.State + " ";
 
-			address += ZipCodeFull;
+            if ( ZipCodeFull.Length > 0 )
+                address += address.Length > 0 ? ", " + ZipCodeFull : this.ZipCodeFull + " ";
 
 			return address;
 		}//

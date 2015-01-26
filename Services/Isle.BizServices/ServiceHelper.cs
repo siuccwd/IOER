@@ -6,9 +6,11 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Web;
 
 //temp use of:ILPathways.Utilities for email - probably should do differently
 using ILPathways.Utilities;
+using IPB = ILPathways.Business;
 
 namespace Isle.BizServices
 {
@@ -17,6 +19,10 @@ namespace Isle.BizServices
         public static int DefaultMiles = 25;
         private static string thisClassName = "ServiceHelper";
         //
+        /// <summary>
+        /// Session variable for message to display in the system console
+        /// </summary>
+        public const string SYSTEM_CONSOLE_MESSAGE = "SystemConsoleMessage";
 
         #region === Security related Methods ===
 
@@ -111,6 +117,11 @@ namespace Isle.BizServices
 
         #endregion
         #region Helpers and validaton
+        public static bool IsLocalHost()
+        {
+            string host = HttpContext.Current.Request.Url.Host.ToString();
+            return ( host.Contains( "localhost" ) || host.Contains( "209.175.164.200" ) );
+        }
 
         public static int StringToInt( string value, int defaultValue )
         {
@@ -668,6 +679,24 @@ namespace Isle.BizServices
 
             return appValue;
         } //
+        public static bool GetAppKeyValue( string keyName, bool defaultValue )
+        {
+            bool appValue = false;
+
+            try
+            {
+                appValue = bool.Parse( System.Configuration.ConfigurationManager.AppSettings[ keyName ] );
+
+                // If we get here, then number is an integer, otherwise we will use the default
+            }
+            catch
+            {
+                appValue = defaultValue;
+                LogError( string.Format( "@@@@ Error on appKey: {0},  using default of: {1}", keyName, defaultValue ) );
+            }
+
+            return appValue;
+        } //
         #endregion
 
         #region Error Logging ================================================
@@ -781,7 +810,7 @@ namespace Isle.BizServices
                     {
                         if ( GetAppKeyValue( "notifyOnException", "no" ).ToLower() == "yes" )
                         {
-                            EmailManager.NotifyAdmin( "workNet Exception encountered", message );
+                            EmailManager.NotifyAdmin( "IOER Exception encountered", message );
                         }
                     }
                 }
@@ -801,8 +830,12 @@ namespace Isle.BizServices
         /// <remarks>This is a helper method that defaults to a trace level of 10</remarks>
         public static void DoTrace( string message )
         {
-            //default level to 10
-            DoTrace( 10, message, true );
+            //default level to 8
+            //should get app key value
+            int appTraceLevel = UtilityManager.GetAppKeyValue( "appTraceLevel", 8 );
+            if ( appTraceLevel < 8 )
+                appTraceLevel = 8;
+            DoTrace( appTraceLevel, message, true );
         }
 
         /// <summary>
@@ -995,6 +1028,81 @@ namespace Isle.BizServices
 
         }	// End method
 
+        #endregion
+
+
+        #region === system console methods ==
+
+
+        /// <summary>
+        /// Set a system Console Error Message
+        /// </summary>
+        public static void SetConsoleErrorMessage( string message )
+        {
+            SetSessionMessage( SYSTEM_CONSOLE_MESSAGE, "", message, "errorMessage", false );
+        }
+
+        /// <summary>
+        /// Set a system Console success Message
+        /// </summary>
+        public static void SetConsoleSuccessMessage( string message )
+        {
+            SetSessionMessage( SYSTEM_CONSOLE_MESSAGE, "", message, "successMessage", false );
+        }
+
+        /// <summary>
+        /// Set a system Console info Message
+        /// </summary>
+        public static void SetConsoleInfoMessage( string message )
+        {
+            SetSessionMessage( SYSTEM_CONSOLE_MESSAGE, "", message, "infoMessage", false );
+        }
+        /// <summary>
+        /// store a system message in the passed session variable using the FormMessage class
+        /// </summary>
+        /// <param name="sessionMessageName">Name of the session variable</param>
+        /// <param name="title">Optional title</param>
+        /// <param name="msgString">Message</param>
+        /// <param name="cssClass">CSS Class</param>
+        /// <param name="showPopup">True also display a popup dialog</param>
+        public static void SetSessionMessage( string sessionMessageName, string title, string msgString, string cssClass, bool showPopup )
+        {
+
+            //
+            IPB.FormMessage formMessage = new IPB.FormMessage();
+            formMessage.Text = msgString;
+            formMessage.Title = title;
+            formMessage.CssClass = cssClass;
+            formMessage.ShowPopup = showPopup;
+            if ( msgString.IndexOf( "&lt;" ) > -1 || msgString.IndexOf( "</" ) > -1 )
+            {
+                formMessage.IsFormatted = true;
+            }
+
+            try
+            {
+                //need to handle case where multiple messages are written to console??
+                if ( HttpContext.Current.Session[ sessionMessageName ] != null )
+                {
+                    IPB.FormMessage existingMessage = ( IPB.FormMessage )HttpContext.Current.Session[ sessionMessageName ];
+                    if ( existingMessage.Text.Trim().Length > 0 )
+                    {
+                        if ( existingMessage.Title.Length > 0 )
+                            formMessage.Text += "<br/>" + existingMessage.Title;
+                        if ( existingMessage.Text.Length > 0 )
+                            formMessage.Text += "<br/>" + existingMessage.Text;
+                    }
+                }
+                HttpContext.Current.Session[ sessionMessageName ] = formMessage;
+            }
+            catch ( Exception ex )
+            {
+                //ignore
+                LogError( ex, thisClassName + ".SetSessionMessage: " + ex.ToString() );
+            }
+
+
+        } //
         #endregion
     }
 }

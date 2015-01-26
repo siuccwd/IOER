@@ -11,6 +11,7 @@ using System.Data;
 using LRWarehouse.Business;
 
 using System.Web.Script.Serialization;
+using ResMgr = Isle.BizServices.ResourceBizService;
 
 namespace ILPathways.LRW.controls
 {
@@ -207,7 +208,7 @@ namespace ILPathways.LRW.controls
 
             for ( int i = 0 ; i < scoreStandards.Length ; i++ )
             {
-                manager.Create( scoreStandards[ i ], ref status );
+                ResMgr.StandardEvaluation_Create( scoreStandards[ i ], ref status );
             }
             for ( int i = 0 ; i < scoreDimensions.Length ; i++ )
             {
@@ -215,7 +216,7 @@ namespace ILPathways.LRW.controls
                 {
                     scoreDimensions[ i ].CriteriaInfo = criteria[ i ];
                 }
-                manager.Create( scoreDimensions[ i ], ref status );
+                //manager.Create( scoreDimensions[ i ], ref status );
             }
 
             UpdateIndexScore();

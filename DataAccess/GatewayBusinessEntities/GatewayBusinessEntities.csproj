@@ -34,10 +34,19 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="EntityFramework">
-      <HintPath>..\..\packages\EntityFramework.5.0.0\lib\net40\EntityFramework.dll</HintPath>
+    <Reference Include="AutoMapper">
+      <HintPath>..\..\packages\AutoMapper.3.1.1\lib\net40\AutoMapper.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\EntityFramework.6.1.2\lib\net40\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\EntityFramework.6.1.2\lib\net40\EntityFramework.SqlServer.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data.Entity" />
     <Reference Include="System.Runtime.Serialization" />
@@ -121,9 +130,11 @@
     <Compile Include="CodeTable.cs">
       <DependentUpon>GatewayDB.tt</DependentUpon>
     </Compile>
+    <Compile Include="EFSecurityManager.cs" />
     <Compile Include="EmailNotice.cs">
       <DependentUpon>GatewayDB.tt</DependentUpon>
     </Compile>
+    <Compile Include="GatewayContext.cs" />
     <Compile Include="GatewayDB.Context.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -151,10 +162,16 @@
     <Compile Include="OrganizationTemp.cs">
       <DependentUpon>GatewayDB.tt</DependentUpon>
     </Compile>
+    <Compile Include="Organization_AdminMembers.cs">
+      <DependentUpon>GatewayDB.tt</DependentUpon>
+    </Compile>
     <Compile Include="Organization_Member.cs">
       <DependentUpon>GatewayDB.tt</DependentUpon>
     </Compile>
     <Compile Include="Organization_MemberRole.cs">
+      <DependentUpon>GatewayDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Organization_MemberSummary.cs">
       <DependentUpon>GatewayDB.tt</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -168,8 +185,6 @@
       <Generator>EntityModelCodeGenerator</Generator>
       <LastGenOutput>GatewayDB.Designer.cs</LastGenOutput>
     </EntityDeploy>
-    <None Include="bin\Debug\GatewayBusinessEntities.dll.config" />
-    <None Include="bin\Release\GatewayBusinessEntities.dll.config" />
     <None Include="GatewayDB.Context.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <DependentUpon>GatewayDB.edmx</DependentUpon>
@@ -189,14 +204,22 @@
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="bin\Debug\EntityFramework.dll" />
-    <Content Include="bin\Debug\EntityFramework.xml" />
-    <Content Include="bin\Debug\GatewayBusinessEntities.dll" />
-    <Content Include="bin\Debug\GatewayBusinessEntities.pdb" />
-    <Content Include="bin\Release\EntityFramework.dll" />
-    <Content Include="bin\Release\EntityFramework.xml" />
-    <Content Include="bin\Release\GatewayBusinessEntities.dll" />
-    <Content Include="bin\Release\GatewayBusinessEntities.pdb" />
+    <ProjectReference Include="..\..\Business\ILPathways.Business\ILPathways.Business.csproj">
+      <Project>{cae031c2-7899-4cc3-9772-0787e65977a2}</Project>
+      <Name>ILPathways.Business</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Common\IllinoisPathways.Common\ILPathways.Common.csproj">
+      <Project>{cbb05737-7947-4ed9-8ed3-79d5c2a6597d}</Project>
+      <Name>ILPathways.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Common\ILPathways.Utilities\ILPathways.Utilities.csproj">
+      <Project>{949d7eb6-93e1-489f-a5e7-2d0d9086f720}</Project>
+      <Name>ILPathways.Utilities</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Services\Isle.DTO\Isle.DTO.csproj">
+      <Project>{a16be910-9990-48dc-a9de-f5985d50d09c}</Project>
+      <Name>Isle.DTO</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

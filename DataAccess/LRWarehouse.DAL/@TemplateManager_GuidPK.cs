@@ -117,10 +117,9 @@ namespace LRWarehouse.DAL
                 }
                 catch ( Exception ex )
                 {
-                    LogError( ex, thisClassName + string.Format( ".Create() for RowId: {0} and CreatedBy: {1}", entity.RowId.ToString(), entity.CreatedBy ) );
+                    LogError( ex, thisClassName + string.Format( ".Create() for Id: {0} ", entity.Id.ToString() ) );
                     statusMessage = thisClassName + "- Unsuccessful: Create(): " + ex.Message.ToString();
-                    entity.Message = statusMessage;
-                    entity.IsValid = false;
+                   
                 }
             }
             return newId;
@@ -156,12 +155,12 @@ namespace LRWarehouse.DAL
                 }
                 catch ( Exception ex )
                 {
-                    LogError( ex, thisClassName + string.Format( ".Update() for RowId: {0} and LastUpdatedBy: {1}", entity.RowId.ToString(), entity.LastUpdatedBy ) );
+                    LogError( ex, thisClassName + string.Format( ".Update() for RowId: {0} ", entity.RowId.ToString() ) );
                     //ex:
                     //LogError( ex, thisClassName + string.Format( ".Update() for orgId: {0} and userid: {1} and programId: {2} and contact type: {3}", entity.OrgId.ToString(), entity.UserId.ToString(), entity.ProgramId.ToString(), entity.ContactType ) );
                     message = thisClassName + "- Unsuccessful: Update(): " + ex.Message.ToString();
-                    entity.Message = message;
-                    entity.IsValid = false;
+                    //entity.Message = message;
+                    //entity.IsValid = false;
                 }
             }
             return message;

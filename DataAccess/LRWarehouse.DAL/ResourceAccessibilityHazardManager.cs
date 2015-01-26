@@ -12,7 +12,7 @@ using MyEntityCollection = System.Collections.Generic.List<LRWarehouse.Business.
 
 namespace LRWarehouse.DAL
 {
-    class ResourceAccessibilityHazardManager : BaseDataManager
+    public class ResourceAccessibilityHazardManager : BaseDataManager
     {
         public string Import(MyEntity entity)
         {

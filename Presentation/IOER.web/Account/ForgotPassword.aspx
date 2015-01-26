@@ -31,12 +31,14 @@
 <asp:requiredfieldvalidator id="rfvEmail" Display="None" ControlToValidate="txtEmail" ErrorMessage="Enter your Email address or login Id" runat="server"></asp:requiredfieldvalidator>
 <asp:Panel ID="hiddenPanel" runat="server" Visible="false">
 <asp:Label ID="recoverMessage" runat="server" >
-Dear {0} <p>Click the following link to log into IOERS and reset your password</p>
+Dear {0} <p>Click the following link to log into IOER and reset your password. <br /></p>
+    <p><b>Note: For your protection, this is a one time use recovery link (so it cannot be used by others to access your account)</b>.</p>
 <a href="{1}">Click here to login and be directed to the profile page to change your password</a>
 </asp:Label>
 
-<asp:Literal ID="loginLink" runat="server" >/Account/Login.aspx?g={0}&NextUrl=/Account/Profile.aspx</asp:Literal>
+<asp:Literal ID="loginLink" runat="server" >/Account/Login.aspx?pg={0}&nextUrl=/Account/Profile.aspx</asp:Literal>
 <asp:Literal ID="addToBcc" runat="server" >mparsons@siuccwd.com</asp:Literal>
-<asp:Literal ID="confirmationMessage" runat="server" >An email was sent to your account containing a link to reset your password. If you do not see an email, be sure to check your junk mail folder (and add ilSharedLearning.org as a trusted partner!).</asp:Literal>
+<asp:Literal ID="attemptsCount" runat="server" >0</asp:Literal>
+<asp:Literal ID="confirmationMessage" runat="server" >An email was sent to your account containing a link to reset your password. <br />If you do not see an email, be sure to check your junk mail folder (and add ilSharedLearning.org as a trusted partner!).</asp:Literal>
 </asp:Panel>
 </asp:Content>

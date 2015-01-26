@@ -2,16 +2,18 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using System.Web.Script.Serialization;
 using System.Web.Services;
 
-using Isle.BizServices;
-using System.Web.Script.Serialization;
-using LRWarehouse.Business;
 using ILPathways.Business;
-using LRWarehouse.DAL;
 using ILPathways.Utilities;
-
+using Isle.BizServices;
+using Isle.DTO;
+using LRWarehouse.Business;
+using LRWarehouse.DAL;
 using AccountManager = Isle.BizServices.AccountServices;
+using DataBaseHelper = LRWarehouse.DAL.BaseDataManager;
+using CodesService = Isle.BizServices.CodeTableBizService;
 using LibraryBizService = Isle.BizServices.LibraryBizService;
 
 namespace ILPathways.Services
@@ -30,6 +32,15 @@ namespace ILPathways.Services
       AccountServices accountService = new AccountServices();
       JavaScriptSerializer serializer = new JavaScriptSerializer();
 
+      [WebMethod]
+      public string GetAllLibraryInfo( string userGUID, int libraryID )
+      {
+          LibraryData output = GetAllLibraryData( userGUID, libraryID );
+
+          //Do the serialization and return
+          return serializer.Serialize( output );
+      }
+      
       /* Get All Data */
       public LibraryData GetAllLibraryData( string userGUID, int libraryID )
       {
@@ -52,24 +63,28 @@ namespace ILPathways.Services
         output.library = GetLibrary( user, library );
         output.collections = GetCollections( user, library.Id );
         output.isMyLibrary = ( user.Id == output.library.createdByID );
+
         output.hasEditAccess = libService.Library_DoesUserHaveEditAccess( library.Id, user.Id );
         if ( output.hasEditAccess == false )
             output.hasContribute = libService.Library_DoesUserHaveContributeAccess( library.Id, user.Id );
         else
             output.hasContribute = output.hasEditAccess;
+
+        output.allowJoinRequest = ( user.Id != output.library.createdByID ) && ( output.library.allowJoinRequest == true );
+          //check if already a member
+        var memberCheck = libService.LibraryMember_Get( library.Id, user.Id );
+        if ( memberCheck.Id > 0 && memberCheck.MemberTypeId > 0 )
+        {
+            //prob better to show membership??
+            output.allowJoinRequest = false;
+        }
+
         output.myLibraries = GetMyLibraries( user );
+        ActivityBizServices.LibraryHit( library, user, "Select" );
 
         return output;
       }
-      [WebMethod]
-      public string GetAllLibraryInfo( string userGUID, int libraryID )
-      {
-        LibraryData output = GetAllLibraryData( userGUID, libraryID );
-
-        //Do the serialization and return
-        return serializer.Serialize( output );
-      }
-      
+    
 
       #region GET methods 
       /* Get a Library */
@@ -98,12 +113,13 @@ namespace ILPathways.Services
           output.id = library.Id;
           output.avatarURL = library.ImageUrl;
           if ( output.avatarURL == "" )
-            output.avatarURL = "/images/isle.png";
+            output.avatarURL = "/images/ioer_med.png";
 
           output.title = library.Title;
           output.description = library.Description;
           output.currentPublicAccessLevel = ( int ) library.PublicAccessLevel;
           output.currentOrganizationAccessLevel = ( int ) library.OrgAccessLevel;
+          output.allowJoinRequest = library.AllowJoinRequest;
           output.orgId = library.OrgId;
           output.Organization = library.Organization;
           output.paradata = GetParadata( user, library, null, true );
@@ -112,6 +128,8 @@ namespace ILPathways.Services
           {
             output.filters = GetFilters( library.Id, 0 );
           }
+            //don't log as typically just collecting libraries for dropdown lists
+          //ActivityBizServices.LibraryHit( library.Id, user.Id, "Get" );
         }
         else
         {
@@ -120,6 +138,7 @@ namespace ILPathways.Services
 
         return output;
       }
+
 
       /* Get Libraries I have Edit Access to */
       [WebMethod]
@@ -130,7 +149,9 @@ namespace ILPathways.Services
       }
       public List<JSONLibrary> GetMyLibraries( Patron user )
       {
-        var libraries = libService.Library_SelectListWithContributeAccess( user.Id );
+          var libraries = libService.Libraries_SelectListWithContributeAccess( user.Id );
+
+          //var libraries = libService.Library_SelectListWithContributeAccess( user.Id );
         return GetMyLibraries( user, libraries );
       }
       public List<JSONLibrary> GetMyLibraries( Patron user, List<ILPathways.Business.Library> libraries )
@@ -149,6 +170,49 @@ namespace ILPathways.Services
         return output;
       }
 
+      public List<JSONLibrary> GetMyLibrariesWithContribute( int userId )
+      {
+          Patron user = AccountServices.GetUser( userId );
+          return GetMyLibrariesWithContribute( user ); ;
+      }
+      public List<JSONLibrary> GetMyLibrariesWithContribute( Patron user )
+      {
+          List<LibrarySummaryDTO> libraries = libService.Library_SelectListWithContributeAccess( user.Id );
+
+          var output = new List<JSONLibrary>();
+          var lib = new JSONLibrary();
+          foreach ( LibrarySummaryDTO library in libraries )
+          {
+              //var lib = FillContributeLibrary( user, library );
+              lib = new JSONLibrary();
+              lib.id = library.Id;
+              lib.isPersonalLibrary = library.LibraryTypeId == 1;
+
+              lib.avatarURL = library.ImageUrl;
+              if ( lib.avatarURL == "" )
+                  lib.avatarURL = "/images/ioer_med.png";
+
+              lib.title = library.Title;
+              if ( library.UserNeedsApproval )
+                  lib.title = library.Title + " [Requires Approval]";
+              else
+                  lib.title = library.Title;
+              //lib.description = library.Description;
+              lib.currentPublicAccessLevel = library.PublicAccessLevel;
+              lib.currentOrganizationAccessLevel = library.OrgAccessLevel;
+
+              lib.createdByID = library.CreatedById;
+
+              //????????????????
+              var libCollections = libService.LibrarySections_SelectListWithContributeAccess( library.Id, user.Id );
+              lib.collections = GetCollections( user, libCollections, false, false, false );
+
+              output.Add( lib );
+          }
+
+          return output;
+      }
+      
       /* Get Collections */
       [WebMethod]
       public string GetCollections( string userGUID, int libraryID )
@@ -196,7 +260,7 @@ namespace ILPathways.Services
         {
           var col = new JSONCollection();
           col.id = section.Id;
-          col.avatarURL = ( section.ImageUrl == "" ? "/images/isle.png" : section.ImageUrl );
+          col.avatarURL = ( section.ImageUrl == "" ? "/images/ioer_med.png" : section.ImageUrl );
           col.title = ( includeLibraryTitle ? section.LibraryTitle + ": " : "" ) + section.Title;
           col.description = section.Description;
           col.currentPublicAccessLevel = ( int ) section.PublicAccessLevel;
@@ -257,6 +321,7 @@ namespace ILPathways.Services
 
         return output;
       }
+
       public List<int> GetFilters( int libraryID, int collectionID, string field )
       {
         var results = new List<DataItem>();
@@ -264,20 +329,34 @@ namespace ILPathways.Services
         if ( collectionID == 0 )
         {
           results = libService.AvailableFiltersForLibrary( libraryID, field );
-      }
-        else
-      {
-          results = libService.AvailableFiltersForCollection( collectionID, field );
-      }
-
-        foreach ( DataItem item in results )
-      {
-          output.Add( item.Id );
-      }
-
-        return output;
+        }
+          else
+        {
+            results = libService.AvailableFiltersForCollection( collectionID, field );
         }
 
+          foreach ( DataItem item in results )
+        {
+            output.Add( item.Id );
+        }
+
+        return output;
+      }
+
+
+      [WebMethod]
+      public string FillCollectionWidget( int libraryID, string collectionName, int maxResources, bool usingTargetUrl )
+      {
+          string keyword = "";
+          return serializer.Serialize( FillCollectionWidget( libraryID, collectionName
+                    , maxResources
+                    , usingTargetUrl
+                    , keyword ) );
+      }
+      public string FillCollectionWidget( int libraryID, string collectionName, int maxResources, bool usingTargetUrl, string keyword )
+      {
+          return "in progress";
+      }
       #endregion
 
       #region Update Methods
@@ -299,10 +378,12 @@ namespace ILPathways.Services
         if ( collectionID == 0 )
         {
           libService.LibraryCommentCreate( libraryID, text, user.Id );
+          ActivityBizServices.LibraryHit( libraryID, user, "Library Comment" );
         }
         else
         {
           libService.LibrarySectionCommentCreate( collectionID, text, user.Id );
+          ActivityBizServices.CollectionHit( collectionID, user, "Collection Comment" );
         }
 
         return serializer.Serialize( GetAllLibraryData( user, libraryID ) );
@@ -315,7 +396,8 @@ namespace ILPathways.Services
         var user = GetUser( userGUID );
         if ( !user.IsValid ) { return ""; }
         string status = "";
-        
+        string action = "";
+
         //If Library
         if ( collectionID == 0 || isLibrary )
         {
@@ -325,10 +407,12 @@ namespace ILPathways.Services
             if ( typeID == 0 )
             {
               libService.LibrarySubscriptionDelete( maybeSub.Id, ref status );
+              action = "Library Unfollow";
             }
             else
             {
               libService.LibrarySubScriptionUpdate( maybeSub.Id, typeID );
+              action = "Updated Library Follower";
             }
           }
           else
@@ -336,6 +420,7 @@ namespace ILPathways.Services
             if ( typeID != 0 )
             {
               libService.LibrarySubScriptionCreate( libraryID, user.Id, typeID, ref status );
+              action = "New Library Follower";
             }
           }
         }
@@ -348,10 +433,12 @@ namespace ILPathways.Services
             if ( typeID == 0 )
             {
               libService.CollectionSubscriptionDelete( maybeSub.Id, ref status );
+              action = "Collection Unfollow";
             }
             else
             {
               libService.CollectionSubScriptionUpdate( maybeSub.Id, typeID );
+              action = "Updated Collection Follower";
             }
           }
           else
@@ -359,9 +446,14 @@ namespace ILPathways.Services
             if ( typeID != 0 )
             {
               libService.CollectionSubscriptionCreate( collectionID, user.Id, typeID, ref status );
+              action = "New Collection Follower";
+              ActivityBizServices.CollectionHit( collectionID, user, "Collection Follower" );
             }
           }
         }
+
+        ActivityBizServices.LibraryHit( libraryID, user, action );
+
         return serializer.Serialize( GetAllLibraryData( user, libraryID ) );
       }
 
@@ -385,16 +477,23 @@ namespace ILPathways.Services
         //Do the copy
         string status = "";
         var id = libService.ResourceCopy( intID, toCollection, user.Id, ref status );
-        if ( id == 0 ) { return ""; }
-        else
+        if ( id == 0 ) 
+        {   
+            return ""; 
+        }
+        else 
         {
-          return serializer.Serialize( GetAllLibraryData( user, libraryID ) );
+            ActivityBizServices.LibraryHit( libraryID, user, "LibraryResource Copy" );
+            ActivityBizServices.CollectionHit( toCollection, user, "Collection Resource Copied from: " + libraryID.ToString() );
+            return serializer.Serialize( GetAllLibraryData( user, libraryID ) );
         }
       }
 
       [WebMethod]
       public string ActionMove( string userGUID, int libraryID, int fromCollection, int toCollection, int intID )
       {
+        try
+        {
         //Check user
         var user = GetUser( userGUID );
         if ( !user.IsValid ) 
@@ -403,15 +502,15 @@ namespace ILPathways.Services
         }
 
         //Check user can edit the collection to move from
-        var fromCol = libService.LibrarySectionGet( fromCollection );
-        if(! libService.LibrarySection_DoesUserHaveEditAccess( libraryID, fromCol.Id, user.Id ) )
+          //var fromCol = libService.LibrarySectionGet( fromCollection );
+          if ( !libService.LibrarySection_DoesUserHaveEditAccess( libraryID, fromCollection, user.Id ) )
         { 
           return ""; 
         }
         
         //Check user can edit the collection to move to, regardless of whether or not it's the source library
-        var toCol = libService.LibrarySectionGet( toCollection );
-        if ( !libService.LibrarySection_DoesUserHaveEditAccess( toCol.LibraryId, toCol.Id, user.Id ) )
+          var toCol = libService.LibrarySectionGet( toCollection );
+          if ( !libService.LibrarySection_DoesUserHaveEditAccess( toCol.LibraryId, toCollection, user.Id ) )
         { 
           return ""; 
         }
@@ -422,7 +521,13 @@ namespace ILPathways.Services
         if ( id != "successful" ) { return ""; }
         else
         {
+            ActivityBizServices.LibraryHit( libraryID, user, "Resource Move" );
           return serializer.Serialize( GetAllLibraryData( user, libraryID ) );
+        }
+      }
+        catch ( Exception ex )
+        {
+          return ex.Message;
         }
       }
 
@@ -451,6 +556,7 @@ namespace ILPathways.Services
         }
         else
         {
+            ActivityBizServices.LibraryHit( libraryID, user, "Resource Delete" );
           return serializer.Serialize( GetAllLibraryData( user, libraryID ) );
         }
       }
@@ -551,6 +657,7 @@ namespace ILPathways.Services
         collection.ImageUrl = "";
 
         libService.LibrarySectionCreate( collection, ref status );
+        ActivityBizServices.LibraryHit( libraryID, user, "Create Collection" );
 
         return serializer.Serialize( GetAllLibraryData( user, library ) );
       }
@@ -581,7 +688,7 @@ namespace ILPathways.Services
         string status = "";
         
         libService.LibrarySection_Delete( collectionID, ref status );
-
+        ActivityBizServices.LibraryHit( libraryID, user, "Delete Collection" );
         //Return the updated data
         return serializer.Serialize( GetAllLibraryData( user, libraryID ) );
       }
@@ -592,7 +699,7 @@ namespace ILPathways.Services
       {
         //Get User
         var user = GetUser( userGUID );
-        if ( !user.IsValid || libraryID == 0 )
+        if ( user == null || user.Id == 0 || libraryID == 0 )
         {
           return "";
         }
@@ -605,6 +712,7 @@ namespace ILPathways.Services
           if ( like == null || !like.HasLikeEntry )
           {
             libService.LibraryLikeCreate( libraryID, isLike, user.Id );
+            ActivityBizServices.LibraryHit( libraryID, user, "Library Like" );
           }
         }
         else
@@ -613,11 +721,68 @@ namespace ILPathways.Services
           if ( like == null || !like.HasLikeEntry )
           {
             libService.LibrarySectionLikeCreate( collectionID, isLike, user.Id );
+            ActivityBizServices.CollectionHit( collectionID, user, "Collection Like" );
           }
         }
 
         //return updated data
         return serializer.Serialize( GetAllLibraryData( user, libraryID ) );
+      }
+
+      /* Request to Join a Library */
+      [WebMethod]
+      public string RequestJoin( string userGUID, int libraryID, string message )
+      {
+        //Note: the extra parameter at the end of the ImmediateReturn is in this case used to indicate whether or not to replace the join request area with the text of the message returned.
+        bool isValid = false;
+        string status = "";
+        var utilService = new UtilityService();
+        message = utilService.ValidateText( message, 25, "Message", ref isValid, ref status );
+        if ( !isValid )
+        {
+          return utilService.ImmediateReturn( "", false, status, false );
+        }
+
+        if ( userGUID == "" )
+        {
+          return utilService.ImmediateReturn( "", false, "Please login to request access.", true );
+        }
+
+        //Get User
+        var user = GetUser( userGUID );
+        if ( !user.IsValid || libraryID == 0 )
+        {
+          return utilService.ImmediateReturn( "", false, "Invalid User or Library", true );
+        }
+
+        //Check to see if they already have access
+        var memberCheck = libService.LibraryMember_Get( libraryID, user.Id );
+        if( memberCheck.Id > 0 && memberCheck.MemberTypeId > 0 )
+        {
+          return utilService.ImmediateReturn( "", false, "You are already a member of this Library.", true );
+        }
+
+        //Check to see if they already requested access
+        if ( memberCheck.Id > 0 && memberCheck.MemberTypeId == 0 )
+        {
+          return utilService.ImmediateReturn( "", false, "You have already requested access to this Library.", true );
+        }
+
+        //Request access
+        int mbrId = libService.LibraryMember_Create( libraryID, user.Id, 0, user.Id, ref status );
+        if ( mbrId > 0 )
+        {
+            ActivityBizServices.LibraryHit( libraryID, user, "Request to Join Library" );
+
+            //send email to library admin.
+            if ( libService.SendLibraryJoinRequestEmail( libraryID, user, message, ref status ) == false )
+            {
+              return utilService.ImmediateReturn( "", false, "You have requested access to this Library. However, there was an issue sending the email to the library administrator: " + status, false );
+            }
+        }
+        //Return result
+        return utilService.ImmediateReturn( "You have requested access to this Library. The administrator(s) will determine whether or not to grant you access.", true, "", true );
+
       }
 
       #endregion
@@ -688,11 +853,14 @@ namespace ILPathways.Services
             var data = libService.Library_LikeSummary( library.Id ).First<DataItem>();
             output.likes = data.Int1;
             output.dislikes = data.Int2;
-            ObjectLike like = libService.Library_GetLike( library.Id, user.Id );
-            if ( like != null && like.HasLikeEntry )
+            if ( library.Id > 0 && user.Id > 0 )
             {
-              output.iLikeThis = like.IsLike;
-              output.iDislikeThis = !like.IsLike;
+                ObjectLike like = libService.Library_GetLike( library.Id, user.Id );
+                if ( like != null && like.HasLikeEntry )
+                {
+                    output.iLikeThis = like.IsLike;
+                    output.iDislikeThis = !like.IsLike;
+                }
             }
           }
           catch ( Exception ex ) { } //Fails if there is an empty result set
@@ -714,11 +882,14 @@ namespace ILPathways.Services
             var data = libService.LibrarySection_LikeSummary( collection.Id ).First<DataItem>();
             output.likes = data.Int1;
             output.dislikes = data.Int2;
-            ObjectLike like = libService.LibrarySection_GetLike( collection.Id, user.Id );
-            if ( like != null && like.HasLikeEntry )
+            if ( collection.Id > 0 && user.Id > 0 )
             {
-              output.iLikeThis = like.IsLike;
-              output.iDislikeThis = !like.IsLike;
+                ObjectLike like = libService.LibrarySection_GetLike( collection.Id, user.Id );
+                if ( like != null && like.HasLikeEntry )
+                {
+                    output.iLikeThis = like.IsLike;
+                    output.iDislikeThis = !like.IsLike;
+                }
             }
           }
           catch ( Exception ex ) { }
@@ -750,6 +921,8 @@ namespace ILPathways.Services
         public bool isMyLibrary { get; set; }
         public bool hasEditAccess { get; set; }
         public bool hasContribute { get; set; }
+        public bool allowJoinRequest { get; set; }
+
         public JSONLibrary library { get; set; }
         public List<JSONCollection> collections { get; set; }
         public List<JSONLibrary> myLibraries { get; set; }
@@ -778,6 +951,9 @@ namespace ILPathways.Services
         {
           collections = new List<JSONCollection>();
         }
+        public bool allowJoinRequest { get; set; }
+        public bool isPersonalLibrary { get; set; }
+          
         public List<JSONCollection> collections { get; set; }
         [System.Web.Script.Serialization.ScriptIgnore]
         public int createdByID { get; set; } //Not serialized
@@ -810,6 +986,31 @@ namespace ILPathways.Services
       {
         public string name { get; set; }
         public List<int> ids { get; set; }
+      }
+
+
+      //Subclasses
+      public class WidgetLibraryBase
+      {
+          public string title { get; set; }
+          public string link { get; set; }
+      }
+      public class WidgetLibCol : WidgetLibraryBase
+      {
+          public WidgetLibCol()
+          {
+              items = new List<object>();
+              collections = new List<WidgetResource>();
+          }
+          public bool showHeader { get; set; }
+          public bool showCollections { get; set; }
+          public List<object> items { get; set; }
+          public List<WidgetResource> collections { get; set; }
+      }
+
+      public class WidgetResource : WidgetLibraryBase
+      {
+          public string thumbURL { get; set; }
       }
       #endregion
 

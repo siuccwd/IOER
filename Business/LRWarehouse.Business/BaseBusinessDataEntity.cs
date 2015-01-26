@@ -491,6 +491,43 @@ namespace LRWarehouse.Business
 		#endregion
 
 		#region === Display Methods ===
+        /// <summary>
+        /// Format a title (such as for a library) to be url friendly
+        /// </summary>
+        /// <param name="title"></param>
+        /// <returns></returns>
+        public static string UrlFriendlyTitle( string title )
+        {
+            if ( title == null || title.Trim().Length == 0 )
+                return "";
+
+            string encodedTitle = title.Replace( " - ", "-" );
+            encodedTitle = encodedTitle.Replace( " ", "_" );
+            //encodedTitle = encodedTitle.Replace( ".", "-" );
+            encodedTitle = encodedTitle.Replace( "'", "" );
+            encodedTitle = encodedTitle.Replace( "&", "-" );
+            encodedTitle = encodedTitle.Replace( "#", "" );
+            encodedTitle = encodedTitle.Replace( "$", "S" );
+            encodedTitle = encodedTitle.Replace( "%", "percent" );
+            encodedTitle = encodedTitle.Replace( "^", "" );
+            encodedTitle = encodedTitle.Replace( "*", "" );
+            encodedTitle = encodedTitle.Replace( "+", "_" );
+            encodedTitle = encodedTitle.Replace( "~", "_" );
+            encodedTitle = encodedTitle.Replace( "`", "_" );
+            encodedTitle = encodedTitle.Replace( ":", "" );
+            encodedTitle = encodedTitle.Replace( ";", "" );
+            encodedTitle = encodedTitle.Replace( "?", "" );
+            encodedTitle = encodedTitle.Replace( "\"", "_" );
+            encodedTitle = encodedTitle.Replace( "\\", "_" );
+            encodedTitle = encodedTitle.Replace( "<", "_" );
+            encodedTitle = encodedTitle.Replace( ">", "_" );
+            encodedTitle = encodedTitle.Replace( "__", "_" );
+            encodedTitle = encodedTitle.Replace( "__", "_" );
+            if ( encodedTitle.EndsWith( "." ) )
+                encodedTitle = encodedTitle.Substring( 0, encodedTitle.Length - 1 );
+            return encodedTitle;
+        } //
+
 		/// <summary>
 		/// Format a date as short date format
 		/// </summary>
@@ -505,7 +542,7 @@ namespace LRWarehouse.Business
 				return dtValue.ToShortDateString();
 
 		} // end property
-
+          
 		/// <summary>
 		/// Format a date as MMM DD/YYYY (ex. Mar 12/2007)
 		/// </summary>

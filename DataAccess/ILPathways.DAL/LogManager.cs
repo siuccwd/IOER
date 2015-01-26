@@ -232,24 +232,24 @@ namespace ILPathways.DAL
         /// <param name="stringToTest"></param>
         /// <param name="maxLength"></param>
         /// <returns></returns>
-        protected static string HandleParameterMaximums( string caller, string stringToTest, int maxLength )
-        {
-            //caller
-            string traceTemplate = "***** In method: {0}, truncating parameter [{1}] from length of {2} to length of {3}. \n\rLost string: [{4}]";
+        //protected static string HandleParameterMaximums( string caller, string stringToTest, int maxLength )
+        //{
+        //    //caller
+        //    string traceTemplate = "***** In method: {0}, truncating parameter [{1}] from length of {2} to length of {3}. \n\rLost string: [{4}]";
 
-            if ( stringToTest.Length > maxLength )
-            {
-                string truncated = stringToTest.Substring( maxLength );
+        //    if ( stringToTest.Length > maxLength )
+        //    {
+        //        string truncated = stringToTest.Substring( maxLength );
 
-                DoTrace( 1, String.Format( traceTemplate, caller, stringToTest, stringToTest.Length, maxLength, truncated ) );
-                return stringToTest.Substring( 0, maxLength );
-            }
-            else
-            {
-                return stringToTest;
-            }
+        //        DoTrace( 1, String.Format( traceTemplate, caller, stringToTest, stringToTest.Length, maxLength, truncated ) );
+        //        return stringToTest.Substring( 0, maxLength );
+        //    }
+        //    else
+        //    {
+        //        return stringToTest;
+        //    }
 
-        } //
+        //} //
 
 
         #endregion

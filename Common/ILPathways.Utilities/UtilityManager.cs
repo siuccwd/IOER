@@ -17,6 +17,8 @@ using System.Web.UI.WebControls;
 //using workNet.DAL;
 //using workNet.BusObj.Entity;
 
+using SafebrowseV2;
+
 namespace ILPathways.Utilities
 {
     public class UtilityManager
@@ -172,6 +174,22 @@ namespace ILPathways.Utilities
                 appValue = Int32.Parse( System.Configuration.ConfigurationManager.AppSettings[ keyName ] );
 
                 // If we get here, then number is an integer, otherwise we will use the default
+            }
+            catch
+            {
+                appValue = defaultValue;
+                LoggingHelper.LogError( string.Format( "@@@@ Error on appKey: {0},  using default of: {1}", keyName, defaultValue ) );
+            }
+
+            return appValue;
+        } //
+        public static bool GetAppKeyValue( string keyName, bool defaultValue )
+        {
+            bool appValue = false;
+
+            try
+            {
+                appValue = bool.Parse( System.Configuration.ConfigurationManager.AppSettings[ keyName ] );
             }
             catch
             {
@@ -370,9 +388,15 @@ namespace ILPathways.Utilities
             string host = "";
             try
             {
-                // doing it this way so as to not break anything - HttpContext doesn't exist in a WCF web service
-                // so if this doesn't work we go get the FQDN another way.
-                host = HttpContext.Current.Request.ServerVariables[ "HTTP_HOST" ];
+                //14-10-10 mp - change to explicit value from web.config
+                host = GetAppKeyValue( "siteHostName" );
+                if ( host == "" )
+                {
+                    // doing it this way so as to not break anything - HttpContext doesn't exist in a WCF web service
+                    // so if this doesn't work we go get the FQDN another way.
+                    host = HttpContext.Current.Request.ServerVariables[ "HTTP_HOST" ];
+                    //need to handle ports!!
+                }
             }
             catch ( Exception ex )
             {
@@ -382,7 +406,8 @@ namespace ILPathways.Utilities
                 Match match = hostEx.Match( host );
                 if ( match.Index > -1 )
                 {
-                    host = host.Replace( match.Value, "www" );
+                    if (match.Value.Length > 0)
+                        host = host.Replace( match.Value, "www" );
                 }
             }
 
@@ -1162,6 +1187,40 @@ namespace ILPathways.Utilities
         }
         #endregion
 
+        /// <summary>
+        /// Format a title (such as for a library) to be url friendly
+        /// </summary>
+        /// <param name="title"></param>
+        /// <returns></returns>
+        public static string UrlFriendlyTitle( string title )
+        {
+            string encodedTitle = title.Replace( " - ", "-" );
+            encodedTitle = encodedTitle.Replace( " ", "_" );
+            //encodedTitle = encodedTitle.Replace( ".", "-" );
+            encodedTitle = encodedTitle.Replace( "'", "" );
+            encodedTitle = encodedTitle.Replace( "&", "-" );
+            encodedTitle = encodedTitle.Replace( "#", "" );
+            encodedTitle = encodedTitle.Replace( "$", "S" );
+            encodedTitle = encodedTitle.Replace( "%", "percent" );
+            encodedTitle = encodedTitle.Replace( "^", "" );
+            encodedTitle = encodedTitle.Replace( "*", "" );
+            encodedTitle = encodedTitle.Replace( "+", "_" );
+            encodedTitle = encodedTitle.Replace( "~", "_" );
+            encodedTitle = encodedTitle.Replace( "`", "_" );
+            encodedTitle = encodedTitle.Replace( ":", "-" );
+            encodedTitle = encodedTitle.Replace( ";", "" );
+            encodedTitle = encodedTitle.Replace( "?", "" );
+            encodedTitle = encodedTitle.Replace( "\"", "_" );
+            encodedTitle = encodedTitle.Replace( "\\", "_" );
+            encodedTitle = encodedTitle.Replace( "<", "_" );
+            encodedTitle = encodedTitle.Replace( ">", "_" );
+            encodedTitle = encodedTitle.Replace( "__", "_" );
+            encodedTitle = encodedTitle.Replace( "__", "_" );
+            if ( encodedTitle.EndsWith( "." ) )
+                encodedTitle = encodedTitle.Substring( 0, encodedTitle.Length - 1 );
+            return encodedTitle;
+        } //
+
 
         /// <summary>
         /// Retrieve a string item from the current cache
@@ -1261,6 +1320,54 @@ namespace ILPathways.Utilities
                 else
                 {
                     newVal = stringToTest;
+                }
+            }
+            catch
+            {
+
+                newVal = defaultValue;
+            }
+
+            return newVal;
+
+        } //
+
+        public static bool Assign( bool? value, bool defaultValue )
+        {
+            bool newVal;
+
+            try
+            {
+                if ( value != null )
+                {
+                    newVal = ( bool ) value;
+                }
+                else
+                {
+                    newVal = defaultValue;
+                }
+            }
+            catch
+            {
+
+                newVal = defaultValue;
+            }
+
+            return newVal;
+
+        } //
+        public static int Assign(int? value, int defaultValue)
+        {
+            int newVal;
+            try
+            {
+                if (value != null)
+                {
+                    newVal = (int)value;
+                }
+                else
+                {
+                    newVal = defaultValue;
                 }
             }
             catch
@@ -1394,6 +1501,30 @@ namespace ILPathways.Utilities
             retVal += newMin;
 
             return retVal;
+        }
+
+        public static string CheckUnsafeUrl(string url)
+        {
+            string apiKey = GetAppKeyValue("googleSafeBrowsingApiKey", "");
+            string cacheDir = GetAppKeyValue("googleSafeBrowsingCache", "");
+
+            ReputationEngine repEngine = new ReputationEngine();
+            repEngine.Initialize(apiKey, cacheDir);
+            Reputation rep = repEngine.CheckUrl(url);
+            if (rep == Reputation.None)
+            {
+                return "Safe";
+            }
+            if (rep == Reputation.Error)
+            {
+                return "Unknown";
+            }
+            if (rep == Reputation.MalwareBlackList || rep == Reputation.PhishBlackList)
+            {
+                return "Blacklisted";
+            }
+
+            return "Unknown";
         }
     }
 }

@@ -22,6 +22,24 @@ namespace ILPathways.LRW.controls {
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl error;
         
         /// <summary>
+        /// btnReActivateResource control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnReActivateResource;
+        
+        /// <summary>
+        /// litResourceId control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Literal litResourceId;
+        
+        /// <summary>
         /// content control.
         /// </summary>
         /// <remarks>
@@ -67,6 +85,15 @@ namespace ILPathways.LRW.controls {
         protected global::System.Web.UI.HtmlControls.HtmlInputButton btnDeactivateResource;
         
         /// <summary>
+        /// btnRegenerateThumbnail control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlInputButton btnRegenerateThumbnail;
+        
+        /// <summary>
         /// usageRightsSelector control.
         /// </summary>
         /// <remarks>
@@ -82,7 +109,7 @@ namespace ILPathways.LRW.controls {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ILPathways.LRW.controls.StandardsBrowser5 sBrowser;
+        protected global::ILPathways.Controls.StandardsBrowser7 sBrowser;
         
         /// <summary>
         /// reportProblemContainer control.
@@ -119,5 +146,23 @@ namespace ILPathways.LRW.controls {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Literal txtFormSecurityName;
+
+        /// <summary>
+        /// txtFormSecurityName control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Literal txtGeneralSecurity;
+        
+        /// <summary>
+        /// Literal1 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Literal Literal1;
     }
 }

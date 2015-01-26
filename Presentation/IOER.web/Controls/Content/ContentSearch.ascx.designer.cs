@@ -103,6 +103,33 @@ namespace ILPathways.Controls.Content {
         protected global::System.Web.UI.WebControls.RadioButtonList listCreatedBy;
         
         /// <summary>
+        /// contentTypePanel control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel contentTypePanel;
+        
+        /// <summary>
+        /// Label2 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label Label2;
+        
+        /// <summary>
+        /// cbxContentType control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.CheckBoxList cbxContentType;
+        
+        /// <summary>
         /// createResourceLinkPanel control.
         /// </summary>
         /// <remarks>
@@ -220,6 +247,15 @@ namespace ILPathways.Controls.Content {
         protected global::System.Web.UI.WebControls.Literal txtAuthorSecurityName;
         
         /// <summary>
+        /// txtAuthorSecurityName2 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Literal txtAuthorSecurityName2;
+        
+        /// <summary>
         /// txtLibraryId control.
         /// </summary>
         /// <remarks>
@@ -265,6 +301,24 @@ namespace ILPathways.Controls.Content {
         protected global::System.Web.UI.WebControls.Literal readMoreTemplateSystran;
         
         /// <summary>
+        /// litCurriculumPublicUrl control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Literal litCurriculumPublicUrl;
+        
+        /// <summary>
+        /// litConentPublicUrl control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Literal litConentPublicUrl;
+        
+        /// <summary>
         /// Panel4 control.
         /// </summary>
         /// <remarks>
@@ -308,6 +362,24 @@ namespace ILPathways.Controls.Content {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Literal txtPublicFilter;
+        
+        /// <summary>
+        /// showingContentTypeFilters control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Literal showingContentTypeFilters;
+        
+        /// <summary>
+        /// txtTypeFilter control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Literal txtTypeFilter;
         
         /// <summary>
         /// txtAuthFilter control.

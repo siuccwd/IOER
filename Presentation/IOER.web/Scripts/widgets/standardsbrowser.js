@@ -6,7 +6,7 @@
         options.preselectedGrade = (typeof(standardsBrowserOptions.preselectedGrade) != "undefined" ? standardsBrowserOptions.preselectedGrade.toLowerCase() : "");
         options.helperUrl = (typeof(standardsBrowserOptions.helperUrl) != "undefined" ? standardsBrowserOptions.helperUrl : "");
     }
-    $("#ioer_standardsbrowser").replaceWith("<iframe id=\"ioerStandardsBrowser\" src=\"http://ioer.ilsharedlearning.org/testing/browserframe.aspx?standardsbrowsermode=" + options.mode + "&preselectedbody=" + options.preselectedBody + "&preselectedgrade=" + options.preselectedGrade + "&helperUrl=" + options.helperUrl + "\" />");
+    $("#ioer_standardsbrowser").replaceWith("<iframe id=\"ioerStandardsBrowser\" src=\"//ioer.ilsharedlearning.org/Widgets/Standards/?standardsbrowsermode=" + options.mode + "&preselectedbody=" + options.preselectedBody + "&preselectedgrade=" + options.preselectedGrade + "&helperUrl=" + options.helperUrl + "\" />");
     var browserBox = $("#ioerStandardsBrowser");
     browserBox.css({ "border": "none", "min-width": "300px" });
     $(window).on("resize", function () {

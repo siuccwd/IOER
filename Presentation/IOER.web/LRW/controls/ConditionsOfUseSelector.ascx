@@ -1,7 +1,7 @@
 ﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="ConditionsOfUseSelector.ascx.cs" Inherits="ILPathways.LRW.controls.ConditionsOfUseSelector" %>
 
 <!-- Conditions of Use Script -->
-<script type="text/javascript" language="javascript">
+<script type="text/javascript" >
 var conditions = {
   <%=conditionsData %>
   updateSelection: function(jDDL) {

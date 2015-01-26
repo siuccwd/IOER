@@ -5,6 +5,7 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 
+using Isle.BizServices;
 using Isle.DataContracts;
 using ILPathways.Business;
 using ILPathways.Common;
@@ -24,6 +25,9 @@ using LBiz=LRWarehouse.Business;
 using LRDAL = LRWarehouse.DAL;
 using EFDAL = IoerContentBusinessEntities;
 using IoerContentBusinessEntities;
+using Isle.DTO;
+using Isle.DTO.Filters;
+
 namespace Isle.BizServices
 {
     public class LibraryBizService : ServiceHelper
@@ -31,7 +35,7 @@ namespace Isle.BizServices
         LibManager myMgr = new LibManager();
         LibResourceManager libResManager = new LibResourceManager();
 
-        EFDAL.IsleContentEntities ctx = new EFDAL.IsleContentEntities();
+        EFDAL.IsleContentContext ctx = new EFDAL.IsleContentContext();
 
         const string thisClassName = "LibraryService";
 
@@ -80,12 +84,17 @@ namespace Isle.BizServices
         }//
 
         /// <summary>
-        /// Add a personal Library 
+        /// create a default personal Library 
         /// </summary>
         /// <param name="user"></param>
         /// <param name="statusMessage"></param>
         /// <returns></returns>
-        public Library CreateMyLibrary( ThisUser user, ref string statusMessage )
+        public Library CreateDefaultLibrary( ThisUser user, ref string statusMessage )
+        {
+            return myMgr.CreateMyLibrary( user, ref statusMessage );
+        }//
+
+        public Library CreateDefaultLibrary( IWebUser user, ref string statusMessage )
         {
             return myMgr.CreateMyLibrary( user, ref statusMessage );
         }//
@@ -112,10 +121,20 @@ namespace Isle.BizServices
         }//
         #endregion
 
+        #region ====== Library methods for dashboard ===============================================
+        public void Library_FillDashboard( DashboardDTO dashboard, ThisUser user, int requestedByUserId )
+        {
+            Library lib = GetMyLibrary( ( IWebUser )user );
+            //need a check for not found, and then whether public
+
+            EFDAL.EFLibraryManager.Library_FillDashboard( dashboard, lib, requestedByUserId );
+        }
+        #endregion
+
         #region ====== Library Privileges/Retrieval Methods ===============================================
         /// <summary>
         /// Determine if user can access the library admin functions. Either
-        /// - must have a personal lib, or be a library member with a role of editor or above
+        /// - must have a personal lib, or be a library member with a role of Curator or above
         /// - or must be a member of an org with a member role of administrator or library admin
         /// </summary>
         /// <param name="userId"></param>
@@ -228,14 +247,30 @@ namespace Isle.BizServices
         /// </summary>
         /// <param name="userId"></param>
         /// <returns></returns>
-        public List<Library> Library_SelectListWithContributeAccess( int userId )
+        public void Library_SelectListWithContributeAccess( LibraryContributeDTO dto, int userId )
         {
-            return myMgr.SelectListWithContributeAccess( userId );
+            myMgr.SelectListWithContributeAccess( dto,userId );
         }
-        public List<Library> Library_SelectListWithContributeAccess( int userId, int libraryId )
+
+        public List<LibrarySummaryDTO> Library_SelectListWithContributeAccess( int userId )
         {
-            return myMgr.SelectListWithContributeAccess( userId, libraryId );
+            LibraryContributeDTO dto = new LibraryContributeDTO();
+            myMgr.SelectListWithContributeAccess( dto, userId );
+            return dto.libraries;
         }
+        public void Library_SelectListWithContributeAccess( LibraryContributeDTO dto, int userId, int libraryId )
+        {
+            myMgr.SelectListWithContributeAccess( dto,userId, libraryId );
+        }
+
+        public List<Library> Libraries_SelectListWithContributeAccess( int userId )
+        {
+            return myMgr.SelectLibrariesWithContributeAccess( userId );
+        }
+        //public List<Library> Library_SelectListWithContributeAccessOLD( int userId, int libraryId )
+        //{
+        //    return myMgr.Library_SelectListWithContributeAccessOLD( userId, libraryId );
+        //}
 
         /// <summary>
         /// Determine if user has contribute access to the library
@@ -365,7 +400,7 @@ namespace Isle.BizServices
                     foreach ( int rid in list )
                     {
                         cntr++;
-                        LibraryResourceCreate( newSectionId, rid, createdById, ref statusMessage );
+                        LibraryResourceCreate( toLibraryId, newSectionId, rid, createdById, ref statusMessage );
                     }
                     statusMessage = string.Format("Copied the collection and {0} resources to the requested library.", cntr);
                 }
@@ -384,20 +419,20 @@ namespace Isle.BizServices
             return LibrarySectionManager.GetLibraryDefaultSection( libraryId );
         }//
 
-        public LibrarySection GetLibrarySection_MyAuthored( ThisUser user )
-        {
-            return LibrarySectionManager.GetLibrarySection_MyAuthored( user );
-        }//
+        //public LibrarySection GetLibrarySection_MyAuthored( ThisUser user )
+        //{
+        //    return LibrarySectionManager.GetLibrarySection_MyAuthored( user );
+        //}//
 
-        public LibrarySection GetLibrarySection_MyAuthored( int libraryId )
-        {
-            return LibrarySectionManager.GetLibrarySection_MyAuthored( libraryId );
-        }//
+        //public LibrarySection GetLibrarySection_MyAuthored( int libraryId )
+        //{
+        //    return LibrarySectionManager.GetLibrarySection_MyAuthored( libraryId );
+        //}//
 
-        public LibrarySection GetLibrarySection_MyAuthored( int libraryId, bool createIfMissing )
-        {
-            return LibrarySectionManager.GetLibrarySection_MyAuthored( libraryId, createIfMissing );
-        }//
+        //public LibrarySection GetLibrarySection_MyAuthored( int libraryId, bool createIfMissing )
+        //{
+        //    return LibrarySectionManager.GetLibrarySection_MyAuthored( libraryId, createIfMissing );
+        //}//
 
         public LibrarySection LibrarySectionGet( int sectionId )
         {
@@ -549,6 +584,41 @@ namespace Isle.BizServices
 
         #region ====== Library Members methods ===============================================
 
+        /// <summary>
+        /// Add a new library member
+        /// </summary>
+        /// <param name="libraryId"></param>
+        /// <param name="userId"></param>
+        /// <param name="typeId"></param>
+        /// <param name="statusMessage"></param>
+        /// <returns></returns>
+        public int LibraryMember_Create( int libraryId, int userId, int memberTypeId, int createdById, ref string statusMessage )
+        {
+            //int id = EFLibraryManager.LibraryMember_Create( libraryId, userId, memberTypeId, createdById, ref statusMessage );
+            int id = myMgr.LibraryMember_Create( libraryId, userId, memberTypeId, createdById, ref statusMessage );
+            return id;
+        }
+
+        public bool LibraryMember_Update( int id, int memberTypeId, int lastUpdatedById )
+        {
+            if ( id == 0 )
+                return false;
+            return new EFLibraryManager().LibraryMember_Update( id, memberTypeId, lastUpdatedById );
+        }
+
+        public bool LibraryMember_Update( int libraryId, int userId, int memberTypeId, int lastUpdatedById )
+        {
+            if ( libraryId == 0 || userId == 0 )
+                return false;
+            return new EFLibraryManager().LibraryMember_Update( libraryId, userId, memberTypeId, lastUpdatedById );
+        }
+
+        public bool LibraryMember_Delete( int id )
+        {
+            return new EFLibraryManager().LibraryMember_Delete( id);
+
+        }
+
         public bool IsLibraryMember( int libraryId, int userId )
         {
             LibraryMember entity = LibraryMember_Get( libraryId, userId );
@@ -574,40 +644,32 @@ namespace Isle.BizServices
 
             return EFLibraryManager.LibraryMember_Get( libraryId, userId );
         }
-
-        public bool LibraryMember_Delete( int id )
-        {
-            return EFLibraryManager.LibraryMember_Delete( id);
-
-        }
-
         /// <summary>
-        /// Add a new library member
+        /// Get all members for a library
         /// </summary>
         /// <param name="libraryId"></param>
-        /// <param name="userId"></param>
-        /// <param name="typeId"></param>
-        /// <param name="statusMessage"></param>
         /// <returns></returns>
-        public int LibraryMember_Create( int libraryId, int userId, int memberTypeId, int createdById, ref string statusMessage )
+        public List<LibraryMember> LibraryMembers_GetAll( int libraryId )
         {
-            int id = EFLibraryManager.LibraryMember_Create( libraryId, userId, memberTypeId, createdById, ref statusMessage );
 
-            return id;
+            return EFLibraryManager.LibraryMembers_ForLibrary( libraryId );
         }
 
-        public bool LibraryMember_Update( int id, int memberTypeId, int lastUpdatedById )
+        public List<LibraryMember> LibraryMembers_GetApprovers( int libraryId )
         {
-            if ( id == 0 )
-                return false;
-            return EFLibraryManager.LibraryMember_Update( id, memberTypeId, lastUpdatedById );
+            //may want to arbrarily added the creator, as may not be in the list of LMbrs
+            List<LibraryMember> list = EFLibraryManager.LibraryMembers_GetApprovers( libraryId );
+
+            return list;
         }
 
-        public bool LibraryMember_Update( int libraryId, int userId, int memberTypeId, int lastUpdatedById )
+
+        public List<LibraryMember> LibraryMembers_GetTypeMembers( int libraryId, int memberTypeId )
         {
-            if ( libraryId == 0 || userId == 0 )
-                return false;
-            return EFLibraryManager.LibraryMember_Update( libraryId, userId, memberTypeId, lastUpdatedById );
+            //may want to arbrarily added the creator, as may not be in the list of LMbrs
+            List<LibraryMember> list = EFLibraryManager.LibraryMembers_GetTypeMembers( libraryId, memberTypeId );
+
+            return list;
         }
 
         public List<LibraryMember> LibraryMember_Search( string pFilter, string pOrderBy, int pStartPageIndex, int pMaximumRows, ref int pTotalRows )
@@ -621,15 +683,15 @@ namespace Isle.BizServices
         #region Library Invitations
         public int LibraryInvitation_Create( LibraryInvitation entity, ref string statusMessage )
         {
-            return EFLibraryManager.LibraryInvitationCreate( entity, ref statusMessage );
+            return new EFLibraryManager().LibraryInvitationCreate( entity, ref statusMessage );
         }
         public bool LibraryInvitation_Update( LibraryInvitation entity )
         {
-            return EFLibraryManager.LibraryInvitation_Update( entity );
+            return new EFLibraryManager().LibraryInvitation_Update( entity );
         }
         public bool LibraryInvitation_Delete( int id )
         {
-            return EFLibraryManager.LibraryInvitation_Delete( id );
+            return new EFLibraryManager().LibraryInvitation_Delete( id );
         }
 
         public LibraryInvitation LibraryInvitation_Get( int id )
@@ -699,7 +761,7 @@ namespace Isle.BizServices
 
         public bool LibraryCollectionMember_Delete( int id )
         {
-            return EFLibraryManager.LibrarySectionMember_Delete( id );
+            return new EFLibraryManager().LibrarySectionMember_Delete( id );
 
         }
 
@@ -713,7 +775,7 @@ namespace Isle.BizServices
         /// <returns></returns>
         public int LibraryCollectionMember_Create( int parentId, int userId, int memberTypeId, int createdById, ref string statusMessage )
         {
-            int id = EFLibraryManager.LibrarySectionMember_Create( parentId, userId, memberTypeId, createdById, ref statusMessage );
+            int id = new EFLibraryManager().LibrarySectionMember_Create( parentId, userId, memberTypeId, createdById, ref statusMessage );
 
             return id;
         }
@@ -722,14 +784,14 @@ namespace Isle.BizServices
         {
             if ( id == 0 )
                 return false;
-            return EFLibraryManager.LibrarySectionMember_Update( id, memberTypeId, lastUpdatedById );
+            return new EFLibraryManager().LibrarySectionMember_Update( id, memberTypeId, lastUpdatedById );
         }
 
         public bool LibraryCollectionMember_Update( int parentId, int userId, int memberTypeId, int lastUpdatedById )
         {
             if ( parentId == 0 || userId == 0 )
                 return false;
-            return EFLibraryManager.LibrarySectionMember_Update( parentId, userId, memberTypeId, lastUpdatedById );
+            return new EFLibraryManager().LibrarySectionMember_Update( parentId, userId, memberTypeId, lastUpdatedById );
         }
 
         public List<LibraryMember> LibraryCollectionMember_Search( string pFilter, string pOrderBy, int pStartPageIndex, int pMaximumRows, ref int pTotalRows )
@@ -743,73 +805,58 @@ namespace Isle.BizServices
 
         #region ====== Library Resource ===============================================
         /// <summary>
-        /// Delete an Library record
+        /// Delete an Library resource record
         /// </summary>
-        /// <param name="pId"></param>
+        /// <param name="libraryResourceId"></param>
         /// <param name="statusMessage"></param>
         /// <returns></returns>
-        public bool LibraryResourceDeleteById( int pId, ref string statusMessage )
+        public bool LibraryResourceDeleteById( int libraryResourceId, ref string statusMessage )
         {
-            bool result = libResManager.DeleteById( pId, ref statusMessage );
-            if ( result == true )
-                LibraryResource_UpdateElasticSearchForAllLibrariesAndSectionsForResource( pId );
+            bool result = false;
 
+            //get the res for res id for es method
+            LibraryResource entity = libResManager.Get( libraryResourceId );
+            if ( entity != null && entity.Id > 0 )
+            {
+                result = libResManager.DeleteById( libraryResourceId, ref statusMessage );
+                if ( result == true )
+                {
+                    LibraryResource_UpdateElasticSearchForAllLibrariesAndSectionsForResource( entity.ResourceIntId );
+                    ResourceBizService.DecreaseFavorites( entity.ResourceIntId );
+                }
+            }
             return result;
         }//
+
+        /// <summary>
+        /// Delete a resource from a collection
+        /// </summary>
+        /// <param name="fromCollectionId"></param>
+        /// <param name="resourceIntId"></param>
+        /// <param name="statusMessage"></param>
+        /// <returns></returns>
         public bool LibraryResourceDelete( int fromCollectionId, int resourceIntId, ref string statusMessage )
         {
             bool result = libResManager.Delete( fromCollectionId, resourceIntId, ref statusMessage );
             if ( result == true )
+            {
                 LibraryResource_UpdateElasticSearchForAllLibrariesAndSectionsForResource( resourceIntId );
+
+                ResourceBizService.DecreaseFavorites( resourceIntId );
+            }
 
             return result;
         }//
  
-        /// <summary>
-        ///  Method to create LibraryResource object via resourceVersion Id
-        /// </summary>
-        /// <param name="resourceVersionId"></param>
-        /// <param name="userGUID"></param>
-        /// <param name="statusMessage"></param>
-        /// <returns></returns>
-        private int LibraryResourceCreateByRVId_NotUsed( int resourceVersionId, int collectionID, string userGUID, ref string statusMessage )
-        {
-            int userId = 0;
-            ThisUser user = new LRDAL.PatronManager().GetByRowId( userGUID );
-            if ( user.IsValid )
-            {
-                userId = user.Id;
-            }
-            else
-            {
-                statusMessage = "Error user account was not found";
-                return 0;
-            }
-            LBiz.ResourceVersion rv = new LRDAL.ResourceVersionManager().Get( resourceVersionId );
-            if ( rv != null && rv.Id > 0 )
-            {
-                LibraryResource entity = new LibraryResource();
-                entity.LibrarySectionId = collectionID;
-                entity.ResourceIntId = rv.ResourceIntId;
-                entity.CreatedById = userId;
-
-                return LibraryResourceCreate( collectionID, rv.ResourceIntId, userId, ref statusMessage );
-            }
-            else
-            {
-                statusMessage = "error resource version was not found";
-                return 0;
-            }
-        }//
-
         /// <summary>
         ///  Method to create LibraryResource object
         /// </summary>
         /// <param name="entity"></param>
         /// <param name="user"></param>
         /// <returns></returns>
-        public int LibraryResourceCreate( LibraryResource entity, ThisUser user, ref string statusMessage )
+        private int LibraryResourceCreate( LibraryResource entity, ThisUser user, ref string statusMessage )
         {
+            //NEW: need to check if user needs approval
             int newId = 0;
             #region if not provided, get from library/default section
             if (entity.LibrarySectionId == 0) 
@@ -861,35 +908,173 @@ namespace Isle.BizServices
                }
            }
             #endregion
-            newId= LibraryResourceCreate( entity.LibrarySectionId, entity.ResourceIntId, user.Id, ref statusMessage );
+            newId= LibraryResourceCreate( entity.LibraryId, entity.LibrarySectionId, entity.ResourceIntId, user, ref statusMessage );
            
             return newId;
         }//
 
-        public int LibraryResourceCreate( int collectionId, int resourceIntId, int userId, ref string statusMessage )
+
+        public int LibraryResourceCreate( int collectionId, int resourceIntId, int createdById, ref string statusMessage )
         {
+            
+            LibrarySection collection = LibrarySectionManager.Get( collectionId );
+            int libraryId = collection.LibraryId;
+            ThisUser user = AccountServices.GetUser( createdById );
+            return LibraryResourceCreate( libraryId, collectionId, resourceIntId, user, ref statusMessage );
+        }//
+
+        public int LibraryResourceCreate( int libraryId, int collectionId, int resourceIntId, int createdById, ref string statusMessage )
+        {
+            ThisUser user = AccountServices.GetUser( createdById );
+            return LibraryResourceCreate( libraryId, collectionId, resourceIntId, user, ref statusMessage );
+        }//
+
+        public int LibraryResourceCreate(int libraryId, int collectionId, int resourceIntId, ThisUser user, ref string statusMessage )
+        {
+            string doingLibResourcesApproval = UtilityManager.GetAppKeyValue( "doingLibResourcesApproval", "no" );
             LibraryResource entity = new LibraryResource();
             entity.LibrarySectionId = collectionId;
             entity.ResourceIntId = resourceIntId;
-            entity.CreatedById = userId;
+            entity.CreatedById = user.Id;
+            bool isActive = true;
+            //string statusMessage = "";
 
-            int id = libResManager.Create( entity, ref statusMessage );
+            if ( doingLibResourcesApproval == "yes" )
+            {
+                bool isApprovalRequired = new LibraryManager().IsLibraryApprovalRequired( libraryId, user.Id );
+                if ( isApprovalRequired )
+                {
+                    isActive = false;
+                    //other actions?
+                }
+            }
+            int id = new EFLibraryManager().LibraryResource_Create( collectionId, resourceIntId, user.Id, isActive, ref statusMessage );
+            //int id = libResManager.Create( entity, ref statusMessage );
             if ( id > 0 )
             {
-                //update favourites
-                ResourceBizService.UpdateFavorite( entity.ResourceIntId );
-                //refresh index for resId
-                LibraryResource_UpdateElasticSearchForAllLibrariesAndSectionsForResource( resourceIntId );
+                if ( isActive )
+                {
+                    //update favourites
+                    ResourceBizService.UpdateFavorite( entity.ResourceIntId );
+                    //refresh index for resId
+                    LibraryResource_UpdateElasticSearchForAllLibrariesAndSectionsForResource( resourceIntId );
+                    statusMessage = "Successful";
+                }
+                else
+                {
+                    //send email
+                    SendResourceApprovalRequestEmail( libraryId, user, entity, ref statusMessage );
+
+                    statusMessage = "Submission requires approval.";
+                }
             }
             else
             {
-                string msg = string.Format( "ResourceIntId: {0}; collectionId: {1}; userId: {2}. May need to correct manually.", entity.ResourceIntId, entity.LibrarySectionId, userId.ToString() );
+                string msg = string.Format( "ResourceIntId: {0}; collectionId: {1}; userId: {2}. May need to correct manually.", entity.ResourceIntId, entity.LibrarySectionId, user.Id.ToString() );
                 EmailManager.NotifyAdmin( "LibraryResourceCreate( int collectionId, int resourceIntId, int userId, ref string statusMessage ) - Failed to add collection resource to elastic search", msg );
                 statusMessage = "Error resource was not added to the collection.";
                 return 0;
             }
 
             return id;
+ }//
+        /// <summary>
+        /// Retrieve a library resource WITHOUT parents
+        /// </summary>
+        /// <param name="libraryResourceId"></param>
+        /// <returns></returns>
+        public LibraryResource LibraryResource_Get( int libraryResourceId )
+        {
+            return LibraryResource_Get( libraryResourceId, false );
+        }//
+
+        /// <summary>
+        /// retrieve a library resource and include library section and library
+        /// </summary>
+        /// <param name="libraryResourceId"></param>
+        /// <param name="includingParents"></param>
+        /// <returns></returns>
+        public LibraryResource LibraryResource_Get( int libraryResourceId, bool includingParents )
+        {
+            LibraryResource entity = new LibraryResource();
+            string statusMessage = "";
+            entity = EFLibraryManager.LibraryResource_Get( libraryResourceId, includingParents, ref statusMessage );
+            if ( entity == null || entity.Id == 0 )
+            {
+                entity.IsValid = false;
+                entity.Message = statusMessage;
+            }
+
+            return entity;
+        }//
+
+
+        /// <summary>
+        /// Activate a library resource
+        /// </summary>
+        /// <param name="libraryResourceId"></param>
+        /// <param name="userId"></param>
+        /// <param name="statusMessage"></param>
+        /// <returns></returns>
+        public bool LibraryResource_Activate( int libraryResourceId, ThisUser user, ref string statusMessage )
+        {
+
+            bool successful = EFLibraryManager.LibraryResource_Activate( libraryResourceId, ref statusMessage );
+            if ( successful )
+            {
+                LibraryResource entity = EFLibraryManager.LibraryResource_Get( libraryResourceId, true, ref statusMessage );
+                if ( entity != null && entity.Id > 0 )
+                {
+                    //update favourites
+                    ResourceBizService.UpdateFavorite( entity.ResourceIntId );
+                    //refresh index for resId
+                    LibraryResource_UpdateElasticSearchForAllLibrariesAndSectionsForResource( entity.ResourceIntId );
+
+                    //send email 
+                    SendApprovalConfirmationEmail( entity, user );
+                }
+                else
+                {
+                    LoggingHelper.LogError( string.Format( "LibraryBizService.LibraryResource_Activate. libraryResourceId: {0}. The resource was activated but then not found on retrieve", libraryResourceId ), true );
+                }
+            }
+            else
+            {
+                string msg = string.Format( "libraryResourceId: {0}; userId: {1}. May need to correct manually.", libraryResourceId, user.Id);
+                EmailManager.NotifyAdmin( "LibraryResource_Activate( int libraryResourceId,int userId, ref string statusMessage ) - Failed to activate a library resource.", msg );
+                statusMessage = "Error resource was not activated.";
+                return false;
+            }
+
+            return successful;
+        }//
+
+        /// <summary>
+        /// reject request to add resource to library:
+        /// - Delete an Library resource record
+        /// - notify
+        /// </summary>
+        /// <param name="libraryResourceId"></param>
+        /// <param name="statusMessage"></param>
+        /// <returns></returns>
+        public bool LibraryResource_RejectSubmission( int libraryResourceId, ThisUser admin, string reason, ref string statusMessage )
+        {
+            bool result = false;
+
+            //get the res for res id for es method
+            LibraryResource entity = EFLibraryManager.LibraryResource_Get( libraryResourceId, true,ref statusMessage );
+            //LibraryResource entity = libResManager.Get( libraryResourceId );
+            if ( entity != null && entity.Id > 0 )
+            {
+                result = libResManager.DeleteById( libraryResourceId, ref statusMessage );
+                if ( result == true )
+                {
+                    //not in ES, so no action necessary
+                    //notify contributor - need to add reason
+                    SendRejectionEmail( entity, admin, reason );
+                }
+            }
+            return result;
         }//
 
         /// <summary>
@@ -929,17 +1114,41 @@ namespace Isle.BizServices
         /// <returns></returns>
         public int ResourceCopy( int resourceIntId, int toCollectionId, int userId, ref string statusMessage )
         {
+            string doingLibResourcesApproval = UtilityManager.GetAppKeyValue( "doingLibResourcesApproval", "no" );
+            bool isActive = true;
+            LibrarySection lsec = new LibrarySection();
             //do check in library - for use with incrementing favourites
             bool isInLibrary = IsResourceInLibraryByCollectionId( toCollectionId, resourceIntId );
+
+            if ( doingLibResourcesApproval == "yes" )
+            {
+                lsec = LibrarySectionManager.Get( toCollectionId );
+                bool isApprovalRequired = new LibraryManager().IsLibraryApprovalRequired( lsec.LibraryId, userId );
+                if ( isApprovalRequired )
+                {
+                    isActive = false;
+                    //other actions?
+                }
+            }
 
             int id = libResManager.ResourceCopy( resourceIntId, toCollectionId, userId, ref statusMessage );
             if ( id > 0 )
             {
-                //update favourites 
-                if (isInLibrary == false) 
-                    ResourceBizService.UpdateFavorite( resourceIntId );
+                if ( isActive )
+                {
+                    //update favourites 
+                    if ( isInLibrary == false )
+                        ResourceBizService.UpdateFavorite( resourceIntId );
 
-                LibraryResource_UpdateElasticSearchForAllLibrariesAndSectionsForResource( resourceIntId );
+                    LibraryResource_UpdateElasticSearchForAllLibrariesAndSectionsForResource( resourceIntId );
+                }
+                else
+                {
+                    LibraryResource entity = new LibraryResourceManager().Get( id );
+                    ThisUser user = AccountServices.GetUser( userId );
+                    //send email
+                    SendResourceApprovalRequestEmail( lsec.LibraryId, user, entity, ref statusMessage );
+                }
             }
             else
             {
@@ -966,10 +1175,35 @@ namespace Isle.BizServices
 
         public string ResourceMove( int fromCollectionId, int resourceIntId, int toCollectionId, int userId, ref string statusMessage )
         {
+            string doingLibResourcesApproval = UtilityManager.GetAppKeyValue( "doingLibResourcesApproval", "no" );
+            bool isActive = true;
+            LibrarySection lsec = new LibrarySection();
+
+            if ( doingLibResourcesApproval == "yes" )
+            {
+                lsec = LibrarySectionManager.Get( toCollectionId );
+                bool isApprovalRequired = new LibraryManager().IsLibraryApprovalRequired( lsec.LibraryId, userId );
+                if ( isApprovalRequired )
+                {
+                    isActive = false;
+                    //other actions?
+                }
+            }
+
             string message = libResManager.ResourceMove( fromCollectionId, resourceIntId, toCollectionId, userId, ref statusMessage );
             if ( message == "successful" )
             {
-                LibraryResource_UpdateElasticSearchForAllLibrariesAndSectionsForResource( resourceIntId );
+                if ( isActive )
+                {
+                    LibraryResource_UpdateElasticSearchForAllLibrariesAndSectionsForResource( resourceIntId );
+                }
+                else
+                {
+                    LibraryResource entity = EFDAL.EFLibraryManager.LibraryResource_Get( toCollectionId, resourceIntId );
+                    ThisUser user = AccountServices.GetUser( userId );
+                    //send email
+                    SendResourceApprovalRequestEmail( lsec.LibraryId, user, entity, ref statusMessage );
+                }
             }
             else
             {
@@ -986,22 +1220,26 @@ namespace Isle.BizServices
         /// <returns></returns>
         public bool IsResourceInLibrary( ThisUser user, int resourceIntId )
         {
-            return libResManager.IsResourceInLibrary( user, resourceIntId );
+            return EFDAL.EFLibraryManager.IsResourceInMyLibrary( user.Id, resourceIntId );
+            //return libResManager.IsResourceInLibrary( user, resourceIntId );
         }//
+
         public bool IsResourceInLibrary( int libraryId, int resourceIntId )
         {
-            return libResManager.IsResourceInLibrary( libraryId, resourceIntId );
+            return EFDAL.EFLibraryManager.IsResourceInLibrary( libraryId, resourceIntId );
+            //return libResManager.IsResourceInLibrary( libraryId, resourceIntId );
         }//
+
         public bool IsResourceInLibraryByCollectionId( int collectionId, int resourceIntId )
         {
-            
+            return EFDAL.EFLibraryManager.IsResourceInCollection( collectionId, resourceIntId );
             //get collection to get library
-            LibrarySection entity = LibrarySectionManager.Get( collectionId );
-            if ( entity != null && entity.IsValidEntity() )
-            {
-                return libResManager.IsResourceInLibrary( entity.LibraryId, resourceIntId );
-            }
-            else return false;
+            //LibrarySection entity = LibrarySectionManager.Get( collectionId );
+            //if ( entity != null && entity.IsValidEntity() )
+            //{
+            //    return libResManager.IsResourceInLibrary( entity.LibraryId, resourceIntId );
+            //}
+            //else return false;
         }//
         public bool IsLibraryEmpty( int libraryId )
         {
@@ -1045,6 +1283,17 @@ namespace Isle.BizServices
 
             return resIdsList;
         }//
+
+        /// <summary>
+        /// Retrieve resources requiring approval for the provided library
+        /// </summary>
+        /// <param name="libraryId"></param>
+        /// <returns></returns>
+        public List<LibraryResource> LibraryResource_SelectPendingResources( int libraryId )
+        {
+            return libResManager.SelectResourcesRequiringApproval( libraryId );
+        }//
+
         /// <summary>
         /// Return list of all resources for a library section
         /// </summary>
@@ -1064,7 +1313,7 @@ namespace Isle.BizServices
         /// <param name="pMaximumRows"></param>
         /// <param name="pTotalRows"></param>
         /// <returns></returns>
-        public List<LibraryResource> SearchList( string pFilter, string pOrderBy, int pStartPageIndex, int pMaximumRows, ref int pTotalRows )
+        public List<LibraryResource> LibraryResource_SearchList( string pFilter, string pOrderBy, int pStartPageIndex, int pMaximumRows, ref int pTotalRows )
         {
             return libResManager.SearchList( pFilter, pOrderBy, pStartPageIndex, pMaximumRows, ref pTotalRows );
         }
@@ -1088,7 +1337,7 @@ namespace Isle.BizServices
 
         #region ====== OBSOLETE/NOT USED ===============================================
 
-        public LibraryResourceSearchResponse ResourceSearch( LibraryResourceSearchRequest request )
+        private LibraryResourceSearchResponse ResourceSearch( LibraryResourceSearchRequest request )
         {
             int totalRows = 0;
             string message = "";
@@ -1205,10 +1454,12 @@ namespace Isle.BizServices
             List<int> libList = new List<int>();
             List<int> collList = new List<int>();
 
+            LoggingHelper.DoTrace( 5, string.Format( "LibraryResource_UpdateElasticSearchForAllLibrariesAndSectionsForResource: {0}", resourceIntId ) );
             bool result = libResManager.SelectAllLibrariesAndSectionsForResource( resourceIntId, ref libList, ref collList );
             //call elasticSearch method to update lists
 
-            new LRWarehouse.DAL.ElasticSearchManager().RefreshLibraryCollectionTotals( resourceIntId, libList, collList );
+            //new LRWarehouse.DAL.ElasticSearchManager().RefreshLibraryCollectionTotals( resourceIntId, libList, collList );
+            new LRWarehouse.DAL.ElasticSearchManager().RefreshResource( resourceIntId );
 
             return result;
         }//
@@ -1221,7 +1472,8 @@ namespace Isle.BizServices
             bool result = libResManager.SelectAllLibrariesAndSectionsForResource( resourceIntId, ref libList, ref collList );
             //call elasticSearch method to update lists
 
-            new LRWarehouse.DAL.ElasticSearchManager().RefreshLibraryCollectionTotals( resourceIntId, libList, collList );
+            //new LRWarehouse.DAL.ElasticSearchManager().RefreshLibraryCollectionTotals( resourceIntId, libList, collList );
+            new LRWarehouse.DAL.ElasticSearchManager().RefreshResource( resourceIntId );
 
             return result;
         }//
@@ -1247,7 +1499,7 @@ namespace Isle.BizServices
                 return false;
         }
 
-        public bool IsSubcribedtoLibrary( int libraryId, int userId )
+        public bool IsSubcribeLibrarySummaryDTO( int libraryId, int userId )
         {
             if ( libraryId == 0 || userId == 0 )
                 return false;
@@ -1314,7 +1566,7 @@ namespace Isle.BizServices
 
         #region ====== Library collection subscription methods ==================================
 
-        public bool IsSubcribedtoCollection( int collectionId, int userId )
+        public bool IsSubcribeCollectionSummaryDTO( int collectionId, int userId )
         {
             if ( collectionId == 0 || userId == 0 )
                 return false;
@@ -1696,6 +1948,92 @@ namespace Isle.BizServices
         #endregion
         #endregion
 
+        #region ====== Library codes with Resource.Tag ===============================================
+        /// <summary>
+        /// Retrieve filters for library, and only where associated with a resource.tag for a resource in the library
+        /// </summary>
+        /// <param name="siteID"></param>
+        /// <param name="libraryId"></param>
+        /// <returns></returns>
+        public static Site Library_GetPresentFiltersOnly( int siteID, int libraryId )
+        {
+            //TODO - caching??
+
+            //get site and all categories for site
+            Site site = CodeTableBizService.Site_Get( siteID );
+            if ( site == null || site.SiteTagCategories == null )
+            {
+                return site;
+            }
+
+            Site outputSite = new Site();
+            outputSite.Title = site.Title;
+            //more later
+
+            //loop thru categores and only get tags with values
+            foreach ( SiteTagCategory item in site.SiteTagCategories )
+            {
+
+                List<TagFilterBase> tags = EFDAL.EFLibraryManager.LibraryCategoryTags_GetUsed( item.CategoryId, libraryId );
+                if (tags != null && tags.Count > 0) 
+                {
+                    item.TagValues.AddRange( tags );
+
+                    outputSite.SiteTagCategories.Add( item );
+                }
+    
+            }
+
+            return outputSite;
+        }
+
+
+        public static List<TagFilterBase> AvailableFiltersForLibraryCategory( int libraryId, int categoryId )
+        {
+
+            return EFDAL.EFLibraryManager.LibraryCategoryTags_GetUsed( categoryId, libraryId );
+        }
+
+        /// <summary>
+        /// Retrieve filters for collection, and only where associated with a resource.tag for a resource in the collection
+        /// </summary>
+        /// <param name="siteID"></param>
+        /// <param name="collectionId"></param>
+        /// <returns></returns>
+        public static Site Collection_GetPresentFiltersOnly( int siteID, int collectionId )
+        {
+            //get site and all categories for site
+            Site site = CodeTableBizService.Site_Get( siteID );
+            if ( site == null || site.SiteTagCategories == null )
+            {
+                return site;
+            }
+
+            Site outputSite = new Site();
+            outputSite.Title = site.Title;
+            //more later
+            //loop thru categores and only get tags with values
+            foreach ( SiteTagCategory item in site.SiteTagCategories )
+            {
+
+                List<TagFilterBase> tags = EFDAL.EFLibraryManager.CollectionCategoryTags_GetUsed( item.CategoryId, collectionId );
+                if ( tags != null && tags.Count > 0 )
+                {
+                    item.TagValues.AddRange( tags );
+
+                    outputSite.SiteTagCategories.Add( item );
+                }
+
+            }
+
+            return outputSite;
+        }
+        public static List<TagFilterBase> AvailableFiltersForCollectionCategory( int collectionId, int categoryId )
+        {
+            return EFDAL.EFLibraryManager.CollectionCategoryTags_GetUsed( categoryId, collectionId );
+        }
+        #endregion
+
         #region ====== Library codes===============================================
         public List<DataItem> AvailableFiltersForLibrary( int libraryId, string pCodeTableSuffix )
         {
@@ -1729,8 +2067,7 @@ namespace Isle.BizServices
         public static List<CodeItem> GetCodes_LibraryAccessLevel()
         {
             CodeItem ci = new CodeItem();
-            List<EFDAL.Codes_LibraryAccessLevel> eflist = new EFDAL.IsleContentEntities().Codes_LibraryAccessLevel
-                                .ToList();
+            List<EFDAL.Codes_LibraryAccessLevel> eflist = new EFDAL.IsleContentEntities().Codes_LibraryAccessLevel.ToList();
             List<CodeItem> list = new List<CodeItem>();
             if ( eflist.Count > 0 )
             {
@@ -1749,6 +2086,7 @@ namespace Isle.BizServices
         {
             CodeItem ci = new CodeItem();
             List<EFDAL.Codes_LibraryMemberType> eflist = new EFDAL.IsleContentEntities().Codes_LibraryMemberType
+                            .OrderBy(s => s.Id)
                             .ToList();
             List<CodeItem> list = new List<CodeItem>();
             if ( eflist.Count > 0 )
@@ -1762,6 +2100,217 @@ namespace Isle.BizServices
                 }
             }
             return list;
+        }
+        #endregion
+
+
+        #region  Library emails
+        /// <summary>
+        /// Send email to library admin with request to join the library.
+        /// TODO - should NOT be the creator, rather use creator and list of admin/editors
+        /// </summary>
+        /// <param name="libraryId"></param>
+        /// <param name="user"></param>
+        /// <param name="message"></param>
+        /// <param name="statusMessage"></param>
+        /// <returns></returns>
+        public bool SendLibraryJoinRequestEmail( int libraryId, ThisUser user, string message, ref string statusMessage )
+        {
+            bool isValid = false;
+            string bcc = UtilityManager.GetAppKeyValue( "appAdminEmail", "mparsons@siuccwd.com" );
+            string fromEmail = UtilityManager.GetAppKeyValue( "contactUsMailFrom", "mparsons@siuccwd.com" );
+            string url = "/Pages/Login.aspx?pg={0}&nextUrl=/Libraries/Admin.aspx?id={1}&action=handlePending";
+            url = UtilityManager.FormatAbsoluteUrl( url, true );
+
+
+            Library entity = Get( libraryId );
+            if ( entity != null && entity.Id > 0 )
+            {
+                //should use list, but then would need separate emails to accomodate autologin!
+                LibraryMember adminMbr = new LibraryMember();
+                string emailList = GetApproversEmailList( libraryId, ref adminMbr );
+                //adminMbr = GetFirstApprover( libraryId );
+
+                ThisUser target = new AccountServices().Get( entity.CreatedById );
+                if ( target != null && target.Id > 0 )
+                {
+                    //use a proxy id
+                    string proxyId = new AccountServices().Create_ProxyLoginId( target.Id, "administrator for library join", ref statusMessage );
+
+                    string eMessage = string.Format( "You have a request <br/>from: {0} <br/>to join your library: {1}. <br/><br/>Request additional information: <br/>{2}", user.FullName(), entity.Title, message );
+                    string link = string.Format( url, proxyId, libraryId );
+                    eMessage += "<p>You can use the library administration page to assign the member level of: Reader, Contributor, Curator, or Administrator. </p>";
+                    eMessage += string.Format( "<p><a href='{0}'>Follow this link to login to IOER and view a list of pending requests.</a></p>", link );
+                    eMessage += "<p>To assign the library access level, click on the Edit link for the applicable person. Then use the <b>Member Type</b> drop down list to change the type to one of: Reader, Contributor, Curator, or Administrator. Then click update to save the change.</p>";
+
+                    eMessage += "<br/>Note, the user must be associated with an organization that has publishing privileges, or they will not be able to use the contribute functions. You may want to add them to your library organization, if the user does not already have publishing rights.";
+                    EmailManager.SendEmail( target.Email, fromEmail, string.Format( "Request to join your library: ", entity.Title ), eMessage, "", bcc );
+                    isValid = true;
+                }
+                else
+                {
+                    statusMessage = "Error: an account was not found for the library administrator";
+                }
+            }
+
+            else
+            {
+                statusMessage = "Error: the requested library was not found!";
+            }
+
+            return isValid;
+        }
+
+        public bool SendResourceApprovalRequestEmail( int libraryId, ThisUser user, LibraryResource entity, ref string statusMessage )
+        {
+            bool isValid = false;
+            string bcc = UtilityManager.GetAppKeyValue( "appAdminEmail", "mparsons@siuccwd.com" );
+            string fromEmail = UtilityManager.GetAppKeyValue( "contactUsMailFrom", "mparsons@siuccwd.com" );
+            string url = "/Pages/Login.aspx?pg={0}&nextUrl=/Libraries/Admin.aspx?id={1}&action=handleApproval";
+            url = UtilityManager.FormatAbsoluteUrl( url, true );
+
+            //should use list, but then would need separate emails to accomodate autologin!
+            //so cheat: get llist , and take first
+            LibraryMember adminMbr = new LibraryMember();
+            string emailList = GetApproversEmailList( libraryId, ref adminMbr );
+            //adminMbr = GetFirstApprover( libraryId );
+
+            if ( adminMbr != null 
+                && adminMbr.Member != null && adminMbr.Member.Id > 0 )
+            {
+                //use a proxy id
+                string proxyId = new AccountServices().Create_ProxyLoginId( adminMbr.Member.Id, "administrator for library approval", ref statusMessage );
+
+                string eMessage = string.Format( "You have a request <br/>from: {0} <br/>to add a resource to your library: {1}. <br/>", user.FullName(), entity.Title);
+                string link = string.Format( url, proxyId, libraryId );
+                eMessage += "<p>You can use the library administration page to approve (and fully activate the resource in the library) or to delete the resource. </p>";
+                eMessage += string.Format( "<p><a href='{0}'>Follow this link to login to IOER and view a list of pending resources.</a></p>", link );
+
+                //add resource details
+
+                string template = "<table><tr><td style='width:600px'><h2>{0}</h2></td></tr><tr><td>{1}</td></tr><tr><td>{2}</td></tr><table>";
+                LBiz.ResourceVersion rv = ResourceBizService.ResourceVersion_GetByResourceId( entity.ResourceIntId );
+                string imgUrl = ResourceBizService.GetResourceImageUrl( rv.ResourceUrl, entity.ResourceIntId );
+                if ( imgUrl.ToLower().Substring( 0, 4 ) != "http" )
+                    imgUrl = "http:" + imgUrl;
+                string img = string.Format("<img src='{0}' style='width: 200px; height: 150px;'/>", imgUrl);
+
+                eMessage += string.Format( template, rv.Title, rv.Description, img );
+
+                EmailManager.SendEmail( adminMbr.Member.Email, fromEmail, string.Format( "Request to approve addition to your library: ", entity.Title ), eMessage, "", bcc );
+                isValid = true;
+            }
+            else
+            {
+                statusMessage = "Error: an account was not found for the library administrator";
+                //==> send to info@!!!
+
+            }
+        
+            return isValid;
+        }
+
+        private bool SendApprovalConfirmationEmail( LibraryResource entity, ThisUser approver )
+        {
+            bool isValid = false;
+            string bcc = UtilityManager.GetAppKeyValue( "appAdminEmail", "mparsons@siuccwd.com" );
+            string fromEmail = UtilityManager.GetAppKeyValue( "contactUsMailFrom", "mparsons@siuccwd.com" );
+            //not sure if url necessary? Maybe to the library, or resource detail?
+            string url = entity.ResourceSection.FriendlyUrl;  // "/Pages/Login.aspx?pg={0}&nextUrl=/Libraries/Admin.aspx?id={1}&action=handleApproval";
+            url = UtilityManager.FormatAbsoluteUrl( url, true );
+
+            ThisUser contributor = AccountServices.GetUser( entity.CreatedById );
+           // ThisUser approver = AccountServices.GetUser( approvedById );
+
+            string eMessage = string.Format( "<p>Thank you for your submission</p>Your library submission:<br/>Library: {0}<br/>Collection: {1}<br/>Resource: {2} <br/>has been approved by {3}.", entity.ResourceLibrary.Title, entity.CollectionTitle, entity.Title, approver.FullName() );
+
+            eMessage += string.Format( "<p><a href='{0}'>Follow this link to view the library collection.</a></p>", url );
+
+            //add resource details
+
+            //string template = "<table><tr><td style='min-width:400px'>{0}<br/>{1}</td><td>{2}</td></tr><table>";
+            //LBiz.ResourceVersion rv = ResourceBizService.ResourceVersion_GetByResourceId( entity.ResourceIntId );
+            //string imgUrl = ResourceBizService.GetResourceImageUrl( rv.ResourceUrl, entity.ResourceIntId );
+            //string img = string.Format( "<img src='{0}' style='width: 200px; height: 150px;'/>", imgUrl );
+
+            //eMessage += string.Format( template, rv.Title, rv.Description, img );
+
+            EmailManager.SendEmail( contributor.Email, fromEmail, string.Format( "Your library submission has been approved: ", entity.Title ), eMessage, "", bcc );
+            isValid = true;
+     
+
+            return isValid;
+        }
+
+        private bool SendRejectionEmail( LibraryResource entity, ThisUser admin, string reason )
+        {
+            bool isValid = false;
+            string bcc = UtilityManager.GetAppKeyValue( "appAdminEmail", "mparsons@siuccwd.com" );
+            string fromEmail = UtilityManager.GetAppKeyValue( "contactUsMailFrom", "mparsons@siuccwd.com" );
+            //not sure if url necessary? Maybe to the library, or resource detail?
+            string url = entity.ResourceSection.FriendlyUrl;  // "/Pages/Login.aspx?pg={0}&nextUrl=/Libraries/Admin.aspx?id={1}&action=handleApproval";
+            url = UtilityManager.FormatAbsoluteUrl( url, true );
+            if ( reason == null || reason.Trim().Length == 0 )
+            {
+                reason = "Did not feel this resource was appropriate for our collection at this time.";
+            }
+            ThisUser contributor = AccountServices.GetUser( entity.CreatedById );
+            //ThisUser admin = AccountServices.GetUser( adminId );
+
+            string eMessage = string.Format( "<p>Thank you for your submission</p>Your library submission:<br/>Library: {0}<br/>Collection: {1}<br/>Resource: {2} <br/>has not been accepted by {3}<br/>Reason: {4}", entity.ResourceLibrary.Title, entity.CollectionTitle, entity.Title, admin.FullName(), reason );
+
+            eMessage += string.Format( "<p><a href='{0}'>Follow this link to view the library collection.</a></p>", url );
+
+            //add resource details????
+
+            //string template = "<table><tr><td style='min-width:400px'>{0}<br/>{1}</td><td>{2}</td></tr><table>";
+            //LBiz.ResourceVersion rv = ResourceBizService.ResourceVersion_GetByResourceId( entity.ResourceIntId );
+            //string imgUrl = ResourceBizService.GetResourceImageUrl( rv.ResourceUrl, entity.ResourceIntId );
+            //string img = string.Format( "<img src='{0}' style='width: 200px; height: 150px;'/>", imgUrl );
+
+            //eMessage += string.Format( template, rv.Title, rv.Description, img );
+
+            EmailManager.SendEmail( contributor.Email, fromEmail, string.Format( "Your library submission has not been accepted: ", entity.Title ), eMessage, "", bcc );
+            isValid = true;
+
+
+            return isValid;
+        }
+
+        public string GetApproversEmailList( int libraryId, ref LibraryMember firstAdmin )
+        {
+            string elist = "";
+//            LibraryMember entity = new LibraryMember();
+
+            List<LibraryMember> adminList = LibraryMembers_GetApprovers( libraryId );
+            if ( adminList != null && adminList.Count > 0 )
+            {
+                foreach ( LibraryMember mbr in adminList )
+                {
+                    if ( firstAdmin == null || firstAdmin.Id == 0 )
+                        firstAdmin = mbr;
+
+                    elist += mbr.Member.Email + ";";
+                }
+            }
+            return elist;
+        }
+        public LibraryMember GetFirstApprover( int libraryId )
+        {
+            //string elist = "";
+            LibraryMember entity = new LibraryMember();
+
+            List<LibraryMember> adminList = LibraryMembers_GetApprovers( libraryId );
+            if ( adminList != null && adminList.Count > 0 )
+            {
+                foreach ( LibraryMember mbr in adminList )
+                {
+                   // elist += mbr.Member.Email + ";";
+                    entity = mbr;
+                    break;
+                }
+            }
+            return entity;
         }
         #endregion
     }

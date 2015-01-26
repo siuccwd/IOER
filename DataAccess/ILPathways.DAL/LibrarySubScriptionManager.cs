@@ -431,7 +431,7 @@ namespace ILPathways.DAL
 
             entity.ParentId = GetRowPossibleColumn( dr, "ParentId", 0 );
             if (entity.ParentId == 0)
-                entity.ParentId = GetRowColumn( dr, "LibraryId", 0 );
+                entity.ParentId = GetRowPossibleColumn( dr, "LibraryId", 0 );
             if ( entity.ParentId == 0 )
                 entity.ParentId = GetRowColumn( dr, "SectionId", 0 );
 

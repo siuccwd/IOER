@@ -18,6 +18,7 @@ namespace IoerContentBusinessEntities
         {
             this.Library_Member = new HashSet<Library_Member>();
             this.Library_SectionMember = new HashSet<Library_SectionMember>();
+            this.Community_Member = new HashSet<Community_Member>();
         }
     
         public int Id { get; set; }
@@ -26,5 +27,6 @@ namespace IoerContentBusinessEntities
     
         public virtual ICollection<Library_Member> Library_Member { get; set; }
         public virtual ICollection<Library_SectionMember> Library_SectionMember { get; set; }
+        public virtual ICollection<Community_Member> Community_Member { get; set; }
     }
 }

@@ -53,26 +53,26 @@
 </script>
 
 <style type="text/css">
-  #header { margin: 0px 0 10px 0; position: relative; height: 75px; border-bottom: 1px solid #DDD; min-width: 300px; }
+  #header { margin: 0px 0 10px 0; position: relative; height: 100px; border-bottom: 1px solid #DDD; min-width: 300px; }
   #header, #header * { box-sizing: border-box; -moz-box-sizing: border-box; -webkit-box-sizing: border-box; }
   #logoLink { 
     display: inline-block; 
     width: 120px; 
-    height: 75px; 
-    background: transparent url('/images/isle.png') no-repeat center -20px; 
-    margin: 5px;
+    height: 100px; 
+    background: transparent url('/images/ioer_med_bigtext.png') no-repeat center center; 
+    background-size: cover;
     position: absolute;
     top: 0;
-    left: 0;
+    left: 5px;
   }
   #siteHeader { 
     text-align: left;
-    font-size: 18px;
-    margin-left: 125px;
-    height: 25px;
-    line-height: 25px;
+    font-size: 20px;
+    margin-left: 135px;
+    height: 40px;
+    line-height: 40px;
     text-transform: uppercase;
-    max-height: 25px;
+    max-height: 40px;
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;
@@ -104,7 +104,7 @@
     background-color: #FFF;
     position: absolute;
     right: 0;
-    top: 44px;
+    top: 53px;
     height: 0;
     overflow: hidden;
     z-index: 1000000;
@@ -130,7 +130,6 @@
     border-radius: 0 0 5px 5px;
   }
   #navigation .navTop a:hover, #navigation .navTop a:focus {
-    background-color: <%=css_orange %>;
     color: #FFF;
   }
   #navigation .navTop:hover .navLinks, #navigation .navTop:focus .navLinks, #navigation .navLinks.showing {
@@ -138,7 +137,6 @@
     opacity: 1;
   }
   #navigation .navTop:hover, #navigation .navTop:focus {
-    background-color: <%=css_orange %>;
     color: #FFF;
     cursor: pointer;
   }
@@ -150,23 +148,21 @@
   }
   #mobileMenuButton {
     display: block;
-    background-color: <%=css_blue %>;
     color: #FFF;
     font-weight: bold;
     text-transform: uppercase;
     border-radius: 5px;
-    margin: 0 5px 0 125px;
-    height: 40px;
-    line-height: 40px;
+    margin: 0 15px 0 140px;
+    height: 50px;
+    line-height: 50px;
     text-align: center;
+    font-size: 20px;
   }
-  #mobileMenuButton:hover, #mobileMenuButton:focus {
-    background-color: <%=css_orange %>;
-  }
+  
   
   @media screen and (max-width: 899px) {
     #navigation { position: absolute; top: 100%; right: 0; z-index: 1000000; padding: 0; }
-    #navigation .navTop { display: block; height: 44px; line-height: 44px; min-width: 100%; border: 1px solid #CCC; border-top: none; }
+    #navigation .navTop { display: block; height: 54px; line-height: 54px; min-width: 100%; border: 1px solid #CCC; border-top: none; }
     #navigation .navTop:first-child { border-top: 1px solid #CCC; }
     #headerContent #loggedInName { display: none; }
     #mobileMenuButton { display: block; }
@@ -175,7 +171,7 @@
   }
   @media screen and (min-width: 900px) {
     #navigation, #navigation.mobileHidden { display: block; padding-left: 125px; }
-    #navigation .navTop { display: inline-block; vertical-align: bottom; height: 44px; line-height: 44px; }
+    #navigation .navTop { display: inline-block; vertical-align: bottom; height: 54px; line-height: 54px; }
     #headerContent #loggedInName { display: block; }
     #navigation .navTop:last-child { border-right: none; }
     #mobileMenuButton { display: none; }
@@ -195,8 +191,15 @@
   #navigation .navTop[data-icon=admin]:hover, #navigation .navTop[data-icon=admin]:focus { background-image: url('/images/icons/icon_swirl_bg.png'); }
   #navigation .navTop[data-icon=login]:hover, #navigation .navTop[data-icon=login]:focus { background-image: url('/images/icons/icon_loginaccount_bg.png'); }
 
-  #skipNav { position: absolute; top: 3px; left: 50%; opacity: 0; background-color: #EEE; display: inline-block; padding: 2px 5px; }
+  #skipNav { position: absolute; top: 3px; left: 60%; opacity: 0; background-color: #EEE; display: inline-block; padding: 2px 5px; }
   #skipNav:focus { opacity: 1; }
+</style>
+<style>
+  /* Dynamic colors - VS2012 breaks formatting on these */
+  #navigation .navTop a:hover, #navigation .navTop a:focus { background-color: <%=css_orange %>; }
+  #navigation .navTop:hover, #navigation .navTop:focus { background-color: <%=css_orange %>; }
+  #mobileMenuButton { background-color: <%=css_blue %>; }
+  #mobileMenuButton:hover, #mobileMenuButton:focus { background-color: <%=css_orange %>; }
 </style>
 
 <div id="header">
@@ -215,10 +218,11 @@
           <a href="/Publishers.aspx" class="navLink">Publishers</a>
         </div>
       </div>
-      <div data-icon="contribute" class="navTop" data-href="" onclick="window.location.href = '/Contribute/';">
-        <h2>Contribute</h2>
+      <div data-icon="contribute" class="navTop" data-href="" aria-haspopup="true">
+        <h2>Share</h2>
         <div class="navLinks">
           <a href="/Contribute" class="navLink">Contribute Resources</a>
+            <a href="/Community/1/ISLE_Community" class="navLink">Communities</a>
           <!--<a href="/Publish.aspx" class="navLink">Tag Online Resource</a>
           <a href="/My/Author.aspx" class="navLink">Create New Resource</a>-->
         </div>
@@ -228,7 +232,6 @@
         <div class="navLinks">
           <!--<a href="/Help" class="navLink">Getting Started</a>-->
           <!--<a href="/Help/FAQs.aspx" class="navLink">Frequently Asked Questions</a>-->
-            <a href="/Communities/" class="navLink">Communities</a>
           <a href="/IOER_Timeline/" class="navLink">IOER Timeline</a>
           <a href="/Help/Guide.aspx" class="navLink">User Guide</a>
           <a href="/News/Default.aspx" class="navLink">OER News</a>

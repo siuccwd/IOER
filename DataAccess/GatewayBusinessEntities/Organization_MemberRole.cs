@@ -15,7 +15,7 @@ namespace GatewayBusinessEntities
     public partial class Organization_MemberRole
     {
         public int Id { get; set; }
-        public int OrgContactId { get; set; }
+        public int OrgMemberId { get; set; }
         public int RoleId { get; set; }
         public System.DateTime Created { get; set; }
         public Nullable<int> CreatedById { get; set; }

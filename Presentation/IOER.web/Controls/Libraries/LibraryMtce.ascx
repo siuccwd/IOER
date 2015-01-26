@@ -53,6 +53,7 @@
   .dataColumn {
     margin: 2px;
   }
+    .imgStyle { background-color: #E6E6E6; box-shadow: 3px 3px 4px #AAA; border-radius: 5px; }
 </style>
  <script type="text/javascript">
      jQuery(document).ready(function () {
@@ -114,7 +115,7 @@
     <asp:label id="Label1"  associatedcontrolid="txtTitle" runat="server">Title</asp:label> 
   </div>
   <div class="dataColumn"> 
-    <asp:textbox  id="txtTitle" CssClass="txtTitle"  MaxLength="200" runat="server"></asp:textbox>  <br /><asp:HyperLink ID="viewLibraryLink" runat="server" Text="View Library" Target="_blank"></asp:HyperLink>
+    <asp:textbox  id="txtTitle" CssClass="txtTitle" ToolTip="Enter library name"  MaxLength="200" runat="server"></asp:textbox>  <br /><asp:HyperLink ID="viewLibraryLink" runat="server" Text="View Library" Target="_blank"></asp:HyperLink>
 	</div>	
 <!-- --> 
 <asp:Panel ID="libTypePanel" runat="server" Visible="true">
@@ -167,8 +168,21 @@
  <div class="dataColumn">
                         <a class="toolTipLink" id="A2" title="Organization Access Level|<ul><li><strong>None</strong> - The library has no default access for members of the related organization, and is hidden from searches. </li><li><strong>By Request Only</strong> - The library has no default access for members of the related organization, but will enable requests to access the library. The library can be found by a search.</li><li><strong>Read Only</strong> - The library can be viewed by any member the related organization and will be displayed in searches.</li><li><strong>Contribute with Approval</strong> - The library is publically available and any member of the related organization may add a resource to the library. The resource will not be visible until it has been approved by a library curator or administrator.</li><li><strong>Contribute No Approval</strong> - Same as the latter, except no approval is required.</li></ul>"><img
 			src="/images/icons/infoBubble.gif" alt="" /></a>
-                    </div>
 </asp:Panel>
+
+<asp:Panel ID="joinRequestPanel1" runat="server" Visible="true">
+    <div class="clearFloat"></div>
+  <div class="labelColumn " > 
+    <asp:label id="Label7"  associatedcontrolid="rblAllowJoinRequest" runat="server">Allow Request to Join Library</asp:label> 
+  </div>
+  <div class="dataColumn"> 
+    <asp:RadioButtonList id="rblAllowJoinRequest"  CssClass="radioButton"  causesvalidation="false"   runat="server" tooltip="True: The system will present ability for requests to join the library" RepeatDirection="Horizontal">
+	<asp:ListItem Text="Yes"  value="Yes" Selected="True"></asp:ListItem>    
+ 	<asp:ListItem Text="No" 	value="No"  ></asp:ListItem>
+</asp:RadioButtonList>
+  </div>
+</asp:Panel>
+
 <!-- --> 
 <asp:Panel ID="activePanel" Visible="false" runat="server">
 <div class="clearFloat"></div>
@@ -207,13 +221,13 @@
 </asp:Panel>
 
 	
-	<asp:Panel ID="imagePanel" runat="server" Visible="true">
+<asp:Panel ID="imagePanel" runat="server" Visible="true">
 <!-- --> 
 <div class="clearFloat"></div>
   <div class="labelColumn" > 
     <asp:label id="Label4"  runat="server">Library Image</asp:label> 
   </div>
-  <div class="dataColumn isleBox" style="width: 145px; height: 145px;">
+  <div class="dataColumn" style="width: 150px; height: 150px;">
     <asp:literal ID="currentImage" runat="server" Visible="false"></asp:literal>
 	</div>
     <div class="dataColumn" style="width: 150px; padding-top:20px;">
@@ -278,13 +292,12 @@
 </div>
 
 <asp:Panel ID="hiddenStuff" runat="server" Visible="false">
-
+<asp:Literal ID="formSecurityName" runat="server" Visible="false">ILPathways.Admin</asp:Literal>
 <!-- control variables -->
 <asp:Literal ID="txtDefaultLibraryTypeId" runat="server" Visible="false">1</asp:Literal>
 <asp:Literal ID="showingImagePath" runat="server" Visible="false">no</asp:Literal>
 
+<asp:Literal ID="txtLibraryImageTemplate" runat="server" Visible="false"><img src='{0}' width='{1}px' class="imgStyle"  alt='libary icon'/></asp:Literal>
 
-<asp:Literal ID="txtLibraryImageTemplate" runat="server" Visible="false"><img src='{0}' width='{1}px' height='{1}px' alt='libary icon'/></asp:Literal>
-<asp:Literal ID="Literal1" runat="server" Visible="false"><img src='{0}' width='{1}px' height='{1}px' alt='libary icon'/></asp:Literal>
 </asp:Panel>
 

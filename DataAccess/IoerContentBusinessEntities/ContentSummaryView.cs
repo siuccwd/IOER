@@ -24,11 +24,11 @@ namespace IoerContentBusinessEntities
         public string ContentStatus { get; set; }
         public Nullable<int> PrivilegeTypeId { get; set; }
         public string ContentPrivilege { get; set; }
-        public Nullable<int> ConditionsOfUseId { get; set; }
+        public int ConditionsOfUseId { get; set; }
         public int ResourceVersionId { get; set; }
-        public Nullable<bool> IsPublished { get; set; }
+        public bool IsPublished { get; set; }
         public Nullable<bool> IsOrgContentOwner { get; set; }
-        public Nullable<int> OrgId { get; set; }
+        public int OrgId { get; set; }
         public string Organization { get; set; }
         public Nullable<int> ParentOrgId { get; set; }
         public string ParentOrganization { get; set; }
@@ -43,5 +43,18 @@ namespace IoerContentBusinessEntities
         public Nullable<bool> IsActive { get; set; }
         public string AuthorKey { get; set; }
         public string OrgKey { get; set; }
+        public int ParentId { get; set; }
+        public string ResourceUrl { get; set; }
+        public Nullable<int> ResourceIntId { get; set; }
+        public string UseRightsUrl { get; set; }
+        public string DocumentUrl { get; set; }
+        public Nullable<System.Guid> DocumentRowId { get; set; }
+        public Nullable<int> SortOrder { get; set; }
+        public string LastUpdatedBy { get; set; }
+        public string ConditionsOfUse { get; set; }
+        public string ConditionsOfUseUrl { get; set; }
+        public string ConditionsOfUseIconUrl { get; set; }
+        public string Timeframe { get; set; }
+        public string ImageUrl { get; set; }
     }
 }

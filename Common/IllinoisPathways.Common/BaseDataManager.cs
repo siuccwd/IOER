@@ -110,7 +110,7 @@ namespace ILPathways.Common
             }
             return hasColumn;
         } // end method
-        
+
         /// <summary>
         /// Helper method to retrieve a string column from a row but will ignore missing columns (unlike GetRowColumn)
         /// </summary>
@@ -155,13 +155,13 @@ namespace ILPathways.Common
             }
             catch ( Exception ex )
             {
-                
+
                 colValue = defaultValue;
             }
             return colValue;
 
         } // end method
-         public static bool GetRowPossibleColumn( SqlDataReader row, string column, bool defaultValue )
+        public static bool GetRowPossibleColumn( SqlDataReader row, string column, bool defaultValue )
         {
             bool colValue;
 
@@ -1318,6 +1318,84 @@ namespace ILPathways.Common
             }
         }
 
+        public static void PopulateList( CheckBoxList list, List<CodeItem> items, string dataValueField, string dataTextField, string selectTitle )
+        {
+            try
+            {
+                //clear current entries
+                list.Items.Clear();
+
+                if ( items.Count > 0 )
+                {
+                    int count = items.Count;
+                    if ( selectTitle.Length > 0 )
+                    {
+                        // add select row
+                        CodeItem hdr = new CodeItem();
+                        hdr.Id = 0;
+                        hdr.Title = selectTitle;
+                        items.Insert( 0, hdr );
+                    }
+                    list.DataSource = items;
+                    list.DataValueField = dataValueField;
+                    list.DataTextField = dataTextField;
+                    list.DataBind();
+                    list.Enabled = true;
+                    if ( selectTitle.Length > 0 )
+                        list.SelectedIndex = 0;
+                }
+                else
+                {
+                    list.Items.Add( new ListItem( "No Selections Available", "" ) );
+                    list.Enabled = false;
+                }
+
+            }
+            catch ( Exception ex )
+            {
+                LogError( ex, "BaseDataManager.PopulateList( CheckBoxList list, DataSet ds, string " + dataValueField + ", string " + dataTextField + ", string selectTitle )" );
+            }
+        }
+
+        public static void PopulateList( RadioButtonList list, List<CodeItem> items, string dataValueField, string dataTextField, string selectTitle )
+        {
+            try
+            {
+                //clear current entries
+                list.Items.Clear();
+
+                if ( items.Count > 0 )
+                {
+                    int count = items.Count;
+                    if ( selectTitle.Length > 0 )
+                    {
+                        // add select row
+                        CodeItem hdr = new CodeItem();
+                        hdr.Id = 0;
+                        hdr.Title = selectTitle;
+                        items.Insert( 0, hdr );
+                    }
+                    list.DataSource = items;
+                    list.DataValueField = dataValueField;
+                    list.DataTextField = dataTextField;
+                    list.DataBind();
+                    list.Enabled = true;
+                    if ( selectTitle.Length > 0 )
+                        list.SelectedIndex = 0;
+                }
+                else
+                {
+                    list.Items.Add( new ListItem( "No Selections Available", "" ) );
+                    list.Enabled = false;
+                }
+
+            }
+            catch ( Exception ex )
+            {
+                LogError( ex, "BaseDataManager.PopulateList( CheckBoxList list, DataSet ds, string " + dataValueField + ", string " + dataTextField + ", string selectTitle )" );
+            }
+        }
+
         /// <summary>
         /// Fill a list using passed dataset
         /// </summary>
@@ -1578,7 +1656,7 @@ namespace ILPathways.Common
         }//
 
         #endregion
-        
+
         #region Logging - keep in sync with methods in UtilityManager until cleaned up or replaced
         /// <summary>
         /// Format an exception and message, and then log it
@@ -1588,7 +1666,7 @@ namespace ILPathways.Common
         public static void LogError( Exception ex, string message )
         {
 
-           // string user = "";
+            // string user = "";
             string sessionId = "unknown";
             string remoteIP = "unknown";
             string path = "unknown";

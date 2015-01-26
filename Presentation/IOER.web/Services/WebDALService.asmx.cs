@@ -2,20 +2,21 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
+using System.Net;
 using System.Web;
+//using System.Threading; //Web Browser needs this
 using System.Web.Script.Serialization;
 using System.Web.Services;
 
-using LRWarehouse.DAL;
-using LRWarehouse.Business;
-using ILPathways.Utilities;
 using ILPathways.Controllers;
-using System.Net;
-using System.IO;
-using System.Diagnostics;
+using ILPathways.Utilities;
+using LRWarehouse.Business;
+using LRWarehouse.DAL;
+using ResMgr = Isle.BizServices.ResourceBizService;
 
-//using System.Threading; //Web Browser needs this
 
 namespace ILPathways.Services
 {
@@ -83,7 +84,7 @@ namespace ILPathways.Services
         /// </summary>
         /// <param name="user">The user doing the Liking</param>
         /// <param name="type">"resource" or "collection"</param>
-        /// <param name="id">Version ID of the Resource or ID of the collection</param>
+        /// <param name="id">Resource ID of the Resource or ID of the collection</param>
         public int LikeResourceOrCollection( Patron user, string type, int id, ref bool isValid, ref string status )
         {
           var utilService = new UtilityService();
@@ -119,7 +120,9 @@ namespace ILPathways.Services
           }
           else if ( type == "resource" )
           {
-            var intID = utilService.GetIntIDFromVersionID( id );
+              //resourceIntId is being passed
+            //var intID = utilService.GetIntIDFromVersionID( id );
+            var intID = id;
             var test = new ResourceLikeSummaryManager().GetForDisplay( intID, user.Id, ref status );
             if ( !test.YouLikeThis && !test.YouDislikeThis )
             {
@@ -461,14 +464,18 @@ namespace ILPathways.Services
         public List<StandardsData> FetchStandardsData( RatingMessage input )
         {
             List<StandardsData> results = new List<StandardsData>();
+
+            //get resource standards
             ResourceStandardCollection collection = new ResourceStandardManager().Select( input.intID );
+
             Patron user = new PatronManager().GetByRowId( input.userGUID );
             ResourceEvaluationManager reManager = new ResourceEvaluationManager();
             Dictionary<string, string> ratingWords = new Dictionary<string, string> { { "1", "Very Weak" }, { "2", "Limited" }, { "3", "Strong" }, { "4", "Superior" } };
+
             foreach ( ResourceStandard standard in collection )
             {
                 string status = "";
-                DataSet ds = reManager.Select( input.intID, user.Id, standard.StandardId, 0, ref status );
+
                 StandardsData data = new StandardsData();
                 data.align = standard.AlignmentTypeValue;
                 if ( data.align == "" ) { data.align = "Aligns to"; }
@@ -479,6 +486,8 @@ namespace ILPathways.Services
                 data.rating = "Unrated";
                 data.userRated = false;
 
+                //OLD - get standard evaluations via ResourceEvaluationManager
+                DataSet ds = reManager.Resource_StandardEvaluations_Select( input.intID, user.Id, standard.StandardId, ref status );
                 if ( DatabaseManager.DoesDataSetHaveRows( ds ) )
                 {
                     foreach ( DataRow dr in ds.Tables[ 0 ].Rows )
@@ -513,7 +522,11 @@ namespace ILPathways.Services
             evaluation.ScaleMin = 1;
             evaluation.ScaleMax = 4;
             string status = "";
-            reManager.Create( evaluation, ref status );
+
+            //TODO - does irating stay at 0-3??
+            int rating = Int32.Parse( input.rating );
+            int id = ResMgr.ResourceStandardEvaluation_Create( input.intID, input.id, user.Id, rating, ref status );
+           // ResMgr.StandardEvaluation_Create( evaluation, ref status );
 
             return FetchStandardsData( input );
         }
@@ -679,7 +692,7 @@ namespace ILPathways.Services
                 entity.CreatedBy = userFullName;
                 //TODO - add commenter context - from Patron table
                 //entity.Commenter = user.TBD;
-                entity.IsActive = true;
+                //entity.IsActive = true;
                 entity.CreatedById = userIntID;
 
                 int id = mgr.Create( entity, ref statusMessage );

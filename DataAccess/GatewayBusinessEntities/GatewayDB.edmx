@@ -46,16 +46,60 @@
       [LR_PatronOrgSummary].[FullName] AS [FullName], 
       [LR_PatronOrgSummary].[SortName] AS [SortName], 
       [LR_PatronOrgSummary].[Email] AS [Email], 
+      [LR_PatronOrgSummary].[IsActive] AS [IsActive], 
       [LR_PatronOrgSummary].[PublishingRole] AS [PublishingRole], 
-      [LR_PatronOrgSummary].[ImageUrl] AS [ImageUrl], 
-      [LR_PatronOrgSummary].[UserRowId] AS [UserRowId], 
       [LR_PatronOrgSummary].[JobTitle] AS [JobTitle], 
       [LR_PatronOrgSummary].[RoleProfile] AS [RoleProfile], 
+      [LR_PatronOrgSummary].[ImageUrl] AS [ImageUrl], 
+      [LR_PatronOrgSummary].[UserProfileUrl] AS [UserProfileUrl], 
+      [LR_PatronOrgSummary].[UserRowId] AS [UserRowId], 
       [LR_PatronOrgSummary].[OrganizationId] AS [OrganizationId], 
       [LR_PatronOrgSummary].[Organization] AS [Organization], 
       [LR_PatronOrgSummary].[Created] AS [Created], 
       [LR_PatronOrgSummary].[LastUpdated] AS [LastUpdated]
       FROM [dbo].[LR.PatronOrgSummary] AS [LR_PatronOrgSummary]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="Organization_AdminMembers" EntityType="GatewayModel1.Store.Organization_AdminMembers" store:Type="Views" store:Schema="dbo" store:Name="Organization.AdminMembers">
+            <DefiningQuery>SELECT 
+      [Organization_AdminMembers].[OrgMbrId] AS [OrgMbrId], 
+      [Organization_AdminMembers].[OrgId] AS [OrgId], 
+      [Organization_AdminMembers].[Organization] AS [Organization], 
+      [Organization_AdminMembers].[UserId] AS [UserId], 
+      [Organization_AdminMembers].[FirstName] AS [FirstName], 
+      [Organization_AdminMembers].[LastName] AS [LastName], 
+      [Organization_AdminMembers].[Email] AS [Email], 
+      [Organization_AdminMembers].[OrgMemberTypeId] AS [OrgMemberTypeId], 
+      [Organization_AdminMembers].[OrgMemberType] AS [OrgMemberType], 
+      [Organization_AdminMembers].[Roles] AS [Roles], 
+      [Organization_AdminMembers].[MemberAdded] AS [MemberAdded], 
+      [Organization_AdminMembers].[BaseOrgId] AS [BaseOrgId], 
+      [Organization_AdminMembers].[BaseOrganization] AS [BaseOrganization]
+      FROM [dbo].[Organization.AdminMembers] AS [Organization_AdminMembers]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="Organization_MemberSummary" EntityType="GatewayModel1.Store.Organization_MemberSummary" store:Type="Views" store:Schema="dbo" store:Name="Organization_MemberSummary">
+            <DefiningQuery>SELECT 
+      [Organization_MemberSummary].[OrgMbrId] AS [OrgMbrId], 
+      [Organization_MemberSummary].[OrgId] AS [OrgId], 
+      [Organization_MemberSummary].[Organization] AS [Organization], 
+      [Organization_MemberSummary].[IsIsleMember] AS [IsIsleMember], 
+      [Organization_MemberSummary].[UserId] AS [UserId], 
+      [Organization_MemberSummary].[FirstName] AS [FirstName], 
+      [Organization_MemberSummary].[LastName] AS [LastName], 
+      [Organization_MemberSummary].[FullName] AS [FullName], 
+      [Organization_MemberSummary].[SortName] AS [SortName], 
+      [Organization_MemberSummary].[Email] AS [Email], 
+      [Organization_MemberSummary].[ImageUrl] AS [ImageUrl], 
+      [Organization_MemberSummary].[UserProfileUrl] AS [UserProfileUrl], 
+      [Organization_MemberSummary].[OrgMemberTypeId] AS [OrgMemberTypeId], 
+      [Organization_MemberSummary].[OrgMemberType] AS [OrgMemberType], 
+      [Organization_MemberSummary].[BaseOrgId] AS [BaseOrgId], 
+      [Organization_MemberSummary].[BaseOrganization] AS [BaseOrganization], 
+      [Organization_MemberSummary].[Created] AS [Created], 
+      [Organization_MemberSummary].[MemberAdded] AS [MemberAdded], 
+      [Organization_MemberSummary].[CreatedById] AS [CreatedById], 
+      [Organization_MemberSummary].[LastUpdated] AS [LastUpdated], 
+      [Organization_MemberSummary].[LastUpdatedById] AS [LastUpdatedById]
+      FROM [dbo].[Organization_MemberSummary] AS [Organization_MemberSummary]</DefiningQuery>
           </EntitySet>
           <AssociationSet Name="FK_AppGroup_OrgMember_AppGroup" Association="GatewayModel1.Store.FK_AppGroup_OrgMember_AppGroup">
             <End Role="AppGroup" EntitySet="AppGroup" />
@@ -383,6 +427,7 @@
           <Property Name="Id" Type="int" Nullable="false" />
           <Property Name="Title" Type="varchar" MaxLength="50" />
           <Property Name="Created" Type="datetime" />
+          <Property Name="IsActive" Type="bit" />
         </EntityType>
         <EntityType Name="Codes_OrgMemberType">
           <Key>
@@ -391,6 +436,7 @@
           <Property Name="Id" Type="int" Nullable="false" />
           <Property Name="Title" Type="varchar" MaxLength="50" />
           <Property Name="Created" Type="datetime" />
+          <Property Name="IsActive" Type="bit" />
         </EntityType>
         <EntityType Name="Codes_OrgType">
           <Key>
@@ -497,11 +543,14 @@
           <Property Name="State" Type="char" MaxLength="2" />
           <Property Name="Zipcode" Type="varchar" MaxLength="10" />
           <Property Name="Zipcode4" Type="varchar" MaxLength="4" />
+          <Property Name="K12Identifier" Type="varchar" MaxLength="50" />
           <Property Name="Created" Type="datetime" />
           <Property Name="CreatedById" Type="int" />
           <Property Name="LastUpdated" Type="datetime" />
           <Property Name="LastUpdatedById" Type="int" />
           <Property Name="RowId" Type="uniqueidentifier" />
+          <Property Name="IsIsleMember" Type="bit" />
+          <Property Name="EmailDomain" Type="varchar" MaxLength="50" />
         </EntityType>
         <EntityType Name="Organization_Member">
           <Key>
@@ -521,7 +570,7 @@
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
-          <Property Name="OrgContactId" Type="int" Nullable="false" />
+          <Property Name="OrgMemberId" Type="int" Nullable="false" />
           <Property Name="RoleId" Type="int" Nullable="false" />
           <Property Name="Created" Type="datetime" Nullable="false" />
           <Property Name="CreatedById" Type="int" />
@@ -600,15 +649,76 @@
           <Property Name="FullName" Type="varchar" MaxLength="101" />
           <Property Name="SortName" Type="varchar" MaxLength="102" />
           <Property Name="Email" Type="varchar" MaxLength="100" />
+          <Property Name="IsActive" Type="bit" />
           <Property Name="PublishingRole" Type="varchar" MaxLength="50" />
-          <Property Name="ImageUrl" Type="varchar" MaxLength="200" />
-          <Property Name="UserRowId" Type="uniqueidentifier" Nullable="false" />
           <Property Name="JobTitle" Type="varchar" MaxLength="100" />
           <Property Name="RoleProfile" Type="varchar" MaxLength="500" />
+          <Property Name="ImageUrl" Type="varchar" MaxLength="200" />
+          <Property Name="UserProfileUrl" Type="varchar" />
+          <Property Name="UserRowId" Type="uniqueidentifier" Nullable="false" />
           <Property Name="OrganizationId" Type="int" />
           <Property Name="Organization" Type="varchar" MaxLength="100" />
           <Property Name="Created" Type="datetime" />
           <Property Name="LastUpdated" Type="datetime" />
+        </EntityType>
+        <!--Errors Found During Generation:
+      warning 6002: The table/view 'Gateway.dbo.Organization.AdminMembers' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.
+      -->
+        <EntityType Name="Organization_AdminMembers">
+          <Key>
+            <PropertyRef Name="OrgMbrId" />
+            <PropertyRef Name="OrgId" />
+            <PropertyRef Name="Organization" />
+            <PropertyRef Name="UserId" />
+            <PropertyRef Name="MemberAdded" />
+          </Key>
+          <Property Name="OrgMbrId" Type="int" Nullable="false" />
+          <Property Name="OrgId" Type="int" Nullable="false" />
+          <Property Name="Organization" Type="varchar" Nullable="false" MaxLength="100" />
+          <Property Name="UserId" Type="int" Nullable="false" />
+          <Property Name="FirstName" Type="varchar" MaxLength="50" />
+          <Property Name="LastName" Type="varchar" MaxLength="50" />
+          <Property Name="Email" Type="varchar" MaxLength="100" />
+          <Property Name="OrgMemberTypeId" Type="int" />
+          <Property Name="OrgMemberType" Type="varchar" MaxLength="50" />
+          <Property Name="Roles" Type="nvarchar(max)" />
+          <Property Name="MemberAdded" Type="datetime" Nullable="false" />
+          <Property Name="BaseOrgId" Type="int" />
+          <Property Name="BaseOrganization" Type="varchar" MaxLength="100" />
+        </EntityType>
+        <!--Errors Found During Generation:
+      warning 6002: The table/view 'Gateway.dbo.Organization_MemberSummary' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.
+      -->
+        <EntityType Name="Organization_MemberSummary">
+          <Key>
+            <PropertyRef Name="OrgMbrId" />
+            <PropertyRef Name="OrgId" />
+            <PropertyRef Name="Organization" />
+            <PropertyRef Name="UserId" />
+            <PropertyRef Name="Created" />
+            <PropertyRef Name="MemberAdded" />
+          </Key>
+          <Property Name="OrgMbrId" Type="int" Nullable="false" />
+          <Property Name="OrgId" Type="int" Nullable="false" />
+          <Property Name="Organization" Type="varchar" Nullable="false" MaxLength="100" />
+          <Property Name="IsIsleMember" Type="bit" />
+          <Property Name="UserId" Type="int" Nullable="false" />
+          <Property Name="FirstName" Type="varchar" MaxLength="50" />
+          <Property Name="LastName" Type="varchar" MaxLength="50" />
+          <Property Name="FullName" Type="varchar" MaxLength="101" />
+          <Property Name="SortName" Type="varchar" MaxLength="102" />
+          <Property Name="Email" Type="varchar" MaxLength="100" />
+          <Property Name="ImageUrl" Type="varchar" MaxLength="200" />
+          <Property Name="UserProfileUrl" Type="varchar" />
+          <Property Name="OrgMemberTypeId" Type="int" />
+          <Property Name="OrgMemberType" Type="varchar" MaxLength="50" />
+          <Property Name="BaseOrgId" Type="int" />
+          <Property Name="BaseOrganization" Type="varchar" MaxLength="100" />
+          <Property Name="Created" Type="datetime" Nullable="false" />
+          <Property Name="MemberAdded" Type="datetime" Nullable="false" />
+          <Property Name="CreatedById" Type="int" />
+          <Property Name="LastUpdated" Type="datetime" />
+          <Property Name="LastUpdatedById" Type="int" />
         </EntityType>
         <Association Name="FK_AppGroup_OrgMember_AppGroup">
           <End Role="AppGroup" Type="GatewayModel1.Store.AppGroup" Multiplicity="1">
@@ -838,7 +948,7 @@
               <PropertyRef Name="Id" />
             </Principal>
             <Dependent Role="Organization_MemberRole">
-              <PropertyRef Name="OrgContactId" />
+              <PropertyRef Name="OrgMemberId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -886,7 +996,6 @@
           <EntitySet Name="EmailNotices" EntityType="GatewayModel1.EmailNotice" />
           <EntitySet Name="Organizations" EntityType="GatewayModel1.Organization" />
           <EntitySet Name="Organization_Member" EntityType="GatewayModel1.Organization_Member" />
-          <EntitySet Name="Organization_MemberRole" EntityType="GatewayModel1.Organization_MemberRole" />
           <EntitySet Name="OrganizationRequests" EntityType="GatewayModel1.OrganizationRequest" />
           <EntitySet Name="OrganizationTemps" EntityType="GatewayModel1.OrganizationTemp" />
           <EntitySet Name="SqlQueries" EntityType="GatewayModel1.SqlQuery" />
@@ -951,10 +1060,6 @@
             <End Role="Codes_ExternalSite" EntitySet="Codes_ExternalSite" />
             <End Role="AppUser_ExternalAccount" EntitySet="AppUser_ExternalAccount" />
           </AssociationSet>
-          <AssociationSet Name="FK_Organization_MemberRole_Codes_OrgMemberRole" Association="GatewayModel1.FK_Organization_MemberRole_Codes_OrgMemberRole">
-            <End Role="Codes_OrgMemberRole" EntitySet="Codes_OrgMemberRole" />
-            <End Role="Organization_MemberRole" EntitySet="Organization_MemberRole" />
-          </AssociationSet>
           <AssociationSet Name="FK_Organization_Member_Codes_OrgMemberType" Association="GatewayModel1.FK_Organization_Member_Codes_OrgMemberType">
             <End Role="Codes_OrgMemberType" EntitySet="Codes_OrgMemberType" />
             <End Role="Organization_Member" EntitySet="Organization_Member" />
@@ -963,12 +1068,19 @@
             <End Role="Organization" EntitySet="Organizations" />
             <End Role="Organization_Member" EntitySet="Organization_Member" />
           </AssociationSet>
+          <EntitySet Name="AppVisitLogs" EntityType="GatewayModel1.AppVisitLog" />
+          <EntitySet Name="Codes_State" EntityType="GatewayModel1.Codes_State" />
+          <EntitySet Name="Organization_MemberRole" EntityType="GatewayModel1.Organization_MemberRole" />
+          <AssociationSet Name="FK_Organization_MemberRole_Codes_OrgMemberRole" Association="GatewayModel1.FK_Organization_MemberRole_Codes_OrgMemberRole">
+            <End Role="Codes_OrgMemberRole" EntitySet="Codes_OrgMemberRole" />
+            <End Role="Organization_MemberRole" EntitySet="Organization_MemberRole" />
+          </AssociationSet>
           <AssociationSet Name="FK_Organization_MemberRole_Organization_Contact" Association="GatewayModel1.FK_Organization_MemberRole_Organization_Contact">
             <End Role="Organization_Member" EntitySet="Organization_Member" />
             <End Role="Organization_MemberRole" EntitySet="Organization_MemberRole" />
           </AssociationSet>
-          <EntitySet Name="AppVisitLogs" EntityType="GatewayModel1.AppVisitLog" />
-          <EntitySet Name="Codes_State" EntityType="GatewayModel1.Codes_State" />
+          <EntitySet Name="Organization_AdminMembers" EntityType="GatewayModel1.Organization_AdminMembers" />
+          <EntitySet Name="Organization_MemberSummary" EntityType="GatewayModel1.Organization_MemberSummary" />
         </EntityContainer>
         <EntityType Name="AppGroup">
           <Key>
@@ -1230,6 +1342,7 @@
           <Property Name="Id" Type="Int32" Nullable="false" />
           <Property Name="Title" Type="String" MaxLength="50" Unicode="false" FixedLength="false" />
           <Property Name="Created" Type="DateTime" Precision="3" />
+          <Property Type="Boolean" Name="IsActive" />
           <NavigationProperty Name="Organization_MemberRole" Relationship="GatewayModel1.FK_Organization_MemberRole_Codes_OrgMemberRole" FromRole="Codes_OrgMemberRole" ToRole="Organization_MemberRole" />
         </EntityType>
         <EntityType Name="Codes_OrgMemberType">
@@ -1240,6 +1353,7 @@
           <Property Name="Title" Type="String" MaxLength="50" Unicode="false" FixedLength="false" />
           <Property Name="Created" Type="DateTime" Precision="3" />
           <NavigationProperty Name="Organization_Member" Relationship="GatewayModel1.FK_Organization_Member_Codes_OrgMemberType" FromRole="Codes_OrgMemberType" ToRole="Organization_Member" />
+          <Property Type="Boolean" Name="IsActive" />
         </EntityType>
         <EntityType Name="Codes_OrgType">
           <Key>
@@ -1346,6 +1460,9 @@
           <NavigationProperty Name="AppGroup_OrgMember" Relationship="GatewayModel1.FK_AppGroup_OrgMember_Organization" FromRole="Organization" ToRole="AppGroup_OrgMember" />
           <NavigationProperty Name="Organization_Member" Relationship="GatewayModel1.FK_Organization_Member_Organization" FromRole="Organization" ToRole="Organization_Member" />
           <Property Type="String" Name="Zipcode4" MaxLength="4" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="K12Identifier" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="Boolean" Name="IsIsleMember" />
+          <Property Type="String" Name="EmailDomain" MaxLength="50" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="Organization_Member">
           <Key>
@@ -1362,18 +1479,6 @@
           <NavigationProperty Name="Codes_OrgMemberType" Relationship="GatewayModel1.FK_Organization_Member_Codes_OrgMemberType" FromRole="Organization_Member" ToRole="Codes_OrgMemberType" />
           <NavigationProperty Name="Organization" Relationship="GatewayModel1.FK_Organization_Member_Organization" FromRole="Organization_Member" ToRole="Organization" />
           <NavigationProperty Name="Organization_MemberRole" Relationship="GatewayModel1.FK_Organization_MemberRole_Organization_Contact" FromRole="Organization_Member" ToRole="Organization_MemberRole" />
-        </EntityType>
-        <EntityType Name="Organization_MemberRole">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="OrgContactId" Type="Int32" Nullable="false" />
-          <Property Name="RoleId" Type="Int32" Nullable="false" />
-          <Property Name="Created" Type="DateTime" Nullable="false" Precision="3" />
-          <Property Name="CreatedById" Type="Int32" />
-          <NavigationProperty Name="Codes_OrgMemberRole" Relationship="GatewayModel1.FK_Organization_MemberRole_Codes_OrgMemberRole" FromRole="Organization_MemberRole" ToRole="Codes_OrgMemberRole" />
-          <NavigationProperty Name="Organization_Member" Relationship="GatewayModel1.FK_Organization_MemberRole_Organization_Contact" FromRole="Organization_MemberRole" ToRole="Organization_Member" />
         </EntityType>
         <EntityType Name="OrganizationRequest">
           <Key>
@@ -1455,6 +1560,8 @@
           <Property Type="Guid" Name="UserRowId" Nullable="false" />
           <Property Type="DateTime" Name="Created" Precision="3" />
           <Property Type="DateTime" Name="LastUpdated" Precision="3" />
+          <Property Type="Boolean" Name="IsActive" />
+          <Property Type="String" Name="UserProfileUrl" MaxLength="8000" FixedLength="false" Unicode="false" />
         </EntityType>
         <Association Name="FK_AppGroup_OrgMember_AppGroup">
           <End Role="AppGroup" Type="GatewayModel1.AppGroup" Multiplicity="1">
@@ -1650,18 +1757,6 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_Organization_MemberRole_Codes_OrgMemberRole">
-          <End Role="Codes_OrgMemberRole" Type="GatewayModel1.Codes_OrgMemberRole" Multiplicity="1" />
-          <End Role="Organization_MemberRole" Type="GatewayModel1.Organization_MemberRole" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Codes_OrgMemberRole">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="Organization_MemberRole">
-              <PropertyRef Name="RoleId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="FK_Organization_Member_Codes_OrgMemberType">
           <End Role="Codes_OrgMemberType" Type="GatewayModel1.Codes_OrgMemberType" Multiplicity="0..1">
             <OnDelete Action="Cascade" />
@@ -1685,20 +1780,6 @@
             </Principal>
             <Dependent Role="Organization_Member">
               <PropertyRef Name="OrgId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_Organization_MemberRole_Organization_Contact">
-          <End Role="Organization_Member" Type="GatewayModel1.Organization_Member" Multiplicity="1">
-            <OnDelete Action="Cascade" />
-          </End>
-          <End Role="Organization_MemberRole" Type="GatewayModel1.Organization_MemberRole" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Organization_Member">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="Organization_MemberRole">
-              <PropertyRef Name="OrgContactId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -1726,6 +1807,97 @@
           <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Type="String" Name="StateCode" MaxLength="2" FixedLength="false" Unicode="false" />
           <Property Type="String" Name="State" MaxLength="50" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="Organization_MemberRole">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="Int32" Name="OrgMemberId" Nullable="false" />
+          <Property Type="Int32" Name="RoleId" Nullable="false" />
+          <Property Type="DateTime" Name="Created" Nullable="false" Precision="3" />
+          <Property Type="Int32" Name="CreatedById" />
+          <NavigationProperty Name="Codes_OrgMemberRole" Relationship="GatewayModel1.FK_Organization_MemberRole_Codes_OrgMemberRole" FromRole="Organization_MemberRole" ToRole="Codes_OrgMemberRole" />
+          <NavigationProperty Name="Organization_Member" Relationship="GatewayModel1.FK_Organization_MemberRole_Organization_Contact" FromRole="Organization_MemberRole" ToRole="Organization_Member" />
+        </EntityType>
+        <Association Name="FK_Organization_MemberRole_Codes_OrgMemberRole">
+          <End Type="GatewayModel1.Codes_OrgMemberRole" Role="Codes_OrgMemberRole" Multiplicity="1" />
+          <End Type="GatewayModel1.Organization_MemberRole" Role="Organization_MemberRole" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Codes_OrgMemberRole">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Organization_MemberRole">
+              <PropertyRef Name="RoleId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Organization_MemberRole_Organization_Contact">
+          <End Type="GatewayModel1.Organization_Member" Role="Organization_Member" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="GatewayModel1.Organization_MemberRole" Role="Organization_MemberRole" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Organization_Member">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Organization_MemberRole">
+              <PropertyRef Name="OrgMemberId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="Organization_AdminMembers">
+          <Key>
+            <PropertyRef Name="OrgMbrId" />
+            <PropertyRef Name="OrgId" />
+            <PropertyRef Name="Organization" />
+            <PropertyRef Name="UserId" />
+            <PropertyRef Name="MemberAdded" />
+          </Key>
+          <Property Type="Int32" Name="OrgMbrId" Nullable="false" />
+          <Property Type="Int32" Name="OrgId" Nullable="false" />
+          <Property Type="String" Name="Organization" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Type="Int32" Name="UserId" Nullable="false" />
+          <Property Type="String" Name="FirstName" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="LastName" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="Email" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Type="Int32" Name="OrgMemberTypeId" />
+          <Property Type="String" Name="OrgMemberType" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="Roles" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Type="DateTime" Name="MemberAdded" Nullable="false" Precision="3" />
+          <Property Type="Int32" Name="BaseOrgId" />
+          <Property Type="String" Name="BaseOrganization" MaxLength="100" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="Organization_MemberSummary">
+          <Key>
+            <PropertyRef Name="OrgMbrId" />
+            <PropertyRef Name="OrgId" />
+            <PropertyRef Name="Organization" />
+            <PropertyRef Name="UserId" />
+            <PropertyRef Name="MemberAdded" />
+            <PropertyRef Name="Created" />
+          </Key>
+          <Property Type="Int32" Name="OrgMbrId" Nullable="false" />
+          <Property Type="Int32" Name="OrgId" Nullable="false" />
+          <Property Type="String" Name="Organization" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Type="Boolean" Name="IsIsleMember" />
+          <Property Type="Int32" Name="UserId" Nullable="false" />
+          <Property Type="String" Name="FirstName" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="LastName" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="Email" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Type="Int32" Name="OrgMemberTypeId" />
+          <Property Type="String" Name="OrgMemberType" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="DateTime" Name="MemberAdded" Nullable="false" Precision="3" />
+          <Property Type="DateTime" Name="LastUpdated" Precision="3" />
+          <Property Type="Int32" Name="BaseOrgId" />
+          <Property Type="String" Name="BaseOrganization" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="FullName" MaxLength="101" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="SortName" MaxLength="102" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="ImageUrl" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="UserProfileUrl" MaxLength="8000" FixedLength="false" Unicode="false" />
+          <Property Type="DateTime" Name="Created" Nullable="false" Precision="3" />
+          <Property Type="Int32" Name="CreatedById" />
+          <Property Type="Int32" Name="LastUpdatedById" />
         </EntityType>
       </Schema>
     </edmx:ConceptualModels>
@@ -1974,6 +2146,7 @@
           <EntitySetMapping Name="Codes_OrgMemberRole">
             <EntityTypeMapping TypeName="GatewayModel1.Codes_OrgMemberRole">
               <MappingFragment StoreEntitySet="Codes_OrgMemberRole">
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="Title" ColumnName="Title" />
                 <ScalarProperty Name="Created" ColumnName="Created" />
@@ -1983,6 +2156,7 @@
           <EntitySetMapping Name="Codes_OrgMemberType">
             <EntityTypeMapping TypeName="GatewayModel1.Codes_OrgMemberType">
               <MappingFragment StoreEntitySet="Codes_OrgMemberType">
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="Title" ColumnName="Title" />
                 <ScalarProperty Name="Created" ColumnName="Created" />
@@ -2073,6 +2247,9 @@
           <EntitySetMapping Name="Organizations">
             <EntityTypeMapping TypeName="GatewayModel1.Organization">
               <MappingFragment StoreEntitySet="Organization">
+                <ScalarProperty Name="EmailDomain" ColumnName="EmailDomain" />
+                <ScalarProperty Name="IsIsleMember" ColumnName="IsIsleMember" />
+                <ScalarProperty Name="K12Identifier" ColumnName="K12Identifier" />
                 <ScalarProperty Name="Zipcode4" ColumnName="Zipcode4" />
                 <ScalarProperty Name="id" ColumnName="id" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
@@ -2110,17 +2287,6 @@
                 <ScalarProperty Name="CreatedById" ColumnName="CreatedById" />
                 <ScalarProperty Name="LastUpdated" ColumnName="LastUpdated" />
                 <ScalarProperty Name="LastUpdatedById" ColumnName="LastUpdatedById" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="Organization_MemberRole">
-            <EntityTypeMapping TypeName="GatewayModel1.Organization_MemberRole">
-              <MappingFragment StoreEntitySet="Organization_MemberRole">
-                <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="OrgContactId" ColumnName="OrgContactId" />
-                <ScalarProperty Name="RoleId" ColumnName="RoleId" />
-                <ScalarProperty Name="Created" ColumnName="Created" />
-                <ScalarProperty Name="CreatedById" ColumnName="CreatedById" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -2188,6 +2354,8 @@
           <EntitySetMapping Name="LR_PatronOrgSummary">
             <EntityTypeMapping TypeName="GatewayModel1.LR_PatronOrgSummary">
               <MappingFragment StoreEntitySet="LR_PatronOrgSummary">
+                <ScalarProperty Name="UserProfileUrl" ColumnName="UserProfileUrl" />
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
                 <ScalarProperty Name="LastUpdated" ColumnName="LastUpdated" />
                 <ScalarProperty Name="Created" ColumnName="Created" />
                 <ScalarProperty Name="UserRowId" ColumnName="UserRowId" />
@@ -2231,6 +2399,63 @@
                 <ScalarProperty Name="State" ColumnName="State" />
                 <ScalarProperty Name="StateCode" ColumnName="StateCode" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Organization_MemberRole">
+            <EntityTypeMapping TypeName="GatewayModel1.Organization_MemberRole">
+              <MappingFragment StoreEntitySet="Organization_MemberRole">
+                <ScalarProperty Name="CreatedById" ColumnName="CreatedById" />
+                <ScalarProperty Name="Created" ColumnName="Created" />
+                <ScalarProperty Name="RoleId" ColumnName="RoleId" />
+                <ScalarProperty Name="OrgMemberId" ColumnName="OrgMemberId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Organization_AdminMembers">
+            <EntityTypeMapping TypeName="GatewayModel1.Organization_AdminMembers">
+              <MappingFragment StoreEntitySet="Organization_AdminMembers">
+                <ScalarProperty Name="BaseOrganization" ColumnName="BaseOrganization" />
+                <ScalarProperty Name="BaseOrgId" ColumnName="BaseOrgId" />
+                <ScalarProperty Name="MemberAdded" ColumnName="MemberAdded" />
+                <ScalarProperty Name="Roles" ColumnName="Roles" />
+                <ScalarProperty Name="OrgMemberType" ColumnName="OrgMemberType" />
+                <ScalarProperty Name="OrgMemberTypeId" ColumnName="OrgMemberTypeId" />
+                <ScalarProperty Name="Email" ColumnName="Email" />
+                <ScalarProperty Name="LastName" ColumnName="LastName" />
+                <ScalarProperty Name="FirstName" ColumnName="FirstName" />
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
+                <ScalarProperty Name="Organization" ColumnName="Organization" />
+                <ScalarProperty Name="OrgId" ColumnName="OrgId" />
+                <ScalarProperty Name="OrgMbrId" ColumnName="OrgMbrId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Organization_MemberSummary">
+            <EntityTypeMapping TypeName="GatewayModel1.Organization_MemberSummary">
+              <MappingFragment StoreEntitySet="Organization_MemberSummary">
+                <ScalarProperty Name="LastUpdatedById" ColumnName="LastUpdatedById" />
+                <ScalarProperty Name="CreatedById" ColumnName="CreatedById" />
+                <ScalarProperty Name="Created" ColumnName="Created" />
+                <ScalarProperty Name="UserProfileUrl" ColumnName="UserProfileUrl" />
+                <ScalarProperty Name="ImageUrl" ColumnName="ImageUrl" />
+                <ScalarProperty Name="SortName" ColumnName="SortName" />
+                <ScalarProperty Name="FullName" ColumnName="FullName" />
+                <ScalarProperty Name="BaseOrganization" ColumnName="BaseOrganization" />
+                <ScalarProperty Name="BaseOrgId" ColumnName="BaseOrgId" />
+                <ScalarProperty Name="LastUpdated" ColumnName="LastUpdated" />
+                <ScalarProperty Name="MemberAdded" ColumnName="MemberAdded" />
+                <ScalarProperty Name="OrgMemberType" ColumnName="OrgMemberType" />
+                <ScalarProperty Name="OrgMemberTypeId" ColumnName="OrgMemberTypeId" />
+                <ScalarProperty Name="Email" ColumnName="Email" />
+                <ScalarProperty Name="LastName" ColumnName="LastName" />
+                <ScalarProperty Name="FirstName" ColumnName="FirstName" />
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
+                <ScalarProperty Name="IsIsleMember" ColumnName="IsIsleMember" />
+                <ScalarProperty Name="Organization" ColumnName="Organization" />
+                <ScalarProperty Name="OrgId" ColumnName="OrgId" />
+                <ScalarProperty Name="OrgMbrId" ColumnName="OrgMbrId" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

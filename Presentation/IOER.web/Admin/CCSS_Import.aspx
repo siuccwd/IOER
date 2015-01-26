@@ -9,29 +9,33 @@
 <body>
     <form id="form1" runat="server">
     <div>
-    	<h3>Select ...</h3>
+    	<h3>Select Standards Body</h3>
 	    <br class="clearFloat" />			
       <div class="labelColumn" >Select a Standards Body</div>	
       <div class="dataColumn">   		
 		    <asp:DropDownList		 id="lstForm" runat="server" Width="200px" AutoPostBack="false" >
-          <asp:ListItem Text="CCSS" Value="1" Selected="True"></asp:ListItem>
-          <asp:ListItem Text="ASN" Value="2"></asp:ListItem>
-        </asp:DropDownList>
+                <asp:ListItem Text="Select the Standard Body" Value="0" Selected="True"></asp:ListItem>
+              <asp:ListItem Text="CCSS" Value="1" ></asp:ListItem>
+              <asp:ListItem Text="CDC" Value="2"></asp:ListItem>
+              <asp:ListItem Text="Illinois Learning Standards (ILS)" Value="3"></asp:ListItem>
+            </asp:DropDownList>
       </div>
   	<!-- --> 
 	<br class="clearFloat" />
   <div class="labelColumn requiredField">
-    <asp:label id="Label1"  associatedcontrolid="txtStandardsFile" runat="server">File</asp:label> 
+    <asp:label id="Label1"  associatedcontrolid="txtStandardsFile" runat="server">File<br />absolute path or relative to app_Data (ex: /App_Data/D2589605.xml)</asp:label> 
   </div>
   <div class="dataColumn"> 
-    <asp:textbox  id="txtStandardsFile" Width="300px" runat="server">C:\inetpub\wwwroot\VOS_2010\IllinoisPathways\IllinoisPathways\App_Data\D10003FB.xml</asp:textbox>
+    <asp:textbox  id="txtStandardsFile" Width="80%" runat="server">E:\Projects\IOER2\Presentation\IOER.web\App_Data\D2589605.xml</asp:textbox>
     <br />
-    <asp:DropDownList		 id="ddlFile" runat="server" Width="80%"  >
-          <asp:ListItem Text="Math" Value="C:\inetpub\wwwroot\VOS_2010\IllinoisPathways\IllinoisPathways\App_Data\D10003FB.xml" Selected="True"></asp:ListItem>
-          <asp:ListItem Text="English" Value="C:\inetpub\wwwroot\VOS_2010\IllinoisPathways\IllinoisPathways\App_Data\D10003FC.xml"></asp:ListItem>
-          <asp:ListItem Text="Social Science" Value="C:\inetpub\wwwroot\VOS_2010\IllinoisPathways\IllinoisPathways\App_Data\D10003FC.xml"></asp:ListItem>
-          <asp:ListItem Text="Arts" Value="C:\inetpub\wwwroot\VOS_2010\IllinoisPathways\IllinoisPathways\App_Data\D10003FC.xml"></asp:ListItem>
-          <asp:ListItem Text="PhysEd" Value="C:\inetpub\wwwroot\VOS_2010\IllinoisPathways\IllinoisPathways\App_Data\D10003FC.xml"></asp:ListItem>
+    <asp:DropDownList		 id="ddlStandardsFile" runat="server" Width="300px"  >
+        <asp:ListItem Text="Select the Standards files" Value="0" Selected="True"></asp:ListItem>
+          <asp:ListItem Text="Math"             Value="/App_Data/D10003FB.xml" ></asp:ListItem>
+          <asp:ListItem Text="English"          Value="/App_Data/D10003FC.xml"></asp:ListItem>
+          <asp:ListItem Text="Social Science"   Value="/App_Data/D10003FC.xml"></asp:ListItem>
+          <asp:ListItem Text="Arts"             Value="/App_Data/D10003FC.xml"></asp:ListItem>
+          <asp:ListItem Text="PhysEd"           Value="/App_Data/D10003FC.xml"></asp:ListItem>
+          <asp:ListItem Text="Health - CDC"     Value="/App_Data/D2589605.xml"></asp:ListItem>
     </asp:DropDownList>
 	</div>
     	<!-- --> 
@@ -48,6 +52,7 @@
     <asp:Panel ID="hiddenPanel" runat="server" Visible="false">
     <asp:Literal ID="mathXml" runat="server">C:\inetpub\wwwroot\VOS_2010\IllinoisPathways\IllinoisPathways\App_Data\D10003FB.xml</asp:Literal>
     <asp:Literal ID="englishXml" runat="server">C:\inetpub\wwwroot\VOS_2010\IllinoisPathways\IllinoisPathways\App_Data\D10003FC.xml</asp:Literal>
+    <asp:Literal ID="healthXml" runat="server">~\App_Data\D2589605.xml</asp:Literal>
     </asp:Panel>
     </form>
 </body>

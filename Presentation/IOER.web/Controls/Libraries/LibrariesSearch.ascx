@@ -46,9 +46,9 @@
   .result .data { width: calc(100% - 150px); padding: 0 5px; }
   .result .data h2 { font-size: 20px; }
   .result .data h2 a { font-size: inherit; }
-  .result .collections { width: 100%; height: 75px; min-height: 70px; overflow-x: auto; overflow-y: hidden; white-space: nowrap; padding: 2px 5px; box-shadow: 0 0 80px -30px #CCC inset; border-radius: 5px; }
-  .result .collections .collection { font-size: 0; background-color: #EEE; border-radius: 5px; padding: 2px; width: 300px; display: inline-block; vertical-align: top; height: 55px; overflow: hidden;  }
-  .result .collections .fixedCollectionThumb { width: 100px; height: 50px; border-radius: 5px; background-position: center center; background-size: cover; vertical-align: middle; }
+  .result .collections { width: 100%; height: 125px; min-height: 70px; overflow-x: auto; overflow-y: hidden; white-space: nowrap; padding: 2px 5px; box-shadow: 0 0 80px -30px #CCC inset; border-radius: 5px; }
+  .result .collections .collection { font-size: 0; background-color: #EEE; border-radius: 5px; padding: 2px; width: 250px; display: inline-block; vertical-align: top; height: 105px; overflow: hidden;  }
+  .result .collections .fixedCollectionThumb { width: 100px; height: 100px; border-radius: 5px; background-position: center center; background-size: cover; vertical-align: middle; }
   .result .collections .collection p { padding-left: 5px; width: calc(100% - 100px); margin: 0; vertical-align: middle; white-space: normal; }
 
   .result .collectionsTitle { font-style: italic; padding-left: 10px; color: #555; }
@@ -162,7 +162,9 @@
         <a class="stretchyThumb" href="{libraryURL}"><img src="{iconURL}" /></a>
         <div class="data">
           <h2><a href="{libraryURL}">{title}</a></h2>
-          <p>{description}</p>
+            <div class="orgTitle"><br />Organization: {orgTitle}</div>
+            <p>{description}</p>
+            <div class="colLibraryTitle"><br />Library: {libraryTitle}</div>
         </div>
         <div class="collectionsTitle">Collections in this Library:</div>
         <div class="collections">
@@ -184,6 +186,7 @@
 
 <asp:Panel ID="hiddenStuff" runat="server" Visible="false">
 <asp:Literal ID="txtSubscribedLibsView" runat="server" Visible="false">no</asp:Literal>
+<asp:Literal ID="txtShowAllLibsOption" runat="server" Visible="false">yes</asp:Literal>
 <asp:Literal ID="subscribedLibrariesFilter" runat="server" Visible="false">
 ( lib.Id in (SELECT  LibraryId FROM [Library.Subscription] where UserId = {0}) )</asp:Literal>
 </asp:Panel>

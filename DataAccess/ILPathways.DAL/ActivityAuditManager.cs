@@ -279,6 +279,54 @@ namespace ILPathways.DAL
 
         }//
 
+        public static List<ObjectActivity> ObjectActivity_OrgSummary( int forDays, int orgId, int userId, int pMaximumRows )
+        {
+            List<ObjectActivity> list = new List<ObjectActivity>();
+            ObjectActivity item = new ObjectActivity();
+
+            SqlParameter[] sqlParameters = new SqlParameter[ 3 ];
+            sqlParameters[ 0 ] = new SqlParameter( "@HistoryDays", forDays );
+            sqlParameters[ 1 ] = new SqlParameter( "@OrgId", orgId );
+            sqlParameters[ 2 ] = new SqlParameter( "@UserId", userId );
+
+            using ( SqlConnection conn = new SqlConnection( ContentConnectionRO() ) )
+            {
+                DataSet ds = new DataSet();
+                try
+                {
+                    ds = SqlHelper.ExecuteDataset( conn, CommandType.StoredProcedure, "[Activity.OrgAll]", sqlParameters );
+
+                    if ( ds.HasErrors )
+                    {
+                        return null;
+                    }
+                    else
+                    {
+                        int cntr = 0;
+                        foreach ( DataRow dr in ds.Tables[ 0 ].Rows )
+                        {
+                            item = Fill( dr );
+                            list.Add( item );
+                            cntr++;
+                            if ( cntr == pMaximumRows )
+                                break;
+                        }
+                    }
+
+                }
+                catch ( Exception ex )
+                {
+                    LogError( ex, "ActivityAuditManager.ObjectActivity_OrgSummary() " );
+                    return null;
+
+                }
+            }
+
+            return list;
+
+
+        }//
+
         public static List<ObjectActivity> ObjectActivity_Search( string pFilter, string pOrderBy, int pStartPageIndex, int pMaximumRows, ref int pTotalRows )
         {
             List<ObjectActivity> list = new List<ObjectActivity>();

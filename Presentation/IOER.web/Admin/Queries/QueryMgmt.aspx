@@ -52,10 +52,10 @@
     //        e.style.fontSize = (fontSize--)+'pt';
     //    }
   }
--->
+//-->
 </script>
  <ajaxToolkit:ToolkitScriptManager runat="Server" EnablePartialRendering="true" ID="ScriptManager1" />
-<div class="container-fluid">
+<div class="container-fluid" style="background-color: whitesmoke;">
     <h1 class="isleH1">Query Administration</h1>
 <div class="row-fluid span12">
 <asp:validationsummary id="vsErrorSummary" HeaderText="Errors on page" forecolor="" CssClass="errorMessage" runat="server"></asp:validationsummary>

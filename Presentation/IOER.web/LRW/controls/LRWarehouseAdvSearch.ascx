@@ -93,8 +93,8 @@ If you have any questions or comments please send them to <a href="mailto:info@s
 	<!-- Cluster -->
 		<div class="labelColumn" >Cluster</div>
 	<div class="dataColumn">   		
-	<wcl:skmCheckBoxList ID="cbxlCluster" runat="server" Width="400px"  RepeatColumns="1" 
-			AccessiblePrefix="" Visible="False"></wcl:skmCheckBoxList>		
+	<asp:CheckBoxList ID="cbxlCluster" runat="server" Width="400px"  RepeatColumns="1" 
+			AccessiblePrefix="" Visible="False"></asp:CheckBoxList>		
 	</div>
 	</asp:Panel>  
 
@@ -111,14 +111,14 @@ If you have any questions or comments please send them to <a href="mailto:info@s
 		<br class="clearFloat" />	
 			<div class="labelColumn" >Grade Level</div>
 		<div class="dataColumn">   
-		<wcl:skmCheckBoxList ID="cbxGradeLevel1" runat="server"  RepeatColumns="1" 
+		<asp:CheckBoxList ID="cbxGradeLevel1" runat="server"  RepeatColumns="1" 
 				AccessiblePrefix="" >
 					<asp:ListItem Text="Primary" Value="Elementary School"></asp:ListItem>
 			<asp:ListItem Text="Middle School"></asp:ListItem>
 			<asp:ListItem Text="Secondary" Value="high school"></asp:ListItem>
 			<asp:ListItem Text="Post-secondary" Value="Higher Education"></asp:ListItem>
 		
-		</wcl:skmCheckBoxList>		
+		</asp:CheckBoxList>		
 
 		</div>  
 	</asp:Panel>
@@ -127,17 +127,17 @@ If you have any questions or comments please send them to <a href="mailto:info@s
 	<!-- Resource Types -->
 		<h3>Resource Types</h3>
 		<div class="narrowingValuesDiv">
-		<wcl:skmCheckBoxList ID="cbxlResType2" runat="server" RepeatColumns="2" AccessiblePrefix=""
+		<asp:CheckBoxList ID="cbxlResType2" runat="server" RepeatColumns="2" AccessiblePrefix=""
 			Visible="true">
-		</wcl:skmCheckBoxList>
+		</asp:CheckBoxList>
 	</div>
 
 	<!-- Resource format -->
 		<h3>Resource Types</h3>
 		<div class="narrowingValuesDiv">
-		<wcl:skmCheckBoxList ID="cbxlFormatType" runat="server" RepeatColumns="2" AccessiblePrefix=""
+		<asp:CheckBoxList ID="cbxlFormatType" runat="server" RepeatColumns="2" AccessiblePrefix=""
 			Visible="true">
-		</wcl:skmCheckBoxList>
+		</asp:CheckBoxList>
 	</div>
 </div>
 <asp:Panel ID="showTotalsPanel1" runat="server" Visible="false">   

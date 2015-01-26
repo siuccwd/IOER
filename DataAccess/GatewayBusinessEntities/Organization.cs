@@ -44,6 +44,9 @@ namespace GatewayBusinessEntities
         public Nullable<int> LastUpdatedById { get; set; }
         public Nullable<System.Guid> RowId { get; set; }
         public string Zipcode4 { get; set; }
+        public string K12Identifier { get; set; }
+        public Nullable<bool> IsIsleMember { get; set; }
+        public string EmailDomain { get; set; }
     
         public virtual ICollection<AppGroup> AppGroups { get; set; }
         public virtual ICollection<AppGroup_OrgMember> AppGroup_OrgMember { get; set; }

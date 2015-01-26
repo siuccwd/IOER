@@ -26,14 +26,15 @@ namespace ILPathways.Services
     JavaScriptSerializer serializer = new JavaScriptSerializer();
     AccountServices accountServices = new Isle.BizServices.AccountServices();
     UtilityService utilService = new UtilityService();
-    List<Patron> foundUsers = new List<Patron>();
+    //List<Patron> foundUsers = new List<Patron>();
 
     #region Get Methods
 
     [WebMethod]
-    public string GetCommunity( int id )
+    public string GetCommunity( string userGUID, int id )
     {
-      var community = GetJSONCommunity( id );
+      var user = utilService.GetUserFromGUID( userGUID );
+      var community = GetJSONCommunity( user, id );
       if ( community == null || community.id == 0 )
       {
         return utilService.ImmediateReturn( "", false, "Community not found.", null );
@@ -43,71 +44,86 @@ namespace ILPathways.Services
         return utilService.ImmediateReturn( community, true, "okay", null );
       }
     }
-    public JSONCommunity GetJSONCommunity( int id )
+
+    public JSONCommunity GetJSONCommunity( Patron user, int id )
     {
-      var output = new JSONCommunity();
-      var com = comService.Community_Get( id );
+        var output = new JSONCommunity();
+        //mp - updated target method to return user name and avatar
+        var com = comService.Community_Get( id );
 
-      output.id = com.Id;
-      output.title = com.Title;
-      output.description = com.Description;
-      output.created = com.Created.ToShortDateString();
-      output.image = com.ImageUrl;
+        output.id = com.Id;
+        output.title = com.Title;
+        output.description = com.Description;
+        output.created = com.Created.ToShortDateString();
+        output.image = com.ImageUrl;
 
-      foreach ( CommunityPosting posting in com.Postings )
-      {
-        if ( posting.RelatedPostingId == 0 ) //Top-level post
+        output.userIsFollowing = comService.Community_MemberIsMember( id, user.Id );
+
+        foreach ( CommunityPosting posting in com.Postings )
         {
-          var post = BuildPost( posting );
-
-          foreach ( CommunityPosting nextPosting in com.Postings ) //Get children of this top level post
-          {
-            if ( nextPosting.RelatedPostingId == posting.Id )
+            if ( posting.RelatedPostingId == 0 ) //Top-level post
             {
-              var childPost = BuildPost( nextPosting );
-              post.responses.Add( childPost );
-            }
-          }
-          post.responses.Reverse();
+                //build parent
+                var post = BuildPost( posting );
+                if ( posting.ChildPostings != null && posting.ChildPostings.Count > 0 )
+                {
+                    foreach ( CommunityPosting nextPosting in posting.ChildPostings ) //Get children of this top level post
+                    {
+                        var childPost = BuildPost( nextPosting );
+                        post.responses.Add( childPost );
+                    }
+                }
+                //post.responses.Reverse();
 
-          output.postings.Add( post );
+                output.postings.Add( post );
+            }
         }
+
+        return output;
+    }
+    protected JSONCommunityPosting BuildPost( CommunityPosting posting )
+    {
+        var post = new JSONCommunityPosting();
+        post.communityID = posting.CommunityId;
+        post.id = posting.Id;
+        post.parentID = posting.RelatedPostingId;
+        post.text = posting.Message;
+        post.created = posting.Created.ToShortDateString();
+        post.createdByID = posting.CreatedById;
+        post.postType = posting.PostingType;
+        post.postTypeID = posting.PostingTypeId;
+
+        post.poster = posting.UserFullName;
+        post.posterAvatar = posting.UserImageUrl;
+        if ( post.posterAvatar == "" )
+        {
+            post.posterAvatar = "/images/defaultProfileImg.jpg";
+        }
+
+        return post;
+    }
+
+    [WebMethod]
+    public string GetRecentPosts( int communityID, int numberOfPosts )
+    {
+      var output = GetRecentPostsJSON( communityID, numberOfPosts );
+
+      return utilService.ImmediateReturn( output, true, "okay", null );
+    }
+    public List<JSONCommunityPosting> GetRecentPostsJSON( int communityID, int numberOfPosts )
+    {
+      var data = comService.Community_Get( communityID, numberOfPosts );
+      var output = new List<JSONCommunityPosting>();
+
+      foreach ( CommunityPosting posting in data.Postings )
+      {
+        output.Add( BuildPost( posting ) );
       }
 
       return output;
     }
 
-    protected JSONCommunityPosting BuildPost( CommunityPosting posting )
-    {
-      var post = new JSONCommunityPosting();
-      post.communityID = posting.CommunityId;
-      post.id = posting.Id;
-      post.parentID = posting.RelatedPostingId;
-      post.text = posting.Message;
-      post.created = posting.Created.ToShortDateString();
-      post.createdByID = posting.CreatedById;
-      
-      //Patron efficiency
-      bool found = false;
-      foreach ( Patron user in foundUsers )
-      {
-        if ( user.Id == posting.CreatedById )
-        {
-          found = true;
-          setupUserInfo( user, ref post );
-          break;
-        }
-      }
-      if ( !found )
-      {
-        var user = accountServices.Get( posting.CreatedById );
-        setupUserInfo( user, ref post );
-        foundUsers.Add( user );
-      }
-      return post;
-    }
-
-    private void setupUserInfo( Patron user, ref JSONCommunityPosting post )
+    private void setupUserInfo2( Patron user, ref JSONCommunityPosting post )
     {
       post.posterAvatar = user.UserProfile.ImageUrl;
       if ( post.posterAvatar == "" )
@@ -132,29 +148,70 @@ namespace ILPathways.Services
 
       return utilService.ImmediateReturn( community, isValid, status, null );
     }
+    [WebMethod]
+    public string PostMessageFromTimeline( string userGUID, int communityID, int parentID, string text, bool isMyTimeline )
+    {
+      bool isValid = false;
+      string status = "";
+      var user = utilService.GetUserFromGUID( userGUID );
+
+      PostMessageSilently( user, communityID, parentID, 25, text, ref isValid, ref status );
+      if ( !isValid )
+      {
+        return utilService.ImmediateReturn( "", false, status, null );
+      }
+
+      var item = new ILPathways.Controls.Activity1();
+
+      //Determine what to show
+      var activities = new List<ObjectActivity>();
+      if ( isMyTimeline )  //User wants their network
+      {
+        activities = ActivityBizServices.ObjectActivity_MyFollowingSummary( item.historyDays, user.Id, item.maxPosts );
+      }
+      else
+      {
+        activities = ActivityBizServices.ObjectActivity_RecentList( item.historyDays, user.Id, item.maxPosts );
+      }
+
+      item.LoadActivities( activities );
+      return utilService.ImmediateReturn( item.eventRanges, isValid, status, null );
+
+    }
     public JSONCommunity PostMessage( Patron user, int communityID, int parentID, int minimumLength, string text, ref bool isValid, ref string status )
     {
       var output = new JSONCommunity();
 
+      PostMessageSilently( user, communityID, parentID, minimumLength, text, ref isValid, ref status );
+      if ( !isValid )
+      {
+        return output;
+      }
+
+      return GetJSONCommunity( user, communityID );
+    }
+    public void PostMessageSilently( Patron user, int communityID, int parentID, int minimumLength, string text, ref bool isValid, ref string status )
+    {
       //Validate user
       if ( user.Id == 0 || !user.IsValid )
       {
         isValid = false;
         status = "You must login to post!";
-        return output;
+        return;
       }
 
       //Validate text
       text = utilService.ValidateText( text, minimumLength, "Message", ref isValid, ref status );
       if ( !isValid )
       {
-        return output;
+        return;
       }
 
       //Create the posting
       comService.PostingAdd( communityID, text, user.Id, parentID );
+      isValid = true;
+      status = "okay";
 
-      return GetJSONCommunity( communityID );
     }
 
     [WebMethod]
@@ -198,7 +255,93 @@ namespace ILPathways.Services
       isValid = true;
       status = "okay";
 
-      return GetJSONCommunity( communityID );
+      return GetJSONCommunity( user, communityID );
+    }
+
+    [WebMethod]
+    public string LockThread( string userGUID, int postID, int communityID )
+    {
+      var user = utilService.GetUserFromGUID( userGUID );
+      bool isValid = false;
+      string status = "";
+
+      JSONCommunity community = LockThread( user, postID, communityID, ref isValid, ref status );
+
+      return utilService.ImmediateReturn( community, isValid, status, null );
+    }
+    public JSONCommunity LockThread( Patron user, int postID, int communityID, ref bool isValid, ref string status )
+    {
+      var output = new JSONCommunity();
+
+      //Validate user
+      if ( user.Id == 0 || !user.IsValid )
+      {
+        isValid = false;
+        status = "You must login to lock threads!";
+        return output;
+      }
+
+      //Validate that the user can delete the post in question
+      var targetPost = comService.Posting_Get( postID );
+
+      if ( targetPost.CreatedById == user.Id || utilService.isUserAdmin( user ) )
+      {
+        //Lock the thread
+        
+      }
+      else
+      {
+        isValid = false;
+        status = "You are not authorized to lock that!";
+        return output;
+      }
+
+      isValid = true;
+      status = "okay";
+
+      return GetJSONCommunity( user, communityID );
+
+    }
+
+
+    [WebMethod]
+    public string ToggleFollowing( string userGUID, int communityID )
+    {
+      var user = utilService.GetUserFromGUID( userGUID );
+      bool isValid = false;
+      string status = "";
+
+      bool isFollowingNow = ToggleFollowing(user, communityID, ref isValid, ref status);
+
+      return utilService.ImmediateReturn( isFollowingNow, isValid, status, null );
+    }
+    public bool ToggleFollowing( Patron user, int communityID, ref bool isValid, ref string status )
+    {
+      var output = false;
+
+      //Validate user
+      if ( user.Id == 0 || !user.IsValid )
+      {
+        isValid = false;
+        status = "You must login to follow!";
+        return output;
+      }
+
+      //Toggle the following
+      if ( comService.Community_MemberIsMember( communityID, user.Id ) )
+      {
+        new comService().Community_MemberDelete( communityID, user.Id );
+        output = false;
+      }
+      else
+      {
+        new comService().Community_MemberAdd( communityID, user.Id );
+        output = true;
+      }
+
+      isValid = true;
+      status = "okay";
+      return output;
     }
 
     #endregion
@@ -216,6 +359,7 @@ namespace ILPathways.Services
       public string description { get; set; }
       public string created { get; set; }
       public string image { get; set; }
+      public bool userIsFollowing { get; set; }
       public List<JSONCommunityPosting> postings { get; set; }
     }
     public class JSONCommunityPosting
@@ -228,6 +372,8 @@ namespace ILPathways.Services
       public int id { get; set; }
       public int parentID { get; set; }
       public int createdByID { get; set; }
+      public int postTypeID { get; set; }
+      public string postType { get; set; }
       public string poster { get; set; }
       public string posterAvatar { get; set; }
       public string text { get; set; }

@@ -90,6 +90,15 @@
   border: 5px;
   cursor: pointer;
 }
+.flyoutContent table tr label {
+  display: inline-block;
+  *display: inline;
+  zoom: 1;
+  height:18px;
+  line-height:18px;
+  padding-left: 5px;
+  cursor: pointer;
+}
 .flyoutContent ul li:hover, .flyoutContent ul li:focus {
   color: #FFF;
   background-color: <%=css_orange %>;
@@ -221,6 +230,7 @@ table tr.gridItem td {
         // alert('buttons');
         clearRadioButtonList('<%=listCreatedBy.ClientID %>', false)
         clearRadioButtonList('<%=rblIDateCreated.ClientID %>', false)
+        CheckBoxListSelect('<%=cbxContentType.ClientID %>', false)
 
 
         return false;
@@ -247,7 +257,7 @@ table tr.gridItem td {
         }
         return false;
     }
-
+   
     //-->
 </script>
 <asp:Panel ID="authoringPanel" runat="server" Visible="true">
@@ -264,7 +274,7 @@ table tr.gridItem td {
     </asp:Panel>
     <asp:Panel ID="dateFiltersPanel" CssClass="isleBox" runat="server" Visible="true">
       <div class="flyoutContent">
-              <h2 class="isleBox_H2">Date Filters <a href="javascript:void('')" class="cbxlReset" id="reset_Dates">Reset</a></h2>
+              <h2 class="isleBox_H2">Date Filters</h2>
                 Date last updated:
                 <asp:RadioButtonList id="rblIDateCreated" causesvalidation="false" RepeatLayout="UnorderedList"   runat="server" tooltip="Date ranges" RepeatDirection="Vertical">
 	                <asp:ListItem Text="Last 7 days" Value="1"></asp:ListItem>
@@ -277,7 +287,7 @@ table tr.gridItem td {
               
     <asp:Panel ID="filtersPanel" CssClass="isleBox" runat="server" Visible="false">
       <div class="flyoutContent">
-              <h2 class="isleBox_H2">Created By <a href="javascript:void('')" class="cbxlReset" id="reset_Language">Reset</a></h2>
+              <h2 class="isleBox_H2">Created By </h2>
               <asp:Label ID="createdByMessage" runat="server" Visible="false"></asp:Label>
               <asp:RadioButtonList id="listCreatedBy" causesvalidation="false" RepeatLayout="UnorderedList"   runat="server" tooltip="Created By options" RepeatDirection="Vertical">
 	                <asp:ListItem Text="Created By Me" Value="1" Selected="True" ></asp:ListItem>
@@ -288,11 +298,21 @@ table tr.gridItem td {
             </div>
     </asp:Panel>
 
+    <asp:Panel ID="contentTypePanel" CssClass="isleBox" runat="server" Visible="false">
+      <div class="flyoutContent">
+              <h2 class="isleBox_H2">Content Type </h2>
+              <asp:Label ID="Label2" runat="server" Visible="false"></asp:Label>
+          <asp:CheckBoxList ID="cbxContentType" runat="server" RepeatDirection="Vertical"></asp:CheckBoxList>
+              
+            </div>
+    </asp:Panel>
+
   </div><!-- end left column -->
 
   <div class="column right">
     <asp:Panel runat="server" ID="createResourceLinkPanel" Visible="false" Cssclass="rightAlign">
       <a href="/My/Author.aspx">Create a New Educational Resource</a>
+        <a href="/My/Curriculum/new">Create a New Learning List Resource</a>
     </asp:Panel>
 
     <div class="searchBoxHolder">
@@ -342,40 +362,42 @@ table tr.gridItem td {
       >
 	      <HeaderStyle CssClass="gridResultsHeader" horizontalalign="Left" />
 	      <columns>
-        <asp:TemplateField HeaderText=""  >
-          <ItemTemplate>
-            <asp:HyperLink ID="editLink" runat="server" Visible="false" Target="_blank" NavigateUrl='<%# Eval("ContentRowId", "/My/Author.aspx?rid={0}") %>' CssClass="editLink textLink"> Edit <img src="/images/icons/Edit-Document-icon24.png" alt="Edit item" /></asp:HyperLink>
-          </ItemTemplate>
-        </asp:TemplateField>
+                <asp:TemplateField HeaderText=""  >
+                    <ItemTemplate>
+                    <asp:HyperLink ID="editLink" runat="server" Visible="false" Target="_blank" 
+                        NavigateUrl='<%# SetEditUrl(DataBinder.Eval( Container.DataItem, "ContentType" ).ToString(), (DataBinder.Eval( Container.DataItem, "ContentRowId" ).ToString()), (DataBinder.Eval( Container.DataItem, "ContentId" ).ToString()))%>' CssClass="editLink textLink"> Edit <img src="/images/icons/Edit-Document-icon24.png" alt="Edit item" /></asp:HyperLink>
 
-		      <asp:TemplateField HeaderText="Title/Description" SortExpression="Title" ItemStyle-Width="50%" >
-			      <ItemTemplate>
+                    </ItemTemplate>
+                </asp:TemplateField>
 
-              <div class="result"><!-- begin result -->
-                <div class="resultData">
-                <h3 class="isleH3"><a href="/CONTENT/<%#Eval("ContentId")%>/<%# CleanTitle(DataBinder.Eval( Container.DataItem, "Title" ).ToString())%>" class="title"><%#Eval("Title")%></a></h3>
-                <h3 class="isleH3" style="display:none;" ><a href="/CONTENT/<%#Eval("ContentRowId")%>/<%# CleanTitle(DataBinder.Eval( Container.DataItem, "Title" ).ToString())%>" class="title"><%#Eval("Title")%></a></h3>
-                  <h3 class="isleH3" style="display:none;" >
-                    <a href="/Repository/ResourcePage.aspx?rid=<%#Eval("ContentRowId")%>"  class="title textLink" >
-                      <asp:Literal ID="Label1" Text='<%#Eval("Title")%>' runat="server" />
-                    </a> 
-                   		
-                  </h3>
-                  <div class="description expandCollapseBox">
-                    <%# CleanDescription( DataBinder.Eval( Container.DataItem, "Summary" ).ToString(), 0 )%>
-                  </div>
-                  <asp:Label ID="lblCreatedById" runat="server" visible="false" Text='<%#Eval("CreatedById")%>'></asp:Label>
-                </div>
-              </div><!-- end result -->
+                <asp:TemplateField HeaderText="Title/Description" SortExpression="Title" ItemStyle-Width="50%" >
+                    <ItemTemplate>
+                        <div class="result"><!-- begin result -->
+                        <div class="resultData">
+                        <h3 class="isleH3" style="display:none;"><a href="/CONTENT/<%#Eval("ContentId")%>/<%# CleanTitle(DataBinder.Eval( Container.DataItem, "Title" ).ToString())%>" class="title"><%#Eval("Title")%></a>
+                        </h3>
 
-			      </ItemTemplate>
-		      </asp:TemplateField>
-          <asp:boundfield datafield="ContentPrivilege" headertext="Privilege" ItemStyle-CssClass="resultsPrivilege" SortExpression="ContentPrivilege" Visible="true"></asp:boundfield>	
-          <asp:boundfield datafield="ContentStatus" headertext="Status" SortExpression="ContentStatus" ItemStyle-Width="75px" Visible="true"></asp:boundfield>	
-		      <asp:boundfield datafield="Author" headertext="Author" SortExpression="auth.SortName" Visible="true"></asp:boundfield>	
-          <asp:boundfield datafield="Organization" headertext="Organization" ItemStyle-Width="100px" SortExpression="base.Organization" Visible="true"></asp:boundfield>	
-          <asp:boundfield datafield="LastUpdatedDisplay" ItemStyle-Width="75px"  SortExpression="LastUpdated" headertext="Updated"></asp:boundfield>	
-          <asp:boundfield datafield="OrgId" headertext="Organization" Visible="false"></asp:boundfield>
+                        <h3 class="isleH3" ><%# SetPublicUrl(DataBinder.Eval( Container.DataItem, "TypeId" ).ToString(), (DataBinder.Eval( Container.DataItem, "ContentId" ).ToString()), (DataBinder.Eval( Container.DataItem, "Title" ).ToString()), (DataBinder.Eval( Container.DataItem, "ParentId" ).ToString()))%>
+                            </h3>
+
+                        <div class="description expandCollapseBox">
+                            <%# CleanDescription( DataBinder.Eval( Container.DataItem, "Summary" ).ToString(), 0 )%>
+                            <%# DebugStuff(DataBinder.Eval( Container.DataItem, "ContentType" ).ToString())%>
+                        </div>
+                        <asp:Label ID="lblCreatedById" runat="server" visible="false" Text='<%#Eval("CreatedById")%>'></asp:Label>
+                        </div>
+                        </div><!-- end result -->
+
+                    </ItemTemplate>
+                </asp:TemplateField>
+                <asp:boundfield datafield="ContentPrivilege" headertext="Privilege" ItemStyle-CssClass="resultsPrivilege" SortExpression="ContentPrivilege" Visible="true"></asp:boundfield>	
+                <asp:boundfield datafield="ContentStatus" headertext="Status" SortExpression="ContentStatus" ItemStyle-Width="75px" Visible="true"></asp:boundfield>	
+                <asp:boundfield datafield="Author" headertext="Author" SortExpression="auth.SortName" Visible="true"></asp:boundfield>	
+                <asp:boundfield datafield="Organization" headertext="Organization" ItemStyle-Width="100px" SortExpression="base.Organization" Visible="true"></asp:boundfield>	
+                <asp:boundfield datafield="LastUpdatedDisplay" ItemStyle-Width="75px"  SortExpression="base.LastUpdated" headertext="Updated"></asp:boundfield>	
+                <asp:boundfield datafield="ContentType" ItemStyle-Width="75px"   headertext="Content Type" Visible="false"></asp:boundfield>	
+                <asp:boundfield datafield="OrgId" headertext="Organization" Visible="false"></asp:boundfield>
+              <asp:boundfield datafield="PartnerList" ItemStyle-Width="75px"   headertext="PartnerList" Visible="true"></asp:boundfield>
           <%--<asp:TemplateField ><ItemTemplate> <span style="margin-left:10px;">&nbsp;</span></ItemTemplate></asp:TemplateField>--%>
         </columns>
 	      <pagersettings 
@@ -411,16 +433,20 @@ table tr.gridItem td {
 
 <asp:Panel ID="hiddenStuff" runat="server" Visible="false">
 <asp:Literal ID="txtFormSecurityName" runat="server" Visible="false">ILPathways.LRW.controls.ContentSearch</asp:Literal>
-<asp:Literal ID="txtAuthorSecurityName" runat="server" Visible="false">ILPathways.LRW.controls.Authoring</asp:Literal>
+<asp:Literal ID="txtAuthorSecurityName" runat="server" Visible="false"></asp:Literal>
+<asp:Literal ID="txtAuthorSecurityName2" runat="server" Visible="false">ILPathways.LRW.controls.Authoring</asp:Literal>
 <asp:Literal ID="txtLibraryId" runat="server" Visible="false">0</asp:Literal>
 
-<asp:Literal ID="formattedTitleTemplate" runat="server" Visible="false"><a style="color:#000;  cursor:hand;" href="{0}" target="_blank" title="Website link opens in a new window">{1}</a></asp:Literal>
+<asp:Literal ID="formattedTitleTemplate" runat="server" Visible="false"><a style="color:#000;  cursor:pointer;" href="{0}" target="_blank" title="Website link opens in a new window">{1}</a></asp:Literal>
 
 </asp:Panel>
 
 <asp:Panel ID="Panel3" runat="server" Visible="false">
 <asp:Literal ID="readMoreTemplate" runat="server" Visible="false">&nbsp;...&nbsp;<p class="readMore"><a href="javascript:void()">Show More &gt;&gt;</a></p></asp:Literal>
 <asp:Literal ID="readMoreTemplateSystran" runat="server" Visible="false">&nbsp;...&nbsp;<p class="readMore"><a href="javascript:void()">Show More</a></p></asp:Literal>
+
+<asp:Literal ID="litCurriculumPublicUrl" runat="server" Visible="false"><a href='/Curriculum/{0}/{1}' target="_blank">{2}</a></asp:Literal>
+<asp:Literal ID="litConentPublicUrl" runat="server" Visible="false"><a href='/Content/{0}/{1}' target="_blank">{2}</a></asp:Literal>
 
 </asp:Panel>
 <asp:Panel ID="Panel4" runat="server" Visible="false">
@@ -429,7 +455,9 @@ table tr.gridItem td {
 <asp:Literal ID="txtMyOrgFilter" runat="server" Visible="false">(base.OrgId = {0} OR auth.OrganizationId = {0}) </asp:Literal>
 
 <asp:Literal ID="txtCustomFilter" runat="server" Visible="false"></asp:Literal>
-<asp:Literal ID="txtPublicFilter" runat="server" Visible="false">(base.PrivilegeTypeId = 1 AND base.IsActive = 1  AND base.StatusId = 5 ) </asp:Literal>
+<asp:Literal ID="txtPublicFilter" runat="server" Visible="false">(base.PrivilegeTypeId = 1 AND base.IsActive = 1  AND base.StatusId = 5 AND TypeId in (10, 50)) </asp:Literal>
+<asp:Literal ID="showingContentTypeFilters" runat="server" Visible="false">yes</asp:Literal>
+<asp:Literal ID="txtTypeFilter" runat="server" Visible="false">( TypeId in (10, 40, 50, 52)) </asp:Literal>
 <!-- only:
 (created by = me and any status) 
 or public 

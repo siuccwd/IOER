@@ -2,15 +2,19 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using System.Web.Script.Serialization;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
+using ILPathways.Utilities;
 using ILPathways.Library;
-using System.Web.Script.Serialization;
 using ILPathways.Services;
 
 namespace ILPathways.Controls.Libraries
 {
+    /// <summary>
+    /// Search for libraries
+    /// </summary>
     public partial class LibrariesSearch : BaseUserControl
     {
         List<jsonLibraryFilter> currentFilters = new List<jsonLibraryFilter>();
@@ -31,6 +35,11 @@ namespace ILPathways.Controls.Libraries
             set { txtSubscribedLibsView.Text = value; }
         }//
 
+        /// <summary>
+        /// handle page load
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         protected void Page_Load( object sender, EventArgs e )
         {
             InitPage();
@@ -44,8 +53,10 @@ namespace ILPathways.Controls.Libraries
 
             if ( IsUserAuthenticated() )
             {
+                string showFollowed = GetRequestKeyValue( "showFollowed", "no" );
+
                 userGUID = "var userGUID = \"" + WebUser.RowId.ToString() + "\";";
-                if ( SubscribedLibrariesView == "yes" )
+                if ( SubscribedLibrariesView == "yes" || showFollowed == "yes" )
                 {
                     useSubscribedLibraries = "var useSubscribedLibraries = true;";
                 }
@@ -58,6 +69,7 @@ namespace ILPathways.Controls.Libraries
         {
             //These should probably be generated from database data or some similar source, but for now this should do
             currentFilters.Clear();
+            string showMyOrgLibraries = GetRequestKeyValue( "showMyOrgLibraries", "no" );
 
             //Date Range
             var dateRange = new jsonLibraryFilter();
@@ -79,6 +91,7 @@ namespace ILPathways.Controls.Libraries
             libraryType.type = "cbxl";
             libraryType.tip = "Show:";
             libraryType.items.Add( new jsonLibraryFilterItem() { selected = false, text = "Organization Libraries", value = 2 } );
+
             libraryType.items.Add( new jsonLibraryFilterItem() { selected = false, text = "User Libraries", value = 1 } );
             currentFilters.Add( libraryType );
 
@@ -90,10 +103,23 @@ namespace ILPathways.Controls.Libraries
                 viewType.name = "view";
                 viewType.type = "rbl";
                 viewType.tip = "Show:";
-                //viewType.items.Add( new jsonLibraryFilterItem() { selected = true, text = "All Libraries", value = 1 } );
-                viewType.items.Add( new jsonLibraryFilterItem() { selected = true, text = "All Public Libraries", value = 2 } );
+                bool showPublic = true;
+
+                if ( txtShowAllLibsOption.Text.Equals( "yes" ) )
+                {
+                    viewType.items.Add( new jsonLibraryFilterItem() { selected = true, text = "All Libraries", value = 1 } );
+                    showPublic = false;
+                }
+
+                viewType.items.Add( new jsonLibraryFilterItem() { selected = showPublic, text = "All Public Libraries", value = 2 } );
                 //viewType.items.Add( new jsonLibraryFilterItem() { selected = false, text = "Only Private Libraries", value = 3 } );
-                viewType.items.Add( new jsonLibraryFilterItem() { selected = false, text = "Only Libraries I'm a member of", value = 4 } );
+                if ( showMyOrgLibraries == "yes" )
+                {
+                    viewType.items.Add( new jsonLibraryFilterItem() { selected = true, text = "Only Libraries I'm a member of", value = 4 } );
+                }
+                else
+                    viewType.items.Add( new jsonLibraryFilterItem() { selected = false, text = "Only Libraries I'm a member of", value = 4 } );
+
                 currentFilters.Add( viewType );
             }
 

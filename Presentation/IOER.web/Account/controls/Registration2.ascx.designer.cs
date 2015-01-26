@@ -13,6 +13,15 @@ namespace ILPathways.Account.controls {
     public partial class Registration2 {
         
         /// <summary>
+        /// confirmMsg control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl confirmMsg;
+        
+        /// <summary>
         /// regMessage control.
         /// </summary>
         /// <remarks>
@@ -85,6 +94,15 @@ namespace ILPathways.Account.controls {
         protected global::System.Web.UI.WebControls.Button btnSubmit;
         
         /// <summary>
+        /// Button1 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button Button1;
+        
+        /// <summary>
         /// hiddenPanel control.
         /// </summary>
         /// <remarks>
@@ -148,13 +166,13 @@ namespace ILPathways.Account.controls {
         protected global::System.Web.UI.WebControls.Literal autoActivateLink;
         
         /// <summary>
-        /// activateLink1 control.
+        /// defaultUrl control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Literal activateLink1;
+        protected global::System.Web.UI.WebControls.Literal defaultUrl;
         
         /// <summary>
         /// txtReturnUrl control.
@@ -173,6 +191,15 @@ namespace ILPathways.Account.controls {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label registerSuccessMsg;
+        
+        /// <summary>
+        /// registerSuccessMsgFull control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label registerSuccessMsgFull;
         
         /// <summary>
         /// confirmMessage control.

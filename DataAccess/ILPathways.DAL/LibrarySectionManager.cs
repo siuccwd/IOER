@@ -70,6 +70,7 @@ namespace ILPathways.DAL
         public static LibrarySection CreateDefault( int libraryId, ref string statusMessage )
         {
             Library lib = new LibraryManager().Get( libraryId );
+
             LibrarySection entity = new LibrarySection();
             entity.LibraryId = libraryId;
             entity.SectionTypeId = GENERAL_LIBRARY_SECTION_ID;
@@ -80,6 +81,7 @@ namespace ILPathways.DAL
             entity.IsActive = true;
             entity.IsPublic = true;
             entity.ImageUrl = lib.ImageUrl;
+            entity.RowId = Guid.NewGuid();
 
             if ( lib != null && lib.SeemsPopulated )
             {
@@ -785,10 +787,10 @@ namespace ILPathways.DAL
 
             entity.Created = GetRowColumn( dr, "Created", System.DateTime.MinValue );
             entity.CreatedById = GetRowColumn( dr, "CreatedById", 0 );
-            //entity.CreatedBy = GetRowColumn( dr, "CreatedBy", "" );
+            entity.CreatedBy = GetRowPossibleColumn( dr, "CreatedBy", "" );
             entity.LastUpdated = GetRowColumn( dr, "LastUpdated", System.DateTime.MinValue );
             entity.LastUpdatedById = GetRowColumn( dr, "LastUpdatedById", 0 );
-            //entity.LastUpdatedBy = GetRowColumn( dr, "LastUpdatedBy", "" );
+            entity.LastUpdatedBy = GetRowPossibleColumn( dr, "LastUpdatedBy", "" );
             string rowId = GetRowPossibleColumn( dr, "RowId", "" );
             if ( rowId.Length > 35 )
             {
@@ -832,9 +834,10 @@ namespace ILPathways.DAL
 
             entity.Created = GetRowColumn( dr, "Created", System.DateTime.MinValue );
             entity.CreatedById = GetRowColumn( dr, "CreatedById", 0 );
-
+            entity.CreatedBy = GetRowPossibleColumn( dr, "CreatedBy", "" );
             entity.LastUpdated = GetRowColumn( dr, "LastUpdated", System.DateTime.MinValue );
             entity.LastUpdatedById = GetRowColumn( dr, "LastUpdatedById", 0 );
+            entity.LastUpdatedBy = GetRowPossibleColumn( dr, "LastUpdatedBy", "" );
 
             string rowId = GetRowPossibleColumn( dr, "RowId", "" );
             if ( rowId.Length > 35 )
@@ -977,26 +980,33 @@ namespace ILPathways.DAL
         {
             ObjectLike entity = new ObjectLike();
             entity.HasLikeEntry = false;
+            if ( userId == 0 || sectionId == 0 )
+                return entity;
             try
             {
-                SqlParameter[] sqlParameters = new SqlParameter[ 2 ];
-
-                sqlParameters[ 0 ] = new SqlParameter( "@SectionId", sectionId );
-                sqlParameters[ 1 ] = new SqlParameter( "@UserId", userId );
-
-
-                SqlDataReader dr = SqlHelper.ExecuteReader( ContentConnection(), CommandType.StoredProcedure, "[Library.SectionLikeGet]", sqlParameters );
-                if ( dr.HasRows )
+                using ( SqlConnection connection = new SqlConnection( ContentConnection() ) )
                 {
-                    while ( dr.Read() )
+                    SqlParameter[] sqlParameters = new SqlParameter[ 2 ];
+
+                    sqlParameters[ 0 ] = new SqlParameter( "@SectionId", sectionId );
+                    sqlParameters[ 1 ] = new SqlParameter( "@UserId", userId );
+
+
+                    SqlDataReader dr = SqlHelper.ExecuteReader( connection, CommandType.StoredProcedure, "[Library.SectionLikeGet]", sqlParameters );
+                    if ( dr.HasRows )
                     {
-                        entity.Id = GetRowColumn( dr, "Id", 0 );
-                        entity.ParentId = GetRowColumn( dr, "SectionId", 0 );
-                        entity.HasLikeEntry = true;
-                        entity.IsLike = GetRowColumn( dr, "IsLike", false );
-                        entity.Created = GetRowColumn( dr, "Created", entity.DefaultDate );
-                        entity.CreatedById = GetRowColumn( dr, "CreatedById", userId );
+                        while ( dr.Read() )
+                        {
+                            entity.Id = GetRowColumn( dr, "Id", 0 );
+                            entity.ParentId = GetRowColumn( dr, "SectionId", 0 );
+                            entity.HasLikeEntry = true;
+                            entity.IsLike = GetRowColumn( dr, "IsLike", false );
+                            entity.Created = GetRowColumn( dr, "Created", entity.DefaultDate );
+                            entity.CreatedById = GetRowColumn( dr, "CreatedById", userId );
+                        }
                     }
+                    dr.Close();
+                    dr = null;
                 }
                
             }

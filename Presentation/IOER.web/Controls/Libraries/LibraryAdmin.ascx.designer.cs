@@ -76,6 +76,15 @@ namespace ILPathways.Controls.Libraries {
         protected global::System.Web.UI.WebControls.LinkButton showAllLibraries;
         
         /// <summary>
+        /// showAllUserLibraries control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.LinkButton showAllUserLibraries;
+        
+        /// <summary>
         /// sourceLibraryId control.
         /// </summary>
         /// <remarks>
@@ -103,15 +112,6 @@ namespace ILPathways.Controls.Libraries {
         protected global::System.Web.UI.WebControls.TextBox collectionId;
         
         /// <summary>
-        /// libOptionsPanel control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel libOptionsPanel;
-        
-        /// <summary>
         /// newLibraryLink control.
         /// </summary>
         /// <remarks>
@@ -119,6 +119,15 @@ namespace ILPathways.Controls.Libraries {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.LinkButton newLibraryLink;
+        
+        /// <summary>
+        /// myLibMemberships control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.LinkButton myLibMemberships;
         
         /// <summary>
         /// editLibraryLink control.
@@ -146,6 +155,15 @@ namespace ILPathways.Controls.Libraries {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.LinkButton libInviteLink;
+        
+        /// <summary>
+        /// libApprovalLink control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.LinkButton libApprovalLink;
         
         /// <summary>
         /// collectionPanel1 control.
@@ -184,6 +202,15 @@ namespace ILPathways.Controls.Libraries {
         protected global::System.Web.UI.WebControls.LinkButton colInviteLink;
         
         /// <summary>
+        /// startPanel control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel startPanel;
+        
+        /// <summary>
         /// litCurrentLibrary control.
         /// </summary>
         /// <remarks>
@@ -200,15 +227,6 @@ namespace ILPathways.Controls.Libraries {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Literal litCurrentCollection;
-        
-        /// <summary>
-        /// startPanel control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel startPanel;
         
         /// <summary>
         /// LibraryPanel control.
@@ -283,6 +301,24 @@ namespace ILPathways.Controls.Libraries {
         protected global::System.Web.UI.WebControls.Panel mbrSearchPanel;
         
         /// <summary>
+        /// Label6 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label Label6;
+        
+        /// <summary>
+        /// ddlFilterMemberType control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.DropDownList ddlFilterMemberType;
+        
+        /// <summary>
         /// Label1 control.
         /// </summary>
         /// <remarks>
@@ -344,15 +380,6 @@ namespace ILPathways.Controls.Libraries {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Panel invitationsPanel;
-        
-        /// <summary>
-        /// newInvitationLink control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.LinkButton newInvitationLink;
         
         /// <summary>
         /// showInvitations control.
@@ -526,6 +553,33 @@ namespace ILPathways.Controls.Libraries {
         protected global::System.Web.UI.WebControls.Button inviteStep5CreateAcct;
         
         /// <summary>
+        /// orgRolePanel control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel orgRolePanel;
+        
+        /// <summary>
+        /// cblOrgRoles control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.CheckBoxList cblOrgRoles;
+        
+        /// <summary>
+        /// btnOrgRoleContinue control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnOrgRoleContinue;
+        
+        /// <summary>
         /// messagePanel control.
         /// </summary>
         /// <remarks>
@@ -589,6 +643,15 @@ namespace ILPathways.Controls.Libraries {
         protected global::System.Web.UI.WebControls.Panel finshInvitePanel;
         
         /// <summary>
+        /// newInvitationLink control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.LinkButton newInvitationLink;
+        
+        /// <summary>
         /// pendingInvitesPanel control.
         /// </summary>
         /// <remarks>
@@ -634,6 +697,15 @@ namespace ILPathways.Controls.Libraries {
         protected global::System.Web.UI.WebControls.Panel followersPanel;
         
         /// <summary>
+        /// approvePanel control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel approvePanel;
+        
+        /// <summary>
         /// hiddenPanel control.
         /// </summary>
         /// <remarks>
@@ -661,6 +733,15 @@ namespace ILPathways.Controls.Libraries {
         protected global::System.Web.UI.WebControls.Literal doingBccOnRegistration;
         
         /// <summary>
+        /// ccApproverWithMbrConfirm control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Literal ccApproverWithMbrConfirm;
+        
+        /// <summary>
         /// txtCurrentLibraryId control.
         /// </summary>
         /// <remarks>
@@ -679,40 +760,49 @@ namespace ILPathways.Controls.Libraries {
         protected global::System.Web.UI.WebControls.Literal txtCurrentLibraryMemberId;
         
         /// <summary>
-        /// inviteSubject control.
+        /// autoAddMbrAsOrgExternalMbr control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label inviteSubject;
+        protected global::System.Web.UI.WebControls.Literal autoAddMbrAsOrgExternalMbr;
         
         /// <summary>
-        /// inviteEmail control.
+        /// allowingChangeToOrgMbr control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label inviteEmail;
+        protected global::System.Web.UI.WebControls.Literal allowingChangeToOrgMbr;
         
         /// <summary>
-        /// doRegisterMsg control.
+        /// libraryInviteExpiryDays control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label doRegisterMsg;
+        protected global::System.Web.UI.WebControls.Literal libraryInviteExpiryDays;
         
         /// <summary>
-        /// visitLibraryMsg control.
+        /// isMyMembershipsSearch control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label visitLibraryMsg;
+        protected global::System.Web.UI.WebControls.Literal isMyMembershipsSearch;
+        
+        /// <summary>
+        /// retainingCurrentSectionOnNewSelection control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Literal retainingCurrentSectionOnNewSelection;
         
         /// <summary>
         /// acctCreatedMsg control.
@@ -787,15 +877,6 @@ namespace ILPathways.Controls.Libraries {
         protected global::System.Web.UI.WebControls.Literal registerLink;
         
         /// <summary>
-        /// loginToLibraryLink control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Literal loginToLibraryLink;
-        
-        /// <summary>
         /// libraryLink control.
         /// </summary>
         /// <remarks>
@@ -821,5 +902,149 @@ namespace ILPathways.Controls.Libraries {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Literal librariesHome;
+        
+        /// <summary>
+        /// autoLoginLinkLibrariesSearch control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Literal autoLoginLinkLibrariesSearch;
+        
+        /// <summary>
+        /// autoLoginLinkLibrary control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Literal autoLoginLinkLibrary;
+        
+        /// <summary>
+        /// autoLoginLinkContribute control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Literal autoLoginLinkContribute;
+        
+        /// <summary>
+        /// autoLoginLinkSearch control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Literal autoLoginLinkSearch;
+        
+        /// <summary>
+        /// autoLoginLinkGuide control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Literal autoLoginLinkGuide;
+        
+        /// <summary>
+        /// emailsPanel1 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel emailsPanel1;
+        
+        /// <summary>
+        /// inviteSubject control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label inviteSubject;
+        
+        /// <summary>
+        /// inviteEmail control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label inviteEmail;
+        
+        /// <summary>
+        /// doRegisterMsg control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label doRegisterMsg;
+        
+        /// <summary>
+        /// visitLibraryMsg control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label visitLibraryMsg;
+        
+        /// <summary>
+        /// adLibrarySummaryDTOConfirmSubject control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label adLibrarySummaryDTOConfirmSubject;
+        
+        /// <summary>
+        /// adLibrarySummaryDTOConfirmMsg control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label adLibrarySummaryDTOConfirmMsg;
+        
+        /// <summary>
+        /// ReaderlibMbrRole control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label ReaderlibMbrRole;
+        
+        /// <summary>
+        /// contributelibMbrRole control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label contributelibMbrRole;
+        
+        /// <summary>
+        /// editorlibMbrRole control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label editorlibMbrRole;
+        
+        /// <summary>
+        /// adminlibMbrRole control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label adminlibMbrRole;
     }
 }

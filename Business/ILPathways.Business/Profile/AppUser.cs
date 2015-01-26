@@ -23,7 +23,14 @@ namespace ILPathways.Business
         #endregion
 
         public AppUser()
-        { }
+        {
+            ProxyId = "";
+            UserProfile = new AppUserProfile();
+            LastOrgMbrCheckDate = DefaultDate;
+            //Organizations = new List<Organization>();
+            //NOTE - DO NOT instantiate OrgMemberships
+
+        }
 
         #region Properties
         private string _email = "";
@@ -104,6 +111,7 @@ namespace ILPathways.Business
             }
         }
 
+        public string ProxyId { get; set; }
 
         /// <summary>
         /// Get/Set SecretQuestionID
@@ -220,7 +228,34 @@ namespace ILPathways.Business
             }
         } //
 
+        /// <summary>
+        /// Gets/Sets ImageUrl
+        /// </summary>
+        public string ImageUrl
+        {
+            get
+            {
+                if ( UserProfile == null )
+                    UserProfile = new AppUserProfile();
 
+                return this.UserProfile.ImageUrl;
+            }
+            set
+            {
+                if ( UserProfile == null )
+                    UserProfile = new AppUserProfile();
+
+                if ( UserProfile.ImageUrl == value )
+                {
+                    //Ignore set
+                }
+                else
+                {
+                    UserProfile.ImageUrl = value.Trim();
+                    HasChanged = true;
+                }
+            }
+        }
         #endregion
 
         #region Properties for Profile
@@ -279,6 +314,10 @@ namespace ILPathways.Business
                 }
             }
         } //
+
+        //public List<Organization> Organizations { get; set; }
+        public List<OrganizationMember> OrgMemberships { get; set; }
+        public DateTime LastOrgMbrCheckDate { get; set; }
         #endregion
 
 

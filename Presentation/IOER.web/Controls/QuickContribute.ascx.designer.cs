@@ -22,6 +22,15 @@ namespace ILPathways.Controls {
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl contributer;
         
         /// <summary>
+        /// gooruSearch control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl gooruSearch;
+        
+        /// <summary>
         /// lblDebugMode control.
         /// </summary>
         /// <remarks>
@@ -112,6 +121,33 @@ namespace ILPathways.Controls {
         protected global::ILPathways.LRW.controls.ConditionsOfUseSelector RightsSelector;
         
         /// <summary>
+        /// accessRightsPanel control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel accessRightsPanel;
+        
+        /// <summary>
+        /// ddlContentFilePrivacyLevel control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.DropDownList ddlContentFilePrivacyLevel;
+        
+        /// <summary>
+        /// standards control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::ILPathways.Controls.StandardsBrowser7 standards;
+        
+        /// <summary>
         /// cbxlSubject control.
         /// </summary>
         /// <remarks>
@@ -148,22 +184,31 @@ namespace ILPathways.Controls {
         protected global::System.Web.UI.WebControls.Panel submitPanel;
         
         /// <summary>
-        /// btnSubmit control.
+        /// hdnStandards control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnSubmit;
+        protected global::System.Web.UI.HtmlControls.HtmlInputHidden hdnStandards;
         
         /// <summary>
-        /// error control.
+        /// notLoggedInError control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlGenericControl error;
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl notLoggedInError;
+        
+        /// <summary>
+        /// notAuthorizedError control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl notAuthorizedError;
         
         /// <summary>
         /// createdContentItemId control.
@@ -173,5 +218,41 @@ namespace ILPathways.Controls {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Literal createdContentItemId;
+        
+        /// <summary>
+        /// txtParentNodeId control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Literal txtParentNodeId;
+        
+        /// <summary>
+        /// doingLRPublish control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Literal doingLRPublish;
+        
+        /// <summary>
+        /// txtFormSecurityName control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Literal txtFormSecurityName;
+        
+        /// <summary>
+        /// txtRememberedItems control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Literal txtRememberedItems;
     }
 }

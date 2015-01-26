@@ -13,30 +13,12 @@ namespace ILPathways.Account {
     public partial class Profile {
         
         /// <summary>
-        /// ScriptManager1 control.
+        /// UserProfile2a control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::AjaxControlToolkit.ToolkitScriptManager ScriptManager1;
-        
-        /// <summary>
-        /// UserProfile1 control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::ILPathways.Account.controls.UserProfile UserProfile1;
-        
-        /// <summary>
-        /// AccountRegisterUpdateController control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::ILPathways.Account.controls.AccountRegisterUpdateController AccountRegisterUpdateController;
+        protected global::ILPathways.Account.controls.UserProfile2 UserProfile2a;
     }
 }

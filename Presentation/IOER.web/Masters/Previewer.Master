@@ -1,5 +1,5 @@
 ﻿<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="Previewer.master.cs" Inherits="ILPathways.Masters.Previewer" %>
-<%@ Register TagName="Header" TagPrefix="uc1" Src="/Controls/Includes/Header6.ascx" %>
+<%@ Register TagName="Header" TagPrefix="uc1" Src="/Controls/Includes/Header7.ascx" %>
 
 <!DOCTYPE html>
 
@@ -7,22 +7,23 @@
   <head>
     <title></title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js" type="text/javascript"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js" type="text/javascript"></script>
     <link rel="Stylesheet" type="text/css" href="/Styles/ISLE.css" />
+		<link rel="Stylesheet" type="text/css" href="/Styles/common2.css" />
 
     <style type="text/css">
       /* Big Stuff */
       * { box-sizing: border-box; -moz-box-sizing: border-box; }
       form #header { margin: 0; }
-      #header #logoLink { height: 70px; }
       html, body, form { height: 100%; padding: 0; }
-      #content { height: calc( 100% - 75px ); font-size: 0;  min-width: 300px; }
+      #content { height: calc( 100% - 125px ); font-size: 0;  min-width: 300px; }
       #toolBox { height: 100%; float: left; overflow-y: scroll; overflow-x: hidden; font-size: 16px; }
       #previewFrame { height: 100%; border: none; background-color: #EEE; }
       #main_tabs { font-size: 0; }
       #main_tabs a { width: 50%; display: inline-block; font-size: 24px; line-height: 30px; text-align: center; color: #FFF; background-color: #3572B8; background: linear-gradient(#3572B8, #5592D8);  }
       #main_tabs a[data-selected=true] { background-color: #9984BD; background: linear-gradient(#9984BD, #B9A4DD); }
       #main_tabs a:hover, #main_tabs a:focus { background: #FF5707; }
+    	#content { padding-left: 0; }
 
       @media screen and (max-width: 600px) {
         /* Compact Mode */

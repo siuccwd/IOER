@@ -19,7 +19,9 @@ using ILPathways.Business;
 using ILPathways.classes;
 using ILPathways.Controllers;
 using BDM = ILPathways.Common.BaseDataManager;
-using ILPathways.DAL;
+using LRDAL = LRWarehouse.DAL;
+//using ILPathways.DAL;
+using Isle.BizServices;
 using ILPathways.Library;
 using ILPathways.Utilities;
 
@@ -671,7 +673,7 @@ namespace ILPathways.Controls.AppItems
         private bool IsEmailableAnnouncement( AppItem entity )
         {
             bool retVal = false;
-            //string filter = "Category = '" + DatabaseManager.HandleApostrophes( entity.Category ) + "'";
+            //string filter = "Category = '" + LRDAL.BaseDataManager.HandleApostrophes( entity.Category ) + "'";
             //string message = "successful";
             //DataSet ds = new AnnouncementEmailManager().Select( filter, ref message );
             //if ( entity.Status.ToLower() == "published" && DoesDataSetHaveRows( ds ) )
@@ -725,7 +727,7 @@ namespace ILPathways.Controls.AppItems
                     filePath = FileSystemHelper.GetCacheOutputPath( doc.RowId.ToString() );
                     fileUrl = FileSystemHelper.GetCacheOutputUrl( doc.RowId.ToString() );
                     
-                    url = FileSystemHelper.HandleDocumentCaching( filePath, doc.FileName, fileUrl, doc.RowId.ToString() );
+                    url = FileSystemHelper.HandleDocumentCaching( filePath, doc );
 
                     lblServerDocumentLink.NavigateUrl = url;
                     lblServerDocumentLink.Text = "View (from server): " + doc.FileName;
@@ -1387,7 +1389,7 @@ namespace ILPathways.Controls.AppItems
         {
             //string status = "";
             AppItem entity = CurrentRecord;
-            SqlQuery query = SqlQueryManager.Get( "ImmediateNewsSubscribers2" );
+            SqlQuery query = new SqlQuery();    // SqlQueryManager.Get( "ImmediateNewsSubscribers2" );
             if ( query.IsValid && query.Id > 0 )
             {
                 //EmailNoticeJob job = new EmailNoticeJob();
@@ -1922,7 +1924,7 @@ namespace ILPathways.Controls.AppItems
 
                     if ( this.ddlSearchCategory.SelectedIndex > 0 )
                     {
-                        filter += BDM.FormatSearchItem( filter, "Category", DatabaseManager.HandleApostrophes( this.ddlSearchCategory.SelectedValue.ToString() ), booleanOperator );
+                        filter += BDM.FormatSearchItem( filter, "Category", LRDAL.BaseDataManager.HandleApostrophes( this.ddlSearchCategory.SelectedValue.ToString() ), booleanOperator );
                     }
                     if ( ddlStatusSearch.SelectedIndex > 0 )
                     {
@@ -1935,7 +1937,7 @@ namespace ILPathways.Controls.AppItems
                         string where = " (AppItem.Title like '" + keyword + "' "
                                                 + " OR AppItem.[Description] like '" + keyword + "' "
                                                 + " OR AppItem.[AppItemCode] like '" + keyword + "') ";
-                        filter += BaseDataManager.FormatSearchItem( filter, where, booleanOperator );
+                        filter += LRDAL.BaseDataManager.FormatSearchItem( filter, where, booleanOperator );
                     }
                     if ( IsTestEnv() )
                     {
@@ -2196,12 +2198,12 @@ namespace ILPathways.Controls.AppItems
                 sql += orderBy;
             }
 
-            DataSet ds = DatabaseManager.DoQuery( sql );
-            BaseDataManager.PopulateList( lstForm, ds, "Id", "Title", "Select an AppItem Type record" );
+            DataSet ds = LRDAL.DatabaseManager.DoQuery( sql );
+            LRDAL.BaseDataManager.PopulateList( lstForm, ds, "Id", "Title", "Select an AppItem Type record" );
 
-            BaseDataManager.PopulateList( ddlTypeId, ds, "Id", "Title" );
+            LRDAL.BaseDataManager.PopulateList( ddlTypeId, ds, "Id", "Title" );
 
-            BaseDataManager.PopulateList( ddlTypeId2, ds, "Id", "Title" );
+            LRDAL.BaseDataManager.PopulateList( ddlTypeId2, ds, "Id", "Title" );
 
 
             //DataSet ds = myManager.AppItemTypeSelect();
@@ -2212,7 +2214,7 @@ namespace ILPathways.Controls.AppItems
             //if ( ds != null && ds.Tables.Count > 0 )
             //{
             //  // add select row
-            //  BaseDataManager.AddEntryToTable( ds.Tables[ 0 ], 0, "Select an AppItem Type record", "Id", "Title" );
+            //  LRDAL.BaseDataManager.AddEntryToTable( ds.Tables[ 0 ], 0, "Select an AppItem Type record", "Id", "Title" );
             //  DataView dv = ds.Tables[ 0 ].DefaultView;
             //  if ( AppItemTypeRestriction.Length > 0 )
             //  {
@@ -2241,7 +2243,7 @@ namespace ILPathways.Controls.AppItems
         {
             ddlSearchCategory.Items.Clear();
             DataSet ds1 = myManager.SelectTypeCategories( typeId );
-            BaseDataManager.PopulateList( this.ddlSearchCategory, ds1, "Category", "Category", "Select a Category" );
+            LRDAL.BaseDataManager.PopulateList( this.ddlSearchCategory, ds1, "Category", "Category", "Select a Category" );
 
         } //
 
@@ -2262,7 +2264,7 @@ namespace ILPathways.Controls.AppItems
             //{
                 ds = myManager.SelectTypeCategories( typeId );
            // }
-            BaseDataManager.PopulateList( this.ddlCategory, ds, "Category", "Category", "Select a Category" );
+            LRDAL.BaseDataManager.PopulateList( this.ddlCategory, ds, "Category", "Category", "Select a Category" );
 
             if ( typeId > 0 && ds != null && ds.Tables.Count > 0 && ds.Tables[ 0 ].Rows.Count > 1 )
             {
@@ -2278,8 +2280,8 @@ namespace ILPathways.Controls.AppItems
         /// </summary>
         private void SetSubcategoryList( int typeId, string pCategory )
         {
-            DataSet ds = myManager.SelectTypeSubcategories( typeId, DatabaseManager.HandleApostrophes( pCategory ) );
-            BaseDataManager.PopulateList( this.ddlSubcategory, ds, "SubCategory", "SubCategory", "Select a Sub-Category" );
+            DataSet ds = myManager.SelectTypeSubcategories( typeId, LRDAL.BaseDataManager.HandleApostrophes( pCategory ) );
+            LRDAL.BaseDataManager.PopulateList( this.ddlSubcategory, ds, "SubCategory", "SubCategory", "Select a Sub-Category" );
 
         } //
 
@@ -2301,19 +2303,19 @@ namespace ILPathways.Controls.AppItems
                 if ( IsTestEnv() )
                     LoggingHelper.DoTrace( 5, "SetSearchStatusList. sql: " + sql );
                 //DataSet ds1 = myManager.SelectTypeStatus( typeId );
-                ds = DatabaseManager.DoQuery( sql );
+                ds = LRDAL.DatabaseManager.DoQuery( sql );
             }
             else
             {
                 ds = myManager.SelectTypeStatus( typeId );
             }
-            BaseDataManager.PopulateList( this.ddlStatusSearch, ds, "Status", "Status", "Select a Status" );
+            LRDAL.BaseDataManager.PopulateList( this.ddlStatusSearch, ds, "Status", "Status", "Select a Status" );
         } //
         private void SetStatusList( int typeId )
         {
             //will different item types have different possible status values
             DataSet ds = myManager.SelectTypeStatus( typeId );
-            BaseDataManager.PopulateList( this.ddlStatus, ds, "Status", "Status", "Select a Status" );
+            LRDAL.BaseDataManager.PopulateList( this.ddlStatus, ds, "Status", "Status", "Select a Status" );
 
         } //
 
@@ -2360,8 +2362,8 @@ namespace ILPathways.Controls.AppItems
         } //
         private void SetPageSizeList()
         {
-            DataSet ds1 = DatabaseManager.GetCodeValues( "GridPageSize", "SortOrder" );
-            DatabaseManager.PopulateList( this.ddlPageSizeList, ds1, "StringValue", "StringValue", "Select Size" );
+            DataSet ds1 = LRDAL.DatabaseManager.GetCodeValues( "GridPageSize", "SortOrder" );
+            LRDAL.BaseDataManager.PopulateList( this.ddlPageSizeList, ds1, "StringValue", "StringValue", "Select Size" );
 
         } //
         /// <summary>

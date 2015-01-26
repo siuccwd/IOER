@@ -3,11 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Services;
+using System.Web.Script.Serialization;
 
 using ILPathways.Utilities;
+using Isle.BizServices;
 using LRWarehouse.DAL;
+using Thumbnailer = LRWarehouse.DAL.ResourceThumbnailManager;
 using LRWarehouse.Business;
-using System.Web.Script.Serialization;
+
 
 namespace ILPathways.Services
 {
@@ -43,21 +46,24 @@ namespace ILPathways.Services
     }
     public string ValidateURL( string url, bool mustBeNew, ref bool isValid, ref string status )
     {
-      //Do basic text validation
-      url = ValidateText( url, 12, "Resource URL", ref isValid, ref status );
+      //Do basic text validation without rewriting the URL
+      ValidateText( url, 12, "Resource URL", ref isValid, ref status );
       if ( !isValid )
       {
         return url;
       }
 
+      //Just to be sure
+      url = url.Replace( "<", "" ).Replace( ">", "" ); 
+
       //Check for existing URL, if we care
       if ( mustBeNew )
       {
-        var test = new ResourceVersionManager().GetByUrl( url );
+        var test = ResourceBizService.ResourceVersion_GetByUrl( url );
         if ( test.Count > 0 )
         {
           var first = test.First<LRWarehouse.Business.ResourceVersion>();
-          status = "Resource already exists in IOER: <a href=\"/IOER/" + first.Id + "/" + first.SortTitle.Replace( " ", "_" ) + "\">Click Here</a>";
+          status = "Resource already exists in IOER: <a href=\"/Resource/" + first.ResourceIntId + "/" + ResourceVersion.UrlFriendlyTitle( first.SortTitle ) + "\">Click Here</a>";
           isValid = false;
           return "";
         }
@@ -81,6 +87,30 @@ namespace ILPathways.Services
         status = "Improperly formatted URL.";
         isValid = false;
         return "";
+      }
+      
+      //Check for blacklist
+      Uri uri = new Uri(url);
+      string blStatus = "successful";
+      BlacklistedHost bh = new BlacklistedHostManager().GetByHostname(uri.Host, ref blStatus);
+      if (bh != null)
+      {
+          status = "This page is suspected to be a phishing page, contain malware, or may otherwise be inappropriate.  "+
+              "Click to learn more about <a href='http://www.antiphishing.org/'>phishing</a> and <a href='http://www.stopbadware.org/'>malware</a>.";
+          isValid = false;
+          return "";
+      }
+      else
+      {
+          string reputation = UtilityManager.CheckUnsafeUrl(url);
+          if (reputation == "Blacklisted")
+          {
+              status = "This page is suspected to be a phishing page, contain malware, or may otherwise be inappropriate.  " +
+                  "Click to learn more about <a href='http://www.antiphishing.org/'>phishing</a> and <a href='http://www.stopbadware.org/'>malware</a>.  "+
+                  "Advisory provided by <a href='http://code.google.com/apis/safebrowsing/safebrowsing_faq.html#whyAdvisory'>Google</a>.";
+              isValid = false;
+              return "";
+          }
       }
 
       //Set return values
@@ -107,24 +137,16 @@ namespace ILPathways.Services
     public string ValidateText( string text, int minimumLength, string fieldTitle, ref bool isValid, ref string status )
     {
       text = FormHelper.SanitizeUserInput( text );
-      if ( text == "" )
+      text = text.Trim();
+      if ( minimumLength > 0 && text.Length < minimumLength )
       {
-        status = "Invalid value(s) detected in " + fieldTitle;
+        status = fieldTitle + " must be at least " + minimumLength + " character" + ( minimumLength == 1 ? "" : "s" ) + " long.";
         isValid = false;
         return text;
       }
       if ( BadWordChecker.CheckForBadWords( text ) )
       {
         status = "Inappropriate language detected in " + fieldTitle;
-        isValid = false;
-        return text;
-      }
-
-      text = text.Trim();
-
-      if ( text.Length < minimumLength )
-      {
-        status = fieldTitle + " must be at least " + minimumLength + " character" + ( minimumLength == 1 ? "" : "s" ) + " long.";
         isValid = false;
         return text;
       }
@@ -243,6 +265,8 @@ namespace ILPathways.Services
       try
       {
         var test = new System.Net.Mail.MailAddress( text );
+        if ( test.User.Length == 0 ) { throw new ArgumentException(); }
+        var testURI = new Uri( "http://" + test.Host, UriKind.Absolute); //Should throw an error if improperly formatted
         isValid = true;
         status = "okay";
       }
@@ -256,7 +280,8 @@ namespace ILPathways.Services
       //Check for existing email
       var testUser = new PatronManager().GetByEmail( text );
       emailAlreadyExists = ( testUser.IsValid && testUser.Id > 0 );
-
+        if (emailAlreadyExists)
+            status = "Error: Email Address already exists in system.";
       return text;
     }
 
@@ -401,52 +426,90 @@ namespace ILPathways.Services
     #endregion
 
     #region Miscellaneous
+    /// <summary>
+    /// Retrieve a Resource id using the related resource version id to retrieve the Resource record
+    /// </summary>
+    /// <param name="versionID"></param>
+    /// <returns></returns>
     public int GetIntIDFromVersionID( int versionID )
     {
-      return new ResourceManager().GetByVersion( versionID ).Id;
+        return ResourceBizService.ResourceGet_ViaVersionID( versionID ).Id;
+    }
+    /// <summary>
+    /// Retrieve resource version id using resourceIntId to retrieve the resource version record
+    /// </summary>
+    /// <param name="resourceId"></param>
+    /// <returns></returns>
+    public int GetVersionIDFromIntID( int resourceId )
+    {
+        //return new ResourceVersionManager().GetByResourceId( resourceId ).Id;
+
+        return ResourceBizService.ResourceVersion_GetByResourceId( resourceId ).Id;
     }
 
     [WebMethod]
     public string GetThumbnail( int intID, string url )
     {
-      var thumbURL = "";
-      var largeThumbURL = "";
-      var isValid = false;
-      var status = "";
-
-      //Not exposing a version of this to client-side that allows forcing the creation of thumbnails, to prevent potential spam/attacks/problems
-      GetThumbnail( intID, url, false, ref isValid, ref status, ref thumbURL, ref largeThumbURL );
-
-      //Fetch thumbnails
-      return serializer.Serialize(
-        new
-        {
-          thumbURL = thumbURL,
-          largeThumbURL = largeThumbURL,
-          isValid = isValid,
-          status = status
-        }
-      );
+      return "/OERThumbs/large/" + intID + "-large.png";
     }
-    public void GetThumbnail( int intID, string url, bool createIfNeeded, ref bool isValid, ref string status, ref string thumbURL, ref string largeThumbURL )
+
+    [WebMethod]
+    public string RegenerateThumbnail( string userGUID, int intID, string url )
     {
-      url = ValidateURL( url, false, ref isValid, ref status );
-      if ( !isValid )
+      try
       {
-        return;
+        var user = GetUserFromGUID( userGUID );
+        if ( user.IsValid )
+        {
+          if ( isUserAdmin( user ) )
+          {
+              new Thumbnailer().CreateThumbnail( intID, url, true );
+            return ImmediateReturn( true, true, "Regenerating, please wait", null );
+          }
+        }
+        return ImmediateReturn( false, false, "Invalid Access Rights", null );
       }
-      string imgUrl = ContentHelper.GetAppKeyValue( "cachedImagesUrl", "//ioer.ilsharedlearning.org/OERThumbs/" );
-
-      if ( ! new WebDALService().IsProduction() )
+      catch ( Exception ex )
       {
-        isValid = true;
-        status = "Only Production Servers should create thumbnails!";
-        thumbURL = imgUrl + "thumb/" + intID + "-thumb.png";
-        largeThumbURL = imgUrl + "large/" + intID + "-large.png";
-        return;
+        return ImmediateReturn( false, false, "Error: " + ex.Message, ex.ToString() );
+      }
+    }
+
+    /*
+    //Run in console:
+    $.ajax({
+      url: "/Services/UtilityService.asmx/RefreshElasticSearchRecords",
+      success: function(msg){ console.log(msg); },
+      type: "POST",
+      contentType: "application/json; charset=utf-8",
+      dataType: "json",
+      data: JSON.stringify({ ids: [1, 2, 3] }),
+    });
+    */
+    [WebMethod( EnableSession = true )]
+    public GenericReturn RefreshElasticSearchRecords( List<int> ids )
+    {
+      //Validate user
+      var user = ( Patron ) Session[ "user" ];
+      if ( user == null || user.Id == 0 )
+      {
+        return DoReturn( "", false, "invalid user", null );
       }
 
-      new ResourceThumbnailManager().GetThumbnail( intID, createIfNeeded, url, ref isValid, ref status, ref thumbURL, ref largeThumbURL );
+      if ( isUserAdmin( user ) )
+      {
+        try
+        {
+          new ElasticSearchManager().RefreshResources( ids );
+        }
+        catch ( Exception ex )
+        {
+          return DoReturn( ex.Message, false, "Error: " + ex.Message, ex );
+        }
+        return DoReturn( "", true, "Success", null );
+      }
+
+      return DoReturn( "", false, "invalid user", null );
     }
 
     public Patron GetUserFromGUID( string userGUID )
@@ -482,10 +545,28 @@ namespace ILPathways.Services
         }
       );
     }
+
+    public static GenericReturn DoReturn( object data, bool valid, string status, object extra )
+    {
+      return new GenericReturn()
+      {
+        data = data,
+        valid = valid,
+        status = status,
+        extra = extra
+      };
+    }
     #endregion
 
     #region subclasses
-
+    public class GenericReturn
+    {
+      protected internal GenericReturn() { }
+      public object data { get; set; }
+      public bool valid { get; set; }
+      public string status { get; set; }
+      public object extra { get; set; }
+    }
     #endregion
   }
 }

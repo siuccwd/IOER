@@ -13,6 +13,60 @@ namespace ILPathways.Account.controls {
     public partial class UserProfile2 {
         
         /// <summary>
+        /// email1 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlInputText email1;
+        
+        /// <summary>
+        /// email2 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlInputText email2;
+        
+        /// <summary>
+        /// password1 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlInputPassword password1;
+        
+        /// <summary>
+        /// password2 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlInputPassword password2;
+        
+        /// <summary>
+        /// firstName control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlInputText firstName;
+        
+        /// <summary>
+        /// lastName control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlInputText lastName;
+        
+        /// <summary>
         /// btnUpdateAccount control.
         /// </summary>
         /// <remarks>
@@ -40,6 +94,15 @@ namespace ILPathways.Account.controls {
         protected global::System.Web.UI.WebControls.Button btnUpdateAvatar;
         
         /// <summary>
+        /// lblOrg control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlInputText lblOrg;
+        
+        /// <summary>
         /// ddlPubRole control.
         /// </summary>
         /// <remarks>
@@ -49,13 +112,13 @@ namespace ILPathways.Account.controls {
         protected global::System.Web.UI.WebControls.DropDownList ddlPubRole;
         
         /// <summary>
-        /// txtUserOrganization control.
+        /// jobTitle control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtUserOrganization;
+        protected global::System.Web.UI.HtmlControls.HtmlInputText jobTitle;
         
         /// <summary>
         /// txtProfile control.
@@ -74,5 +137,32 @@ namespace ILPathways.Account.controls {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Button btnUpdateProfile;
+        
+        /// <summary>
+        /// templates control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl templates;
+        
+        /// <summary>
+        /// roleSelectTitle control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Literal roleSelectTitle;
+        
+        /// <summary>
+        /// pubRoleSql control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Literal pubRoleSql;
     }
 }

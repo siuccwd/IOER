@@ -1,0 +1,11 @@
+﻿.hintBox { background: linear-gradient(#EEE, #FAFAFA); padding: 5px; border-radius: 5px; margin: 5px; border: 1px solid #CCC; box-shadow: 0 0 15px -5px #000; color: #000; position: fixed; top: 5px; left: 50%; width: 310px; margin-left: -155px; z-index: 999999; }
+.hintBox.animated { transition: top 1s; }
+.hintBox > .header { background-color: #4AA394; color: #FFF; font-weight: bold; margin: -5px -5px 5px -5px; padding: 2px 5px; border-radius: 5px 5px 0 0; }
+.hint { border: 1px solid #DDD; padding: 5px; margin-bottom: 5px; border-radius: 5px; }
+.hint:last-child { margin-bottom: 0; }
+.hint .header { margin: -5px -6px 5px -6px; padding: 2px; background-color: #DDD; }
+.hintBox .header .hintClose { float: right; height: 18px; width: 18px; border-radius: 5px; color: #FFF; background-color: #D55; border: 1px; transition: background-color 0.2s; }
+.hintBox .header .hintClose:focus, .hintBox .header .hintClose:hover { background-color: #F00; cursor: pointer; }
+.hintBox .header .hintClose.hide { background-color: #3572B8; width: auto; padding: 0 5px; }
+.hintBox .header .hintClose.hide:focus, .hintBox .header .hintClose.hide:hover { background-color: #FF5707; cursor: pointer; }
+.hintBox .header.hintFooter { display: none; margin: 5px -6px -5px -6px; border-radius: 0 0 5px 5px; }

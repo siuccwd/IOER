@@ -7,10 +7,12 @@
   #CopyWriteDiv { font-size: 8px; text-align: center; color: #AAA; }
   #FooterDiv h3, #FooterDiv a { color: #888; }
   #FooterDiv a:hover, #FooterDiv a:focus { text-decoration: underline; }
-  #FooterDiv .footerItem { display: inline-block; vertical-align: top; width: 30%;  } 
+  #FooterDiv .footerItem { display: inline-block; vertical-align: top; width: 23%;  } 
+  #CopyWriteDiv .txtServer { display: none;  } 
 
   @media screen and (max-width: 500px) {
     #FooterDiv .footerItem { display: block; width: 100%; margin: 10px 5px; } 
+    #CopyWriteDiv .txtServer { display: inline-block; margin: 5px 10px; } 
   }
 </style>
 <div id="FooterSection">
@@ -19,23 +21,34 @@
       <h3>
         Communication</h3>
       <ul>
-        <li><a href="http://www.ilsharedlearning.org/Pages/Contact-Us.aspx">Contact Us & Media</a></li>
+        <li><a href="//ilsharedlearning.org/Pages/Contact-Us.aspx" target="isleSite">Contact Us & Media</a></li>
+        <!--<li><a href="http://oerevaluationteam.weebly.com/" target="_blank">ISBE Open Education Resource Team</a></li>-->
+        <li><a href="//ilsharedlearning.org/Pages/default.aspx" target="isleSite">Illinois Shared Learning Environment</a></li>
+        <li><a href="//ioer.ilsharedlearning.org/Pages/NationalInitiatives.aspx" target="isleSite">National Initiatives</a></li>
+				<!--<li><asp:HyperLink id="linkNewsSubscribe" navigateurl="/News/Subscribe.aspx" runat="server">Subscribe to IOER News</asp:HyperLink></li>-->
       </ul>
     </div>
     <div class="footerItem">
 			<h3>Website Policy</h3>
       <ul>
-        <li><a href="http://ilsharedlearning.org/Pages/ISLE-Privacy-Policy.aspx">Privacy Policy</a></li>
-        <li><a href="http://ilsharedlearning.org/Pages/ISLE-Terms-of-Use.aspx">Terms of Use</a></li>
+        <li><a href="//ilsharedlearning.org/Pages/ISLE-Privacy-Policy.aspx" target="isleSite">Privacy Policy</a></li>
+        <li><a href="//ilsharedlearning.org/Pages/ISLE-Terms-of-Use.aspx" target="isleSite">Terms of Use</a></li>
       </ul>
 		</div>
 
 		<div class="footerItem">
-			<h3>Communications Center</h3>
+			<h3>Widgets</h3>
 			<ul>
-				<li><asp:HyperLink id="linkNews" navigateurl="/News/Default.aspx" runat="server">IOER News</asp:HyperLink></li>
-				<!--<li><asp:HyperLink id="linkNewsSubscribe" navigateurl="/News/Subscribe.aspx" runat="server">Subscribe to IOER News</asp:HyperLink></li>-->
-
+        <li><a href="/widgets">Configure IOER Widgets for your Site</a></li>
+        <li><a href="/Pages/SamplePage.aspx">Widgets Sample Page</a></li>
+        
+			</ul>
+		</div>
+		<div class="footerItem">
+			<h3>Developers</h3>
+			<ul>
+                <li><a href="http://ilsharedlearning.org/DevDoc/SitePages/Home.aspx" target="_blank">Developer Documentation</a></li>
+        
 			</ul>
 		</div>
 	</div>
@@ -44,6 +57,7 @@
 	
 	<p>Copyright &copy; 2012 - <%= thisYear %> Illinois Department of Commerce and Economic Opportunity</p>
 	<p><asp:label ID="eo_Statement" runat="server"></asp:label></p>	
+    <p><asp:label ID="txtServer" CssClass="txtServer" runat="server"></asp:label></p>	
 </div>
 
 <script>

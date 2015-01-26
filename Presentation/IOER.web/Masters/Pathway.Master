@@ -1,13 +1,20 @@
 ﻿<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="Pathway.master.cs" Inherits="ILPathways.Masters.Pathway" %>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<%@ Register TagPrefix="uc1" TagName="hdr" Src="/Controls/Includes/Header6.ascx" %>
+<%@ Register TagPrefix="uc1" TagName="hdr" Src="/Controls/Includes/Header7.ascx" %>
 <%@ Register TagPrefix="uc1" TagName="systemMessageLine" Src="/Controls/Includes/SystemMessageLine.ascx" %>
 <%@ Register TagPrefix="cc1" TagName="footer" Src="/Controls/Includes/footer3.ascx" %>
 
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:fb="http://ogp.me/ns/fb#">
 <head id="Head1" runat="server">
 <title></title>
+
+<script type="text/javascript">
+    //kludge for IE9
+    if (window.console === undefined) {
+        console = { log: function () { } };
+    }
+    </script>
 <%--<link href="/Styles/common.css" rel="Stylesheet" type="text/css" />--%>
 <link href="/Styles/CustomControls.css" rel="stylesheet" type="text/css" />
 <link href="/Styles/Tabs.css" rel="stylesheet" type="text/css" />

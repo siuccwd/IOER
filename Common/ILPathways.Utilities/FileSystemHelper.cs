@@ -6,7 +6,6 @@ using System.Text;
 using System.Web;
 using Scripting;
 
-//using workNet.DAL;
 using ILPathways.Business;
 
 namespace ILPathways.Utilities
@@ -25,6 +24,17 @@ namespace ILPathways.Utilities
             return HandleDocumentCaching( targetFolder, document, overwritingFile );
         } //
 
+        public static string HandleImageCaching( string targetFolder, IDocument document)
+        {
+            bool overwritingFile = false;
+            return HandleDocumentCaching( targetFolder, document, overwritingFile );
+        } //
+        public static string HandleImageCaching( string targetFolder, IDocument document, bool overwritingFile )
+        {
+            //bool overwritingFile = false;
+            return HandleDocumentCaching( targetFolder, document, overwritingFile );
+        } //
+
 		/// <summary>
 		/// Handle document caching. Check if file exists, if not cache the document
 		/// </summary>
@@ -34,10 +44,36 @@ namespace ILPathways.Utilities
         public static string HandleDocumentCaching( string targetFolder, IDocument document, bool overwritingFile )
 		{
 			string message = "";
-
-			string destFile = targetFolder + "\\" + document.FileName;
+            string destFile = "";
+            if ( document == null || document.FileName == null || document.FileName.Trim().Length == 0 )
+            {
+                message = "Error - an invalid or incomplete document was encountered.";
+                return message;
+            }
+           
 			try
 			{
+                if ( targetFolder == null || targetFolder.Trim().Length == 0 )
+                {
+                    //just in case, use default and report
+                    targetFolder = UtilityManager.GetAppKeyValue( "path.ContentOutputPath", "C:\\" );
+
+                    LoggingHelper.LogError( string.Format( thisClassName + ".HandleDocumentCaching() - targetFolder not provided, using path.ContentOutputPath. RowId: {0}, FileName: {1}", document.RowId, document.FileName ), true );
+                }
+                //check if target contains file name
+                if ( targetFolder.ToLower().IndexOf( document.FileName.ToLower() ) > -1 )
+                {
+                    destFile = targetFolder;
+                }
+                else
+                {
+                    if ( targetFolder.Trim().EndsWith( "\\" ) == false )
+                    {
+                        targetFolder = targetFolder.Trim() + "\\";
+                    }
+                    destFile = targetFolder + document.FileName;
+                }
+
 				if ( System.IO.File.Exists( destFile ) )
 				{
 					//may want to return path for display in a link?
@@ -54,7 +90,7 @@ namespace ILPathways.Utilities
 				{
 					//ensure directory structure exists
 					CreateDirectory( targetFolder );
-
+                    
 					//download
 					byte[] buffer = document.ResourceData;
 					using ( FileStream fs = new FileStream( destFile, FileMode.Create ) )
@@ -73,52 +109,77 @@ namespace ILPathways.Utilities
 			return message;
 		}//
 
-		/// <summary>
-		/// Handle document caching. Check if file exists, if not retrieve and cache
-		/// </summary>
-		/// <param name="path"></param>
-		/// <param name="fileName"></param>
-		/// <param name="fileUrl"></param>
-		/// <param name="docRowId"></param>
-		/// <returns></returns>
-        public static string HandleDocumentCaching( string path, string fileName, string fileUrl, string docRowId )
-		{
-			string url = "";
-			try
-			{
-				if ( DoesFileExist( path, fileName ) )
-				{
-					url = fileUrl + fileName;
-				} else
-				{
 
-                    //DocumentVersion doc = DocumentStoreManager.Get( docRowId );
-                    ////ensure direc structure exists
-                    //CreateDirectory( path );
-                    //string destFile = path + "\\" + doc.FileName;
-                    ////download
-                    //byte[] buffer = doc.ResourceData;
-                    //using ( FileStream fs = new FileStream( destFile, FileMode.Create ) )
-                    //{
-                    //    fs.Write( buffer, 0, buffer.Length );
-                    //}
+        /// <summary>
+        /// Set a filepath from a url
+        /// </summary>
+        /// <param name="url"></param>
+        /// <param name="fileName"></param>
+        /// <returns></returns>
+        public static string SetFilePathFromUrl( string url, string fileName )
+        {
+            if ( url == null || url.Trim().Length < 5 )
+                return "";
 
-                    //url = fileUrl + doc.FileName;
-                    //if ( doc.URL.Length == 0 )
-                    //{
-                    //    //update url
-                    //    doc.URL = url;
-                    //    DocumentStoreManager.Update( doc );
-                    //}
-				}
-			} catch ( Exception ex )
-			{
-				LoggingHelper.LogError( ex, thisClassName + ".HandleDocumentCaching(" + path + ")" );
-				url = "";
-			}
+            string documentFolder = "";
+            string baseUrl = UtilityManager.GetAppKeyValue( "path.ContentOutputUrl", "/Content/" );
+            string basePath = UtilityManager.GetAppKeyValue( "path.ContentOutputPath" );
 
-			return url;
-		} //
+            //the base url should be in the url
+            int start = url.ToLower().IndexOf( baseUrl.ToLower() );
+            if ( start > -1 )
+            {
+                documentFolder = basePath + url.Substring( start + baseUrl.Length );
+                documentFolder = documentFolder.Replace( "/", "\\" );
+                //extract filename
+                int pos = documentFolder.ToLower().IndexOf( fileName.ToLower() );
+                if ( pos > -1 )
+                {
+                    documentFolder = documentFolder.Substring( 0, pos - 1 );
+                }
+
+            }
+            else
+            {
+                //if not, then a problem
+            }
+
+            return documentFolder;
+        }//
+
+        /// <summary>
+        /// Delete file from server
+        /// </summary>
+        /// <param name="targetFolder"></param>
+        /// <param name="document"></param>
+        /// <returns></returns>
+        public static bool DeleteDocumentFromServer( string targetFolder, IDocument document )
+        {
+            bool isSuccessful = false;
+            string message = "";
+
+            string destFile = targetFolder + "\\" + document.FileName;
+            try
+            {
+                if ( System.IO.File.Exists( destFile ) )
+                {
+                    System.IO.File.Delete( destFile );
+                    isSuccessful = true;
+                }
+                else
+                {
+                    isSuccessful = true;
+                }
+
+            }
+            catch ( Exception ex )
+            {
+                LoggingHelper.LogError( ex, thisClassName + ".DeleteDocumentFromServer() - Unexpected error encountered while deleting document:<br/>" + ex.Message );
+
+                message = thisClassName + ".DeleteDocumentFromServer() - Unexpected error encountered. You could try closing the form and then try again. System Administration has been notified)<br/>" + ex.ToString();
+            }
+            return isSuccessful;
+        }
 		#endregion 
 
 		#region export methods
@@ -232,6 +293,9 @@ namespace ILPathways.Utilities
 		/// <returns></returns>
 		public static bool DoesPathExist( string path )
 		{
+            if ( path == null )
+                return false;
+
 			try
 			{
 				if ( Directory.Exists( path ) )
@@ -255,6 +319,9 @@ namespace ILPathways.Utilities
 		/// <param name="fileName"></param>
 		public static bool DoesFileExist( string documentFolder, string fileName )
 		{
+            if ( documentFolder == null || fileName == null )
+                return false;
+
 			string destFile = documentFolder + "\\" + fileName;
 			try
 			{

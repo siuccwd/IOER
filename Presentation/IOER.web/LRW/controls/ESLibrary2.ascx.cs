@@ -5,9 +5,8 @@ using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-
-
 using System.Web.Script.Serialization;
+
 using Isle.BizServices;
 using ILPathways.Library;
 using ILPathways.Business;
@@ -25,6 +24,7 @@ namespace ILPathways.LRW.controls
     {
         public string libInfoString { get; set; }
         public string userGUID { get; set; }
+        public string proxyId { get; set; }
         public int libraryID { get; set; }
         public string linkedCollectionID { get; set; }
         public string libraryGuid { get; set; }
@@ -50,12 +50,11 @@ namespace ILPathways.LRW.controls
         /// <returns></returns>
         public Services.ESLibrary2Service.LibraryData GetLibrary()
         {
-            if ( IsTestEnv() )
-            {
-                LoggingHelper.DoTrace( "ESLibrary2.GetLibrary()" );
-            }
+
           //Attempt to get the user
           userGUID = IsUserAuthenticated() ? WebUser.RowId.ToString() : "";
+
+          proxyId = IsUserAuthenticated() ? WebUser.ProxyId : "0";
           libraryID = 0;
           //If available, get the preselected Collection ID
           //It will be used in the ESLibrary.js file
@@ -66,46 +65,44 @@ namespace ILPathways.LRW.controls
           {
               return GetMyLibrary();
           }
-          else if ( Page.RouteData.Values.Count > 0 
-              && Page.RouteData.Values.ContainsKey( "libID" ) )
+
+          libraryID = FormHelper.GetRouteKeyValue( Page, "libID", 0 );
+          if ( libraryID > 0 )
+              return GetLibrary( libraryID );
+          else
           {
-              libraryID = int.Parse( Page.RouteData.Values[ "libID" ].ToString() );
-              if (libraryID > 0)
-                return GetLibrary( libraryID );
-          }
-          else //User wants another Library, regardless of logged in status
-          {
-            try
-            {
-              libraryID = int.Parse( Request.Params[ "id" ] );
+              libraryID = GetRequestKeyValue( "id", 0 );
               if ( libraryID > 0 )
                   return GetLibrary( libraryID );
-
-              //var data = new Services.ESLibrary2Service().GetAllLibraryData( userGUID, libraryID );
-              //settingsPanel.Visible = data.isMyLibrary || data.hasEditAccess;
-              //settingsTab.Visible = data.isMyLibrary || data.hasEditAccess;
-              //addResourcesPanel.Visible = data.isMyLibrary || data.hasEditAccess;
-              //addTab.Visible = data.isMyLibrary || data.hasEditAccess;
-
-              ////Read code tables for access levels
-              //if ( data.hasEditAccess )
-              //{
-              //  SetupDDLs();
-              //}
-
-              //return data;
-            }
-            catch ( UnauthorizedAccessException ex )
-            {
-              PrintError( ex.Message );
-              return null;
-            }
-            catch ( Exception ex )
-            {
-              PrintError( "Sorry, that is an invalid Library ID." );
-              return null;
-            }
           }
+
+
+          // if ( Page.RouteData.Values.Count > 0 
+          //    && Page.RouteData.Values.ContainsKey( "libID" ) )
+          //{
+          //    libraryID = int.Parse( Page.RouteData.Values[ "libID" ].ToString() );
+          //    if (libraryID > 0)
+          //      return GetLibrary( libraryID );
+          //}
+          //else //User wants another Library, regardless of logged in status
+          //{
+          //  try
+          //  {
+          //    libraryID = GetRequestKeyValue("id",0);
+          //    if ( libraryID > 0 )
+          //        return GetLibrary( libraryID );
+          //  }
+          //  catch ( UnauthorizedAccessException ex )
+          //  {
+          //    PrintError( ex.Message );
+          //    return null;
+          //  }
+          //  catch ( Exception ex )
+          //  {
+          //    PrintError( "Sorry, that is an invalid Library ID." );
+          //    return null;
+          //  }
+          //}
           //at this point, a library was not found
           if (linkedCollectionID == "0")
             PrintError( "Sorry, a valid Library ID has not been provided." );
@@ -119,17 +116,19 @@ namespace ILPathways.LRW.controls
         /// <returns></returns>
         private string GetCollectionId()
         {
+            int colId = GetRequestKeyValue( "col", 0 );
+            //string colId = Request.Params[ "col" ] == null ? "0" : Request.Params[ "col" ];
 
-            string colId = Request.Params[ "col" ] == null ? "0" : Request.Params[ "col" ];
+            colId = FormHelper.GetRouteKeyValue( Page, "colID", 0 );
 
-            if ( Page.RouteData.Values.Count > 0
-             && Page.RouteData.Values.ContainsKey( "colID" ) )
-            {
-                colId = Page.RouteData.Values[ "colID" ].ToString();
+            //if ( Page.RouteData.Values.Count > 0
+            // && Page.RouteData.Values.ContainsKey( "colID" ) )
+            //{
+            //    colId = Page.RouteData.Values[ "colID" ].ToString();
 
-            }
+            //}
 
-            return colId;
+            return colId.ToString();
         }
 
         private Services.ESLibrary2Service.LibraryData GetMyLibrary()
@@ -139,23 +138,58 @@ namespace ILPathways.LRW.controls
                 PrintError( "Please Login to access your Library." );
                 return null;
             }
-            else //Is logged in
+
+            var user = ( LRWarehouse.Business.Patron )WebUser;
+            //It's probably better to replace the next line with one that gets the user's current Library ID (and use that in the GetAllLibraryData method), but that ID seems to always be 0)
+            var library = new Isle.BizServices.LibraryBizService().GetMyLibrary( user );
+            if ( !library.IsValid || library.Id == 0 ) //User doesn't have a library yet
             {
-                var user = ( LRWarehouse.Business.Patron )WebUser;
-                //It's probably better to replace the next line with one that gets the user's current Library ID (and use that in the GetAllLibraryData method), but that ID seems to always be 0
-                var library = new Isle.BizServices.LibraryBizService().GetMyLibrary( user );
-                if ( !library.IsValid || library.Id == 0 ) //User doesn't have a library yet
+                if ( FormHelper.GetRequestKeyValue( "action" ) == "autoCreate" )
+                {
+                    string statusMessage = "";
+                    new LibraryBizService().CreateDefaultLibrary( user, ref statusMessage );
+                    Response.Redirect( "/My/Library", true );
+                }
+                else
                 {
                     PrepareNewLibrary();
 
                     return null;
                 }
-                var data = new Services.ESLibrary2Service().GetAllLibraryData( user, library );
-                libraryID = library.Id;
+            }
+            var data = new Services.ESLibrary2Service().GetAllLibraryData( user, library );
+            libraryID = library.Id;
+            settingsPanel.Visible = data.isMyLibrary || data.hasEditAccess;
+            settingsTab.Visible = data.isMyLibrary || data.hasEditAccess;
+            addResourcesPanel.Visible = data.isMyLibrary || data.hasEditAccess;
+            addTab.Visible = data.isMyLibrary || data.hasEditAccess;
+            joinLibraryPanel.Visible = !data.isMyLibrary;
+
+            joinTab.Visible = !data.isMyLibrary && data.allowJoinRequest;
+
+            //Read code tables for access levels
+            if ( data.hasEditAccess )
+            {
+                SetupDDLs();
+            }
+
+            return data;
+            
+
+        } ///
+
+        private Services.ESLibrary2Service.LibraryData GetLibrary( int libId )
+        {
+            try
+            {
+                var data = new Services.ESLibrary2Service().GetAllLibraryData( userGUID, libId );
                 settingsPanel.Visible = data.isMyLibrary || data.hasEditAccess;
                 settingsTab.Visible = data.isMyLibrary || data.hasEditAccess;
                 addResourcesPanel.Visible = data.isMyLibrary || data.hasEditAccess;
                 addTab.Visible = data.isMyLibrary || data.hasEditAccess;
+                joinLibraryPanel.Visible = !data.isMyLibrary;
+
+                joinTab.Visible = !data.isMyLibrary && data.allowJoinRequest;
 
                 //Read code tables for access levels
                 if ( data.hasEditAccess )
@@ -165,23 +199,14 @@ namespace ILPathways.LRW.controls
 
                 return data;
             }
-
-        }
-        private Services.ESLibrary2Service.LibraryData GetLibrary( int libId )
-        {
-            var data = new Services.ESLibrary2Service().GetAllLibraryData( userGUID, libId );
-            settingsPanel.Visible = data.isMyLibrary || data.hasEditAccess;
-            settingsTab.Visible = data.isMyLibrary || data.hasEditAccess;
-            addResourcesPanel.Visible = data.isMyLibrary || data.hasEditAccess;
-            addTab.Visible = data.isMyLibrary || data.hasEditAccess;
-
-            //Read code tables for access levels
-            if ( data.hasEditAccess )
+            catch ( UnauthorizedAccessException uaex )
             {
-                SetupDDLs();
+                SetConsoleErrorMessage( "You do not have access this library" );
+                libraryStuff.Visible = false;
+                searchControl.Visible = false;
+                var errData = new Services.ESLibrary2Service.LibraryData();
+                return errData;
             }
-
-            return data;
         }
 
         public void SetupDDLs()
@@ -262,10 +287,7 @@ namespace ILPathways.LRW.controls
                   library.PublicAccessLevel = ( EObjectAccessLevel ) Int32.Parse( ddlPublicAccessLevel.SelectedValue );
               else
                   library.PublicAccessLevel = EObjectAccessLevel.ReadOnly;
-              if ( library.PublicAccessLevel > 0 )
-                  library.IsPublic = true;
-              else
-                  library.IsPublic = false;
+              
 
               if ( ddlOrgAccessLevel.SelectedIndex >= 0 )
                   library.OrgAccessLevel = ( EObjectAccessLevel ) Int32.Parse( ddlOrgAccessLevel.SelectedValue );
@@ -335,6 +357,17 @@ namespace ILPathways.LRW.controls
             public List<int> gradeLevel;
             public List<int> resourceType;
             public List<int> mediaType;
+        }
+
+        protected void quickLibrary_Click( object sender, EventArgs e )
+        {
+            if ( IsUserAuthenticated() )
+            {
+                string statusMessage = "";
+                new LibraryBizService().CreateDefaultLibrary( WebUser, ref statusMessage );
+                SetConsoleSuccessMessage( libraryCreateMsg.Text );
+                Response.Redirect( "/My/Library" );
+            }
         }
 
     }

@@ -19,6 +19,8 @@ namespace ILPathways.Business
 		public Organization() 
         {
             OrgMembers = new List<OrganizationMember>();
+            IsIsleMember = false;
+            ExternalIdentifier = "";
         }
 
         #region Properties for Organization
@@ -44,29 +46,16 @@ namespace ILPathways.Business
         }
         public string OrgType { get; set; }
 
-        private string _externalIdentifier = "";
+        /// <summary>
+        /// Gets/Sets IsIsleMember
+        /// </summary>
+        public bool IsIsleMember { get; set; }
+
         /// <summary>
         /// Gets/Sets ExternalIdentifier
         /// </summary>
-        public string ExternalIdentifier
-        {
-            get
-            {
-                return this._externalIdentifier;
-            }
-            set
-            {
-                if ( this._externalIdentifier == value )
-                {
-                    //Ignore set
-                }
-                else
-                {
-                    this._externalIdentifier = value.Trim();
-                    HasChanged = true;
-                }
-            }
-        }
+        public string ExternalIdentifier { get; set; }
+       
         #endregion
 
         #region behaviours

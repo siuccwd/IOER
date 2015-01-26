@@ -13,6 +13,7 @@
     collection: "/images/icons/icon_library_med.png",
     communityposting: "/images/icons/icon_community_med.png",
     like: "/images/icons/icon_likes_med.png",
+    evaluation: "/images/icons/icon_ratings_med.png",
     following: "/images/icons/icon_click-throughs_med.png"
   };
 
@@ -23,6 +24,8 @@
     if(search.length > 0){
       show(search.split("=")[1]);
     }
+
+    showTab("message", $(".contributeTabs a").first()[0]);
 
     //Fix for Safari/mobile
     if (navigator.userAgent.indexOf("5.1.7 Safari") > -1 || navigator.userAgent.indexOf("5.0 Safari") > -1 || navigator.userAgent.indexOf("4.0 Mobile Safari") > -1) {
@@ -126,11 +129,13 @@
       .replace(/{item}/g, data.actionTitle)
       .replace(/{action}/g, data.actionType)
       .replace(/{actor}/g, data.actor.title)
+        .replace(/{userId}/g, data.actor.id)
       .replace(/{locationType}/g, data.location.type)
       .replace(/{location}/g, data.location.title)
       .replace(/{date}/g, data.date)
       .replace(/{details}/g, getDetails(data))
       .replace(/{locationImage}/g, data.location.thumbnail)
+        .replace(/{extraClass}/g, data.location.extraClass)
       .replace(/{link}/g, data.location.link)
       .replace(/{actorAvatar}/g, data.actor.thumbnail);
     }
@@ -152,6 +157,19 @@
       return $("#template_comment").html()
         .replace(/{description}/g, data.item.description)
         .replace(/{link}/g, data.item.link);
+    }
+    else if (data.item.type == "evaluation") {
+        //Do evaluation
+        return $("#template_evaluation").html()
+            .replace(/{location}/g, data.location.title)
+            .replace(/{location_description}/g, data.location.description)
+            .replace(/{title}/g, data.item.title)
+            .replace(/{description}/g, data.item.description)
+            .replace(/{thumb}/g, data.item.thumbnail)
+            .replace(/{link}/g, data.item.link)
+            .replace(/{id}/g, data.item.id)
+            .replace(/{likes}/g, data.likes)
+            .replace(/{dislikes}/g, data.dislikes);
     }
     else if (data.item.type == "communityposting") {
         //Do posting
@@ -183,17 +201,18 @@
       }
   }
 
-  //Like something
+    //Like something
+    //Warning used for multiple purposes
   function like(button, type, id){
     if(userGUID == ""){
       alert("Please login to Like!");
       return;
     }
 
-    doAjax("Like", { userGUID: userGUID, type: type, id: id }, successLike, $(button));
+    doDalAjax("Like", { userGUID: userGUID, type: type, id: id }, successLike, $(button));
   }
 
-  function doAjax(method, data, success, button){
+  function doDalAjax(method, data, success, button){
     $.ajax({
       url: "/Services/WebDALService.asmx/" + method,
       async: true,
@@ -274,28 +293,113 @@
   }
 </script>
 
+<script>
+  //Page functions
+    function postMessage(button) {
+    
+        var communityID = parseInt($(".communitiesList option:selected").val());
+        if (communityID == 0) {
+            $("#commentSubmitResult").html("You must select a community before posting a message!");
+            return;
+        }
+        var val = $("#txtComment").val();
+        if (val.length > 0) {
+            doAjax("PostMessageFromTimeline", { userGUID: userGUID, communityID: communityID, parentID: 0, text: val, isMyTimeline: (window.location.href.indexOf("my") > -1) }, successPostMessage, $(button));
+        }
+        else {
+          $("#commentSubmitResult").html("You cannot post an empty message!");
+        }
+      }
+
+  function showTab(target, tab){
+    $(".contributeTabs a").removeClass("selected");
+    $(tab).addClass("selected");
+    $(".contributeTab").hide();
+    $(".contributeTab[data-tabID=" + target + "]").show();
+  }
+
+  //AJAX stuff
+  function doAjax(method, data, success, button) {
+    disableButton(button);
+    $.ajax({
+      url: "/Services/CommunityService.asmx/" + method,
+      async: true,
+      success: function (msg) {
+        try {
+          success($.parseJSON(msg.d));
+        }
+        catch (e) {
+          success(msg.d);
+        }
+        enableButton(button);
+      },
+      type: "POST",
+      data: JSON.stringify(data),
+      dataType: "json",
+      contentType: "application/json; charset=utf-8"
+    });
+  }
+
+  function disableButton(button) {
+    if(button == null){ return; }
+    button.attr("originalVal", button.attr("value"));
+    button.attr("value", "...");
+    button.attr("disabled", "disabled");
+  }
+  function enableButton(button) {
+    if(button == null){ return; }
+    button.attr("value", button.attr("originalVal"));
+    button.removeAttr("disabled");
+  }
+
+  function successPostMessage(data) {
+    if (data.isValid) {
+      ranges = data.data;
+      $("#commentSubmitResult").html("Posted!");
+      $("#txtComment").val("");
+      renderRanges(true);
+      $("#commentSubmitResult").val("");
+    }
+    else {
+      $("#commentSubmitResult").html(data.status);
+    }
+  }
+
+</script>
+
 <style type="text/css">
   /* Big Stuff */
-  * { box-sizing: border-box; }
+  * { box-sizing: border-box; -moz-box-sizing: border-box; -webkit-box-sizing: border-box; }
   #content { transition: padding 1s; -webkit-transition: padding 1s; min-width: 300px; }
-
+  .sectionBox { padding: 10px; text-align: center; border-radius: 5px; margin: 0 auto 25px auto; max-width: 500px;  }
   /* Top Box */
-  #topBox { background-color: #EEE; padding: 5px; text-align: center; margin: 5px 5px 20px 5px; border-radius: 5px; margin: 0 auto; max-width: 1000px; margin-bottom: 25px; }
+  #topBox { background-color: #EEE; padding: 10px; text-align: center; border-radius: 5px; margin: 0 auto 25px auto; max-width: 1000px; border-top: 1px solid #4AA394; }
   #topBox #filtering a { display: inline-block; vertical-align: top; background-color: #3572B8; color: #FFF; text-align: center; padding: 5px; }
   #topBox #filtering a:first-child { border-radius: 5px 0 0 5px; }
   #topBox #filtering a:last-child { border-radius: 0 5px 5px 0; }
   #topBox #filtering a:hover, #topBox #filtering a:focus { background-color: #FF5707; }
   /* Contribute */
-  #topBox #contribute { text-align: center; width: 80%; margin: 5px auto; }
-  #topBox #contribute .contributeLabel { display: inline-block; width: 32%; padding: 5px; color: #FFF; }
-  #topBox #contribute #txtComment { width: 100%; resize: none; height: 4em; border: 1px solid #4AA394; }
-  #topBox #contribute span.contributeLabel { background-color: #4AA394; border-top-left-radius: 5px; }
-  #topBox #contribute a.contributeLabel { background-color: #3572B8; }
-  #topBox #contribute a.rounded { border-top-right-radius: 5px; }
-  #topBox #contribute a.contributeLabel:hover, #topBox #contribute a.contributeLabel:focus, #topBox #contribute #btnSubmit:hover, #topBox #contribute #btnSubmit:focus { background-color: #FF5707; cursor: pointer; }
-  #topBox #contribute #commentSubmitResult { display: inline-block; width: 78%; vertical-align: top; min-height: 1.2em; text-align: right; }
-  #topBox #contribute #btnSubmit { width: 20%; background-color: #4AA394; color: #FFF; display: inline-block; vertical-align: top; border-radius: 5px; }
+  #topBox .contribute { text-align: center; }
+  #topBox .contribute .contributeLabel { display: inline-block; width: 32%; padding: 5px; color: #FFF; }
+  #topBox .contribute #txtComment { width: 100%; resize: none; height: 4em; border: 1px solid #4AA394; }
+  #topBox .contribute span.contributeLabel { background-color: #4AA394; border-top-left-radius: 5px; }
+  #topBox .contribute a.contributeLabel { background-color: #3572B8; }
+  #topBox .contribute a.rounded { border-top-right-radius: 5px; }
+  #topBox .contribute a.contributeLabel:hover, #topBox .contribute a.contributeLabel:focus, #topBox .contribute #btnSubmit:hover, #topBox .contribute #btnSubmit:focus { background-color: #FF5707; cursor: pointer; }
+  #topBox .contribute #commentSubmitResult { display: inline-block; width: 78%; vertical-align: top; min-height: 1.2em; text-align: right; }
+  #topBox .contribute #btnSubmit { width: 20%; background-color: #4AA394; color: #FFF; display: inline-block; vertical-align: top; border-radius: 5px; }
 
+  .contributeTab { margin-bottom: 10px; }
+  .contributeTabs { margin: 0 auto; max-width: 1000px; padding-left: 5px; }
+  .contributeTabs a { display: inline-block; padding: 2px 5px; background-color: #3572B8; color: #FFF; border-radius: 5px 5px 0 0; }
+  .contributeTabs a.selected { background-color: #4AA394; }
+  .contributeTabs a:hover, .contributeTabs a:focus { background-color: #FF5707; }
+
+  .wayToContribute { display: inline-block; vertical-align: top; width: 24%; position: relative; padding-left: 15px; margin-bottom: 5px; min-width: 100px; }
+  .wayToContribute h4 { border-radius: 5px; background-color: #4AA394; color: #FFF; padding: 2px 5px 2px 20px; }
+  .wayToContribute img { position: absolute; top: 0; left: 0px; border-radius: 50%; background-color: #4AA394; }
+  .wayToContribute p { padding-left: 15px; text-align: left; }
+  .wayToContribute a { display: block; font-weight: bold; text-align: right; }
 
   /* Ranges */
   .range { margin-bottom: 30px; max-width: 1200px; margin: 0 auto 50px auto; }
@@ -392,6 +496,9 @@
   p.replacementButton { width: 75px; display: inline-block; text-align: center; color: #555; font-style: italic; height: 23px; line-height: 23px; margin: 0; }
   .locationType { font-style: italic; text-transform: capitalize; color: #555; }
 
+    .event .basics a.hideSection { display: none; }
+
+
   /* Responsive */
   @media screen and (min-width: 980px) {
     #content { padding-left: 50px; }
@@ -426,7 +533,7 @@
     .event[data-type=collection] .basics a div, 
     .event[data-type=comment] .basics a div 
     { display: block; width: 100%; }
-
+    .wayToContribute { width: 49%; }
     
   }
   @media screen and (max-width: 500px) {
@@ -437,16 +544,48 @@
   }
 </style>
 <div id="content">
-  <h1 class="isleH1">ISLE OER Activity Feed</h1>
+  <h1 class="isleH1"><asp:literal ID="pageHeading" runat="server">IOER Timeline</asp:literal></h1>
+
+  <div id="contributeTabs" class="contributeTabs" runat="server">
+    <a href="#" onclick="showTab('message', this); return false;">Post a Message</a>
+    <a href="#" onclick="showTab('contribute', this); return false;">Contribute a Resource</a>
+  </div>
   <div id="topBox">
-    <!--<div id="contribute">
-      <span class="contributeLabel">Post a Message</span>
-      <a class="contributeLabel" href="/Contribute/?mode=upload">Contribute a File</a>
-      <a class="contributeLabel rounded" href="/Contribute/?mode=tag">Contribute a Link</a>
-      <textarea id="txtComment"></textarea>
-      <p id="commentSubmitResult"></p>
-      <input id="btnSubmit" type="button" onclick="return false;" value="Post" />
-    </div>-->
+    <div id="contribute" runat="server" class="contribute">
+      <div class="grayBox contributeTab" data-tabID="message">
+          <asp:DropDownList ID="communitiesList" CssClass="communitiesList" runat="server" ></asp:DropDownList>
+        <textarea id="txtComment"></textarea>
+        <p id="commentSubmitResult"></p>
+        <input id="btnSubmit" type="button" onclick="postMessage(this); return false;" value="Post" />
+      </div>
+      <div class="grayBox contributeTab" data-tabID="contribute">
+        <div class="wayToContribute" data-id="quickTag">
+          <img src="/images/icons/icon_swirl_bg.png">
+          <h4>Quick Tag</h4>
+          <p>Submit a webpage or a file that is already hosted online, tag it with basic information, and enhance your tags later.</p>
+          <a href="/Contribute/?mode=tag">Tag Now &rarr;</a>
+        </div>
+        <div class="wayToContribute" data-id="quickUpload">
+          <img src="/images/icons/icon_upload_bg.png">
+          <h4>Quick Upload</h4>
+          <p>Upload a file, tag it with basic information, and enhance your tags later.</p>
+          <a href="/Contribute/?mode=upload">Upload Now &rarr;</a>
+        </div>
+        <div class="wayToContribute" data-id="author">
+          <img src="/images/icons/icon_create_bg.png">
+          <h4>Create a New Resource</h4>
+          <p>Easily create a simple webpage and attach multiple files to it with this tool.</p>
+          <a href="/My/Author">Go to Authoring Tool &rarr;</a>
+        </div>
+        <div class="wayToContribute" data-id="publisher">
+          <img src="/images/icons/icon_tag_bg.png">
+          <h4>Tag an Online Resource</h4>
+          <p>Want to thoroughly tag a website or a file that's already hosted online? Start here.</p>
+          <a href="/Publish.aspx">Go to Tagging Tool &rarr;</a>
+        </div>
+      </div>
+    </div>
+
     <div id="filtering">
       <a href="#" onclick="show('all'); return false;">Show All Activity</a>
       <!--<a href="#" onclick="show('news'); return false;">IOER News Updates</a>-->
@@ -457,6 +596,16 @@
       <a href="#" onclick="show('like'); return false;">Likes</a>
     </div>
   </div>
+    <div runat="server" id="ioerTimelineMessage" class="sectionBox" visible="false">
+        <h2>Recent activity for the IOER site</h2>
+    </div>
+    <div runat="server" id="myTimelineMessage" class="sectionBox" visible="false">
+        <h3>Recent activity for the people and libraries that you are following</h3>
+    </div>
+    <div runat="server" id="orgTimelineMessage" class="sectionBox" visible="false">
+        <h3>Recent Activity for this Organization</h3>
+    </div>
+
   <div id="timeline"></div>
   <div id="nothing">No recent activity.</div>
 
@@ -472,7 +621,7 @@
         <div class="narrowDetails">
           <h2>{actor}</h2>
           <p>{action} a {item} </p>
-          <a href="{link}" target="_blank" class="locationThumbnail">
+          <a href="{link}" target="tmlLink" class="locationThumbnail">
             <img src="{locationImage}" />
             <div>{location}</div>
           </a>
@@ -483,10 +632,9 @@
       <div class="event" data-type="{type}">
         <img src="{icon}" class="icon" />
         <div class="basics">
-          
-          <h2><img class="actorAvatar" src="{actorAvatar}" /> {actor}</h2>
+          <h2><a href="/Profile/{userId}/{actor}" target="tmlLink" ><img class="actorAvatar" src="{actorAvatar}" /> {actor}</a></h2>
           <p>{item}</p>
-          <a href="{link}" target="_blank" class="locationThumbnail">
+          <a href="{link}" target="tmlLink" class="locationThumbnail {extraClass}">
             <img src="{locationImage}" />
             <div><span class="locationType">{locationType}</span><br />{location}</div>
           </a>
@@ -496,7 +644,7 @@
       </div>
     </div>
     <div id="template_news">
-      <h2><a href="{link}" target="_blank">{title}</a></h2>
+      <h2><a href="{link}" target="tmlLink">{title}</a></h2>
       <p>{description}</p>
     </div>
     <div id="template_comment">
@@ -506,9 +654,9 @@
       <p>{description}</p>
     </div>
     <div id="template_resource">
-      <h2><a href="{link}" target="_blank">{title}</a></h2>
+      <h2><a href="{link}" target="tmlLink">{title}</a></h2>
       <div class="boxWithThumb">
-        <a href="{link}" target="_blank" class="thumb"><img src="{thumb}" /></a>
+        <a href="{link}" target="tmlLink" class="thumb"><img src="{thumb}" /></a>
         <p>{description}</p>
         <div class="shareLike">
           <div class="share">Share: <input type="text" onclick="this.select()" readonly="readonly" value="http://ioer.ilsharedlearning.org{link}" /></div>
@@ -524,10 +672,29 @@
         </div>
       </div>
     </div>
+      <div id="template_evaluation">
+          <h2><a href="{link}" target="tmlLink">{title}</a></h2>
+          <div class="boxWithThumb">
+            <a href="{link}" target="tmlLink" class="thumb"><img src="{thumb}" /></a>
+            <p>{description}</p>
+            <div class="shareLike">
+              <div class="share">Share: <input type="text" onclick="this.select()" readonly="readonly" value="http://ioer.ilsharedlearning.org{link}" /></div>
+              <div class="likeBox" data-id="{id}">
+                <input type="button" onclick="like(this, 'resource', {id}); return false;" value="+ Like" />
+                <div class="likeBarContainer">
+                  <div class="likeBar"></div>
+                  <div class="dislikeBar"></div>
+                  <div class="likeBarText">{likes}</div>
+                  <div class="dislikeBarText">{dislikes}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+    </div>
     <div id="template_collection">
-      <h2><a href="{link}" target="_blank">{title}</a></h2>
+      <h2><a href="{link}" target="tmlLink">{title}</a></h2>
       <div class="boxWithThumb">
-        <a href="{link}" target="_blank" class="thumb"><img src="{thumb}" /></a>
+        <a href="{link}" target="tmlLink" class="thumb"><img src="{thumb}" /></a>
         <p>{description}</p>
         <div class="shareLike">
           <p class="share"><label>Share: </label><input type="text" onclick="this.select()" readonly="readonly" value="http://ioer.ilsharedlearning.org{link}" /></p>
@@ -544,4 +711,7 @@
       </div>
     </div>
   </div>
+    
+    <asp:literal ID="myIoerHeader" Visible="false" runat="server">My IOER Timeline</asp:literal>
+    <asp:literal ID="orgIoerHeader" Visible="false" runat="server">{0} IOER Timeline</asp:literal>
 </div>

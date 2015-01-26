@@ -1,21 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-
-using LRWarehouse.Business;
-using Resource = LRWarehouse.Business.Resource;
-using LRWarehouse.DAL;
+using System.Data;
 using System.IO;
+using System.Linq;
+using System.Text;
+using System.Web;
+using System.Web.Script.Serialization;
+
 using ILPathways.Library;
+using ILPathways.Services;
 using ILPathways.Utilities;
 using LearningRegistry;
 using LearningRegistry.RDDD;
-using System.Text;
-using System.Data;
-
-using System.Web.Script.Serialization;
-using ILPathways.Services;
+using LRWarehouse.Business;
+using LRWarehouse.DAL;
+using Resource = LRWarehouse.Business.Resource;
+using Thumbnailer = LRWarehouse.DAL.ResourceThumbnailManager;
 
 namespace ILPathways.Controllers
 {
@@ -24,11 +24,11 @@ namespace ILPathways.Controllers
         protected int resourceIntID;
         protected System.Guid resourceID;
         protected int userID;
-
-        public void PublishToAll( Resource resourceEntity, string keyData, string PgpKeyringLocation, ref int resourceVersionID )
+        [Obsolete]
+        private void PublishToAllXXX( Resource resourceEntity, string keyData, string PgpKeyringLocation, ref int resourceVersionID )
         {
             string statusMessage = "";
-            PublishToAll( resourceEntity, ref resourceVersionID, ref statusMessage );
+            PublishToAllXXXX( resourceEntity, ref resourceVersionID, ref statusMessage );
         }
 
         /// <summary>
@@ -39,7 +39,7 @@ namespace ILPathways.Controllers
         /// <param name="PgpKeyringLocation"></param>
         /// <param name="resourceVersionID"></param>
         /// <param name="statusMessage"></param>
-        public void PublishToAll( Resource resourceEntity, ref int resourceVersionID, ref string statusMessage )
+        public void PublishToAllXXXX( Resource resourceEntity, ref int resourceVersionID, ref string statusMessage )
         {
             Resource tempEntity = PublishToLearningRegistry( resourceEntity, ref statusMessage ); //Different because it will add the doc_ID to the entity and return it
 
@@ -51,7 +51,7 @@ namespace ILPathways.Controllers
                     PublishToDatabase( tempEntity, ref resourceVersionID, ref statusMessage );
                     UpdateElasticSearch( resourceVersionID );
                     LoggingHelper.DoTrace( "Published using full tool, Thumbnail step is next. IntID: " + tempEntity.Id + ", url: " + tempEntity.ResourceUrl );
-                    new ResourceThumbnailManager().CreateThumbnail( tempEntity.Id, tempEntity.ResourceUrl );
+                    new Thumbnailer().CreateThumbnail( tempEntity.Id, tempEntity.ResourceUrl );
                 }
                 catch ( Exception ex )
                 {
@@ -61,23 +61,24 @@ namespace ILPathways.Controllers
         }
 
         #region - using integer version id
-        public void UpdateAll( Resource resourceEntity, int resourceVersionID )
-        {
-            UpdateDatabase( resourceEntity, ref resourceVersionID );
-            //LR updates handled by external update method
-        }
-        public void UpdateDatabase( Resource resourceEntity, ref int resourceVersionID )
-        {
-            string statusMessage = "";
-            PublishToDatabase( resourceEntity, ref resourceVersionID, ref statusMessage );
-            UpdateElasticSearch( resourceVersionID );
-        }
+        //public void UpdateAllXX( Resource resourceEntity, int resourceVersionID )
+        //{
+        //    UpdateDatabaseXX( resourceEntity, ref resourceVersionID );
+        //    //LR updates handled by external update method
+        //}
+        //public void UpdateDatabaseXX( Resource resourceEntity, ref int resourceVersionID )
+        //{
+        //    string statusMessage = "";
+        //    PublishToDatabase( resourceEntity, ref resourceVersionID, ref statusMessage );
+        //    UpdateElasticSearch( resourceVersionID );
+        //}
         public void UpdateElasticSearch( int resourceVersionID )
         {
-            ElasticSearchManager eManager = new ElasticSearchManager();
-            ResourceJSONManager jManager = new ResourceJSONManager();
-            ResourceJSONFlat[] flats = jManager.GetJSONFlatByVersionID( resourceVersionID );
-            eManager.CreateOrReplaceRecord( flats );
+            //ElasticSearchManager eManager = new ElasticSearchManager();
+            //ResourceJSONManager jManager = new ResourceJSONManager();
+            //ResourceJSONFlat[] flats = jManager.GetJSONFlatByVersionID( resourceVersionID );
+            //eManager.CreateOrReplaceRecord( flats );
+            new ElasticSearchManager().RefreshResource( new ResourceService().GetIntIDFromVersionID( resourceVersionID ) );
         }
         public void PublishToDatabase( Resource resourceEntity, ref int resourceVersionID, ref string statusMessage )
         {
@@ -118,7 +119,9 @@ namespace ILPathways.Controllers
                 {
                     resourceIntID = rv.ResourceIntId;
                     resourceID = resourceEntity.RowId;
-                    resourceEntity.RowId = rv.ResourceId;
+
+                    //?????
+                    //resourceEntity.RowId = rv.ResourceId;
 
                     //Figure out what the Resource Version should be
                     resourceEntity.Version = MergeVersions( resourceEntity.Version, rv );
@@ -135,7 +138,7 @@ namespace ILPathways.Controllers
             userID = resourceEntity.CreatedById;
 
             //Most data goes here
-            resourceEntity.Version.ResourceId = resourceID;
+            //resourceEntity.Version.ResourceId = resourceID;
             resourceEntity.Version.ResourceIntId = resourceIntID;
             resourceEntity.Version.CreatedById = userID;
             resourceEntity.LastUpdated = DateTime.Now;
@@ -190,7 +193,7 @@ namespace ILPathways.Controllers
             //Resource Standard
             foreach ( ResourceStandard standard in resourceEntity.Standard ) //Can't use CreateFromMap due to ResourceStandard having legitimately needed extra stuff
             {
-                standard.ResourceId = resourceID;
+                //standard.ResourceId = resourceID;
                 standard.ResourceIntId = resourceIntID;
                 standard.CreatedById = userID;
                 standardManager.Create( standard, ref statusMessage );
@@ -200,7 +203,7 @@ namespace ILPathways.Controllers
             if ( resourceEntity.AssessmentType.CodeId != 0 )
             {
                 ResourceChildItem assessmentType = resourceEntity.AssessmentType;
-                assessmentType.ResourceId = resourceID;
+                //assessmentType.ResourceId = resourceID;
                 assessmentType.ResourceIntId = resourceIntID;
                 assessmentType.CreatedById = userID;
                 assessmentTypeManager.Create( assessmentType, ref statusMessage );
@@ -229,7 +232,7 @@ namespace ILPathways.Controllers
             foreach ( ResourceChildItem mapItem in mapItems )
             {
                 mapItem.CreatedById = WebUser.Id;
-                mapItem.ResourceId = resourceID;
+                //mapItem.ResourceId = resourceID;
                 mapItem.ResourceIntId = resourceIntID;
                 if ( mapItem.CreatedById == 0 )
                 {
@@ -300,7 +303,7 @@ namespace ILPathways.Controllers
 
         public void PublishLREnvelope( lr_Envelope envelope, ref string statusMessage, ref string lrDocID )
         {
-            string node = UtilityManager.GetAppKeyValue( "learningRegistryNodePublish" ); //"https://node01.public.learningregistry.net", "http://sandbox.learningregistry.org/"
+            string node = UtilityManager.GetAppKeyValue( "learningRegistryNodePublish" ); 
             string clientID = "info@siuccwd.com";
             string clientPassword = "in5t@ll3r";
 
@@ -364,8 +367,9 @@ namespace ILPathways.Controllers
                     PublishLREnvelope( envelope, ref statusMessage, ref LRDocID );
 
                     //Publish to ElasticSearch
-                    ResourceJSONFlat flat = new ResourceJSONManager().GetJSONFlatByVersionID( resourceVersionID )[ 0 ];
-                    new ElasticSearchManager().CreateOrReplaceRecord( flat );
+                    //ResourceJSONFlat flat = new ResourceJSONManager().GetJSONFlatByVersionID( resourceVersionID )[ 0 ];
+                    //new ElasticSearchManager().CreateOrReplaceRecord( flat );
+                    new ElasticSearchManager().RefreshResource( new ResourceService().GetIntIDFromVersionID( resourceVersionID ) );
 
                     //Set status messages
                     SetConsoleSuccessMessage( "Successful Publish of saved resource" );
@@ -402,163 +406,6 @@ namespace ILPathways.Controllers
                 statusMessage = statusMessage + "Publish of saved resource Failed: " + ex.ToString();
                 isValid = false;
             }
-            return isValid;
-        }
-
-        public bool BuildSaveLRDocument_OLD( Resource resourceEntity, ref string statusMessage )
-        {
-            string PgpKeyringLocation = Path.Combine( HttpRuntime.AppDomainAppPath, "App_Data/lrpriv.asc" );
-            string keyData = File.ReadAllText( PgpKeyringLocation );
-            bool isValid = true;
-            string[] PublicKeyLocations = new string[] { "http://pgp.mit.edu:11371/pks/lookup?op=get&search=0x8CAB019667FCE68F" };
-            string UserID = UtilityManager.GetAppKeyValue( "signingUserId", "ILWorknet <info@illinoisworknet.com>" );
-            ResourceManager mgr = new ResourceManager();
-
-            lr_document doc = BuildDocument( ref resourceEntity );
-
-            PgpSigner signer = new PgpSigner( PublicKeyLocations, keyData, UserID, "s0cr@tes" );
-            doc = signer.Sign( doc );
-
-            lr_Envelope envelope = BuildEnvelope( doc );
-
-            PublishPending entity = new PublishPending();
-            //issue - don't have id yet, need to call this after the database publish
-            entity.ResourceId = resourceEntity.Id;
-            entity.ResourceVersionId = resourceEntity.Version.Id;
-            entity.Reason = "Resource requires approval.";
-            entity.CreatedById = resourceEntity.CreatedById;
-            entity.LREnvelope = envelope.Serialize();
-
-            int id = mgr.PublishPending_Create( entity, ref statusMessage );
-
-            return isValid;
-        }
-
-        public Resource PublishToLearningRegistry_OLD( Resource resourceEntity, ref string statusMessage )
-        {
-            //string keyData = File.ReadAllText( MapPath( "/App_Data/privkey.asc" ) );
-            //string PgpKeyringLocation = MapPath( "/App_Data/privkey.asc" );
-            string PgpKeyringLocation = Path.Combine( HttpRuntime.AppDomainAppPath, "App_Data/lrpriv.asc" );
-            string keyData = File.ReadAllText( PgpKeyringLocation );
-            //string[] PublicKeyLocations = new string[] { "http://pgp.mit.edu:11371/pks/lookup?op=get&search=0x8CAB019667FCE68F" };
-            string[] PublicKeyLocations = new string[] { "http://pgp.mit.edu:11371/pks/lookup?op=get&search=0x6ce0837335049763" };
-            //string UserID = UtilityManager.GetAppKeyValue( "signingUserId", "ILWorknet <info@illinoisworknet.com>" );
-            string UserID = "ISLEOER (Data Signing Key) <info@siuccwd.com>";
-            //string password = "s0cr@tes";
-            string password = "89k7SMteVzPUY";
-
-            lr_document doc = BuildDocument(ref resourceEntity);
-            string docJSON = new JavaScriptSerializer().Serialize( doc );
-            string name = Guid.NewGuid().ToString();
-            WebDALService webDAL = new WebDALService();
-            if ( webDAL.IsSandbox() ) { } // Don't save it
-            else if ( webDAL.IsLocalHost() )
-            {
-                File.WriteAllText( @"C:\elasticSearchJSON\savedDocs\" + name + ".json", docJSON );
-            }
-            else //Production
-            {
-                File.WriteAllText( @"\\STAGE\savedDocs\" + name + ".json", docJSON );
-            }
-
-            PgpSigner signer = new PgpSigner( PublicKeyLocations, keyData, UserID, password );
-            doc = signer.Sign( doc );
-
-            lr_Envelope envelope = BuildEnvelope( doc );
-            string node = UtilityManager.GetAppKeyValue( "learningRegistryNodePublish", "http://sandbox.learningregistry.org/" );
-            //string node = "http://node01.public.learningregistry.net";
-            //string node = "http://isleoer.ilpathways.com";
-            LRClient client = new LRClient( node, "info@siuccwd.com", "in5t@ll3r" );
-
-            try
-            {
-                PublishResponse response = client.Publish( envelope );
-
-                SetConsoleSuccessMessage( "Successful Publish!<br />Learning Registry Document ID:<br />" + response.document_results.ElementAt( 0 ).doc_ID );
-                resourceEntity.Version.LRDocId = response.document_results.ElementAt( 0 ).doc_ID;
-                statusMessage = statusMessage + "<br />Successful LR Publish!<br />Learning Registry Document ID:<br /><span id=\"resourceDocID\">" + response.document_results.ElementAt( 0 ).doc_ID + "</span>";
-                resourceEntity.IsValid = true;
-
-            }
-            catch ( Exception ex )
-            {
-                if ( ex.Message.IndexOf( "502" ) > 0 )
-                {
-                    SetConsoleErrorMessage( "There was an error publishing your Resource to the Learning Registry. The Registry may be undergoing maintenance, or may be temporarily down. However, your published data is still available on our system, and will be automatically published to the Registry when the situation is resolved." );
-                }
-                else
-                {
-                    SetConsoleErrorMessage( "Publish Failed: " + ex.Message.ToString() );
-                }
-                //statusMessage = statusMessage + "<br />LR Publish Failed: " + ex.ToString();
-                //resourceEntity.IsValid = false;
-            }
-
-            return resourceEntity;
-        }
-
-        public bool PublishSavedEnvelope_OLD( int pResourceVersionId, ref string statusMessage )
-        {
-            bool isValid = true;
-            string LRDocId = "";
-            string node = UtilityManager.GetAppKeyValue( "learningRegistryNodePublish" ); //"http://node01.public.learningregistry.net", "http://sandbox.learningregistry.org/"
-            LRClient client = new LRClient( node, "info@siuccwd.com", "in5t@ll3r" );
-            ResourceManager mgr = new ResourceManager();
-            try
-            {
-                PublishPending entity = mgr.PublishPending_GetByRVId( pResourceVersionId );
-                if ( entity != null && entity.Id > 0 )
-                {
-                    //Publish to LR
-                    PublishResponse response = client.Publish( entity.LREnvelope );
-                    
-                    //Publish to ElasticSearch
-                    ResourceJSONManager jsonManager = new ResourceJSONManager();
-                    ResourceJSONFlat flat = jsonManager.GetJSONFlatByVersionID( pResourceVersionId )[ 0 ];
-                    ElasticSearchManager eManager = new ElasticSearchManager();
-                    eManager.CreateOrReplaceRecord( flat );
-
-                    SetConsoleSuccessMessage( "Successful Publish of saved resource" );
-
-                    LRDocId = response.document_results.ElementAt( 0 ).doc_ID;
-                    LoggingHelper.DoTrace( 5, "Successful Publish of saved resource - LR Document ID:<br />" + LRDocId );
-
-                    entity.IsPublished = true;
-                    entity.PublishedDate = DateTime.Now;
-                    mgr.PublishPending_Update( entity );
-
-                    ResourceVersionManager rvmgr = new ResourceVersionManager();
-                    ResourceVersion rv = rvmgr.Get( pResourceVersionId );
-                    if ( rv != null && rv.Id > 0 )
-                    {
-                        rv.LRDocId = LRDocId;
-                        rvmgr.Update_LrDocId( rv );
-
-                        statusMessage = statusMessage + "<br />Successful LR Publish!<br />Learning Registry Document ID:<br /><span id=\"resourceDocID\">" + response.document_results.ElementAt( 0 ).doc_ID + "</span>";
-                    }
-                    else
-                    {
-                        isValid = false;
-                        statusMessage = string.Format("Error - unable to retrieve the resource version record (in order to update the LR docId: {0}).", LRDocId);
-                        SetConsoleErrorMessage( statusMessage );
-                    }
-                    
-                }
-                else
-                {
-                    statusMessage = "Error - unable to retrieve the requested publish-pending resource";
-                    SetConsoleErrorMessage( statusMessage );
-                    isValid = false;
-                }
-
-            }
-            catch ( Exception ex )
-            {
-                SetConsoleErrorMessage( "Error Publishing to Learning Registry: " + ex.ToString() );
-                //statusMessage = statusMessage + "<br />Publish of saved resource Failed: " + ex.ToString();
-                //isValid = false;
-            }
-
             return isValid;
         }
 

@@ -106,7 +106,20 @@ namespace ILPathways.Admin.mapping
                 this.InitializeForm();
             }
         }//
+        protected void Page_PreRender( object sender, EventArgs e )
+        {
 
+            try
+            {
+                pager2.CurrentIndex = LastPageNumber;
+                pager2.ItemCount = LastTotalRows;
+            }
+            catch
+            {
+                //no action
+            }
+
+        }//
         /// <summary>
         /// Perform form initialization activities
         /// </summary>
@@ -129,9 +142,13 @@ namespace ILPathways.Admin.mapping
             {
                 // get form privileges
                 FormPrivileges = GDAL.SecurityManager.GetGroupObjectPrivileges( WebUser, FormSecurityName );
-
+                LoggingHelper.DoTrace( 2, "==================== MapCareerClusters. After GetGroupObjectPrivileges" );
             }
 
+            GridViewSortExpression = "";
+            GridViewSortDirection = System.Web.UI.WebControls.SortDirection.Ascending;
+            LastPageNumber = 0;
+            InitializePageSizeList();
 
 
             //handling setting of which action buttons are available to the current user
@@ -226,6 +243,7 @@ namespace ILPathways.Admin.mapping
         } //
         private void DoSearch( int selectedPageNbr, string sortTerm )
         {
+            DataSet ds = null;
             if ( selectedPageNbr == 0 )
             {
                 //with custom pager, need to start at 1
@@ -236,18 +254,15 @@ namespace ILPathways.Admin.mapping
 
             // Set the page size for the DataGrid control based on the selection
             CheckForPageSizeChange();
+            int pTotalRows = 0;
+            string filter = FormatFilter();
 
 
-            string sql = "";
-            if ( ddlFilterCluster.SelectedIndex > 0 )
-            {
-                sql = string.Format( SELECT_SQL, string.Format( " where MappedClusterId = {0} ", ddlFilterCluster.SelectedValue ) );
-            }
-            else
-            {
-                sql = string.Format( SELECT_SQL, " " );
-            }
-            DataSet ds = DatabaseManager.DoQuery( sql );
+            ds = GDAL.CodeTableBizService.MapCareerCluster_Search( filter, sortTerm, selectedPageNbr, pager1.PageSize, ref pTotalRows );
+
+            //assumes min rows are returned, so pager needs to have the total rows possible
+            pager1.ItemCount = pager2.ItemCount = pTotalRows;
+            LastTotalRows = pTotalRows;
 
             this.txtMapping.Text = "";
             //don't reset the selected cluster
@@ -259,45 +274,74 @@ namespace ILPathways.Admin.mapping
             if ( FormPrivileges.CanCreate() )
                 this.addPanel.Visible = true;
 
-            if ( MyManager.DoesDataSetHaveRows( ds ) && ds.Tables[ 0 ].TableName.ToLower() != "resultmessagetable" )
+            if ( MyManager.DoesDataSetHaveRows( ds ) == false )
             {
-                try
-                {
-                    if ( FormPrivileges.CanCreate() == false )
-                        formGrid.AutoGenerateEditButton = false;
-
-                    formGrid.DataSource = ds;
-                    formGrid.DataBind();
-
-                    formGrid.Visible = true;
-                    gridPanel.Visible = true;
-                    if ( FormPrivileges.CanDelete() == false )
-                        formGrid.Columns[ 0 ].Visible = false;
-                }
-                catch ( Exception ex )
-                {
-                    SetConsoleErrorMessage( "Unexpected error encountered<br>Contact system administration.<br>" + ex.Message );
-                    LogError( ex, thisClassName + ".DoSearch" );
-                }
-                finally
-                {
-                    ds.Dispose();
-                }
-
-            }
-            else
-            {
-                if ( MyManager.DoesDataSetHaveRows( ds ) && ds.Tables[ 0 ].TableName.ToLower() == "resultmessagetable" )
-                {
-                    string msg = DatabaseManager.GetRowColumn( ds.Tables[ 0 ].Rows[ 0 ], "RESULTS_TABLE", "" );
-                    if ( msg.Length > 0 )
-                        SetConsoleErrorMessage( msg );
-                }
-
+                SetConsoleErrorMessage( "No records were found for the provided search criteria" );
+                ddlPageSizeList.Enabled = false;
+                pager1.Visible = false;
+                pager2.Visible = false;
                 formGrid.DataSource = null;
                 formGrid.DataBind();
             }
+            else
+            {
+                ddlPageSizeList.Enabled = true;
+
+                if ( FormPrivileges.CanCreate() == false )
+                    formGrid.AutoGenerateEditButton = false;
+
+                DataTable dt = ds.Tables[ 0 ];
+                if ( pTotalRows > formGrid.PageSize )
+                {
+                    //formGrid.PagerSettings.Visible = true;
+                    pager1.Visible = true;
+                    pager2.Visible = true;
+                }
+                else
+                {
+                    pager1.Visible = false;
+                    pager2.Visible = false;
+                }
+
+                formGrid.DataSource = dt;
+                formGrid.DataBind();
+
+                formGrid.Visible = true;
+                gridPanel.Visible = true;
+                if ( FormPrivileges.CanDelete() == false )
+                    formGrid.Columns[ 0 ].Visible = false;
+            }
+               
         }
+
+        protected string FormatFilter()
+        {
+            string filter = "";
+
+            string booleanOperator = "AND";
+
+            if ( txtKeyword.Text.Trim().Length > 0 )
+            {
+                string keyword = MyManager.HandleApostrophes( FormHelper.SanitizeUserInput( txtKeyword.Text.Trim() ) );
+
+                if ( keyword.IndexOf( "%" ) == -1 )
+                    keyword = "%" + keyword + "%";
+
+                string where = " (prj.Title like '" + keyword + "'	OR prj.[Description] like '" + keyword + "') ";
+                filter += MyManager.FormatSearchItem( filter, where, booleanOperator );
+            }
+
+            if ( ddlFilterCluster.SelectedIndex > 0 )
+            {
+                filter += MyManager.FormatSearchItem( filter, "MappedClusterId", ddlFilterCluster.SelectedValue, booleanOperator );
+
+            }
+
+            //if ( this.IsTestEnv() )
+            //  this.SetConsoleSuccessMessage( "sql: " + filter );
+
+            return filter;
+        }	//
         protected void formGrid_RowDataBound( object sender, GridViewRowEventArgs e )
         {
             if ( e.Row.RowType == DataControlRowType.DataRow )

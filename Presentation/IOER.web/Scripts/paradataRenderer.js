@@ -30,7 +30,12 @@ function standardHandler(data, item) {
             display = datum;
         }
         else if (item.showType == "percent" && datum > 0) {
+          if (datum < 1) {
             display = Math.round(datum * 100) + "%";
+          }
+          else {
+            display = Math.round(datum) + "%";
+          }
         }
         if (display != null) {
             return paradataTemplate

@@ -50,12 +50,14 @@ namespace GatewayBusinessEntities
         public DbSet<EmailNotice> EmailNotices { get; set; }
         public DbSet<Organization> Organizations { get; set; }
         public DbSet<Organization_Member> Organization_Member { get; set; }
-        public DbSet<Organization_MemberRole> Organization_MemberRole { get; set; }
         public DbSet<OrganizationRequest> OrganizationRequests { get; set; }
         public DbSet<OrganizationTemp> OrganizationTemps { get; set; }
         public DbSet<SqlQuery> SqlQueries { get; set; }
         public DbSet<LR_PatronOrgSummary> LR_PatronOrgSummary { get; set; }
         public DbSet<AppVisitLog> AppVisitLogs { get; set; }
         public DbSet<Codes_State> Codes_State { get; set; }
+        public DbSet<Organization_MemberRole> Organization_MemberRole { get; set; }
+        public DbSet<Organization_AdminMembers> Organization_AdminMembers { get; set; }
+        public DbSet<Organization_MemberSummary> Organization_MemberSummary { get; set; }
     }
 }

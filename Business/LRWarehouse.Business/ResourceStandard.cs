@@ -4,15 +4,27 @@ using System.Text;
 
 namespace LRWarehouse.Business
 {
-    public class ResourceStandard : BaseBusinessDataEntity
+    [Serializable]
+    public class ResourceStandard 
     {
+        //: BaseBusinessDataEntity
+        public int Id { get; set; }
+        public System.DateTime Created { get; set; }
+        public int AlignedById { get; set; }
 
-        private Guid _resourceId;
-        public Guid ResourceId
+        private int _createdById;
+        public int CreatedById
         {
-            get { return this._resourceId; }
-            set { this._resourceId = value; }
+            get
+            {
+                return _createdById;
+            }
+            set
+            {
+                _createdById = value;
+            }
         }
+
         private int _resourceIntId;
         public int ResourceIntId
         {
@@ -20,6 +32,12 @@ namespace LRWarehouse.Business
             set { this._resourceIntId = value; }
         }
 
+        private int _standardId;
+        public int StandardId
+        {
+            get { return this._standardId; }
+            set { this._standardId = value; }
+        }
         private string _standardDescription;
         public string StandardDescription
         {
@@ -41,12 +59,6 @@ namespace LRWarehouse.Business
             set { this._originalValue = value; }
         }*/
 
-        private int _standardId;
-        public int StandardId
-        {
-            get { return this._standardId; }
-            set { this._standardId = value; }
-        }
         /*public int CodeId 
         {
             get { return this._standardId; }
@@ -79,7 +91,6 @@ namespace LRWarehouse.Business
             set { this._alignmentTypeValue = value; }
         }
 
-
         private int _alignmentDegreeId;
         public int AlignmentDegreeId
         {
@@ -96,5 +107,6 @@ namespace LRWarehouse.Business
 
 
     }
+
 
 }

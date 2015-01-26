@@ -1,28 +1,44 @@
 ﻿/* Big stuff */
 * { box-sizing: border-box; -moz-box-sizing: border-box; -webkit-box-sizing: border-box; }
+form #container.addThis { transition: padding 1s; }
+@media screen and (min-width: 979px) {
+  form #container.addThis { padding-left: 50px; }
+}
 
 /* Gray Boxes */
 /* Margins intentionally left out--it's usually better to pad the parent element */
 .grayBox { background-color: #EEE; padding: 10px; border-radius: 5px; }
-.grayBox h2.header { background-color: #4AA394; display: block; color: #FFF; font-size: 1.2em; margin: -10px -10px 5px -10px; padding: 2px 5px; border-radius: 5px 5px 0 0; }
-.grayBox h2.mid { background-color: #DDD; font-size: 1.1em; margin: 5px -10px 5px -10px; padding: 1px 5px; }
+.grayBox .header { background-color: #4AA394; display: block; color: #FFF; font-size: 1.2em; margin: -10px -10px 5px -10px; padding: 2px 5px; border-radius: 5px 5px 0 0; }
+.grayBox .mid { background-color: #DDD; font-size: 1.1em; margin: 5px -10px 5px -10px; padding: 1px 5px; }
+.grayBox.slim { padding: 5px; }
+.grayBox.slim .header { margin: -5px -5px 5px -5px; }
+.grayBox.slim .mid { margin: 5px -5px 5px -5px; }
 
 /* Buttons */
-.isleButton { padding: 2px 5px; width: 100%; color: #FFF; font-weight: bold; border-radius: 5px; }
-.isleButton:hover, .isleButton:focus { background-color: #FF6A00; cursor: pointer; }
+input[type=button]:hover, input[type=button]:focus, input[type=submit]:hover, input[type=submit]:focus { cursor: pointer; }
+.isleButton { padding: 2px 5px; width: 100%; color: #FFF; font-weight: bold; border-radius: 5px; border-width: 1px; transition: background-color 0.1s, color 0.1s; }
+.isleButton:hover, .isleButton:focus { background-color: #FF6A00; color: #FFF; cursor: pointer; }
 .isleButton.shaded { box-shadow: 0 5px 25px -5px #FFF inset; border: 1px solid #FFF; }
+.closeButton { color: #FFF; background-color: #D33; border-radius: 5px; text-align: center; padding-bottom: 1px; height: 23px; width: 23px; font-size: 22px; line-height: 16px; font-weight: bold; border: 0; float: right; }
+.closeButton:hover, .closeButton:focus { background-color: #F00; box-shadow: 0 0 10px -3px #F00; }
 
 /* Inputs */
-.bigText label, .bigText input[type=text], .bigText input[type=password], .bigText select, .bigText input[type=file],
-label.bigText, input[type=text].bigText, input[type=password].bigText, select.bigText, input[type=file].bigText { height: 40px; line-height: 40px; display: inline-block; vertical-align: top; }
+.bigText label, .bigText input[type=text], .bigText input[type=password], .bigText select, .bigText input[type=file], .bigText div.displayDiv,
+label.bigText, input[type=text].bigText, input[type=password].bigText, select.bigText, input[type=file].bigText, div.displayDiv.bigText { height: 35px; line-height: 35px; display: inline-block; vertical-align: top; }
 .bigText input[type=text], .bigText input[type=password], .bigText select, 
-input[type=text].bigText, input[type=password].bigText, select.bigText { font-size: 30px; padding: 2px 5px; }
+input[type=text].bigText, input[type=password].bigText, select.bigText { font-size: 24px; padding: 2px 5px; }
 .bigText label,
 label.bigText { padding: 2px 5px; font-weight: bold; white-space: nowrap; }
 .bigText input[type=button], .bigText input[type=submit],
-input[type=button].bigText, input[type=submit].bigText { font-size: 25px; }
+input[type=button].bigText, input[type=submit].bigText { font-size: 22px; }
 .bigText input[type=file], input[type=file].bigText { font-size: 22px; padding: 2px 5px; border-radius: 5px; }
 .bigText textarea, textarea.bigText { font-size: 18px; width: 100%; display: inline-block; vertical-align: top; resize: none; }
+.bigText div.displayDiv,
+div.displayDiv.bigText { padding: 2px 5px; }
+
+/* Checkbox/radio button lists */
+.inputList > label { display: block; padding: 2px 5px; border-radius: 5px; transition: background-color 0.1s; }
+.inputList > label:hover, .inputList > label:focus { background-color: #DDD; cursor: pointer; }
 
 /* Background Colors */
 .bgLightGray { background-color: #EEE; }
@@ -31,6 +47,7 @@ input[type=button].bigText, input[type=submit].bigText { font-size: 25px; }
 .bgBlue { background-color: #3572B8; }
 .bgOrange { background-color: #FF6A00; }
 .bgRed { background-color: #B03D25; }
+
 
 /* Block stuff */
 /* There are better ways of doing this, but safari on windows and android browsers don't support them, so we resort to this: */
@@ -44,3 +61,8 @@ input[type=button].bigText, input[type=submit].bigText { font-size: 25px; }
   #content { padding-left: 50px; }
   #at4-share { left: 0px; }
 }
+
+/* Lists */
+ul, ol, dl { margin-left: 20px; }
+dl dt { font-weight: bold; }
+dl dd { display: list-item; list-style-type: circle; margin-left: 20px; }

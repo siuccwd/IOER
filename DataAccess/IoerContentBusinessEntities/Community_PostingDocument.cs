@@ -20,7 +20,7 @@ namespace IoerContentBusinessEntities
         public Nullable<System.DateTime> Created { get; set; }
         public Nullable<int> CreatedById { get; set; }
     
-        public virtual Community_Posting Community_Posting { get; set; }
         public virtual Document_Version Document_Version { get; set; }
+        public virtual Community_Posting Community_Posting { get; set; }
     }
 }

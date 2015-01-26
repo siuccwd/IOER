@@ -1,7 +1,8 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Masters/Pathway.Master" AutoEventWireup="true" CodeBehind="MapCareerClusters.aspx.cs" Inherits="ILPathways.Admin.mapping.MapCareerClusters" %>
+﻿<%@ Page Title="Map Career Clusters" Language="C#" MasterPageFile="~/Masters/Pathway.Master" AutoEventWireup="true" CodeBehind="MapCareerClusters.aspx.cs" Inherits="ILPathways.Admin.mapping.MapCareerClusters" %>
 
 
 <asp:Content ID="Content1" ContentPlaceHolderID="HeadContent" runat="server">
+    <link href="/Styles/common.css" rel="Stylesheet" type="text/css" />
 <style type="text/css">
     .labelColumn {
         display: inline-block;
@@ -15,12 +16,12 @@
 </style>
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="BodyContent" runat="server">
-    
+    <h1 class="isleH1">Map Career Clusters</h1>
 <!-- content start -->
 <div >
 <asp:validationsummary id="vsErrorSummary" HeaderText="Errors on page" forecolor="" CssClass="errorMessage" runat="server"></asp:validationsummary>
 <br />
-<div>
+<div style="width:90%; ">
 <asp:panel id="addPanel" runat="server" Visible="false">
 <div class="infoMessage" style="width: 90%;">
 			<h2>Add New Mapping</h2>
@@ -55,7 +56,7 @@
 <div class="clearFloat"></div>	
 <h2>Existing Mappings</h2>
 <asp:panel id="gridPanel" runat="server" Visible="false">
-          <div style="float:right;">
+          <div style="float:right; ">
             Page Size <asp:dropdownlist id="ddlPageSizeList" runat="server" Enabled="false" visible="true" AutoPostBack="True" OnSelectedIndexChanged="PageSizeList_OnSelectedIndexChanged"></asp:dropdownlist>
           </div>
 	    <div style="float:left;">
@@ -83,6 +84,17 @@
 	<div class="dataColumn">
             <asp:DropDownList id="ddlFilterCluster"  runat="server"  AutoPostBack="True" OnSelectedIndexChanged="ddlFilterCluster_OnSelectedIndexChanged" ></asp:DropDownList>
 	</div> 
+    <asp:Panel ID="keywordPanel" runat="server" Visible="false">
+        <div class="labelColumn">
+		<asp:label id="Label3" associatedcontrolid="txtKeyword" runat="server">Filter Current Filters</asp:label>*
+	</div>
+	<div class="dataColumn">
+          <asp:TextBox ID="txtKeyword" runat="server"></asp:TextBox>
+	</div> 
+
+
+
+    </asp:Panel>
     <div class="clearFloat"></div>
 <asp:gridview ID="formGrid" runat="server" autogeneratecolumns="False" datakeynames="Id"
             showfooter="false" allowpaging="false" allowsorting="false"  Width="100%"
@@ -99,6 +111,15 @@
 					 Delete</asp:LinkButton>
 			 </ItemTemplate>
 		 </asp:TemplateField>
+  <asp:TemplateField HeaderText="Cluster Mapping"  >
+        <EditItemTemplate>
+            <asp:TextBox ID="gridFilterValue" runat="server" Text='<%# Bind("FilterValue") %>' width="300px" ></asp:TextBox>
+            <asp:RequiredFieldValidator id="RequiredFieldValidator3" runat="server" ErrorMessage="A LR Value is required!" ControlToValidate="gridFilterValue"></asp:RequiredFieldValidator>
+        </EditItemTemplate>
+        <ItemTemplate>
+            <asp:label ID="gridlblFilterValue" runat="server" Text='<%# Bind("FilterValue") %>'></asp:label>
+        </ItemTemplate>
+    </asp:TemplateField>  
    <asp:TemplateField HeaderText="Career Cluster" >
         <EditItemTemplate>
         <asp:label ID="gridlblClusters2" runat="server" Text='<%# Bind("ClusterTitle") %>'></asp:label>
@@ -109,15 +130,7 @@
             <asp:label ID="gridlblClusters" runat="server" Text='<%# Bind("ClusterTitle") %>'></asp:label>
         </ItemTemplate>
     </asp:TemplateField>
-    <asp:TemplateField HeaderText="Cluster Mapping"  >
-        <EditItemTemplate>
-            <asp:TextBox ID="gridFilterValue" runat="server" Text='<%# Bind("FilterValue") %>' width="300px" ></asp:TextBox>
-            <asp:RequiredFieldValidator id="RequiredFieldValidator3" runat="server" ErrorMessage="A LR Value is required!" ControlToValidate="gridFilterValue"></asp:RequiredFieldValidator>
-        </EditItemTemplate>
-        <ItemTemplate>
-            <asp:label ID="gridlblFilterValue" runat="server" Text='<%# Bind("FilterValue") %>'></asp:label>
-        </ItemTemplate>
-    </asp:TemplateField>  
+  
      
     <asp:boundfield datafield="MappedClusterId" Visible="false" ></asp:boundfield>	               
 </Columns>
@@ -125,7 +138,7 @@
 </div>
 	    <div style="float:left;">
 		    <wcl:PagerV2_8 ID="pager2" runat="server" 
-          Visible="true" 
+          Visible="false" 
           OnCommand="pager_Command" 
           GenerateFirstLastSection="true" 
           FirstClause="First Page" 

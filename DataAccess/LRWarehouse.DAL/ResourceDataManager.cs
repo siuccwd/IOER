@@ -36,7 +36,7 @@ namespace LRWarehouse.DAL
             DataSet ds = GetDSFromSQL( table.createProc, parameters, table.tableName, ".Create()" );
             if ( DoesDataSetHaveRows( ds ) )
             {
-              newID = GetRowColumn( ds.Tables[ 0 ].Rows[ 0 ], "Id", 0 );
+              newID = GetRowPossibleColumn( ds.Tables[ 0 ].Rows[ 0 ], "Id", 0 );
             }
             else
             {
@@ -94,6 +94,9 @@ namespace LRWarehouse.DAL
         public static class ResourceDataSubclassFinder
         {
             static Dictionary<string, IResourceDataSubclass> classes = new Dictionary<string, IResourceDataSubclass> { 
+                { "accessibilityControl", new accessibilityControl() },
+                { "accessibilityFeature", new accessibilityFeature() },
+                { "accessibilityHazard", new accessibilityHazard() },
                 { "assessmentType", new assessmentType() },
                 { "accessRights", new accessRights() },
                 { "careerCluster", new careerCluster() },
@@ -106,7 +109,8 @@ namespace LRWarehouse.DAL
                 { "language", new language() },
                 { "resourceType", new resourceType() },
                 { "subject", new subject() },
-                { "originalVersionURL", new originalVersionURL() }
+                { "originalVersionURL", new originalVersionURL() },
+                //{ "k12subject", new k12subject() }
             };
 
             public static IResourceDataSubclass getSubclassByName( string name )
@@ -159,17 +163,20 @@ namespace LRWarehouse.DAL
             return parameters;
           }
         }
-        public class assessmentType : ResourceDataSubclass
+
+        public class accessibilityControl : ResourceDataSubclass
         {
-          public assessmentType()
+            string id = "AccessibilityControl";
+            public accessibilityControl()
           {
-            tableName = "AssessmentType";
-            typeIDString = "@AssessmentTypeId";
-            selectedCodesProc = "[Resource.AssessmentType_SelectedCodes]";
-            selectProc = "[Resource.AssessmentTypeSelect]";
-            createProc = "[Resource.AssessmentTypeInsert]";
-            codetableProc = "SELECT [Id], [Title], [Description], [WarehouseTotal] AS ItemCount FROM [Codes.AssessmentType] WHERE [IsActive] = 1 ORDER BY [SortOrder]";
+              tableName = id;
+              typeIDString = string.Format( "@{0}Id]", id );
+              selectedCodesProc = string.Format( "[Resource.{0}_SelectedCodes]", id );
+              selectProc = string.Format( "[Resource.{0}Select]", id );
+              createProc = string.Format( "[Resource.{0}Insert]", id );
+              codetableProc = string.Format( "SELECT [Id], [Title], [Description], [WarehouseTotal] AS ItemCount FROM [Codes.{0}] WHERE [IsActive] = 1 ORDER BY [Title]", id );
           }
+
           public override SqlParameter[] getCreateProcParameters( int resourceIntID, int codeID, string originalValue, int createdByID )
           {
             SqlParameter[] parameters = new SqlParameter[ 3 ];
@@ -179,6 +186,76 @@ namespace LRWarehouse.DAL
             return parameters;
           }
         }
+
+
+        public class accessibilityFeature : ResourceDataSubclass
+        {
+            string id = "AccessibilityFeature";
+            public accessibilityFeature()
+            {
+                tableName = id;
+                typeIDString = string.Format( "@{0}Id]", id );
+                selectedCodesProc = string.Format( "[Resource.{0}_SelectedCodes]", id );
+                selectProc = string.Format( "[Resource.{0}Select]", id );
+                createProc = string.Format( "[Resource.{0}Insert]", id );
+                codetableProc = string.Format( "SELECT [Id], [Title], [Description], [WarehouseTotal] AS ItemCount FROM [Codes.{0}] WHERE [IsActive] = 1 ORDER BY [Title]", id );
+            }
+
+            public override SqlParameter[] getCreateProcParameters( int resourceIntID, int codeID, string originalValue, int createdByID )
+            {
+                SqlParameter[] parameters = new SqlParameter[ 3 ];
+                parameters[ 0 ] = new SqlParameter( "@ResourceIntId", resourceIntID );
+                parameters[ 1 ] = new SqlParameter( typeIDString, codeID );
+                parameters[ 2 ] = new SqlParameter( "@CreatedbyId", createdByID );
+                return parameters;
+            }
+        }
+
+
+        public class accessibilityHazard : ResourceDataSubclass
+        {
+            string id = "AccessibilityHazard";
+            public accessibilityHazard()
+            {
+                tableName = id;
+                typeIDString = string.Format( "@{0}Id]", id );
+                selectedCodesProc = string.Format("[Resource.{0}_SelectedCodes]", id);
+                selectProc = string.Format( "[Resource.{0}Select]", id );
+                createProc = string.Format( "[Resource.{0}Insert]", id );
+                codetableProc = string.Format("SELECT [Id], [Title], [Description], [WarehouseTotal] AS ItemCount FROM [Codes.{0}] WHERE [IsActive] = 1 ORDER BY [Id]", id);
+            }
+
+            public override SqlParameter[] getCreateProcParameters( int resourceIntID, int codeID, string originalValue, int createdByID )
+            {
+                SqlParameter[] parameters = new SqlParameter[ 3 ];
+                parameters[ 0 ] = new SqlParameter( "@ResourceIntId", resourceIntID );
+                parameters[ 1 ] = new SqlParameter( typeIDString, codeID );
+                parameters[ 2 ] = new SqlParameter( "@CreatedbyId", createdByID );
+                return parameters;
+            }
+        }
+
+        public class assessmentType : ResourceDataSubclass
+        {
+            public assessmentType()
+            {
+                tableName = "AssessmentType";
+                typeIDString = "@AssessmentTypeId";
+                selectedCodesProc = "[Resource.AssessmentType_SelectedCodes]";
+                selectProc = "[Resource.AssessmentTypeSelect]";
+                createProc = "[Resource.AssessmentTypeInsert]";
+                codetableProc = "SELECT [Id], [Title], [Description], [WarehouseTotal] AS ItemCount FROM [Codes.AssessmentType] WHERE [IsActive] = 1 ORDER BY [SortOrder]";
+            }
+            public override SqlParameter[] getCreateProcParameters( int resourceIntID, int codeID, string originalValue, int createdByID )
+            {
+                SqlParameter[] parameters = new SqlParameter[ 3 ];
+                parameters[ 0 ] = new SqlParameter( "@ResourceIntId", resourceIntID );
+                parameters[ 1 ] = new SqlParameter( typeIDString, codeID );
+                parameters[ 2 ] = new SqlParameter( "@CreatedbyId", createdByID );
+                return parameters;
+            }
+        }
+
         public class careerCluster : ResourceDataSubclass
         {
           public careerCluster()
@@ -188,7 +265,7 @@ namespace LRWarehouse.DAL
             selectedCodesProc = "[Resource.ClusterSelect_SelectedCodes2]";
             selectProc = "[Resource.ClusterSelect2]";
             createProc = "[Resource.ClusterInsert2]";
-            codetableProc = "SELECT [Id], [CareerCluster] AS Title, [Description], [WarehouseTotal] AS ItemCount FROM [CareerCluster] WHERE [IsActive] = 1 AND [IsIlPathway] = 1 ORDER BY [CareerCluster]";
+            codetableProc = "SELECT [Id], [IlPathwayName] AS Title, [Description], [WarehouseTotal] AS ItemCount FROM [CareerCluster] WHERE [IsActive] = 1 AND [IsIlPathway] = 1 ORDER BY [CareerCluster]";
           }
           public override SqlParameter[] getCreateProcParameters( int resourceIntID, int codeID, string originalValue, int createdByID )
           {
@@ -371,7 +448,7 @@ namespace LRWarehouse.DAL
           {
             tableName = "Subject";
             typeIDString = "@SubjectId";
-            selectedCodesProc = "";
+            selectedCodesProc = "[Resource.Subject_SelectedCodes]";
             selectProc = "";
             createProc = "[Resource.SubjectInsert2]";
             codetableProc = "SELECT [Id], [Title], [Description], [WarehouseTotal] AS ItemCount FROM [Codes.Subject] WHERE [IsActive] = 1 ORDER BY [Title]";
@@ -405,6 +482,14 @@ namespace LRWarehouse.DAL
             return parameters;
           }
         }
+        /*public class k12subject : ResourceDataSubclass
+        {
+          public k12subject()
+          {
+            tableName = "k12subject";
+            typeIDString = "@";
+          }
+        }*/
 
         #endregion
     }

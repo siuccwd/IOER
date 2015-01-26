@@ -45,7 +45,7 @@ namespace ILPathways.DAL
 		/// <param name="pRowId"></param>
 		/// <param name="statusMessage"></param>
 		/// <returns></returns>
-		public static bool Delete( string pRowId, ref string statusMessage )
+		public bool Delete( string pRowId, ref string statusMessage )
 		{
             string connectionString = ContentConnection();
 			bool successful;
@@ -80,7 +80,7 @@ namespace ILPathways.DAL
 			string newId = "";
 
 			#region parameters
-			SqlParameter[] sqlParameters = new SqlParameter[ 10 ];
+			SqlParameter[] sqlParameters = new SqlParameter[ 11 ];
 			sqlParameters[ 0 ] = new SqlParameter( "@Title", SqlDbType.VarChar );
 			sqlParameters[ 0 ].Size = 200;
 			sqlParameters[ 0 ].Value = entity.Title;
@@ -118,7 +118,7 @@ namespace ILPathways.DAL
 
 			sqlParameters[ 9 ] = new SqlParameter( "@CreatedById", SqlDbType.Int );
 			sqlParameters[ 9 ].Value = entity.CreatedById;
-
+            sqlParameters[ 10 ] = new SqlParameter( "@FilePath", entity.FilePath );
 
 			#endregion
 
@@ -150,13 +150,28 @@ namespace ILPathways.DAL
 		/// </summary>
 		/// <param name="entity"></param>
 		/// <returns></returns>
-		public static string Update( DocumentVersion entity )
+		public string Update( DocumentVersion entity )
 		{
 			string message = "successful";
             string connectionString = ContentConnection();
 
+            if ( entity.HasDocument() == false )
+            {
+                //if missing doc, need to first retrieve a doc, then overlay as needed
+                DocumentVersion old = Get( entity.RowId );
+                if ( old.IsValid == false )
+                {
+                    return "Error: - document not found!";
+                }
+                //only overlay potential missing data
+                entity.MimeType = old.MimeType;
+                entity.ResourceBytes = old.ResourceBytes;
+                entity.SetResourceData( old.ResourceBytes, old.ResourceData );
+
+            }
+
 			#region parameters
-			SqlParameter[] sqlParameters = new SqlParameter[ 11 ];
+			SqlParameter[] sqlParameters = new SqlParameter[ 12 ];
 			sqlParameters[ 0 ] = new SqlParameter( "@RowId", SqlDbType.UniqueIdentifier );
 			sqlParameters[ 0 ].Value = entity.RowId;
 
@@ -172,16 +187,12 @@ namespace ILPathways.DAL
 			sqlParameters[ 3 ].Size = 25;
 			sqlParameters[ 3 ].Value = entity.Status;
 
-			sqlParameters[ 4 ] = new SqlParameter( "@FileName", SqlDbType.VarChar );
-			sqlParameters[ 4 ].Size = 150;
-			sqlParameters[ 4 ].Value = entity.FileName;
+			sqlParameters[ 4 ] = new SqlParameter( "@FileName", entity.FileName);
 
 			sqlParameters[ 5 ] = new SqlParameter( "@FileDate", SqlDbType.DateTime );
 			sqlParameters[ 5 ].Value = entity.FileDate;
 
-			sqlParameters[ 6 ] = new SqlParameter( "@MimeType", SqlDbType.VarChar );
-			sqlParameters[ 6 ].Size = 125;
-			sqlParameters[ 6 ].Value = entity.MimeType;
+			sqlParameters[ 6 ] = new SqlParameter( "@MimeType",  entity.MimeType);
 
 			sqlParameters[ 7 ] = new SqlParameter( "@Bytes", SqlDbType.BigInt );
 			sqlParameters[ 7 ].Value = entity.ResourceBytes;
@@ -196,6 +207,7 @@ namespace ILPathways.DAL
 			sqlParameters[ 10 ] = new SqlParameter( "@LastUpdatedById", SqlDbType.Int );
 			sqlParameters[ 10 ].Value = entity.LastUpdatedById;
 
+            sqlParameters[ 11 ] = new SqlParameter( "@FilePath", entity.FilePath );
 			#endregion
 
 			try
@@ -214,6 +226,43 @@ namespace ILPathways.DAL
 			return message;
 
 		}//
+
+
+        public string UpdateFileInfo( DocumentVersion entity )
+        {
+            string message = "successful";
+            string connectionString = ContentConnection();
+
+            #region parameters
+            SqlParameter[] sqlParameters = new SqlParameter[ 4 ];
+            sqlParameters[ 0 ] = new SqlParameter( "@RowId", SqlDbType.UniqueIdentifier );
+            sqlParameters[ 0 ].Value = entity.RowId;
+            sqlParameters[ 1 ] = new SqlParameter( "@FilePath", entity.FilePath );
+            sqlParameters[ 2 ] = new SqlParameter( "@FileName", entity.FileName );
+            sqlParameters[ 3 ] = new SqlParameter( "@URL", entity.URL);
+
+            //sqlParameters[ 4 ] = new SqlParameter( "@LastUpdatedById", entity.LastUpdatedById);
+
+            
+            #endregion
+
+            try
+            {
+                SqlHelper.ExecuteNonQuery( connectionString, "[DocumentVersion.UpdateFileInfo]", sqlParameters );
+                message = "successful";
+
+            }
+            catch ( Exception ex )
+            {
+                LogError( ex, className + ".UpdateFileInfo() " );
+                message = className + "- Unsuccessful: UpdateFileInfo(): " + ex.Message.ToString();
+                entity.Message = message;
+                entity.IsValid = false;
+            }
+
+            return message;
+
+        }//
 
         /// <summary>
         /// Set the record status to published
@@ -360,6 +409,7 @@ namespace ILPathways.DAL
 			entity.URL = GetRowColumn( dr, "URL", "" );
 			entity.Status = GetRowColumn( dr, "Status", "" );
 			entity.FileName = GetRowColumn( dr, "FileName", "" );
+            entity.FilePath = GetRowColumn( dr, "FilePath", "" );
 			entity.FileDate = GetRowColumn( dr, "FileDate", System.DateTime.Now );
 
 			entity.MimeType = GetRowColumn( dr, "MimeType", "" );

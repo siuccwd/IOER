@@ -13,11 +13,11 @@ namespace LRWarehouse.Business
         private string _username = "";
         private string _password = "";
 
-        private int _fldSecret_Question_ID;
-        private string _secretAnswer = "";
+        //private int _fldSecret_Question_ID;
+        //private string _secretAnswer = "";
 
-        private string _roleName = "";
-        private int _roleId;
+        //private string _roleName = "";
+        //private int _roleId;
 
         private int _worknetId;
 
@@ -33,7 +33,13 @@ namespace LRWarehouse.Business
         #endregion
 
         public Patron()
-        { }
+        {
+            ProxyId = "";
+            UserProfile = new PatronProfile();
+            LastOrgMbrCheckDate = DefaultDate;
+            //Organizations = new List<Organization>();
+            //NOTE - DO NOT instantiate OrgMemberships
+        }
 
         #region Properties
 
@@ -99,22 +105,6 @@ namespace LRWarehouse.Business
         /// <summary>
         /// Get/Set for User name
         /// </summary>
-        public string Username
-        {
-            get { return _username; }
-            set
-            {
-                if ( this._username == value )
-                {
-                    //Ignore set
-                }
-                else
-                {
-                    this._username = value.Trim();
-                    HasChanged = true;
-                }
-            }
-        }
         public string UserName
         {
             get { return _username; }
@@ -131,6 +121,22 @@ namespace LRWarehouse.Business
                 }
             }
         }
+        //public string Username
+        //{
+        //    get { return _username; }
+        //    set
+        //    {
+        //        if ( this._username == value )
+        //        {
+        //            //Ignore set
+        //        }
+        //        else
+        //        {
+        //            this._username = value.Trim();
+        //            HasChanged = true;
+        //        }
+        //    }
+        //}
         /// <summary>
         /// Get/Set for Password
         /// </summary>
@@ -150,6 +156,8 @@ namespace LRWarehouse.Business
                 }
             }
         }
+
+        public string ProxyId { get; set; }
 
         private string _zipCode = "";
         /// <summary>
@@ -174,41 +182,41 @@ namespace LRWarehouse.Business
         /// <summary>
         /// Get/Set SecretQuestionID
         /// </summary>
-        public int SecretQuestionID
-        {
-            get { return _fldSecret_Question_ID; }
-            set
-            {
-                if ( this._fldSecret_Question_ID == value )
-                {
-                    //Ignore set
-                }
-                else
-                {
-                    this._fldSecret_Question_ID = value;
-                    HasChanged = true;
-                }
-            }
-        }
+        //public int SecretQuestionID
+        //{
+        //    get { return _fldSecret_Question_ID; }
+        //    set
+        //    {
+        //        if ( this._fldSecret_Question_ID == value )
+        //        {
+        //            //Ignore set
+        //        }
+        //        else
+        //        {
+        //            this._fldSecret_Question_ID = value;
+        //            HasChanged = true;
+        //        }
+        //    }
+        //}
         /// <summary>
         /// Get/Set SecretAnswer
         /// </summary>
-        public string SecretAnswer
-        {
-            get { return _secretAnswer; }
-            set
-            {
-                if ( this._secretAnswer == value )
-                {
-                    //Ignore set
-                }
-                else
-                {
-                    this._secretAnswer = value.Trim();
-                    HasChanged = true;
-                }
-            }
-        }
+        //public string SecretAnswer
+        //{
+        //    get { return _secretAnswer; }
+        //    set
+        //    {
+        //        if ( this._secretAnswer == value )
+        //        {
+        //            //Ignore set
+        //        }
+        //        else
+        //        {
+        //            this._secretAnswer = value.Trim();
+        //            HasChanged = true;
+        //        }
+        //    }
+        //}
 
 
         /// <summary>
@@ -255,6 +263,34 @@ namespace LRWarehouse.Business
             }
         } //
 
+        /// <summary>
+        /// Gets/Sets ImageUrl
+        /// </summary>
+        public string ImageUrl
+        {
+            get
+            {
+                if ( UserProfile == null )
+                    UserProfile = new PatronProfile();
+
+                return this.UserProfile.ImageUrl;
+            }
+            set
+            {
+                if ( UserProfile == null )
+                    UserProfile = new PatronProfile();
+
+                if ( UserProfile.ImageUrl == value )
+                {
+                    //Ignore set
+                }
+                else
+                {
+                    UserProfile.ImageUrl = value.Trim();
+                    HasChanged = true;
+                }
+            }
+        }
         public int worknetId
         {
             get
@@ -313,17 +349,17 @@ namespace LRWarehouse.Business
         {
             string idName = "";
 
-            if ( this.Username.ToLower().Equals( this.Email.ToLower() ) )
+            if ( this.UserName.ToLower().Equals( this.Email.ToLower() ) )
             {
                 idName = this.FullName();
             }
-            else if ( this.Username.IndexOf( "@" ) > -1 )
+            else if ( this.UserName.IndexOf( "@" ) > -1 )
             {
                 idName = this.FullName();
             }
             else
             {
-                idName = this.Username;
+                idName = this.UserName;
             }
 
             return idName;
@@ -339,7 +375,7 @@ namespace LRWarehouse.Business
             using ( guestUser )
             {
                 Id = 0;
-                Username = "guest";
+                UserName = "guest";
                 FirstName = "guest";
                 LastName = "user-" + System.DateTime.Now.ToString();
                 //RoleId = 1;
@@ -494,7 +530,10 @@ namespace LRWarehouse.Business
             }
         }
 
-        //fake orgId
+        /// <summary>
+        /// Get/Set OrgiD - this is a mirror/convenience of value from UserProfile
+        /// ??why was it not being used?
+        /// </summary>
         private int _orgId = 0;
         public int OrgId
         {
@@ -522,6 +561,7 @@ namespace LRWarehouse.Business
 
         /// <summary>
         ///  Get/Set ParentOrgId
+        ///  Normally not set, sometimes used for approvals, and for org vertical checks
         /// </summary>
         private int _parentOrgId = -1;
         public int ParentOrgId
@@ -568,6 +608,14 @@ namespace LRWarehouse.Business
             return shortName;
         }//
 
+       // public List<Organization> Organizations { get; set; }
+
+        /// <summary>
+        /// List of Organization Memberships
+        /// Leave null on instantiate. Null state will indicate no previous attempt to fill orgMbrs
+        /// </summary>
+        public List<OrganizationMember> OrgMemberships{ get; set; }
+        public DateTime LastOrgMbrCheckDate { get; set; }
         #endregion
     }
 }

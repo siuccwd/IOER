@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Web;
+using System.Web.Script.Serialization;
 using System.Web.Services;
-
-using System.Data;
 
 using LRWarehouse.Business;
 using LRWarehouse.DAL;
@@ -15,6 +15,7 @@ using Isle.BizServices;
 
 namespace ILPathways.Services
 {
+
     /// <summary>
     /// Summary description for DashboardService
     /// </summary>
@@ -25,11 +26,52 @@ namespace ILPathways.Services
     [System.Web.Script.Services.ScriptService]
     public class DashboardService : System.Web.Services.WebService
     {
+        UtilityService utilService = new UtilityService();
+
         [WebMethod]
-        public string HelloWorld()
+        public string ToggleFollowing( int followingUserId, int followedByUserId )
         {
-            return "Hello World";
+            bool isValid = false;
+            string status = "";
+
+            bool isFollowingNow = ToggleFollowing( followingUserId, followedByUserId, ref isValid, ref status );
+
+            return utilService.ImmediateReturn( isFollowingNow, isValid, status, null );
         }
+        public bool ToggleFollowing( int followingUserId, int followedByUserId, ref bool isValid, ref string status )
+        {
+            var output = false;
+
+            //Validate user
+            if ( followedByUserId == 0  )
+            {
+                isValid = false;
+                status = "You must login to follow!";
+                return output;
+            }
+            if ( followingUserId == 0 )
+            {
+                isValid = false;
+                status = "A following user must be selected!";
+                return output;
+            }
+            //Toggle the following
+            if ( AccountServices.Person_FollowingIsMember( followingUserId, followedByUserId ) )
+            {
+                AccountServices.Person_FollowingDelete( followingUserId, followedByUserId );
+                output = false;
+            }
+            else
+            {
+                AccountServices.Person_FollowingAdd( followingUserId, followedByUserId );
+                output = true;
+            }
+
+            isValid = true;
+            status = "okay";
+            return output;
+        }
+
 
         #region Get methods
         [WebMethod]
@@ -242,7 +284,7 @@ namespace ILPathways.Services
             profile.name = webUser.FullName();
             profile.organization = organization.Name;
             profile.role = webUser.UserProfile.PublishingRole;
-            profile.avatar = webUser.UserProfile.ImageUrl; // "/images/ISLE.png"; //Temporary until user avatars are implemented
+            profile.avatar = webUser.UserProfile.ImageUrl; // "/images/ioer_med.png"; //Temporary until user avatars are implemented
             return profile;
         }
         protected LibraryProfile GetLibraryData( Guid userGUID )
@@ -293,7 +335,7 @@ namespace ILPathways.Services
                 item.href = "#";
                 item.name = "Collection " + i;
                 item.resources = randomizer.Next(100);
-                item.image = "/images/ISLE.png";
+                item.image = "/images/ioer_med.png";
 
                 items.Add( item );
             }//
@@ -315,7 +357,7 @@ namespace ILPathways.Services
                 item.href = "#";
                 item.name = "Library " + i;
                 item.resources = randomizer.Next( 200 );
-                item.image = "/images/ISLE.png";
+                item.image = "/images/ioer_med.png";
                 item.following = randomizer.Next( 1, 3 );
 
                 items.Add( item );
@@ -336,7 +378,7 @@ namespace ILPathways.Services
                 item.id = i;
                 item.href = "#";
                 item.name = "My Resource #" + i;
-                item.image = "/images/ISLE.png";
+                item.image = "/images/ioer_med.png";
 
                 items.Add( item );
             }//

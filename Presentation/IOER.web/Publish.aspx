@@ -1,17 +1,13 @@
-﻿<%@ Page Title="" Language="C#" AutoEventWireup="true" CodeBehind="Publish.aspx.cs" Inherits="ILPathways.Publish" %>
+﻿<%@ Page Title="" Language="C#" AutoEventWireup="true" CodeBehind="Publish.aspx.cs" Inherits="ILPathways.Publish" MasterPageFile="/Masters/Responsive.Master" %>
 
-<%@ Register TagPrefix="uc1" TagName="PublishNarrow" Src="/LRW/controls/PublishResource_Narrow2.ascx" %>
+<%@ Register TagPrefix="uc1" TagName="Publisher" Src="/Controls/Publish3.ascx" %>
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<asp:Content ID="Content1" ContentPlaceHolderID="HeadContent" runat="server">
+  <link rel="Stylesheet" type="text/css" href="/Styles/common2.css" />
+</asp:Content>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head runat="server">
-    <title>ISLE Publishing Tool</title>
-</head>
-<body>
-    <form id="form1" runat="server" defaultbutton="NullButton">
-      <uc1:PublishNarrow id="publisher" runat="server"></uc1:PublishNarrow>
-      <asp:Button ID="NullButton" runat="server" style="display:none;" OnClientClick="return false;" />
-    </form>
-</body>
-</html>
+<asp:Content ContentPlaceHolderID="BodyContent" runat="server">
+  <div id="content">
+    <uc1:Publisher ID="PublisherControl" runat="server" />
+  </div>
+</asp:Content>

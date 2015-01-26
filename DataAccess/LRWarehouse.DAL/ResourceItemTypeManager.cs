@@ -94,10 +94,7 @@ namespace LRWarehouse.DAL
         }
         public int Create( MyEntity entity, ref string statusMessage )
         {
-            string resourceRowId = "";
-            if ( entity.ResourceId.ToString() != entity.DEFAULT_GUID )
-                resourceRowId = entity.ResourceId.ToString();
-
+            
             return Create( entity.ResourceIntId, entity.CodeId, entity.CreatedById, ref statusMessage );
         }
 

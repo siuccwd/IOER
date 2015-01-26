@@ -16,15 +16,21 @@ using ILPathways.Common;
 using ILPathways.Utilities;
 using IDBM = ILPathways.DAL.DatabaseManager;
 //using DBM = LRWarehouse.DAL.DatabaseManager;
-using AppUser= LRWarehouse.Business.Patron;
+using AppUser = LRWarehouse.Business.Patron;
 using LRWarehouse.Business;
+using ILPathways.Services;
+using LibraryAdminPendingResourcesDTO = ILPathways.Services.LibraryService.LibraryAdminPendingResourcesDTO;
 
 namespace ILPathways.Controls.Libraries
 {
     public partial class LibraryAdmin : BaseUserControl
     {
         MyMgr mgr = new MyMgr();
+        AccountMgr acctMgr = new AccountMgr();
+
         private string thisClassName = "LibraryAdmin";
+        Services.UtilityService utilService = new Services.UtilityService();
+
         #region Properties
 
         /// <summary>
@@ -39,23 +45,37 @@ namespace ILPathways.Controls.Libraries
         {
             get
             {
-                if (ViewState["CurrentLibrary"] == null)
-                    ViewState["CurrentLibrary"] = new ILP.Library();
-                return ViewState["CurrentLibrary"] as ILP.Library;
+                if ( ViewState[ "CurrentLibrary" ] == null )
+                    ViewState[ "CurrentLibrary" ] = new ILP.Library();
+                return ViewState[ "CurrentLibrary" ] as ILP.Library;
             }
-            set { ViewState["CurrentLibrary"] = value; }
+            set { ViewState[ "CurrentLibrary" ] = value; }
         }
         public int CurrentLibraryId
         {
             get
             {
-                if ( !IsInteger(txtCurrentLibraryId.Text) )
+                if ( !IsInteger( txtCurrentLibraryId.Text ) )
                     txtCurrentLibraryId.Text = "0";
 
-                return Int32.Parse(txtCurrentLibraryId.Text);
+                return Int32.Parse( txtCurrentLibraryId.Text );
             }
             set { txtCurrentLibraryId.Text = value.ToString(); }
         }
+
+        public int LastLibraryId
+        {
+            get
+            {
+                if ( HttpContext.Current.Session[ "NewLibraryId" ] == null )
+                    HttpContext.Current.Session[ "NewLibraryId" ] = "0";
+
+                return Int32.Parse( HttpContext.Current.Session[ "NewLibraryId" ].ToString() );
+            }
+
+            set { HttpContext.Current.Session[ "NewLibraryId" ] = value; }
+        }
+
         public int CurrentLibraryMemberId
         {
             get
@@ -69,16 +89,19 @@ namespace ILPathways.Controls.Libraries
         }
         public List<CodeItem> OrgCodesList 
         {
-            get {
+            get
+            {
                 if ( ViewState[ "OrgCodesList" ] == null )
                     ViewState[ "OrgCodesList" ] = new List<CodeItem>();
-                return ViewState[ "OrgCodesList" ] as List<CodeItem>; }
+                return ViewState[ "OrgCodesList" ] as List<CodeItem>;
+            }
             set { ViewState[ "OrgCodesList" ] = value; }
         }
         
         public AppUser Invitee 
         {
-            get {
+            get
+            {
                 if ( ViewState[ "Invitee" ] == null )
                     ViewState[ "Invitee" ] = new AppUser();
                 return ViewState[ "Invitee" ] as AppUser; 
@@ -91,7 +114,8 @@ namespace ILPathways.Controls.Libraries
         /// </summary>
         public ILP.LibraryInvitation Invitation 
         {
-            get {
+            get
+            {
                 if ( ViewState[ "Invitation" ] == null )
                     ViewState[ "Invitation" ] = new ILP.LibraryInvitation();
                 return ViewState[ "Invitation" ] as ILP.LibraryInvitation; 
@@ -132,10 +156,14 @@ namespace ILPathways.Controls.Libraries
             }
             set { ViewState[ "LastTotalRows" ] = value; }
         }//
+
+        public string pendingResources { get; set; }
+        public string userGUID { get; set; }
         #endregion
 
         protected void Page_Load( object sender, EventArgs e )
         {
+            pendingResources = "[]";
             if ( IsUserAuthenticated() == false )
             {
                 SetConsoleErrorMessage( "Error: you must be authenticated in order to use this page.<br/>Please login and try again." );
@@ -155,6 +183,16 @@ namespace ILPathways.Controls.Libraries
             {
                 pager2.CurrentIndex = LastPageNumber;
                 pager2.ItemCount = LastTotalRows;
+                int lastId = LastLibraryId;
+                if ( lastId > 0 && lastId != CurrentLibraryId )
+                {
+                    bool hasLibs = ShowAllowedLibraries();
+
+                    //prob need to refresh list first
+                    SetListSelectionInt( lastId.ToString() );
+
+                    SetSelectedLibrary( lastId );
+                }
             }
             catch
             {
@@ -164,25 +202,38 @@ namespace ILPathways.Controls.Libraries
         }//
         private void InitializeForm()
         {
-            //formSecurityName
-            //==> actually first check for any admin libs
-            //this is prob to allow admin accss to all libs
-            this.FormPrivileges = GDAL.SecurityManager.GetGroupObjectPrivileges( this.WebUser, FormSecurityName );
-            if ( CurrentUser.Username == "mparsons" )
+            //LoggingHelper.DoTrace( 2, "==================== LibraryAdmin.InitializeForm" );
+            this.FormPrivileges = new ILP.ApplicationRolePrivilege();
+
+            try
             {
-                FormPrivileges.SetAdminPrivileges();
-                sourceLibraryId.Visible = true;
-                collectionId.Visible = true;
+                //formSecurityName
+                //==> actually first check for any admin libs
+                //this is prob to allow admin accss to all libs
+                this.FormPrivileges = GDAL.SecurityManager.GetGroupObjectPrivileges( this.WebUser, FormSecurityName );
+                if ( WebUser.UserName == "mparsons" )
+                {
+                    FormPrivileges.SetAdminPrivileges();
+                    sourceLibraryId.Visible = true;
+                    collectionId.Visible = true;
+                }
+
+                if ( FormPrivileges.CreatePrivilege >= ( int ) ILP.EPrivilegeDepth.Region )
+                {
+                    //show link to load all libraries
+                    showAllLibraries.Visible = true;
+                    showAllUserLibraries.Visible = true;
+                }
             }
-            if ( FormPrivileges.CreatePrivilege >= ( int )ILP.EPrivilegeDepth.Region )
+            catch ( Exception ex )
             {
-                //show link to load all libraries
-                showAllLibraries.Visible = true;
+                LoggingHelper.LogError( ex, "LibraryAdmin.InitializeForm" );
             }
+
             GridViewSortExpression = "";
             GridViewSortDirection = System.Web.UI.WebControls.SortDirection.Ascending;
             LastPageNumber = 0;
-            InitializePageSizeList();
+            PopulateControls();
 
             //load adminable libs, if false, no libs
             bool hasLibs = ShowAllowedLibraries();
@@ -208,17 +259,50 @@ namespace ILPathways.Controls.Libraries
         /// </summary>
         private void CheckRecordRequest()
         {
-
             // Check if a request was made for a specific search parms
             int id = this.GetRequestKeyValue( "id", 0 );
 
             if ( id > 0 )
             {
                 //get library and see if has access - future
+                //check if in allowed libraries
+                sourceLibrary.SelectedIndex = -1;
+                SetListSelectionInt( id.ToString() );
 
+                if ( sourceLibrary.SelectedIndex > 0 )
+                {
+                    string action = this.GetRequestKeyValue( "action", "" );
+                    if ( action == "handlePending" )
+                    {
+                        libMbrsLink_Click( new object(), new EventArgs() );
+                        this.pendingMembers_Click( new object(), new EventArgs() );
+                    }
+                    else if ( action == "handleApproval" )
+                    {
+                        libApproveLink_Click( new object(), new EventArgs() );
+                    }
+                }
             }
 
         }	// End 
+        protected void SetListSelectionInt( string keyName )
+        {
+
+            if ( keyName.Length > 0 )
+            {
+                foreach ( ListItem item in sourceLibrary.Items )
+                {
+                    if ( item.Value == keyName )
+                    {
+                        item.Selected = true;
+                        sourceLibrary_SelectedIndexChanged( new object(), new EventArgs() );
+                        break;
+                    }
+                }
+            }
+
+        } //
+
         protected bool ShowAllowedLibraries()
         {
             bool hasLibraries = false;
@@ -231,7 +315,7 @@ namespace ILPathways.Controls.Libraries
                 if ( ds.Tables[ 0 ].Rows.Count == 1 )
                 {
                     sourceLibrary.SelectedIndex = 1;
-                    sourceLibrary_SelectedIndexChanged(new object(), new EventArgs());
+                    sourceLibrary_SelectedIndexChanged( new object(), new EventArgs() );
                 }
             }
             return hasLibraries;
@@ -246,7 +330,17 @@ namespace ILPathways.Controls.Libraries
         protected void showAllLibraries_Click( object sender, EventArgs e )
         {
             int totalRows = 0;
-            DataSet ds = mgr.LibrarySearch( "lib.IsActive = 1", "lib.Title", 1, 1000, ref totalRows );
+            DataSet ds = mgr.LibrarySearch( "lib.IsActive = 1 AND lib.LibraryTypeId = 2", "lib.Title", 1, 1000, ref totalRows );
+            if ( DoesDataSetHaveRows( ds ) )
+            {
+
+                IDBM.PopulateList( this.sourceLibrary, ds, "Id", "title", "Select a Library" );
+            }
+        }
+        protected void showAllUserLibraries_Click( object sender, EventArgs e )
+        {
+            int totalRows = 0;
+            DataSet ds = mgr.LibrarySearch( "lib.IsActive = 1 AND lib.LibraryTypeId = 1", "lib.Title", 1, 1000, ref totalRows );
             if ( DoesDataSetHaveRows( ds ) )
             {
 
@@ -269,7 +363,7 @@ namespace ILPathways.Controls.Libraries
                     foreach ( ILP.OrganizationMember item in list )
                     {
                         ci = new CodeItem();
-                        ci.Id = item.Id;
+                        ci.Id = item.OrgId;
                         ci.Title = item.Organization;
                         codes.Add( ci );
                     }
@@ -287,17 +381,24 @@ namespace ILPathways.Controls.Libraries
 
         protected void sourceLibrary_SelectedIndexChanged( object sender, EventArgs e )
         {
+            int id = Int32.Parse( sourceLibrary.SelectedValue );
+            SetSelectedLibrary( id );
+        }
+
+
+        protected void SetSelectedLibrary( int libraryId )
+        {
             CurrentLibraryMemberId = 0;
 
-            if ( sourceLibrary.SelectedIndex > 0 )
+            if ( libraryId > 0 )
             {
                 //reset action areas
                 membersGrid.DataSource = null;
                 membersGrid.DataBind();
-                HideSections();
 
-                CurrentLibraryId = Int32.Parse( sourceLibrary.SelectedValue );
-                CurrentLibrary = mgr.Get(CurrentLibraryId);
+
+                CurrentLibraryId = libraryId;
+                CurrentLibrary = mgr.Get( CurrentLibraryId );
                 pageTitle.Text = "Library Administration - " + CurrentLibrary.Title;
                 //need to also check if is my personal library, or is an org admin
                 if ( CurrentLibrary.IsMyPersonalLibrary( WebUser.Id ) )
@@ -307,10 +408,11 @@ namespace ILPathways.Controls.Libraries
                 else
                 {
                     ILP.LibraryMember lm = mgr.LibraryMember_Get( CurrentLibraryId, WebUser.Id );
-                    if ( lm != null && lm.MemberTypeId > 2 )
+                    if ( lm != null && lm.MemberTypeId > ILP.LibraryMember.LIBRARY_MEMBER_TYPE_ID_READER )
                     {
                         CurrentLibraryMemberId = lm.MemberTypeId;
-                    } else 
+                    }
+                    else
                     {
                         //not a Member, do an org check 
                         if ( CurrentLibrary.OrgId > 0 )
@@ -319,20 +421,21 @@ namespace ILPathways.Controls.Libraries
                             if ( orgMbr != null && orgMbr.SeemsPopulated )
                             {
                                 if ( orgMbr.HasAdministratorRole() 
-                                  || orgMbr.HasLibraryAdministratorRole ())
+                                  || orgMbr.HasLibraryAdministratorRole() )
                                 {
                                     CurrentLibraryMemberId = ILP.LibraryMember.LIBRARY_MEMBER_TYPE_ID_ADMIN;
                                 }
                             }
                         }
-                        else if ( FormPrivileges.CreatePrivilege >= ( int ) ILP.EPrivilegeDepth.Region )
+                    }
+                }
+                //allow admin acces to all libraries
+                if ( CurrentLibraryMemberId == 0
+                     && FormPrivileges.CreatePrivilege >= ( int )ILP.EPrivilegeDepth.Region )
                         {
                             CurrentLibraryMemberId = ILP.LibraryMember.LIBRARY_MEMBER_TYPE_ID_ADMIN;
                         }
-                    }
                     
-                }
-
                 if ( CurrentLibraryMemberId == 0 )
                 {
                     //no apparant access
@@ -344,10 +447,12 @@ namespace ILPathways.Controls.Libraries
                     return;
                 }
 
+
+                //want to limit the options based on member type
                 sourceLibraryId.Text = CurrentLibraryId.ToString();
                 litCurrentLibrary.Text = sourceLibrary.SelectedItem.Text;
 
-                if ( FormPrivileges.CreatePrivilege < ( int )ILP.EPrivilegeDepth.State )
+                if ( FormPrivileges.CreatePrivilege < ( int ) ILP.EPrivilegeDepth.State )
                 {
                     DataSet ds = mgr.LibrarySections_SelectWithEditAccess( CurrentLibraryId, WebUser.Id );
                     IDBM.PopulateList( this.sourceCollection, ds, "Id", "title", "Select Collection" );
@@ -358,6 +463,17 @@ namespace ILPathways.Controls.Libraries
                     IDBM.PopulateList( this.sourceCollection, ds, "Id", "title", "Select Collection" );
                 }
                 SetLibraryOptionsState( true );
+
+                //or just populate visible section, or edit and members?
+                if ( retainingCurrentSectionOnNewSelection.Text == "no" )
+                {
+                    HideSections();
+                }
+                else
+                {
+                    //determine current visible, and change it alone
+                    RefreshCurrentView();
+                }
             }
             else
             {
@@ -373,6 +489,8 @@ namespace ILPathways.Controls.Libraries
                 collectionId.Text = "";
                 sourceLibraryId.Text = "";
             }
+
+            LastLibraryId = libraryId;
         } //
 
         protected void SetLibraryOptionsState( bool state )
@@ -380,6 +498,7 @@ namespace ILPathways.Controls.Libraries
             editLibraryLink.Visible = state;
             libMbrsLink.Visible = state;
             libInviteLink.Visible = state;
+            libApprovalLink.Visible = state;
 
         } //
 
@@ -406,7 +525,7 @@ namespace ILPathways.Controls.Libraries
             //use 2 as the select ... row should have been added
             if ( OrgCodesList == null || OrgCodesList.Count < 2 )
             {
-                if ( ShowAllowedOrgs() == false)  
+                if ( ShowAllowedOrgs() == false )
                 {
                     //problems?
                     SetConsoleErrorMessage( "Error: - no organizations were found - not allowed to create an organization library." );
@@ -415,7 +534,7 @@ namespace ILPathways.Controls.Libraries
             }
             pageTitle.Text = "Library Administration";
             LibraryPanel.Visible = true;
-            LibraryMtce1.InitializeOrgLibary( "Enter library name", OrgCodesList );
+            LibraryMtce1.InitializeOrgLibrary( "", OrgCodesList );
             refreshLibrariesLink.Visible = true;
         }
 
@@ -432,12 +551,56 @@ namespace ILPathways.Controls.Libraries
         protected void libMbrsLink_Click( object sender, EventArgs e )
         {
             HideSections();
+            isMyMembershipsSearch.Text = "no";
             membersPanel.Visible = true;
+            mbrSearchPanel.Visible = true;
+            pendingMembers.Visible = true;
+            membersGrid.AutoGenerateEditButton = true;
             if ( sourceLibrary.SelectedIndex > 0 )
             {
                 DoMembersSearch();
             }
             //
+        }
+
+        protected void myLibMemberships_Click( object sender, EventArgs e )
+        {
+            HideSections();
+            isMyMembershipsSearch.Text = "yes";
+            //mbrSearchPanel.Visible = false;
+            membersPanel.Visible = true;
+            pendingMembers.Visible = false;
+            membersGrid.AutoGenerateEditButton = false;
+
+            int selectedPageNbr = 0;
+            string sortTerm = GetCurrentSortTerm();
+            pager2.ItemCount = 0;
+
+            DoMembersSearch( selectedPageNbr, sortTerm, true );
+        }
+
+        protected void RefreshCurrentView()
+        {
+            if ( membersPanel.Visible )
+            {
+                libMbrsLink_Click( new object(), new EventArgs() );
+            }
+            else if ( invitationsPanel.Visible )
+            {
+                libInviteLink_Click( new object(), new EventArgs() );
+            }
+            else if ( followersPanel.Visible )
+            {
+                
+            }
+            else if ( approvePanel.Visible )
+            {
+                libApproveLink_Click( new object(), new EventArgs() );
+            }
+            else if ( LibraryPanel.Visible )
+            {
+                editLibraryLink_Click( new object(), new EventArgs() );
+            }
         }
         protected void HideSections()
         {
@@ -447,7 +610,8 @@ namespace ILPathways.Controls.Libraries
             membersPanel.Visible = false;
             invitationsPanel.Visible = false;
             followersPanel.Visible = false;
-
+            approvePanel.Visible = false;
+            messagePanel.Visible = false;
             rfvEmail.Enabled = false;
         } //
         protected void libInviteLink_Click( object sender, EventArgs e )
@@ -458,7 +622,26 @@ namespace ILPathways.Controls.Libraries
             
         }
 
-        #region  Members =============================================================
+        protected void libApproveLink_Click( object sender, EventArgs e )
+        {
+          HideSections();
+          approvePanel.Visible = true;
+          userGUID = WebUser.RowId.ToString();
+          
+
+          var pendingResourcesData = new LibraryService().GetPendingResources( CurrentLibraryId, WebUser.RowId.ToString() );
+          if ( pendingResourcesData == null || pendingResourcesData.Count == 0 )
+          {
+            pendingResources = "[]";
+          }
+          else
+          {
+            pendingResources = new System.Web.Script.Serialization.JavaScriptSerializer().Serialize( pendingResourcesData );
+          }
+
+        }
+
+        #region  ====== Members =============================================================
 
         private void DoMembersSearch()
         {
@@ -466,7 +649,17 @@ namespace ILPathways.Controls.Libraries
             string sortTerm = GetCurrentSortTerm();
             pager2.ItemCount = 0;
 
-            DoMembersSearch( selectedPageNbr, sortTerm );
+            DoMembersSearch( selectedPageNbr, sortTerm, false );
+  } //
+
+
+        private void DoMembersSearch( int selectedPageNbr, string sortTerm )
+        {
+            bool isMyMembershipsSearch = false;
+            if ( pendingMembers.Visible == false )
+                isMyMembershipsSearch = true;
+
+            DoMembersSearch( selectedPageNbr, sortTerm, isMyMembershipsSearch );
         } //
 
         /// <summary>
@@ -474,7 +667,7 @@ namespace ILPathways.Controls.Libraries
         /// </summary>
         /// <param name="selectedPageNbr"></param>
         /// <param name="sortTerm"></param>
-        private void DoMembersSearch( int selectedPageNbr, string sortTerm )
+        private void DoMembersSearch( int selectedPageNbr, string sortTerm, bool isMyMembershipsSearch )
         {
             DataSet ds = null;
             if ( selectedPageNbr == 0 )
@@ -490,11 +683,12 @@ namespace ILPathways.Controls.Libraries
 
             int pTotalRows = 0;
 
-            
-            //Q and Dirty search
-            int libId = Int32.Parse( sourceLibrary.SelectedValue );
-            //string filter = FormatFilter();
-            string filter = string.Format(" LibraryId = {0} ", libId);
+            string filter = "";
+            if (isMyMembershipsSearch)
+                filter = FormatMyMembershipsFilter();
+            else
+                filter = FormatMembersFilter();
+
             List<ILP.LibraryMember> list = mgr.LibraryMember_Search( filter, sortTerm, selectedPageNbr, pager2.PageSize, ref pTotalRows );
             pager2.ItemCount = pTotalRows;
 
@@ -525,23 +719,63 @@ namespace ILPathways.Controls.Libraries
                 membersGrid.DataSource = list;
                 //membersGrid.PageIndex = selectedPageNbr;
                 membersGrid.DataBind();
+
+                 //if memberships context, show library
+                if ( pendingMembers.Visible == false )
+                {
+                    membersGrid.Columns[ 2 ].Visible = true;
+                } else
+                    membersGrid.Columns[ 2 ].Visible = false;
             }
-            
+        }
+
+
+        protected string FormatMembersFilter()
+        {
+            string filter = "";
+            string booleanOperator = "AND";
+
+            //Q and Dirty search
+            int libId = Int32.Parse( sourceLibrary.SelectedValue );
+            //string filter = FormatFilter();
+            filter = string.Format( " LibraryId = {0} ", libId );
+
+            if ( ddlFilterMemberType.SelectedIndex > 0 )
+            {
+                int mbrTypeId = Int32.Parse( this.ddlFilterMemberType.SelectedValue.ToString() );
+                filter += MyMgr.FormatSearchItem( filter, "MemberTypeId", mbrTypeId, booleanOperator );
+            }
+            return filter;
+        }
+
+        protected string FormatMyMembershipsFilter()
+        {
+            string filter = "";
+            string booleanOperator = "AND";
+
+            filter = string.Format( " UserId = {0} ", WebUser.Id);
+
+            if ( ddlFilterMemberType.SelectedIndex > 0 )
+            {
+                int mbrTypeId = Int32.Parse( this.ddlFilterMemberType.SelectedValue.ToString() );
+                filter += MyMgr.FormatSearchItem( filter, "MemberTypeId", mbrTypeId, booleanOperator );
+            }
+            return filter;
         }
      
-
         protected void colMbrsLink_Click( object sender, EventArgs e )
         {
 
         }
         protected void pendingMembers_Click( object sender, EventArgs e )
         {
-
+            ddlFilterMemberType.SelectedIndex = 1;
+            this.DoMembersSearch();
         }
 
         protected void searchLink_Click( object sender, EventArgs e )
         {
-
+            this.DoMembersSearch();
         }
 
         protected void membersGrid_RowDataBound( object sender, GridViewRowEventArgs e )
@@ -553,22 +787,6 @@ namespace ILPathways.Controls.Libraries
                 if ( ( e.Row.RowState & DataControlRowState.Edit ) == DataControlRowState.Edit )
                 {
                     FormatEditRow( drv, e );
-                }
-                else
-                {
-                    //check if item is in use, cannot delete these records
-                    //LinkButton delBtn = ( LinkButton ) e.Row.FindControl( "deleteRowButton" );
-                    //if ( FormPrivileges.CanDelete() )
-                    //{
-                    //    delBtn.Enabled = true;
-                    //    delBtn.Attributes.Add( "onclick", "javascript:return " +
-                    //            "confirm('Are you sure you want to delete this record (" +
-                    //            DataBinder.Eval( e.Row.DataItem, "ClusterTitle" ) + ")')" );
-                    //}
-                    //else
-                    //{
-                    //    delBtn.Visible = false;
-                    //}
                 }
             }
         }
@@ -602,6 +820,32 @@ namespace ILPathways.Controls.Libraries
             else
             {
                 ddl.SelectedIndex = 0;
+            }
+
+            if ( CurrentLibrary.OrgId > 0 )
+            {
+                DropDownList ddl2 = ( DropDownList ) e.Row.FindControl( "gridDdlOrgMbrType" );
+                ddl2.Visible = true;
+                PopulateOrgMemberTypes( ddl2 );
+
+                string orgMbrTypeId = drv.OrgMemberTypeId.ToString();
+                int orgMbrTypeIdx = 0;
+                Int32.TryParse( orgMbrTypeId, out orgMbrTypeIdx );
+                if ( orgMbrTypeIdx > 0 )
+                {
+                    this.SetListSelection( ddl2, orgMbrTypeId.ToString() );
+                    if ( this.allowingChangeToOrgMbr.Text == "no" )
+                        ddl2.Enabled = false;
+                }
+                else
+                {
+                    ddl2.SelectedIndex = 0;
+                }
+            }
+            else
+            {
+                Label noOrgMsg = ( Label ) e.Row.FindControl( "gridlblNoOrgMbrMsg" );
+                noOrgMsg.Visible = true;
             }
 
         }
@@ -670,14 +914,16 @@ namespace ILPathways.Controls.Libraries
                     this.SetConsoleSuccessMessage( "Successfully removed member from this library." );
                     //OK reset list
                     string sortTerm = "";   // GetCurrentSortTerm();
-
-                    DoMembersSearch();
+                    if (isMyMembershipsSearch.Text == "yes")
+                        DoMembersSearch( 0, sortTerm, true );
+                    else 
+                        DoMembersSearch();
                 }
                 else
                 {
                     // problem
                     this.SetConsoleErrorMessage( "An unexpected issue was encountered while attempting to delete this record. System administration has been notified:<br/> " + statusMessage );
-                    LoggingHelper.LogError(  "LibraryAdmin.DeleteRecord() - Delete failed for library member id of " + recordId.ToString() + " and returned the following message:<br/>" + statusMessage, true );
+                    LoggingHelper.LogError( "LibraryAdmin.DeleteRecord() - Delete failed for library member id of " + recordId.ToString() + " and returned the following message:<br/>" + statusMessage, true );
                 }
 
             }
@@ -780,21 +1026,62 @@ namespace ILPathways.Controls.Libraries
             try
             {
                 GridViewRow row = ( GridViewRow ) membersGrid.Rows[ e.RowIndex ];
-                int id = Int32.Parse(membersGrid.DataKeys[ e.RowIndex ].Value.ToString());
+                int id = Int32.Parse( membersGrid.DataKeys[ e.RowIndex ].Value.ToString() );
+                //get current - especially to check if was pending
+                ILP.LibraryMember lm = mgr.LibraryMember_Get( id );
 
                 //get values from grid 
                  DropDownList ddl = ( DropDownList ) row.FindControl( "gridDdlTypes" );
-                 if ( ddl != null && ddl.SelectedIndex > 0 )
+
+                 if ( ddl != null && ddl.SelectedIndex > -1 )
                  {
+                     int typeId = Int32.Parse( ddl.SelectedValue );
                      //update the record
-                     bool isOk = mgr.LibraryMember_Update( id, Int32.Parse( ddl.SelectedValue ), WebUser.Id );
+                     bool isOk = mgr.LibraryMember_Update( id, typeId, WebUser.Id );
 
                      if ( isOk )
                      {
-                         SetConsoleSuccessMessage( "Successfully updated record" );
                          // Refresh the data
                          membersGrid.EditIndex = -1;
+                         AppUser user = new AccountMgr().Get( lm.UserId );
+                         
+                         bool updatedPendingMbr = false;
 
+                         //if was update to a pending status, send email 
+                         if ( typeId > 0 && lm.MemberTypeId == 0 )
+                         {
+                             lm.MemberTypeId = typeId;
+                             lm.SetMemberType();    // = ddl.SelectedItem.Text;
+                            updatedPendingMbr = true;
+
+                             if ( user != null && user.Id > 0 )
+                             {
+                                 SendLibraryConfirmationEmail( lm, user );
+                             }
+                         }
+
+                         if ( CurrentLibrary.OrgId > 0 )
+                         {
+                             DropDownList orgMbrList = ( DropDownList ) row.FindControl( "gridDdlOrgMbrType" );
+                            if ( orgMbrList != null && orgMbrList.SelectedIndex > 0 && orgMbrList.Enabled == true )
+                             {
+                                 HandleAddingLibMbrToOrg( lm, user, orgMbrList );
+                             }
+                         }
+
+                         bool canPublish = GDAL.OrganizationBizService.DoesUserHavePublishPrivileges( user );
+
+                        if ( CurrentLibrary.OrgId > 0 && canPublish == false )
+                         {
+                            if ( typeId > 1 )
+                                SetConsoleSuccessMessage( "Successfully updated member.<br/>WARNING; THIS USER DOES NOT HAVE PUBLISHING PRIVILEGES.<br/>If you expect this person to be able to tag/publish new resources, you may want to add them to the library organization (or another organization with publish privileges)." );
+                             else 
+                                SetConsoleSuccessMessage( "Successfully updated member" );
+                         }
+                         else
+                         {
+                             SetConsoleSuccessMessage( "Successfully updated member" );
+                         }
                          DoMembersSearch();
                      }
                      else
@@ -810,6 +1097,64 @@ namespace ILPathways.Controls.Libraries
 
             }
         }
+
+        private void SendLibraryConfirmationEmail( ILP.LibraryMember lm, AppUser user )
+        {
+            string statusMessage = "";
+            string bcc = UtilityManager.GetAppKeyValue( "appAdminEmail", "mparsons@siuccwd.com" );
+            string fromEmail = UtilityManager.GetAppKeyValue( "contactUsMailFrom", "mparsons@siuccwd.com" );
+            string cc = "";
+            if ( ccApproverWithMbrConfirm.Text == "yes" )
+                cc = WebUser.Email;
+
+            string proxyId = new GDAL.AccountServices().Create_ProxyLoginId( user.Id, "Confirm to user added to library", ref statusMessage );
+
+            string eMessage = string.Format( adLibrarySummaryDTOConfirmMsg.Text, 
+                this.CurrentLibrary.Title, lm.MemberType,
+                string.Format( UtilityManager.FormatAbsoluteUrl( autoLoginLinkContribute.Text, true ), proxyId ),
+                string.Format( UtilityManager.FormatAbsoluteUrl( autoLoginLinkSearch.Text, true ), proxyId ),
+                string.Format( UtilityManager.FormatAbsoluteUrl( autoLoginLinkLibrary.Text, true ), proxyId, CurrentLibrary.Id ),
+                string.Format( UtilityManager.FormatAbsoluteUrl( autoLoginLinkLibrariesSearch.Text, true ), proxyId ),
+                string.Format( UtilityManager.FormatAbsoluteUrl( autoLoginLinkGuide.Text, true ), proxyId ),
+                WebUser.FullName()
+                );
+
+
+            EmailManager.SendEmail( user.Email, WebUser.Email, string.Format( adLibrarySummaryDTOConfirmSubject.Text, CurrentLibrary.Title ), eMessage, cc, bcc );
+            
+        } //
+
+        private void HandleAddingLibMbrToOrg( ILP.LibraryMember lm, AppUser user, DropDownList orgMbrList )
+        {
+            string statusMessage = "";
+            try
+            {
+                int typeId = Int32.Parse( orgMbrList.SelectedValue );
+                //need to check if the same Org mbr type
+                //prob should not allow chg? Or only if actual org admin?
+                if ( lm.IsAnOrgMbr )
+                {
+                    ILP.OrganizationMember mbr = GDAL.OrganizationBizService.OrganizationMember_Get( CurrentLibrary.OrgId, user.Id );
+                    //allowing changes?
+                    if ( mbr != null && mbr.OrgMemberTypeId != typeId )
+                    {
+                        mbr.OrgMemberTypeId = typeId;
+                        mbr.LastUpdatedById = WebUser.Id;
+                        bool action = GDAL.OrganizationBizService.OrganizationMember_Update( mbr );
+                    }
+                }
+                else
+                {
+                    int omid = GDAL.OrganizationBizService.OrganizationMember_Create( CurrentLibrary.OrgId, user.Id, typeId, WebUser.Id, ref statusMessage );
+                }
+            }
+            catch ( Exception ex )
+            {
+                SetConsoleErrorMessage( "Oh oh something went wrong. System administraation has been notified" );
+                LogError( ex, "LibraryAdmin.HandleAddingLibMbrToOrg" );
+            }
+        }
+
         private string GetCurrentSortTerm()
         {
             string sortTerm = GridViewSortExpression;
@@ -836,6 +1181,24 @@ namespace ILPathways.Controls.Libraries
             {
                 //Select an Member Type
                 IDBM.PopulateList( ddl, codes, "Id", "Title", "" );
+                if ( selectFirst )
+                {
+                    ddl.SelectedIndex = 1;
+                }
+
+            }
+        }	// End 
+        protected void PopulateOrgMemberTypes( DropDownList ddl )
+        {
+            PopulateOrgMemberTypes( ddl, false );
+        }	// End 
+
+        protected void PopulateOrgMemberTypes( DropDownList ddl, bool selectFirst )
+        {
+            List<CodeItem> codes = OrgMgr.OrgMemberType_Select(); ;
+            if ( codes != null && codes.Count > 0 )
+            {
+                IDBM.PopulateList( ddl, codes, "Id", "Title", "Do NOT add To Library Organization" );
                 if ( selectFirst )
                 {
                     ddl.SelectedIndex = 1;
@@ -871,7 +1234,7 @@ namespace ILPathways.Controls.Libraries
         } //
         private void SetPageSizeList()
         {
-            GDAL.CodeTableBizService.PopulateGridPageSizeList(ref this.ddlPageSizeList);
+            GDAL.CodeTableBizService.PopulateGridPageSizeList( ref this.ddlPageSizeList );
         } //
         /// <summary>
         /// Check if page size preferrence has changed and update session variable if appropriate
@@ -911,6 +1274,14 @@ namespace ILPathways.Controls.Libraries
             }
         } //
         #endregion
+        void PopulateControls()
+        {
+            InitializePageSizeList();
+
+            List<CodeItem> list = OrgMgr.OrgMemberRole_Select();
+
+            IDBM.PopulateList( cblOrgRoles, list, "Id", "Title", "" );
+        }
          #endregion 
         #region  ============== invitations =====================
 
@@ -942,18 +1313,28 @@ namespace ILPathways.Controls.Libraries
             inviteStep4HasAcct.Visible = false;
             createAcctPanel.Visible = false;
 
-            //look up user
-            if ( txtEmail.Text != null && txtEmail.Text.Trim().Length > 5 )
+            bool isValid = true;
+            bool alreadyExists = false;
+            string statusMessage = "";
+
+            string inputEmail = txtEmail.Text.Trim();
+            inputEmail = utilService.ValidateEmail( txtEmail.Text, ref isValid, ref statusMessage, ref alreadyExists );
+
+            if ( isValid == false )
+            {
+                SetConsoleErrorMessage( "Error - Please enter a valid email addess and try again." );
+            }
+            else 
             {
                 bool sameOrg = false;
-                Invitee = new AccountMgr().GetByEmail(txtEmail.Text.Trim());
-                if(Invitee != null && Invitee.Id > 0) 
+                Invitee = new AccountMgr().GetByEmail( txtEmail.Text.Trim() );
+                if ( Invitee != null && Invitee.Id > 0 )
                 {
                     //check if a member already
                     ILP.LibraryMember mbr = mgr.LibraryMember_Get( CurrentLibraryId, Invitee.Id );
                     if ( mbr != null && mbr.SeemsPopulated )
                     {
-                        SetConsoleErrorMessage( string.Format("Note: {0} is already a member {1} of this library", Invitee.FullName(), mbr.MemberType)) ;
+                        SetConsoleErrorMessage( string.Format( "Note: {0} is already a member {1} of this library", Invitee.FullName(), mbr.MemberType ) );
                         invitePanelStart.Visible = true;
                         invitePanel2.Visible = false;
                         //NICE TO HAVE: do org role here
@@ -961,7 +1342,7 @@ namespace ILPathways.Controls.Libraries
                     }
 
                     //if library has an org, offer to add to org
-                    if ( CurrentLibrary.OrgId > 0) 
+                    if ( CurrentLibrary.OrgId > 0 )
                     {
                         ILP.OrganizationMember orgMbr = OrgMgr.OrganizationMember_Get( CurrentLibrary.OrgId, Invitee.Id );
                         if ( orgMbr != null && orgMbr.SeemsPopulated )
@@ -975,6 +1356,7 @@ namespace ILPathways.Controls.Libraries
                            
                             messagePanel.Visible = true;
                             invitePanelStart.Visible = false;
+                            invitePanel2.Visible = false;
                         } 
                         else 
                         {
@@ -983,15 +1365,18 @@ namespace ILPathways.Controls.Libraries
                             invitePanelStart.Visible = false;
                             inviteStep4HasAcct.Visible = true;
                             userFoundMsg.Visible = true;
-                            userFoundMsg.Text = string.Format(userFoundOrgMessage.Text, Invitee.FullName());
+                            userFoundMsg.Text = string.Format( userFoundOrgMessage.Text, Invitee.FullName() );
                         }
-                    } else 
+                        }
+                    else
                     {
                         //personal so no offer, skip org
                         messagePanel.Visible = true;
                         invitePanelStart.Visible = false;
+                        invitePanel2.Visible = false;
                     }
-                } else 
+                }
+                else
                 {
                     //not found show next
                     Invitee = new AppUser();
@@ -1004,24 +1389,21 @@ namespace ILPathways.Controls.Libraries
                     notFoundMsg.Visible = true;
                 }
             }
-            else
-            {
-                SetConsoleErrorMessage("Error - Please enter a valid email addess and try again.");
-            }
+            
+
         }//
 
         protected void inviteStep3NoAcct_Click( object sender, EventArgs e )
         {
-            invitePanel2.Visible = false;
-            messagePanel.Visible = true;
+            
             //no special actions, unless we want to just create an acct using email?
+            HandleShowingOrgRolesPanel();
         }
 
         protected void inviteStep4HasAcct_Click( object sender, EventArgs e )
         {
             //no special actions
-            invitePanel2.Visible = false;
-            messagePanel.Visible = true;
+            HandleShowingOrgRolesPanel();
         }
 
         protected void inviteStep5CreateAcct_Click( object sender, EventArgs e )
@@ -1049,14 +1431,38 @@ namespace ILPathways.Controls.Libraries
             string password = "ChangeMe_" + System.DateTime.Now.Millisecond.ToString();
             Invitee.TempProperty1 = password;
             Invitee.Password = ILPathways.Utilities.UtilityManager.Encrypt( password );
-            Invitee.Username = txtEmail.Text;
+            Invitee.UserName = txtEmail.Text;
             Invitee.Email = txtEmail.Text;
 
-            invitePanel2.Visible = false;
-            messagePanel.Visible = true;
-
+            HandleShowingOrgRolesPanel();
         }
 
+
+        protected void HandleShowingOrgRolesPanel()
+        {
+            invitePanel2.Visible = false;
+
+            //first check if user has org admin privileges
+            //or maybe only for existing users???
+            //prob should not allow adding above personal roles??
+            if ( CurrentLibraryMemberId > ILP.LibraryMember.LIBRARY_MEMBER_TYPE_ID_EDITOR 
+                && rblAddToOrg.SelectedIndex > 0 && rblAddToOrg.SelectedIndex != 3 )
+            {
+                orgRolePanel.Visible = true;
+            }
+            else
+            {
+                messagePanel.Visible = true;
+            }
+        }
+
+        protected void inviteOrgRole_Click( object sender, EventArgs e )
+        {
+            //no special actions
+            //probable handle in final step
+            orgRolePanel.Visible = false;
+            messagePanel.Visible = true;
+        }
 
         protected void inviteStep6Final_Click( object sender, EventArgs e )
         {
@@ -1069,33 +1475,36 @@ namespace ILPathways.Controls.Libraries
             string statusMessage = "";
             if ( Invitee == null || Invitee.Email == null || Invitee.Email.Trim().Length < 10 )
             {
-                SetConsoleErrorMessage("Error: a valid invitation was not created. ");
+                SetConsoleErrorMessage( "Error: a valid invitation was not created. " );
                 return;
             }
 
             invitePanel2.Visible = false;
             finshInvitePanel.Visible = true;
      
-            if ( Invitee.Id == 0 && (Invitee.FirstName != null && Invitee.FirstName.Length > 1 ))
+            //check if will create a new account immediately
+            if ( Invitee.Id == 0 && ( Invitee.FirstName != null && Invitee.FirstName.Length > 1 ) )
             {
                 int id = new AccountMgr().Create( Invitee, ref statusMessage );
                 if ( id > 0 )
                 {
                     isNewAcct = true;
                     //do get to retrieve rowId
-                    Invitee = new AccountMgr().Get(id);
+                    Invitee = new AccountMgr().Get( id );
                 }
                 else
                 {
                     //??
                     SetConsoleErrorMessage( "There was a problem creating the account. System admin has been notified." );
-                    EmailManager.NotifyAdmin("Problem creating a quick account from the invitation process", "Don't know why, but: "
+                    EmailManager.NotifyAdmin( "Problem creating a quick account from the invitation process", "Don't know why, but: "
                         + "<br/>email: " + Invitee.Email
                         + "<br/> Name: " + Invitee.FullName()
                         + "<br/>Status Msg: " + statusMessage
                         );
                 }
             }//
+
+            Invitation.Message = txtMessage.EditPanel.Content;
             Invitation.CreatedById = WebUser.Id;
             Invitation.Created = System.DateTime.Now;
             Invitation.LastUpdated = System.DateTime.Now;
@@ -1110,7 +1519,9 @@ namespace ILPathways.Controls.Libraries
                 }
                 else if ( WebUser.OrgId > 0 )
                 {
-                    Invitation.AddToOrgId = WebUser.OrgId;
+                    //probably should not do this??
+                    //==> unless interface makes this clear
+                    //Invitation.AddToOrgId = WebUser.OrgId;
                 }
                 else
                 {
@@ -1133,7 +1544,7 @@ namespace ILPathways.Controls.Libraries
             string subject = string.Format( inviteSubject.Text, WebUser.FullName() );
             string libUrl = string.Format( this.libraryLink.Text, CurrentLibrary.Id );
             libUrl = UtilityManager.FormatAbsoluteUrl( libUrl, false );
-            string libMessage = string.Format(this.visitLibraryMsg.Text, libUrl, CurrentLibrary.Title);
+            string libMessage = string.Format( this.visitLibraryMsg.Text, libUrl, CurrentLibrary.Title );
 
             eMessage = string.Format( this.inviteEmail.Text, CurrentLibrary.Title, ddlMemberType.SelectedItem.Text );
 
@@ -1149,23 +1560,32 @@ namespace ILPathways.Controls.Libraries
                 Invitation.StartingUrl = string.Format( this.libraryLink.Text, CurrentLibraryId ); 
                 Invitation.TargetEmail = Invitee.Email;
                 Invitation.IsActive = true;
+                //academic - now this is only created where a user doesn't exist
                 Invitation.TargetUserId = Invitee.Id;
                 Invitation.Subject = subject;
-                string gettingStarted = string.Format(invitationMessageContent.Text
-                    , UtilityManager.FormatAbsoluteUrl( libUrl, false)
-                    , UtilityManager.FormatAbsoluteUrl( gettingStartedLink.Text, false)
+                string gettingStarted = string.Format( invitationMessageContent.Text
+                    , UtilityManager.FormatAbsoluteUrl( libUrl, false )
+                    , UtilityManager.FormatAbsoluteUrl( gettingStartedLink.Text, false )
                     , UtilityManager.FormatAbsoluteUrl( librariesHome.Text, false ) );
                 Invitation.MessageContent = invitationMessageContent.Text;
 
                 Invitation.ExpiryDate = System.DateTime.Now.AddDays( 7 );
                 Invitation.RowId = Guid.NewGuid();
-
-
+                //add any org mbr roles
+                Invitation.OrgMbrRoles = "";
+                char[] charsToTrim = { ',', ' ' };
+                foreach ( ListItem item in this.cblOrgRoles.Items )
+                {
+                    if ( item.Selected )
+                    {
+                        Invitation.OrgMbrRoles += Int32.Parse( item.Value ) + ",";
+                    }
+                }
+                Invitation.OrgMbrRoles = Invitation.OrgMbrRoles.Length > 0 ? Invitation.OrgMbrRoles.TrimEnd( charsToTrim ) : "";
                 int inviteId = mgr.LibraryInvitation_Create( Invitation, ref statusMessage );
 
                 string url = string.Format( this.registerLink.Text, Invitation.RowId.ToString() );
                 url = UtilityManager.FormatAbsoluteUrl( url, isSecure );
-
 
                 string msg = string.Format( this.doRegisterMsg.Text, url );
                 eMessage += msg;
@@ -1173,11 +1593,15 @@ namespace ILPathways.Controls.Libraries
             }
             else
             {
+                //account exists
+
+
                 if ( isNewAcct )
                 {
+                    string proxyId = new GDAL.AccountServices().Create_3rdPartyAddProxyLoginId( Invitee.Id, "Notice to user invited to library", ref statusMessage );
                     //action: provide confirm url to ???. 
                     //Should they be added to lib before confirm?
-                    string confirmUrl = string.Format( this.activateLink.Text, Invitee.RowId.ToString() );
+                    string confirmUrl = string.Format( this.activateLink.Text, proxyId.ToString() );
                     confirmUrl = UtilityManager.FormatAbsoluteUrl( confirmUrl, isSecure );
 
                     string acctCreated = string.Format( this.acctCreatedMsg.Text, Invitee.Email, "Change password on login", confirmUrl );
@@ -1185,15 +1609,16 @@ namespace ILPathways.Controls.Libraries
                 }
                 else
                 {
+                    string proxyId = new GDAL.AccountServices().Create_ProxyLoginId( Invitee.Id, "Notice to user invited to library", ref statusMessage );
                     //add user as lib member 
                     mgr.LibraryMember_Create( CurrentLibraryId,
                                     Invitee.Id,
                                     Int32.Parse( ddlMemberType.SelectedValue ),
                                     WebUser.Id, ref statusMessage );
 
-                    string contributeUrl = string.Format( contributeLink.Text, Invitee.RowId.ToString() );
+                    string contributeUrl = string.Format( contributeLink.Text, proxyId.ToString() );
                     contributeUrl = UtilityManager.FormatAbsoluteUrl( contributeUrl, isSecure );
-                    eMessage += contributeUrl;
+                    eMessage += string.Format( "<a href={0}>Login to the Contribute page.</a>", contributeUrl );
                 }
 
                 if ( Invitation.AddToOrgId > 0 )
@@ -1207,6 +1632,7 @@ namespace ILPathways.Controls.Libraries
             {
                 eMessage += " <p>" + txtMessage.EditPanel.Content + "</p>";
             }
+            eMessage += " <p>" + WebUser.EmailSignature() + "</p>";
 
             EmailManager.SendEmail( toEmail, fromEmail, subject, eMessage, "", bcc );
             SetConsoleSuccessMessage( "Successfully sent the invitation" );
@@ -1214,6 +1640,11 @@ namespace ILPathways.Controls.Libraries
            
         }
 
+        /// <summary>
+        /// Create an organization member
+        /// </summary>
+        /// <param name="user"></param>
+        /// <param name="invite"></param>
         protected void CreateOrgMember( AppUser user, ILP.LibraryInvitation invite )
         {
             string statusMessage = "";
@@ -1226,14 +1657,45 @@ namespace ILPathways.Controls.Libraries
             int id = OrgMgr.OrganizationMember_Create( om, ref statusMessage );
 
             //also create profile (default org), if not already have orgId
+            //Hmm - may not want to arbitrariliy do this
             if ( user.OrgId == 0 )
             {
-                PatronProfile prof = new PatronProfile();
+                PatronProfile prof = acctMgr.PatronProfile_Get( user.Id );
                 prof.UserId = user.Id;
                 prof.OrganizationId = invite.AddToOrgId;
-                new AccountMgr().PatronProfile_Create( prof, ref statusMessage );
+                if ( prof.IsValid )
+                    statusMessage = acctMgr.PatronProfile_Update( prof );
+                else
+                    acctMgr.PatronProfile_Create( prof, ref statusMessage );
             }
+            if ( id > 0 )
+                HandleOrgMbrRoles( id );
+
+        } //
+
+        private void HandleOrgMbrRoles( int orgMbrId )
+        {
+            ILP.OrganizationMemberRole role = new ILP.OrganizationMemberRole();
+            string statusMessage = "";
+
+            foreach ( ListItem item in this.cblOrgRoles.Items )
+            {
+                if ( item.Selected )
+                {
+                    role = new ILP.OrganizationMemberRole();
+                    role.OrgMemberId = orgMbrId;
+                    role.RoleId = Int32.Parse( item.Value );
+                    role.CreatedById = WebUser.Id;
+                    if ( orgMbrId > 0 )
+                    {
+                        int id = OrgMgr.OrganizationMemberRole_Create( role, ref statusMessage );
+                    }
+
+                }
+            }
+
         }
+
         protected void showInvitations_Click( object sender, EventArgs e )
         {
             pendingInvitesPanel.Visible = true;

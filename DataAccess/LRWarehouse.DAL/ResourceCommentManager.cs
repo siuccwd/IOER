@@ -75,7 +75,7 @@ namespace LRWarehouse.DAL
                 //sqlParameters[ 0 ].Value = entity.ResourceId;
                 sqlParameters[ 0 ] = new SqlParameter( "@ResourceIntId", entity.ResourceIntId );
                 sqlParameters[ 1 ] = new SqlParameter( "@Comment", entity.Comment );
-                sqlParameters[ 2 ] = new SqlParameter( "@IsActive", entity.IsActive );
+                sqlParameters[ 2 ] = new SqlParameter( "@IsActive", 1 );
                 sqlParameters[ 3 ] = new SqlParameter( "@CreatedbyId", entity.CreatedById );
                 sqlParameters[ 4 ] = new SqlParameter( "@CreatedBy", entity.CreatedBy );
                 sqlParameters[ 5 ] = new SqlParameter( "@Commenter", entity.Commenter );
@@ -111,7 +111,7 @@ namespace LRWarehouse.DAL
                 SqlParameter[] sqlParameters = new SqlParameter[8];
                 sqlParameters[0] = new SqlParameter("@ResourceIntId", entity.ResourceIntId);
                 sqlParameters[1] = new SqlParameter("@Comment", entity.Comment);
-                sqlParameters[2] = new SqlParameter("@IsActive", entity.IsActive);
+                sqlParameters[2] = new SqlParameter("@IsActive", 1);
                 if (entity.Created >= SqlDateTime.MinValue && entity.Created <= SqlDateTime.MaxValue)
                 {
                     sqlParameters[3] = new SqlParameter("@Created", entity.Created);
@@ -121,7 +121,7 @@ namespace LRWarehouse.DAL
                     sqlParameters[3] = new SqlParameter("@Created", DateTime.Now);
                 }
                 sqlParameters[4] = new SqlParameter("@CreatedBy", entity.CreatedBy);
-                sqlParameters[5] = new SqlParameter("@ResourceId", entity.ResourceId);
+                sqlParameters[5] = new SqlParameter("@ResourceId", Guid.NewGuid());
                 sqlParameters[6] = new SqlParameter("@Commenter", entity.Commenter);
                 sqlParameters[7] = new SqlParameter("@DocId", entity.DocId);
                 #endregion
@@ -188,6 +188,32 @@ namespace LRWarehouse.DAL
             }
 
         }//
+
+        public List<ResourceComment> SelectList( int resourceId )
+        {
+            List<ResourceComment> list = new List<ResourceComment>();
+            DataSet ds = Select( resourceId );
+
+            if ( DoesDataSetHaveRows( ds ) )
+            {
+                foreach ( DataRow dr in ds.Tables[ 0 ].Rows )
+                {
+                    var comment = new ResourceComment();
+                    comment.Id = GetRowColumn( dr, "Id", 0 );
+                    comment.ResourceIntId = GetRowColumn( dr, "ResourceIntId", 0 );
+                    comment.Comment = GetRowColumn( dr, "Comment", "" );
+                    comment.CreatedById = GetRowColumn( dr, "CreatedById", 0 );
+                    comment.Created = GetRowColumn( dr, "Created", System.DateTime.Now );
+                    comment.CreatedBy = GetRowColumn( dr, "CreatedBy", "" );
+                    comment.Commenter = GetRowColumn( dr, "Commenter", "" );
+
+                    list.Add( comment );
+                }
+            }
+
+            return list;
+        }
+
         /// <summary>
         /// Select Comment related data using passed parameters
         /// </summary>
@@ -233,9 +259,9 @@ namespace LRWarehouse.DAL
 
             entity.IsValid = true;
 
-            string rowId = GetRowColumn( dr, "ResourceId", "" );
-            if ( rowId.Length > 35 )
-                entity.ResourceId = new Guid( rowId );
+            //string rowId = GetRowColumn( dr, "ResourceId", "" );
+            //if ( rowId.Length > 35 )
+            //    entity.ResourceId = new Guid( rowId );
 
             entity.Id = GetRowColumn( dr, "Id", 0 );
             entity.ResourceIntId = GetRowColumn( dr, "ResourceIntId", 0 );

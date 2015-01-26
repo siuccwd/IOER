@@ -4,13 +4,125 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2008/10/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram DiagramId="a55655457415451a9de850338e594bf5" Name="Diagram1" ZoomLevel="73">
-        <EntityTypeShape EntityType="ResourceModel.EmailNotice" Width="1.5" PointX="5.75" PointY="0.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="ResourceModel.Patron" Width="1.5" PointX="0.75" PointY="1" IsExpanded="true" />
-        <EntityTypeShape EntityType="ResourceModel.Patron_Profile" Width="1.5" PointX="3" PointY="1.25" IsExpanded="true" />
+      <Diagram DiagramId="a55655457415451a9de850338e594bf5" Name="Diagram1" ZoomLevel="63">
+        <EntityTypeShape EntityType="ResourceModel.EmailNotice" Width="1.5" PointX="0.5" PointY="13.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="ResourceModel.Patron" Width="1.5" PointX="0.625" PointY="0.5" IsExpanded="false" FillColor="128, 64, 0" />
+        <EntityTypeShape EntityType="ResourceModel.Patron_Profile" Width="1.5" PointX="3.375" PointY="0.5" IsExpanded="false" FillColor="128, 64, 0" />
         <AssociationConnector Association="ResourceModel.FK_Patron_Profile_Patron" ManuallyRouted="false" />
-        <EntityTypeShape EntityType="ResourceModel.Resource" Width="1.875" PointX="5.25" PointY="5.875" />
-        <EntityTypeShape EntityType="ResourceModel.Resource_Version" Width="2.25" PointX="8.125" PointY="5.875" />
+        <EntityTypeShape EntityType="ResourceModel.Codes_Subject" Width="1.5" PointX="17.25" PointY="10.875" FillColor="255, 224, 192" />
+        <EntityTypeShape EntityType="ResourceModel.Codes_TextType" Width="1.5" PointX="17.25" PointY="7.875" FillColor="255, 224, 192" />
+        <EntityTypeShape EntityType="ResourceModel.ConditionOfUse" Width="1.5" PointX="20.375" PointY="7.75" FillColor="255, 224, 192" />
+        <EntityTypeShape EntityType="ResourceModel.Resource_Text" Width="1.5" PointX="14.5" PointY="8.5" />
+        <EntityTypeShape EntityType="ResourceModel.Codes_CareerCluster" Width="2.375" PointX="1" PointY="6.875" FillColor="255, 224, 192" />
+        <EntityTypeShape EntityType="ResourceModel.Resource_Version_Summary" Width="2.375" PointX="2.875" PointY="10.5" />
+        <AssociationConnector Association="ResourceModel.FK_Resource_Text_Codes_TextType" />
+        <EntityTypeShape EntityType="ResourceModel.Resource" Width="2.25" PointX="8.75" PointY="4.875" />
+        <EntityTypeShape EntityType="ResourceModel.System_GenerateLoginId" Width="2" PointX="0.5" PointY="10.625" />
+        <EntityTypeShape EntityType="ResourceModel.Codes_Site" Width="1.5" PointX="11.625" PointY="0.5" />
+        <EntityTypeShape EntityType="ResourceModel.Codes_SiteTagCategory" Width="1.5" PointX="15" PointY="0.5" />
+        <EntityTypeShape EntityType="ResourceModel.Codes_TagCategory" Width="1.875" PointX="19.25" PointY="0.625" />
+        <AssociationConnector Association="ResourceModel.FK_Codes_SiteTagCategory_Codes_Site" />
+        <AssociationConnector Association="ResourceModel.FK_Codes_SiteTagCategory_Codes_TagCategory" />
+        <EntityTypeShape EntityType="ResourceModel.Resource_Cluster" Width="2.25" PointX="4.75" PointY="6.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="ResourceModel.Resource_GradeLevel" Width="2" PointX="8.125" PointY="10.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="ResourceModel.Resource_Keyword" Width="1.75" PointX="7.75" PointY="9.875" IsExpanded="false" />
+        <EntityTypeShape EntityType="ResourceModel.Resource_Subject" Width="2.125" PointX="12" PointY="7.25" IsExpanded="false" />
+        <EntityTypeShape EntityType="ResourceModel.Resource_Version" Width="2.125" PointX="7.875" PointY="1.5" IsExpanded="false" />
+        <AssociationConnector Association="ResourceModel.FK_Resource_Subject_Codes_Subject" />
+        <AssociationConnector Association="ResourceModel.Resource_ResourceVersion" />
+        <AssociationConnector Association="ResourceModel.ResourceResource_Cluster" />
+        <AssociationConnector Association="ResourceModel.Resource_Resource_GradeLevel" />
+        <AssociationConnector Association="ResourceModel.Resource_Resource_Keyword" />
+        <AssociationConnector Association="ResourceModel.Resource_Resource_Subject" />
+        <AssociationConnector Association="ResourceModel.Codes_CareerClusterResource_Cluster" />
+        <EntityTypeShape EntityType="ResourceModel.Codes_AudienceType" Width="2" PointX="15.125" PointY="13.625" FillColor="255, 224, 192" />
+        <EntityTypeShape EntityType="ResourceModel.Codes_GradeLevel" Width="1.5" PointX="6.125" PointY="12" FillColor="255, 224, 192" />
+        <EntityTypeShape EntityType="ResourceModel.Resource_IntendedAudience" Width="1.75" PointX="11.5" PointY="13.5" />
+        <AssociationConnector Association="ResourceModel.FK_IntendedAudience_CodesAudienceType" />
+        <AssociationConnector Association="ResourceModel.FK_Resource_GradeLevel_Codes_GradeLevel" />
+        <AssociationConnector Association="ResourceModel.ResourceResource_IntendedAudience" />
+        <EntityTypeShape EntityType="ResourceModel.Publish_Pending" Width="2.75" PointX="0.75" PointY="19.25" />
+        <EntityTypeShape EntityType="ResourceModel.Resource_PublishedBy" Width="3" PointX="4.875" PointY="4.5" />
+        <EntityTypeShape EntityType="ResourceModel.Resource_Standard" Width="2" PointX="8.625" PointY="17.375" />
+        <EntityTypeShape EntityType="ResourceModel.StandardBody" Width="1.5" PointX="9.875" PointY="21.5" FillColor="Aquamarine" />
+        <EntityTypeShape EntityType="ResourceModel.StandardBody_Node" Width="1.875" PointX="3.875" PointY="22.75" FillColor="Aquamarine" />
+        <EntityTypeShape EntityType="ResourceModel.StandardBody_NodeGradeLevel" Width="2.5" PointX="0.625" PointY="23.875" FillColor="Aquamarine" />
+        <EntityTypeShape EntityType="ResourceModel.StandardBody_Subject" Width="2.25" PointX="6.625" PointY="22.5" FillColor="Aquamarine" />
+        <AssociationConnector Association="ResourceModel.FK_Resource_Standard_StandardBody_Node" />
+        <AssociationConnector Association="ResourceModel.FK_StandardBody_Subject_StandardBody" />
+        <AssociationConnector Association="ResourceModel.FK_StandardBody_NodeGradeLevel_StandardBody_Node" />
+        <AssociationConnector Association="ResourceModel.FK_StandardBody_NodeGradeLevel_StandardBody_NodeGradeLevel" />
+        <AssociationConnector Association="ResourceModel.Standard_SubjectStandardConnector" />
+        <AssociationConnector Association="ResourceModel.ResourceResource_PublishedBy" />
+        <EntityTypeShape EntityType="ResourceModel.Resource_Tag" Width="1.5" PointX="13" PointY="3.625" />
+        <AssociationConnector Association="ResourceModel.ResourceResource_Tag" />
+        <EntityTypeShape EntityType="ResourceModel.Codes_TagValue" Width="1.5" PointX="16.625" PointY="3.375" />
+        <AssociationConnector Association="ResourceModel.FK_Codes_TagValue_Codes_TagCategory" />
+        <AssociationConnector Association="ResourceModel.FK_Resource_Tag_Codes_TagValue" />
+        <AssociationConnector Association="ResourceModel.ResourceResource_Standard" />
+        <EntityTypeShape EntityType="ResourceModel.Resource_AssessmentType" Width="2.375" PointX="1.5" PointY="29.625" IsExpanded="false" />
+        <EntityTypeShape EntityType="ResourceModel.Resource_EducationUse" Width="2" PointX="0.625" PointY="22.5" IsExpanded="false" />
+        <EntityTypeShape EntityType="ResourceModel.Resource_Format" Width="2.5" PointX="1.5" PointY="28.375" IsExpanded="false" />
+        <EntityTypeShape EntityType="ResourceModel.Resource_GroupType" Width="2.375" PointX="1.5" PointY="27.25" IsExpanded="false" />
+        <EntityTypeShape EntityType="ResourceModel.Resource_ItemType" Width="1.5" PointX="11" PointY="9.625" />
+        <EntityTypeShape EntityType="ResourceModel.Resource_Language" Width="1.5" PointX="5.875" PointY="9.25" />
+        <EntityTypeShape EntityType="ResourceModel.Resource_ResourceType" Width="2.25" PointX="1.625" PointY="29" IsExpanded="false" />
+        <EntityTypeShape EntityType="ResourceModel.Evaluation" Width="1.75" PointX="11.625" PointY="24.625" FillColor="Fuchsia" />
+        <EntityTypeShape EntityType="ResourceModel.Evaluation_Dimension" Width="2.125" PointX="16.25" PointY="24.75" FillColor="Fuchsia" />
+        <AssociationConnector Association="ResourceModel.FK_Evaluation_Dimension_Evaluation" />
+        <EntityTypeShape EntityType="ResourceModel.Codes_TagValueKeyword" Width="3.25" PointX="19.125" PointY="3.375" />
+        <AssociationConnector Association="ResourceModel.FK_Codes_TagValueKeyword_Codes_TagValue" />
+        <EntityTypeShape EntityType="ResourceModel.Patron_Following" Width="1.5" PointX="2.875" PointY="2.125" FillColor="128, 64, 64" IsExpanded="false" />
+        <AssociationConnector Association="ResourceModel.FK_Patron_FollowedBy_Patron" />
+        <AssociationConnector Association="ResourceModel.FK_Patron_Following_Patron" />
+        <EntityTypeShape EntityType="ResourceModel.Resource_Evaluation" Width="2.625" PointX="12.875" PointY="19.75" />
+        <EntityTypeShape EntityType="ResourceModel.Resource_EvaluationSection" Width="2.75" PointX="16.25" PointY="21" />
+        <AssociationConnector Association="ResourceModel.FK_Resource_EvaluationSection_Resource_EvaluationSection" />
+        <AssociationConnector Association="ResourceModel.FK_Resource_EvaluationSection_Resource_Evaluation1" />
+        <EntityTypeShape EntityType="ResourceModel.Resource_StandardEvaluation" Width="2.125" PointX="14.75" PointY="17" />
+        <AssociationConnector Association="ResourceModel.FK_Resource_StandardEvaluation_Resource_Standard" />
+        <AssociationConnector Association="ResourceModel.FK_Resource_Evaluation_Evaluation" />
+        <EntityTypeShape EntityType="ResourceModel.Resource_EvalDimensionsSummary" Width="2.375" PointX="20.625" PointY="21.875" />
+        <EntityTypeShape EntityType="ResourceModel.Resource_EvaluationsSummary" Width="3.125" PointX="20.5" PointY="18.625" />
+        <EntityTypeShape EntityType="ResourceModel.Resource_StandardEvaluationSummary" Width="2.875" PointX="20.75" PointY="26" />
+        <EntityTypeShape EntityType="ResourceModel.Resource_StandardEvaluationList" Width="4" PointX="14.125" PointY="28" />
+        <EntityTypeShape EntityType="ResourceModel.Codes_SiteTagCategory_Summary" Width="2.125" PointX="22" PointY="12.5" FillColor="255, 224, 192" />
+        <EntityTypeShape EntityType="ResourceModel.Codes_TagCategoryValue_summary" Width="2.5" PointX="25.125" PointY="12.5" FillColor="255, 224, 192" />
+        <EntityTypeShape EntityType="ResourceModel.Patron_ResourceSummary" Width="2.375" PointX="24.25" PointY="18.75" />
+        <EntityTypeShape EntityType="ResourceModel.Patron_Summary" Width="2.5" PointX="28.125" PointY="19" />
+      </Diagram>
+      <Diagram DiagramId="eae49c2d076442d7b4a496c93e2665dc" Name="ResourceTagging" ZoomLevel="71" >
+        <EntityTypeShape EntityType="ResourceModel.Resource" Width="2.125" PointX="11.125" PointY="1.375" />
+        <EntityTypeShape EntityType="ResourceModel.Resource_Version" Width="2.875" PointX="5.875" PointY="1.25" IsExpanded="false" />
+        <AssociationConnector Association="ResourceModel.Resource_ResourceVersion" />
+        <EntityTypeShape EntityType="ResourceModel.Resource_Cluster" Width="2.5" PointX="15.25" PointY="1.375" />
+        <AssociationConnector Association="ResourceModel.ResourceResource_Cluster" />
+        <EntityTypeShape EntityType="ResourceModel.Resource_GradeLevel" Width="2.75" PointX="18.75" PointY="3" />
+        <AssociationConnector Association="ResourceModel.Resource_Resource_GradeLevel" />
+        <EntityTypeShape EntityType="ResourceModel.Resource_Keyword" Width="2.375" PointX="15.125" PointY="5.5" />
+        <AssociationConnector Association="ResourceModel.Resource_Resource_Keyword" />
+        <EntityTypeShape EntityType="ResourceModel.Resource_Subject" Width="2.25" PointX="18.75" PointY="6.875" />
+        <AssociationConnector Association="ResourceModel.Resource_Resource_Subject" />
+        <EntityTypeShape EntityType="ResourceModel.Resource_IntendedAudience" Width="2.875" PointX="15.125" PointY="9.625" />
+        <AssociationConnector Association="ResourceModel.ResourceResource_IntendedAudience" />
+        <EntityTypeShape EntityType="ResourceModel.Resource_PublishedBy" Width="2.75" PointX="5.875" PointY="2.125" />
+        <AssociationConnector Association="ResourceModel.ResourceResource_PublishedBy" />
+        <EntityTypeShape EntityType="ResourceModel.Codes_TagCategory" Width="2.375" PointX="0.75" PointY="11.125" />
+        <EntityTypeShape EntityType="ResourceModel.Codes_SiteTagCategory" Width="1.5" PointX="1" PointY="8.25" />
+        <AssociationConnector Association="ResourceModel.FK_Codes_SiteTagCategory_Codes_TagCategory" />
+        <EntityTypeShape EntityType="ResourceModel.Codes_Site" Width="1.5" PointX="0.875" PointY="5.75" />
+        <AssociationConnector Association="ResourceModel.FK_Codes_SiteTagCategory_Codes_Site" />
+        <EntityTypeShape EntityType="ResourceModel.Resource_Standard" Width="2.5" PointX="6.5" PointY="4.5" />
+        <AssociationConnector Association="ResourceModel.ResourceResource_Standard" />
+        <EntityTypeShape EntityType="ResourceModel.Codes_TagValue" Width="2.125" PointX="4.5" PointY="11" />
+        <AssociationConnector Association="ResourceModel.FK_Codes_TagValue_Codes_TagCategory" />
+        <EntityTypeShape EntityType="ResourceModel.Resource_Tag" Width="1.5" PointX="8" PointY="10.875" />
+        <AssociationConnector Association="ResourceModel.ResourceResource_Tag" />
+        <AssociationConnector Association="ResourceModel.FK_Resource_Tag_Codes_TagValue" />
+        <EntityTypeShape EntityType="ResourceModel.StandardBody_Node" Width="2.375" PointX="2.75" PointY="1.625" />
+        <AssociationConnector Association="ResourceModel.FK_Resource_Standard_StandardBody_Node" />
+        <EntityTypeShape EntityType="ResourceModel.Codes_TagValueKeyword" Width="2.375" PointX="5.625" PointY="15.5" />
+        <AssociationConnector Association="ResourceModel.FK_Codes_TagValueKeyword_Codes_TagValue" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

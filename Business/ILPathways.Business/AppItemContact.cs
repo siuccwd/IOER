@@ -15,6 +15,7 @@ using System.Text;
 
 namespace ILPathways.Business
 {
+    [Serializable]
 	public class AppItemContact : BaseBusinessDataEntity
 	{
 

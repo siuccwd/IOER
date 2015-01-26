@@ -13,7 +13,8 @@ using LRWarehouse.DAL;
 using IOERUser = LRWarehouse.Business.Patron;
 
 using ILPathways.Library;
-using GDAL = ILPathways.DAL;
+//using ILPathways.DAL;
+using Isle.BizServices;
 using ILPathways.classes;
 using ILPathways.Controllers;
 using ILPathways.Utilities;
@@ -106,7 +107,7 @@ namespace ILPathways.LRW.controls
                 loginContainer.Visible = false;
 
                 //Get Form Privileges
-                this.FormPrivileges = GDAL.SecurityManager.GetGroupObjectPrivileges( this.WebUser, FormSecurityName );
+                this.FormPrivileges = SecurityManager.GetGroupObjectPrivileges( this.WebUser, FormSecurityName );
 
                 if ( FormPrivileges.CanCreate() )
                 {
@@ -283,9 +284,10 @@ namespace ILPathways.LRW.controls
 
             string statusMessage = "";
             IOERUser user = GetAppUser();
-
+            bool isSuccessful = true; ;
             //Publish!
             ResourcePublishUpdateController pubController = new ResourcePublishUpdateController();
+            PublishController newPubController = new PublishController();
             try
             {
                 if ( LRPublishAction.Equals( "no" ) )
@@ -305,8 +307,21 @@ namespace ILPathways.LRW.controls
                 }
                 else
                 {
+                    int intID = 0;
+                    bool skipLRPublish = false;
+                    bool updatingElasticSearch = true;
+                    string sortTitle= "";
 
-                    pubController.PublishToAll( resource, ref resourceVersionID, ref statusMessage );
+                    //pubController.PublishToAll( resource, ref resourceVersionID, ref statusMessage );
+                    newPubController.PublishToAll( resource, 
+                                ref isSuccessful, 
+                                ref statusMessage, 
+                                ref resourceVersionID, 
+                                ref intID, 
+                                ref sortTitle,
+                                updatingElasticSearch,
+                                skipLRPublish );
+
                     justPublished = "true";
                     publishedMessage = "Successful Publish.";
                     new PublishController().SendPublishNotification( user, resource );

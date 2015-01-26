@@ -15,6 +15,7 @@
     <SccLocalPath>SAK</SccLocalPath>
     <SccAuxPath>SAK</SccAuxPath>
     <SccProvider>SAK</SccProvider>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -24,6 +25,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -32,27 +34,30 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="AutoMapper">
       <HintPath>..\..\packages\AutoMapper.3.1.1\lib\net40\AutoMapper.dll</HintPath>
     </Reference>
-    <Reference Include="AutoMapper.3.1.1.0.Fakes">
-      <HintPath>FakesAssemblies\AutoMapper.3.1.1.0.Fakes.dll</HintPath>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\EntityFramework.6.1.2\lib\net40\EntityFramework.dll</HintPath>
     </Reference>
-    <Reference Include="EntityFramework">
-      <HintPath>..\..\packages\EntityFramework.5.0.0\lib\net40\EntityFramework.dll</HintPath>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\EntityFramework.6.1.2\lib\net40\EntityFramework.SqlServer.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.QualityTools.Testing.Fakes, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Data.Entity" />
+    <Reference Include="System.Data" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Security" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
@@ -63,6 +68,12 @@
       <DependentUpon>IoerContent.tt</DependentUpon>
     </Compile>
     <Compile Include="Codes_AudienceType.cs">
+      <DependentUpon>IoerContent.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Codes_CareerCluster.cs">
+      <DependentUpon>IoerContent.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Codes_ContentPartnerType.cs">
       <DependentUpon>IoerContent.tt</DependentUpon>
     </Compile>
     <Compile Include="Codes_ContentPrivilege.cs">
@@ -80,13 +91,22 @@
     <Compile Include="Codes_LibraryMemberType.cs">
       <DependentUpon>IoerContent.tt</DependentUpon>
     </Compile>
+    <Compile Include="Codes_PostingType.cs">
+      <DependentUpon>IoerContent.tt</DependentUpon>
+    </Compile>
     <Compile Include="Codes_ResourceFormat.cs">
       <DependentUpon>IoerContent.tt</DependentUpon>
     </Compile>
     <Compile Include="Codes_ResourceType.cs">
       <DependentUpon>IoerContent.tt</DependentUpon>
     </Compile>
+    <Compile Include="Codes_StandardUsage.cs">
+      <DependentUpon>IoerContent.tt</DependentUpon>
+    </Compile>
     <Compile Include="Codes_SubscriptionType.cs">
+      <DependentUpon>IoerContent.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Codes_TagCategoryValue_Summary.cs">
       <DependentUpon>IoerContent.tt</DependentUpon>
     </Compile>
     <Compile Include="Community.cs">
@@ -95,16 +115,31 @@
     <Compile Include="Community_Member.cs">
       <DependentUpon>IoerContent.tt</DependentUpon>
     </Compile>
+    <Compile Include="Community_MemberSummary.cs">
+      <DependentUpon>IoerContent.tt</DependentUpon>
+    </Compile>
     <Compile Include="Community_Posting.cs">
       <DependentUpon>IoerContent.tt</DependentUpon>
     </Compile>
     <Compile Include="Community_PostingDocument.cs">
       <DependentUpon>IoerContent.tt</DependentUpon>
     </Compile>
+    <Compile Include="Community_PostingSummary.cs">
+      <DependentUpon>IoerContent.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Community_PostItem.cs">
+      <DependentUpon>IoerContent.tt</DependentUpon>
+    </Compile>
     <Compile Include="Content.cs">
       <DependentUpon>IoerContent.tt</DependentUpon>
     </Compile>
-    <Compile Include="ContentFile.cs">
+    <Compile Include="ContentConnector_ChildSummary.cs">
+      <DependentUpon>IoerContent.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ContentNodeSummary.cs">
+      <DependentUpon>IoerContent.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ContentStandard_Summary.cs">
       <DependentUpon>IoerContent.tt</DependentUpon>
     </Compile>
     <Compile Include="ContentSummaryView.cs">
@@ -116,22 +151,63 @@
     <Compile Include="ContentType.cs">
       <DependentUpon>IoerContent.tt</DependentUpon>
     </Compile>
+    <Compile Include="Content_ChildResourceSummary.cs">
+      <DependentUpon>IoerContent.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Content_DocumentSummary.cs">
+      <DependentUpon>IoerContent.tt</DependentUpon>
+    </Compile>
     <Compile Include="Content_History.cs">
+      <DependentUpon>IoerContent.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Content_LearningListSummary.cs">
+      <DependentUpon>IoerContent.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Content_Like.cs">
+      <DependentUpon>IoerContent.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Content_Partner.cs">
       <DependentUpon>IoerContent.tt</DependentUpon>
     </Compile>
     <Compile Include="Content_Reference.cs">
       <DependentUpon>IoerContent.tt</DependentUpon>
     </Compile>
+    <Compile Include="Content_Resource.cs">
+      <DependentUpon>IoerContent.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Content_Standard.cs">
+      <DependentUpon>IoerContent.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Content_Subscription.cs">
+      <DependentUpon>IoerContent.tt</DependentUpon>
+    </Compile>
     <Compile Include="Content_Supplement.cs">
+      <DependentUpon>IoerContent.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Content_Tag.cs">
+      <DependentUpon>IoerContent.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Content_TagSummary.cs">
+      <DependentUpon>IoerContent.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Curriculum_DistinctStandards.cs">
+      <DependentUpon>IoerContent.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Curriculum_HierarchySummary.cs">
       <DependentUpon>IoerContent.tt</DependentUpon>
     </Compile>
     <Compile Include="Document_Version.cs">
       <DependentUpon>IoerContent.tt</DependentUpon>
     </Compile>
-    <Compile Include="EFCommunityManager.cs" />
+    <Compile Include="EFCommunityManager.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="EFContentManager.cs" />
     <Compile Include="EFLibraryManager.cs">
       <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Gateway_OrgSummary.cs">
+      <DependentUpon>IoerContent.tt</DependentUpon>
     </Compile>
     <Compile Include="IoerContent.Context.cs">
       <AutoGen>True</AutoGen>
@@ -148,10 +224,17 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>IoerContent.edmx</DependentUpon>
     </Compile>
+    <Compile Include="IsleContentContext.cs" />
+    <Compile Include="LearningList_MembersSummary.cs">
+      <DependentUpon>IoerContent.tt</DependentUpon>
+    </Compile>
     <Compile Include="Library.cs">
       <DependentUpon>IoerContent.tt</DependentUpon>
     </Compile>
     <Compile Include="Library_Comment.cs">
+      <DependentUpon>IoerContent.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Library_FollowingSummary.cs">
       <DependentUpon>IoerContent.tt</DependentUpon>
     </Compile>
     <Compile Include="Library_Invitation.cs">
@@ -163,6 +246,12 @@
     <Compile Include="Library_Member.cs">
       <DependentUpon>IoerContent.tt</DependentUpon>
     </Compile>
+    <Compile Include="Library_MemberResourceSummary.cs">
+      <DependentUpon>IoerContent.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Library_MemberSummary.cs">
+      <DependentUpon>IoerContent.tt</DependentUpon>
+    </Compile>
     <Compile Include="Library_Party.cs">
       <DependentUpon>IoerContent.tt</DependentUpon>
     </Compile>
@@ -170,6 +259,9 @@
       <DependentUpon>IoerContent.tt</DependentUpon>
     </Compile>
     <Compile Include="Library_Resource.cs">
+      <DependentUpon>IoerContent.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Library_ResourceTagUniqueFilters.cs">
       <DependentUpon>IoerContent.tt</DependentUpon>
     </Compile>
     <Compile Include="Library_Section.cs">
@@ -199,10 +291,22 @@
     <Compile Include="Library_Type.cs">
       <DependentUpon>IoerContent.tt</DependentUpon>
     </Compile>
+    <Compile Include="LR_ConditionOfUse_Select.cs">
+      <DependentUpon>IoerContent.tt</DependentUpon>
+    </Compile>
+    <Compile Include="LR_PatronOrgSummary.cs">
+      <DependentUpon>IoerContent.tt</DependentUpon>
+    </Compile>
+    <Compile Include="LR_ResourceVersion_Summary.cs">
+      <DependentUpon>IoerContent.tt</DependentUpon>
+    </Compile>
     <Compile Include="Person_Following.cs">
       <DependentUpon>IoerContent.tt</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Resource_Standard.cs">
+      <DependentUpon>IoerContent.tt</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <EntityDeploy Include="IoerContent.edmx">
@@ -212,9 +316,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.Config" />
-    <Fakes Include="Fakes\AutoMapper.fakes" />
-    <None Include="bin\Debug\IoerContentBusinessEntities.dll.config" />
-    <None Include="bin\Release\IoerContentBusinessEntities.dll.config" />
     <None Include="IoerContent.Context.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <DependentUpon>IoerContent.edmx</DependentUpon>
@@ -238,30 +339,22 @@
       <Project>{cae031c2-7899-4cc3-9772-0787e65977a2}</Project>
       <Name>ILPathways.Business</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\Common\IllinoisPathways.Common\ILPathways.Common.csproj">
+      <Project>{cbb05737-7947-4ed9-8ed3-79d5c2a6597d}</Project>
+      <Name>ILPathways.Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Common\ILPathways.Utilities\ILPathways.Utilities.csproj">
       <Project>{949d7eb6-93e1-489f-a5e7-2d0d9086f720}</Project>
       <Name>ILPathways.Utilities</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="bin\Debug\AutoMapper.dll" />
-    <Content Include="bin\Debug\EntityFramework.dll" />
-    <Content Include="bin\Debug\EntityFramework.xml" />
-    <Content Include="bin\Debug\ILPathways.Business.dll" />
-    <Content Include="bin\Debug\ILPathways.Business.pdb" />
-    <Content Include="bin\Debug\ILPathways.Utilities.dll" />
-    <Content Include="bin\Debug\ILPathways.Utilities.pdb" />
-    <Content Include="bin\Debug\IoerContentBusinessEntities.dll" />
-    <Content Include="bin\Debug\IoerContentBusinessEntities.pdb" />
-    <Content Include="bin\Debug\nClam.dll" />
-    <Content Include="bin\Release\AutoMapper.dll" />
-    <Content Include="bin\Release\AutoMapper.xml" />
-    <Content Include="bin\Release\EntityFramework.dll" />
-    <Content Include="bin\Release\EntityFramework.xml" />
-    <Content Include="bin\Release\ILPathways.Business.dll" />
-    <Content Include="bin\Release\ILPathways.Business.pdb" />
-    <Content Include="bin\Release\IoerContentBusinessEntities.dll" />
-    <Content Include="bin\Release\IoerContentBusinessEntities.pdb" />
+    <ProjectReference Include="..\..\Services\Isle.DTO\Isle.DTO.csproj">
+      <Project>{a16be910-9990-48dc-a9de-f5985d50d09c}</Project>
+      <Name>Isle.DTO</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ILPathways.DAL\ILPathways.DAL.csproj">
+      <Project>{c91cb23c-3c72-4f3c-b8bc-04ec7b45ec7c}</Project>
+      <Name>ILPathways.DAL</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

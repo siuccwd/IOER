@@ -14,6 +14,18 @@ namespace IOERBusinessEntities
     
     public partial class Resource
     {
+        public Resource()
+        {
+            this.Resource_Version = new HashSet<Resource_Version>();
+            this.Resource_Cluster = new HashSet<Resource_Cluster>();
+            this.Resource_GradeLevel = new HashSet<Resource_GradeLevel>();
+            this.Resource_Keyword = new HashSet<Resource_Keyword>();
+            this.Resource_Subject = new HashSet<Resource_Subject>();
+            this.Resource_IntendedAudience = new HashSet<Resource_IntendedAudience>();
+            this.Resource_Tag = new HashSet<Resource_Tag>();
+            this.Resource_Standard = new HashSet<Resource_Standard>();
+        }
+    
         public System.Guid RowId { get; set; }
         public string ResourceUrl { get; set; }
         public Nullable<int> ViewCount { get; set; }
@@ -23,5 +35,15 @@ namespace IOERBusinessEntities
         public Nullable<bool> IsActive { get; set; }
         public Nullable<bool> HasPathwayGradeLevel { get; set; }
         public int Id { get; set; }
+    
+        public virtual ICollection<Resource_Version> Resource_Version { get; set; }
+        public virtual ICollection<Resource_Cluster> Resource_Cluster { get; set; }
+        public virtual ICollection<Resource_GradeLevel> Resource_GradeLevel { get; set; }
+        public virtual ICollection<Resource_Keyword> Resource_Keyword { get; set; }
+        public virtual ICollection<Resource_Subject> Resource_Subject { get; set; }
+        public virtual ICollection<Resource_IntendedAudience> Resource_IntendedAudience { get; set; }
+        public virtual Resource_PublishedBy Resource_PublishedBy { get; set; }
+        public virtual ICollection<Resource_Tag> Resource_Tag { get; set; }
+        public virtual ICollection<Resource_Standard> Resource_Standard { get; set; }
     }
 }

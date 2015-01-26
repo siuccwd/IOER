@@ -21,6 +21,9 @@ namespace IoerContentBusinessEntities
         public string PassCode { get; set; }
         public string TargetEmail { get; set; }
         public Nullable<int> TargetUserId { get; set; }
+        public Nullable<int> AddToOrgId { get; set; }
+        public Nullable<int> AddAsOrgMemberTypeId { get; set; }
+        public string OrgMbrRoles { get; set; }
         public string Subject { get; set; }
         public string MessageContent { get; set; }
         public string EmailNoticeCode { get; set; }

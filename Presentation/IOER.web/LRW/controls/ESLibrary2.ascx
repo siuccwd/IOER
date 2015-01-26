@@ -1,13 +1,14 @@
 ﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="ESLibrary2.ascx.cs" Inherits="ILPathways.LRW.controls.ESLibrary2" %>
-<%@ Register TagName="Search" TagPrefix="uc1" Src="/LRW/Controls/ElasticSearch3.ascx" %>
-
+<%@ Register TagPrefix="uc1" TagName="Search" Src="/LRW/Controls/ElasticSearch3.ascx" %>
+<%--<%@ Register TagPrefix="uc1" TagName="Search" Src="/Controls/ImportedSearch.ascx" %>--%>
 
 
 <div id="libraryStuff" runat="server">
   <!-- from server -->
   <script type="text/javascript">
     var libraryData = <%=libInfoString %>;
-    var userGUID = "<%=userGUID %>";
+      var userGUID = "<%=userGUID %>";
+      var proxyId = "<%=proxyId %>";
     var linkedCollectionID = <%=linkedCollectionID %>;
 
   </script>
@@ -40,21 +41,22 @@
       overflow: hidden;
       box-shadow: 0 0 10px -2px #4AA394, 0 3px 3px -1px #4AA394 inset;
       border-top: 1px solid #4AA394;
+      position: relative;
     }
-    #libraryHeaderContent[data-collapsed=true] { max-height: 135px; }
+    #libraryHeaderContent[data-collapsed=true] { max-height: 160px; }
     p.middle { text-align: center; padding: 10px; font-style: italic; color: #555; }
     .panel { padding-top: 5px; }
-    #libColTitle { padding-bottom: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    #libColTitle { padding-bottom: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-right: 70px; }
     .libraryControls { width: 55%; }
     .libraryControls select { width: 100%; margin-bottom: 2px; }
     /*.libraryControls select.halfWidth { width: 50%; }*/
     .libraryControls select option[disabled=disabled] { font-style: italic; color: #999; }
 
     /* Library/Collection Selector */
-    #libColSelector { position: relative; }
+    #libColSelector { position: relative; padding-top: 25px; }
     #libColSelector #libraryAvatar { 
-      height: 100px; 
-      width: 100px; 
+      height: 125px; 
+      width: 125px; 
       display: block; 
       position: absolute;
       top: 0;
@@ -65,16 +67,38 @@
       background-size: contain;
       background-repeat: no-repeat;
     }
-    #libColSelector #collectionList { 
-      overflow-x: auto; 
-      overflow-y: hidden; 
-      margin-left: 105px;
-      height: 100px;
-      white-space: nowrap;
-      box-shadow: 75px 0 65px -50px #CCC inset, -75px 0 65px -50px #CCC inset;
-      border-radius: 5px;
-      border-left: 1px solid #CCC;
-      border-right: 1px solid #CCC;
+      #libColSelector #collectionList {
+          overflow-x: auto;
+          overflow-y: hidden;
+          margin-left: 130px;
+          height: 100px;
+          white-space: nowrap;
+          box-shadow: 75px 0 65px -50px #CCC inset, -75px 0 65px -50px #CCC inset;
+          border-radius: 5px;
+          border-left: 1px solid #CCC;
+          border-right: 1px solid #CCC;
+      }
+
+    #libColSelector #collectionsHeader {
+        height: 25px;
+        font-style: italic;
+        font-size: 14px;
+        line-height: 25px;
+        color: #555;
+        position: absolute;
+        left: 135px;
+        top: 0;
+    }
+    #libColSelector #collectionsHeader .toolTipLink { 
+      border: none;
+    }
+    #libColSelector #collectionsHeader .toolTipLink:hover, #libColSelector #collectionsHeader .toolTipLink:focus {
+      box-shadow: none;
+    }
+    #libColSelector #collectionsHeader .toolTipDiv { 
+      font-weight: normal;
+      font-style: normal;
+      line-height: initial;
     }
     #libColSelector .collectionIcon {  
       height: 75px; 
@@ -125,7 +149,7 @@
     }
 
     /* Buttons */
-    #libraryHeader .btn, .resourceActionButton {
+    #libraryHeader .btn, .resourceActionButton, #btnSendExternal {
       padding: 1px 5px;
       border-radius: 5px;
       color: #FFF;
@@ -133,9 +157,9 @@
       width: 100%;
       margin-top: 5px;
     }
-    #libraryHeader .btn.green { background-color: #4AA394; }
+    #libraryHeader .btn.green, #btnSendExternal { background-color: #4AA394; }
     #libraryHeader .btn.red { background-color: #B03D25; }
-    #libraryHeader .btn:hover, #libraryHeader .btn:focus { background-color: #FF5707; cursor: pointer; }
+    #libraryHeader .btn:hover, #libraryHeader .btn:focus, #btnSendExternal:hover, #btnSendExternal:focus { background-color: #FF5707; cursor: pointer; }
 
     /* Tabs */
     #libTabBox { margin: 0 5px; position: relative; }
@@ -146,16 +170,32 @@
       background-color: #3572B8; 
       padding: 5px 5px;
       border-radius: 5px 5px 0 0;
+      vertical-align: bottom;
+      margin-right: -2px;
     }
     #libTabBox a.selected { background-color: #4AA394; }
     #libTabBox a:hover, #libTabBox a:focus { background-color: #FF5707; }
-    #libTabBox a[data-id=expandCollapse] { 
+    #libraryHeaderContent a[data-id=expandCollapse] { 
       border-radius: 5px; 
-      padding: 4px 5px; 
+      padding: 0 25px 0 3px;
       margin: 1px; 
       position: absolute;
-      top: 0;
-      right: 0;
+      top: 2px;
+      right: 2px;
+      height: 25px;
+      text-align: center;
+      font-size: 14px;
+      line-height: 25px;
+      color: #FFF;
+      background: url('') no-repeat right 3px top 50% #FF5707;
+      background-size: 15px 15px;
+    }
+    #libraryHeaderContent[data-collapsed=true] a[data-id=expandCollapse] { background-image: url('/images/arrow-right-offwhite.png'); }
+    #libraryHeaderContent[data-collapsed=false] a[data-id=expandCollapse] { background-image: url('/images/arrow-down-offwhite.png'); }
+    #libraryHeaderContent a[data-id=expandCollapse]:hover, #libraryHeaderContent a[data-id=expandCollapse]:focus  {
+      color: #FFF;
+      background-color: #FF5707;
+      box-shadow: 0 0 20px #FF5707;
     }
 
     /* Details */
@@ -174,9 +214,10 @@
       background-size: contain;
       background-repeat: no-repeat;
     }
+    #pnlDetails h4 { font-weight: normal; font-style: italic; color: #555; }
     #pnlDetails #detailsContent { margin-left: 130px; padding: 8px 0; }
     #pnlDetails #shareFollow, #pnlDetails #opinionBox { display: inline-block; width: 49%; vertical-align: top; }
-    #pnlDetails #opinionBox { text-align: center; clear: both; margin-top: 1.2em; }
+    #pnlDetails #opinionBox { text-align: center; clear: both; }
     #pnlDetails #opinionRack { border: 1px solid #CCC; padding: 1px; border-radius: 5px; height: 23px; position: relative; font-size: 0; }
     #pnlDetails #likeBar, #pnlDetails #dislikeBar, #pnlDetails #likeText, #pnlDetails #dislikeText { height: 19px; display: inline-block; transition: width 0.5s; -webkit-transition: width 0.5s; }
     #pnlDetails #likeBar, #pnlDetails #likeText { left: 1px; }
@@ -188,12 +229,11 @@
     #pnlDetails #btnAddLike, #pnlDetails #btnAddDislike { width: 47%; font-size: 16px; margin: 1px; }
     #pnlDetails #likeText, #pnlDetails #dislikeText { font-size: 16px; position: absolute; top: 1px; color: #FFF; }
     #pnlDetails #likeBar.full, #pnlDetails #dislikeBar.full { border-radius: 5px; }
-    #pnlDetails #followBox, #pnlDetails #shareBox { margin-bottom: 10px; padding-right: 5px; }
-    #pnlDetails #followBox select { width: 65%; margin-right: -4px; }
-    #pnlDetails #followBox input { width: 32%; float: right; }
-    #pnlDetails h4 { font-weight: normal; font-style: italic; color: #555; }
-    #pnlDetails #btnFollowingUpdate { margin: 0; }
-    
+    #pnlDetails #description, #pnlDetails #opinionBox { display: inline-block; width: 49%; vertical-align: top; }
+    /* Possibly temporary */
+    #pnlDetails #btnAddDislike, #pnlDetails #dislikeText { display: none; }
+    #pnlDetails #btnAddLike { width: 100%; }
+
 
     /* Comments */
     #pnlComments { position: relative; min-height: 135px; }
@@ -244,11 +284,27 @@
     #pnlAddResources img { position: absolute; top: 0; left: 0; background-color: #4AA394; border-radius: 50%; }
     #pnlAddResources a { display: block; font-weight: bold; text-align: right; }
 
+    #pnlJoinLibrary { position: relative; min-height: 160px; }
+    #pnlJoinLibrary #joinExplanation { position: absolute; top: 25px; left: 0; width: 400px; }
+    #pnlJoinLibrary #joinInput { width: 100%; padding-left: 410px; }
+    #pnlJoinLibrary textarea { width: 100%; height: 6em; resize: none; }
+
+    /* Share and Follow */
+    /*#pnlShareFollow #followBox, #pnlShareFollow #shareBox { margin-bottom: 10px; padding-right: 5px; display: inline-block; vertical-align: top; width: 49%; margin-right: -4px; }*/
+    #pnlShareFollow #txtShareBox { margin-bottom: 15px; }
+    #pnlShareFollow #followBox select { width: 65%; margin-right: -4px; }
+    #pnlShareFollow #followBox input { width: 32%; float: right; }
+    #pnlShareFollow #btnFollowingUpdate { margin: 0; }
+    #pnlShareFollow #widgetConfigList label { display: inline-block; vertical-align: top; width: 32%; padding: 2px 5px; }
+    #pnlShareFollow #widgetConfigList label:hover { cursor: pointer; }
+
     /* Responsive */
     @media screen and (max-width:550px){
       #pnlDetails #shareFollow, #pnlDetails #opinionBox, #pnlSettings .third { width: 100%; display: block; }
       #pnlAddResources .wayToAdd { width: 100%; }
       #libTabBox a { font-size: 12px; }
+      #pnlShareFollow #followBox, #pnlShareFollow #shareBox { width: 100%; display: block; }
+      #pnlDetails #description, #pnlDetails #opinionBox { width: 100%; display: block; }
     }
     @media screen and (max-width:650px) {
       #pnlComments #postCommentBox, #pnlComments #commentsBox { width: 100%; position: static; margin: 5px 0; }
@@ -258,28 +314,52 @@
       #pnlComments .comment .owner .date { position: absolute; top: 0; right: 2px; }
       #pnlComments .comment .owner .name { margin-right: 55px; }
     }
+    @media screen and (max-width: 800px) {
+      #pnlJoinLibrary #joinExplanation { position: static; width: auto; }
+      #pnlJoinLibrary #joinInput { padding-left: 0; }
+      #pnlShareFollow #widgetConfigList label { width: 49%; }
+    }
     @media screen and (min-width: 1200px) {
       #pnlAddResources .wayToAdd { width: 24%; }
       #pnlAddResources .wayToAdd { width: 32%; }
-      /*#pnlComments .comment .owner { width: 15%; }
-      #pnlComments .comment .commentText { width: 84%; }*/
+    }
+    @media screen and (max-width: 450px) {
+      #pnlShareFollow #widgetConfigList label { display: block; width: 100%; }
+    }
 
+    /* Icons */
+    .tab { background: url('') 5px center no-repeat; width: 40px; height: 40px; }
+    .tab[data-id=pnlDetails] { background-image: url('/images/icons/icon_library_bg.png'); }
+    .tab[data-id=pnlShareFollow] { background-image: url('/images/icons/icon_loginaccount_bg.png'); }
+    .tab[data-id=pnlComments] { background-image: url('/images/icons/icon_comments_bg.png'); }
+    .tab[data-id=pnlSettings] { background-image: url('/images/icons/icon_myisle_bg.png'); }
+    .tab[data-id=pnlAddResources] { background-image: url('/images/icons/icon_resources_bg.png'); }
+    .tab[data-id=pnlJoinLibrary] { background-image: url('/images/icons/icon_swirl_bg.png'); }
+
+    #libTabBox a.tab { width: auto; padding-left: 40px; }
+    @media screen and (max-width: 700px) {
+      #libTabBox a.tab { width: 40px; padding-left: 0; }
+      #libTabBox a.tab span { display: none; }
     }
   </style>
 
   <div id="libraryHeader">
     <div id="libTabBox">
-      <a href="#" class="tab" data-id="pnlDetails" onclick="showPanel('pnlDetails'); return false;">Details</a>
-      <a href="#" class="tab" data-id="pnlComments" onclick="showPanel('pnlComments'); return false;">Comments</a>
-      <a href="#" class="tab" data-id="pnlSettings" onclick="showPanel('pnlSettings'); return false;" id="settingsTab" runat="server">Settings</a>
-      <a href="#" class="tab" data-id="pnlAddResources" onclick="showPanel('pnlAddResources'); return false;" id="addTab" runat="server">Add Resources</a>
-      <a href="#" data-id="expandCollapse" onclick="expandCollapsePanels(); return false;">Less</a>
+      <a href="#" class="tab" data-id="pnlDetails" onclick="showPanel('pnlDetails'); return false;" title="Library/Collection"><span>Details</span></a>
+      <a href="#" class="tab" data-id="pnlShareFollow" onclick="showPanel('pnlShareFollow'); return false;" title="Share & Follow"><span>Share &amp; Follow</span></a>
+      <a href="#" class="tab" data-id="pnlComments" onclick="showPanel('pnlComments'); return false;" title="Comments"><span>Comments</span></a>
+      <a href="#" class="tab" data-id="pnlSettings" onclick="showPanel('pnlSettings'); return false;" id="settingsTab" runat="server" title="Settings"><span>Settings</span></a>
+      <a href="#" class="tab" data-id="pnlAddResources" onclick="showPanel('pnlAddResources'); return false;" id="addTab" runat="server" title="Add Resources"><span>Add Resources</span></a>
+      <a href="#" class="tab" data-id="pnlJoinLibrary" onclick="showPanel('pnlJoinLibrary'); return false;" id="joinTab" runat="server" title="Become a Member of this Library"><span>Join This Library</span></a>
     </div>
     <div id="libraryHeaderContent">
+      <a href="#" data-id="expandCollapse" onclick="expandCollapsePanels(); return false;">Collapse</a>
       <h2 id="libColTitle"></h2>
       <div id="libColSelector">
         <a href="#" id="libraryAvatar" onclick="pickLibrary(); return false;"></a>
+        <h2 id="collectionsHeader">Collections for this Library: <a class="toolTipLink" title="Collections|A Library contains one or more Collections.|A Collection contains one or more Resources.|Click on a Collection icon to view its contents.|Click on the Library icon to the left to view the entire contents of the Library."></a></h2>
         <div id="collectionList"></div>
+            
       </div>
       <div id="libPanelHolder">
         <!-- pnlDetails -->
@@ -288,26 +368,6 @@
           <div id="detailsContent">
             <h3 class="panelHeader"></h3>
             <p id="description"></p>
-            <div id="shareFollow">
-              <div id="shareBox">
-                <h4>Share:</h4>
-                <input type="text" readonly="readonly" id="txtShareBox" onclick="this.select()" />
-              </div>
-              <div id="followBox">
-                <p class="middle" id="followingMessage">You are already following this entire Library.</p>
-                <div id="followingControls">
-                  <h4>Follow:</h4>
-                  <select id="followingOptions">
-                    <option value="0">Not Following</option>
-                    <option value="1">Follow without email notifications</option>
-                    <option value="2">Follow with weekly email updates</option>
-                    <option value="3">Follow with daily email updates</option>
-                  </select>
-         <%--                             <option value="4">Follow with immediate email updates</option>--%>
-                  <input type="button" id="btnFollowingUpdate" onclick="updateFollowingOption(); return false;" value="Save" class="btn green" />
-                </div>
-              </div>
-            </div>
             <div id="opinionBox">
               <div id="opinionRack">
                 <div id="likeBar"></div>
@@ -370,7 +430,7 @@
             </div>
           </div><!-- /pnlSettings -->
         </div>
-        <!-- pnlAddResources -->
+        <!-- addResourcesPanel -->
         <div id="addResourcesPanel" runat="server">
           <div id="pnlAddResources" class="panel">
             <h3 class="panelHeader">Add Resources...</h3>
@@ -393,29 +453,69 @@
               <p>Quickly tag or upload a Resource you found or created!</p>
               <a href="/Contribute/">Get Started &rarr;</a>
             </div>
-            <!--<div class="wayToAdd" data-id="fromCreated">
-              <img src="/images/icons/icon_create_bg.png" />
-              <h4>From your Computer</h4>
-              <p>Upload, tag, and share a Resource you created.</p>
-              <a href="/Contribute/?mode=upload">Upload Now &rarr;</a>
+            </div> 
+          </div>
+          <!-- /pnlAddResources -->
+          <!-- pnlJoinLibrary -->
+          <div id="joinLibraryPanel" runat="server">
+            <div id="pnlJoinLibrary" class="panel">
+              <h3 class="panelHeader">Become a Member of this Library</h3>
+              <div id="joinExplanation">
+                <p>Library Members have access to add, move, and remove resources and collections within the Library, at the discretion of Library admin(s).</p>
+                <p>To join this Library, please send a brief message to the Library administrator(s) describing why you want to join:</p>
+              </div>
+              <div id="joinInput">
+                <textarea id="txtIJoinBecause"></textarea>
+                <input type="button" class="btn green" id="btnRequestJoin" value="Send Request" onclick="requestJoinLibrary()" />
+              </div>
             </div>
-            <div class="wayToAdd" data-id="fromTagged">
-              <img src="/images/icons/icon_tag_bg.png" />
-              <h4>From The Internet</h4>
-              <p>Tag a Resource that exists online but isn't in the IOER repository.</p>
-              <a href="/Contribute/?mode=tag">Tag Now &rarr;</a>-->
+          </div>
+          <!-- /pnlJoinLibrary -->
+          <!-- pnlShareFollow -->
+          <div id="pnlShareFollow" class="panel">
+            <!--<h3 class="panelHeader">Share and Follow</h3>-->
+            <div id="shareFollowContent">
+              <div id="shareFollow">
+                <div id="shareBox">
+                  <div class="column">
+                    <h4 class="shareLinkHeader">Share:</h4>
+                    <input type="text" readonly="readonly" id="txtShareBox" onclick="this.select()" />
+                  </div>
+                  <div class="column">
+                    <h4>Embed this Library:</h4>
+                    <p>Select up to 10 publicly-available collections, listed below. Up to 10 of the most recent resources from each will be displayed.</p>
+                    <input type="text" readonly="readonly" id="txtWidgetConfig" onclick="this.select()" />
+                    <div id="widgetConfigList"></div>
+                  </div>
+                </div>
+                <div id="followBox">
+                  <p class="middle" id="followingMessage">You are already following this entire Library.</p>
+                  <div id="followingControls">
+                    <h4>Follow:</h4>
+                    <select id="followingOptions">
+                      <option value="0">Not Following</option>
+                      <option value="1">Follow without email notifications</option>
+                      <option value="2">Follow with weekly email updates</option>
+                      <option value="3">Follow with daily email updates</option>
+                    </select>
+           <%--                             <option value="4">Follow with immediate email updates</option>--%>
+                    <input type="button" id="btnFollowingUpdate" onclick="updateFollowingOption(); return false;" value="Save" class="btn green" />
+                  </div>
+                </div>
+              </div>
             </div>
-          </div><!-- /pnlAddResources -->
-        </div>
-      </div><!-- /libPanelHolder -->
-    </div><!-- /libraryHeaderContent -->
-  </div><!-- /libraryHeader -->
+          </div>
+          <!-- /pnlShareFollow -->
+        </div> <!-- /libPanelHolder -->
+      </div><!-- /libraryHeaderContent -->
+    </div> <!-- /libraryHeader -->
+  
 </div><!-- /libraryStuff -->
 
 <div id="templates" style="display:none;">
   <div id="template_collectionIcon">
     <a href="#" onclick="pickCollection({id}); return false;" data-collectionID="{id}" class="collectionIcon" title="{title}">
-      <img alt="{title}" {iconURL} />
+      <img alt="{title}" class="iconImg" />
       <div class="collectionTitle">{title}</div>
     </a>
   </div>
@@ -473,6 +573,10 @@
   </script>
   <p>You haven't created your Library yet. an IOER Library is a great way to store and organize Resources, and share them with others.</p>
   <p>To create your Library, we need some basic information. You can change all of this later.</p>
+    <p>Just want the basics? Click the following button to have the system create your library and a default collection
+        <asp:Button ID="quickLibrary" runat="server" Text="Automatically Create My Library" OnClick="quickLibrary_Click" CssClass="defaultButton" />
+
+    </p>
   <div class="newContent">
     <b>Title:</b> 
     <asp:TextBox ID="txtTitleNew" runat="server" CssClass="txtNewTitle" />
@@ -489,4 +593,6 @@
   </div>
     <asp:Label ID="completionMessage" runat="server" Visible="false">
         <p>Your library was created for you!  <br />Your library is public, if you would like to change access to your library, use the Settings tab.</p><p>Within your library is a default collection; you may add collections to your library and share with others.  Use the Settings tab to add titles, descriptions and images.</p>  </asp:Label>
+
+<asp:Literal ID="libraryCreateMsg" runat="server" Visible="false">Your personal library was created. <br />Be sure to review the getting started guide for information on libraries</asp:Literal>
 </div>

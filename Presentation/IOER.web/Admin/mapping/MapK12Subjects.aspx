@@ -1,4 +1,4 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Masters/Pathway.Master" AutoEventWireup="true" CodeBehind="MapK12Subjects.aspx.cs" Inherits="ILPathways.Admin.mapping.MapK12Subjects" %>
+﻿<%@ Page Title="Map K12 Subjects" Language="C#" MasterPageFile="~/Masters/Pathway.Master" AutoEventWireup="true" CodeBehind="MapK12Subjects.aspx.cs" Inherits="ILPathways.Admin.mapping.MapK12Subjects" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="HeadContent" runat="server">
     <link href="/Styles/common.css" rel="Stylesheet" type="text/css" />
@@ -15,11 +15,12 @@
 </style>
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="BodyContent" runat="server">
+    <h1 class="isleH1">Map K12 Subjects</h1>
 <!-- content start -->
 <div >
 <asp:validationsummary id="vsErrorSummary" HeaderText="Errors on page" forecolor="" CssClass="errorMessage" runat="server"></asp:validationsummary>
 <br />
-<div>
+<div style="width:90%; ">
 <asp:panel id="addPanel" runat="server" Visible="false">
 <div class="infoMessage" style="width: 100%;">
 			<h2>Add New Mapping</h2>
@@ -98,15 +99,7 @@
 					 Delete</asp:LinkButton>
 			 </ItemTemplate>
 		 </asp:TemplateField>
-    <asp:TemplateField HeaderText="Subject"  >
-        <EditItemTemplate>
-            <asp:label ID="gridlblSubjects2" runat="server" Text='<%# Bind("SubjectTitle") %>'></asp:label>
-        </EditItemTemplate>
-        <ItemTemplate>
-            <asp:label ID="gridlblSubjects" runat="server" Text='<%# Bind("SubjectTitle") %>'></asp:label>
-        </ItemTemplate>
-    </asp:TemplateField>
-    <asp:TemplateField HeaderText="Subject Mapping" >
+        <asp:TemplateField HeaderText="Subject Mapping" >
         <EditItemTemplate>
             <asp:TextBox ID="gridFilterValue" runat="server" Text='<%# Bind("FilterValue") %>' width="300px" ></asp:TextBox>
             <asp:RequiredFieldValidator id="RequiredFieldValidator3" runat="server" ErrorMessage="A LR Value is required!" ControlToValidate="gridFilterValue"></asp:RequiredFieldValidator>
@@ -115,6 +108,15 @@
             <asp:label ID="gridlblFilterValue" runat="server" Text='<%# Bind("FilterValue") %>'></asp:label>
         </ItemTemplate>
     </asp:TemplateField>  
+    <asp:TemplateField HeaderText="Subject"  >
+        <EditItemTemplate>
+            <asp:label ID="gridlblSubjects2" runat="server" Text='<%# Bind("SubjectTitle") %>'></asp:label>
+        </EditItemTemplate>
+        <ItemTemplate>
+            <asp:label ID="gridlblSubjects" runat="server" Text='<%# Bind("SubjectTitle") %>'></asp:label>
+        </ItemTemplate>
+    </asp:TemplateField>
+
      
   
     <asp:boundfield datafield="MappedSubjectId" Visible="false" ></asp:boundfield>	               

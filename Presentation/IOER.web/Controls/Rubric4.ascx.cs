@@ -13,27 +13,12 @@ namespace ILPathways.Controls
 {
   public partial class Rubric4 : BaseUserControl
   {
-    /* Notes */
-    /*
-     * 1. Get the user ID
-     * 2. Get the resource
-     * 3. Has math standards? activate math rubric
-     * 4. Has ELA standards and grades K-2? activate ELA K-2 rubric
-     * 5. Has ELA standards and grades 3-12? activate ELA 3-12 rubric
-     * 6. Has NGSS standards? activate NGSS rubric
-     * 7. Has any "Assessment" resource type? foreach rubric, activate assessment dimension
-     * 8. Assemble object
-     * 
-     * 1. Read object
-     * 2. Assemble interface
-     * 
-     */
 
     public Patron user = new Patron();
     public ResourceEvaluationManager rManager = new ResourceEvaluationManager();
     public int resourceVersionID = 0;
 
-    protected void Page_Load( object sender, EventArgs e )
+		protected void Page_Load( object sender, EventArgs e )
     {
       if ( !InitPage() )
       {
@@ -46,7 +31,7 @@ namespace ILPathways.Controls
     protected bool InitPage()
     {
       //Get the user
-      if ( IsUserAuthenticated() )
+      /*if ( IsUserAuthenticated() )
       {
         user = ( Patron ) WebUser;
       }
@@ -56,10 +41,12 @@ namespace ILPathways.Controls
         error.Visible = true;
         errorMessage.Text = "You must login to use this tool.";
         return false;
-      }
+      }*/
 
       //Get the resource
-      try
+			resourceVersionID = 456319;
+
+      /*try
       {
         resourceVersionID = int.Parse( Session[ "versionID" ].ToString() );
         if ( resourceVersionID == 0 )
@@ -73,9 +60,53 @@ namespace ILPathways.Controls
         error.Visible = true;
         errorMessage.Text = "No Resource identified.";
         return false;
-      }
+      }*/
+
+			SetupRatingRBLs();
 
       return true;
     }
+
+		private void SetupRatingRBLs()
+		{
+			foreach(RadioButtonList list in rubric.Controls.OfType<RadioButtonList>())
+			{
+				list.RepeatLayout = RepeatLayout.UnorderedList;
+				list.Items.Clear();
+				list.Items.Add( new ListItem( "Superior", "3" ) );
+				list.Items.Add( new ListItem( "Strong", "2" ) );
+				list.Items.Add( new ListItem( "Limited", "1" ) );
+				list.Items.Add( new ListItem( "Very Weak/None", "0" ) );
+				list.Items.Add( new ListItem( "Not Applicable", "-1" ) );
+				list.Items.FindByValue( "-1" ).Selected = true;
+			}
+		}
+
+		public void btnSubmit_Click( object sender, EventArgs e )
+		{
+			var score = 0;
+			var addedScores = 0;
+
+			foreach ( RadioButtonList list in rubric.Controls.OfType<RadioButtonList>() )
+			{
+				var val = int.Parse( list.SelectedValue );
+				if ( val != -1 )
+				{
+					score += val;
+					addedScores++;
+				}
+			}
+
+			if ( addedScores == 0 )
+			{
+				return;
+			}
+			else
+			{
+				var average = ( decimal ) score / addedScores;
+
+				//Save the score
+			}
+		}
   }
 }

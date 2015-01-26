@@ -37,5 +37,7 @@ namespace IOERBusinessEntities
         public Nullable<int> InteractivityTypeId { get; set; }
         public string InteractivityType { get; set; }
         public System.Guid RowId { get; set; }
+    
+        public virtual Resource Resource { get; set; }
     }
 }

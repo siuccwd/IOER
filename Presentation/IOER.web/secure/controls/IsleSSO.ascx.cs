@@ -9,6 +9,7 @@ using System.Web.UI.WebControls;
 using ILPathways.Utilities;
 using ILPathways.classes;
 using ILPathways.Business;
+using Isle.BizServices;
 using LRWarehouse.Business;
 using ILPathways.Controllers;
 using LDAL = LRWarehouse.DAL;
@@ -44,14 +45,35 @@ namespace ILPathways.secure.controls
         {
             string whereTo = "";
             Patron applicant = new Patron();
-            applicant.Username = Request.ServerVariables["HTTP_MAIL"];
-            applicant.Email = Request.ServerVariables["HTTP_MAIL"];
-            applicant.FirstName = Request.ServerVariables["HTTP_GIVENNAME"];
-            applicant.LastName = Request.ServerVariables["HTTP_SN"];
-            applicant.Password = UtilityManager.Encrypt("sl&tj#");
+            bool shouldUseProductionHeaders = bool.Parse(useProdHeaders.Text);
+            if (shouldUseProductionHeaders)
+            {
+                /* These are going to be some of the values that are coming over from the production IC IdP in addition to current values.  Per Bernie A'cs (email sent 3/31/14 16:34), values are:
+                 * eduPersonPrincipalName:  something like username@schoolDistrictDomainName.illinicloud.org. NB: This is not an email address!
+                 * eduPersonAffiliation:    likely a delimited list of values: {faculty, member, employee} - fixed vocabulary, mixed values can be subject to interruption (interpretation??)
+                 * eduPersonOrganizationDN: likely a single value defining a tenant's authoritative namespace, ie district87.org or unit5.org.
+                 * eduPersonEntitlement:    roles.  Will likely take many forms, but one envisioned is a pseudo URL of the form http://applicationName/role/applicationRole 
+                 *                          which will be mapped by either an LDAP or DB query by tenant.  Output might be http://ioer.ilsharedlearning.org/role/principal. */
+                applicant.UserName = Request.ServerVariables["HTTP_EPPN"];
+                applicant.Email = Request.ServerVariables["HTTP_MAIL"];
+                applicant.FirstName = Request.ServerVariables["HTTP_GIVENNAME"];
+                applicant.LastName = Request.ServerVariables["HTTP_SN"];
+                applicant.Password = UtilityManager.Encrypt("sl&tj#");
+                //applicant.Affiliation = Request.ServerVariables["HTTP_UNSCOPED_AFFILIATION"];
+                //applicant.Role = Request.ServerVariables["HTTP_ENTITLEMENT"];
+                //applicant.Organization = Request.ServerVariables["HTTP_ORG_DN"];
+            }
+            else
+            {
+                applicant.UserName = Request.ServerVariables["HTTP_MAIL"];
+                applicant.Email = Request.ServerVariables["HTTP_MAIL"];
+                applicant.FirstName = Request.ServerVariables["HTTP_GIVENNAME"];
+                applicant.LastName = Request.ServerVariables["HTTP_SN"];
+                applicant.Password = UtilityManager.Encrypt("sl&tj#");
+            }
 
             string logMessage = string.Format("Values scraped from Shibboleth: Email address: {0}\tUser name: {1}\tFirstName: {2}\tLastName: {3}",
-                applicant.Email, applicant.Username, applicant.FirstName, applicant.LastName);
+                applicant.Email, applicant.UserName, applicant.FirstName, applicant.LastName);
             LoggingHelper.DoTrace(logMessage);
 
             AddAndLoginUser(applicant, ref whereTo);
@@ -72,9 +94,10 @@ namespace ILPathways.secure.controls
             {
                 // User exists, attempt to log them in.
                 applicant = myManager.GetByEmail(applicant.Email);
-                currentUser = myManager.Authorize(applicant.Username, applicant.Password, ref status);
+                currentUser = myManager.Authorize(applicant.UserName, applicant.Password, ref status);
                 if (currentUser.IsValid)
                 {
+                    ActivityBizServices.UserPortalAuthentication( applicant );
                     SessionManager.SetUserToSession(Session, currentUser);
                     if (Request.QueryString["nextUrl"] != null && Request.QueryString["nextUrl"] != string.Empty)
                     {
@@ -98,8 +121,16 @@ namespace ILPathways.secure.controls
                 if (applicant.IsValid && applicant.Id > 0)
                 {
                     SessionManager.SetUserToSession(Session, applicant);
+
                     string profileMessage = string.Format(profileCreateMessage.Text, profileRedirect.Text);
                     SetConsoleSuccessMessage(profileMessage);
+
+                    OrganizationBizService.AssociateUserWithOrg( applicant );
+
+                    string ipAddress = this.GetUserIPAddress();
+                    ActivityBizServices.UserRegistrationFromPortal( applicant, ipAddress );
+
+
                     if (Request.QueryString["nextUrl"] != null && Request.QueryString["nextUrl"] != string.Empty)
                     {
                         whereTo = BuildUrl(Request.QueryString["nextUrl"]);
@@ -115,7 +146,24 @@ namespace ILPathways.secure.controls
                 }
             }
         }
+        private string GetUserIPAddress()
+        {
+            string ip = "";
+            try
+            {
+                ip = Request.ServerVariables[ "HTTP_X_FORWARDED_FOR" ];
+                if ( ip == null || ip == "" || ip.ToLower() == "unknown" )
+                {
+                    ip = Request.ServerVariables[ "REMOTE_ADDR" ];
+                }
+            }
+            catch ( Exception ex )
+            {
 
+            }
+
+            return ip;
+        } //
         protected string BuildUrl(string url)
         {
             string retVal = "";
@@ -136,7 +184,7 @@ namespace ILPathways.secure.controls
         {
             string whereTo = "";
             Patron applicant = new Patron();
-            applicant.Email = applicant.Username = txtEmail.Text;
+            applicant.Email = applicant.UserName = txtEmail.Text;
             applicant.FirstName = txtGivenName.Text;
             applicant.LastName = txtSurname.Text;
             applicant.Password = UtilityManager.Encrypt(txtPassword.Text);

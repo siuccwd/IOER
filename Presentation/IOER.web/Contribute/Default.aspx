@@ -11,8 +11,8 @@
       #content { transition: padding-left 1s; -webkit-transition: padding-left 1s; min-width: 300px; }
       h1 {  text-align: center; }
       .intro { font-size: 24px; text-align: center;  }
-      #paths { margin: 0 10%; }
-      .path { margin: 0 auto 25px auto; padding: 5px; clear: both; min-height: 125px; max-width: 1000px; width: 48%; display: inline-block; vertical-align: top; }
+      #paths { margin: 0 10%; text-align: center; }
+      .path { text-align: left; margin: 0 auto 25px auto; padding: 5px; clear: both; min-height: 125px; max-width: 1000px; width: 48%; display: inline-block; vertical-align: top; }
       .path img { float: left; margin: 0 10px 5px 0; width: 14%; background-color: #4AA394; border-radius: 50%; }
       #FooterSection { clear: both; }
       .path h2 { font-size: 20px; color: #FFF; background-color: #4AA394; border-radius: 5px; margin-left: 7%; }
@@ -46,6 +46,13 @@
           <h2>Quick Upload</h2>
           <p>Upload a file, tag it with basic information, and enhance your tags later.</p>
           <a class="goLink" href="?mode=upload">Upload Now &rarr;</a>
+          <div class="clear"></div>
+        </div>
+        <div class="path" id="curriculum">
+          <img src="/images/icons/icon_standards_med.png" />
+          <h2>Create a Learning List</h2>
+          <p>Group related resources and files together. Works for small lessons, but is ideal for full curricula, and everything in between.</p>
+          <a class="goLink" href="/My/LearningList/new">Go to Learning List Builder &rarr;</a>
           <div class="clear"></div>
         </div>
         <div class="path" id="author">

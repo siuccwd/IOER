@@ -22,9 +22,9 @@ namespace LRWarehouse.DAL
 
         public string CreateFromEntity(Entity entity, ref string statusMessage)
         {
-            string resourceRowId = "";
-            if ( entity.ResourceId.ToString() != entity.DEFAULT_GUID )
-                resourceRowId = entity.ResourceId.ToString();
+            //string resourceRowId = "";
+            //if ( entity.ResourceId.ToString() != entity.DEFAULT_GUID )
+            //    resourceRowId = entity.ResourceId.ToString();
 
             return Create( entity.ResourceIntId, entity.CodeId, entity.MappedValue, entity.CreatedById, ref statusMessage );
         }
@@ -45,6 +45,11 @@ namespace LRWarehouse.DAL
             string newId = "";
             if ( pOriginalValue == pCodeId.ToString() )
                 pOriginalValue = "";
+            if ( pCodeId == 0 || pResourceIntId == 0 )
+            {
+                statusMessage = "Error - invalid values";
+                return newId;
+            }
 
             try
             {
@@ -87,7 +92,7 @@ namespace LRWarehouse.DAL
             {
                 #region parameters
                 SqlParameter[] sqlParameters = new SqlParameter[5];
-                sqlParameters[0] = new SqlParameter("@ResourceId", entity.ResourceId);
+                sqlParameters[0] = new SqlParameter("@ResourceId", "");
                 sqlParameters[1] = new SqlParameter("@LanguageId", entity.CodeId);
                 sqlParameters[2] = new SqlParameter("@OriginalValue", entity.OriginalValue);
                 sqlParameters[outputCol] = new SqlParameter("@TotalRows", SqlDbType.Int);
@@ -110,7 +115,7 @@ namespace LRWarehouse.DAL
             catch (Exception ex)
             {
                 LogError(ex, className + string.Format(".Import() for ResourceId: {0}, CodeId: {1}, Value: {2}, and CreatedBy: {3}",
-                    entity.ResourceId.ToString(), entity.CodeId, entity.OriginalValue, entity.CreatedById));
+                    entity.ResourceIntId.ToString(), entity.CodeId, entity.OriginalValue, entity.CreatedById));
                 statusMessage = className + " - Unsuccessful: Import(): " + ex.Message.ToString();
             }
 

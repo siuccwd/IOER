@@ -48,6 +48,25 @@ namespace ILPathways.Business
       }
     }
 
+    private string _groupName;
+    /// <summary>
+    /// Gets/Sets GroupName
+    /// </summary>
+    public string GroupName
+    {
+        get { return this._groupName; }
+        set
+        {
+            if ( this._groupName == value )
+            {
+                //Ignore set
+            }
+            else
+            {
+                this._groupName = value;
+            }
+        }
+    }
 
     #endregion
   } // end class 

@@ -49,13 +49,13 @@ namespace ILPathways.Admin {
         protected global::System.Web.UI.WebControls.TextBox txtStandardsFile;
         
         /// <summary>
-        /// ddlFile control.
+        /// ddlStandardsFile control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList ddlFile;
+        protected global::System.Web.UI.WebControls.DropDownList ddlStandardsFile;
         
         /// <summary>
         /// submitButton control.
@@ -101,5 +101,14 @@ namespace ILPathways.Admin {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Literal englishXml;
+        
+        /// <summary>
+        /// healthXml control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Literal healthXml;
     }
 }

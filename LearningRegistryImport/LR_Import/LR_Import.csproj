@@ -36,9 +36,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.ApplicationBlocks.Data">
-      <HintPath>..\..\Library\Microsoft.ApplicationBlocks.Data.dll</HintPath>
-    </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\..\Library\Newtonsoft.Json.dll</HintPath>
     </Reference>

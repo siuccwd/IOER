@@ -22,7 +22,7 @@ namespace LRWarehouse.DAL
         /// <param name="evaluation"></param>
         /// <param name="status"></param>
         /// <returns></returns>
-        public int Create( ResourceEvaluation evaluation, ref string status )
+        private int Create( ResourceEvaluation evaluation, ref string status )
         {
             status = "successful";
             int retVal = 0;
@@ -58,13 +58,46 @@ namespace LRWarehouse.DAL
             return retVal;
         }// Create
 
+        public int CreateStandardEvaluation( ResourceEvaluation evaluation, ref string status )
+        {
+            status = "successful";
+            int retVal = 0;
+
+            try
+            {
+                #region parameters
+                //will look up by resId and standard id, then do add
+                SqlParameter[] parameters = new SqlParameter[ 4 ];
+                parameters[ 0 ] = new SqlParameter( "@ResourceIntId", evaluation.ResourceIntId );
+                parameters[ 1 ] = new SqlParameter( "@StandardId", evaluation.StandardId );
+                parameters[ 2 ] = new SqlParameter( "@CreatedById", evaluation.CreatedById );
+                parameters[ 3 ] = new SqlParameter( "@Value", evaluation.Value );
+
+                #endregion
+
+                DataSet ds = SqlHelper.ExecuteDataset( ConnString, CommandType.StoredProcedure, INSERT_PROC, parameters );
+                if ( DoesDataSetHaveRows( ds ) )
+                {
+                    retVal = GetRowColumn( ds.Tables[ 0 ].Rows[ 0 ], "Id", 0 );
+                }
+            }
+            catch ( Exception ex )
+            {
+                LogError( className + ".CreateStandardEvaluation(): " + ex.ToString() );
+                status = className + ".CreateStandardEvaluation(): " + ex.Message;
+            }
+
+            return retVal;
+        }// Create
+
         /// <summary>
         /// Retrieves evaluation row by ID
         /// </summary>
         /// <param name="pId"></param>
         /// <param name="status"></param>
         /// <returns></returns>
-        public ResourceEvaluation Get( int pId, ref string status )
+        [Obsolete]
+        private ResourceEvaluation Get( int pId, ref string status )
         {
             status = "successful";
             ResourceEvaluation evaluation = new ResourceEvaluation();
@@ -97,13 +130,15 @@ namespace LRWarehouse.DAL
         /// </summary>
         /// <param name="dr"></param>
         /// <returns></returns>
-        public ResourceEvaluation Fill( DataRow dr )
+        private ResourceEvaluation Fill( DataRow dr )
         {
             ResourceEvaluation eval = new ResourceEvaluation();
             eval.Id = GetRowColumn( dr, "Id", 0 );
             eval.ResourceIntId = GetRowColumn( dr, "ResourceIntId", 0 );
             eval.Created = GetRowColumn( dr, "Created", DateTime.MinValue );
             // Cannot use standard GetRowColumn for StandardId and RubricId because one of these will always be null
+            eval.StandardId = GetRowPossibleColumn( dr, "StandardId", 0 );
+            eval.RubricId = GetRowPossibleColumn( dr, "RubricId", 0 );
             try
             {
                 eval.StandardId = int.Parse( dr[ "StandardId" ].ToString() );
@@ -114,7 +149,7 @@ namespace LRWarehouse.DAL
             }
             catch ( Exception ex )
             {
-                LogError( className + ".Fill(): " + ex.ToString() );
+                //LogError( className + ".Fill(): " + ex.ToString() );
             }
             try
             {
@@ -126,7 +161,7 @@ namespace LRWarehouse.DAL
             }
             catch ( Exception ex )
             {
-                LogError( className + ".Fill(): " + ex.ToString() );
+                // LogError( className + ".Fill(): " + ex.ToString() );
             }
             eval.Value = GetRowColumn( dr, "Value", ( decimal )0.0 );
             eval.ScaleMin = GetRowColumn( dr, "ScaleMin", 0 );
@@ -174,7 +209,44 @@ namespace LRWarehouse.DAL
 
             return ds;
         }
+        /// <summary>
+        /// Select Resource Standard Evaluations
+        /// </summary>
+        /// <param name="resourceIntId"></param>
+        /// <param name="createdById"></param>
+        /// <param name="standardId"></param>
+        /// <param name="rubricId"></param>
+        /// <param name="status"></param>
+        /// <returns></returns>
+        public DataSet Resource_StandardEvaluations_Select( int resourceIntId, int createdById, int standardId, ref string status )
+        {
+            DataSet ds = new DataSet();
+            status = "successful";
 
+            try
+            {
+                #region parameters
+                SqlParameter[] parameters = new SqlParameter[ 4 ];
+                parameters[ 0 ] = new SqlParameter( "@ResourceIntId", resourceIntId );
+                parameters[ 1 ] = new SqlParameter( "@CreatedById", createdById );
+                parameters[ 2 ] = new SqlParameter( "@StandardId", standardId );
+                parameters[ 3 ] = new SqlParameter( "@RubricId", 0 );
+                #endregion
+
+                ds = SqlHelper.ExecuteDataset( ReadOnlyConnString, CommandType.StoredProcedure, SELECT_PROC, parameters );
+                if ( !DoesDataSetHaveRows( ds ) )
+                {
+                    return null;
+                }
+            }
+            catch ( Exception ex )
+            {
+                status = className + ".Resource_StandardEvaluations_Select(): " + ex.Message;
+                LogError( className + ".Resource_StandardEvaluations_Select(): " + ex.ToString() );
+            }
+
+            return ds;
+        }
         /// <summary>
         /// Factory Method style way of getting all of the Rubrics and Standards ratings info for a given Resource, including user info if available
         /// </summary>
@@ -337,8 +409,11 @@ namespace LRWarehouse.DAL
             evaluation.ScaleMin = 1;
             evaluation.Value = score;
             evaluation.ResourceIntId = intID;
-            if ( HasUserRatedThisStandard( standardID, userID, intID ) == true ) { return null; } //No double-dipping
+
+            if ( HasUserRatedThisStandard( standardID, userID, intID ) == true ) 
+                { return null; } //No double-dipping
             this.Create( evaluation, ref status );
+
             var ratings = GetRatingsForResource( intID, userID ); //Have to get everything to ensure proper recalculation
             return ratings.standardRatings;
         }
@@ -350,5 +425,122 @@ namespace LRWarehouse.DAL
 
             return DoesDataSetHaveRows( ds );
         }
+
+        public double GetResourceEvaluationScore( int intID, ref int count )
+        {
+          double totalScore = 0.0;
+          string status = "";
+          double rubricScore = 0.0;
+          double standardsScore = 0.0;
+          int rubricCounter = 0;
+          int standardsCounter = 0;
+          double overallScore = 0.0;
+
+          //ResourceEvaluationManager rManager = new ResourceEvaluationManager();
+          DataSet ds = Select( intID, 0, 0, 0, ref status );
+          if ( DoesDataSetHaveRows( ds ) )
+          {
+            //Tally up the raw info
+            foreach ( DataRow dr in ds.Tables[ 0 ].Rows )
+            {
+              double value = 0.0;
+              if ( GetRowPossibleColumn( dr, "Value" ) == null || GetRowPossibleColumn( dr, "Value" ).ToLower() == "null" )
+              {
+                value = 0.0;
+              }
+              else
+              {
+                try
+                {
+                  value = double.Parse( GetRowPossibleColumn( dr, "Value" ) );
+                  if ( value > 3.0 )
+                  {
+                    value = 3.0;
+                  }
+                  //Compensate for the +1 that happens when a score is inserted, which compensates for the nullifying of scores of 0
+                  value = value - 1;
+                }
+                catch ( Exception ex )
+                {
+                  //LoggingHelper.DoTrace( ex.ToString() + " Value: " + GetRowPossibleColumn( dr, "Value" ) + " EndValue" );
+                }
+              }
+              if ( GetRowPossibleColumn( dr, "RubricId" ) != "" )
+              {
+                rubricScore = rubricScore + value;
+                rubricCounter++;
+              }
+              if ( GetRowPossibleColumn( dr, "StandardId" ) != "" )
+              {
+                standardsScore = standardsScore + value;
+                standardsCounter++;
+              }
+            }
+
+            //Do the averaging
+            if ( rubricCounter > 0 )
+            {
+              rubricScore = rubricScore / rubricCounter;
+            }
+            if ( standardsCounter > 0 )
+            {
+              standardsScore = standardsScore / standardsCounter;
+            }
+
+            count = rubricCounter;
+
+            //Calculate the final score
+            overallScore = rubricScore + standardsScore / 2;
+
+            return overallScore;
+          }
+
+          return totalScore;
+        }
+
+        public Dictionary<int, double> GetEvaluations( int intID )
+        {
+          int count = 0;
+          Dictionary<int, double> items = new Dictionary<int, double>();
+          DataSet ds = DatabaseManager.DoQuery( "SELECT DISTINCT [ResourceIntId] FROM [Resource.Evaluation]" + ( intID == 0 ? "" : " WHERE [ResourceIntId] = " + intID ) );
+          if ( DoesDataSetHaveRows( ds ) )
+          {
+            foreach ( DataRow dr in ds.Tables[ 0 ].Rows )
+            {
+              int resourceIntID = int.Parse( GetRowColumn( dr, "ResourceIntId" ) );
+              double totalScore = GetResourceEvaluationScore( resourceIntID, ref count );
+              items.Add( resourceIntID, totalScore );
+            }
+          }
+
+          return items;
+
+        }
+
+        public List<EvaluationResult> GetEvaluationsWithCount( int intID )
+        {
+          var output = new List<EvaluationResult>();
+          DataSet ds = DatabaseManager.DoQuery( "SELECT DISTINCT [ResourceIntId] FROM [Resource.Evaluation]" + ( intID == 0 ? "" : " WHERE [ResourceIntId] = " + intID ) );
+          if ( DoesDataSetHaveRows( ds ) )
+          {
+            foreach ( DataRow dr in ds.Tables[ 0 ].Rows )
+            {
+              int count = 0;
+              int resourceIntID = int.Parse( GetRowColumn( dr, "ResourceIntId" ) );
+              double totalScore = GetResourceEvaluationScore( resourceIntID, ref count );
+              output.Add( new EvaluationResult() { count = count, intID = resourceIntID, score = totalScore } );
+            }
+          }
+
+          return output;
+        }
+        
+        public class EvaluationResult
+        {
+          public int intID { get; set; }
+          public double score { get; set; }
+          public int count { get; set; }
+        }
+
     }
 }

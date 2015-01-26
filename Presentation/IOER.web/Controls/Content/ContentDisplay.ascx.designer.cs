@@ -40,6 +40,15 @@ namespace ILPathways.Controls.Content {
         protected global::System.Web.UI.WebControls.Panel detailPanel;
         
         /// <summary>
+        /// summaryPanel control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel summaryPanel;
+        
+        /// <summary>
         /// pageContent control.
         /// </summary>
         /// <remarks>
@@ -47,6 +56,24 @@ namespace ILPathways.Controls.Content {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label pageContent;
+        
+        /// <summary>
+        /// curriculumPanel control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel curriculumPanel;
+        
+        /// <summary>
+        /// curriculum control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::ILPathways.Controls.Curriculum.Curriculum1 curriculum;
         
         /// <summary>
         /// buttonBox control.

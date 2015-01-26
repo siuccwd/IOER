@@ -195,8 +195,7 @@ namespace LRWarehouse.DAL
             {
                 #region parameters
                 SqlParameter[] sqlParameters = new SqlParameter[5];
-                sqlParameters[0] = new SqlParameter("@ResourceId", SqlDbType.UniqueIdentifier);
-                sqlParameters[0].Value = entity.ResourceId;
+                sqlParameters[0] = new SqlParameter("@ResourceId", DEFAULT_GUID); //OBSOLETE
                 sqlParameters[1] = new SqlParameter("@IntendedAudienceId", SqlDbType.Int);
                 sqlParameters[1].Value = entity.CodeId;
                 sqlParameters[2] = new SqlParameter("@OriginalValue", SqlDbType.VarChar);
@@ -263,8 +262,8 @@ namespace LRWarehouse.DAL
             return entity;
         }
 
-
-        public Entity GetByResourceAndAudienceId(string resourceId, int audienceId )
+        [Obsolete]
+        private Entity GetByResourceAndAudienceId(string resourceId, int audienceId )
         {
             Entity entity = new Entity();
             try
@@ -426,7 +425,7 @@ namespace LRWarehouse.DAL
             Entity entity = new Entity();
             entity.RowId = new Guid( GetRowColumn( dr, "RowId", DEFAULT_GUID ) );
             entity.ResourceIntId = GetRowColumn( dr, "ResourceIntId", 0 );
-            entity.ResourceId = new Guid( GetRowColumn( dr, "ResourceId", DEFAULT_GUID ) );
+            //entity.ResourceId = new Guid( GetRowColumn( dr, "ResourceId", DEFAULT_GUID ) );
 
             entity.OriginalValue = GetRowColumn( dr, "OriginalAudience", "" );
             entity.CodeId = GetRowColumn( dr, "AudienceId", 0 );

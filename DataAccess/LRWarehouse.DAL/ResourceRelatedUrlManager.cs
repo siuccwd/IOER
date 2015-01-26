@@ -190,9 +190,9 @@ namespace LRWarehouse.DAL
 
             entity.IsValid = true;
 
-            string rowId = GetRowColumn( dr, "ResourceId", "" );
-            if ( rowId.Length > 35 )
-                entity.ResourceId = new Guid( rowId );
+            //string rowId = GetRowColumn( dr, "ResourceId", "" );
+            //if ( rowId.Length > 35 )
+            //    entity.ResourceId = new Guid( rowId );
 
             entity.Id = GetRowColumn( dr, "Id", 0 );
             entity.ResourceIntId = GetRowColumn( dr, "ResourceIntId", 0 );

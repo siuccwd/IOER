@@ -9,7 +9,7 @@
   </script>
   <link rel="Stylesheet" type="text/css" href="/Styles/common.css" />
   <style type="text/css">
-    .mainContent { transition: padding-left 1s; -webkit-transition: padding-left 1s; }
+    .mainContent { transition: padding-left 1s; -webkit-transition: padding-left 1s; min-width: 300px; }
     @media screen and (min-width: 980px) {
       .mainContent { padding-left: 50px; }
     }

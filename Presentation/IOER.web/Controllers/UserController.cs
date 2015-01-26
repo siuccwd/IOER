@@ -204,7 +204,7 @@ namespace ILPathways.Controllers
                 user.FirstName = acct.firstName;
                 user.LastName = acct.lastName;
                 user.Email = acct.email;
-                user.Username = acct.userName;
+                user.UserName = acct.userName;
                 user.Password = password;
                 user.IsValid = true;
                 user.worknetId = acct.worknetId;

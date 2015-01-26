@@ -1,6 +1,6 @@
 ﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="Detail6.ascx.cs" Inherits="ILPathways.LRW.controls.Detail6" %>
 <%@ Register TagPrefix="uc1" TagName="UsageRightsSelector" Src="/LRW/controls/ConditionsOfUseSelector.ascx" %>
-<%@ Register TagPrefix="uc1" TagName="StandardsBrowser" Src="/LRW/controls/StandardsBrowser5.ascx" %>
+<%@ Register TagPrefix="uc1" TagName="StandardsBrowser" Src="/controls/StandardsBrowser7.ascx" %>
 
 <% 
   //Easy CSS colors
@@ -20,12 +20,15 @@
   <script type="text/javascript">
       var userGUID = "<%=userGUID %>";
       var resourceVersionID = <%=resourceVersionID %>;
+      var resourceID = <%=resourceIntID %>;
       var userIsAdmin = "<%=isUserAdmin %>";
+      var userIsAuthor = "<%=isUserAuthor %>";
       <%=resourceText %>
       <%=codeTables %>
+      var SB7mode = "tag";
   </script>
   <script type="text/javascript" language="javascript" src="/Scripts/detail6.js"></script>
-  <link rel="Stylesheet" href="/Styles/detail6.css" />
+  <%--<link rel="Stylesheet" href="/Styles/detail6.css" />--%>
 
   <style type="text/css">
     /* Big stuff */
@@ -125,7 +128,8 @@
     #comments input[type=button] { width: 25%; min-width: 75px; }
     
     .lightbox { border: 1px solid #DDD; padding: 5px; margin: 5px; border-radius: 5px; }
-    .lightbox > h3 { background-color: #DDD; color: #333; text-align: left; padding: 1px 5px; margin: -5px -5px 5px -5px; border-top-left-radius: 3px; border-top-right-radius: 3px; }
+    .lightbox > h3 { background-color: #DDD; color: #333; text-align: left; padding: 1px 5px; margin: 5px -5px 5px -5px; }
+    .lightbox > h3:first-child { margin: -5px -5px 5px -5px; border-top-left-radius: 3px; border-top-right-radius: 3px; }
     
     /* Likes and Dislikes */
     #likedislike { text-align: center; margin-bottom: 10px; }
@@ -154,7 +158,7 @@
     #myLibrary select { width: 100%; margin: 5px 0; }
     #myLibrary input { width: 100%; color: #FFF; border-radius: 5px; }
     #myLibrary input:hover, #myLibrary input:focus { cursor: pointer; }
-    
+      #submissionMessage { color: green;}
     /* Scoreometer */
     /*.scoreometer { border: 1px solid #CCC; padding: 2px; margin: 5px; border-top: 5px solid #CCC; }*/
     .scoreometer h5 { font-weight: normal; font-style: italic; }
@@ -202,26 +206,68 @@
       padding: 3px;
     }
     #modifyThis h2 { text-align: left; }
-        
+    #description {
+          margin-left: 400px;
+      }
+
+    #resourceNote { display: inline-block; width: 50%;     }
+    #resourceMsg { margin-top:25px; padding: 10px; text-align: center;      }
+      #resourceMsg .isleBox {
+          padding-bottom: 15px;
+      }
+      
+    #compDescription { text-align: left; padding:12px;   }
     /* Edit Stuff */
     #title .edit input[type=text] { width: 80%; }
-    #description .edit textarea { width: 45%; height: 280px; padding: 5px; resize: none; }
+    #description .edit textarea { width: 75%; height: 280px; padding: 5px; resize: none; }
     .cbxl .edit a { display: block; padding: 2px 5px; border-left: 10px solid #CCC; color: #333; margin-bottom: 1px; border-radius: 5px; }
     .cbxl .edit a[data-preselected=false]:hover, .cbxl .edit a[data-preselected=false]:focus { color: #FFF; }
     .cbxl .edit a[data-selected=true] { color: #FFF; }
     .cbxl .edit a[data-preselected=true], .cbxl .edit a[data-preselected=true][data-selected=true] { background-color: #CCC; color: #000; }
-    
+
+    /* Evaluations */
+    .evaluation { margin-bottom: 20px; }
+    .evaluationBarContainer { border: 1px solid #BBB; border-radius: 5px; padding: 1px; background-color: #DDD; background: linear-gradient(#DADADA, #EFEFEF); }
+    .evaluationBar, .evaluationBarContainer { position: relative; }
+    .evaluationBarFill { background-color: #CBD; height: 20px; }
+    .dimensions h4 { font-weight: normal; }
+    .dimensions .evaluationBarFill, .ratedStandard .evaluationBarFill { height: 14px; }
+    .evaluationBarFill.noRatings, .evaluationBarFill.notApplicable { background-color: #CCC; }
+    .evaluationBarText { position: absolute; top: 0; left: 0; text-align: center; width: 100%; font-size: 16px; line-height: 20px; opacity: 0; }
+    .dimensions .evaluationBarText, .ratedStandard .evaluationBarText { font-size: 14px; line-height: 14px; }
+    .evaluationBarContainer:hover .evaluationBarText, .evaluationBarContainer:focus .evaluationBarText { opacity: 1; cursor: default; }
+    .evaluationBar.trained .evaluationBarFill { border-radius: 5px 5px 0 0; }
+    .evaluationBar.untrained .evaluationBarFill { border-radius: 0 0 5px 5px; }
+    .evaluation[data-requiresCertification=true] .evaluationBar.untrained { display: none; }
+    .evaluation[data-requiresCertification=true] .evaluationBar.trained .evaluationBarFill { border-radius: 5px; }
+
+    #standardsRatings .evaluationBarFill { border-radius: 5px; }
+    .ratedStandard h4 { margin-bottom: 5px; }
+    .ratedStandard .doRating { white-space: nowrap; display: none; }
+    .ratedStandard .doRating select { width: 85%; margin-right: -4px; }
+    .ratedStandard .doRating input, .ratedStandard .expandCollapseStandard { background-color: #4C98CC; color: #FFF; border-radius: 0 5px 5px 0; width: 15%; border-width: 1px; }
+    .ratedStandard .doRating input:hover, .ratedStandard .doRating input:focus, .ratedStandard .expandCollapseStandard:hover, .ratedStandard .expandCollapseStandard:focus { background-color: #FF5707; cursor: pointer; }
+    .ratedStandard .expandCollapseStandard { width: 25px; float: right; border-radius: 5px; }
+    .ratedStandard .description, .ratedStandard .message { display: none; }
+    .ratedStandard.expanded .doRating, .ratedStandard.expanded .description, .ratedStandard.expanded .message { display: block; }
+
     /* Responsive */
     @media screen and (min-width: 0) and (max-width: 450px) {
-      #infoTabBox .tab#comments .comment h3 .date { float: none; text-align: right; }  
+      #infoTabBox .tab#comments .comment h3 .date { float: none; text-align: right; } 
+      #resourceNote { float: left; width: 90%; }
     }
     @media screen and (min-width: 0) and (max-width: 600px){
       .left.column, .right.column { width: 100%; }
       #thumbAndCritical { margin: 5px auto; float: none; }
-      .scoreometer .myScore * { width: 100%; display: block; } 
+      .scoreometer .myScore * { width: 100%; display: block; }
+      #modifyThis input[type=button] { width: 100%; }
+      #description {margin-left: 20px;} 
     }
-    @media screen and (min-width: 601px) and (max-width: 950px){
-      .left.column, .right.column { width: 100%; }
+    @media screen and (min-width: 900px) and (max-width: 1160px){
+        #description {margin-left: 10px; display: inline-block; width: 80%;} 
+    }
+    @media screen and (min-width: 601px) and (max-width: 900px){
+      .left.column, .right.column { width: 100%; } 
     }
     @media screen and (min-width: 951px) {
 
@@ -265,11 +311,12 @@
     .error { padding: 50px 5px; text-align: center; }
   </style>
   
-  </head>
-  <body>
-
   <div id="error" class="error" runat="server" visible="false">
     <p>Sorry, that is an invalid Resource.</p>
+
+      <asp:Button ID="btnReActivateResource" runat="server" Visible="false"  CssClass="defaultButton" Text="Reactivate Resource"  OnClick="btnReActivateResource_Click" OnClientClick="document.forms[0].onsubmit='';" />
+      <br /><asp:Literal ID="litResourceId" runat="server" Visible="false">0</asp:Literal>
+    
   </div>
 
   <div id="content" class="content" runat="server" visible="true">
@@ -280,13 +327,15 @@
       <div id="lrDocLink"></div>
       <div id="clickthroughs"></div>
       <div id="thumbAndCritical">
-        <a id="thumbnail" href="#" target="_blank"><img src="" /></a>
+        <a id="thumbnail" href="#" target="_blank"><img src="/images/ThumbnailResizer.png" /></a>
         <div id="criticalInfo">
-          <div id="usageRights"><img class="view" /></div>
+          <div id="usageRights"><img class="view" src="/images/icons/rightsreserved.png" /></div>
           <div id="created" itemprop="dateCreated"><b>Created:</b> <span></span></div>
         </div>
       </div>
       <div id="description"><h2>Description</h2><p class="view admin" itemprop="description"></p><span class="edit admin"><textarea></textarea></span></div>
+        <div id="resourceNote"><p class="view admin" itemprop="description"></p></div>
+
       <div id="requires"><h2>Technology and Equipment Requirements</h2><p class="view admin"></p><span class="edit admin"><input type="text" /></span></div>
       <div id="infoTabBox" class="tabBox">
        <div id="modifyThis">
@@ -294,12 +343,15 @@
           <input type="button" value="Save Changes" runat="server" id="btnFinishUpdate" class="finish btn green edit" onclick="saveUpdates()" />
           <input type="button" value="Cancel Changes" runat="server" id="btnCancelChanges" class="cancel btn red edit" onclick="cancelChanges()" />
           <input type="button" value="Deactivate Resource" runat="server" id="btnDeactivateResource" class="deactivate btn red" onclick="deactivate()" />
+          <input type="button" value="Regenerate Thumbnail" runat="server" id="btnRegenerateThumbnail" class="regenerate btn green" onclick="regenerateThumbnail()" />
+          <!--<input type="button" value="Send Resource to External Site" class="btn green" id="btnSendResource" onclick="sendResource()" />-->
+          <input type="button" value="Send Resource to External Site" class="btn green" id="btnMsgResource" onclick="sendResourceMsg()" />
        </div>
         <div class="tabNavigator">
           <a href="#" data-id="tags" title="Metadata Tags"></a>
           <a href="#" data-id="alignedStandards" title="Aligned Standards"></a>
           <a href="#" data-id="keyword" title="Keywords"></a>
-          <a href="#" data-id="subject" title="Subjects"></a>
+          <!--<a href="#" data-id="subject" title="Subjects"></a>-->
           <a href="#" data-id="moreLikeThis" title="More Like This"></a>
        </div>
        <div class="tab" id="tags">
@@ -311,6 +363,7 @@
           <div id="resourceType" class="cbxl" itemprop="learningResourceType"></div>
           <div id="mediaType" class="cbxl" itemprop="mediaType"></div>
           <div id="educationalUse" class="cbxl" itemprop="educationalUse"></div>
+          <div id="k12subject" class="cbxl"></div>
           <div id="pickUsageRights" class="edit">
             <h3>Usage Rights</h3>
             <uc1:UsageRightsSelector ID="usageRightsSelector" runat="server" />
@@ -330,6 +383,9 @@
           <div id="creator" itemprop="author"><h3>Creator:</h3> <span></span></div>
           <div id="publisher" itemprop="publisher"><h3>Publisher:</h3> <span></span></div> 
           <div id="submitter"><h3>Submitter:</h3> <span></span></div>       
+          <div id="accessibilityControl" class="cbxl"></div>
+          <div id="accessibilityFeature" class="cbxl"></div>
+          <div id="accessibilityHazard" class="cbxl"></div>
         </div>
         <div class="tab" id="keyword">
           <h2>Keywords</h2>
@@ -354,7 +410,7 @@
         <div class="tab" id="alignedStandards">
           <h2>Aligned Standards</h2>
           <div class="edit">
-            <uc1:StandardsBrowser ID="sBrowser" isWidget="false" mode="tag" runat="server" />
+            <uc1:StandardsBrowser ID="sBrowser" runat="server" />
           </div>
           <div class="view"></div>
         </div>
@@ -385,7 +441,7 @@
           <a href="#" data-id="comments" title="Comments"></a>
           <a href="#" data-id="library" title="Library Info"></a>
           <a href="#" data-id="standardsRatings" title="Standards Alignment Ratings"></a>
-          <a href="#" data-id="rubrics" title="CCSS Rubric Evaluations"></a>
+          <!--<a href="#" data-id="rubrics" title="Rubric Evaluations"></a>-->
           <a href="#" data-id="report" title="Report an Issue">...</a>
         </div>
         <div class="tab" id="comments">
@@ -397,14 +453,18 @@
           <h2>Library Info</h2>
           <div id="badges" class="lightbox"></div>
           <div id="myLibrary" class="lightbox">
-            <h3>Add this to my Library:</h3>
+            <h3>Add this to my Library/Other Library:</h3>
             <select id="myLibraries"></select>
             <select id="myCollections"></select>
             <input type="button" class="btn green" value="Add" onclick="addToCollection()" />
+              <div id="submissionMessage" ></div>
           </div>
         </div>
         <div id="standardsRatings" class="tab"></div>
-        <div id="rubrics" class="tab"></div>
+        <div id="rubrics" class="tab">
+          <h2>Resource Evaluations</h2>
+          <div id="rubricsData"></div>
+        </div>
         <div id="report" class="tab">
           <h2>Report an Issue</h2>
           <div class="reportProblemContainer" id="reportProblemContainer" runat="server">
@@ -501,13 +561,86 @@
 
     <div id="template_moreLikeThis">
       <div class="resourceLikeThis lightbox">
-        <h3><a href="/IOER/{vid}/{urlTitle}" target="_blank">{title}</a></h3>
-        <a class="mltThumbnail" href="/IOER/{vid}/{urlTitle}" target="_blank"><img src="//ioer.ilsharedlearning.org/OERThumbs/thumb/{intID}-thumb.png" /></a>
+        <h3><a href="/Resource/{rid}/{urlTitle}" target="_blank">{title}</a></h3>
+        <a class="mltThumbnail" href="/Resource/{rid}/{urlTitle}" target="_blank"><img src="//ioer.ilsharedlearning.org/OERThumbs/large/{intID}-large.png" /></a>
         <p>{description}</p>
       </div>
     </div>
+
+    <div id="template_evaluation_rubric">
+      <div class="evaluation rubric lightbox" data-requiresCertification="{requiresCert}">
+        <h3>{title}</h3>
+        <p class="pleaseLogin">{evalText}</p>
+        <h3>Overall Scores</h3>
+        {overallRatings}
+        <h3>Score Breakdown</h3>
+        <div class="dimensions">
+          {dimensions}
+        </div>
+      </div>
+    </div>
+
+    <div id="template_evaluation_dimension">
+      <div class="dimension">
+        <h4>{title}</h4>
+        {ratings}
+      </div>
+    </div>
+
+    <div id="template_evaluationBars">
+      <div class="evaluationBarContainer">
+        <div class="evaluationBar trained">
+          <div class="evaluationBarText">{trainedRatingsCount}</div>
+          <div class="evaluationBarFill {noTrainedRatings} {trainedNotApplicable}" style="width:0px"></div>
+        </div>
+        <div class="evaluationBar untrained">
+          <div class="evaluationBarText">{untrainedRatingsCount}</div>
+          <div class="evaluationBarFill {noUntrainedRatings} {untrainedNotApplicable}" style="width:9999px"></div>
+        </div>
+      </div>
+    </div>
+
+    <div id="template_standard_ratings">
+      <div class="ratedStandard lightbox" data-standardID="{standardID}">
+        <h4>{title} <input type="button" class="expandCollapseStandard" value="+" onclick="expandCollapseStandard({standardID}, this);" /></h4>
+        <div class="description">{description}</div>
+        <div class="evaluationBarContainer">
+          <div class="evaluationBar">
+            <div class="evaluationBarText">99px - {ratingsCount} User Ratings</div>
+            <div class="evaluationBarFill {noRatings} {notApplicable}"  style="width:99px"></div>
+          </div>
+        </div>
+        {doRating}
+      </div>
+    </div>
+
+    <div id="template_evaluation_bar">
+      <div class="evaluationBarContainer" id="{id}">
+        <div class="evaluationBar">
+          <div class="evaluationBarText"></div>
+          <div class="evaluationBarFill"></div>
+        </div>
+      </div>
+    </div>
+
+    <div id="template_doRating">
+      <div class="doRating">
+        <select id="standardRating_{standardID}">
+          <option value="-1" selected="selected">This Resource's alignment to this Standard is...</option>
+          <option value="0">Very Weak</option>
+          <option value="34">Limited</option>
+          <option value="67">Strong</option>
+          <option value="100">Superior</option>
+        </select>
+        <input type="button" onclick="doStandardRating({standardID});" value="Rate" />
+      </div>
+    </div>
+
   </div>
 
+
 <asp:Panel ID="Panel1" runat="server" Visible="false">
-  <asp:Literal ID="txtFormSecurityName" runat="server" Visible="false">ILPathways.LRW.Pages.ResourceDetail</asp:Literal>
+    <!-- set to blank to allow any one to update -->
+  <asp:Literal ID="txtGeneralSecurity" runat="server" Visible="false"></asp:Literal>
+    <asp:Literal ID="txtFormSecurityName" runat="server" Visible="false">ILPathways.LRW.Pages.ResourceDetail</asp:Literal>
 </asp:Panel>

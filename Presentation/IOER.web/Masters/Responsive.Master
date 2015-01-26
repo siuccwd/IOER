@@ -1,26 +1,40 @@
 ﻿<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="Responsive.master.cs" Inherits="ILPathways.Masters.Responsive" %>
-<%@ Register TagPrefix="uc1" TagName="HeaderControl" Src="/Controls/Includes/Header6.ascx" %>
+<%@ Register TagPrefix="uc1" TagName="HeaderControl" Src="/Controls/Includes/Header7.ascx" %>
 <%@ Register TagPrefix="uc1" TagName="Footer" Src="/Controls/Includes/footer3.ascx" %>
 <%@ Register TagPrefix="uc1" TagName="systemMessageLine" Src="/Controls/Includes/SystemMessageLine.ascx" %>
+<%@ Register TagPrefix="uc1" TagName="hints" Src="/Controls/Includes/SessionHints.ascx" %>
 
 <!DOCTYPE html>
 <html>
 <head id="Head1" runat="server">
     <title></title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js" type="text/javascript"></script>
+    <link rel="icon" type="image/ico" href="/images/icons/ioer_favicon.ico" />
+
+    <script type="text/javascript">
+        //kludge for IE9
+        if (typeof(window.console) == "undefined") {
+            console = { log: function () { } };
+        }
+        </script>
+    <script src="/Scripts/jquery-2.1.1.min.js"></script>
     <link rel="Stylesheet" type="text/css" href="/Styles/ISLE.css" />
     <link href="/Styles/CustomControls.css" rel="stylesheet" type="text/css" />
-
+    <uc1:hints id="hints" runat="server" />
 
       <asp:Literal ID="litHidingAddThis" Visible="false" runat="server">
          <style type="text/css">
-        .addthis-smartlayers {
+        .addthis-smartlayers, #at4m-mobile-container {
           display: none;
         }
       </style>
       </asp:Literal>
-      
+      <asp:PlaceHolder ID="hdrPlaceholder" runat="server" >
+    <% if ( !string.IsNullOrWhiteSpace( Request.Params[ "hidechrome" ] ) ) { %>
+    <style type="text/css">
+      .mainSiteHeader, .mainSiteFooter { display: none; }
+    </style>
+    <% } else { %>
     <!-- AddThis Smart Layers BEGIN -->
     <!-- Go to http://www.addthis.com/get/smart-layers to customize -->
     <script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#pubid=xa-52d4024b5e30007a"></script>
@@ -34,14 +48,20 @@
       });
     </script>
     <!-- AddThis Smart Layers END -->
+    <% } %>
+</asp:PlaceHolder>
     <asp:ContentPlaceHolder ID="HeadContent" runat="server" />
 </head>
 <body>
     <form runat="server" id="mainform" onsubmit="return false;">
-      <uc1:HeaderControl ID="header" runat="server" />
+      <div class="mainSiteHeader">
+        <uc1:HeaderControl ID="header" runat="server" />
+      </div>
       <div id="systemMessageDiv"><uc1:systemMessageLine id="systemMessageLine" runat="server" /></div>  
       <asp:ContentPlaceHolder ID="BodyContent" runat="server" />
-      <uc1:Footer ID="pagefooter" runat="server" />
+      <div class="mainSiteFooter">
+        <uc1:Footer ID="pagefooter" runat="server" />
+      </div>
     </form>
 </body>
 </html>

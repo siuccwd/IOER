@@ -85,12 +85,12 @@ namespace LRWarehouse.DAL
 
             try
             {
-                if ( entity.Username == null || entity.Username.Trim().Length == 0 )
-                    entity.Username = entity.Email;
+                if ( entity.UserName == null || entity.UserName.Trim().Length == 0 )
+                    entity.UserName = entity.Email;
                 #region parameters
                 SqlParameter[] sqlParameters = new SqlParameter[ 6 ];
 
-                sqlParameters[ 0 ] = new SqlParameter( "@UserName", entity.Username );
+                sqlParameters[ 0 ] = new SqlParameter( "@UserName", entity.UserName );
                 sqlParameters[ 1 ] = new SqlParameter( "@Password", entity.Password );
                 sqlParameters[ 2 ] = new SqlParameter( "@FirstName", entity.FirstName);
                 sqlParameters[ 3 ] = new SqlParameter( "@LastName", entity.LastName);
@@ -587,7 +587,7 @@ namespace LRWarehouse.DAL
 
             entity.UserProfile = PatronProfile_Get( entity.Id );
             if ( entity.UserProfile != null && entity.UserProfile.UserId > 0 )
-                entity.ParentOrgId = entity.UserProfile.OrganizationId;
+                entity.OrgId = entity.UserProfile.OrganizationId;
 
             return entity;
         }//
@@ -602,7 +602,7 @@ namespace LRWarehouse.DAL
                 entity.RowId = new Guid( rowId );
 
             entity.Id = GetRowColumn( dr, "Id", 0 );
-            entity.Username = GetRowColumn( dr, "UserName", "NoUser" );
+            entity.UserName = GetRowColumn( dr, "UserName", "NoUser" );
             entity.IsActive = GetRowColumn( dr, "IsActive", true );
 
             //Note update proc handles a null password
@@ -627,7 +627,7 @@ namespace LRWarehouse.DAL
             //future - could get org info, profile info
             entity.UserProfile = PatronProfile_Get( entity.Id );
             if ( entity.UserProfile != null && entity.UserProfile.UserId > 0 )
-                entity.ParentOrgId = entity.UserProfile.OrganizationId;
+                entity.OrgId = entity.UserProfile.OrganizationId;
 
             return entity;
         }//
@@ -643,7 +643,7 @@ namespace LRWarehouse.DAL
                 entity.RowId = new Guid( rowId );
 
             entity.Id = GetRowColumn( dr, "Id", 0 );
-            entity.Username = GetRowColumn( dr, "UserName", "NoUser" );
+            entity.UserName = GetRowColumn( dr, "UserName", "NoUser" );
             entity.IsActive = GetRowColumn( dr, "IsActive", false );
 
             entity.Password = GetRowColumn( dr, "Password", "" );
@@ -677,6 +677,14 @@ namespace LRWarehouse.DAL
 
             try
             {
+                //first ensure profile doesn't already exist
+                PatronProfile prof = PatronProfile_Get( entity.UserId );
+                if ( prof != null && prof.UserId > 0 )
+                {
+                    statusMessage = PatronProfile_Update( entity );
+                    return 1;
+                }
+
                 #region parameters
                 SqlParameter[] sqlParameters = new SqlParameter[ 6 ];
 
@@ -722,6 +730,14 @@ namespace LRWarehouse.DAL
 
             try
             {
+                //first ensure profile does already exist
+                PatronProfile prof = PatronProfile_Get( entity.UserId );
+                if ( prof == null || prof.UserId == 0 )
+                {
+                    string statusMessage = "";
+                    int count = PatronProfile_Create( entity, ref statusMessage );
+                    return statusMessage;
+                }
                 #region parameters
                 SqlParameter[] sqlParameters = new SqlParameter[ 6 ];
                 sqlParameters[ 0 ] = new SqlParameter( "@UserId", entity.UserId );

@@ -24,6 +24,9 @@ namespace LearningRegistry
         {
             public String measureType;
             public String value;
+            public String sampleSize;
+            public string scaleMin;
+            public string scaleMax;
         }
         public class lr_Context : lr_base
         {
@@ -34,6 +37,8 @@ namespace LearningRegistry
             public class lr_Object_complex : lr_Object
             {
                 public String id;
+                public string objectType;
+                public string content;
                 /*public override void serialize(IDictionary<string, object> dictionary, IDictionary<string, object> parent)
                 {
                     base.serialize(dictionary,parent);
@@ -86,15 +91,31 @@ namespace LearningRegistry
                 public String action;
                 public lr_Measure measure;
                 public lr_Context context;
-                public DateTime date;
+                public string date;
+                public string comment;
                 public lr_Verb_complex()
                 {
                     measure = new lr_Measure();
                     context = new lr_Context();
-                    date = DateTime.Now;
+                    date = "";
                     action = "";
                 }
             }
+            public class lr_Verb_rating : lr_Verb
+            {
+                public String action;
+                public lr_Measure measure;
+                public lr_Context context;
+                public String date;
+                public lr_Verb_rating()
+                {
+                    measure = new lr_Measure();
+                    context = new lr_Context();
+                    date = "";
+                    action = "";
+                }
+            }
+
         }
         public class lr_Activity
         {

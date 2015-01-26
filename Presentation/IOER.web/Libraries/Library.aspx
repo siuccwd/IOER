@@ -9,19 +9,8 @@
 </asp:Content>
 
 <asp:Content ID="Content2" ContentPlaceHolderID="BodyContent" runat="server">
+    <div style="min-height: 400px; ">
   <uc1:librarysearch ID="librarySearch1" runat="server" />
 
-<%-- 
-<div class="isleMainSection">
-   
-  <div id="subTabPanel">
-    <asp:Panel ID="searchPanel" runat="server" Visible="true">
-      <uc1:librarySearch ID="librarySearch1" IsPersonalLibraryView="false" DisplayURL="/Libraries/Library.aspx" runat="server" />
-
-    </asp:Panel>
-	</div>
-
-
-  </div>
---%>
+        </div>
 </asp:Content>

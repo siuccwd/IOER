@@ -8,10 +8,228 @@ using System.Data;
 
 namespace LRWarehouse.DAL
 {
-    public class ResourceJSONManager
+    public class ResourceJSONManager : BaseDataManager
     {
-        #region data conversion
-        public ResourceJSONFlat GetJSONFromResource( Resource entity )
+      #region == new CRS Json methods
+      public List<CRSResource> GetCRSResourcesFromDataSet( DataSet ds )
+      {
+        var output = new List<CRSResource>();
+        var evaluations = new ResourceEvaluationManager().GetEvaluationsWithCount( 0 );
+
+        foreach ( DataRow dr in ds.Tables[ 0 ].Rows )
+        {
+          var added = false;
+          foreach ( var rating in evaluations )
+          {
+            if ( rating.intID.ToString() == Get( dr, "intID" ) )
+            {
+              output.Add( GetCRSResourceFromDataRow( dr, rating.count, rating.score ) );
+              added = true;
+              break;
+            }
+          }
+          if ( !added )
+          {
+            output.Add( GetCRSResourceFromDataRow( dr, 0, -1 ) );
+          }
+        }
+
+        return output;
+      }
+
+      public List<CRSResource> GetCRSResourcesFromDataRows( List<DataRow> rows, List<ResourceEvaluationManager.EvaluationResult> evaluations, int flagID, ref List<double> counters )
+      {
+        var output = new List<CRSResource>();
+
+        foreach ( DataRow dr in rows )
+        {
+          var added = false;
+          foreach ( var rating in evaluations )
+          {
+            if ( rating.intID.ToString() == Get( dr, "intID" ) )
+            {
+              output.Add( GetCRSResourceFromDataRow( dr, rating.count, rating.score ) );
+              added = true;
+              break;
+            }
+          }
+          if ( !added )
+          {
+            output.Add( GetCRSResourceFromDataRow( dr, 0, -1 ) );
+          }
+
+          counters[ flagID ]++;
+        }
+
+        return output;
+      }
+
+      public List<CRSResource> GetCRSResourcesFromDataRows( List<DataRow> rows, List<ResourceEvaluationManager.EvaluationResult> evaluations )
+      {
+        var temp = new List<double>() { 0.0 };
+        return GetCRSResourcesFromDataRows( rows, evaluations, 0, ref temp );
+      }
+
+      public List<CRSResource> GetCRSResourcesFromDataRows( List<DataRow> rows )
+      {
+        var evaluations = new ResourceEvaluationManager().GetEvaluationsWithCount( 0 );
+        return GetCRSResourcesFromDataRows( rows, evaluations );
+      }
+
+      public CRSResource GetCRSResourceFromDataRow( DataRow dr, int evaluationCount, double evaluationScore )
+      {
+        var resource = new CRSResource();
+        //Single value fields
+        resource.lrDocID = MakeString( Get( dr, "lrDocId" ) );
+        resource.created = MakeDate( Get( dr, "created" ) );
+        resource.createdByID = MakeInt( Get( dr, "createdByID" ) );
+        resource.creator = MakeString( Get( dr, "creator" ) );
+        resource.description = MakeString( Get( dr, "description" ) );
+        resource.intID = MakeInt( Get( dr, "intID" ) );
+        resource.publisher = MakeString( Get( dr, "publisher" ) );
+        resource.submitter = MakeString( Get( dr, "submitter" ) );
+        resource.timeRequired = MakeString( Get( dr, "timeRequired" ) );
+        resource.title = MakeString( Get( dr, "title" ) );
+        resource.sortTitle = MakeString( Get( dr, "sortTitle" ) ); //Missing - MP added 14-05-28
+        resource.url = MakeString( Get( dr, "url" ) );
+        resource.versionID = MakeInt( Get( dr, "versionID" ) );
+        resource.timestamp = long.Parse( DateTime.Parse( resource.created ).ToString( "yyyyMMddHHmmss" ) );
+        resource.requirements = MakeString( Get( dr, "requirements" ) ); ;
+
+        //Multi value fields and alias fields
+        resource.keywords = MakeStringArray( Get( dr, "keywords" ) ).ToList<string>();
+        resource.urlParts = MakeURLParts( Get( dr, "url" ) ).ToList<string>();
+        resource.libraryIDs = MakeIntArray( Get( dr, "libraryIDs" ) ).ToList<int>();
+        resource.collectionIDs = MakeIntArray( Get( dr, "collectionIDs" ) ).ToList<int>();
+        resource.standardAliases = MakeStandardParts2( Get( dr, "standardNotations" ) ).ToList<string>();
+        resource.gradeLevelAliases = MakeStringArray( Get( dr, "gradeLevelAliases" ) ).ToList<string>();
+        resource.isleSectionIDs = MakeIntArray( Get( dr, "targetSiteIDs" ) ).ToList<int>();
+        //Guarantee all Resources show in IOER and Central sites
+        if ( !resource.isleSectionIDs.Contains( 1 ) ) { resource.isleSectionIDs.Add( 1 ); }
+        if ( !resource.isleSectionIDs.Contains( 5 ) ) { resource.isleSectionIDs.Add( 5 ); }
+
+        //Usage Rights
+        resource.usageRights.title = MakeString( Get( dr, "usageRights" ) );
+        resource.usageRights.id = MakeInt( Get( dr, "usageRightsID" ) );
+        resource.usageRights.url = MakeString( Get( dr, "usageRightsURL" ) );
+        resource.usageRights.iconURL = MakeString( Get( dr, "usageRightsIconURL" ) );
+        resource.usageRights.miniIconURL = MakeString( Get( dr, "usageRightsMiniIconURL" ) );
+        resource.usageRights.description = MakeString( Get( dr, "usageRightsDescription" ) );
+        
+        //Fields and Tags
+        resource.accessRights = MakeCRSField( dr, "accessRightsID", "accessRights", "Access Rights" );
+        resource.accessibilityAPI = MakeCRSField( dr, "accessibilityApiIDs", "accessibilityApis", "Accessibility API" );
+        resource.accessibilityControl = MakeCRSField( dr, "accessibilityControlIDs", "accessibilityControls", "Accessibility Control" );
+        resource.accessibilityFeature = MakeCRSField( dr, "accessibilityFeatureIDs", "accessibilityFeatures", "Accessibility Feature" );
+        resource.accessibilityHazard = MakeCRSField( dr, "accessibilityHazardIDs", "accessibilityHazard", "Accessibility Hazard" );
+        resource.assessmentType = MakeCRSField( dr, "asssessmentTypeID", "assessmentType", "Assessment Type" );
+        resource.educationalRole = MakeCRSField( dr, "audienceIDs", "audiences", "End User" );
+        resource.careerCluster = MakeCRSField( dr, "clusterIDs", "clusters", "Career Cluster" );
+        resource.educationalUse = MakeCRSField( dr, "educationalUseIDs", "educationalUses", "Educational Use" );
+        resource.gradeLevel = MakeCRSField( dr, "gradeLevelIDs", "gradeLevels", "Grade Level" );
+        resource.itemType = MakeCRSField( dr, "itemTypeIDs", "itemTypes", "Item Type" );
+        resource.inLanguage = MakeCRSField( dr, "languageIDs", "languages", "Language" );
+        resource.mediaType = MakeCRSField( dr, "mediaTypeIDs", "mediaTypes", "Media Type" );
+        resource.learningResourceType = MakeCRSField( dr, "resourceTypeIDs", "resourceTypes", "Resource Type" );
+        resource.standards = MakeCRSField( dr, "standardIDs", "standardNotations", "Standards" );
+        resource.training = MakeCRSField( dr, "trainingIDs", "training", "Training" );
+        resource.disabilityTopic = MakeCRSField( dr, "disabilityTopicIDs", "disabilityTopics", "Disability Topic" );
+        resource.jobs = MakeCRSField( dr, "jobIDs", "jobs", "Jobs" );
+        resource.networking = MakeCRSField( dr, "networkingIDs", "networking", "Networking" );
+        resource.k12Subject = MakeCRSField( dr, "k12SubjectIDs", "k12Subjects", "K-12 Subject" );
+        resource.resources = MakeCRSField( dr, "resourceIDs", "resources", "Resources" );
+        //resource.workSupportService = MakeCRSField( dr, "workSupportServiceIDs", "workSupportServices", "Work Support Services" );
+        resource.wfePartner = MakeCRSField( dr, "wfePartnerIDs", "wfePartners", "Workforce Education Partners" );
+        resource.explore = MakeCRSField( dr, "exploreIDs", "explore", "Explore" );
+        //resource.workNetSubject = MakeCRSField( dr, "workNetSubjectIDs", "workNetSubjects", "workNet Subject" );
+        resource.region = MakeCRSField( dr, "regionIDs", "regions", "Region" );
+        resource.targetSite = MakeCRSField( dr, "targetSiteIDs", "targetSites", "Target Site" );
+        resource.qualify = MakeCRSField( dr, "qualifyIDs", "qualify", "Qualify" );
+        resource.layoffAssistance = MakeCRSField( dr, "layoffAssistIDs", "layoffAssist", "Layoff Assistance" );
+        resource.wioaWorks = MakeCRSField( dr, "wioaWorksIDs", "wioaWorks", "WIOA Works" );
+
+        //Paradata
+        resource.paradata.views.detail = MakeInt( Get( dr, "detailViews" ) );
+        resource.paradata.views.resource = MakeInt( Get( dr, "viewsCount" ) );
+        resource.paradata.ratings.likes = MakeInt( Get( dr, "likeCount" ) );
+        resource.paradata.ratings.dislikes = MakeInt( Get( dr, "dislikeCount" ) );
+        resource.paradata.ratings.score = MakeInt( Get( dr, "likesSummary" ) );
+        resource.paradata.comments = MakeInt( Get( dr, "commentsCount" ) );
+        resource.paradata.favorites = MakeInt( Get( dr, "favorites" ) );
+        resource.paradata.evaluations.count = evaluationCount;
+        resource.paradata.evaluations.score = evaluationScore;
+
+        return resource;
+      }
+      private CRSField MakeCRSField( DataRow dr, string makeIDs, string makeTags, string title )
+      {
+        return new CRSField() { ids = MakeIntArray( Get( dr, makeIDs ) ).ToList<int>(), tags = MakeStringArray( Get( dr, makeTags ) ).ToList<string>(), title = title };
+      }
+
+      //New as of January 2015
+      public ResourceJSONV7 GetResourceJSONV7FromDataRow( DataRow dr, int evaluationCount, double evaluationScore )
+      {
+        var res = new ResourceJSONV7();
+
+        //Single value fields
+        res.versionID = MakeInt( Get( dr, "versionID" ) );
+        res.intID = MakeInt( Get( dr, "intID" ) );
+        res.created = MakeDate( Get( dr, "created" ) );
+        res.timestamp = long.Parse( DateTime.Parse( res.created ).ToString( "yyyyMMddHHmmss" ) );
+        res.createdByID = MakeInt( Get( dr, "createdByID" ) );
+        res.title = MakeString( Get( dr, "title" ) );
+        res.sortTitle = MakeString( Get( dr, "sortTitle" ) ); 
+        res.description = MakeString( Get( dr, "description" ) );
+        res.url = MakeString( Get( dr, "url" ) );
+        res.lrDocID = MakeString( Get( dr, "lrDocId" ) );
+        res.requirements = MakeString( Get( dr, "requirements" ) );
+        res.timeRequired = MakeString( Get( dr, "timeRequired" ) );
+        res.creator = MakeString( Get( dr, "creator" ) );
+        res.publisher = MakeString( Get( dr, "publisher" ) );
+        res.submitter = MakeString( Get( dr, "submitter" ) );
+
+        //Multi value fields and alias fields
+        res.keywords = MakeStringArray( Get( dr, "keywords" ) ).ToList<string>();
+        res.urlParts = MakeURLParts( Get( dr, "url" ) ).ToList<string>();
+        res.standardAliases = MakeStandardParts2( Get( dr, "standardNotations" ) ).ToList<string>();
+        res.gradeLevelAliases = MakeStringArray( Get( dr, "gradeLevelAliases" ) ).ToList<string>();
+        res.libraryIDs = MakeIntArray( Get( dr, "libraryIDs" ) ).ToList<int>();
+        res.collectionIDs = MakeIntArray( Get( dr, "collectionIDs" ) ).ToList<int>();
+        res.isleSectionIDs = MakeIntArray( Get( dr, "targetSiteIDs" ) ).ToList<int>();
+        //Guarantee all ress show in IOER and Central sites
+        if ( !res.isleSectionIDs.Contains( 1 ) ) { res.isleSectionIDs.Add( 1 ); }
+        if ( !res.isleSectionIDs.Contains( 5 ) ) { res.isleSectionIDs.Add( 5 ); }
+
+        //Usage Rights
+        res.usageRights.title = MakeString( Get( dr, "usageRights" ) );
+        res.usageRights.id = MakeInt( Get( dr, "usageRightsID" ) );
+        res.usageRights.url = MakeString( Get( dr, "usageRightsURL" ) );
+        res.usageRights.iconURL = MakeString( Get( dr, "usageRightsIconURL" ) );
+        res.usageRights.miniIconURL = MakeString( Get( dr, "usageRightsMiniIconURL" ) );
+        res.usageRights.description = MakeString( Get( dr, "usageRightsDescription" ) );
+
+        //Paradata
+        res.paradata.views.detail = MakeInt( Get( dr, "detailViews" ) );
+        res.paradata.views.resource = MakeInt( Get( dr, "viewsCount" ) );
+        res.paradata.ratings.likes = MakeInt( Get( dr, "likeCount" ) );
+        res.paradata.ratings.dislikes = MakeInt( Get( dr, "dislikeCount" ) );
+        res.paradata.ratings.score = MakeInt( Get( dr, "likesSummary" ) );
+        res.paradata.comments = MakeInt( Get( dr, "commentsCount" ) );
+        res.paradata.favorites = MakeInt( Get( dr, "favorites" ) );
+        res.paradata.evaluations.count = evaluationCount;
+        res.paradata.evaluations.score = evaluationScore;
+
+        //Tag List
+        //would like a dynamic way to get all of the appropriate fields
+
+        //Return data
+        return res;
+      }
+
+      #endregion
+
+      #region data conversion
+      public ResourceJSONFlat GetJSONFromResource( Resource entity )
         {
             ResourceJSONFlat resource = new ResourceJSONFlat();
 
@@ -84,17 +302,25 @@ namespace LRWarehouse.DAL
         }
         public ResourceJSONFlat[] GetJSONFlatByIntID( int intID )
         {
-            System.Data.SqlClient.SqlParameter[] parameters = new System.Data.SqlClient.SqlParameter[ 1 ];
-            parameters[ 0 ] = new System.Data.SqlClient.SqlParameter( "@ResourceIntId", intID );
-            DataSet ds = DatabaseManager.ExecuteProc( "Resource_BuildElasticSearch", parameters );
+            // 14-05-28 mp - changed to call method in ElasticSearchManager to ensure only one point of call
+            string status = "";
+            DataSet ds = new ElasticSearchManager().GetSqlDataForElasticSearchCollection5( intID.ToString(), ref status );
+
+            //System.Data.SqlClient.SqlParameter[] parameters = new System.Data.SqlClient.SqlParameter[ 1 ];
+            //parameters[ 0 ] = new System.Data.SqlClient.SqlParameter( "@ResourceIntId", intID );
+
+            //DataSet ds = DatabaseManager.ExecuteProc( "Resource_BuildElasticSearch", parameters );
             return GetJSONArrayFromDataSet( ds );
         }
         public ResourceJSONFlat[] GetJSONArrayFromDataSet( DataSet ds )
         {
             List<ResourceJSONFlat> listJSON = new List<ResourceJSONFlat>();
-            foreach ( DataRow dr in ds.Tables[ 0 ].Rows )
+            if ( DoesDataSetHaveRows( ds ) == true )
             {
-                listJSON.Add( GetJSONFlatFromDataRow( dr ) );
+                foreach ( DataRow dr in ds.Tables[ 0 ].Rows )
+                {
+                    listJSON.Add( GetJSONFlatFromDataRow( dr ) );
+                }
             }
             return listJSON.ToArray<ResourceJSONFlat>();
         }
@@ -692,6 +918,8 @@ namespace LRWarehouse.DAL
         }
         protected string[] MakeURLParts( string input )
         {
+          try
+          {
             string[] parts = input.Replace( "NULL", "" )
                 .Replace( "http://", "" )
                 .Replace( "https://", "" )
@@ -716,6 +944,39 @@ namespace LRWarehouse.DAL
             catch { }
             return stuff.ToArray<string>();
 
+          }
+          catch {
+            return new String[] { "" };
+          }
+        }
+        protected List<string> MakeStandardParts2( string input )
+        {
+          List<string> output = new List<string>();
+
+          var items = input.Replace( "NULL", "" ).Trim().Split( new string[] { "," }, StringSplitOptions.RemoveEmptyEntries );
+          foreach ( var item in items )
+          {
+            var parts = item.Split( new string[] { "." }, StringSplitOptions.RemoveEmptyEntries );
+            if ( parts.Length > 1 )
+            {
+              foreach ( var part in parts )
+              {
+                output.Add( part );
+              }
+              var build = parts[ 0 ];
+              for ( var i = 1 ; i < parts.Length ; i++ )
+              {
+                build = build + "." + parts[ i ];
+                output.Add( build );
+              }
+            }
+            else
+            {
+              output.Add( parts[ 0 ] );
+            }
+          }
+
+          return output;
         }
         protected string[] MakeStandardParts( string input )
         {
@@ -737,8 +998,11 @@ namespace LRWarehouse.DAL
                     {
                         rest = rest + "." + parts[ i ];
                     }
-                    rest = rest.Substring( 1 );
-                    listFinal.Add( rest );
+                    if ( rest.Length > 0 )
+                    {
+                      rest = rest.Substring( 1 );
+                      listFinal.Add( rest );
+                    }
                 }
                 else
                 {

@@ -64,7 +64,7 @@ namespace LRWarehouse.DAL
             }
             catch ( Exception ex )
             {
-                LogError( ex, className + string.Format( ".Create() for ResourceId: {0}, CodeId: {1}, Vale: {2}, and CreatedBy: {3}", entity.ResourceId.ToString(), entity.CodeId, entity.OriginalValue, entity.CreatedById ) );
+                LogError( ex, className + string.Format( ".Create() for ResourceId: {0}, CodeId: {1}, Vale: {2}, and CreatedBy: {3}", entity.ResourceIntId, entity.CodeId, entity.OriginalValue, entity.CreatedById ) );
                 statusMessage = className + "- Unsuccessful: Create(): " + ex.Message.ToString();
             }
 

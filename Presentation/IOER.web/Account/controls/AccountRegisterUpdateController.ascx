@@ -513,7 +513,7 @@
 <asp:Label ID="confirmMessage" runat="server" >
 <div style="width: 800px; padding:50px; background-color: #f5f5f5; ">
 <div style="margin-left: 100px; padding: 50px 15px; line-height: 130%;  width: 600px; background-color: #fff; border: 1px solid #000;">
-Hello {0} <div style="margin-top: 10px;">Thank you for using Illinois Open Education Resources!</div>
+Hello {0} <div style="margin-top: 10px;">Thank you for using Illinois Open Educational Resources!</div>
 <div>Please click the link below to confirm your email address and activate your IOER account</div>
 <div style="margin-left: 100px; margin-top: 25px; padding: 5px 10px 5px 30px; width: 300px; background-color: Blue; color: #fff; text-align:center;">
 
@@ -530,7 +530,7 @@ Sincerely the IOER Team
 <asp:Label ID="confirmMessageOriginal" runat="server">
   <div style="width:100%; background-color:#FFF; font-family:Calibri,Arial,Helvetica,Sans-serif;">
     <div style="width:600px; padding: 25px; background-color: #E6E6E6;">
-      <h1 style="background-color: #4F4E4F; color: #E6E6E6;">Thank you for using Illinois Open Education Resources!</h1>
+      <h1 style="background-color: #4F4E4F; color: #E6E6E6;">Thank you for using Illinois Open Educational Resources!</h1>
       <p>Hello, {0}</p>
       <p>Please click the link below to confirm your email address and activate your IOER account.</p>
       <p><a href="{1}">Activate my IOER account!</a></p>
@@ -545,7 +545,7 @@ Sincerely the IOER Team
     <div>
       <h1 style='background:#4F4E4F'><span style='font-family:"Calibri","sans-serif";
       mso-fareast-font-family:Calibri;mso-fareast-theme-font:minor-latin;color:#E6E6E6'><span
-      style='mso-spacerun:yes'> </span>Thank you for using Illinois Open Education
+      style='mso-spacerun:yes'> </span>Thank you for using Illinois Open Educational
       Resources!<o:p></o:p></span></h1>
       <div style="background:#E6E6E6;background-color:#E6E6E6">
         <p style='background:#E6E6E6'><span style='font-family:"Calibri","sans-serif"'><span

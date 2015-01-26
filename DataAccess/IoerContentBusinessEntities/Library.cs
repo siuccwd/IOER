@@ -20,8 +20,8 @@ namespace IoerContentBusinessEntities
             this.Library_Subscription = new HashSet<Library_Subscription>();
             this.Library_Comment = new HashSet<Library_Comment>();
             this.Library_Like = new HashSet<Library_Like>();
-            this.Library_Invitation = new HashSet<Library_Invitation>();
             this.Library_Member = new HashSet<Library_Member>();
+            this.Library_Invitation = new HashSet<Library_Invitation>();
         }
     
         public int Id { get; set; }
@@ -40,15 +40,16 @@ namespace IoerContentBusinessEntities
         public System.Guid RowId { get; set; }
         public int PublicAccessLevel { get; set; }
         public int OrgAccessLevel { get; set; }
+        public Nullable<bool> AllowJoinRequest { get; set; }
     
         public virtual ICollection<Library_Section> Library_Section { get; set; }
         public virtual ICollection<Library_Subscription> Library_Subscription { get; set; }
         public virtual Library_Type Library_Type { get; set; }
         public virtual ICollection<Library_Comment> Library_Comment { get; set; }
         public virtual ICollection<Library_Like> Library_Like { get; set; }
-        public virtual ICollection<Library_Invitation> Library_Invitation { get; set; }
         public virtual Codes_LibraryAccessLevel Codes_LibraryAccessLevel { get; set; }
         public virtual Codes_LibraryAccessLevel Codes_LibraryAccessLevel1 { get; set; }
         public virtual ICollection<Library_Member> Library_Member { get; set; }
+        public virtual ICollection<Library_Invitation> Library_Invitation { get; set; }
     }
 }

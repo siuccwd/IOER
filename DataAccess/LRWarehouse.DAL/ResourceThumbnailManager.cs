@@ -3,194 +3,98 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+using ILPathways.Utilities;
 using System.Diagnostics;
 using System.IO;
-using ILPathways.Utilities;
-
+using System.Threading;
 
 namespace LRWarehouse.DAL
 {
   public class ResourceThumbnailManager
   {
-    public ResourceThumbnailManager()
+    //The UNC Path to the thumbnail folder -- should add this to web.config
+    private const string thumbnailRootFolder = @"\\OERDATASTORE\OerThumbs\";
+
+    //Create a single thumbnail 
+    public void CreateThumbnail( int resourceID, string url )
     {
-      thumbnailerPath = UtilityManager.GetAppKeyValue( "thumbnailGeneratorV2Folder" );
-      cachedImagesURL = UtilityManager.GetAppKeyValue( "cachedImagesUrl", "http://209.175.164.200/OERThumbs/" );
+      CreateThumbnail( resourceID, url, false );
     }
-    string thumbnailerPath;
-    string cachedImagesURL;
-
-    #region Create Methods
-
-    //Create a thumbnail if it doesn't exist
-    public void CreateThumbnail( int intID, string URL )
+    //Create a single thumbnail
+    public void CreateThumbnail( int resourceID, string url, bool overwriteIfExists )
     {
-      var successful = false;
-      var status = "";
-      var thumb = "";
-      var big = "";
-      CreateThumbnail( intID, URL, false, ref successful, ref status, ref thumb, ref big );
+      if ( UtilityManager.GetAppKeyValue( "envType" ) != "prod" ) { return; }
+      CreateThumbnailIndirectly( resourceID, url, overwriteIfExists );
     }
 
-    //Create a thumbnail (only if it doesn't exist)
-    public void CreateThumbnail( int intID, string URL, bool overwriteIfExists, ref bool successful, ref string status, ref string thumbnailURL, ref string largeThumbnailURL )
+    public void CreateThumbnailIndirectly( int resourceID, string url, bool overwriteIfExists )
     {
-      successful = true;
-      status = "okay";
+      CreateThumbnailIndirectly( resourceID.ToString(), url, overwriteIfExists );
+    }
+    public void CreateThumbnailIndirectly( string id, string url, bool overwriteIfExists )
+    {
+      var arguments = id + " \"" + url + "\" " + ( overwriteIfExists ? "true" : "false" );
 
-      //Call the batch file on \\STAGE and send it the URL, intID, and a boolean to indicate whether or not to check for an existing pair of thumbnails
-      //Suspended usage of this for now, due to IE security settings making it unworkable
-      //CallGeneratorBatchFile( intID, URL, overwriteIfExists, ref successful, ref status );
-
-      //Call the original Thumbnailer
-      if ( UtilityManager.GetAppKeyValue( "envType" ) == "prod" )
+      try
       {
-        CallThumbnailerV1( intID, URL, ref successful, ref status );
+        File.WriteAllText( @"C:\Thumbnail Generator 4\lastrun.txt", "Running thumbnailer indirectly..." + System.Environment.NewLine );
+
+        ProcessStartInfo processInfo;
+        Process process;
+
+        if ( arguments.Length == 0 )
+        {
+          processInfo = new ProcessStartInfo( @"C:\Thumbnail Generator 4\ThumbnailerV4User.exe" );
+        }
+        else
+        {
+          processInfo = new ProcessStartInfo( @"C:\Thumbnail Generator 4\ThumbnailerV4User.exe", arguments );
+        }
+        processInfo.WorkingDirectory = @"C:\Thumbnail Generator 4";
+        processInfo.CreateNoWindow = false;
+        processInfo.UseShellExecute = true;
+
+        process = Process.Start( processInfo );
+        process.WaitForExit( 20000 );
+        process.Close();
       }
-
-      if ( successful )
+      catch ( Exception ex )
       {
-        thumbnailURL = cachedImagesURL + "thumb/" + intID + "-thumb.png";
-        largeThumbnailURL = cachedImagesURL + "large/" + intID + "-large.png";
-      }
-      else
-      {
-        LoggingHelper.LogError( "Error generating thumbnail: " + status );
+        File.WriteAllText( @"C:\Thumbnail Generator 4\lastrun.txt", "Project Level Error: " + ex.Message.ToString() );
       }
     }
 
-    #endregion
-    #region Asynchronous Create Methods
-    //Convenience method/wrapper for async method
-    public void CreateThumbnailAsynchronously( int intID, string url, bool overwriteIfExists )
+    //Create asynchronously
+    public void CreateThumbnailAsync( string resourceID, string url, bool overwriteIfExists, int secondsToWaitBeforeReturn )
     {
-      var input = new ThumbnailInputs()
+      CreateThumbnailAsync( resourceID, url, overwriteIfExists );
+      Thread.Sleep( secondsToWaitBeforeReturn * 1000 );
+    }
+    public void CreateThumbnailAsync( int resourceID, string url, bool overwriteIfExists )
+    {
+      CreateThumbnailAsync( resourceID.ToString(), url, overwriteIfExists );
+    }
+    public void CreateThumbnailAsync( string resourceID, string url, bool overwriteIfExists )
+    {
+      var data = new ThumbnailParams()
       {
-        intID = intID,
-        URL = url,
+        resourceID = resourceID,
+        url = url,
         overwriteIfExists = overwriteIfExists
       };
-      LoggingHelper.DoTrace( 5, "Beginning Asynchronous thumbnail Generation..." );
-      System.Threading.ThreadPool.QueueUserWorkItem( new ResourceThumbnailManager().CreateThumbnail, input );
+      ThreadPool.QueueUserWorkItem( CreateThumbnailAsyncCaller, data );
     }
-    //Method intended for use asynchronously
-    public void CreateThumbnail( dynamic inputs )
+    private void CreateThumbnailAsyncCaller( Object input )
     {
-      bool successful = false;
-      string status = "";
-      string url1 = "";
-      string url2 = "";
-      CreateThumbnail( inputs.intID, inputs.URL, inputs.overwriteIfExists, ref successful, ref status, ref url1, ref url2 );
+      var data = ( ThumbnailParams ) input;
+      CreateThumbnailIndirectly( data.resourceID, data.url, data.overwriteIfExists );
     }
-    //For use with the above method--handy for async stuff
-    public class ThumbnailInputs
+    private class ThumbnailParams
     {
-      public int intID { get; set; }
-      public string URL { get; set; }
+      public string resourceID { get; set; }
+      public string url { get; set; }
       public bool overwriteIfExists { get; set; }
     }
-    #endregion
 
-    #region Get Methods
-    //Get a thumbnail
-    public void GetThumbnail( int intID, ref string thumbnailURL, ref string largeThumbnailURL )
-    {
-      string status = "";
-      bool successful = true;
-      GetThumbnail( intID, false, "", ref successful, ref status, ref thumbnailURL, ref largeThumbnailURL );
-    }
-    public void GetThumbnail( int intID, bool createIfNotExists, string createURL, ref bool createSuccessful, ref string createStatus, ref string thumbnailURL, ref string largeThumbnailURL  )
-    {
-      //if ( File.Exists( @"\\STAGE\OER Thumbnails\large\" + intID + "-large.png" ) && File.Exists( @"\\STAGE\OER Thumbnails\thumb\" + intID + "-thumb.png" ) )
-      if( File.Exists( thumbnailerPath + @"large\" + intID + "-large.png" ) && File.Exists( thumbnailerPath + @"thumb\" + intID + "-thumb.png" ) )
-      {
-        thumbnailURL = cachedImagesURL + "thumb/" + intID + "-thumb.png";
-        largeThumbnailURL = cachedImagesURL + "large/" + intID + "-large.png";
-      }
-      else if ( createIfNotExists && createURL.Length > 0 )
-      {
-        CreateThumbnail( intID, createURL, false, ref createSuccessful, ref createStatus, ref thumbnailURL, ref largeThumbnailURL );
-      }
-    }
-    #endregion
-
-    #region Helper Methods
-    private void CallThumbnailerV1( int intID, string url, ref bool successful, ref string status )
-    {
-      try
-      {
-        successful = false;
-        int exitCode;
-        ProcessStartInfo processInfo;
-        Process process;
-        url = "\"" + url + "\"";
-
-        //processInfo = new ProcessStartInfo( "cmd.exe", "/c " + command );
-        processInfo = new ProcessStartInfo( @"""C:\Thumbnail Generator\ThumbnailUpdater.exe""", "/single " + intID + " " + url );
-        processInfo.CreateNoWindow = true;
-        processInfo.UseShellExecute = false;
-        processInfo.RedirectStandardError = true;
-        processInfo.RedirectStandardOutput = true;
-
-        process = Process.Start( processInfo );
-
-        process.WaitForExit();
-
-        string output = process.StandardOutput.ReadToEnd();
-        string error = process.StandardError.ReadToEnd();
-
-        exitCode = process.ExitCode;
-
-        status = "STATUS: " + output + "; ERROR: " + error;
-        process.Close();
-        successful = ( exitCode == 0 );
-      }
-      catch ( Exception ex )
-      {
-        status = "There was an error processing your request: " + ex.Message.ToString();
-        successful = false;
-      }
-    }
-
-    private void CallGeneratorBatchFile( int intID, string url, bool overwriteIfExists, ref bool successful, ref string status )
-    {
-      try
-      {
-        successful = false;
-        int exitCode;
-        ProcessStartInfo processInfo;
-        Process process;
-        url = "\"" + url + "\"";
-
-        //processInfo = new ProcessStartInfo( "cmd.exe", "/c " + command );
-        processInfo = new ProcessStartInfo( thumbnailerPath + "makethumb.bat", url + " " + intID + " " + overwriteIfExists.ToString().ToLower() );
-        processInfo.CreateNoWindow = true;
-        processInfo.UseShellExecute = false;
-        processInfo.RedirectStandardError = true;
-        processInfo.RedirectStandardOutput = true;
-
-        process = Process.Start( processInfo );
-
-        process.WaitForExit();
-
-        string output = process.StandardOutput.ReadToEnd();
-        string error = process.StandardError.ReadToEnd();
-
-        File.AppendAllText( thumbnailerPath + "output.txt", output + System.Environment.NewLine + System.Environment.NewLine );
-        File.AppendAllText( thumbnailerPath + "error.txt", error + System.Environment.NewLine + System.Environment.NewLine );
-
-        exitCode = process.ExitCode;
-
-        status = "STATUS: " + output + "; ERROR: " + error;
-        process.Close();
-        successful = true;
-      }
-      catch ( Exception ex )
-      {
-        status = "There was an error processing your request: " + ex.Message.ToString();
-        successful = false;
-      }
-    }
-    #endregion
   }
 }

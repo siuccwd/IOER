@@ -9,7 +9,8 @@ using System.Web.UI.WebControls;
 using ILPathways.Library;
 using ILPathways.Services;
 using ILPathways.Utilities;
-using ILPathways.DAL;
+//using ILPathways.DAL;
+using Isle.BizServices;
 using LibMgr = Isle.BizServices.LibraryBizService;
 
 namespace ILPathways.Controls.Includes

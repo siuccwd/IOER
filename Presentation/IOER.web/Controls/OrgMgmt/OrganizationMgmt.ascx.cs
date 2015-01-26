@@ -116,6 +116,11 @@ namespace ILPathways.Controls.OrgMgmt
                 btnNew.Visible = true;
                 btnNew.Enabled = true;
             }
+
+            if ( FormPrivileges.WritePrivilege > ( int ) ILPathways.Business.EPrivilegeDepth.Region )
+            {
+                rblIsIsleMember.Enabled = true;
+            }
             // Set source for form lists
             this.PopulateControls();
 
@@ -255,6 +260,9 @@ namespace ILPathways.Controls.OrgMgmt
             this.txtCity.Text = entity.City;
             this.txtZipcode.Text = entity.Zipcode;
             this.txtZipcodePlus4.Text = entity.ZipCode4;
+            txtEmailDomain.Text = entity.EmailDomain;
+            txtWebsite.Text = entity.WebSite;
+
             this.txtMainPhone.Text = entity.DisplayPhone( entity.MainPhone );
             this.txtMainExtension.Text = entity.MainExtension; 
             this.txtFax.Text = entity.Fax;
@@ -263,7 +271,7 @@ namespace ILPathways.Controls.OrgMgmt
             this.SetListSelection( this.ddlState, entity.State );
 
             this.rblIsActive.SelectedValue = this.ConvertBoolToYesNo( entity.IsActive );
-
+            this.rblIsIsleMember.SelectedValue = this.ConvertBoolToYesNo( entity.IsIsleMember );
 
             if ( entity.Id > 0 )
             {
@@ -287,6 +295,7 @@ namespace ILPathways.Controls.OrgMgmt
 
                 btnDelete.Visible = false;
                 detailPanel.Enabled = true;
+                rblIsIsleMember.SelectedIndex = 1;
             }
 
         }//
@@ -393,11 +402,11 @@ namespace ILPathways.Controls.OrgMgmt
                 SetConsoleErrorMessage( "Please select a state" );
                 isValid = false;
             }
-            if ( this.txtZipcodePlus4.Text.Trim().Length == 0 )
-            {
-                SetConsoleErrorMessage( "Please enter the zipcode plus 4" );
-                isValid = false;
-            }
+            //if ( this.txtZipcodePlus4.Text.Trim().Length == 0 )
+            //{
+            //    SetConsoleErrorMessage( "Please enter the zipcode plus 4" );
+            //    isValid = false;
+            //}
             if ( this.txtZipcode.Text.Trim().Length == 0 )
             {
                 SetConsoleErrorMessage( "Please enter a zipcode" );
@@ -471,6 +480,11 @@ namespace ILPathways.Controls.OrgMgmt
                 entity.City = FormHelper.SanitizeUserInput( this.txtCity.Text );
                 entity.ZipCode = FormHelper.SanitizeUserInput( this.txtZipcode.Text );
                 entity.ZipCode4 = FormHelper.SanitizeUserInput( this.txtZipcodePlus4.Text );
+                entity.EmailDomain = FormHelper.SanitizeUserInput( txtEmailDomain.Text );
+                if ( entity.EmailDomain.StartsWith( "@" ) )
+                    entity.EmailDomain = entity.EmailDomain.Substring( 1 );
+
+                entity.WebSite = txtWebsite.Text;
                 entity.MainPhone = FormHelper.SanitizeUserInput( this.txtMainPhone.Text );
                 entity.MainExtension = FormHelper.SanitizeUserInput( this.txtMainExtension.Text );
                 entity.State = this.ddlState.SelectedValue;
@@ -478,6 +492,7 @@ namespace ILPathways.Controls.OrgMgmt
                 entity.OrgTypeId = Int32.Parse( this.ddlOrgTypeId.SelectedValue );
 
                 entity.IsActive = this.ConvertYesNoToBool( this.rblIsActive.SelectedValue );
+                entity.IsIsleMember = this.ConvertYesNoToBool( this.rblIsIsleMember.SelectedValue );
 
                 entity.LastUpdated = System.DateTime.Now;
                 entity.LastUpdatedById = WebUser.Id;		//include for future use

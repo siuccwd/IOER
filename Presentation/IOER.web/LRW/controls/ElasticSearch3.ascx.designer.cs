@@ -13,13 +13,13 @@ namespace ILPathways.LRW.controls {
     public partial class ElasticSearch3 {
         
         /// <summary>
-        /// sBrowser control.
+        /// sBrowser7 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ILPathways.LRW.controls.StandardsBrowser5 sBrowser;
+        protected global::ILPathways.Controls.StandardsBrowser7 sBrowser7;
         
         /// <summary>
         /// imgThumbnail control.

@@ -317,6 +317,8 @@ namespace ILPathways.Utilities
                 {
                     output = "";
                 }
+                //one last??
+                //output = FilterText( output );
             }
             catch ( Exception ex )
             {
@@ -325,6 +327,14 @@ namespace ILPathways.Utilities
 
             return output;
         }
+        //private static String FilterText( String userInput )
+        //{
+        //    Regex re = new Regex( "([^A-Za-z0-9@.,' _-]+)" );
+        //    String filtered = re.Replace( userInput, "_" );
+        //    return filtered;
+        //}
+      
+
 		/// <summary>
 		/// do checks for possible invalid parameters in the request string. return false if suspect
 		/// </summary>
@@ -343,12 +353,9 @@ namespace ILPathways.Utilities
 				{
 					//or just do a redirect???
 					return false;
-
 				}
 
 				//other checks
-
-
 
 			} catch ( Exception ex )
 			{
@@ -367,7 +374,10 @@ namespace ILPathways.Utilities
 		/// <returns>The value for the requested parameter or the default value if the parameter was not found</returns>
 		public static int GetRequestKeyValue( string parameter, int defaultParm )
 		{
-
+            if ( IsValidRequestString() == false )
+            {
+                return defaultParm;
+            }
 			string request = HttpContext.Current.Request.QueryString.Get( parameter );
 			if ( request == null ) request = "";
 
@@ -383,6 +393,11 @@ namespace ILPathways.Utilities
 
         public static bool GetRequestKeyValue( string parameter, bool defaultParm )
         {
+            if ( IsValidRequestString() == false )
+            {
+                return defaultParm;
+            }
+
             bool result = false;
             string request = HttpContext.Current.Request.QueryString.Get( parameter );
             if ( request == null ) request = defaultParm.ToString();
@@ -428,18 +443,94 @@ namespace ILPathways.Utilities
 				return defaultParm;
 			} else
 			{
-        if (request.IndexOf("';") > -1)
-        {
-          request = request.Substring(0, request.IndexOf("';"));
-        }
-        if (request.IndexOf(";") > -1)
-        {
-          request = request.Substring(0, request.IndexOf(";"));
-        }
+                request = CleanText( request );
+                //if (request.IndexOf("';") > -1)
+                //{
+                //  request = request.Substring(0, request.IndexOf("';"));
+                //}
+                //if (request.IndexOf(";") > -1)
+                //{
+                //  request = request.Substring(0, request.IndexOf(";"));
+                //}
 				return request;
 			}
+        } // end
 
+        /// <summary>
+        /// Get a route parameter.
+        /// If found, the variable will be 'cleaned'.
+        /// If not found, return the default value of blank
+        /// </summary>
+        /// <param name="page"></param>
+        /// <param name="parameter"></param>
+        /// <returns></returns>
+        public static string GetRouteKeyValue( Page page, string parameter )
+        {
+            return GetRouteKeyValue(page, parameter, "");
 		} // end
+
+        /// <summary>
+        /// Get a route parameter.
+        /// If found, the variable will be 'cleaned'.
+        /// If not found, a second check will be done using GetRequestKeyValue 
+        /// </summary>
+        /// <param name="page"></param>
+        /// <param name="parameter"></param>
+        /// <param name="defaultParm"></param>
+        /// <returns></returns>
+        public static string GetRouteKeyValue( Page page, string parameter, string defaultParm )
+        {
+            string request = "";
+            if ( IsValidRequestString() == false )
+            {
+                return defaultParm;
+            }
+            if ( page.RouteData.Values.Count > 0
+              && page.RouteData.Values.ContainsKey( parameter ) )
+            {
+                request = page.RouteData.Values[ parameter ].ToString();
+                request = CleanText( request );
+                return request;
+            }
+            //check the http parms
+            return GetRequestKeyValue( parameter, defaultParm );
+            
+        } // end
+
+
+        /// <summary>
+        /// Get a route parameter.
+        /// If found, the variable will be 'cleaned'.
+        /// If not found, a second check will be done using GetRequestKeyValue
+        /// </summary>
+        /// <param name="page"></param>
+        /// <param name="parameter"></param>
+        /// <param name="defaultParm"></param>
+        /// <returns></returns>
+        public static int GetRouteKeyValue( Page page, string parameter, int defaultParm )
+        {
+            if ( IsValidRequestString() == false )
+            {
+                return defaultParm;
+            }
+
+            if ( page.RouteData.Values.Count > 0
+              && page.RouteData.Values.ContainsKey( parameter ) )
+            {
+                string request = page.RouteData.Values[ parameter ].ToString();
+                if ( IsInteger( request ) )
+                {
+                    return int.Parse( request );
+                }
+                else
+                {
+                    return defaultParm;
+                }  
+            }
+            //check the http parms
+            return GetRequestKeyValue( parameter, defaultParm );
+            
+        } // end
 		#endregion
 		#region === Session handler methods ===
 		/// <summary>

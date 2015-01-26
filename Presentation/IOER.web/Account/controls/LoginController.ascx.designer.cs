@@ -92,5 +92,32 @@ namespace ILPathways.Account.controls {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Literal txtReturnUrl;
+        
+        /// <summary>
+        /// forcingNextUrlAsHttp control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Literal forcingNextUrlAsHttp;
+        
+        /// <summary>
+        /// autoCreateLibraryOnActivate control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Literal autoCreateLibraryOnActivate;
+        
+        /// <summary>
+        /// libraryCreateMsg control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Literal libraryCreateMsg;
     }
 }

@@ -98,12 +98,12 @@ h2 { padding-left: 10px; }
 </style>
 
 <div class="mainContent">
-<h1 class="isleH1">ISLE Open Education Resources Usage Guide</h1>
+<h1 class="isleH1">ISLE Open Educational Resources Usage Guide</h1>
 
 <iframe id="youtubePlayer" src="//www.youtube.com/embed/videoseries?list=PLZG3yuusmGNzdCti7BIUyVcA5Z4UGPMPG" frameborder="0" allowfullscreen></iframe>
 
 <h2>Guide</h2>
-<p>The ISLE Open Education Resources toolset is a series of utilities to help teachers and students find, create, and evaluate Learning Resources.</p>
+<p>The ISLE Open Educational Resources toolset is a series of utilities to help teachers and students find, create, and evaluate Learning Resources.</p>
 <p>The IOER Tools leverage the <a href="http://learningregistry.org/" class="textLink" target="_blank">Learning Registry</a>, the <a href="http://www.corestandards.org/" class="textLink" target="_blank">Common Core State Standards</a>, the <a href="http://www.nextgenscience.org/" class="textLink" target="_blank">Next Generation Science Standards</a>, and other sources of high-quality, useful data.</p>
 <p>Use the videos and documents here to learn the basics of using the IOER tools.</p>
 
@@ -136,7 +136,7 @@ h2 { padding-left: 10px; }
       useTextArrows: true,
       autoAdvance: 5000,
       items: [
-        { link: "thumb/{intID}-thumb.png"/files/feast/ISLE OER Library Guide July 2013 FINALPrint.pdf", img: { header: "Adobe PDF", text: "PDF" }, text: "Library Guide" },
+        { link: "large/{intID}-large.png"/files/feast/ISLE OER Library Guide July 2013 FINALPrint.pdf", img: { header: "Adobe PDF", text: "PDF" }, text: "Library Guide" },
         { link: "//ioer.ilsharedlearning.org/OERThumbs/files/feast/ISLE OER Overview July 2013-FINALPrint.pdf", img: { header: "Adobe PDF", text: "PDF" }, text: "Overview" },
         { link: "//ioer.ilsharedlearning.org/OERThumbs/files/feast/ISLE OER Tagging Guide July 2013-FINALPrint.pdf", img: { header: "Adobe PDF", text: "PDF" }, text: "Tagging Guide" },
         { link: "//ioer.ilsharedlearning.org/OERThumbs/files/feast/ISLE OER Authoring Guide July 2013-FINALPrint.pdf", img: { header: "Adobe PDF", text: "PDF" }, text: "Authoring Guide" },

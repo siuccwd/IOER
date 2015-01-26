@@ -52,12 +52,17 @@ namespace ILPathways.Utilities
             string queryString = "unknown";
             string url = "unknown";
             string parmsString = "";
+            string lRefererPage= "";
 
             try
             {
                 sessionId = HttpContext.Current.Session.SessionID.ToString();
                 remoteIP = HttpContext.Current.Request.ServerVariables[ "REMOTE_HOST" ];
 
+                if ( HttpContext.Current.Request.UrlReferrer != null )
+                {
+                    lRefererPage = HttpContext.Current.Request.UrlReferrer.ToString();
+                }
                 string serverName = UtilityManager.GetAppKeyValue( "serverName", HttpContext.Current.Request.ServerVariables[ "LOCAL_ADDR" ] );
                 path = serverName + HttpContext.Current.Request.Path;
 
@@ -90,6 +95,7 @@ namespace ILPathways.Utilities
                 string errMsg = message +
                     "\r\nType: " + ex.GetType().ToString() + ";" + 
                     "\r\nSession Id - " + sessionId + "____IP - " + remoteIP +
+                    "\r\rReferrer: " + lRefererPage + ";" +
                     "\r\nException: " + ex.Message.ToString() + ";" + 
                     "\r\nStack Trace: " + ex.StackTrace.ToString() +
                     "\r\nServer\\Template: " + path +
@@ -196,22 +202,22 @@ namespace ILPathways.Utilities
         /// </summary>
         /// <param name="label">Label control that will display a trace message</param>
         /// <param name="message">The message to be sent to the trace log as well as to the trace control</param>
-        public static void DoTrace( System.Web.UI.WebControls.Label label, string message )
-        {
-            try
-            {
-                label.Text += message + "<br>";
+        //public static void DoTrace( System.Web.UI.WebControls.Label label, string message )
+        //{
+        //    try
+        //    {
+        //        label.Text += message + "<br>";
 
-                label.Visible = true;
+        //        label.Visible = true;
 
-                DoTrace( message );
-            }
-            catch
-            {
-                // ignore error for now - future to log it
-            }
+        //        DoTrace( message );
+        //    }
+        //    catch
+        //    {
+        //        // ignore error for now - future to log it
+        //    }
 
-        } // end
+        //} // end
 
         /// <summary>
         /// Handle trace requests - typically during development, but may be turned on to track code flow in production.
@@ -220,8 +226,11 @@ namespace ILPathways.Utilities
         /// <remarks>This is a helper method that defaults to a trace level of 10</remarks>
         public static void DoTrace( string message )
         {
-            //default level to 10
-            DoTrace( 10, message, true );
+            //default level to 8
+            int appTraceLevel = UtilityManager.GetAppKeyValue( "appTraceLevel", 8 );
+            if ( appTraceLevel < 8 )
+                appTraceLevel = 8;
+            DoTrace( appTraceLevel, message, true );
         }
 
         /// <summary>
@@ -249,7 +258,7 @@ namespace ILPathways.Utilities
 
             try
             {
-                appTraceLevel = UtilityManager.GetAppKeyValue( "appTraceLevel", 1 );
+                appTraceLevel = UtilityManager.GetAppKeyValue( "appTraceLevel", 6 );
 
                 //Allow if the requested level is <= the application thresh hold
                 if ( level <= appTraceLevel )
@@ -345,7 +354,7 @@ namespace ILPathways.Utilities
                 + ",'" + comment + "',"
                 + remoteIP + "";
 
-            if ( UtilityManager.GetAppKeyValue( "loggingPageVisitsToDatabase", "yes" ) == "XXXX" )
+            if ( UtilityManager.GetAppKeyValue( "loggingPageVisitsToDatabase", "no" ) == "XXXX" )
             {
                // ILPathways.DAL.LogManager.LogPageVisit( sessionId, template, queryString, parmString, isPostBack, userid, partner, comment, remoteIP, lwia );
                 //lwia, pathway, lang, mainChannel, currentZip 

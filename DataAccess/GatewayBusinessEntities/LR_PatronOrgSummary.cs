@@ -30,5 +30,7 @@ namespace GatewayBusinessEntities
         public System.Guid UserRowId { get; set; }
         public Nullable<System.DateTime> Created { get; set; }
         public Nullable<System.DateTime> LastUpdated { get; set; }
+        public Nullable<bool> IsActive { get; set; }
+        public string UserProfileUrl { get; set; }
     }
 }

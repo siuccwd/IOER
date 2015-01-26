@@ -13,15 +13,6 @@ namespace ILPathways.Controls.Includes {
     public partial class footer3 {
         
         /// <summary>
-        /// linkNews control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.HyperLink linkNews;
-        
-        /// <summary>
         /// linkNewsSubscribe control.
         /// </summary>
         /// <remarks>
@@ -38,5 +29,14 @@ namespace ILPathways.Controls.Includes {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label eo_Statement;
+        
+        /// <summary>
+        /// txtServer control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label txtServer;
     }
 }

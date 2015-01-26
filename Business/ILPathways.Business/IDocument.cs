@@ -20,5 +20,6 @@ namespace ILPathways.Business
         byte[] ResourceData { get;  }
         int CreatedById { get; set; }
         void SetResourceData( long bytes, byte[] resourceData );
+        bool HasDocument();
     }
 }

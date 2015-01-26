@@ -361,7 +361,7 @@ namespace ILPathways.Utilities
 		
 
 			return  NotifyAdmin( emailTo, subject, message );
-		} //(404) Not Found
+        } 
 
 		/// <summary>
 		/// Sends an email message to the system administrator
@@ -374,9 +374,13 @@ namespace ILPathways.Utilities
 		{
 			char[] delim = new char[ 1 ];
 			delim[ 0 ] = ',';
-			string emailFrom = UtilityManager.GetAppKeyValue( "systemNotifyFromEmail", "TheWatcher@ilpathways.com" );
+			string emailFrom = UtilityManager.GetAppKeyValue( "systemNotifyFromEmail", "TheWatcher@siuccwd.com" );
 			string cc = UtilityManager.GetAppKeyValue( "systemAdminEmail", "mparsons@siuccwd.com" );
-
+            if ( emailTo == "" )
+            {
+                emailTo = cc;
+                cc = "";
+            }
 			//avoid infinite loop by ensuring this method didn't generate the exception
 			if ( message.IndexOf( "EmailManager.NotifyAdmin" ) > -1 )
 			{

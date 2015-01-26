@@ -19,7 +19,8 @@ using ILPathways.Business;
 using ILPathways.classes;
 using BDM = ILPathways.Common;
 using ILPathways.Controllers;
-using ILPathways.DAL;
+//using ILPathways.DAL;
+using Isle.BizServices;
 using ILPathways.Library;
 using ILPathways.Utilities;
 using LRWarehouse.Business;
@@ -945,7 +946,7 @@ namespace ILPathways.Controls.FAQs
                 {
                     DataSet ds = new DataSet();
                     //Retrieve tags list from session
-                    if ( BaseDataManager.DoesDataSetHaveRows( CurrentPathwaysList ) == true )
+                    if ( LRD.BaseDataManager.DoesDataSetHaveRows( CurrentPathwaysList ) == true )
                     {
                         ds = CurrentPathwaysList;
                         StringBuilder deletedItems = new StringBuilder( "" );
@@ -1378,39 +1379,39 @@ namespace ILPathways.Controls.FAQs
                 //string where = string.Format( " (fqpath.PathwayId in ({0})) ", this.ddlSearchPathway.SelectedValue );
                 string where = string.Format( "(base.RowId in (select FaqRowId from [Faq.FaqPathway] where PathwayId in ({0}))) ", this.ddlSearchPathway.SelectedValue );
 
-                filter += BaseDataManager.FormatSearchItem( filter, where, booleanOperator );
+                filter += LRD.BaseDataManager.FormatSearchItem( filter, where, booleanOperator );
             }
             else if ( DefaultTargetPathways.Length > 0 )
             {
                 //string where = string.Format( " (fqpath.PathwayId in ({0})) ", DefaultTargetPathways );
                 string where = string.Format( "(base.RowId in (select FaqRowId from [Faq.FaqPathway] where PathwayId in ({0}))) ", DefaultTargetPathways );
-                filter += BaseDataManager.FormatSearchItem( filter, where, booleanOperator );
+                filter += LRD.BaseDataManager.FormatSearchItem( filter, where, booleanOperator );
             }
 
             if ( this.ddlSearchCategory.SelectedIndex > 0 )
             {
-                filter += BaseDataManager.FormatSearchItem( filter, "base.CategoryId", ddlSearchCategory.SelectedValue.ToString(), booleanOperator );
+                filter += LRD.BaseDataManager.FormatSearchItem( filter, "base.CategoryId", ddlSearchCategory.SelectedValue.ToString(), booleanOperator );
             }
             else if ( DefaultCategories.Length > 0 )
             {
                 string where = string.Format( "(cat.CategoryCode in ({0}) )", DefaultCategories );
-                filter += BaseDataManager.FormatSearchItem( filter, where, booleanOperator );
+                filter += LRD.BaseDataManager.FormatSearchItem( filter, where, booleanOperator );
             }
 
             if ( ddlStatusSearch.SelectedIndex > 0 )
             {
-                filter += BaseDataManager.FormatSearchItem( filter, "Status", ddlStatusSearch.SelectedValue.ToString(), booleanOperator );
+                filter += LRD.BaseDataManager.FormatSearchItem( filter, "Status", ddlStatusSearch.SelectedValue.ToString(), booleanOperator );
             }
 
             if ( txtKeyword.Text.Trim().Length > 0 )
             {
-                string keyword = BaseDataManager.HandleApostrophes( FormHelper.CleanText( txtKeyword.Text.Trim() ) );
+                string keyword = LRD.BaseDataManager.HandleApostrophes( FormHelper.CleanText( txtKeyword.Text.Trim() ) );
 
                 if ( keyword.IndexOf( "%" ) == -1 )
                     keyword = "%" + keyword + "%";
 
                 string where = " (base.Title like '" + keyword + "'	OR base.[Description] like '" + keyword + "') ";
-                filter += BaseDataManager.FormatSearchItem( filter, where, booleanOperator );
+                filter += LRD.BaseDataManager.FormatSearchItem( filter, where, booleanOperator );
             }
 
             if ( this.IsTestEnv() )
@@ -1677,12 +1678,12 @@ namespace ILPathways.Controls.FAQs
             //string sql = "Select distinct string1 As FAQPathway from FaqItem where typeid = 1010 order by 1 ";
             string sql = sqlSelectDistinctPaths.Text;
             DataSet ds = LRD.DatabaseManager.DoQuery( sql );
-            BaseDataManager.PopulateList( this.ddlSearchPathway, ds, "Id", "Title", "Select a Pathway" );
+            LRD.BaseDataManager.PopulateList( this.ddlSearchPathway, ds, "Id", "Title", "Select a Pathway" );
 
             //if ( usingMultiplePath.Text.Equals( "no" ) )
             //{
             //  DataSet ds1 = LRD.DatabaseManager.DoQuery( sql );
-            //  BaseDataManager.PopulateList( this.ddlFAQPathway, ds1, "Id", "Title", "Select a Pathway" );
+            //  LRD.BaseDataManager.PopulateList( this.ddlFAQPathway, ds1, "Id", "Title", "Select a Pathway" );
             //}
         } //
 
@@ -1703,7 +1704,7 @@ namespace ILPathways.Controls.FAQs
 
             string sql = string.Format( sqlSelectSearchCategories.Text, filter );
             DataSet ds = LRD.DatabaseManager.DoQuery( sql );
-            BaseDataManager.PopulateList( this.ddlSearchCategory, ds, "Id", "Category", "Select a Category" );
+            LRD.BaseDataManager.PopulateList( this.ddlSearchCategory, ds, "Id", "Category", "Select a Category" );
 
         } //
         /// <summary>
@@ -1723,7 +1724,7 @@ namespace ILPathways.Controls.FAQs
             //string sql = string.Format( "Select distinct Category from FaqItem where len(Category) > 0 AND TypeId = 1010 and String1 = '{0}' Order by Category", pathway.Trim());
             string sql = string.Format( sqlCategoriesList.Text, filter );
             DataSet ds = LRD.DatabaseManager.DoQuery( sql );
-            BaseDataManager.PopulateList( this.ddlCategory, ds, "Id", "Category", "Select a Category" );
+            LRD.BaseDataManager.PopulateList( this.ddlCategory, ds, "Id", "Category", "Select a Category" );
         } //
 
 
@@ -1737,7 +1738,7 @@ namespace ILPathways.Controls.FAQs
             //string sql = string.Format( "Select distinct Category from FaqItem where len(Category) > 0 AND TypeId = 1010 and String1 = '{0}' Order by Category", pathway.Trim());
             string sql = string.Format( "SELECT id, [Category]  FROM [dbo].[FAQ.Category] where [PathwayId] = {0} order by 2", pathwayId.ToString() );
             DataSet ds = LRD.DatabaseManager.DoQuery( sql );
-            BaseDataManager.PopulateList( this.ddlCategory, ds, "Id", "Category", "Select a Category" );
+            LRD.BaseDataManager.PopulateList( this.ddlCategory, ds, "Id", "Category", "Select a Category" );
         } //
 
         /// <summary>
@@ -1760,11 +1761,11 @@ namespace ILPathways.Controls.FAQs
             //search uses existing
             string sql = string.Format( "SELECT distinct [Status]  FROM [dbo].[FAQ] order by 1" );
             DataSet ds1 = LRD.DatabaseManager.DoQuery( sql );
-            BaseDataManager.PopulateList( this.ddlStatusSearch, ds1, "Status", "Status", "Select a Status" );
+            LRD.BaseDataManager.PopulateList( this.ddlStatusSearch, ds1, "Status", "Status", "Select a Status" );
 
             //
             DataSet ds2 = LRD.DatabaseManager.SelectCodesTable( "[CodeTable]", "StringValue", "StringValue", "IntegerValue", " CodeName = 'FaqStatus'" );
-            BaseDataManager.PopulateList( ddlStatus, ds2, "Code", "title", "Select a Status" );
+            LRD.BaseDataManager.PopulateList( ddlStatus, ds2, "Code", "title", "Select a Status" );
         } //
 
 

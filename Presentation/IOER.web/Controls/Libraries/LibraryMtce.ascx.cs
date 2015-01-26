@@ -34,6 +34,16 @@ namespace ILPathways.Controls.Libraries
 
 
         #region Properties
+        /// <summary>
+        /// Set value used when check form privileges
+        /// - using admin to allow setting global access
+        /// - will do individual checks on gets, if not admin
+        /// </summary>
+        public string FormSecurityName
+        {
+            get { return this.formSecurityName.Text; }
+            set { this.formSecurityName.Text = value; }
+        }
         public bool InitializeOnRequest { get; set; }
         public int NewLibraryId
         {
@@ -95,6 +105,7 @@ namespace ILPathways.Controls.Libraries
         {
 
             FormPrivileges = new ApplicationRolePrivilege();
+            this.FormPrivileges = GDAL.SecurityManager.GetGroupObjectPrivileges( this.WebUser, FormSecurityName );
             if ( IsUserAuthenticated() && WebUser.UserName == "mparsons" )
             {
                 showingImagePath.Text = "yes";
@@ -116,7 +127,7 @@ namespace ILPathways.Controls.Libraries
         /// <summary>
         /// called from a parent control
         /// </summary>
-        public void InitializeOrgLibary( string orgName, List<CodeItem> orgCodesList )
+        public void InitializeOrgLibrary( string orgName, List<CodeItem> orgCodesList )
         {
             //reset form by populating with an empty business object
             ThisLibrary entity = new ThisLibrary();
@@ -261,13 +272,11 @@ namespace ILPathways.Controls.Libraries
                 {
                     this.SetConsoleErrorMessage( "Sorry the requested record does not exist" );
                     return;
-
                 }
                 else
                 {
                     PopulateForm( entity );
                 }
-
             }
             catch ( System.Exception ex )
             {
@@ -323,17 +332,36 @@ namespace ILPathways.Controls.Libraries
             this.txtDescription.Text = entity.Description;
 
             this.SetListSelection( this.ddlLibraryType, entity.LibraryTypeId.ToString() );
-            this.SetListSelection( this.ddlPublicAccessLevel, entity.PublicAccessLevel.ToString() );
-            this.SetListSelection( this.ddlOrgAccessLevel, entity.OrgAccessLevel.ToString() );
+            this.SetListSelection( this.ddlPublicAccessLevel, entity.PublicAccessLevelInt.ToString() );
+            this.SetListSelection( this.ddlOrgAccessLevel, entity.OrgAccessLevelInt.ToString() );
 
-            this.rblIsPublic.SelectedValue = this.ConvertBoolToYesNo( entity.IsPublic );
             this.rblIsDiscoverable.SelectedValue = this.ConvertBoolToYesNo( entity.IsDiscoverable );
             this.rblIsActive.SelectedValue = this.ConvertBoolToYesNo( entity.IsActive );
+            this.rblAllowJoinRequest.SelectedValue = this.ConvertBoolToYesNo( entity.AllowJoinRequest );
+            
 			currentFileName.Text = entity.ImageUrl;
             noLibraryImagelabel.Visible = true;
 
             if ( entity.Id > 0 )
             {
+                //determine rights
+                int CurrentLibraryMemberTypeId = 0;
+                if ( entity.IsMyPersonalLibrary( WebUser.Id ) )
+                {
+                    CurrentLibraryMemberTypeId = LibraryMember.LIBRARY_MEMBER_TYPE_ID_ADMIN;
+                }
+                else
+                {
+                    LibraryMember lm = myManager.LibraryMember_Get( entity.Id, WebUser.Id );
+                    if ( lm != null && lm.MemberTypeId > LibraryMember.LIBRARY_MEMBER_TYPE_ID_READER )
+                    {
+                        CurrentLibraryMemberTypeId = lm.MemberTypeId;
+                    }
+                }
+
+                if ( CurrentLibraryMemberTypeId == LibraryMember.LIBRARY_MEMBER_TYPE_ID_ADMIN )
+                    FormPrivileges.DeletePrivilege = 3;
+
                 viewLibraryLink.NavigateUrl = string.Format("/Libraries/Library.aspx?id={0}", entity.Id);
                 viewLibraryLink.Visible = true;
                 if ( entity.OrgId > 0 )
@@ -341,6 +369,7 @@ namespace ILPathways.Controls.Libraries
                     orgPanel.Visible = true;
                     lblOrganization.Text = entity.Organization;
                     lblOrganization.Visible = true;
+                    ddlOrgs.Visible = false;
                 }
                 if (entity.LibraryTypeId == 1)
                     orgPanel.Visible = false;
@@ -359,8 +388,7 @@ namespace ILPathways.Controls.Libraries
                         FormatImageTag( defaultLibraryImage );
                 }
                 ddlLibraryType.Enabled = false;
-                if ( FormPrivileges.CanDelete() 
-                    && entity.LibraryTypeId != ThisLibrary.PERSONAL_LIBRARY_ID )
+                if ( FormPrivileges.CanDelete()  )
                 {
                     btnDelete.Visible = true;
                 }
@@ -634,7 +662,7 @@ namespace ILPathways.Controls.Libraries
                 entity.Title = FormHelper.SanitizeUserInput( this.txtTitle.Text );
                 entity.Description = FormHelper.SanitizeUserInput( this.txtDescription.Text );
 
-                entity.IsPublic = this.ConvertYesNoToBool( this.rblIsPublic.SelectedValue );
+                entity.AllowJoinRequest = this.ConvertYesNoToBool( this.rblAllowJoinRequest.SelectedValue );
                 entity.IsDiscoverable = this.ConvertYesNoToBool( this.rblIsDiscoverable.SelectedValue );
                 entity.IsActive = this.ConvertYesNoToBool( this.rblIsActive.SelectedValue );
 
@@ -642,10 +670,7 @@ namespace ILPathways.Controls.Libraries
                     entity.PublicAccessLevel = ( EObjectAccessLevel ) Int32.Parse( ddlPublicAccessLevel.SelectedValue );
                 else
                     entity.PublicAccessLevel = EObjectAccessLevel.ReadOnly;
-                if ( entity.PublicAccessLevel > EObjectAccessLevel.ByRequestOnly )
-                    entity.IsPublic = true;
-                else
-                    entity.IsPublic = false;
+               
 
                 if ( ddlOrgAccessLevel.SelectedIndex >= 0 )
                     entity.OrgAccessLevel = ( EObjectAccessLevel ) Int32.Parse( ddlOrgAccessLevel.SelectedValue );

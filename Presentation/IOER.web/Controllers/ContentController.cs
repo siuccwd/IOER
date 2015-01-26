@@ -6,16 +6,21 @@ using System.Web;
 using AppUser = LRWarehouse.Business.Patron; //ILPathways.Business.AppUser;
 using MyManager = Isle.BizServices.ContentServices;
 using AcctManager = Isle.BizServices.AccountServices;
+using OrgManager = Isle.BizServices.OrganizationBizService;
 using GroupManager = Isle.BizServices.GroupServices;
 
 using ILPathways.Business;
 using ILPathways.Library;
 using ILPathways.Utilities;
+using Isle.BizServices;
 using LRWarehouse.Business;
 using ResourceManager = LRWarehouse.DAL.ResourceManager;
 
 namespace ILPathways.Controllers
 {
+    /// <summary>
+    /// Methods related to Content items
+    /// </summary>
     public class ContentController
     {
         static string thisClassName = "ContentController";
@@ -24,7 +29,7 @@ namespace ILPathways.Controllers
         /// </summary>
         /// <param name="resource"></param>
         /// <param name="contentId"></param>
-        /// <param name="user"></param>
+        /// <param name="author"></param>
         /// /// <param name="hasApproval">return true if approval was required</param>
         /// <param name="statusMessage"></param>
         /// <returns>true if ok, false if errors</returns>
@@ -44,11 +49,14 @@ namespace ILPathways.Controllers
                 return false;
             }
 
-            entity.ResourceVersionId = resource.Version.Id;
+            //entity.ResourceVersionId = resource.Version.Id;
+            entity.ResourceIntId = resource.Id;
+            entity.UseRightsUrl = resource.Version.Rights;
 
             if ( entity.IsOrgContent() == false )
             {
                 entity.StatusId = ContentItem.PUBLISHED_STATUS;
+                entity.IsPublished = true;
                 mgr.Update( entity );
 
                 //TODO - anything else??
@@ -79,7 +87,6 @@ namespace ILPathways.Controllers
         /// </summary>
         /// <param name="contentId"></param>
         /// <param name="author"></param>
-        /// <param name="hasApproval"></param>
         /// <param name="statusMessage"></param>
         /// <returns></returns>
         public static bool RequestApproval( int contentId, AppUser author, ref string statusMessage )
@@ -105,7 +112,7 @@ namespace ILPathways.Controllers
                 entity.StatusId = ContentItem.SUBMITTED_STATUS;
                 mgr.Update( entity );
                 //set resource to inactive
-                string status = new ResourceManager().SetResourceActiveState( false, entity.ResourceVersionId );
+                string status = new ResourceManager().SetResourceActiveState( entity.ResourceIntId, false );
 
                 //add record to audit table
                 string msg = string.Format( "Request by {0} for approval of resource id: {1}", author.FullName(), entity.Id );
@@ -133,7 +140,7 @@ namespace ILPathways.Controllers
             string toEmail = "";
             string bccEmail = "";
             //if valid
-            Organization org = AcctManager.GetOrganization( author, ref statusMessage );
+            Organization org = OrgManager.GetOrganization( author, ref statusMessage );
             if ( org != null && org.Id > 0 )
             {
                 //get list of administrators
@@ -149,13 +156,14 @@ namespace ILPathways.Controllers
                 else
                 {
                     //if no approvers, send to info
-                    toEmail = UtilityManager.GetAppKeyValue( "contactUsMailTo", "info@illinoisworknet.com" );
+                    toEmail = UtilityManager.GetAppKeyValue( "contactUsMailTo", "DoNotReply@ilsharedlearning.org" );
                     note = "<br/>NOTE: no organization approvers were found for this organization: " + org.Name;
                 }
-                string url = UtilityManager.FormatAbsoluteUrl( string.Format( "/Repository/ResourcePage.aspx?rid={0}", entity.RowId.ToString() ), true );
+                string friendlyTitle = ResourceBizService.FormatFriendlyTitle( entity.Title );
+                string url = UtilityManager.FormatAbsoluteUrl( string.Format( "/Content/{0}/{1}", entity.Id.ToString(), friendlyTitle ), true );
                 string urlTitle = string.Format( "<a href='{0}'>{1}</a>", url, entity.Title );
                 if (System.DateTime.Now < new System.DateTime(2013, 7, 1))
-                    bccEmail = UtilityManager.GetAppKeyValue( "systemAdminEmail", "info@illinoisworknet.com" );
+                    bccEmail = UtilityManager.GetAppKeyValue( "appAdminEmail", "info@illinoisworknet.com" );
 
                 string subject = string.Format( "Isle request to approve an education resource from: {0}", author.FullName() );
                 string body = string.Format( "<p>{0} from {1} is requesting approval on an education resource.</p>", author.FullName(), org.Name );
@@ -175,78 +183,81 @@ namespace ILPathways.Controllers
         /// Handle action of content approved
         /// </summary>
         /// <param name="contentId"></param>
-        /// <param name="userId"></param>
-        public static bool HandleApprovedAction( int contentId, AppUser approver, ref string statusMessage )
-        {
-            ContentItem entity = new MyManager().Get( contentId );
-            if ( entity != null && entity.Id > 0 )
-                return HandleApprovedAction( entity, approver, ref statusMessage );
-            else
-            {
-                statusMessage = "Error - unable to retrieve the requested resource";
-                return false;   
-            }
-        }
+        /// <param name="approver"></param>
+        /// <param name="statusMessage"></param>
+        //public static bool HandleApprovedAction( int contentId, AppUser approver, ref string statusMessage )
+        //{
+        //    ContentItem entity = new MyManager().Get( contentId );
+        //    if ( entity != null && entity.Id > 0 )
+        //        return HandleApprovedAction( entity, approver, ref statusMessage );
+        //    else
+        //    {
+        //        statusMessage = "Error - unable to retrieve the requested resource";
+        //        return false;   
+        //    }
+        //}
 
         /// <summary>
         /// Handle action of content approved
         /// </summary>
         /// <param name="entity"></param>
-        /// <param name="userId"></param>
-        public static bool HandleApprovedAction( ContentItem entity, AppUser approver, ref string statusMessage )
-        {
-            bool isValid = true;
-            string bccEmail = "";
+        /// <param name="approver"></param>
+        /// <param name="statusMessage"></param>
+        //public static bool HandleApprovedAction( ContentItem entity, AppUser approver, ref string statusMessage )
+        //{
+        //    bool isValid = true;
+        //    string bccEmail = "";
 
-            statusMessage = string.Empty;
-            MyManager mgr = new MyManager();
-            entity.StatusId = ContentItem.PUBLISHED_STATUS;
-            entity.ApprovedById = approver.Id;
-            entity.Approved = System.DateTime.Now;
-            mgr.Update( entity );
+        //    statusMessage = string.Empty;
+        //    MyManager mgr = new MyManager();
+        //    entity.StatusId = ContentItem.PUBLISHED_STATUS;
+        //    entity.ApprovedById = approver.Id;
+        //    entity.Approved = System.DateTime.Now;
+        //    mgr.Update( entity );
 
-            //set resource to active
-            string status = new ResourceManager().SetResourceActiveState( true, entity.ResourceVersionId);
+        //    //set resource to active
+        //    string status = new ResourceManager().SetResourceActiveStateByResVersionId( true, entity.ResourceVersionId );
 
-            //======= published cached LR data
-            if ( entity.PrivilegeTypeId == ContentItem.PUBLIC_PRIVILEGE )
-            {
-               //new BaseUserControl().SetConsoleInfoMessage( "WARNING - HAVE NOT IMPLEMENTED CODE TO READ CACHED LR DATA AND DO ACTUAL LR PUBLISH" );
-                ResourcePublishUpdateController ctr = new ResourcePublishUpdateController();
-                if ( ctr.PublishSavedEnvelope( entity.ResourceVersionId, ref statusMessage ) == false )
-                {
-                    new BaseUserControl().SetConsoleErrorMessage( "WARNING - the publish to the learning registry failed. System administration has been notified." );
-                    Utilities.EmailManager.NotifyAdmin( "Publish of pending resource failed", string.Format( "The attempt to publish a saved resource was unsuccessful. Content id: {0}, RV Id: {1}, Message: {2}", entity.Id, entity.ResourceVersionId,  statusMessage ) );
-                }
-            }
+        //    //======= published cached LR data
+        //    if ( entity.PrivilegeTypeId == ContentItem.PUBLIC_PRIVILEGE )
+        //    {
+        //       //new BaseUserControl().SetConsoleInfoMessage( "WARNING - HAVE NOT IMPLEMENTED CODE TO READ CACHED LR DATA AND DO ACTUAL LR PUBLISH" );
+        //        ResourcePublishUpdateController ctr = new ResourcePublishUpdateController();
+        //        if ( ctr.PublishSavedEnvelope( entity.ResourceVersionId, ref statusMessage ) == false )
+        //        {
+        //            new BaseUserControl().SetConsoleErrorMessage( "WARNING - the publish to the learning registry failed. System administration has been notified." );
+        //            Utilities.EmailManager.NotifyAdmin( "Publish of pending resource failed", string.Format( "The attempt to publish a saved resource was unsuccessful. Content id: {0}, RV Id: {1}, Message: {2}", entity.Id, entity.ResourceVersionId,  statusMessage ) );
+        //        }
+        //    }
 
-            //add record to audit table
-            string msg = string.Format( "Resource: {0}, author: {1}, was approved by {2}", entity.Title, entity.Author, approver.FullName() );
+        //    //add record to audit table
+        //    string msg = string.Format( "Resource: {0}, author: {1}, was approved by {2}", entity.Title, entity.Author, approver.FullName() );
 
-            mgr.ContentHistory_Create( entity.Id, "Content Approved", msg, approver.Id, ref statusMessage );
+        //    mgr.ContentHistory_Create( entity.Id, "Content Approved", msg, approver.Id, ref statusMessage );
 
-            //send email
-            AcctManager amgr = new AcctManager();
-            AppUser author = amgr.Get( entity.CreatedById );
+        //    //send email
+        //    AcctManager amgr = new AcctManager();
+        //    AppUser author = amgr.Get( entity.CreatedById );
 
-            string url = UtilityManager.FormatAbsoluteUrl( string.Format( "/Repository/ResourcePage.aspx?rid={0}", entity.RowId.ToString() ), true );
-            string urlTitle = string.Format( "<a href='{0}'>{1}</a>", url, entity.Title );
-            string toEmail = author.Email;
-            if ( System.DateTime.Now < new System.DateTime( 2013, 7, 1 ) )
-                bccEmail = UtilityManager.GetAppKeyValue( "systemAdminEmail", "info@illinoisworknet.com" );
+        //    string friendlyTitle = ResourceBizService.FormatFriendlyTitle( entity.Title );
+        //    string url = UtilityManager.FormatAbsoluteUrl( string.Format( "/Content/{0}/{1}", entity.Id.ToString(), friendlyTitle ), true );
+        //    string urlTitle = string.Format( "<a href='{0}'>{1}</a>", url, entity.Title );
+        //    string toEmail = author.Email;
+        //    if ( System.DateTime.Now < new System.DateTime( 2013, 7, 1 ) )
+        //        bccEmail = UtilityManager.GetAppKeyValue( "systemAdminEmail", "info@illinoisworknet.com" );
             
 
-            string subject = "Isle: APPROVED education resource";
+        //    string subject = "Isle: APPROVED education resource";
 
-            string body = string.Format( "<p>{0} has approved your education resource. It is now available on the website (based on the defined privilege settings).</p>", approver.FullName());
-            body += "<br/>url:&nbsp;" + urlTitle;
-            body += "<br/>From: " + approver.EmailSignature();
-            string from = approver.Email;
-            EmailManager.SendEmail( toEmail, from, subject, body, approver.Email, bccEmail );
+        //    string body = string.Format( "<p>{0} has approved your education resource. It is now available on the website (based on the defined privilege settings).</p>", approver.FullName());
+        //    body += "<br/>url:&nbsp;" + urlTitle;
+        //    body += "<br/>From: " + approver.EmailSignature();
+        //    string from = approver.Email;
+        //    EmailManager.SendEmail( toEmail, from, subject, body, approver.Email, bccEmail );
 
 
-            return isValid;
-        }
+        //    return isValid;
+        //}
 
         public void CreateContentHistory_Approve( ContentItem entity )
         {
@@ -260,7 +271,9 @@ namespace ILPathways.Controllers
         /// Handle action of content denied
         /// </summary>
         /// <param name="contentId"></param>
-        /// <param name="userId"></param>
+        /// <param name="reason"></param>
+        /// <param name="approver"></param>
+        /// <param name="statusMessage"></param>
         public static bool HandleDeclinedAction( int contentId, string reason, AppUser approver, ref string statusMessage )
         {
             ContentItem entity = new MyManager().Get( contentId );
@@ -277,7 +290,9 @@ namespace ILPathways.Controllers
         /// Handle action of content denied
         /// </summary>
         /// <param name="entity"></param>
-        /// <param name="userId"></param>
+        /// <param name="reason"></param>
+        /// <param name="approver"></param>
+        /// <param name="statusMessage"></param>
         public static bool HandleDeclinedAction( ContentItem entity, string reason, AppUser approver, ref string statusMessage )
         {
             bool isValid = true;
@@ -291,7 +306,7 @@ namespace ILPathways.Controllers
             mgr.Update( entity );
 
             //set resource to inactive
-            string status = new ResourceManager().SetResourceActiveState( false, entity.ResourceVersionId );
+            string status = new ResourceManager().SetResourceActiveState( entity.ResourceIntId, true );
             //add record to audit table
             string msg = string.Format( "Resource: {0}, author: {1}, was declined by {2}", entity.Title, entity.Author, approver.FullName() );
 
@@ -301,7 +316,8 @@ namespace ILPathways.Controllers
             AcctManager amgr = new AcctManager();
             AppUser author = amgr.Get( entity.CreatedById );
 
-            string url = UtilityManager.FormatAbsoluteUrl( string.Format( "/Repository/ResourcePage.aspx?rid={0}", entity.RowId.ToString() ), true );
+            string friendlyTitle = ResourceBizService.FormatFriendlyTitle( entity.Title );
+            string url = UtilityManager.FormatAbsoluteUrl( string.Format( "/Content/{0}/{1}", entity.Id.ToString(), friendlyTitle ), true );
             string urlTitle = string.Format( "<a href='{0}'>{1}</a>", url, entity.Title );
             string toEmail = author.Email;
             string bccEmail = UtilityManager.GetAppKeyValue( "systemAdminEmail", "info@illinoisworknet.com" );
@@ -338,7 +354,7 @@ namespace ILPathways.Controllers
             AcctManager mgr = new AcctManager();
             AppUser author = mgr.Get( contentCreatedById );
             //if valid
-            Organization org = AcctManager.GetOrganization( author, ref statusMessage );
+            Organization org = OrgManager.GetOrganization( author, ref statusMessage );
             if ( org != null && org.Id > 0 )
             {
                 if ( GroupManager.IsUserAnOrgApprover( org.Id, checkUserId ) )

@@ -1,19 +1,21 @@
-﻿using System;
+﻿ using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Web;
 using System.Web.Services;
+using System.Web.Script.Serialization;
 
 //TODO - remove direct calls to DAL and go thru biz services layer
 using LRWarehouse.DAL;
 using LRWarehouse.Business;
-using System.Web.Script.Serialization;
-using System.Data;
-using Isle.BizServices;
-using ILPathways.Utilities;
 
+using ILPathways.Business;
+using ILPathways.Utilities;
+using Isle.BizServices;
+using Isle.DTO;
 using AccountManager = Isle.BizServices.AccountServices;
-using DBM = Isle.BizServices.ResourceBizService;
+using ResBiz = Isle.BizServices.ResourceBizService;
 
 namespace ILPathways.Services
 {
@@ -27,7 +29,7 @@ namespace ILPathways.Services
     [System.Web.Script.Services.ScriptService]
     public class DetailService6 : System.Web.Services.WebService
     {
-        JavaScriptSerializer serializer = new JavaScriptSerializer( null );
+        JavaScriptSerializer serializer = new JavaScriptSerializer();
         UtilityService utilService = new UtilityService();
 
         #region Data getters
@@ -40,7 +42,12 @@ namespace ILPathways.Services
             {
                 //Get most of the data
                 ResourceVersion version = new ResourceVersionManager().Get( vid );
-                if ( version.IsValid == false || version.IsActive == false ) { throw new Exception(); }
+                if (version.IsValid == false || version.IsActive == false)
+                {
+                    throw new Exception();
+                }
+
+                Patron user = GetUser( userGUID );
 
                 //Single value fields
                 detail.versionID = vid;
@@ -60,6 +67,9 @@ namespace ILPathways.Services
 
                 //Multi value fields with controlled vocabulary
                 detail.itemType = GetMVF( "itemType", detail.intID, false, "Item Type" );
+                detail.accessibilityControl = GetMVF( "accessibilityControl", detail.intID, false, "Accessibility Control" );
+                detail.accessibilityFeature = GetMVF( "accessibilityFeature", detail.intID, false, "Accessibility Feature" );
+                detail.accessibilityHazard = GetMVF( "accessibilityHazard", detail.intID, false, "accessibility Hazard" );
                 detail.accessRights = GetMVF( "accessRights", detail.intID, false, "Access Rights" );
                 detail.language = GetMVF( "language", detail.intID, false, "Language" );
                 detail.careerCluster = GetMVF( "careerCluster", detail.intID, true, "Career Cluster" );
@@ -69,18 +79,41 @@ namespace ILPathways.Services
                 detail.mediaType = GetMVF( "mediaType", detail.intID, true, "Media Type" );
                 detail.educationalUse = GetMVF( "educationalUse", detail.intID, true, "Educational Use" );
                 detail.gradeLevel = GetMVF( "gradeLevel", detail.intID, true, "Grade Levels" );
+                detail.k12subject = GetMVF( "subject", detail.intID, true, "K-12 Subject" );
 
                 //Specially-formatted data
                 detail.usageRights = GetUsageRights( version.Rights );
                 detail.timeRequired = GetTimeRequired( version.TypicalLearningTime );
-                GetStandardsAndRubrics( ref detail, detail.intID, userGUID );
+
+                //TODO - update the following
+                //GetStandardsAndRubrics( ref detail, detail.intID, user );
+                GetStandards( ref detail, user );
+                GetEvaluations( ref detail, user );
+
                 detail.subject = GetFreeText( detail.intID, "subject" );
                 detail.keyword = GetFreeText( detail.intID, "keyword" );
-                detail.libColInfo = GetLibColInfo( detail.intID, userGUID );
+
+                detail.libColInfo = GetLibColInfo( detail.intID, user );
 
                 //Paradata
-                detail.paradata = GetParadata( detail.intID, userGUID );
+                detail.paradata = GetParadata( detail.intID, user );
                 detail.comments = GetComments( detail.intID );
+                bool canViewItem = true;
+
+                ContentItem item = new ContentServices().GetForResourceDetail(version.ResourceIntId, user, ref canViewItem);
+                if ( item != null && item.Id > 0 )
+                {
+                    FillRelatedContentDetail( detail, item );
+
+                    if ( canViewItem == false )
+                    {
+                        detail.lrDocID = "";
+                        detail.url = "";
+                        detail.IsPrivateDocument = true;
+                        //message should have been imbedded already?
+                        //detail.resourceNote += item.Message;
+                    }
+                }
             }
             catch ( Exception ex )
             {
@@ -88,6 +121,14 @@ namespace ILPathways.Services
             }
 
             return detail;
+        }
+
+        private void FillRelatedContentDetail(jsonDetail detail, ContentItem item)
+        {
+            //now determine what useful content info to add
+            //Q&D
+            if ( item.Message != null && item.Message.Length > 0 )
+                detail.resourceNote += "<div id='resourceMsg'>" + item.Message + "</div>";
         }
 
         [WebMethod]
@@ -98,7 +139,7 @@ namespace ILPathways.Services
             try
             {
                 DataSet ds = dataManager.SelectedCodes( ResourceDataManager.ResourceDataSubclassFinder.getSubclassByName( table ), intID );
-                if ( DBM.DoesDataSetHaveRows( ds ) )
+                if ( ResBiz.DoesDataSetHaveRows( ds ) )
                 {
                     list.name = table;
                     list.isMultiSelect = isMultiSelect;
@@ -106,9 +147,9 @@ namespace ILPathways.Services
                     foreach ( DataRow dr in ds.Tables[ 0 ].Rows )
                     {
                         var item = new jsonMVFItem();
-                        item.id = int.Parse( DBM.GetRowColumn( dr, "Id" ) );
-                        item.selected = bool.Parse( DBM.GetRowColumn( dr, "IsSelected" ) );
-                        item.title = DBM.GetRowColumn( dr, "Title" );
+                        item.id = int.Parse( ResBiz.GetRowColumn( dr, "Id" ) );
+                        item.selected = bool.Parse( ResBiz.GetRowColumn( dr, "IsSelected" ) );
+                        item.title = ResBiz.GetRowColumn( dr, "Title" );
                         list.items.Add( item );
                     }
                 }
@@ -128,7 +169,7 @@ namespace ILPathways.Services
         public List<BlankCBXL> GetCodeTables()
         {
             var dataManager = new ResourceDataManager();
-            string[] tables = new string[] { "accessRights", "careerCluster", "educationalUse", "mediaType", "gradeLevel", "groupType", "endUser", "itemType", "language", "resourceType" };
+            string[] tables = new string[] { "accessibilityControl", "accessibilityFeature","accessibilityHazard","accessRights", "careerCluster", "educationalUse", "mediaType", "gradeLevel", "groupType", "endUser", "itemType", "language", "resourceType" };
             var list = new List<BlankCBXL>();
 
             var count = 0;
@@ -144,9 +185,9 @@ namespace ILPathways.Services
                 foreach ( DataRow dr in ds.Tables[ 0 ].Rows )
                 {
                     var item = new jsonCBXLItem();
-                    item.id = int.Parse( DBM.GetRowColumn( dr, "Id" ) );
+                    item.id = int.Parse( ResBiz.GetRowColumn( dr, "Id" ) );
                     item.selected = false;
-                    item.title = DBM.GetRowColumn( dr, "Title" );
+                    item.title = ResBiz.GetRowColumn( dr, "Title" );
                     cbxl.items.Add( item );
                 }
                 list.Add( cbxl );
@@ -163,14 +204,21 @@ namespace ILPathways.Services
 
         #region Data setters
         [WebMethod]
-        public string DoStandardRating( string userGUID, int standardID, int rating, int versionID )
+        public string DoStandardRating( string userGUID, int standardID, int rating, int intID )
         {
-            int userID = GetUserID( userGUID );
-            if ( userID == 0 ) { return null; }
+          var user = GetUser(userGUID);
+          if(user == null || user.Id == 0)
+          {
+            return utilService.ImmediateReturn(null, false, "invalid user", null);
+          }
+            string status = "";
 
-            int intID = utilService.GetIntIDFromVersionID( versionID );
+            //create eval record
+          ResBiz.ResourceStandardEvaluation_Create( intID, standardID, user.Id, rating, ref status );
 
-            return serializer.Serialize( new ResourceEvaluationManager().RateStandard( userID, standardID, rating, intID ) );
+          var detail = new jsonDetail() { intID = intID };
+          GetStandards( ref detail, user );
+          return utilService.ImmediateReturn( detail.standards, true, "okay", null );
         }
 
         [WebMethod]
@@ -179,12 +227,18 @@ namespace ILPathways.Services
           string status = "";
           //Get/validate the user
           var user = GetUser( userGUID );
-          if ( user.IsValid == false ) { return null; }
+          if ( user.IsValid == false )
+          {
+              return null;
+          }
           //Init library service
           var libService = new Isle.BizServices.LibraryBizService();
           //Ensure this collection exists
           var collection = libService.LibrarySectionGet( collectionID );
-          if ( collection.IsValid == false ) { return null; }
+          if ( collection.IsValid == false )
+          {
+              return null;
+          }
           //Ensure this collection belongs to this user
           var myCollections = libService.LibrarySections_SelectListWithContributeAccess( libraryID, user.Id );
           bool foundCollection = false;
@@ -205,11 +259,16 @@ namespace ILPathways.Services
             libResource.ResourceIntId = intID;
             libResource.CreatedById = user.Id;
             libResource.LibraryId = libraryID;
-            int test = libService.LibraryResourceCreate( libResource, user, ref status );
+            //int test = libService.LibraryResourceCreate( libResource, user, ref status );
+            int test = libService.LibraryResourceCreate( libraryID, collection.Id, intID, user, ref status );
             if ( test > -1 )
             {
+
               //Get the refreshed library info and return it
-              var output = GetLibColInfo( intID, userGUID );
+              var output = GetLibColInfo( intID, user );
+
+              //14-07-07 mp - check for a status indicating approval required
+              output.message = status;
               return serializer.Serialize( output );
             }
           }
@@ -242,13 +301,14 @@ namespace ILPathways.Services
                 comment.Comment = text;
                 comment.CreatedById = userID;
                 comment.CreatedBy = new PatronManager().Get( userID ).FullName();
-                comment.IsActive = true;
+                //comment.IsActive = true;
 
                 //var commentID = 0;
                 var commentID = commentManager.Create( comment, ref status );
                 if ( commentID > 0 )
                 {
-                    new ElasticSearchManager().AddComment( intID.ToString() );
+                    //new ElasticSearchManager().AddComment( intID.ToString() );
+                    new ElasticSearchManager().RefreshResource( intID );
                     response.validComment = true;
                     response.comments = GetComments( intID );
                 }
@@ -264,9 +324,10 @@ namespace ILPathways.Services
 
 
         [WebMethod]
-        public string FindMoreLikeThis( int versionID, string parameters, int minFieldMatches )
+        public string FindMoreLikeThis( int intID, string text, string parameters, int minFieldMatches )
         {
-            return new ElasticSearchManager().FindMoreLikeThis( versionID, parameters.Split( ',' ), minFieldMatches, 12, 1 );
+            //return new ElasticSearchManager().FindMoreLikeThis( versionID, parameters.Split( ',' ), minFieldMatches, 12, 1 );
+            return new ElasticSearchManager().FindMoreLikeThis( intID, text, parameters.Split( ',' ) );
         }
 
         [WebMethod]
@@ -286,7 +347,8 @@ namespace ILPathways.Services
         {
             var intID = utilService.GetIntIDFromVersionID( versionID );
             new ResourceViewManager().Create( intID, GetUserID( userGUID ) );
-            new ElasticSearchManager().AddResourceView( intID.ToString() );
+            //new ElasticSearchManager().AddResourceView( intID.ToString() );
+            new ElasticSearchManager().RefreshResource( intID );
 
             return serializer.Serialize( GetClickThroughs( intID ) );
         }
@@ -310,11 +372,17 @@ namespace ILPathways.Services
             string status = "";
             update.subject = FixFreeText( update.subject );
             update.keyword = FixFreeText( update.keyword );
+            bool didTitle_DescChange = false;
 
             //do admin-only updates
             var permissions = SecurityManager.GetGroupObjectPrivileges( user, "ILPathways.LRW.Pages.ResourceDetail" );
             if ( permissions.CreatePrivilege > ( int )ILPathways.Business.EPrivilegeDepth.State )
             {
+
+                if ( update.title != resource.Version.Title
+                    || update.description != resource.Version.Description )
+                    didTitle_DescChange = true;
+
                 //Only change these if they pass validation
                 update.title = ValidateText( update.title, 8, ref status );
                 resource.Version.Title = ( status == "okay" ? update.title : resource.Version.Title );
@@ -324,6 +392,7 @@ namespace ILPathways.Services
 
                 update.requires = ValidateText( update.requires, 0, ref status );
                 resource.Version.Requirements = ( status == "okay" ? update.requires : resource.Version.Requirements );
+
             }
             else
             {
@@ -341,6 +410,10 @@ namespace ILPathways.Services
                 resource.Version.AccessRightsId = update.accessRights.id;
                 versionManager.UpdateById( resource.Version );
 
+                //check if need to sync title and desc changes for a content item
+                if (didTitle_DescChange == true)
+                    new ContentServices().HandleSyncResourceVersionChgs( resource.Version );
+
                 ProcessMVF( update.gradeLevel, userID, intID, "gradeLevel" );
                 ProcessMVF( update.careerCluster, userID, intID, "careerCluster" );
                 ProcessMVF( update.endUser, userID, intID, "endUser" );
@@ -348,6 +421,11 @@ namespace ILPathways.Services
                 ProcessMVF( update.resourceType, userID, intID, "resourceType" );
                 ProcessMVF( update.mediaType, userID, intID, "mediaType" );
                 ProcessMVF( update.educationalUse, userID, intID, "educationalUse" );
+                ProcessMVF( update.k12subject, userID, intID, "subject" );
+
+                ProcessMVF( update.accessibilityControl, userID, intID, "accessibilityControl" );
+                ProcessMVF( update.accessibilityFeature, userID, intID, "accessibilityFeature" );
+                ProcessMVF( update.accessibilityHazard, userID, intID, "accessibilityHazard" );
 
                 new ResourceLanguageManager().Create( intID, update.language.id, update.language.value, userID, ref status );
                 if ( update.itemType.id != 0 )
@@ -366,10 +444,15 @@ namespace ILPathways.Services
                     item.AlignmentTypeCodeId = standard.alignment.id;
                     item.AlignmentTypeValue = standard.alignment.value;
                     standardsManager.Create( item, ref status );
+
                 }
 
                 AddFreeTextItems( new ResourceKeywordManager(), update.keyword, userID, intID );
                 AddFreeTextItems( new ResourceSubjectManager(), update.subject, userID, intID );
+
+                //Update elasticsearch
+                //new ElasticSearchManager().RefreshRecord( intID );
+                new ElasticSearchManager().RefreshResource( intID );
             }
 
             //return updated resource
@@ -377,7 +460,7 @@ namespace ILPathways.Services
         }
 
         [WebMethod]
-        public string ReportIssue( string issue, string userGUID, int versionID )
+        public string ReportIssue( string issue, string userGUID, int resourceID )
         {
             string status = "";
             issue = ValidateText( issue, 5, ref status );
@@ -386,8 +469,8 @@ namespace ILPathways.Services
                 var user = GetUser( userGUID );
                 if ( user.IsValid )
                 {
-                    //string url = "http://ioer.ilsharedlearning.org/IOER/" + versionID + "/";
-                    string url = "/IOER/" + versionID + "/";
+                    //string url = "/IOER/" + resourceID + "/";
+                    string url = "/Resource/" + resourceID + "/";
                     url = UtilityManager.FormatAbsoluteUrl( url, false );
                     string toEmail = UtilityManager.GetAppKeyValue( "contactUsMailTo", "info@ilsharedlearning.org" );
                     string subject = "Reporting an issue!";
@@ -411,11 +494,15 @@ namespace ILPathways.Services
             var permissions = SecurityManager.GetGroupObjectPrivileges( user, "ILPathways.LRW.Pages.ResourceDetail" );
             if ( permissions.CreatePrivilege > ( int ) ILPathways.Business.EPrivilegeDepth.State )
             {
-                try {
-                    new ResourceVersionManager().SetActiveState( false, versionID );
+                try 
+                {
                     string response = "";
-                    var esManager = new ElasticSearchManager();
-                    new ElasticSearchManager().DeleteByVersionID( versionID, ref response );
+                    ResBiz.Resource_SetInactiveByVersionId( versionID, ref response );
+
+                    //new ResourceVersionManager().SetActiveState( false, versionID );
+                    
+                    //var esManager = new ElasticSearchManager();
+                    //new ElasticSearchManager().DeleteByVersionID( versionID, ref response );
 
                     ActivityBizServices.SiteActivityAdd( "Resource", "Deactivate", string.Format( "Resource VersionID: {0} was deactivated by {1}", versionID, user.FullName() ), user.Id, 0, versionID );
 
@@ -430,6 +517,12 @@ namespace ILPathways.Services
             {
                 return "You do not have permission to deactivate Resources!";
             }
+        }
+
+        [WebMethod]
+        public string RegenerateThumbnail( string userGUID, int resourceID, string url )
+        {
+          return utilService.RegenerateThumbnail( userGUID, resourceID, url );
         }
 
         #endregion
@@ -468,8 +561,8 @@ namespace ILPathways.Services
         {
             var output = new jsonUsageRights();
             //DataSet ds = CodeTableManager.ConditionsOfUse_Select(); //Not enough data
-            DataSet ds = DBM.DoQuery( "IF( SELECT COUNT(*) FROM [ConditionOfUse] WHERE [Url] = '" + rights + "' ) = 0 SELECT * FROM [ConditionOfUse] WHERE [Url] IS NULL ELSE SELECT * FROM [ConditionOfUse] WHERE [Url] = '" + rights + "'" );
-            if ( DBM.DoesDataSetHaveRows( ds ) )
+            DataSet ds = ResBiz.DoQuery( "IF( SELECT COUNT(*) FROM [ConditionOfUse] WHERE [Url] = '" + rights + "' ) = 0 SELECT * FROM [ConditionOfUse] WHERE [Url] IS NULL ELSE SELECT * FROM [ConditionOfUse] WHERE [Url] = '" + rights + "'" );
+            if ( ResBiz.DoesDataSetHaveRows( ds ) )
             {
                 DataRow dr = ds.Tables[ 0 ].Rows[ 0 ];
                 output.usageRightsText = Get( dr, "Summary" );
@@ -533,7 +626,7 @@ namespace ILPathways.Services
         {
             var list = new List<jsonComment>();
             DataSet ds = new ResourceCommentManager().Select( intID );
-            if ( DBM.DoesDataSetHaveRows( ds ) )
+            if ( ResBiz.DoesDataSetHaveRows( ds ) )
             {
                 foreach ( DataRow dr in ds.Tables[ 0 ].Rows )
                 {
@@ -550,53 +643,65 @@ namespace ILPathways.Services
             return list;
         }
 
-        public jsonDetailLibraryInfo GetLibColInfo( int intID, string userGUID )
+        public jsonDetailLibraryInfo GetLibColInfo( int resourceID, Patron user )
         {
           var output = new jsonDetailLibraryInfo();
-          var user = new AccountManager().GetByRowId( userGUID );
+          LibraryContributeDTO dto = new LibraryContributeDTO();
+
           var libService = new Isle.BizServices.LibraryBizService();
 
           //Get all of the libraries I have access to
           if ( user.Id > 0 )
           {
-            var myLibraries = libService.Library_SelectListWithContributeAccess( user.Id );
-            foreach ( ILPathways.Business.Library item in myLibraries )
-            {
-              //Fill out library data
-              var library = new jsonDetailLibrary();
-              library.isPersonalLibrary = item.LibraryTypeId == 1;
-              library.isInLibrary = libService.IsResourceInLibrary( item.Id, intID );
-              library.id = item.Id;
-              library.title = item.Title;
-              library.avatarURL = item.ImageUrl;
-              
-              //Get collections for this library
-              var collections = libService.LibrarySections_SelectListWithContributeAccess( item.Id, user.Id );
-              foreach ( ILPathways.Business.LibrarySection col in collections )
-              {
-                var collection = new jsonDetailLibCol();
-                collection.title = col.Title;
-                collection.id = col.Id;
-                collection.avatarURL = col.ImageUrl;
-                if ( col.IsDefaultSection )
-                {
-                  library.defaultCollectionID = col.Id;
-                }
-                library.collections.Add( collection );
-              }
+            libService.Library_SelectListWithContributeAccess( dto, user.Id );
 
-              output.myLibraries.Add( library );
+            if ( dto != null && dto.libraries != null && dto.libraries.Count > 0 )
+            {
+
+                //List<LibrarySummaryDTO> myLibraries = dto.libraries;
+
+                foreach ( LibrarySummaryDTO item in dto.libraries )
+                {
+                    //Fill out library data
+                    var library = new jsonDetailLibrary();
+                    library.isPersonalLibrary = item.LibraryTypeId == 1;
+                    library.isInLibrary = libService.IsResourceInLibrary( item.Id, resourceID );
+                    library.id = item.Id;
+                    if (item.UserNeedsApproval)
+                        library.title = item.Title + " [Requires Approval]";
+                    else
+                        library.title = item.Title;
+                    library.avatarURL = item.ImageUrl;
+
+                    //Get collections for this library
+                    //need to take into account if library is open contribute
+                    var collections = libService.LibrarySections_SelectListWithContributeAccess( item.Id, user.Id );
+                    foreach ( ILPathways.Business.LibrarySection col in collections )
+                    {
+                        var collection = new jsonDetailLibCol();
+                        collection.title = col.Title;
+                        collection.id = col.Id;
+                        collection.avatarURL = col.ImageUrl;
+                        if ( col.IsDefaultSection )
+                        {
+                            library.defaultCollectionID = col.Id;
+                        }
+                        library.collections.Add( collection );
+                    }
+
+                    output.myLibraries.Add( library );
+                }
             }
           }
 
           //Get all of the Libraries this Resource appears in
-          var inLibraries = libService.GetAllLibrariesWithResource( intID );
+          var inLibraries = libService.GetAllLibrariesWithResource( resourceID );
           foreach ( ILPathways.Business.Library item in inLibraries )
           {
             jsonDetailLibCol library = new jsonDetailLibCol();
             library.title = item.Title;
             library.id = item.Id;
-            library.avatarURL = (item.ImageUrl == "defaultUrl" ? "/images/isle.png" : item.ImageUrl );
+            library.avatarURL = (item.ImageUrl == "defaultUrl" ? "/images/ioer_med.png" : item.ImageUrl );
 
             output.libraries.Add( library );
           }
@@ -604,12 +709,12 @@ namespace ILPathways.Services
           return output;
         }
 
-        public jsonParadata GetParadata( int intID, string userGUID )
+        public jsonParadata GetParadata( int intID, Patron user )
         {
           var output = new jsonParadata();
 
           string testStatus = "";
-          var summary = new ResourceLikeSummaryManager().GetForDisplay( intID, GetUserID( userGUID ), ref testStatus );
+          var summary = new ResourceLikeSummaryManager().GetForDisplay( intID, user.Id, ref testStatus );
           output.likes = summary.LikeCount;
           output.dislikes = summary.DislikeCount;
           output.iLikeThis = summary.YouLikeThis;
@@ -624,45 +729,46 @@ namespace ILPathways.Services
         public jsonParadata AddLikeDislike( string userGUID, int versionID, bool isLike )
         {
             int intID = utilService.GetIntIDFromVersionID( versionID );
-            int userID = GetUserID( userGUID );
-            if ( userID == 0 ) { return null; }
+            Patron user = GetUser( userGUID );
+
+            if ( user.Id == 0 ) { return null; }
             var manager = new ResourceLikeManager();
             var like = new ResourceLike();
 
             //Need a proc for this
-            DataSet ds = DBM.DoQuery( "SELECT * FROM [Resource.Like] WHERE [ResourceIntId] = " + intID + " AND [CreatedById] = " + userID );
-            if ( DBM.DoesDataSetHaveRows( ds ) )
+            DataSet ds = ResBiz.DoQuery( "SELECT * FROM [Resource.Like] WHERE [ResourceIntId] = " + intID + " AND [CreatedById] = " + user.Id );
+            if ( ResBiz.DoesDataSetHaveRows( ds ) )
             {
-              return GetParadata( intID, userGUID );
+                return GetParadata( intID, user );
             }
 
             like.IsLike = isLike;
-            like.CreatedById = userID;
+            like.CreatedById = user.Id;
             like.ResourceIntId = intID;
             string status = "";
 
             manager.Create( like, ref status );
 
-            return GetParadata( intID, userGUID );
+            return GetParadata( intID, user );
         }
 
         public int GetClickThroughs( int intID )
         {
             int count = 0;
             //Need a proc for this
-            DataSet ds = DBM.DoQuery( "SELECT COUNT(*) AS 'Count' FROM [Resource.View] WHERE ResourceIntId = " + intID );
-            if ( DBM.DoesDataSetHaveRows( ds ) )
+            DataSet ds = ResBiz.DoQuery( "SELECT COUNT(*) AS 'Count' FROM [Resource.View] WHERE ResourceIntId = " + intID );
+            if ( ResBiz.DoesDataSetHaveRows( ds ) )
             {
                 count = GetInt( ds.Tables[ 0 ].Rows[ 0 ], "Count" );
             }
             return count;
         }
 
-        public void GetStandardsAndRubrics( ref jsonDetail input, int intID, string userGUID )
+        /*public void GetStandardsAndRubrics( ref jsonDetail input, int intID, Patron user )
         {
             try
             {
-                ResourceRatings ratings = new ResourceEvaluationManager().GetRatingsForResource( intID, GetUserID( userGUID ) );
+                ResourceRatings ratings = new ResourceEvaluationManager().GetRatingsForResource( intID, user.Id );
                 input.standards = ratings.standardRatings;
                 input.rubrics = ratings.rubricRatings;
             }
@@ -672,16 +778,73 @@ namespace ILPathways.Services
                 input.standards = ratings.standardRatings;
                 input.rubrics = ratings.rubricRatings;
             }
+
+        }*/
+        public void GetStandards ( ref jsonDetail detail, Patron user ) 
+        {
+          var statusMessage = "";
+          //detail.standards = new ResourceEvaluationManager().GetRatingsForResource( detail.intID, user.Id ).standardRatings;
+          detail.standards = ResourceBizService.ResourceStandardEvaluation_GetAll( detail.intID, user, ref statusMessage );
+          var alignments = new string[] { "Aligns to", "Assesses", "Teaches", "Requires" }; //kludge
+          foreach ( var item in detail.standards )
+          {
+            try
+            {
+              item.AlignmentType = alignments[ item.AlignmentTypeId ];
+            }
+            catch
+            {
+              item.AlignmentType = "Aligns to";
+            }
+          }
+          return;
+          //
+
+          /*var status = "";
+          var baseStandardData = new ResourceEvaluationManager().GetRatingsForResource( detail.intID, user.Id ).standardRatings; //Need alignment type, couldn't get it to come from database in the next call. so this will need to be temporary too.
+          var standardsEvalData = ResourceBizService.GetAllStandardEvaluationsForResource( detail.intID, user, ref status );
+
+          foreach ( var item in standardsEvalData )
+          {
+            var target = baseStandardData.Where( m => m.id == item.StandardId ).FirstOrDefault();
+            if ( target != null )
+            {
+              item.AlignmentType = target.alignmentType;
+              item.AlignmentTypeId = target.alignmentTypeID;
+            }
+          }
+          detail.standards = standardsEvalData;*/
         }
+        
+        public void GetEvaluations( ref jsonDetail detail, Patron user )
+        {
+          string status = "";
+          try
+          {
+            var data = ResourceBizService.GetAllEvaluationsForResource( detail.intID, user, ref status );
+            bool already = false;
+            bool can = false;
+            ResourceBizService.Evaluations_UserEvaluationStatus( 1, detail.intID, user, ref already, ref can );
+            detail.userAlreadyEvaluated = already;
+            detail.userCanEvaluate = can;
+            
+            detail.evaluations = data;
+          }
+          catch ( Exception ex )
+          {
+            LoggingHelper.LogError( ex.Message.ToString() + "; Rubric Status: " + status );
+          }
+        }
+
         protected string Get( DataRow dr, string column )
         {
-            return DBM.GetRowPossibleColumn( dr, column );
+            return ResBiz.GetRowPossibleColumn( dr, column );
         }
         protected int GetInt( DataRow dr, string column )
         {
             try
             {
-                return int.Parse( DBM.GetRowPossibleColumn( dr, column ) );
+                return int.Parse( ResBiz.GetRowPossibleColumn( dr, column ) );
             }
             catch
             {
@@ -702,7 +865,17 @@ namespace ILPathways.Services
         }
         protected Patron GetUser( string userGUID )
         {
-            return userGUID == "" ? new Patron() { IsValid = false } : new AccountManager().GetByRowId( userGUID );
+            Patron user = new Patron();
+
+            if ( userGUID.Trim() == "" )
+            {
+                user.IsValid = false;
+            }
+            else
+            {
+                user = new AccountServices().GetByRowId( userGUID );
+            }
+            return user;
         }
         protected string ValidateText( string text, int minimumLength, ref string status )
         {
@@ -743,7 +916,7 @@ namespace ILPathways.Services
             var manager = new ResourceDataManager();
             foreach ( IDValuePair pair in input )
             {
-                manager.Create( ResourceDataManager.ResourceDataSubclassFinder.getSubclassByName( table ), intID, pair.id, "", userID );
+                manager.Create( ResourceDataManager.ResourceDataSubclassFinder.getSubclassByName( table ), intID, pair.id, pair.value, userID );
             }
         }
         #endregion
@@ -777,7 +950,10 @@ namespace ILPathways.Services
                 mediaType = new jsonMVF();
                 educationalUse = new jsonMVF();
                 gradeLevel = new jsonMVF();
-                standards = new List<ResourceRating>();
+                k12subject = new jsonMVF();
+                //standards = new List<ResourceRating>();
+                standards = new List<ResourceStandardEvaluationSummary>();
+                //standards = new List<ResourceStandardEvaluationSummary>();
                 rubrics = new List<ResourceRating>();
                 comments = new List<jsonComment>();
                 usageRights = new jsonUsageRights();
@@ -786,6 +962,9 @@ namespace ILPathways.Services
                 libColInfo = new jsonDetailLibraryInfo();
                 paradata = new jsonParadata();
                 comments = new List<jsonComment>();
+                evaluations = new List<ResourceEvaluationSummaryDTO>();
+                resourceNote = "";
+                IsPrivateDocument = false;
             }
 
             //Single value items
@@ -794,6 +973,7 @@ namespace ILPathways.Services
             public string title { get; set; }
             public string url { get; set; }
             public string description { get; set; }
+            public string resourceNote { get; set; }
             public string requires { get; set; }
             public string created { get; set; }
             public string creator { get; set; }
@@ -802,10 +982,15 @@ namespace ILPathways.Services
             public string isBasedOnUrl { get; set; }
             public string timeRequired { get; set; }
             public string lrDocID { get; set; }
-
+                            
+            public bool IsPrivateDocument { get; set; }
             //Multi value fields with controlled vocabulary
             public jsonMVF itemType { get; set; }
             public jsonMVF accessRights { get; set; }
+            public jsonMVF accessibilityControl { get; set; }
+            public jsonMVF accessibilityFeature { get; set; }
+            public jsonMVF accessibilityHazard { get; set; }
+
             public jsonMVF language { get; set; }
             public jsonMVF careerCluster { get; set; }
             public jsonMVF endUser { get; set; }
@@ -814,14 +999,20 @@ namespace ILPathways.Services
             public jsonMVF mediaType { get; set; }
             public jsonMVF educationalUse { get; set; }
             public jsonMVF gradeLevel { get; set; }
+            public jsonMVF k12subject { get; set; }
 
             //Specially-formatted data
             public jsonUsageRights usageRights { get; set; }
-            public List<ResourceRating> standards { get; set; }
+            public List<ResourceStandardEvaluationSummary> standards { get; set; }
+            //public List<ResourceRating> standards { get; set; }
+            //public List<ResourceStandardEvaluationSummary> standards { get; set; }
             public List<ResourceRating> rubrics { get; set; }
+            public List<ResourceEvaluationSummaryDTO> evaluations { get; set; }
             public jsonFreeText subject { get; set; }
             public jsonFreeText keyword { get; set; }
             public jsonDetailLibraryInfo libColInfo { get; set; }
+            public bool userCanEvaluate { get; set; }
+            public bool userAlreadyEvaluated { get; set; }
 
             //Paradata
             public jsonParadata paradata { get; set; }
@@ -892,6 +1083,7 @@ namespace ILPathways.Services
             }
             public List<jsonDetailLibCol> libraries { get; set; }
             public List<jsonDetailLibrary> myLibraries { get; set; }
+            public string message { get; set; }
         }
         public class jsonDetailLibrary : jsonDetailLibCol
         {
@@ -934,6 +1126,7 @@ namespace ILPathways.Services
                 resourceType = new List<IDValuePair>();
                 mediaType = new List<IDValuePair>();
                 educationalUse = new List<IDValuePair>();
+                k12subject = new List<IDValuePair>();
                 subject = new List<string>();
                 keyword = new List<string>();
                 standards = new List<InputStandard>();
@@ -949,6 +1142,12 @@ namespace ILPathways.Services
             public List<IDValuePair> resourceType { get; set; }
             public List<IDValuePair> mediaType { get; set; }
             public List<IDValuePair> educationalUse { get; set; }
+            public List<IDValuePair> k12subject { get; set; }
+
+            public List<IDValuePair> accessibilityControl { get; set; }
+            public List<IDValuePair> accessibilityFeature { get; set; }
+            public List<IDValuePair> accessibilityHazard { get; set; }
+
             public string usageRights { get; set; }
             public string timeRequired { get; set; }
             public IDValuePair accessRights { get; set; }

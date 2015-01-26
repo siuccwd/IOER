@@ -32,7 +32,7 @@ namespace ILPathways.Business
 					//Ignore set
 				} else
 				{
-					this._name = value.Trim();
+					this._name = value != null ? value != null ? value.Trim() : "" : "";
 					HasChanged = true;
 				}
 			}
@@ -101,11 +101,28 @@ namespace ILPathways.Business
 					//Ignore set
 				} else
 				{
-					this._mainPhone = this.StripPhone( value.Trim() );
+					this._mainPhone = this.StripPhone( value != null ? value.Trim() : "" );
 					HasChanged = true;
 				}
 			}
 		}
+        public string MainPhoneFormatted
+        {
+            get
+            {
+                if ( _mainPhone == null || _mainPhone.Length == 0 )
+                    return "";
+                if ( _mainPhone.Length == 10 && _mainPhone.IndexOf( "-" ) == -1 )
+                {
+                    return _mainPhone.Substring( 0, 3 ) 
+                            + "-" + _mainPhone.Substring( 3, 3 ) 
+                            + "-" + _mainPhone.Substring( 6, 4 );
+
+                } else
+                    return this._mainPhone;
+            }
+
+        }
 
 		private string _mainExtension = "";
 		/// <summary>
@@ -130,7 +147,7 @@ namespace ILPathways.Business
                 }
                 else
 				{
-					this._mainExtension = value.Trim();
+					this._mainExtension = value != null ? value.Trim() : "";
 					HasChanged = true;
 				}
 			}
@@ -159,7 +176,7 @@ namespace ILPathways.Business
         } 
         else
 				{
-					this._altPhone = this.StripPhone( value.Trim() );
+					this._altPhone = this.StripPhone( value != null ? value.Trim() : "" );
 					HasChanged = true;
 				}
 			}
@@ -188,7 +205,7 @@ namespace ILPathways.Business
                 }
                 else 
 				{
-					this._altExtension = value.Trim();
+					this._altExtension = value != null ? value.Trim() : "";
 					HasChanged = true;
 				}
 			}
@@ -217,7 +234,7 @@ namespace ILPathways.Business
         }
         else
 				{
-					this._fax = this.StripPhone( value.Trim() );
+					this._fax = this.StripPhone( value != null ? value.Trim() : "" );
 					HasChanged = true;
 				}
 			}
@@ -317,6 +334,34 @@ namespace ILPathways.Business
 			}
 		}
 
+        private string _emailDomain = "";
+        /// <summary>
+        /// Gets/Sets EmailDomain
+        /// </summary>
+        public string EmailDomain
+        {
+            get
+            {
+                return this._emailDomain;
+            }
+            set
+            {
+                if ( this._emailDomain == value )
+                {
+                    //Ignore set
+                }
+                else if ( value == null )
+                {
+                    this._emailDomain = null;
+                    HasChanged = true;
+                }
+                else
+                {
+                    this._emailDomain = value.Trim();
+                    HasChanged = true;
+                }
+            }
+        }
 
         private string _logoUrl = "";
 		/// <summary>
@@ -387,7 +432,7 @@ namespace ILPathways.Business
 					//Ignore set
 				} else
 				{
-					this.OrgAddress.Address1 = value.Trim();
+					this.OrgAddress.Address1 = value != null ? value.Trim() : "";
 					HasChanged = true;
 				}
 			}
@@ -408,7 +453,7 @@ namespace ILPathways.Business
 					//Ignore set
 				} else
 				{
-					this.OrgAddress.Address2 = value.Trim();
+					this.OrgAddress.Address2 = value != null ? value.Trim() : "";
 					HasChanged = true;
 				}
 				
@@ -431,7 +476,7 @@ namespace ILPathways.Business
 					//Ignore set
 				} else
 				{
-					this.OrgAddress.City = value.Trim();
+					this.OrgAddress.City = value != null ? value.Trim() : "";
 					HasChanged = true;
 				}
 
@@ -454,7 +499,7 @@ namespace ILPathways.Business
 					//Ignore set
 				} else
 				{
-					this.OrgAddress.State = value.Trim();
+					this.OrgAddress.State = value != null ? value.Trim() : "";
 					HasChanged = true;
 				}
 				
@@ -476,7 +521,7 @@ namespace ILPathways.Business
 					//Ignore set
 				} else
 				{
-					this.OrgAddress.ZipCode = value.Trim();
+					this.OrgAddress.ZipCode = value != null ? value.Trim() : "";
 					HasChanged = true;
 				}
 			}
@@ -497,7 +542,7 @@ namespace ILPathways.Business
 					//Ignore set
 				} else
 				{
-					this.OrgAddress.ZipCode = value.Trim();
+					this.OrgAddress.ZipCode = value != null ? value.Trim() : "";
 					HasChanged = true;
 				}
 			}
@@ -519,7 +564,7 @@ namespace ILPathways.Business
 					//Ignore set
 				} else
 				{
-					this.OrgAddress.ZipCodePlus4 = value.Trim();
+					this.OrgAddress.ZipCodePlus4 = value != null ? value.Trim() : "";
 					HasChanged = true;
 				}
 			}
@@ -552,7 +597,7 @@ namespace ILPathways.Business
 					//Ignore set
 				} else
 				{
-					this.OrgAddress.CountyCode = value.Trim();
+					this.OrgAddress.CountyCode = value != null ? value.Trim() : "";
 					HasChanged = true;
 				}
 			}
@@ -574,13 +619,24 @@ namespace ILPathways.Business
 					//Ignore set
 				} else
 				{
-					this.OrgAddress.Country = value.Trim();
+					this.OrgAddress.Country = value != null ? value.Trim() : "";
 					HasChanged = true;
 				}
 			}
 		}//
 
-	
+        /// <summary>
+        /// Return address as a string
+        /// </summary>
+        /// <returns></returns>
+        public string AddressToString
+        {
+            get
+			{
+                return this.OrgAddress.AddressString(); 
+			}
+            
+        }//
 		#endregion
 
 
@@ -604,14 +660,7 @@ namespace ILPathways.Business
             return this.OrgAddress.FullAddress();
         } //
 
-        /// <summary>
-        /// Return address as a string
-        /// </summary>
-        /// <returns></returns>
-        public string AddressToString()
-        {
-            return this.OrgAddress.AddressString();
-        }//
+
 
         /// <summary>
         /// Format the full address line for html display

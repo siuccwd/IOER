@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Web;
 using System.Web.Services;
@@ -10,8 +11,8 @@ using System.Web.Script.Services;
 
 using LRWarehouse.DAL;
 using LRWarehouse.Business;
-using ILPathways.DAL;
-using System.Data;
+//using ILPathways.DAL;
+using Isle.BizServices;
 
 using DatabaseManager = LRWarehouse.DAL.DatabaseManager;
 using PatronManager = LRWarehouse.DAL.PatronManager;
@@ -217,9 +218,10 @@ namespace ILPathways.Services
             return GetFreeWords( data );
         }
 
-        protected Widget_MoreLikeThis Get_MoreLikeThis( int versionID )
+        protected Widget_MoreLikeThis Get_MoreLikeThis( int intID )
         {
-            return new Widget_MoreLikeThis() { result = new ElasticSearchManager().GetByVersionID( versionID ) };
+            //return new Widget_MoreLikeThis() { result = new ElasticSearchManager().GetByVersionID( versionID ) };
+            return new Widget_MoreLikeThis() { result = new ElasticSearchManager().FindMoreLikeThis( intID, "words", new string[] { "title", "description", "keywords" } ) };
         }
 
         protected Widget_Comments Get_Comments( int versionID )

@@ -18,18 +18,18 @@
     if (videosLoaded) {
       return;
     }
-    $("#overviewBox .youtube").attr("src", "//www.youtube.com/embed/j2wsNSGQQx4?wmode=transparent");
-    $("#overviewBox .youtubeLink").attr("href", "http://www.youtube.com/watch?v=j2wsNSGQQx4");
-    $("#searchBox .youtube").attr("src", "//www.youtube.com/embed/FedkwWdEiio?wmode=transparent");
-    $("#searchBox .youtubeLink").attr("href", "http://www.youtube.com/watch?v=FedkwWdEiio");
-    $("#contributeBox .youtube").attr("src", "//www.youtube.com/embed/AsuiH4bUdKY?wmode=transparent");
-    $("#contributeBox .youtubeLink").attr("href", "http://www.youtube.com/watch?v=AsuiH4bUdKY");
-    $("#resourceBox .youtube").attr("src", "//www.youtube.com/embed/TSvmUeVdGuQ?wmode=transparent");
-    $("#resourceBox .youtubeLink").attr("href", "http://www.youtube.com/watch?v=TSvmUeVdGuQ");
-    $("#librariesBox .youtube").attr("src", "//www.youtube.com/embed/bpUqQR0YZTA?wmode=transparent");
-    $("#librariesBox .youtubeLink").attr("href", "http://www.youtube.com/watch?v=bpUqQR0YZTA");
-    $("#shareBox .youtube").attr("src", "//www.youtube.com/embed/Kdgt1ZHkvnM?wmode=transparent");
-    $("#shareBox .youtubeLink").attr("href", "http://www.youtube.com/watch?v=j2wsNSGQQx4");
+    $("#overviewBox .youtube").attr("src", "//www.youtube.com/embed/vFxYZ4VAqtE?wmode=transparent&rel=0");
+    $("#overviewBox .youtubeLink").attr("href", "http://www.youtube.com/watch?v=vFxYZ4VAqtE");
+    $("#searchBox .youtube").attr("src", "//www.youtube.com/embed/6jaS81hUcwk?wmode=transparent&rel=0");
+    $("#searchBox .youtubeLink").attr("href", "http://www.youtube.com/watch?v=6jaS81hUcwk");
+    $("#contributeBox .youtube").attr("src", "//www.youtube.com/embed/Jo_tvwv8voU?wmode=transparent&rel=0");
+    $("#contributeBox .youtubeLink").attr("href", "http://www.youtube.com/watch?v=Jo_tvwv8voU");
+    $("#resourceBox .youtube").attr("src", "//www.youtube.com/embed/n-Iu4_gToDk?wmode=transparent&rel=0");
+    $("#resourceBox .youtubeLink").attr("href", "http://www.youtube.com/watch?v=n-Iu4_gToDk");
+    $("#librariesBox .youtube").attr("src", "//www.youtube.com/embed/7VgpIoUx5Fs?wmode=transparent&rel=0");
+    $("#librariesBox .youtubeLink").attr("href", "http://www.youtube.com/watch?v=7VgpIoUx5Fs");
+    $("#shareBox .youtube").attr("src", "//www.youtube.com/embed/pWJ9o7nGxTM?wmode=transparent&rel=0");
+    $("#shareBox .youtubeLink").attr("href", "http://www.youtube.com/watch?v=pWJ9o7nGxTM");
     videosLoaded = true;
   }
 
@@ -43,7 +43,8 @@
     var isSmall = contributeBox.css("display") == "block";
     var shareBox = $("#shareBox");
 
-    if (!isSmall && !videosLoaded) {
+    //if (!isSmall && !videosLoaded) {
+    if(true){
       loadVideos();
     }
 
@@ -138,8 +139,8 @@
     .data .youtubeBox { float: none; margin: 0 auto; display: block; }
   }
   @media screen and (max-width: 650px) {
-    .data .youtubeBox, .youtubeBox { display: none; }
-    .youtubeLink { display: block; }
+    /*.data .youtubeBox, .youtubeBox { display: none; }
+    .youtubeLink { display: block; }*/
     .downlinks a { display: block; width: 100%; margin-bottom: 1px; height: auto; padding: 5px 2px; }
     .downlinks a:first-child { border-radius: 5px 5px 0 0; }
     .downlinks a:last-child { margin-right: 0; border-radius: 0 0 5px 5px; }
@@ -178,6 +179,11 @@
     </svg>
 
     <div id="steps">
+
+      <div class="group" id="step-1" style="padding:10px; margin: 10px; display:none;">
+        <p style=" font-size: 20px; font-weight:bold; text-align: center;">Thank you for participating in today's Session!  <a href="http://surveymonkey.com/s/VWWQLQ5" target="_blank" style="font-size:inherit; font-weight:inherit;">Please let us know what you think!</a></p>
+      </div>
+
       <div class="step" id="step0">
         <div class="group" id="overviewBox">
           <img src="/images/icons/icon_help_med.png" class="icon" />
@@ -188,9 +194,11 @@
               <img src="/images/youtube-autoresizer.png" />
               <iframe class="youtube" src="" frameborder="0" allowfullscreen></iframe>
             </div>
-            <span>Hosting more than 200,000 open and available learning resources, IOER provides specific, standards-aligned resources utilizing filters and engaging tools to refine and share quality, peer-reviewed educational collections and resources. </span>
-            <a class="pdfLink" href="/OERThumbs/files/QuickStart.pdf" target="_blank">View PDF</a>
-            <a class="youtubeLink" href="#" target="_blank">Watch Video &rarr;</a>
+            <span>IOER provides you with one-click access to open, standards-aligned educational content. Use our tools to find, remix, and comment on resources for your personalized IOER learning library. Hosting more than 200,000 open and available learning resources, IOER provides specific, standards-aligned resources utilizing filters and engaging tools to refine and share quality, peer-reviewed educational collections and resources. </span>
+            <a class="pdfLink" href="/OERThumbs/files/QuickStart.pdf" target="_blank">Quick Start Guide (PDF)</a>
+            <a class="pdfLink" href="/OERThumbs/files/Admin.pdf" target="_blank">IOER Administration Guide (PDF)</a>
+            <a class="pdfLink" href="/OERThumbs/files/Overview.pptx" target="_blank">IOER Overview (PPTX)</a>
+            <a class="youtubeLink" href="http://www.youtube.com/watch?v=j2wsNSGQQx4" target="_blank">Watch Video &rarr;</a>
           </div>
         </div>
       </div>
@@ -202,13 +210,13 @@
           <h3>"I want to find Resources"</h3>
           <div class="data">
             <span>Providing a wide variety of Filters to refine your search, IOER have developed robust criteria for your search, such as Standards, Grade Level, Subjects and Career Clusters.  Finding quality learning materials is easier than ever with tools to sort and organize by Newest, Most Liked, Most Commented On, and a wide variety of Views and Libraries.</span>
-            <a class="pdfLink" href="/OERThumbs/files/Search.pdf" target="_blank">View PDF</a>
+            <a class="pdfLink" href="/OERThumbs/files/Search.pdf" target="_blank">Search Guide (PDF)</a>
           </div>
           <div class="youtubeBox">
             <img src="/images/youtube-autoresizer.png" />
             <iframe class="youtube" src="" frameborder="0" allowfullscreen></iframe>
           </div>
-          <a class="youtubeLink" href="#" target="_blank">Watch Video &rarr;</a>
+          <a class="youtubeLink" href="http://www.youtube.com/watch?v=FedkwWdEiio" target="_blank">Watch Video &rarr;</a>
           <div class="downlinks">
             <a href="/Libraries/Default.aspx" target="_blank">Libraries Search</a>
             <a href="/Search.aspx" target="_blank">Resources Search</a>
@@ -222,13 +230,16 @@
           <h3>"I want to submit Resources"</h3>
           <div class="data">
             <span>Many options for Contributing in IOER allow you to quickly tag a resource using standards alignment and keywords, create a new resource from your computer directly to the Internet, as well as more detailed tagging and creation tools.  Fast or methodical, IOER has learning resources for everyone.</span>
-            <a class="pdfLink" href="/OERThumbs/files/Contribute.pdf" target="_blank">View PDF</a>
+            <a class="pdfLink" href="/OERThumbs/files/Tagger.pdf" target="_blank">Full Tagger Guide (PDF)</a>
+            <a class="pdfLink" href="/OERThumbs/files/Contribute.pdf" target="_blank">Contribute Guide (PDF)</a>
+            <a class="pdfLink" href="/OERThumbs/files/LearningLists_about.pdf" target="_blank">About Learning Lists (PDF)</a>
+            <a class="pdfLink" href="/OERThumbs/files/LearningLists_create.pdf" target="_blank">How To Create Learning Lists (PDF)</a>
           </div>
           <div class="youtubeBox">
             <img src="/images/youtube-autoresizer.png" />
             <iframe class="youtube" src="" frameborder="0" allowfullscreen></iframe>
           </div>
-          <a class="youtubeLink" href="#" target="_blank">Watch Video &rarr;</a>
+          <a class="youtubeLink" href="http://www.youtube.com/watch?v=AsuiH4bUdKY" target="_blank">Watch Video &rarr;</a>
           <div class="downlinks">
             <a href="/Publish.aspx" target="_blank">Tagging Tool</a>
             <a href="/My/Author.aspx" target="_blank">Authoring Tool</a>
@@ -248,9 +259,9 @@
               <iframe class="youtube" src="" frameborder="0" allowfullscreen></iframe>
             </div>
             <span>Each resource has its own Detail Page, providing in-depth information about each resource found in IOER.  In addition to highly detailed standards-alignment tabs, Commenting, Likes and Sharing options are available with just a click for each resource in the Learning Registry, through IOER.</span>
-            <a class="pdfLink" href="/OERThumbs/files/Detail.pdf" target="_blank">View PDF</a>
+            <a class="pdfLink" href="/OERThumbs/files/Detail.pdf" target="_blank">Detail Page Guide (PDF)</a>
           </div>
-          <a class="youtubeLink" href="#" target="_blank">Watch Video &rarr;</a>
+          <a class="youtubeLink" href="http://www.youtube.com/watch?v=TSvmUeVdGuQ" target="_blank">Watch Video &rarr;</a>
         </div>
       </div>
 
@@ -265,9 +276,10 @@
               <iframe class="youtube" src="" frameborder="0" allowfullscreen></iframe>
             </div>
             <span>IOER Libraries provide many ways for you to tag, contribute, create, organize and share your learning resources with fast and easy-to-use tools that allow for public and private settings.  User and Organizational Libraries allow individuals and groups to quickly categorize their learning resources in so many ways.</span>
-            <a class="pdfLink" href="/OERThumbs/files/Libraries.pdf" target="_blank">View PDF</a>
+            <a class="pdfLink" href="/OERThumbs/files/Libraries.pdf" target="_blank">Libraries Guide (PDF)</a>
+            <a class="pdfLink" href="/OERThumbs/files/Libraries_howto.pdf" target="_blank">How To Create Libraries (PDF)</a>
           </div>
-          <a class="youtubeLink" href="#" target="_blank">Watch Video &rarr;</a>
+          <a class="youtubeLink" href="http://www.youtube.com/watch?v=bpUqQR0YZTA" target="_blank">Watch Video &rarr;</a>
         </div>
       </div>
 
@@ -277,14 +289,14 @@
           <h2>Sharing</h2>
           <h3>"I want to share Resources with my colleagues"</h3>
           <div class="data">
-            <!--<div class="youtubeBox">
+            <div class="youtubeBox">
               <img src="/images/youtube-autoresizer.png" />
               <iframe class="youtube" src="" frameborder="0" allowfullscreen></iframe>
-            </div>-->
+            </div>
             <span>Community-building is what IOER is all about!  As you begin building your selected library of chosen collections of learning resources, you will find a continued focus on adding responsive design tools to assist you in the development of your learning environment.</span>
-            <!--<a class="pdfLink" href="/OERThumbs/files/Contribute.pdf" target="_blank">View PDF</a>-->
+            <a class="pdfLink" href="/OERThumbs/files/Sharing.pdf" target="_blank">Sharing Guide (PDF)</a>
           </div>
-          <!--<a class="youtubeLink" href="#" target="_blank">Watch Video &rarr;</a>-->
+          <a class="youtubeLink" href="#" target="_blank">Watch Video &rarr;</a>
         </div>
       </div>
     </div>

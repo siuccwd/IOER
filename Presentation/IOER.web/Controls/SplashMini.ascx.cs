@@ -34,6 +34,7 @@ namespace ILPathways.Controls
         myFollowedLink.Visible = true;
         myCreatedLink.Visible = true;
         myNetworkLink.Visible = true;
+        myDashboardLink.Visible = true;
       }
       else
       {
@@ -43,6 +44,7 @@ namespace ILPathways.Controls
         myFollowedLink.Visible = false;
         myCreatedLink.Visible = false;
         myNetworkLink.Visible = false;
+        myDashboardLink.Visible = false;
       }
     }
   }

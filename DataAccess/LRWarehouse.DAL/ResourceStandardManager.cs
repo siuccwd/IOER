@@ -75,10 +75,10 @@ namespace LRWarehouse.DAL
                     {
                         entity.Id = id;
                     }
-                    else if ( newId.Length == 36 )
-                    {
-                        entity.RowId = new Guid( newId );
-                    }
+                    //else if ( newId.Length == 36 )
+                    //{
+                    //    //entity.RowId = new Guid( newId );
+                    //}
                 }
                 dr.Close();
                 dr = null;
@@ -99,9 +99,10 @@ namespace LRWarehouse.DAL
             try
             {
                 SqlParameter[] sqlParameter = new SqlParameter[6];
-                sqlParameter[0] = new SqlParameter("@ResourceId", entity.ResourceId);
-                sqlParameter[1] = new SqlParameter("@StandardId", entity.StandardId);
-                sqlParameter[2] = new SqlParameter("@OriginalValue", entity.StandardUrl);
+                //sqlParameter[0] = new SqlParameter("@ResourceId", "");
+                sqlParameter[0] = new SqlParameter("@StandardId", entity.StandardId);
+                sqlParameter[1] = new SqlParameter("@StandardUrl", entity.StandardUrl);
+                sqlParameter[2] = new SqlParameter("@NotationCode", entity.StandardNotationCode);
                 sqlParameter[3] = new SqlParameter("@TotalRows", SqlDbType.Int);
                 sqlParameter[3].Value = 0;
                 sqlParameter[3].Direction = ParameterDirection.Output;
