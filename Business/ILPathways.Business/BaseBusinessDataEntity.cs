@@ -60,7 +60,7 @@ namespace ILPathways.Business
 		protected string XML_US_HEADER = "<?xml version='1.0'  encoding='US-ASCII'?>";
 		protected string XML_APP_NODE = "<workNet>";
 		protected string XML_APP_NODE_CLOSE = "</workNet>";
-		public string DEFAULT_GUID = "00000000-0000-0000-0000-000000000000";
+		public static string DEFAULT_GUID = "00000000-0000-0000-0000-000000000000";
 		/// <summary>
 		/// Default date in place of the min date
 		/// </summary>

@@ -1,0 +1,29 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LinkChecker", "LinkChecker\LinkChecker.csproj", "{119FEC6D-6789-41EE-B3E3-C3302A3EA787}"
+EndProject
+Global
+	GlobalSection(TeamFoundationVersionControl) = preSolution
+		SccNumberOfProjects = 2
+		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
+		SccTeamFoundationServer = http://ides-tfs01:8080/tfs/illinois%20worknet
+		SccLocalPath0 = .
+		SccProjectUniqueName1 = LinkChecker\\LinkChecker.csproj
+		SccProjectName1 = LinkChecker
+		SccLocalPath1 = LinkChecker
+	EndGlobalSection
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x86 = Debug|x86
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{119FEC6D-6789-41EE-B3E3-C3302A3EA787}.Debug|x86.ActiveCfg = Debug|x86
+		{119FEC6D-6789-41EE-B3E3-C3302A3EA787}.Debug|x86.Build.0 = Debug|x86
+		{119FEC6D-6789-41EE-B3E3-C3302A3EA787}.Release|x86.ActiveCfg = Release|x86
+		{119FEC6D-6789-41EE-B3E3-C3302A3EA787}.Release|x86.Build.0 = Release|x86
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

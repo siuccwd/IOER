@@ -1,0 +1,12 @@
+
+Version 1.2 (March 25 2008)
+============================
+-A minor bug related to Polygons is fixed
+-Now you can enable or disable Traffic overlays.
+
+FRED
+
+Version 1.1 (March 23 2008)
+===========================
+-Now you can draw polylines and polygons with this control
+-A new property GoogleMapObject.APIVersion is added with this control. This will allow users to use any version of Google Maps API. Default version is 2.

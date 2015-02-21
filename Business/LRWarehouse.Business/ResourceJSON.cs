@@ -3,17 +3,131 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+
 namespace LRWarehouse.Business
 {
+  public class CRSResource
+  {
+    public CRSResource() 
+    {
+      keywords = new List<string>();
+      urlParts = new List<string>();
+      standardAliases = new List<string>();
+      gradeLevelAliases = new List<string>();
+      libraryIDs = new List<int>();
+      collectionIDs = new List<int>();
+      isleSectionIDs = new List<int>();
+      paradata = new JSONParadataSummary();
+      usageRights = new JSONUsageRights();
+      accessRights = new CRSField() { title = "Access Rights" };
+      accessibilityAPI = new CRSField() { title = "Accessibility API" };
+      accessibilityControl = new CRSField() { title = "Accessibility Control" };
+      accessibilityFeature = new CRSField() { title = "Accessibility Feature" };
+      accessibilityHazard = new CRSField() { title = "Accessibility Hazard" };
+      assessmentType = new CRSField() { title = "AssessmentType" };
+      educationalRole = new CRSField() { title = "End User" };
+      careerCluster = new CRSField() { title = "Career Cluster" };
+      training = new CRSField() { title = "Career Planning" };
+      disabilityTopic = new CRSField() { title = "Disability Topic" };
+      educationalUse = new CRSField() { title = "Educational Use" };
+      networking = new CRSField() { title = "Employer Program" };
+      gradeLevel = new CRSField() { title = "Grade Level" };
+      groupType = new CRSField() { title = "Group Type" };
+      itemType = new CRSField() { title = "Item Type" };
+      jobs = new CRSField() { title = "Job Preparation" };
+      inLanguage = new CRSField() { title = "Access Rights" };
+      mediaType = new CRSField() { title = "Media Type" };
+      learningResourceType = new CRSField() { title = "Resource Type" };
+      k12Subject = new CRSField() { title = "K-12 Subject" };
+      resources = new CRSField() { title = "Resource" };
+      //workSupportService = new CRSField() { title = "Work Support Service" };
+      wfePartner = new CRSField() { title = "Workforce Education Partner" };
+      explore = new CRSField() { title = "Workplace Skills" };
+      standards = new CRSField() { title = "Standards" };
+      //workNetSubject = new CRSField() { title = "workNet Subject" };
+      region = new CRSField() { title = "Region" };
+      targetSite = new CRSField() { title = "Target Sites" };
+      qualify = new CRSField() { title = "Qualify" };
+      layoffAssistance = new CRSField() { title = "Layoff Assistance" };
+      wioaWorks = new CRSField() { title = "WIOA Works" };
+    }
+    public int versionID { get; set; }
+    public int intID { get; set; }
+    public long timestamp { get; set; }
+    public int createdByID { get; set; }
+    public string title { get; set; }
+    public string sortTitle { get; set; }
+    public string description { get; set; }
+    public string url { get; set; }
+    public string lrDocID { get; set; }
+    public string requirements { get; set; }
+    public string timeRequired { get; set; }
+    public string created { get; set; }
+    public string creator { get; set; }
+    public string publisher { get; set; }
+    public string submitter { get; set; }
+    public List<string> keywords { get; set; }
+    public List<string> urlParts { get; set; }
+    public List<string> standardAliases { get; set; }
+    public List<string> gradeLevelAliases { get; set; }
+    public List<int> libraryIDs { get; set; }
+    public List<int> collectionIDs { get; set; }
+    public List<int> isleSectionIDs { get; set; }
+    public JSONUsageRights usageRights { get; set; }
+    public JSONParadataSummary paradata { get; set; }
+    public CRSField accessRights { get; set; }
+    public CRSField accessibilityAPI { get; set; }
+    public CRSField accessibilityControl { get; set; }
+    public CRSField accessibilityFeature { get; set; }
+    public CRSField accessibilityHazard { get; set; }
+    public CRSField assessmentType { get; set; }
+    public CRSField educationalRole { get; set; }
+    public CRSField careerCluster { get; set; }
+    public CRSField training { get; set; }
+    public CRSField disabilityTopic { get; set; }
+    public CRSField educationalUse { get; set; }
+    public CRSField networking { get; set; }
+    public CRSField gradeLevel { get; set; }
+    public CRSField groupType { get; set; }
+    public CRSField itemType { get; set; }
+    public CRSField jobs { get; set; }
+    public CRSField inLanguage { get; set; }
+    public CRSField mediaType { get; set; }
+    public CRSField learningResourceType { get; set; }
+    public CRSField k12Subject { get; set; }
+    public CRSField resources { get; set; }
+    //public CRSField workSupportService { get; set; }
+    public CRSField wfePartner { get; set; }
+    public CRSField explore { get; set; }
+    public CRSField standards { get; set; }
+    //public CRSField workNetSubject { get; set; } //workNet subject -- needs a better name ?
+    public CRSField region { get; set; }
+    public CRSField targetSite { get; set; }
+    public CRSField qualify { get; set; }
+    public CRSField layoffAssistance { get; set; }
+    public CRSField wioaWorks { get; set; }
+  }
+  public class CRSField
+  {
+    public CRSField() 
+    {
+      tags = new List<string>();
+      ids = new List<int>();
+    }
+    public string title { get; set; }
+    public List<string> tags { get; set; }
+    public List<int> ids { get; set; }
+  }
+
   public class ResourceJSON
   {
     public ResourceJSON()
     {
       keywords = new List<string>();
       urlParts = new List<string>();
-      standards = new JSONStandards();
+      standards = new MultiValueFieldWithAliases();
       usageRights = new JSONUsageRights();
-      fields = new List<MultiValueField>();
+      //fields = new List<MultiValueField>();
     }
     public int versionID;
     public int intID;
@@ -28,17 +142,16 @@ namespace LRWarehouse.Business
     public string creator { get; set; }
     public string publisher { get; set; }
     public string signer { get; set; }
-    public string originalVersionURL { get; set; }
     public List<string> keywords { get; set; }
     public List<string> urlParts { get; set; }
-    public JSONStandards standards { get; set; }
+    public MultiValueFieldWithAliases standards { get; set; }
+    public MultiValueFieldWithAliases gradeLevel { get; set; }
     public JSONUsageRights usageRights { get; set; }
-    public JSONParadataSummary paradataSummary { get; set; }
-    public List<MultiValueField> fields { get; set; }
-    /*public MultiValueField isleSection { get; set; }
+    public JSONParadataSummary paradata { get; set; }
+    //public List<MultiValueField> fields { get; set; }
+    public MultiValueField isleSection { get; set; }
     public MultiValueField alignmentType { get; set; }
     public MultiValueField itemType { get; set; }
-    public MultiValueField gradeLevel { get; set; }
     public MultiValueField subject { get; set; }
     public MultiValueField accessRights { get; set; }
     public MultiValueField careerCluster { get; set; }
@@ -52,51 +165,69 @@ namespace LRWarehouse.Business
     public MultiValueField accessibilityHazard { get; set; }
     public MultiValueField accessibilityAPI { get; set; }
     public MultiValueField accessibilityControl { get; set; }
-    public MultiValueField careerPlanning { get; set; }
-    public MultiValueField employer { get; set; }
+    public MultiValueField training { get; set; }
+    public MultiValueField networking { get; set; }
     public MultiValueField disability { get; set; }
-    public MultiValueField jobPreparation { get; set; }
+    public MultiValueField jobs { get; set; }
     public MultiValueField veterans { get; set; }
     public MultiValueField workforceEducationPartners { get; set; }
-    public MultiValueField workplaceSkills { get; set; }
-    public MultiValueField workSupportServices { get; set; }*/
+    public MultiValueField explore { get; set; }
+    public MultiValueField workSupportServices { get; set; }
   }
   public class MultiValueField
   {
     public MultiValueField()
     {
-      names = new List<string>();
+      titles = new List<string>();
       ids = new List<int>();
     }
-    public string esName { get; set; }
-    public string title { get; set; }
+    //public string esName { get; set; }
+    public string header { get; set; }
     public string type { get; set; }
     public int fieldID { get; set; }
-    public List<string> names { get; set; }
+    public List<string> titles { get; set; }
     public List<int> ids { get; set; }
   }
   public class JSONParadataSummary
   {
-    public int commentsCount { get; set; }
-    public int detailViews { get; set; }
-    public int resourceViews { get; set; }
-    public int likes { get; set; }
-    public int dislikes { get; set; }
-    public int ratingScore { get; set; }
-    public int evaluationsCount { get; set; }
-    public double evaluationsScore { get; set; }
-    public int favoritesCount { get; set; }
-  }
-  public class JSONStandards : MultiValueField
-  {
-    public JSONStandards()
+    public JSONParadataSummary()
     {
-      parts = new List<string>();
+      views = new Views();
+      evaluations = new Evaluations();
+      ratings = new Ratings();
     }
-    public List<string> parts { get; set; }
+    public int comments { get; set; }
+    public int favorites { get; set; }
+    public Views views { get; set; }
+    public Evaluations evaluations { get; set; }
+    public Ratings ratings { get; set; }
+    public class Views { 
+      public int detail { get; set; } 
+      public int resource { get; set; } 
+    }
+    public class Evaluations { 
+      public int count { get; set; } 
+      public double score { get; set; } 
+    }
+    public class Ratings { 
+      public int likes { get; set; } 
+      public int dislikes { get; set; } 
+      public double score { get; set; } 
+    }
   }
-  public class JSONUsageRights : MultiValueField
+  public class MultiValueFieldWithAliases : MultiValueField
   {
+    public MultiValueFieldWithAliases()
+    {
+      aliases = new List<string>();
+    }
+    public List<string> aliases { get; set; }
+  }
+  public class JSONUsageRights
+  {
+    public int id { get; set; }
+    public string title { get; set; }
+    public string description { get; set; }
     public string url { get; set; }
     public string iconURL { get; set; }
     public string miniIconURL { get; set; }
@@ -366,5 +497,52 @@ namespace LRWarehouse.Business
         public string usageRightsURL;
         public string usageRightsIconURL;
         public string usageRightsMiniIconURL;
+    }
+
+
+  //New as of January 2015
+    public class ResourceJSONV7
+    {
+      public ResourceJSONV7()
+      {
+        fields = new List<TagCategory>();
+      }
+      public int versionID { get; set; }
+      public int intID { get; set; }
+      public string created { get; set; }
+      public long timestamp { get; set; }
+      public int createdByID { get; set; }
+      public string title { get; set; }
+      public string sortTitle { get; set; }
+      public string description { get; set; }
+      public string url { get; set; }
+      public string lrDocID { get; set; }
+      public string requirements { get; set; }
+      public string timeRequired { get; set; }
+      public string creator { get; set; }
+      public string publisher { get; set; }
+      public string submitter { get; set; }
+      public List<string> keywords { get; set; }
+      public List<string> urlParts { get; set; }
+      public List<string> standardAliases { get; set; }
+      public List<string> gradeLevelAliases { get; set; }
+      public List<int> libraryIDs { get; set; }
+      public List<int> collectionIDs { get; set; }
+      public List<int> isleSectionIDs { get; set; }
+      public JSONUsageRights usageRights { get; set; }
+      public JSONParadataSummary paradata { get; set; }
+      public List<TagCategory> fields { get; set; }
+    }
+    public class TagCategory
+    {
+      public TagCategory()
+      {
+        tags = new List<string>();
+        tagIDs = new List<int>();
+      }
+      public int catID { get; set; }
+      public string cat { get; set; }
+      public List<string> tags { get; set; }
+      public List<int> tagIDs { get; set; }
     }
 }

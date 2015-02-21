@@ -4,37 +4,36 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2008/10/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram DiagramId="6ba65081af92404590bc8ef05d44e801" Name="Diagram1" ZoomLevel="100">
-        <EntityTypeShape EntityType="GatewayModel1.AppGroup" Width="1.5" PointX="3" PointY="10.125" IsExpanded="true" />
-        <EntityTypeShape EntityType="GatewayModel1.AppGroup_Member" Width="1.5" PointX="5.25" PointY="6.25" IsExpanded="true" />
-        <EntityTypeShape EntityType="GatewayModel1.AppGroup_OrgMember" Width="1.5" PointX="8.25" PointY="11.125" IsExpanded="true" />
-        <EntityTypeShape EntityType="GatewayModel1.AppGroup_Privilege" Width="1.5" PointX="5.25" PointY="15.625" IsExpanded="true" />
-        <EntityTypeShape EntityType="GatewayModel1.AppGroup_TeamMember" Width="1.5" PointX="5.25" PointY="21.375" IsExpanded="true" />
-        <EntityTypeShape EntityType="GatewayModel1.Application" Width="1.5" PointX="0.75" PointY="6.625" IsExpanded="true" />
-        <EntityTypeShape EntityType="GatewayModel1.Application_Member" Width="1.5" PointX="16" PointY="5.125" IsExpanded="true" />
-        <EntityTypeShape EntityType="GatewayModel1.ApplicationObject" Width="1.5" PointX="3" PointY="16.875" IsExpanded="true" />
-        <EntityTypeShape EntityType="GatewayModel1.ApplicationRolePrivilege" Width="1.5" PointX="5.25" PointY="26.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="GatewayModel1.AppUser" Width="1.5" PointX="13.75" PointY="5.125" IsExpanded="true" />
+      <Diagram DiagramId="6ba65081af92404590bc8ef05d44e801" Name="Diagram1" ZoomLevel="71">
+        <EntityTypeShape EntityType="GatewayModel1.AppGroup" Width="1.5" PointX="2.75" PointY="9.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="GatewayModel1.AppGroup_Member" Width="1.5" PointX="0.625" PointY="6.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="GatewayModel1.AppGroup_OrgMember" Width="2.25" PointX="4" PointY="11.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="GatewayModel1.AppGroup_Privilege" Width="2.5" PointX="4.5" PointY="16" IsExpanded="true" />
+        <EntityTypeShape EntityType="GatewayModel1.AppGroup_TeamMember" Width="3.25" PointX="5.5" PointY="20.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="GatewayModel1.Application" Width="1.5" PointX="4.5" PointY="5.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="GatewayModel1.Application_Member" Width="2.125" PointX="7.5" PointY="5.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="GatewayModel1.ApplicationObject" Width="1.75" PointX="0.875" PointY="16.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="GatewayModel1.ApplicationRolePrivilege" Width="1.875" PointX="0.75" PointY="20.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="GatewayModel1.AppUser" Width="1.5" PointX="12.5" PointY="5" IsExpanded="true" />
         <EntityTypeShape EntityType="GatewayModel1.AppUser_ExternalAccount" Width="1.5" PointX="19" PointY="5.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="GatewayModel1.AppUser_Profile" Width="1.5" PointX="16" PointY="13.375" IsExpanded="true" />
-        <EntityTypeShape EntityType="GatewayModel1.Codes_AuthorizationLevel" Width="1.5" PointX="0.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="GatewayModel1.AppUser_Profile" Width="1.5" PointX="18.875" PointY="9.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="GatewayModel1.Codes_AuthorizationLevel" Width="1.75" PointX="0.5" PointY="0.625" IsExpanded="true" />
         <EntityTypeShape EntityType="GatewayModel1.Codes_ExternalSite" Width="1.5" PointX="16.75" PointY="2.125" IsExpanded="true" />
-        <EntityTypeShape EntityType="GatewayModel1.Codes_GroupType" Width="1.5" PointX="0.75" PointY="3.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="GatewayModel1.Codes_OrgMemberRole" Width="2.125" PointX="8.375" PointY="7.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="GatewayModel1.Codes_OrgMemberType" Width="1.5" PointX="3.75" PointY="2.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="GatewayModel1.Codes_GroupType" Width="2.5" PointX="0.75" PointY="3.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="GatewayModel1.Codes_OrgMemberRole" Width="2.125" PointX="15.25" PointY="13.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="GatewayModel1.Codes_OrgMemberType" Width="1.5" PointX="12.125" PointY="10" IsExpanded="true" />
         <EntityTypeShape EntityType="GatewayModel1.Codes_OrgType" Width="1.5" PointX="5.75" PointY="0.75" IsExpanded="true" />
         <EntityTypeShape EntityType="GatewayModel1.Codes_PrivilegeDepth" Width="1.5" PointX="7.5" PointY="2.75" IsExpanded="true" />
         <EntityTypeShape EntityType="GatewayModel1.Codes_PrivilegeType" Width="1.5" PointX="7.75" PointY="0.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="GatewayModel1.Codes_PublishingRole" Width="1.5" PointX="3" PointY="0.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="GatewayModel1.Codes_PublishingRole" Width="2" PointX="3" PointY="0.5" IsExpanded="true" />
         <EntityTypeShape EntityType="GatewayModel1.CodeTable" Width="1.5" PointX="9.75" PointY="0.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="GatewayModel1.EmailNotice" Width="1.5" PointX="10.75" PointY="14.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="GatewayModel1.Organization" Width="1.5" PointX="0.75" PointY="9.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="GatewayModel1.Organization_Member" Width="1.5" PointX="6" PointY="11.125" IsExpanded="true" />
-        <EntityTypeShape EntityType="GatewayModel1.Organization_MemberRole" Width="2.375" PointX="11.25" PointY="11.5" IsExpanded="true" />
-        <EntityTypeShape EntityType="GatewayModel1.OrganizationRequest" Width="1.5" PointX="11.75" PointY="0.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="GatewayModel1.OrganizationTemp" Width="1.5" PointX="12.75" PointY="14.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="GatewayModel1.SqlQuery" Width="1.5" PointX="13.75" PointY="0.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="GatewayModel1.LR_PatronOrgSummary" Width="1.5" PointX="7.75" PointY="15.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="GatewayModel1.EmailNotice" Width="1.5" PointX="18.75" PointY="13.75" IsExpanded="false" />
+        <EntityTypeShape EntityType="GatewayModel1.Organization" Width="1.5" PointX="7" PointY="10.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="GatewayModel1.Organization_Member" Width="2" PointX="9.125" PointY="10.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="GatewayModel1.OrganizationRequest" Width="1.5" PointX="14.625" PointY="10.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="GatewayModel1.OrganizationTemp" Width="2.125" PointX="17.875" PointY="14.5" IsExpanded="false" />
+        <EntityTypeShape EntityType="GatewayModel1.SqlQuery" Width="1.5" PointX="20.125" PointY="0.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="GatewayModel1.LR_PatronOrgSummary" Width="1.5" PointX="19.625" PointY="16.75" IsExpanded="true" FillColor="255, 192, 128" />
         <AssociationConnector Association="GatewayModel1.FK_AppGroup_OrgMember_AppGroup" ManuallyRouted="false" />
         <AssociationConnector Association="GatewayModel1.FK_AppGroup_Privilege_AppGroup" ManuallyRouted="false" />
         <AssociationConnector Association="GatewayModel1.FK_AppGroup_Application" ManuallyRouted="false" />
@@ -50,12 +49,15 @@
         <AssociationConnector Association="GatewayModel1.FK_AppUser_ExternalSite_AppUser" ManuallyRouted="false" />
         <AssociationConnector Association="GatewayModel1.FK_AppUser_Profile_AppUser" ManuallyRouted="false" />
         <AssociationConnector Association="GatewayModel1.FK_AppUser_ExternalSite_Codes_ExternalSite" ManuallyRouted="false" />
-        <AssociationConnector Association="GatewayModel1.FK_Organization_MemberRole_Codes_OrgMemberRole" ManuallyRouted="false" />
         <AssociationConnector Association="GatewayModel1.FK_Organization_Member_Codes_OrgMemberType" ManuallyRouted="false" />
         <AssociationConnector Association="GatewayModel1.FK_Organization_Member_Organization" ManuallyRouted="false" />
-        <AssociationConnector Association="GatewayModel1.FK_Organization_MemberRole_Organization_Contact" ManuallyRouted="false" />
-        <EntityTypeShape EntityType="GatewayModel1.AppVisitLog" Width="1.5" PointX="5.3694944816499461" PointY="3.8605142402744455" />
-        <EntityTypeShape EntityType="GatewayModel1.Codes_State" Width="1.5" PointX="6.0513086887315426" PointY="29.222234262722655" />
+        <EntityTypeShape EntityType="GatewayModel1.AppVisitLog" Width="1.5" PointX="16.375" PointY="4.375" />
+        <EntityTypeShape EntityType="GatewayModel1.Codes_State" Width="1.5" PointX="21.75" PointY="10.25" />
+        <EntityTypeShape EntityType="GatewayModel1.Organization_MemberRole" Width="2.75" PointX="10.75" PointY="13.875" />
+        <AssociationConnector Association="GatewayModel1.FK_Organization_MemberRole_Codes_OrgMemberRole" />
+        <AssociationConnector Association="GatewayModel1.FK_Organization_MemberRole_Organization_Contact" />
+        <EntityTypeShape EntityType="GatewayModel1.Organization_AdminMembers" Width="2" PointX="16.375" PointY="16.875" FillColor="255, 192, 128" />
+        <EntityTypeShape EntityType="GatewayModel1.Organization_MemberSummary" Width="2.625" PointX="21.875" PointY="16.75" FillColor="255, 192, 128" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

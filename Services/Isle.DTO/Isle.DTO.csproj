@@ -1,0 +1,104 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{A16BE910-9990-48DC-A9DE-F5985D50D09C}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Isle.DTO</RootNamespace>
+    <AssemblyName>Isle.DTO</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\..\packages\Newtonsoft.Json.6.0.2\lib\net40\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Common\AJAXResponse.cs" />
+    <Compile Include="Common\ObjectMember.cs" />
+    <Compile Include="Common\SiteParams.cs" />
+    <Compile Include="Content\ContentNode.cs" />
+    <Compile Include="Content\ContentTag.cs" />
+    <Compile Include="Content\Content_TagSummary.cs" />
+    <Compile Include="Content\Curriculum.cs" />
+    <Compile Include="Content\LearningListNode.cs" />
+    <Compile Include="Content\NodeRequest.cs" />
+    <Compile Include="Dashboard\DashboardDTO.cs" />
+    <Compile Include="Dashboard\DashboardResourceDTO.cs" />
+    <Compile Include="Dashboard\ResourcesBox.cs" />
+    <Compile Include="Filters\Filters.cs" />
+    <Compile Include="Filters\Site.cs" />
+    <Compile Include="Filters\SiteTagCategory.cs" />
+    <Compile Include="Library\CollectionDTO.cs" />
+    <Compile Include="Library\LibraryContributeDTO.cs" />
+    <Compile Include="Library\LibraryDTO.cs" />
+    <Compile Include="Paradata\CommentDTO.cs" />
+    <Compile Include="Resource\CodesTagValue.cs" />
+    <Compile Include="Resource\CodesTagValueKeyword.cs" />
+    <Compile Include="Resource\Resource.cs" />
+    <Compile Include="Resource\ResourceDTO.cs" />
+    <Compile Include="Resource\ResourceEvaluationDTO.cs" />
+    <Compile Include="Resource\ResourceEvaluationSummaryDTO.cs" />
+    <Compile Include="Resource\ResourceStandardEvaluationSummary.cs" />
+    <Compile Include="Resource\ResourceTransformDTO.cs" />
+    <Compile Include="Resource\StandardDTO.cs" />
+    <Compile Include="SiteFiltersDTO.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SiteFiltersTagsDTO.cs" />
+    <Compile Include="SiteFilterValueDTO.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Business\ILPathways.Business\ILPathways.Business.csproj">
+      <Project>{cae031c2-7899-4cc3-9772-0787e65977a2}</Project>
+      <Name>ILPathways.Business</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Business\LRWarehouse.Business\LRWarehouse.Business.csproj">
+      <Project>{e5d37489-c4fc-48c9-a714-5610610a27e4}</Project>
+      <Name>LRWarehouse.Business</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

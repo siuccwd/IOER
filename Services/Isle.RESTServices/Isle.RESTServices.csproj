@@ -131,6 +131,7 @@
     <Content Include="UserDataService.svc" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="Web.config" />
     <None Include="Web.Debug.config" />
     <None Include="Web.Release.config" />

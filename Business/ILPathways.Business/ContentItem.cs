@@ -14,7 +14,22 @@ namespace ILPathways.Business
         ///</summary>
         public ContentItem()
         {
+            RowId = Guid.NewGuid();
+            UsingContentStandards = true;
+            ChildItems = new List<ContentItem>();
+            ContentStandards = new List<Content_StandardSummary>();
+            ContentChildrenStandards = new List<Content_StandardSummary>();
 
+            Standards = new List<ContentResourceStandard>();
+            ChildrenStandards = new List<ContentResourceStandard>();
+            DocumentPrivacyMessage = "";
+            Timeframe = "";
+            DocumentUrl = "";
+            AutoPreviewUrl = "";
+            FileName = "";
+            FilePath = "";
+            DocumentPath = "";
+            //NodeResources = new List<NodeResource>();
         }
 
         /// <summary>
@@ -26,6 +41,16 @@ namespace ILPathways.Business
         public static int ORG_HOME_PAGE_CONTENT_ID = 25;
         public static int LESSON_PLAN_CONTENT_ID = 30;
         public static int DOCUMENT_CONTENT_ID = 40;
+        public static int EXTERNAL_URL_CONTENT_ID = 41;
+
+        public static int CURRICULUM_CONTENT_ID = 50;
+        public static int MODULE_CONTENT_ID = 52;
+        public static int UNIT_CONTENT_ID = 54;
+        public static int LESSON_CONTENT_ID = 56;
+        public static int ACTIVITY_CONTENT_ID = 58;
+        public static int ASSESSMENT_CONTENT_ID = 59;
+
+        public static int FEATURED_CONTENT_SORT_ORDER = -1;
 
         /// <summary>
         /// Status types
@@ -41,7 +66,8 @@ namespace ILPathways.Business
         public static int MY_ORG_PRIVILEGE = 2;
         public static int MY_REGION_PRIVILEGE = 3;
         public static int MY_STATE_PRIVILEGE = 4;
-        public static int MY_ORG_AND_CLIENTS_PRIVILEGE = 5;
+        public static int MY_ORG_AND_STUDENTS_PRIVILEGE = 5;
+        public static int ISLE_ORG_MEMBER_PRIVILEGE = 6;
 
         #region Properties
 
@@ -140,6 +166,51 @@ namespace ILPathways.Business
                 }
             }
         }
+        private string _contentType = "";
+        /// <summary>
+        /// Gets/Sets ContentType
+        /// </summary>
+        public string ContentType
+        {
+            get
+            {
+                if ( _contentType.Length > 0 )
+                    return this._contentType;
+                else
+                {
+                    if ( TypeId == 0 )
+                    {
+                        return "";
+                    }
+                    else
+                    {
+                        if ( TypeId == 59 ) return "Assessment";
+                        else if ( TypeId == 58 ) return "Activity";
+                        else if ( TypeId == 56 ) return "Lesson";
+                        else if ( TypeId == 54 ) return "Unit";
+                        else if ( TypeId == 52 ) return "Module";
+                        else if ( TypeId == 50 ) return "Curriculum";
+                        else if ( TypeId == 40 ) return "Document";
+                        else if ( TypeId == 30 ) return "Lesson Plan";
+                        else if ( TypeId == 15 ) return "Template";
+                        else if ( TypeId == 10 ) return "Content";
+                        else return "Content";
+                    }
+                }
+            }
+            set
+            {
+                if ( this._contentType == value )
+                {
+                    //Ignore set
+                }
+                else
+                {
+                    this._contentType = value.Trim();
+                    HasChanged = true;
+                }
+            }
+        }
 
         private bool _isOrgContent;
         /// <summary>
@@ -205,29 +276,9 @@ namespace ILPathways.Business
             }
         }
 
-        private string _contentType = "";
-        /// <summary>
-        /// Gets/Sets ContentType
-        /// </summary>
-        public string ContentType
-        {
-            get
-            {
-                return this._contentType;
-            }
-            set
-            {
-                if ( this._contentType == value )
-                {
-                    //Ignore set
-                }
-                else
-                {
-                    this._contentType = value.Trim();
-                    HasChanged = true;
-                }
-            }
-        }
+        public int ParentId { get; set; }
+        public int SortOrder { get; set; }
+
         private int _statusId;
         /// <summary>
         /// Gets/Sets StatusId
@@ -261,6 +312,8 @@ namespace ILPathways.Business
         {
             get
             {
+                if ( StatusId > 0 && _status == "" )
+                    _status = GetStatusTitle( StatusId );
                 return this._status;
             }
             set
@@ -276,10 +329,29 @@ namespace ILPathways.Business
                 }
             }
         }
+        public string GetStatusTitle( int statusId )
+        {
+            string title = "";
 
+            if ( statusId == 1 )
+                return "Draft";
+            else if ( statusId == 2 )
+                return "In Progress";
+            else if ( statusId == 3 )
+                return "Submitted";
+            else if ( statusId == 4 )
+                return "Revisions Required";
+            else if ( statusId == 5 )
+                return "Published";
+            else if ( statusId == 8 )
+                return "Inactive";
+            else 
+                return "";
+        }
         private bool _isPublished = false;
         /// <summary>
         /// Gets/Sets IsPublished
+        /// TODO - should probably just depend on the statusId = 5??
         /// </summary>
         public bool IsPublished
         {
@@ -426,7 +498,7 @@ namespace ILPathways.Business
         /// <summary>
         /// Gets/Sets the ResourceVersionId
         /// </summary>
-        public int ResourceVersionId
+        private int ResourceVersionId
         {
             get
             {
@@ -442,6 +514,35 @@ namespace ILPathways.Business
                 {
                     this._resourceVersionId = value;
                     HasChanged = true;
+                    //just in case
+                    if ( _resourceVersionId == 0 )
+                        _resourceIntId = 0;
+
+                }
+            }
+        }//
+        private int _resourceIntId;
+        /// <summary>
+        /// Gets/Sets the ResourceIntId
+        /// </summary>
+        public int ResourceIntId
+        {
+            get
+            {
+                return this._resourceIntId;
+            }
+            set
+            {
+                if ( this._resourceIntId == value )
+                {
+                    //Ignore set
+                }
+                else
+                {
+                    this._resourceIntId = value;
+                    HasChanged = true;
+                    if ( _resourceIntId == 0 )
+                        _resourceVersionId = 0;
                 }
             }
         }//
@@ -470,54 +571,9 @@ namespace ILPathways.Business
             }
         }
 
-        private string _resourceUrl = "";
-        /// <summary>
-        /// Gets/Sets ResourceUrl for the attached document - use case where a single document is uploaded 
-        /// </summary>
-        public string DocumentUrl
-        {
-            get
-            {
-                return this._resourceUrl;
-            }
-            set
-            {
-                if ( this._resourceUrl == value )
-                {
-                    //Ignore set
-                }
-                else
-                {
-                    this._resourceUrl = value.Trim();
-                    HasChanged = true;
-                }
-            }
-        }
-
-        private Guid _documentRowId;
-        public Guid DocumentRowId
-        {
-            get
-            {
-                return this._documentRowId;
-            }
-            set
-            {
-                if ( this._documentRowId == value )
-                {
-                    //Ignore set
-                }
-                else
-                {
-                    this._documentRowId = value;
-                    HasChanged = true;
-                }
-            }
-        }
-
-
+        public string ImageUrl { get; set; }
         #endregion
-
+        
         #region composite properties
 
         private string _conditionsOfUse;
@@ -635,12 +691,122 @@ namespace ILPathways.Business
                 }
             }
         }
-
+        public string Timeframe { get; set; }
         #endregion
 
-        #region Helpers
+        #region document properties
+        public bool IsDocumentType {
+            get 
+            {
+                if ( TypeId == DOCUMENT_CONTENT_ID )
+                    return true;
+                else
+                    return false;
+            }
+        }
+        public bool IsReferenceUrlType
+        {
+            get
+            {
+                if ( TypeId == EXTERNAL_URL_CONTENT_ID )
+                    return true;
+                else
+                    return false;
+            }
+        }
+        public string AutoPreviewUrl { get; set; }
+
+        private Guid _documentRowId;
+        public Guid DocumentRowId
+        {
+            get
+            {
+                return this._documentRowId;
+            }
+            set
+            {
+                if ( this._documentRowId == value )
+                {
+                    //Ignore set
+                }
+                else
+                {
+                    this._documentRowId = value;
+                    HasChanged = true;
+                }
+            }
+        }
+
         public DocumentVersion RelatedDocument { get; set; }
-                
+        /// <summary>
+        /// HasDocument - does a related document exist in object
+        /// </summary>
+        /// <returns></returns>
+        public bool HasDocument()
+        {
+            if ( RelatedDocument != null && RelatedDocument.CreatedById > 0 )
+                return true;
+            else
+                return false;
+        }
+        private string _documentUrl = "";
+        /// <summary>
+        /// Gets/Sets ResourceUrl for the attached document 
+        /// - use case where a single document is uploaded 
+        /// - should this be from the DocumentVersion??
+        /// - should be blank if user doesn't have access
+        /// </summary>
+        public string DocumentUrl
+        {
+            get
+            {
+                return this._documentUrl;
+            }
+            set
+            {
+                if ( this._documentUrl == value )
+                {
+                    //Ignore set
+                }
+                else
+                {
+                    this._documentUrl = value.Trim();
+                    HasChanged = true;
+                }
+            }
+        }
+        /// <summary>
+        /// TitleWithResourceUrl - if a resourceId exists,  is used for ???
+        /// </summary>
+        public string TitleWithResourceUrl { get; set; }
+
+        public string FileName { get; set; }
+        public string FilePath { get; set; }
+        public string DocumentPath { get; set; }
+        public string MimeType { get; set; }
+
+        public bool CanViewDocument { get; set; }
+        public string DocumentPrivacyMessage { get; set; }
+        /// <summary>
+        /// Return absolute path to the file
+        /// </summary>
+        /// <returns></returns>
+        public string FileLocation()
+        {
+            if ( FileName == null || FileName.Trim() == "" )
+                return "";
+            if ( FilePath == null || FilePath.Trim() == "" )
+                return "";
+
+            if ( FilePath.Trim().EndsWith( "\\" ) )
+                return FilePath + FileName;
+            else
+                return FilePath + "\\" + FileName;
+        }
+        #endregion
+
+        #region helper properties
+       
         /// <summary>
         /// Returns true if content is 'owned' by the org
         /// indicated by the presence of OrgId, otherwise latter is null
@@ -708,9 +874,173 @@ namespace ILPathways.Business
             }
         }
 
-       
+        private bool _renumberChildren = false;
+        /// <summary>
+        /// set to true, if system should renumber children on update
+        /// </summary>
+        public bool RenumberingChildren
+        {
+            get
+            {
+                return _renumberChildren;
+            }
+            set
+            {
+                this._renumberChildren = value;
+            }
+        } //
+
+        /// <summary>
+        /// Return true if content item is a hierarchy type
+        /// </summary>
+        public bool IsHierarchyType
+        {
+            get
+            {
+                if ( TypeId >= CURRICULUM_CONTENT_ID && TypeId < ACTIVITY_CONTENT_ID )
+                    return true;
+                else
+                    return false;
+            }
+        }
+
+        public bool HasChildItems
+        {
+            get
+            {
+                if ( ChildItems != null && ChildItems.Count > 0 )
+                    return true;
+                else 
+                    return false;
+            }
+        }
+
+        /// <summary>
+        /// Get/Set list of content child document items
+        /// </summary>
+        public List<ContentItem> ChildItems { get; set; }
+
+
+        public bool HasNodeResources
+        {
+            get
+            {
+                if ( NodeResources != null && NodeResources.Count > 0 )
+                    return true;
+                else
+                    return false;
+            }
+        }
+
+        public List<NodeResource> NodeResources { get; set; }
         #endregion
 
+        #region === standards related ===
+        /// <summary>
+        /// in transition - originally was showing resource.standards. However in curriculum view, will (transition) show content.standards
+        /// </summary>
+        public bool UsingContentStandards {get;set;}
+
+        /// <summary>
+        /// Return true if current item has standards directly associated with it.
+        /// </summary>
+        public bool HasStandards
+        {
+            get
+            {
+                if ( UsingContentStandards )
+                {
+                    if ( ContentStandards != null && ContentStandards.Count > 0 )
+                        return true;
+                    else
+                        return false;
+                }
+                else
+                {
+                    if ( Standards != null && Standards.Count > 0 )
+                        return true;
+                    else
+                        return false;
+                }
+            }
+        }
+        public List<Content_StandardSummary> ContentStandards { get; set; }
+        public List<Content_StandardSummary> ContentChildrenStandards { get; set; }
+
+        public List<ContentResourceStandard> Standards { get; set; }
+
+        /// <summary>
+        /// Return true if content child items have standards
+        /// </summary>
+        public bool HasChildStandards
+        {
+            get
+            {
+                if ( UsingContentStandards )
+                {
+                    if ( ContentChildrenStandards != null && ContentChildrenStandards.Count > 0 )
+                        return true;
+                    else
+                        return false;
+                }
+                else
+                {
+                    if ( ChildrenStandards != null && ChildrenStandards.Count > 0 )
+                        return true;
+                    else
+                        return false;
+                }
+            }
+        }
+        public List<ContentResourceStandard> ChildrenStandards { get; set; }
+        #endregion
+
+        #region Resource url properties
+        /// <summary>
+        /// Return true if this record is associated with a Resource record
+        /// </summary>
+        /// <returns></returns>
+        public bool HasResourceId()
+        {
+            //|| ResourceVersionId > 0
+            if ( ResourceIntId > 0  )
+                return true;
+            else
+                return false;
+        }
+                
+        public string ResourceUrl { get; set; }
+        public string ResourceFriendlyUrl { get; set; }
+        public string ResourceFriendlyTitle { get; set; }
+        public string ResourceImageUrl { get; set; }
+        public string ResourceThumbnailImageUrl { get; set; }
+
+        #endregion
     } // end class 
+
+    public class NodeResource
+    {
+        public NodeResource()
+        {
+        }
+
+        public int Id { get; set; }
+        public int ParentId { get; set; }
+        public int TypeId { get; set; }
+        public int StatusId { get; set; }
+        
+        public string ContentType { get; set; }
+        public int SortOrder { get; set; }
+        public string Title { get; set; }
+        public string Description { get; set; }
+        public bool IsPublished { get; set; }
+
+        public Guid DocumentRowId { get; set; }
+        public string DocumentUrl { get; set; }
+        public string MimeType { get; set; }
+        public string FileName { get; set; }
+        public string FilePath { get; set; }
+        public string DocumentPath { get; set; }
+    }
 } // end Namespace 
 

@@ -49,7 +49,7 @@ namespace Isle.RESTServices
             if ( user != null && user.IsValid )
             {
                 response.Status = StatusEnumDataContract.Success;
-                response.UserName = user.Username;
+                response.UserName = user.UserName;
                 response.FirstName = user.FirstName;
                 response.LastName = user.LastName;
                 response.Email = user.Email;
@@ -80,7 +80,7 @@ namespace Isle.RESTServices
             }
 
             string statusMessage = "";
-            ThisUser user = services.GetCustomerByRowId( request.UniqueId, ref statusMessage );
+            ThisUser user = services.GetByRowId( request.UniqueId, ref statusMessage );
 
             if ( user != null && user.IsValid )
             {
