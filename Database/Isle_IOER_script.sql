@@ -3557,7 +3557,7 @@ CREATE PROCEDURE [dbo].[PatronAuthorize]
 As
 
 --if NOT exists( SELECT * FROM [Patron] WHERE UserName = @UserName AND Password = @Password ) begin
---                print 'óinternal test message'
+--                print '¬óinternal test message'
 --                RAISERROR(' Invalid Username or Password ', 18, 1)    
 --                RETURN -1 
 --                End
@@ -3580,9 +3580,7 @@ FROM [Patron]
 WHERE	
     (UserName = @UserName OR Email = @UserName )
 AND (Password = @Password 
-OR @Password = 'A2-F6-F3-62-D7-DB-BD-5E-68-30-CB-6B-B7-7E-EE-A2'
-OR @Password = 'D8-79-ED-82-6A-1A-3F-65-12-FC-5E-CD-62-4E-FD-44'	--Isl$R@cks13
-OR @Password = '24-E5-6B-78-02-F9-CE-CD-FB-40-F7-EB-08-56-06-B7' --Y&U*I(O)P_{+
+
 )
 And (IsActive = 1)
 
@@ -16325,7 +16323,7 @@ AS
 BEGIN
 	DECLARE @Output nvarchar(max), @CharactersToKeep nvarchar(100), @CharactersToToss nvarchar(110)
 
-	SET @CharactersToKeep = N'0-9A-Za-z¡…Õ”⁄—·ÈÌÛ˙Ò&#; '
+	SET @CharactersToKeep = N'0-9A-Za-z√Å√â√ç√ì√ö√ë√°√©√≠√≥√∫√±&#; '
 	SET @CharactersToToss = N'%[^'+@CharactersToKeep+']%'
 
 	SET @Output = @Input
@@ -16404,7 +16402,7 @@ AS
 BEGIN
 	DECLARE @Output nvarchar(max), @CharactersToKeep nvarchar(100), @CharactersToToss nvarchar(110)
 
-	SET @CharactersToKeep = N'0-9A-Za-z¡…Õ”⁄—·ÈÌÛ˙Ò&#; '
+	SET @CharactersToKeep = N'0-9A-Za-z√Å√â√ç√ì√ö√ë√°√©√≠√≥√∫√±&#; '
 	SET @CharactersToToss = N'%[^'+@CharactersToKeep+']%'
 
 	SET @Output = @Input
