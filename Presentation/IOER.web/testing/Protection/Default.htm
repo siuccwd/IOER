@@ -1,0 +1,47 @@
+﻿<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml"><head>
+		<title>Nudity Detection with HTMLCanvas and Javascript</title>
+		<link href="style.css" type="text/css" rel="stylesheet">
+		<link href="../favicon.png" type="image/png" rel="icon">
+	</head>
+	<body>
+		<div id="wrapper">
+			<h1>Demo pictures</h1>
+			<div class="entry">
+				<img width="500" height="375" alt="" src="damita.jpg" id="testImage">
+				<div onclick="nude.load('testImage');nude.scan(function(result){ if(!result) document.getElementById('result1').innerHTML='No nude!'; });" class="btn">Scan Image</div>
+				<div id="result1" style="float:right;margin-top:-20px;">No nude!</div>
+			</div>
+			<div class="entry">
+				<img width="500" height="375" alt="" src="damita2.jpg" id="testImage2">
+				<div onclick="nude.load('testImage2');nude.scan(function(result){ if(!result) document.getElementById('result2').innerHTML='No nude!!'; });" class="btn">Scan Image</div>
+				<div id="result2" style="float:right;margin-top:-20px;">No nude!!</div>
+			</div>
+			<div class="entry">
+				<img width="500" height="375" alt="" src="test6.jpg" id="testImage3">
+				<div onclick="nude.load('testImage3');nude.scan(function(result){ if(!result) document.getElementById('result3').innerHTML='No nude!!'; });" class="btn">Scan Image</div>
+				<div id="result3" style="float:right;margin-top:-20px;">No nude!!</div>
+			</div>
+			<div class="entry">
+				<img width="500" height="375" alt="" src="test2.jpg" id="testImage4">
+				<div onclick="nude.load('testImage4');nude.scan(function(result){ if(!result){ document.getElementById('result4').innerHTML='No nude!!'; }else{ document.getElementById('result4').innerHTML='Nude!!'; } });" class="btn">Scan Image</div>
+				<div id="result4" style="float:right;margin-top:-20px;">Nude!!</div>
+			</div>
+			<!--<div class="entry">
+			<video autoplay="false" loop="loop" controls="true" id="video123" width="500" height="375"> 
+          		<source src="http://www.archive.org/download/CC_1915_03_01_TheChampion/CC_1915_03_01_TheChampion.ogv" type="video/ogg" /> 
+           		<source src="http://www.archive.org/download/CC_1915_03_01_TheChampion/CC_1915_03_01_TheChampion_512kb.mp4" type="video/mp4"/> 
+        	</video>
+				<div class="btn" style="width:250px;" onclick="nude.load(document.getElementById('video123'));nude.scan(function(result){ if(result){ alert('its nude.'); }else{ alert('its not nude'); }});">Scan video frame</div>
+			</div>
+			 -->
+
+		</div>
+		<!--[if IE]>
+		<script type="text/javascript" src="excanvas.js"></script>	
+		<![endif]-->
+		<script src="nude.min.js" type="text/javascript"></script><canvas style="display: none;" width="500" height="375"></canvas>
+		<!--<script type="text/javascript" src="test.nude.js"></script>-->
+
+	
+
+</body></html>
