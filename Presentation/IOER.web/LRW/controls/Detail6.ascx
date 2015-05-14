@@ -86,6 +86,7 @@
     .tabBox .tab { background-color: #EEE; min-height: 75px; border-radius: 5px; padding-bottom: 10px; }
     .tabBox .tab[data-selected=false] { display: none; }
     .tabBox .tab h2 { font-size: 20px; line-height: 25px; color: #FFF; padding: 0 5px; border-top-left-radius: 5px; border-top-right-radius: 5px; }
+    .tabBox .tab ul, .tabBox .tab ol { margin-left: 25px; }
     p.center { text-align: center; padding: 10px; }
     
     /* Tab Navigation */
@@ -207,7 +208,7 @@
     }
     #modifyThis h2 { text-align: left; }
     #description {
-          margin-left: 400px;
+          /* margin-left: 400px; */
       }
 
     #resourceNote { display: inline-block; width: 50%;     }
@@ -320,7 +321,7 @@
   </div>
 
   <div id="content" class="content" runat="server" visible="true">
-    <h1 id="title"><span class="view admin" itemprop="name"></span><span class="edit admin">Title: <input type="text" /></span></h1>
+    <h1 id="title"><span class="view admin author" itemprop="name"></span><span class="edit admin author">Title: <input type="text" /></span></h1>
 
     <div class="left column">
       <a href="#" id="resourceURL" target="_blank" itemprop="targetUrl"></a>
@@ -333,7 +334,7 @@
           <div id="created" itemprop="dateCreated"><b>Created:</b> <span></span></div>
         </div>
       </div>
-      <div id="description"><h2>Description</h2><p class="view admin" itemprop="description"></p><span class="edit admin"><textarea></textarea></span></div>
+      <div id="description"><h2>Description</h2><p class="view admin author" itemprop="description"></p><span class="edit admin author"><textarea></textarea></span></div>
         <div id="resourceNote"><p class="view admin" itemprop="description"></p></div>
 
       <div id="requires"><h2>Technology and Equipment Requirements</h2><p class="view admin"></p><span class="edit admin"><input type="text" /></span></div>
@@ -344,6 +345,7 @@
           <input type="button" value="Cancel Changes" runat="server" id="btnCancelChanges" class="cancel btn red edit" onclick="cancelChanges()" />
           <input type="button" value="Deactivate Resource" runat="server" id="btnDeactivateResource" class="deactivate btn red" onclick="deactivate()" />
           <input type="button" value="Regenerate Thumbnail" runat="server" id="btnRegenerateThumbnail" class="regenerate btn green" onclick="regenerateThumbnail()" />
+          <input type="button" value="Ubertag This Data" runat="server" id="btnUbertag" class="ubertag btn green" onclick="" />
           <!--<input type="button" value="Send Resource to External Site" class="btn green" id="btnSendResource" onclick="sendResource()" />-->
           <input type="button" value="Send Resource to External Site" class="btn green" id="btnMsgResource" onclick="sendResourceMsg()" />
        </div>
@@ -441,7 +443,7 @@
           <a href="#" data-id="comments" title="Comments"></a>
           <a href="#" data-id="library" title="Library Info"></a>
           <a href="#" data-id="standardsRatings" title="Standards Alignment Ratings"></a>
-          <!--<a href="#" data-id="rubrics" title="Rubric Evaluations"></a>-->
+          <a href="#" data-id="rubrics" title="Rubric Evaluations"></a>
           <a href="#" data-id="report" title="Report an Issue">...</a>
         </div>
         <div class="tab" id="comments">
@@ -479,45 +481,45 @@
   </div><!-- /content -->
 
   <div id="templates" style="display:none;">
-    <div id="template_CBXL">
+    <script type="text/template" id="template_CBXL">
       <h3>{title}</h3>
       <div class="view">{list}</div>
       <div class="edit"></div>
-    </div>
+    </script>
     
-    <div id="template_comment">
+    <script type="text/template" id="template_comment">
       <div class="comment lightbox">
         <h3><div class="date">{date}</div>{name} commented:</h3>
         <p>{text}</p>
       </div>
-    </div>
+    </script>
 
-    <div id="template_subjectkeyword">
+    <script type="text/template" id="template_subjectkeyword">
       <a target="_blank" class="blockLink" href='/Search.aspx?q="{text}"'>{text}</a>
-    </div>
+    </script>
 
-    <div id="template_suggestedsubject">
+    <script type="text/template" id="template_suggestedsubject">
       <a href="#" onclick="addFreeText('{text}', 'subject'); return false;" class="blockLink">{text}</a>
-    </div>
+    </script>
 
-    <div id="template_addedTextItem">
+    <script type="text/template" id="template_addedTextItem">
       <div class="addedTextItem" data-text="{text}"><span>{text}</span><a href="#" onclick="removeAddedText(this); return false;">X</a></div>
-    </div>
+    </script>
 
-    <div id="template_paradataIcon">
+    <script type="text/template" id="template_paradataIcon">
       <div class="paradataIcon" title="{title}">
         <img {img} />
         <div>{text}</div>
       </div>
-    </div>
+    </script>
 
-    <div id="template_badge">
+    <script type="text/template" id="template_badge">
       <div class="badge">
         <a href="/Libraries/Library.aspx?id={id}" title="{title}" target="_blank"><img {img} /></a>
       </div>
-    </div>
+    </script>
 
-    <div id="template_rubricScoreometer">
+    <script type="text/template" id="template_rubricScoreometer">
       <div class="scoreometer lightbox" data-score="{rawscore}">
         <h3>{title}</h3>
         <div class="scorebar">
@@ -527,9 +529,9 @@
           </div>
         </div>
       </div>
-    </div>
+    </script>
 
-    <div id="template_standardScoreometer">
+    <script type="text/template" id="template_standardScoreometer">
       <div class="scoreometer lightbox" data-score="{rawscore}">
         <h3>{alignment}: {title}</h3>
         <p class="description">{description}</p>
@@ -550,24 +552,24 @@
           <input type="button" value="Save" class="btn green tiny" />
         </div>
       </div>
-    </div>
+    </script>
 
-    <div id="template_listedStandard">
+    <script type="text/template" id="template_listedStandard">
       <div class="listedStandard lightbox" data-standardid="{standardID}">
         <h3>{alignment}: {title}</h3>
         <p>{description}</p>
       </div>
-    </div>
+    </script>
 
-    <div id="template_moreLikeThis">
+    <script type="text/template" id="template_moreLikeThis">
       <div class="resourceLikeThis lightbox">
         <h3><a href="/Resource/{rid}/{urlTitle}" target="_blank">{title}</a></h3>
         <a class="mltThumbnail" href="/Resource/{rid}/{urlTitle}" target="_blank"><img src="//ioer.ilsharedlearning.org/OERThumbs/large/{intID}-large.png" /></a>
         <p>{description}</p>
       </div>
-    </div>
+    </script>
 
-    <div id="template_evaluation_rubric">
+    <script type="text/template" id="template_evaluation_rubric">
       <div class="evaluation rubric lightbox" data-requiresCertification="{requiresCert}">
         <h3>{title}</h3>
         <p class="pleaseLogin">{evalText}</p>
@@ -578,16 +580,16 @@
           {dimensions}
         </div>
       </div>
-    </div>
+    </script>
 
-    <div id="template_evaluation_dimension">
+    <script type="text/template" id="template_evaluation_dimension">
       <div class="dimension">
         <h4>{title}</h4>
         {ratings}
       </div>
-    </div>
+    </script>
 
-    <div id="template_evaluationBars">
+    <script type="text/template" id="template_evaluationBars">
       <div class="evaluationBarContainer">
         <div class="evaluationBar trained">
           <div class="evaluationBarText">{trainedRatingsCount}</div>
@@ -598,9 +600,9 @@
           <div class="evaluationBarFill {noUntrainedRatings} {untrainedNotApplicable}" style="width:9999px"></div>
         </div>
       </div>
-    </div>
+    </script>
 
-    <div id="template_standard_ratings">
+    <script type="text/template" id="template_standard_ratings">
       <div class="ratedStandard lightbox" data-standardID="{standardID}">
         <h4>{title} <input type="button" class="expandCollapseStandard" value="+" onclick="expandCollapseStandard({standardID}, this);" /></h4>
         <div class="description">{description}</div>
@@ -612,18 +614,18 @@
         </div>
         {doRating}
       </div>
-    </div>
+    </script>
 
-    <div id="template_evaluation_bar">
+    <script type="text/template" id="template_evaluation_bar">
       <div class="evaluationBarContainer" id="{id}">
         <div class="evaluationBar">
           <div class="evaluationBarText"></div>
           <div class="evaluationBarFill"></div>
         </div>
       </div>
-    </div>
+    </script>
 
-    <div id="template_doRating">
+    <script type="text/template" id="template_doRating">
       <div class="doRating">
         <select id="standardRating_{standardID}">
           <option value="-1" selected="selected">This Resource's alignment to this Standard is...</option>
@@ -634,7 +636,7 @@
         </select>
         <input type="button" onclick="doStandardRating({standardID});" value="Rate" />
       </div>
-    </div>
+    </script>
 
   </div>
 

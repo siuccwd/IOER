@@ -500,7 +500,12 @@ namespace ILPathways.Services
       {
         try
         {
-          new ElasticSearchManager().RefreshResources( ids );
+          //new ElasticSearchManager().RefreshResources( ids );
+          var manager = new ResourceV2Services();
+          foreach ( var id in ids )
+          {
+            manager.RefreshResource( id );
+          }
         }
         catch ( Exception ex )
         {
@@ -555,6 +560,24 @@ namespace ILPathways.Services
         status = status,
         extra = extra
       };
+    }
+
+    //Get user from session or return null
+    public Patron GetUser( bool returnNullInsteadOfNewIfNotFound )
+    {
+      try
+      {
+        var user = ( Patron ) Session[ Constants.USER_REGISTER ];
+        if ( user == null || user.Id == 0 )
+        {
+          throw new UnauthorizedAccessException();
+        }
+        return user;
+      }
+      catch
+      {
+        return returnNullInsteadOfNewIfNotFound ? null : new Patron();
+      }
     }
     #endregion
 

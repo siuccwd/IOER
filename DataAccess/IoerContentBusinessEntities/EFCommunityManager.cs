@@ -451,7 +451,7 @@ namespace IoerContentBusinessEntities
 
                 to.Created = fromEntity.Created == null ? System.DateTime.Now : ( System.DateTime ) fromEntity.Created;
                 to.CreatedById = ( int ) fromEntity.CreatedById;
-                if ( fromEntity.RelatedPostingId != null )
+                if ( fromEntity.RelatedPostingId > 0 )
                     to.RelatedPostingId = ( int ) fromEntity.RelatedPostingId;
             }
             return to;
@@ -567,7 +567,7 @@ namespace IoerContentBusinessEntities
             to.Community_Posting.Created = ( System.DateTime ) fromEntity.Created;
             to.Community_Posting.CreatedById = ( int ) fromEntity.CreatedById;
 
-            to.Community_Posting.PostingTypeId = fromEntity.PostingTypeId == null ? 1 : ( int ) fromEntity.PostingTypeId;
+            to.Community_Posting.PostingTypeId = fromEntity.PostingTypeId < 1 ? 1 : ( int ) fromEntity.PostingTypeId;
             to.Community_Posting.PostingStatus = fromEntity.PostingStatus;
             return to;
         }

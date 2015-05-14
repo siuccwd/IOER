@@ -32,5 +32,6 @@ namespace GatewayBusinessEntities
         public Nullable<System.DateTime> LastUpdated { get; set; }
         public Nullable<bool> IsActive { get; set; }
         public string UserProfileUrl { get; set; }
+        public int HasProfile { get; set; }
     }
 }

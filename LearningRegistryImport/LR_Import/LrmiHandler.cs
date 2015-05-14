@@ -26,6 +26,10 @@ namespace LearningRegistryCache2
         private ResourceGroupTypeManager groupTypeManager;
         private ResourceItemTypeManager itemTypeManager;
         private ResourceAssessmentTypeManager asmtTypeManager;
+        private ResourceAccessibilityApiManager accessibilityApiManager;
+        private ResourceAccessibilityControlManager accessibilityControlManager;
+        private ResourceAccessibilityFeatureManager accessibilityFeatureManager;
+        private ResourceAccessibilityHazardManager accessibilityHazardManager;
 
         public LrmiHandler()
         {
@@ -41,6 +45,10 @@ namespace LearningRegistryCache2
             groupTypeManager = new ResourceGroupTypeManager();
             itemTypeManager = new ResourceItemTypeManager();
             asmtTypeManager = new ResourceAssessmentTypeManager();
+            accessibilityApiManager = new ResourceAccessibilityApiManager();
+            accessibilityControlManager = new ResourceAccessibilityControlManager();
+            accessibilityFeatureManager = new ResourceAccessibilityFeatureManager();
+            accessibilityHazardManager = new ResourceAccessibilityHazardManager();
         }
 
 
@@ -49,6 +57,8 @@ namespace LearningRegistryCache2
             // Begin common logic for all metadata schemas
             XmlDocument payload = new XmlDocument();
             bool isValid = false;
+            string title = "";
+            string description = "";
 
             Resource resource = LoadCommonMetadata(docId, url, payloadPlacement, record, payload, ref isValid);
             if (!isValid)
@@ -61,11 +71,63 @@ namespace LearningRegistryCache2
 
 
             XmlNodeList list = payload.GetElementsByTagName("name");
-            foreach (XmlNode title in list)
+            foreach (XmlNode titleNode in list)
             {
-                if (title.ParentNode.Name.ToLower() == "resource_data")
+                XmlDocument doc2 = new XmlDocument();
+                XmlNodeList list2 = null;
+                if (titleNode.ChildNodes != null && titleNode.ChildNodes.Count > 0)
                 {
-                    resource.Version.Title = TrimWhitespace(title.InnerText);
+                    doc2.LoadXml("<root>" + titleNode.InnerXml + "</root>");
+                    list2 = doc2.GetElementsByTagName("name");
+                }
+                if (titleNode.ParentNode.Name.ToLower() == "resource_data")
+                {
+                    if (list2 != null && list2.Count > 0)
+                    {
+                        title = TrimWhitespace(list2[0].InnerText);
+                    }
+                    else
+                    {
+                        title = TrimWhitespace(titleNode.InnerText);
+                    }
+                    if (title.Length > resource.Version.Title.Length)
+                    {
+                        resource.Version.Title = title;
+                    }
+                    break;
+                }
+                else if (titleNode.ParentNode.Name.ToLower() == "items")
+                {
+                    if (list2 != null && list2.Count > 0)
+                    {
+                        title = TrimWhitespace(list2[0].InnerText);
+                    }
+                    else
+                    {
+                        title = TrimWhitespace(titleNode.InnerText);
+                    }
+                    if (title.Length > resource.Version.Title.Length)
+                    {
+                        resource.Version.Title = title;
+                    }
+                    break;
+                }
+                else if (titleNode.ParentNode.Name.ToLower() == "properties" &&
+                  (titleNode.ParentNode.ParentNode.Name.ToLower() == "items" ||
+                   titleNode.ParentNode.ParentNode.Name.ToLower() == "resource_data"))
+                {
+                    if (list2 != null && list2.Count > 0)
+                    {
+                        title = TrimWhitespace(list2[0].InnerText);
+                    }
+                    else
+                    {
+                        title = TrimWhitespace(titleNode.InnerText);
+                    }
+                    if (title.Length > resource.Version.Title.Length)
+                    {
+                        resource.Version.Title = title;
+                    }
                     break;
                 }
             }
@@ -89,7 +151,11 @@ namespace LearningRegistryCache2
             list = payload.GetElementsByTagName("description");
             foreach (XmlNode node in list)
             {
-                resource.Version.Description = CleanseDescription(TrimWhitespace(node.InnerText));
+                description = CleanseDescription(TrimWhitespace(node.InnerText));
+                if (description.Length > resource.Version.Description.Length)
+                {
+                    resource.Version.Description = description;
+                }
                 break;
             }
 
@@ -227,6 +293,7 @@ namespace LearningRegistryCache2
                 {
                     ConvertGradesToAgeRange(resource, gradeLevels);
                 }
+                AddAccessibility(resource, payload);
                 AddAudiences(resource, payload);
                 AddResourceFormats(resource, payload);
                 AddResourceTypes(resource, payload);
@@ -239,13 +306,13 @@ namespace LearningRegistryCache2
                 if (CheckForGoodLanguage(resource.Id) == true)
                 {
                     // Add to Elastic Search Index
-                    UpdateElasticSearchList(resource.Id);
+                    LearningRegistry.resourceIdList.Add(resource.Id);
                 }
                 else
                 {
                     // Deactivate resource
                     resource.IsActive = false;
-                    resourceManager.SetResourceActiveState(false, resource.Id);
+                    resourceManager.SetResourceActiveState( resource.Id, false );
                 }
             }
             catch (Exception ex)
@@ -253,15 +320,75 @@ namespace LearningRegistryCache2
             }
         }// LrmiMap
 
+        protected void AddAccessibility(Resource resource, XmlDocument payload)
+        {
+            string status = "successful";
+
+            // Accessibility Features
+            XmlNodeList list = payload.GetElementsByTagName("accessibilityFeature");
+            foreach (XmlNode node in list)
+            {
+                ResourceChildItem feature = new ResourceChildItem();
+                feature.ResourceIntId = resource.Id;
+                feature.OriginalValue = TrimWhitespace(node.InnerText);
+                accessibilityFeatureManager.Import(feature);
+            }
+
+            // Accessibility Hazards
+            list = payload.GetElementsByTagName("accessibilityHazard");
+            foreach (XmlNode node in list)
+            {
+                ResourceAccessibilityHazard hazard = new ResourceAccessibilityHazard();
+                hazard.ResourceIntId = resource.Id;
+                hazard.OriginalValue = TrimWhitespace(node.InnerText);
+                accessibilityHazardManager.Import(hazard);
+            }
+
+            // Accessibility APIs
+            list = payload.GetElementsByTagName("accessibilityAPI");
+            foreach (XmlNode node in list)
+            {
+                ResourceChildItem api = new ResourceChildItem();
+                api.ResourceIntId = resource.Id;
+                api.OriginalValue = TrimWhitespace(node.InnerText);
+                accessibilityApiManager.Import(api);
+            }
+
+            // Accessibility Controls
+            list = payload.GetElementsByTagName("accessibilityControl");
+            foreach (XmlNode node in list)
+            {
+                ResourceChildItem control = new ResourceChildItem();
+                control.ResourceIntId = resource.Id;
+                control.OriginalValue = TrimWhitespace(node.InnerText);
+                accessibilityControlManager.Import(control);
+            }
+        }
+
         protected void AddSubjects(Resource resource, XmlDocument payload)
         {
             string status = "successful";
             int nbrSubjects = 0;
             int maxSubjects = int.Parse(ConfigurationManager.AppSettings["maxSubjectsToProcess"]);
             XmlNodeList list = payload.GetElementsByTagName("about");
+            XmlDocument doc2 = new XmlDocument();
+            XmlNodeList list2 = null;
             foreach (XmlNode node in list)
             {
-                string subject = TrimWhitespace(node.InnerText);
+                if (node.ChildNodes != null && node.ChildNodes.Count > 0)
+                {
+                    doc2.LoadXml("<root>" + node.InnerXml + "</root>");
+                    list2 = doc2.GetElementsByTagName("name");
+                }
+                string subject = "";
+                if (list2 != null && list2.Count > 0)
+                {
+                    subject = TrimWhitespace(list2[0].InnerText);
+                }
+                else
+                {
+                    subject = TrimWhitespace(node.InnerText);
+                }
                 int amp = subject.IndexOf("&");
                 int scolon = subject.IndexOf(";");
                 if (scolon > -1 && amp == -1)
@@ -277,7 +404,6 @@ namespace LearningRegistryCache2
                                 break;
                             }
                             ResourceSubject resSubject = new ResourceSubject();
-                            resSubject.ResourceId = resource.RowId;
                             resSubject.ResourceIntId = resource.Id;
                             resSubject.Subject = ApplySubjectEditRules(subjectItem);
                             resSubject.Subject = TrimWhitespace(resSubject.Subject);
@@ -300,7 +426,6 @@ namespace LearningRegistryCache2
                     subject = ApplySubjectEditRules(subject);
                     subject = TrimWhitespace(subject);
                     ResourceSubject resSubject = new ResourceSubject();
-                    resSubject.ResourceId = resource.RowId;
                     resSubject.ResourceIntId = resource.Id;
                     resSubject.Subject = subject;
                     status = subjectManager.Create(resSubject);
@@ -321,52 +446,89 @@ namespace LearningRegistryCache2
 
         protected void AddStandards(Resource resource, XmlDocument payload)
         {
-            string status = "successful";
             XmlNodeList list = payload.GetElementsByTagName("educationalAlignment");
             foreach (XmlNode node in list)
             {
                 XmlDocument doc2 = new XmlDocument();
                 doc2.LoadXml(node.OuterXml);
-                XmlNodeList list2 = doc2.GetElementsByTagName("targetName");
+
+                XmlNodeList list2 = doc2.GetElementsByTagName("targetUrl");
+                string targetUrl = "";
                 foreach (XmlNode node2 in list2)
                 {
                     string value = TrimWhitespace(node2.InnerText);
-                    ResourceStandard standard = new ResourceStandard();
-                    standard.ResourceId = resource.RowId;
-                    standard.ResourceIntId = resource.Id;
-                    if (value.Length > 300)
+                    if (value != null && value.Substring(0, 4).ToLower() == "http")
                     {
-                        standard.StandardUrl = value.Substring(0, 300);
-                    }
-                    else
-                    {
-                        standard.StandardUrl = value;
-                    }
-                    // Get alignment type
-                    XmlNodeList list3 = doc2.GetElementsByTagName("alignmentType");
-                    if (list3 == null || list3.Count == 0)
-                    {
-                        standard.AlignmentTypeValue = "";
-                    }
-                    else
-                    {
-                        standard.AlignmentTypeValue = list3[0].InnerText;
-                    }
-
-                    // educationLevel denotes grade level, which is not a standard - skip educationLevels!
-                    if (standard.AlignmentTypeValue.ToLower() != "educationlevel")
-                    {
-
-                        standardManager.Import(standard, ref status);
-                        if (status != "successful")
-                        {
-                            reportingManager.LogMessage(LearningRegistry.reportId, LearningRegistry.fileName, resource.Version.LRDocId, resource.ResourceUrl,
-                                ErrorType.Error, ErrorRouting.Technical, status);
-                        }
+                        targetUrl = value;
+                        break;
                     }
                 }
-            }
+
+                XmlNodeList list3 = doc2.GetElementsByTagName("targetName");
+                string targetName = "";
+                foreach (XmlNode node3 in list3)
+                {
+                    string value = TrimWhitespace(node3.InnerText);
+                    if (value != null && value != string.Empty)
+                    {
+                        targetName = value;
+                        break;
+                    }
+                }
+
+                XmlNodeList list4 = doc2.GetElementsByTagName("alignmentType");
+                string alignmentType = "";
+                foreach (XmlNode node4 in list4)
+                {
+                    string value = TrimWhitespace(node4.InnerText);
+                    if (value != null && value != string.Empty)
+                    {
+                        alignmentType = value;
+                        break;
+                    }
+                }
+
+                ProcessStandard(resource, targetUrl, targetName, alignmentType);
+            }// foreach
         }// AddStandards
+
+        protected void ProcessStandard(Resource resource, string targetUrl, string targetName, string alignmentType)
+        {
+            string status = "successful"; 
+            ResourceStandard standard = new ResourceStandard();
+            standard.ResourceIntId = resource.Id;
+            if (targetUrl.Length > 300)
+            {
+                standard.StandardUrl = targetUrl.Substring(0, 300);
+            }
+            else
+            {
+                standard.StandardUrl = targetUrl;
+            }
+
+            if (targetName.Length > 300)
+            {
+                standard.StandardNotationCode = targetName.Substring(0, 300);
+            }
+            else
+            {
+                standard.StandardNotationCode = targetName;
+            }
+
+            standard.AlignmentTypeValue = alignmentType;
+
+            // educationLevel denotes grade level, which is not a standard - skip educationLevels!
+            if (standard.AlignmentTypeValue.ToLower() != "educationlevel")
+            {
+
+                standardManager.Import(standard, ref status);
+                if (status != "successful")
+                {
+                    reportingManager.LogMessage(LearningRegistry.reportId, LearningRegistry.fileName, resource.Version.LRDocId, resource.ResourceUrl,
+                        ErrorType.Error, ErrorRouting.Technical, status);
+                }
+            }
+        }
 
         protected void AddAgeRange(Resource resource, XmlDocument payload, ref string ageRange, ref bool hasAgeRange)
         {
@@ -421,16 +583,20 @@ namespace LearningRegistryCache2
                         foreach (XmlNode node3 in list3)
                         {
                             hasGradeLevels = true;
-                            ResourceChildItem level = new ResourceChildItem();
-                            level.ResourceIntId = resource.Id;
-                            level.OriginalValue = TrimWhitespace(node3.InnerText);
-                            gradeLevelManager.Import(level, ref status);
-                            if (status != "successful")
+                            string[] gradez = TrimWhitespace(node3.InnerText).Split(',');
+                            foreach (string grade in gradez)
                             {
-                                auditReportingManager.LogMessage(LearningRegistry.reportId, LearningRegistry.fileName, resource.Version.LRDocId, resource.ResourceUrl, ErrorType.Error, ErrorRouting.Technical,
-                                    status);
+                                ResourceChildItem level = new ResourceChildItem();
+                                level.ResourceIntId = resource.Id;
+                                level.OriginalValue = TrimWhitespace(grade);
+                                gradeLevelManager.Import(level, ref status);
+                                if (status != "successful")
+                                {
+                                    auditReportingManager.LogMessage(LearningRegistry.reportId, LearningRegistry.fileName, resource.Version.LRDocId, resource.ResourceUrl, ErrorType.Error, ErrorRouting.Technical,
+                                        status);
+                                }
+                                grades.Add(level.OriginalValue);
                             }
-                            grades.Add(level.OriginalValue);
                         }
                     }
                 }
@@ -459,7 +625,6 @@ namespace LearningRegistryCache2
             foreach (XmlNode node in list)
             {
                 ResourceChildItem audience = new ResourceChildItem();
-                audience.ResourceId = resource.RowId;
                 audience.ResourceIntId = resource.Id;
                 audience.OriginalValue = TrimWhitespace(node.InnerText);
                 audienceManager.Import(audience, ref status);
@@ -478,7 +643,6 @@ namespace LearningRegistryCache2
             foreach (XmlNode node in list)
             {
                 ResourceChildItem format = new ResourceChildItem();
-                format.ResourceId = resource.RowId;
                 format.ResourceIntId = resource.Id;
                 format.OriginalValue = TrimWhitespace(node.InnerText);
                 formatManager.Import(format, ref status);
@@ -502,7 +666,6 @@ namespace LearningRegistryCache2
             foreach (XmlNode node in list)
             {
                 ResourceChildItem type = new ResourceChildItem();
-                type.ResourceId = resource.RowId;
                 type.ResourceIntId = resource.Id;
                 type.OriginalValue = TrimWhitespace(node.InnerText);
                 typeManager.Import(type, ref status);
@@ -523,7 +686,6 @@ namespace LearningRegistryCache2
                 if (node.InnerXml == null || node.InnerXml == "")
                 {
                     ResourceChildItem language = new ResourceChildItem();
-                    language.ResourceId = resource.RowId;
                     language.ResourceIntId = resource.Id;
                     language.OriginalValue = TrimWhitespace(node.InnerText);
                     languageManager.Import(language, ref status);
@@ -541,7 +703,6 @@ namespace LearningRegistryCache2
                     foreach (XmlNode node2 in list2)
                     {
                         ResourceChildItem language = new ResourceChildItem();
-                        language.ResourceId = resource.RowId;
                         language.ResourceIntId = resource.Id;
                         language.OriginalValue = TrimWhitespace(node2.InnerText);
                         languageManager.Import(language, ref status);
@@ -559,7 +720,6 @@ namespace LearningRegistryCache2
             {
                 // If no languages found, assume English but log it.
                 ResourceChildItem language = new ResourceChildItem();
-                language.ResourceId = resource.RowId;
                 language.ResourceIntId = resource.Id;
                 language.OriginalValue = "English";
                 languageManager.Import(language, ref status);
@@ -583,7 +743,6 @@ namespace LearningRegistryCache2
             foreach (XmlNode node in list)
             {
                 ResourceChildItem edUse = new ResourceChildItem();
-                edUse.ResourceId = resource.RowId;
                 edUse.ResourceIntId = resource.Id;
                 edUse.OriginalValue = TrimWhitespace(node.InnerText);
                 edUseManager.Import(edUse, ref status);
@@ -602,7 +761,6 @@ namespace LearningRegistryCache2
             foreach (XmlNode node in list)
             {
                 ResourceChildItem groupType = new ResourceChildItem();
-                groupType.ResourceId = resource.RowId;
                 groupType.ResourceIntId = resource.Id;
                 groupType.OriginalValue = TrimWhitespace(node.InnerText);
                 groupTypeManager.Import(groupType, ref status);
@@ -622,7 +780,6 @@ namespace LearningRegistryCache2
             foreach (XmlNode node in list)
             {
                 ResourceChildItem itemType = new ResourceChildItem();
-                itemType.ResourceId = resource.RowId;
                 itemType.ResourceIntId = resource.Id;
                 itemType.OriginalValue = TrimWhitespace(node.InnerText);
                 status = itemTypeManager.Import(itemType);

@@ -290,6 +290,7 @@ namespace ILPathways.Controls.Libraries
 
             if ( keyName.Length > 0 )
             {
+                sourceLibrary.SelectedIndex = -1;
                 foreach ( ListItem item in sourceLibrary.Items )
                 {
                     if ( item.Value == keyName )
@@ -297,7 +298,9 @@ namespace ILPathways.Controls.Libraries
                         item.Selected = true;
                         sourceLibrary_SelectedIndexChanged( new object(), new EventArgs() );
                         break;
-                    }
+                    } 
+                    else
+                        item.Selected = false;
                 }
             }
 
@@ -347,6 +350,12 @@ namespace ILPathways.Controls.Libraries
                 IDBM.PopulateList( this.sourceLibrary, ds, "Id", "title", "Select a Library" );
             }
         }
+
+
+        /// <summary>
+        /// LIST IS NOT USED, just the boolean
+        /// </summary>
+        /// <returns></returns>
         protected bool ShowAllowedOrgs()
         {
             bool hasOrgs = false;
@@ -369,8 +378,8 @@ namespace ILPathways.Controls.Libraries
                     }
 
                     OrgCodesList = codes;
-                    IDBM.PopulateList( this.ddlOrgs, codes, "Id", "Title", "Select an Organization" );
-                    //this.orgsPanel.Visible = true;
+                    //IDBM.PopulateList( this.ddlOrgs, codes, "Id", "Title", "Select an Organization" );
+
                 }
             }
 

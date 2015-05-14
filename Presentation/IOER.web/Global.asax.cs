@@ -226,6 +226,13 @@ namespace IllinoisPathways
             "ContactUs",
             "~/Pages/ContactUs.aspx"
             );
+
+          //Ubertagger
+            routes.MapPageRoute(
+              "UberTagger",
+              "ubertagger",
+              "~/ubertagger.aspx"
+            );
         }
 
         void Application_End( object sender, EventArgs e )
@@ -245,21 +252,8 @@ namespace IllinoisPathways
             try
             {
                 //Do we want to track the referer somehow??
-                string lRefererPage = "";
-                if ( Request.UrlReferrer != null )
-                {
-                    lRefererPage = Request.UrlReferrer.ToString();
-                    //check for link to us parm
-                    //??
-
-                    //handle refers from illinoisworknet.com 
-                    if ( lRefererPage.ToLower().IndexOf( ".illinoisworknet.com" ) > -1 )
-                    {
-                        //may want to keep reference to determine source of this condition. 
-                        //For ex. user may have let referring page get stale and so a new session was started when user returned! 
-
-                    }
-                }
+                string lRefererPage = GetUserReferrer();
+               
                 string ipAddress = this.GetUserIPAddress();
                 ///check for bots
                 ///bot, crawler, spider, slurp, crawling
@@ -278,12 +272,14 @@ namespace IllinoisPathways
                     LoggingHelper.DoTrace( 2, string.Format( "Session_Start. referrer: {0}, agent: {1}, IP Address: ", lRefererPage, agent, ipAddress ) );
 
                     string startMsg = "Session Started. SessionID: " + Session.SessionID;
-                    if ( lRefererPage.Length > 0 )
-                        startMsg += ", Referrer: " + lRefererPage;
+                    //2015-04 mparsons - referrer is now stored separately, and often very large, so skip
+                    //if ( lRefererPage.Length > 0 )
+                    //    startMsg += ", Referrer: " + lRefererPage;
                     //string ipAddress = Request.ServerVariables[ "REMOTE_HOST" ] == null ? "unknown" : Request.ServerVariables[ "REMOTE_HOST" ];
                     startMsg += ", IP Address: " + ipAddress;
+                    startMsg += ", Agent: " + agent;
 
-                    ActivityBizServices.SessionStartActivity( startMsg );
+                    ActivityBizServices.SessionStartActivity( startMsg, Session.SessionID.ToString(), ipAddress, lRefererPage );
 
                     //Log page visit
                     if ( UtilityManager.GetAppKeyValue( "loggingPageVisits", "no" ) == "yes" )
@@ -292,12 +288,12 @@ namespace IllinoisPathways
 
                         string serverName = UtilityManager.GetAppKeyValue( "serverName" );
 
-                        GatewayServices.LogSessionStart( Session.SessionID.ToString(), serverName, startMsg, ipAddress );
+                        GatewayServices.LogSessionStart( Session.SessionID.ToString(), serverName, startMsg, ipAddress, lRefererPage );
                     }
                 }
                 else
                 {
-                    LoggingHelper.DoTrace( string.Format( "Session_Start. Skipping bot: referrer: {0}, agent: {1}", lRefererPage, agent ) );
+                    LoggingHelper.DoTrace(2, string.Format( "Session_Start. Skipping bot: referrer: {0}, agent: {1}", lRefererPage, agent ) );
                 }
             }
             catch ( Exception ex )
@@ -305,6 +301,33 @@ namespace IllinoisPathways
                 LoggingHelper.LogError( ex, "Session_Start. =================" );
             }
 
+        } //
+        private string GetUserReferrer()
+        {
+            string lRefererPage = "unknown";
+            try
+            {
+                if ( Request.UrlReferrer != null )
+                {
+                    lRefererPage = Request.UrlReferrer.ToString();
+                    //check for link to us parm
+                    //??
+
+                    //handle refers from illinoisworknet.com 
+                    if ( lRefererPage.ToLower().IndexOf( ".illinoisworknet.com" ) > -1 )
+                    {
+                        //may want to keep reference to determine source of this condition. 
+                        //For ex. user may have let referring page get stale and so a new session was started when user returned! 
+
+                    }
+                }
+            }
+            catch ( Exception ex )
+            {
+                lRefererPage = ex.Message;
+            }
+
+            return lRefererPage;
         } //
         private string GetUserIPAddress()
         {

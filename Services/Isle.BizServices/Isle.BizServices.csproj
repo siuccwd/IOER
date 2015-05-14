@@ -15,6 +15,7 @@
     <SccLocalPath>SAK</SccLocalPath>
     <SccAuxPath>SAK</SccAuxPath>
     <SccProvider>SAK</SccProvider>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -24,6 +25,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -32,21 +34,18 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="AutoMapper">
       <HintPath>..\..\packages\AutoMapper.3.1.1\lib\net40\AutoMapper.dll</HintPath>
     </Reference>
-    <Reference Include="EntityFramework, Version=4.4.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\EntityFramework.6.1.2\lib\net45\EntityFramework.dll</HintPath>
+      <HintPath>..\..\packages\EntityFramework.6.1.3\lib\net40\EntityFramework.dll</HintPath>
     </Reference>
     <Reference Include="EntityFramework.SqlServer">
-      <HintPath>..\..\packages\EntityFramework.6.1.2\lib\net45\EntityFramework.SqlServer.dll</HintPath>
-    </Reference>
-    <Reference Include="IoerContentBusinessEntities, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\DataAccess\IoerContentBusinessEntities\bin\Debug\IoerContentBusinessEntities.dll</HintPath>
+      <HintPath>..\..\packages\EntityFramework.6.1.3\lib\net40\EntityFramework.SqlServer.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
@@ -86,6 +85,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PublishingServices.cs" />
     <Compile Include="ResourceBizService.cs" />
+    <Compile Include="ResourceV2Services.cs" />
     <Compile Include="SecurityManager.cs" />
     <Compile Include="Service References\workNetAccountServices\Reference.cs">
       <AutoGen>True</AutoGen>
@@ -127,13 +127,13 @@
       <Project>{f010c012-fc36-4b51-93c4-d6408f9672f1}</Project>
       <Name>IOERBusinessEntities</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\DataAccess\IoerContentBusinessEntities\IoerContentBusinessEntities.csproj">
+      <Project>{3e114bb6-e7de-45c7-81fd-34df3d2b4dbf}</Project>
+      <Name>IoerContentBusinessEntities</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\DataAccess\LRWarehouse.DAL\LRWarehouse.DAL.csproj">
       <Project>{5a3c08e1-cc85-4a82-bcc1-f43e54107b5b}</Project>
       <Name>LRWarehouse.DAL</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Isle.DataContracts\Isle.DataContracts.csproj">
-      <Project>{aecdc4c5-3ef5-4ce1-a4d0-88c8f4e4634e}</Project>
-      <Name>Isle.DataContracts</Name>
     </ProjectReference>
     <ProjectReference Include="..\Isle.DTO\Isle.DTO.csproj">
       <Project>{a16be910-9990-48dc-a9de-f5985d50d09c}</Project>
@@ -142,8 +142,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
-    <None Include="bin\Debug\Isle.BizServices.dll.config" />
-    <None Include="bin\Release\Isle.BizServices.dll.config" />
     <None Include="packages.config" />
     <None Include="Service References\workNetAccountServices\Account.wsdl" />
     <None Include="Service References\workNetAccountServices\Isle.BizServices.workNetAccountServices.AccountDetail1.datasource">
@@ -171,62 +169,6 @@
       <Generator>WCF Proxy Generator</Generator>
       <LastGenOutput>Reference.cs</LastGenOutput>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="bin\Debug\AutoMapper.dll" />
-    <Content Include="bin\Debug\EntityFramework.dll" />
-    <Content Include="bin\Debug\EntityFramework.xml" />
-    <Content Include="bin\Debug\GatewayBusinessEntities.dll" />
-    <Content Include="bin\Debug\GatewayBusinessEntities.pdb" />
-    <Content Include="bin\Debug\ILPathways.Business.dll" />
-    <Content Include="bin\Debug\ILPathways.Business.pdb" />
-    <Content Include="bin\Debug\ILPathways.Common.dll" />
-    <Content Include="bin\Debug\ILPathways.Common.pdb" />
-    <Content Include="bin\Debug\ILPathways.DAL.dll" />
-    <Content Include="bin\Debug\ILPathways.DAL.pdb" />
-    <Content Include="bin\Debug\ILPathways.Utilities.dll" />
-    <Content Include="bin\Debug\ILPathways.Utilities.pdb" />
-    <Content Include="bin\Debug\IOERBusinessEntities.dll" />
-    <Content Include="bin\Debug\IOERBusinessEntities.pdb" />
-    <Content Include="bin\Debug\IoerContentBusinessEntities.dll" />
-    <Content Include="bin\Debug\IoerContentBusinessEntities.pdb" />
-    <Content Include="bin\Debug\Isle.BizServices.dll" />
-    <Content Include="bin\Debug\Isle.BizServices.pdb" />
-    <Content Include="bin\Debug\Isle.DataContracts.dll" />
-    <Content Include="bin\Debug\Isle.DataContracts.pdb" />
-    <Content Include="bin\Debug\LRWarehouse.Business.dll" />
-    <Content Include="bin\Debug\LRWarehouse.Business.pdb" />
-    <Content Include="bin\Debug\LRWarehouse.DAL.dll" />
-    <Content Include="bin\Debug\LRWarehouse.DAL.pdb" />
-    <Content Include="bin\Debug\Microsoft.ApplicationBlocks.Data.dll" />
-    <Content Include="bin\Debug\nClam.dll" />
-    <Content Include="bin\Release\AutoMapper.dll" />
-    <Content Include="bin\Release\AutoMapper.xml" />
-    <Content Include="bin\Release\EntityFramework.dll" />
-    <Content Include="bin\Release\EntityFramework.xml" />
-    <Content Include="bin\Release\GatewayBusinessEntities.dll" />
-    <Content Include="bin\Release\GatewayBusinessEntities.pdb" />
-    <Content Include="bin\Release\ILPathways.Business.dll" />
-    <Content Include="bin\Release\ILPathways.Business.pdb" />
-    <Content Include="bin\Release\ILPathways.Common.dll" />
-    <Content Include="bin\Release\ILPathways.Common.pdb" />
-    <Content Include="bin\Release\ILPathways.DAL.dll" />
-    <Content Include="bin\Release\ILPathways.DAL.pdb" />
-    <Content Include="bin\Release\ILPathways.Utilities.dll" />
-    <Content Include="bin\Release\ILPathways.Utilities.pdb" />
-    <Content Include="bin\Release\IOERBusinessEntities.dll" />
-    <Content Include="bin\Release\IOERBusinessEntities.pdb" />
-    <Content Include="bin\Release\IoerContentBusinessEntities.dll" />
-    <Content Include="bin\Release\IoerContentBusinessEntities.pdb" />
-    <Content Include="bin\Release\Isle.BizServices.dll" />
-    <Content Include="bin\Release\Isle.BizServices.pdb" />
-    <Content Include="bin\Release\Isle.DataContracts.dll" />
-    <Content Include="bin\Release\Isle.DataContracts.pdb" />
-    <Content Include="bin\Release\LRWarehouse.Business.dll" />
-    <Content Include="bin\Release\LRWarehouse.Business.pdb" />
-    <Content Include="bin\Release\LRWarehouse.DAL.dll" />
-    <Content Include="bin\Release\LRWarehouse.DAL.pdb" />
-    <Content Include="bin\Release\Microsoft.ApplicationBlocks.Data.dll" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

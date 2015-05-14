@@ -498,8 +498,8 @@ namespace ILPathways.Admin.Org
 
             //Set page size based on user preferences
             int defaultPageSize = this.formGrid.PageSize;
-            //this.formGrid.PageSize = defaultPageSize;
-
+            this.formGrid.PageSize = defaultPageSize;
+            pager1.PageSize = pager2.PageSize = defaultPageSize;
             this.SetListSelection( this.ddlPageSizeList, defaultPageSize.ToString() );
 
         } //

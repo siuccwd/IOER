@@ -90,6 +90,9 @@
         <EntityTypeShape EntityType="ResourceModel.Codes_TagCategoryValue_summary" Width="2.5" PointX="25.125" PointY="12.5" FillColor="255, 224, 192" />
         <EntityTypeShape EntityType="ResourceModel.Patron_ResourceSummary" Width="2.375" PointX="24.25" PointY="18.75" />
         <EntityTypeShape EntityType="ResourceModel.Patron_Summary" Width="2.5" PointX="28.125" PointY="19" />
+        <EntityTypeShape EntityType="ResourceModel.Resource_Like" Width="1.5" PointX="0.74988297221711053" PointY="8.68606320428013" />
+        <EntityTypeShape EntityType="ResourceModel.Resource_LikeSummary" Width="1.5" PointX="1.6841190092657317" PointY="21.104681963615437" />
+        <EntityTypeShape EntityType="ResourceModel.Resource_View" Width="1.5" PointX="7.7794502804891437" PointY="9.76716399647629" />
       </Diagram>
       <Diagram DiagramId="eae49c2d076442d7b4a496c93e2665dc" Name="ResourceTagging" ZoomLevel="71" >
         <EntityTypeShape EntityType="ResourceModel.Resource" Width="2.125" PointX="11.125" PointY="1.375" />

@@ -23,8 +23,12 @@ namespace IoerContentBusinessEntities
         public Nullable<int> TargetUserId { get; set; }
         public Nullable<int> ActionByUserId { get; set; }
         public Nullable<int> ActivityObjectId { get; set; }
-        public Nullable<int> Int2 { get; set; }
         public string RelatedImageUrl { get; set; }
         public string RelatedTargetUrl { get; set; }
+        public string SessionId { get; set; }
+        public string IPAddress { get; set; }
+        public Nullable<int> ObjectRelatedId { get; set; }
+        public Nullable<int> TargetObjectId { get; set; }
+        public string Referrer { get; set; }
     }
 }

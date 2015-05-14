@@ -22,18 +22,18 @@ namespace ILPathways.Controls
     Services.ElasticSearchService searchService = new Services.ElasticSearchService();
 
     protected void Page_Load( object sender, EventArgs e )
-    {
+    {      
       newestResources = "[]";
       followedResources = "[]";
       mostCommentedResources = "[]";
       featuredResources = "[]";
-      GetNewestResources();
-      GetMostCommentedResources();
+      GetNewestResourcesV7();
+      GetMostCommentedResourcesV7();
       GetCommunityPosts();
-      GetFeaturedResources();
+      GetFeaturedResourcesV7();
       if ( IsUserAuthenticated() )
       {
-        GetFollowedResources();
+        GetFollowedResourcesV7();
       }
     }
 
@@ -42,81 +42,50 @@ namespace ILPathways.Controls
       communityPosts = new ILPathways.Services.CommunityService().GetRecentPosts( 1, 5 );
     }
 
-    public void GetNewestResources()
+
+    public void GetNewestResourcesV7()
     {
-      var input = GetSortedInput( "intID", "desc" );
-      newestResources = searchService.DoSearch3( input );
+      var input = GetSortedInputV7( "ResourceId", "desc" );
+      newestResources = ( string ) searchService.DoSearchCollection7( input ).data;
     }
 
-    public void GetMostCommentedResources()
+    public void GetMostCommentedResourcesV7()
     {
-      var input = GetSortedInput( "commentsCount", "desc" );
-      mostCommentedResources = searchService.DoSearch3( input );
+      var input = GetSortedInputV7( "Paradata.Comments", "desc" );
+      mostCommentedResources = ( string ) searchService.DoSearchCollection7( input ).data;
     }
 
-    public void GetFeaturedResources()
+    public void GetFollowedResourcesV7()
     {
-      var libFilter = new Services.ElasticSearchService.jsonFilter();
-      libFilter.field = "libraryIDs";
-      libFilter.es = "libraryIDs";
-      libFilter.items.Add( new Services.ElasticSearchService.jsonFilterItem()
-      {
-        id = 286,
-        text = "SIUC IOER"
-      } );
-      var colFilter = new Services.ElasticSearchService.jsonFilter();
-      colFilter.field = "collectionIDs";
-      colFilter.es = "collectionIDs";
-      colFilter.items.Add( new Services.ElasticSearchService.jsonFilterItem()
-      {
-        id = 532,
-        text = "Featured Resources"
-      } );
-
-      /*var libService = new Isle.BizServices.LibraryBizService();
-      var myLibraries = libService.Library_SelectListWithContributeAccess( WebUser.Id );
-      foreach ( LibrarySummaryDTO library in myLibraries )
-      {
-        var lib = new Services.ElasticSearchService.jsonFilterItem();
-        lib.id = library.Id;
-        lib.text = library.Title;
-        libFilter.items.Add( lib );
-      }*/
-
-      var input = GetSortedInput( "intID", "desc" );
-      input.narrowingOptions.idFilters.Add( libFilter );
-      input.narrowingOptions.idFilters.Add( colFilter );
-
-      featuredResources = searchService.DoSearch3( input );
-    }
-
-    public void GetFollowedResources()
-    {
-      var libFilter = new Services.ElasticSearchService.jsonFilter();
-      libFilter.field = "libraryIDs";
-      libFilter.es = "libraryIDs";
-
       var libService = new Isle.BizServices.LibraryBizService();
       var myLibraries = libService.Library_SelectListWithContributeAccess( WebUser.Id );
-      foreach(LibrarySummaryDTO library in myLibraries){
-        var lib = new Services.ElasticSearchService.jsonFilterItem();
-        lib.id = library.Id;
-        lib.text = library.Title;
-        libFilter.items.Add( lib );
+      var input = GetSortedInputV7( "ResourceId", "desc" );
+
+      foreach ( LibrarySummaryDTO library in myLibraries )
+      {
+        input.libraryIDs.Add( library.Id );
       }
 
-      var input = GetSortedInput( "intID", "desc" );
-      input.narrowingOptions.idFilters.Add( libFilter );
-
-      followedResources = searchService.DoSearch3( input );
+      newestResources = ( string ) searchService.DoSearchCollection7( input ).data;
     }
 
-    public Services.ElasticSearchService.JSONQuery2 GetSortedInput( string field, string order )
+    public void GetFeaturedResourcesV7()
     {
-      var input = new Services.ElasticSearchService.JSONQuery2();
-      input.sort = new Services.ElasticSearchService.jsonSortingOptions() { field = field, order = order };
-      input.searchText = "* -freesound -delete -bookshare -\"Smarter Balanced Assessment Consortium\"";
+      var input = GetSortedInputV7( "ResourceId", "desc" );
+      input.libraryIDs.Add( 286 );
+      input.collectionIDs.Add( 532 );
+      input.size = 25;
+      featuredResources = ( string ) searchService.DoSearchCollection7( input ).data;
+    }
+
+    public Services.ElasticSearchService.JSONQueryV7 GetSortedInputV7( string field, string order )
+    {
+      var input = new Services.ElasticSearchService.JSONQueryV7();
+      input.sort = new Services.ElasticSearchService.SortV7() { field = field, order = order };
+      input.text = "*";
+      input.not = " 'delete'  'freesound'  'bookshare'  'smarter balanced' ";
       input.size = 10;
+      input.start = 0;
 
       return input;
     }

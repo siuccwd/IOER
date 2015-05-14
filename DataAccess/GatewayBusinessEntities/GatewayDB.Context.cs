@@ -59,5 +59,6 @@ namespace GatewayBusinessEntities
         public DbSet<Organization_MemberRole> Organization_MemberRole { get; set; }
         public DbSet<Organization_AdminMembers> Organization_AdminMembers { get; set; }
         public DbSet<Organization_MemberSummary> Organization_MemberSummary { get; set; }
+        public DbSet<Organization_MemberCrosstab> Organization_MemberCrosstab { get; set; }
     }
 }

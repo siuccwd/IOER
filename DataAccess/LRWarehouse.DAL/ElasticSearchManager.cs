@@ -30,7 +30,7 @@ namespace LRWarehouse.DAL
     public ElasticSearchManager() {
       var node = new Uri( GetAppKeyValue( "elasticSearchUrl" ) );
       var connectionPool = new SniffingConnectionPool(new[] { node });
-      var config = new ConnectionConfiguration( connectionPool );
+      var config = new ConnectionConfiguration( connectionPool ).MaximumRetries(10).DisablePing(true);
       client = new ElasticsearchClient( config );
       jsonManager = new ResourceJSONManager();
       serializer = new JavaScriptSerializer();
@@ -44,6 +44,10 @@ namespace LRWarehouse.DAL
       return Search( queryJSON, "collection5" );
     }
     public string Search( string queryJSON, string indexName )
+    {
+      return Search( queryJSON, indexName, type );
+    }
+    public string Search( string queryJSON, string indexName, string type )
     {
       var response = client.Search<string>( indexName, type, queryJSON ).Response;
       return response;
@@ -70,11 +74,11 @@ namespace LRWarehouse.DAL
     }
 
     //Create or replace record(s) in the index
-    public void RefreshResource( int id )
+    public void RefreshResourceOld( int id )
     {
-      RefreshResources( new List<int> { id } );
+      RefreshResourcesOld( new List<int> { id } );
     }
-    public void RefreshResources( List<int> ids )
+    public void RefreshResourcesOld( List<int> ids )
     {
       //Get Evaluation Data
       var evaluations = evaluationManager.GetEvaluationsWithCount( 0 );
@@ -86,8 +90,11 @@ namespace LRWarehouse.DAL
       CreateOrReplaceResourcesInCollection5( dataC5, evaluations );
 
       //Collection 6
-        var dataC6 = GetSqlDataForElasticSearchCollection6( idList, ref status );
-        CreateOrReplaceResourcesInCollection6( dataC6, evaluations );
+      var dataC6 = GetSqlDataForElasticSearchCollection6( idList, ref status );
+      CreateOrReplaceResourcesInCollection6( dataC6, evaluations );
+
+      //Collection 7
+      //this method should only be called by the method in resourcev2services and thus collection7 should be handled by that
     }
 
     //Create or update from existing DataSets (useful for full index rebuilds)
@@ -155,6 +162,7 @@ namespace LRWarehouse.DAL
     }
     public void DeleteResources( List<int> ids )
     {
+      /*
       //Collection 5
       var bulkC5 = new List<object>();
       foreach ( var item in ids )
@@ -170,6 +178,15 @@ namespace LRWarehouse.DAL
         bulkC6.Add( new { delete = new { _index = "collection6", _type = type, _id = item } } );
       }
       client.Bulk( bulkC6 );
+      */
+
+      //Collection 7
+      var bulkC7 = new List<object>();
+      foreach ( var item in ids )
+      {
+        bulkC7.Add( new { delete = new { _index = "collection7", _type = type, _id = item } } );
+      }
+      client.Bulk( bulkC7 );
     }
 
     //Delete Entire Index
@@ -222,5 +239,20 @@ namespace LRWarehouse.DAL
       }
     }
     #endregion
+
+    public class ResourceHeader
+    {
+      public ResourceHeader()
+      {
+        index = new ResourceHeaderData();
+      }
+      public ResourceHeaderData index { get; set; }
+    }
+    public class ResourceHeaderData
+    {
+      public string _index { get; set; }
+      public string _type { get; set; }
+      public string _id { get; set; }
+    }
   }
 }

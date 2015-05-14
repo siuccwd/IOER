@@ -835,7 +835,24 @@ namespace ILPathways.Common
 
             return queryString;
         }
+        public static string GetUserIPAddress()
+        {
+            string ip = "unknown";
+            try
+            {
+                ip = HttpContext.Current.Request.ServerVariables[ "HTTP_X_FORWARDED_FOR" ];
+                if ( ip == null || ip == "" || ip.ToLower() == "unknown" )
+                {
+                    ip = HttpContext.Current.Request.ServerVariables[ "REMOTE_ADDR" ];
+                }
+            }
+            catch ( Exception ex )
+            {
 
+            }
+
+            return ip;
+        } //
         /// <summary>
         /// Check if column in passed row is null
         /// </summary>

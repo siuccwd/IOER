@@ -23,7 +23,7 @@ namespace IOERBusinessEntities
         public int ResourceIntId { get; set; }
         public int EvaluationId { get; set; }
         public int Score { get; set; }
-        public Nullable<bool> UserHasCertification { get; set; }
+        public bool UserHasCertification { get; set; }
         public Nullable<int> CreatedById { get; set; }
         public Nullable<System.DateTime> Created { get; set; }
         public Nullable<int> StandardId { get; set; }

@@ -127,10 +127,11 @@ namespace IoerContentBusinessEntities
                     {
                         //will need to delete resource
                         //14-12-04 MP - added code at the services level to check this!
+                        //15-01-28 MP - note in a cascade delete, the resources will need to be handled!!
                         int resourceId = item.ResourceIntId == null ? 0 : ( int ) item.ResourceIntId;
 
-                        if ( usingContentConnector == false )
-                        {
+                        //if ( usingContentConnector == false )
+                        //{
                             context.Contents.Remove( item );
                             context.SaveChanges();
                             isSuccessful = true;
@@ -141,28 +142,49 @@ namespace IoerContentBusinessEntities
                                 && item.DocumentRowId.ToString().Length == 36
                                 && item.DocumentRowId.ToString() != DEFAULT_GUID )
                                 Document_Version_Delete( item.DocumentRowId, ref statusMessage );
-                        } 
-                        else 
+                        //} 
+                        //else 
+                        //{
+                        //    //check for where a content connector child
+                        //    if ( ContentConnector_DeleteChild( item.Id, ref statusMessage ) )
+                        //    {
+
+                        //        context.Contents.Remove( item );
+                        //        context.SaveChanges();
+                        //        isSuccessful = true;
+
+                        //        //delete doc version
+                        //        if ( item.DocumentRowId != null
+                        //            && item.DocumentRowId.ToString().Length == 36
+                        //            && item.DocumentRowId.ToString() != DEFAULT_GUID )
+                        //            Document_Version_Delete( item.DocumentRowId, ref statusMessage );
+                        //    }
+                        //    else
+                        //    {
+                        //        statusMessage = "An issue was encountered removing records related to the requested record. Please notify system administration if this problem reoccurs.";
+                        //    }
+                        //}
+
+                        // =========== delete child nodes ==========================
+                        List<Content> eflist = context.Contents
+                            .Where( s => s.ParentId == id )
+                            .OrderBy( s => s.Id )
+                            .ToList();
+
+                        if ( eflist != null && eflist.Count > 0 )
                         {
-                            //check for where a content connector child
-                            if ( ContentConnector_DeleteChild( item.Id, ref statusMessage ) )
+                            foreach ( Content efom in eflist )
                             {
-
-                                context.Contents.Remove( item );
-                                context.SaveChanges();
-                                isSuccessful = true;
-
-                                //delete doc version
-                                if ( item.DocumentRowId != null
-                                    && item.DocumentRowId.ToString().Length == 36
-                                    && item.DocumentRowId.ToString() != DEFAULT_GUID )
-                                    Document_Version_Delete( item.DocumentRowId, ref statusMessage );
+                                Content_Delete( efom.Id, ref statusMessage );
+                                //if resource exists, need to set inactive
+                                //if ( efom.ResourceIntId != null && efom.ResourceIntId > 0 )
+                                //{
+                                //    Isle.BizServices.ResourceBizService.Resource_SetInactive( ( int ) efom.ResourceIntId, ref statusMessage );
+                                //}
                             }
-                            else
-                            {
-                                statusMessage = "An issue was encountered removing records related to the requested record. Please notify system administration if this problem reoccurs.";
-                            }
+                            statusMessage = string.Format("Also removed all child items ({0})",eflist.Count);
                         }
+        
                     }
                 }
             }
@@ -315,7 +337,7 @@ namespace IoerContentBusinessEntities
             mod.PrivilegeTypeId = content.PrivilegeTypeId;
             mod.ConditionsOfUseId = content.ConditionsOfUseId;
             mod.IsActive = true;
-            mod.IsPublished = false;
+            //mod.IsPublished = false;
             mod.IsOrgContentOwner = content.IsOrgContentOwner;
             mod.OrgId = content.OrgId;
             mod.ResourceIntId = 0;
@@ -378,7 +400,7 @@ namespace IoerContentBusinessEntities
                     mod.PrivilegeTypeId = curr.PrivilegeTypeId;
                     mod.ConditionsOfUseId = curr.ConditionsOfUseId;
                     mod.IsActive = true;
-                    mod.IsPublished = false;
+                   // mod.IsPublished = false;
                     mod.IsOrgContentOwner = curr.IsOrgContentOwner;
                     mod.OrgId = curr.OrgId;
                     mod.ResourceIntId = 0;
@@ -451,7 +473,7 @@ namespace IoerContentBusinessEntities
                     child.PrivilegeTypeId = parentEntity.PrivilegeTypeId;
                     child.ConditionsOfUseId = parentEntity.ConditionsOfUseId;
                     child.IsActive = true;
-                    child.IsPublished = false;
+                   // child.IsPublished = false;
                     child.IsOrgContentOwner = parentEntity.IsOrgContentOwner;
                     child.OrgId = parentEntity.OrgId;
                     child.ResourceIntId = 0;
@@ -493,7 +515,7 @@ namespace IoerContentBusinessEntities
             child.ConditionsOfUseId = parentEntity.ConditionsOfUseId;
             child.ResourceIntId = 0;
             child.IsActive = true;
-            child.IsPublished = false;
+            //child.IsPublished = false;
             child.IsOrgContentOwner = parentEntity.IsOrgContentOwner;
             child.OrgId = parentEntity.OrgId;
             child.ResourceIntId = 0;
@@ -635,7 +657,11 @@ namespace IoerContentBusinessEntities
                     child.SortOrder = efom.SortOrder == null ? DefaultSortOrder : ( int ) efom.SortOrder;
                     child.Title = efom.Title;
                     child.Description = efom.Description;
-                    child.IsPublished = UtilityManager.Assign( efom.IsPublished, false );
+                    if ( efom.StatusId == IB.ContentItem.PUBLISHED_STATUS )
+                        child.IsPublished = true;
+                    else
+                        child.IsPublished = false;
+                   // child.IsPublished = UtilityManager.Assign( efom.IsPublished, false );
 
                     if ( publishedOnly == false || child.IsPublished )
                     {
@@ -670,13 +696,16 @@ namespace IoerContentBusinessEntities
                 {
                     child = new ContentNode();
                     child.Id = efom.Id;
-                    child.IsPublished = UtilityManager.Assign(efom.IsPublished, false);
                     child.ParentId = ( int ) efom.ParentId;
                     child.TypeId = UtilityManager.Assign(efom.TypeId, IB.ContentItem.UNIT_CONTENT_ID);
                     child.SortOrder = efom.SortOrder == null ? DefaultSortOrder : ( int ) efom.SortOrder;
                     child.Title = efom.Title;
                     child.Description = efom.Description;
-                    child.IsPublished = UtilityManager.Assign( efom.IsPublished, false );
+                    if ( efom.StatusId == IB.ContentItem.PUBLISHED_STATUS )
+                        child.IsPublished = true;
+                    else
+                        child.IsPublished = false;
+                    //child.IsPublished = UtilityManager.Assign( efom.IsPublished, false );
 
                     if ( publishedOnly == false || child.IsPublished )
                     {
@@ -782,7 +811,6 @@ namespace IoerContentBusinessEntities
             else
                 to.ParentId = null;
 
-            to.IsPublished = ( bool ) fromEntity.IsPublished;
             to.IsActive = ( bool ) fromEntity.IsActive;
 
             if (fromEntity.TypeId > 10)
@@ -793,6 +821,11 @@ namespace IoerContentBusinessEntities
             if ( fromEntity.StatusId == 0 )
                 fromEntity.StatusId = 2;
             to.StatusId = fromEntity.StatusId;
+            if ( fromEntity.StatusId == IB.ContentItem.PUBLISHED_STATUS )
+                to.IsPublished = true;
+            else
+                to.IsPublished = false; 
+            //to.IsPublished = ( bool ) fromEntity.IsPublished;
 
             if ( fromEntity.PrivilegeTypeId == 0 )
                 fromEntity.PrivilegeTypeId = 1;
@@ -874,8 +907,8 @@ namespace IoerContentBusinessEntities
                 to.SortOrder = fromEntity.SortOrder != null ? ( int ) fromEntity.SortOrder : DefaultSortOrder;
                 to.ParentId = fromEntity.ParentId != null ? ( int ) fromEntity.ParentId : 0;
 
-                if ( fromEntity.IsPublished != null )
-                    to.IsPublished = ( bool ) fromEntity.IsPublished;
+                //if ( fromEntity.IsPublished != null )
+                //    to.IsPublished = ( bool ) fromEntity.IsPublished;
                 to.IsActive = fromEntity.IsActive == null ? true : ( bool ) fromEntity.IsActive;
 
                 to.TypeId = fromEntity.TypeId != null ? ( int ) fromEntity.TypeId : 0;
@@ -1001,7 +1034,7 @@ namespace IoerContentBusinessEntities
                 to.SortOrder = fromEntity.SortOrder != null ? ( int ) fromEntity.SortOrder : DefaultSortOrder;
                 to.ParentId = fromEntity.ParentId;
 
-                to.IsPublished = fromEntity.IsPublished;
+                //to.IsPublished = fromEntity.IsPublished;
                 to.IsActive = fromEntity.IsActive == null ? true : ( bool )fromEntity.IsActive;
 
                 to.TypeId = fromEntity.TypeId != null ? ( int )fromEntity.TypeId : 0;
@@ -1474,7 +1507,7 @@ namespace IoerContentBusinessEntities
                 to.SortOrder = fromEntity.SortOrder;
                 to.ParentId = fromEntity.ParentId;
 
-                to.IsPublished = ( bool ) fromEntity.IsPublished;
+                //to.IsPublished = ( bool ) fromEntity.IsPublished;
                 to.IsActive = ( bool ) fromEntity.IsActive;
 
                 to.TypeId = fromEntity.TypeId != null ? ( int ) fromEntity.TypeId : 0;
@@ -2275,7 +2308,12 @@ namespace IoerContentBusinessEntities
                         entity.Title = item.Title;
                         entity.Description = item.Summary;
                         entity.ImageUrl = item.ImageUrl;
-                        entity.IsPublished = item.IsPublished == null ? false : ( bool ) item.IsPublished;
+                        //entity.IsPublished = item.IsPublished == null ? false : ( bool ) item.IsPublished;
+                        if ( item.StatusId == IB.ContentItem.PUBLISHED_STATUS )
+                            entity.IsPublished = true;
+                        else
+                            entity.IsPublished = false;
+
                         entity.PartnerTypeId = item.PartnerTypeId;
                         entity.PartnerType = item.PartnerType;
                         entity.IsUserAuthor = item.PartnerType == "Author";
@@ -3093,7 +3131,7 @@ namespace IoerContentBusinessEntities
             return entity;
         }
 
-        public static bool Document_Version_Delete( Guid? id, ref string statusMessage )
+        public bool Document_Version_Delete( Guid? id, ref string statusMessage )
         {
             bool isSuccessful = false;
             try

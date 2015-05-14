@@ -106,7 +106,7 @@ namespace ILPathways.Controls.Curriculum
             dataJSON = serializer.Serialize( UtilityService.DoReturn( usage, false, "File must be jpg, gif, or png.", usage ) );
             return;
         }
-        var savingName = node.RowId.ToString() + extension;
+        var savingName = "list" +  node.Id.ToString() + extension;
         FileResourceController.PathParts parts = FileResourceController.DetermineDocumentPathUsingParentItem( node );
         var savingFolder = parts.filePath;
 

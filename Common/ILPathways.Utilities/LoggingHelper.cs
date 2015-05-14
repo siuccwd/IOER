@@ -1,18 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Globalization;
 using System.IO;
-using System.Linq;
-using System.Resources;
-using System.Text;
-using System.Text.RegularExpressions;
 using System.Web;
-using System.Web.SessionState;
-using System.Web.UI;
-using System.Web.UI.WebControls;
 
-using IPU = ILPathways.Utilities;
 //using wnDAL = workNet.DAL;
 
 namespace ILPathways.Utilities
@@ -56,6 +45,9 @@ namespace ILPathways.Utilities
 
             try
             {
+                if ( UtilityManager.GetAppKeyValue( "notifyOnException", "no" ).ToLower() == "yes" )
+                    notifyAdmin = true;
+
                 sessionId = HttpContext.Current.Session.SessionID.ToString();
                 remoteIP = HttpContext.Current.Request.ServerVariables[ "REMOTE_HOST" ];
 
@@ -107,7 +99,7 @@ namespace ILPathways.Utilities
                 if ( parmsString.Length > 0 )
                     errMsg += "\r\nParameters: " + parmsString;
 
-                LoggingHelper.LogError( errMsg );
+                LoggingHelper.LogError( errMsg, notifyAdmin );
             }
             catch
             {

@@ -78,5 +78,8 @@ namespace IOERBusinessEntities
         public DbSet<Codes_TagCategoryValue_summary> Codes_TagCategoryValue_summary { get; set; }
         public DbSet<Patron_ResourceSummary> Patron_ResourceSummary { get; set; }
         public DbSet<Patron_Summary> Patron_Summary { get; set; }
+        public DbSet<Resource_Like> Resource_Like { get; set; }
+        public DbSet<Resource_LikeSummary> Resource_LikeSummary { get; set; }
+        public DbSet<Resource_View> Resource_View { get; set; }
     }
 }

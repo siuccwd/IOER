@@ -45,7 +45,7 @@
       if(event.which == 13 || event.keyCode == 13){
         var query = $("#txtSearch").val();
         if(query.length > 0){
-          window.location.href = "/search?q=" + encodeURIComponent(query);
+          window.location.href = "/search?text=" + encodeURIComponent(query);
         }
       }
     });
@@ -62,6 +62,9 @@
       renderList(id, items, useResourceURL);
     }
     catch(e){
+      console.log("ERROR", e);
+      console.log(data);
+      console.log(id);
       $("div[data-id=" + id + "]").hide();
     }
   }
@@ -77,27 +80,27 @@
       var valid = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ _-";
       for(i in list){
         var fixedTitle = "";
-        for(j in list[i].title){
-          if(valid.indexOf(list[i].title[j]) >= 0){
-            fixedTitle += list[i].title[j];
+        for(j in list[i].Title){
+          if(valid.indexOf(list[i].Title[j]) >= 0){
+            fixedTitle += list[i].Title[j];
           }
         }
         fixedTitle = fixedTitle.replace(/ /g, "_");
-        var useThumb = "//ioer.ilsharedlearning.org/OERThumbs/large/" + list[i].intID + "-large.png";
+        var useThumb = "//ioer.ilsharedlearning.org/OERThumbs/large/" + list[i].ResourceId + "-large.png";
         for(j in thumbIconTypes){
-          if(list[i].url.indexOf(thumbIconTypes[j].match) > -1){
+          if(list[i].Url.indexOf(thumbIconTypes[j].match) > -1){
             useThumb = thumbIconTypes[j].file;
           }
         }
         div.append(
-          template.replace(/{detailURL}/g, (useResourceURL ? list[i].url : "/Resource/" + list[i].intID + "/" + fixedTitle))
+          template.replace(/{detailURL}/g, (useResourceURL ? list[i].Url : "/Resource/" + list[i].ResourceId + "/" + fixedTitle))
           .replace(/{thumbURL}/g, useThumb )
           .replace(/{thumbSRC}/g, "img src=\"" + useThumb + "\"" )
-          .replace(/{text}/g, list[i].title)
-          .replace(/{id}/g, list[i].intID)
+          .replace(/{text}/g, list[i].Title)
+          .replace(/{id}/g, list[i].ResourceId)
         );
         for(j in fileTypes){
-          if(list[i].url.indexOf(fileTypes[j].match) > -1){
+          if(list[i].Url.indexOf(fileTypes[j].match) > -1){
             div.find(".resource").last().find(".message").html(fileTypes[j].text);
           }
         }
@@ -204,13 +207,20 @@
   .communityPost p { padding-left: 55px; }
   .communityPost .date { position: absolute; left: 8px; top: 55px; font-size: 10px; }
 
-  #stemLibraries { text-align: center; white-space: nowrap; }
-  #stemLibraries h2 { text-align: left; }
-  #stemLibraries a { display: inline-block; vertical-align: top; width: 13%; max-width: 200px; margin-right: 1%; height: 200px; background: url('') no-repeat center center; background-size: 90%; }
-  #stemLibraries a div { background-color: #FFF; display: none; }
+  .libraryBox { text-align: center; white-space: nowrap; }
+  .libraryBox h2 { text-align: left; }
+  .libraryBox a { position: relative; display: inline-block; vertical-align: top; width: 100%; max-width: 175px; margin-right: 1%; height: 200px; background: url('') no-repeat center center; background-size: 90%; }
+  .libraryBox a div { background-color: #FFF; display: none; }
+  #stemLibraries a { width: 13%; }
+  #featuredLibraries a div { display: block; position: absolute; bottom: 0; left: 0; right: 0; text-align: center; background-color: rgba(0,0,0,0.6); color: #FFF; padding: 2px; }
+  #featuredLibraries a { background-color: #FFF; border-radius: 5px; overflow: hidden; background-size: 95%; margin-bottom: 15px; background-position: top 10% center; }
 
   #searchBox { transition: padding 1s; padding-bottom: 20px; }
   #searchBox input { display: block; margin: 5px auto; width: 75%; font-size: 32px; padding: 2px 10px; }
+
+  /* Featured Resources */
+  #featuredResources { height: auto; }
+  #featuredResources .resource { width: 17%; margin-bottom: 20px; }
 
   /* Responsive */
   @media screen and (min-width: 980px) {
@@ -226,7 +236,8 @@
     #links .splashItem { width: 47%; }
   }
   @media screen and (max-width: 800px) {
-    .resource { width: 30%; margin: 10px 2% 200px 0; }
+    .resource, #featuredResources .resource { width: 30%; margin: 10px 2% 200px 0; }
+    #featuredResources .resource { margin-bottom: 20px; }
   }
   @media screen and (max-width: 700px) {
     #links .splashItem { width: 98%; }
@@ -235,13 +246,14 @@
     #communityBox { position: static; width: 100%; padding: 5px; }
   }
   @media screen and (max-width: 500px){
-    .resource { width: 48%; margin: 10px 1% 200px 0; }
+    .resource, #featuredResources .resource { width: 48%; margin: 10px 1% 200px 0; }
+    #featuredResources .resource { margin-bottom: 20px; }
     .contentBox h1, .contentBox .bigText.white { display: none; }
     #links .splashItem img { width: 100px; height: 100px; }
     #splash .splashItem { padding-left: 50px; min-height: 100px; }
   }
   @media screen and (max-width: 1175px) {
-    #stemLibraries { white-space: normal; }
+    .libraryBox { white-space: normal; }
     #stemLibraries a { margin: 10px; width: 100px; height: 100px; }
   }
 </style>
@@ -393,7 +405,7 @@
         <h2><a href="/Search.aspx?sort=newest">Newest Resources:</a></h2>
         <div id="newestResources" class="resourcesBox"></div>
       </div>
-      <div id="stemLibraries" class="contentBox interestBox">
+      <div id="stemLibraries" class="contentBox interestBox libraryBox">
         <h2>Illinois Pathways STEM Libraries:</h2>
         <a class="stemLibrary" href="http://ioer.ilsharedlearning.org/Library/211/Agriculture,_Food,_and_Natural_Resources_STEM_Learning_Exchange_Library" style="background-image:url(http://ioer.ilsharedlearning.org/ContentDocs/65/2/7c3f376823ce4f6982017678eac353b5.png);"><div>Agriculture</div></a>
         <a class="stemLibrary" href="http://ioer.ilsharedlearning.org/Library/213/Energy_Learning_Exchange_Library" style="background-image: url(http://ioer.ilsharedlearning.org/ContentDocs/11/2/9e8dd759b4d24defb620b7710399f692.png);"><div>Energy</div></a>
@@ -410,6 +422,13 @@
       <div class="contentBox interestBox" data-id="featuredResources">
         <h2>Featured Resources</h2>
         <div id="featuredResources" class="resourcesBox"></div>
+      </div>
+      <div id="featuredLibraries" class="contentBox interestBox libraryBox">
+        <h2>Featured Libraries:</h2>
+        <a class="stemLibrary" href="https://ioer.ilsharedlearning.org/Library/349/Abraham_Lincoln" style="background-image:url('https://ioer.ilsharedlearning.org/ContentDocs/1/303/bfc0d6fac42e429f845181bfc867fdef.jpg');"><div>Abraham Lincoln</div></a>
+        <a class="stemLibrary" href="http://ioer.ilsharedlearning.org/Library/100/Illinois_workNet" style="background-image:url('http://ioer.ilsharedlearning.org/ContentDocs/34/2/40bdb21a5df247c0890dc2aa1fc0982e.jpg');"><div>Illinois workNet</div></a>
+        <a class="stemLibrary" href="http://ioer.ilsharedlearning.org/Library/318/Illinois_Pathways" style="background-image:url('http://ioer.ilsharedlearning.org/ContentDocs/61/2/7e7b6563e6274f53965122d8412df9ee.jpg');"><div>Illinois Pathways</div></a>
+        <a class="stemLibrary" href="http://ioer.ilsharedlearning.org/Library/316/Adult_Education" style="background-image:url('http://ioer.ilsharedlearning.org/ContentDocs/61/303/3afcb2bd944b4e5e934a1eb6b50232fc.jpg');"><div>Adult Education</div></a>
       </div>
     </div>
   </div>

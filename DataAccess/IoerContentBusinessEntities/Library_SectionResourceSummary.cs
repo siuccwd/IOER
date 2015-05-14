@@ -38,5 +38,8 @@ namespace IoerContentBusinessEntities
         public int ResourceVersionIntId { get; set; }
         public Nullable<bool> IsActive { get; set; }
         public Nullable<int> LibraryResourceCount { get; set; }
+        public string ResourceUrl { get; set; }
+        public string Description { get; set; }
+        public string SortTitle { get; set; }
     }
 }

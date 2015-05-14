@@ -9,8 +9,10 @@
 
 <div id="contributer" runat="server">
   <script type="text/javascript">
-    <%=libraryData %>
-    <%=maxFileSize %>
+      <%=libraryData %>
+      <%=orgData %>
+      <%=maxFileSize %>
+      <%=selectedOrgOutput %>
     <%=selectedLibraryOutput %>
     <%=selectedCollectionOutput %>
   	<%=rememberedItems %>
@@ -40,6 +42,7 @@
       });
       addNA("careerCluster");
       updateDisabledStuff();
+      setupOrgDDLs();
       setupLibColDDLs();
       initValidations();
       updateValidations();
@@ -56,7 +59,7 @@
           parent.refreshList(currentParentNodeId, resourceIntID);
       }
       offerRememberedItems();
-
+      addSelectAlls();
     });
 
     function offerRememberedItems() {
@@ -133,6 +136,24 @@
       }
     }
 
+    function setupOrgDDLs() {
+        var box = $("#ddlOrg");
+        //Reset the list
+        box.html("");
+        //addOption(box, 0, "Select an Organization ...");
+        //Load data dynamically
+        for (i in orgData) {
+            var current = orgData[i];
+            addOption(box, current.Id, current.Title);
+        }
+    
+        if (selectedOrgID > 0) {
+            box.find("option[value=" + selectedOrgID + "]").attr("selected", "selected");
+            //??
+            //box.trigger("change");
+        }
+    }
+
     function loadKeywords() {
       var raw = $(".hdnKeywords").val().split("[separator]");
       if (raw.length > 1 || raw[0].trim().length > 0) {
@@ -162,6 +183,49 @@
               )
         )
       );
+    }
+
+    function addSelectAlls() {
+      $("ul[tablename=gradeLevel]").prepend(
+        $("<li></li>")
+        .append(
+          $("<input></input>")
+          .attr("type", "button")
+          .attr("value", "All High School")
+          .attr("id", "btn_allHighSchool")
+        )
+      );
+      $("ul[tablename=gradeLevel]").prepend(
+        $("<li></li>")
+        .append(
+          $("<input></input>")
+          .attr("type", "button")
+          .attr("value", "All Elementary")
+          .attr("id", "btn_allElementary")
+        )
+      );
+      $("ul[tablename=careerCluster]").prepend(
+        $("<li></li>")
+        .append(
+          $("<input></input>")
+          .attr("type", "button")
+          .attr("value", "All Career Clusters")
+          .attr("id", "btn_allClusters")
+        )
+      );
+      $("#btn_allElementary").on("click", function () {
+        for (var i = 1; i <= 10; i++) {
+          $("ul[tablename=gradeLevel] span[itemid=" + i + "] input").prop("checked", true).trigger("change");
+        }
+      });
+      $("#btn_allHighSchool").on("click", function () {
+        for (var i = 11; i <= 14; i++) {
+          $("ul[tablename=gradeLevel] span[itemid=" + i + "] input").prop("checked", true).trigger("change");
+        }
+      });
+      $("#btn_allClusters").on("click", function () {
+        $("ul[tablename=careerCluster] span input:not([value=0])").prop("checked", true).trigger("change");
+      });
     }
 
     //Page functions
@@ -675,7 +739,8 @@
     .step p.label, .step p.data { margin-left: 0; margin-right: 0; }
     .step p.vm { opacity: 1; overflow: hidden; padding-left: 125px; font-style: italic; line-height: 1.3em; min-height: 1.3em; max-height: 15em; transition: opacity 1s, max-height 1.5s, min-height 0.5s; -webkit-transition: opacity 1s, max-height 1.5s, min-height 0.5s; color: #555; }
     .step p.vm.green { color: #4AA394; }
-    .step p.vm.red { color: #B03D25; }
+    .step p.vm.red { background-color: #B03D25; color: #FFF; }
+    .step p.vm.red a { color: #FFF; text-decoration: underline; }
     .step p.vm.cbxl { padding: 0; text-align: center; }
     .step p.vm:empty { min-height: 0.2em; max-height: 0.2em; opacity: 0; }
     .step p.tip { font-style: italic; }
@@ -684,6 +749,7 @@
     .step ul li { display: inline-block; vertical-align: top; width: 32%; }
     .step ul li span { position: relative; display: block; }
     .step ul li input { position: absolute; top: 4px; left: 2px; cursor: pointer; }
+    .step ul li input[type=button] { position: static; width: 100%; }
     .step ul li label { text-align: left; padding-left: 5px; font-weight: normal; padding: 2px 5px 2px 20px; cursor: pointer; width: 100%; border-radius: 5px; display: inline-block; }
     .step ul li label:hover, .step ul li label:focus { background-color: #DDD; }
     .step .conditionsSelector tbody, .step .conditionsSelector select { width: 100%; }
@@ -811,18 +877,27 @@
         </div>
       </div>
     </div>
-
+      
     <div class="step" id="step3">
-      <h2>3. Add this Resource directly to a Library:</h2>
+      <h2>3. Publishing Resource for myself or an Organization:</h2>
+      <p class="tip last">This step is optional. If publishing the resource for yourself do nothing. If publishing for an organization, select the applicable one below. Only organizations where you are a member will be displayed.</p>
+      <label>Select Organization</label>
+      <select id="ddlOrg" name="ddlOrg"></select>
+
+    </div>
+
+    <div class="step" id="step4">
+      <h2>4. Add this Resource directly to a Library:</h2>
       <p class="tip last">This step is optional. Here you can pick a Library and Collection to add this Resource to.</p>
       <label>Select Library</label>
       <select id="ddlLibrary" name="ddlLibrary"></select>
       <label>Select Collection</label>
       <select id="ddlCollection" name="ddlCollection"></select>
     </div>
+
       <asp:Panel ID="submitPanel" runat="server"></asp:Panel>
-    <div class="step" id="step4">
-      <h2>4. Finish!</h2>
+    <div class="step" id="step5">
+      <h2>5. Finish!</h2>
       <input type="button" class="btnFinish" value="I'm Finished. Submit my Resource!" onclick="validatePage();" />
       <p id="processing">Processing, Please wait...</p>
       <p id="preButtonMessage">One or more fields above is not yet complete!</p>

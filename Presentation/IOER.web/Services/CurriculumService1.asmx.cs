@@ -227,8 +227,8 @@ namespace ILPathways.Services
         LastUpdated = DateTime.Now,
         LastUpdatedById = user.Id,
         IsActive = true,
-        IsPublished = false,
-        StatusId = 5,
+        //TODO - ??should NOT default to published?????
+        StatusId = ContentItem.PUBLISHED_STATUS,
         TypeId = 50,
         PrivilegeTypeId = 1,
         OrgId = organizationID
@@ -290,6 +290,10 @@ namespace ILPathways.Services
         IsActive = true
       };
 
+      //Add English
+      //TODO: Test this
+      //newRes.Language = new List<ResourceChildItem>() { new ResourceChildItem() { Id = 1, CreatedById = user.Id } };
+
       newRes.Version = newVersion;
       
       var status = "";
@@ -300,12 +304,22 @@ namespace ILPathways.Services
       var sortTitle = "";
 
       //Do the publish
-      PublishingServices.PublishToAll( newRes, ref valid, ref status, ref versionID, ref intID, ref sortTitle, true, false, user );
+        //15-04-13 mparsons - added use of publish to org (established when creating a new LL)
+      PublishingServices.PublishToAll( newRes
+                        , ref valid
+                        , ref status
+                        , ref versionID
+                        , ref intID
+                        , ref sortTitle
+                        , true
+                        , false
+                        , user
+                        , topNode.OrgId );
 
       if ( valid )
       {
         //Update the node
-        topNode.IsPublished = true;
+        topNode.StatusId = ContentItem.PUBLISHED_STATUS;
         topNode.ResourceIntId = intID;
         curriculumService.Update( topNode );
 
@@ -333,7 +347,8 @@ namespace ILPathways.Services
     private void SetNodePublished( Isle.DTO.ContentNode item )
     {
       var node = curriculumService.Get( item.Id );
-      node.IsPublished = true;
+
+      node.StatusId = ContentItem.PUBLISHED_STATUS;
       curriculumService.Update( node );
       foreach ( var subItem in item.ChildNodes )
       {
@@ -371,10 +386,19 @@ namespace ILPathways.Services
 
       //Get the node's parent ID
       var returnID = node.ParentId;
-      if ( returnID == null || returnID == 0 || node.Id == curriculumService.GetCurriculumIDForNode( node ) )
+      var deletingTopLevelNode = false;
+      if ( returnID == 0 || node.Id == curriculumService.GetCurriculumIDForNode( node ) )
       {
         //Handle deleting curriculum node
-        return Fail( "You can't delete that level from here." );
+        returnID = 0;
+        deletingTopLevelNode = true;
+
+        //Remove from search index
+        if ( node.HasResourceId() && node.ResourceIntId != 0 )
+        {
+          new LRWarehouse.DAL.ElasticSearchManager().DeleteResource( node.ResourceIntId );
+        }
+        //return Fail( "You can't delete that level from here." ); //Now allowing delete of top level node
       }
 
       //Delete the node
@@ -382,7 +406,7 @@ namespace ILPathways.Services
       var status = "";
       valid = curriculumService.Delete( node.Id, ref status );
 
-      return Reply( returnID, valid, status, null );
+      return Reply( returnID, valid, status, deletingTopLevelNode );
     }
 
     //Reposition a node
@@ -418,9 +442,9 @@ namespace ILPathways.Services
           curriculumService.Update( swapNode );
         }
 
-        //Reorder sort orders if needed
-        if ( targetSortOrder == -1 )
-        {
+        //Reorder sort orders //if needed
+        //if ( targetSortOrder == -1 )
+        //{
           var siblings = curriculumService.GetCurriculumOutlineForEdit( node.ParentId ).ChildNodes.OrderBy( m => m.SortOrder ).ToList();
           var newOrder = 10;
           foreach ( var item in siblings )
@@ -431,7 +455,7 @@ namespace ILPathways.Services
             curriculumService.Update( temp );
             newOrder = newOrder + 10;
           }
-        }
+        //}
 
         return Reply( node.Id, true, "okay", targetSwapNodeID );
       }
@@ -625,7 +649,7 @@ namespace ILPathways.Services
           ParentId = parentID,
           CreatedById = user.Id,
           LastUpdatedById = user.Id,
-          StatusId = 2,
+          StatusId = ContentItem.INPROGRESS_STATUS,
           TypeId = typeId,
           OrgId = curriculumService.GetCurriculumNodeForEdit( curriculumID, user ).OrgId,
           SortOrder = sortOrder
@@ -840,7 +864,7 @@ namespace ILPathways.Services
           item.DocumentUrl = url;
           item.PrivilegeTypeId = accessID;
           item.LastUpdatedById = user.Id;
-          item.StatusId = 5; //Published
+          item.StatusId = ContentItem.PUBLISHED_STATUS;
           item.SortOrder = featured ? -1 : ( node.ChildItems.Count() * 10 ) + 10;
           item.TypeId = 41; //URL
 

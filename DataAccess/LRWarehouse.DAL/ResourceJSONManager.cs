@@ -134,7 +134,7 @@ namespace LRWarehouse.DAL
         resource.standards = MakeCRSField( dr, "standardIDs", "standardNotations", "Standards" );
         resource.training = MakeCRSField( dr, "trainingIDs", "training", "Training" );
         resource.disabilityTopic = MakeCRSField( dr, "disabilityTopicIDs", "disabilityTopics", "Disability Topic" );
-        resource.jobs = MakeCRSField( dr, "jobIDs", "jobs", "Jobs" );
+        resource.jobs = MakeCRSField( dr, "jobPreparationIDs", "jobPreparations", "Jobs" );
         resource.networking = MakeCRSField( dr, "networkingIDs", "networking", "Networking" );
         resource.k12Subject = MakeCRSField( dr, "k12SubjectIDs", "k12Subjects", "K-12 Subject" );
         resource.resources = MakeCRSField( dr, "resourceIDs", "resources", "Resources" );
@@ -147,6 +147,7 @@ namespace LRWarehouse.DAL
         resource.qualify = MakeCRSField( dr, "qualifyIDs", "qualify", "Qualify" );
         resource.layoffAssistance = MakeCRSField( dr, "layoffAssistIDs", "layoffAssist", "Layoff Assistance" );
         resource.wioaWorks = MakeCRSField( dr, "wioaWorksIDs", "wioaWorks", "WIOA Works" );
+        resource.groupType = MakeCRSField( dr, "groupTypeIDs", "groupTypes", "Group Type" );
 
         //Paradata
         resource.paradata.views.detail = MakeInt( Get( dr, "detailViews" ) );
@@ -183,7 +184,6 @@ namespace LRWarehouse.DAL
         res.url = MakeString( Get( dr, "url" ) );
         res.lrDocID = MakeString( Get( dr, "lrDocId" ) );
         res.requirements = MakeString( Get( dr, "requirements" ) );
-        res.timeRequired = MakeString( Get( dr, "timeRequired" ) );
         res.creator = MakeString( Get( dr, "creator" ) );
         res.publisher = MakeString( Get( dr, "publisher" ) );
         res.submitter = MakeString( Get( dr, "submitter" ) );
@@ -192,7 +192,7 @@ namespace LRWarehouse.DAL
         res.keywords = MakeStringArray( Get( dr, "keywords" ) ).ToList<string>();
         res.urlParts = MakeURLParts( Get( dr, "url" ) ).ToList<string>();
         res.standardAliases = MakeStandardParts2( Get( dr, "standardNotations" ) ).ToList<string>();
-        res.gradeLevelAliases = MakeStringArray( Get( dr, "gradeLevelAliases" ) ).ToList<string>();
+        res.gradeLevelAliases = MakeStringArray( Get( dr, "educationLevelAliases" ) ).ToList<string>();
         res.libraryIDs = MakeIntArray( Get( dr, "libraryIDs" ) ).ToList<int>();
         res.collectionIDs = MakeIntArray( Get( dr, "collectionIDs" ) ).ToList<int>();
         res.isleSectionIDs = MakeIntArray( Get( dr, "targetSiteIDs" ) ).ToList<int>();
@@ -849,11 +849,11 @@ namespace LRWarehouse.DAL
         #endregion
 
         #region Make from Strings (mostly returned from DataSets)
-        protected string Get( DataRow dr, string targetColumn )
+        public string Get( DataRow dr, string targetColumn )
         {
             return DatabaseManager.GetRowPossibleColumn( dr, targetColumn );
         }
-        protected string MakeString( string input )
+        public string MakeString( string input )
         {
             string data = input.Replace( "  ", "" )
                 .Replace( "NULL", "" )
@@ -876,7 +876,7 @@ namespace LRWarehouse.DAL
                 return data;
             }
         }
-        protected int MakeInt( string input )
+        public int MakeInt( string input )
         {
             try
             {
@@ -887,7 +887,7 @@ namespace LRWarehouse.DAL
                 return 0;
             }
         }
-        protected string[] MakeStringArray( string input )
+        public string[] MakeStringArray( string input )
         {
             string[] data = MakeString( input ).Split( new string[] { "," }, StringSplitOptions.RemoveEmptyEntries );
             for ( int i = 0 ; i < data.Length ; i++ )
@@ -899,7 +899,7 @@ namespace LRWarehouse.DAL
             }
             return data;
         }
-        protected int[] MakeIntArray( string input )
+        public int[] MakeIntArray( string input )
         {
             List<int> items = new List<int>();
             string[] toParse = MakeStringArray( input );

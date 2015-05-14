@@ -56,7 +56,7 @@ namespace ILPathways.Controllers
             if ( entity.IsOrgContent() == false )
             {
                 entity.StatusId = ContentItem.PUBLISHED_STATUS;
-                entity.IsPublished = true;
+                //entity.IsPublished = true;
                 mgr.Update( entity );
 
                 //TODO - anything else??

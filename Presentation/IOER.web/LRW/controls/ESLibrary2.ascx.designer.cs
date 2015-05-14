@@ -22,6 +22,15 @@ namespace ILPathways.LRW.controls {
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl libraryStuff;
         
         /// <summary>
+        /// activityRenderer control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::ILPathways.Activity.ActivityRenderer activityRenderer;
+        
+        /// <summary>
         /// settingsTab control.
         /// </summary>
         /// <remarks>
@@ -100,7 +109,7 @@ namespace ILPathways.LRW.controls {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ILPathways.LRW.controls.ElasticSearch3 searchControl;
+        protected global::ILPathways.Controls.SearchV6.SearchV6 searchControl;
         
         /// <summary>
         /// error control.
@@ -200,5 +209,14 @@ namespace ILPathways.LRW.controls {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Literal libraryCreateMsg;
+        
+        /// <summary>
+        /// activityDaysAgo control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Literal activityDaysAgo;
     }
 }

@@ -499,7 +499,7 @@ namespace ILPathways.DAL
 			entity.Title = GetRowColumn( dr, "Title", "missing" );
             entity.Description = GetRowColumn( dr, "Description", "missing" );
             entity.Summary = GetRowColumn( dr, "Summary", "" );
-            entity.IsPublished = GetRowColumn( dr, "IsPublished", false );
+            //entity.IsPublished = GetRowColumn( dr, "IsPublished", false );
 			entity.IsActive = GetRowColumn( dr, "IsActive", false );
 
             entity.TypeId = GetRowColumn( dr, "TypeId", 0 );
@@ -550,7 +550,7 @@ namespace ILPathways.DAL
             }
 
             rowId = GetRowPossibleColumn( dr, "DocumentRowId", "" );
-            if ( rowId.Length == 36 && rowId != entity.DEFAULT_GUID )
+            if ( rowId.Length == 36 && rowId != ContentItem.DEFAULT_GUID )
             {
                 DoTrace( 6, className + ".Fill( SqlDataReader dr ) get related document " );
                 entity.DocumentRowId = new Guid( rowId );

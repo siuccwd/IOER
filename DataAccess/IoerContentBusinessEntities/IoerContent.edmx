@@ -138,6 +138,7 @@
       [Community_MemberSummary].[CommunityId] AS [CommunityId], 
       [Community_MemberSummary].[Community] AS [Community], 
       [Community_MemberSummary].[CommunityOrgId] AS [CommunityOrgId], 
+      [Community_MemberSummary].[CommunityOrganization] AS [CommunityOrganization], 
       [Community_MemberSummary].[UserId] AS [UserId], 
       [Community_MemberSummary].[FirstName] AS [FirstName], 
       [Community_MemberSummary].[LastName] AS [LastName], 
@@ -150,7 +151,6 @@
       [Community_MemberSummary].[MemberType] AS [MemberType], 
       [Community_MemberSummary].[ImageUrl] AS [ImageUrl], 
       [Community_MemberSummary].[UserProfileUrl] AS [UserProfileUrl], 
-      [Community_MemberSummary].[CommunityOrganization] AS [CommunityOrganization], 
       [Community_MemberSummary].[IsAnOrgMbr] AS [IsAnOrgMbr], 
       [Community_MemberSummary].[OrgMemberTypeId] AS [OrgMemberTypeId], 
       [Community_MemberSummary].[OrgMemberType] AS [OrgMemberType], 
@@ -207,6 +207,7 @@
       [Content_DocumentSummary].[Title] AS [Title], 
       [Content_DocumentSummary].[SortOrder] AS [SortOrder], 
       [Content_DocumentSummary].[StatusId] AS [StatusId], 
+      [Content_DocumentSummary].[OrgId] AS [OrgId], 
       [Content_DocumentSummary].[Description] AS [Description], 
       [Content_DocumentSummary].[FilePath] AS [FilePath], 
       [Content_DocumentSummary].[FileName] AS [FileName], 
@@ -214,7 +215,9 @@
       [Content_DocumentSummary].[DocumentUrl] AS [DocumentUrl], 
       [Content_DocumentSummary].[DocumentRowId] AS [DocumentRowId], 
       [Content_DocumentSummary].[MimeType] AS [MimeType], 
-      [Content_DocumentSummary].[Created] AS [Created]
+      [Content_DocumentSummary].[Created] AS [Created], 
+      [Content_DocumentSummary].[CreatedById] AS [CreatedById], 
+      [Content_DocumentSummary].[PrivilegeTypeId] AS [PrivilegeTypeId]
       FROM [dbo].[Content.DocumentSummary] AS [Content_DocumentSummary]</DefiningQuery>
           </EntitySet>
           <EntitySet Name="Content_TagSummary" EntityType="IsleContentModel.Store.Content_TagSummary" store:Type="Views" store:Schema="dbo" store:Name="Content.TagSummary">
@@ -296,7 +299,6 @@
       [ContentNodeSummary].[Title] AS [Title], 
       [ContentNodeSummary].[ContentTitle] AS [ContentTitle], 
       [ContentNodeSummary].[Summary] AS [Summary], 
-      [ContentNodeSummary].[FileCnt] AS [FileCnt], 
       [ContentNodeSummary].[TypeId] AS [TypeId], 
       [ContentNodeSummary].[ContentType] AS [ContentType], 
       [ContentNodeSummary].[StatusId] AS [StatusId], 
@@ -557,7 +559,10 @@
       [Library_SectionResourceSummary].[IsActive] AS [IsActive], 
       [Library_SectionResourceSummary].[ResourceCreated] AS [ResourceCreated], 
       [Library_SectionResourceSummary].[Title] AS [Title], 
-      [Library_SectionResourceSummary].[ResourceVersionIntId] AS [ResourceVersionIntId]
+      [Library_SectionResourceSummary].[ResourceUrl] AS [ResourceUrl], 
+      [Library_SectionResourceSummary].[Description] AS [Description], 
+      [Library_SectionResourceSummary].[ResourceVersionIntId] AS [ResourceVersionIntId], 
+      [Library_SectionResourceSummary].[SortTitle] AS [SortTitle]
       FROM [dbo].[Library.SectionResourceSummary] AS [Library_SectionResourceSummary]</DefiningQuery>
           </EntitySet>
           <EntitySet Name="LR_ConditionOfUse_Select" EntityType="IsleContentModel.Store.LR_ConditionOfUse_Select" store:Type="Views" store:Schema="dbo" store:Name="LR.ConditionOfUse_Select">
@@ -829,13 +834,17 @@
           <Property Name="ActivityType" Type="varchar" Nullable="false" MaxLength="25" />
           <Property Name="Activity" Type="varchar" Nullable="false" MaxLength="100" />
           <Property Name="Event" Type="varchar" Nullable="false" MaxLength="100" />
-          <Property Name="Comment" Type="varchar" MaxLength="500" />
+          <Property Name="Comment" Type="varchar" MaxLength="1000" />
           <Property Name="TargetUserId" Type="int" />
           <Property Name="ActionByUserId" Type="int" />
           <Property Name="ActivityObjectId" Type="int" />
-          <Property Name="Int2" Type="int" />
-          <Property Name="RelatedImageUrl" Type="varchar" MaxLength="200" />
-          <Property Name="RelatedTargetUrl" Type="varchar" MaxLength="200" />
+          <Property Name="ObjectRelatedId" Type="int" />
+          <Property Name="RelatedImageUrl" Type="varchar" MaxLength="500" />
+          <Property Name="RelatedTargetUrl" Type="varchar" MaxLength="500" />
+          <Property Name="SessionId" Type="varchar" MaxLength="50" />
+          <Property Name="IPAddress" Type="varchar" MaxLength="50" />
+          <Property Name="TargetObjectId" Type="int" />
+          <Property Name="Referrer" Type="varchar" MaxLength="1000" />
         </EntityType>
         <EntityType Name="Codes_ContentPartnerType">
           <Key>
@@ -1373,6 +1382,7 @@
           <Property Name="Title" Type="varchar" MaxLength="50" />
           <Property Name="Description" Type="varchar" MaxLength="300" />
           <Property Name="Created" Type="datetime" />
+          <Property Name="timestampc" Type="timestamp" StoreGeneratedPattern="Computed" />
         </EntityType>
         <EntityType Name="Person_Following">
           <Key>
@@ -1517,6 +1527,7 @@
           <Property Name="CommunityId" Type="int" Nullable="false" />
           <Property Name="Community" Type="nvarchar" Nullable="false" MaxLength="100" />
           <Property Name="CommunityOrgId" Type="int" Nullable="false" />
+          <Property Name="CommunityOrganization" Type="varchar" MaxLength="100" />
           <Property Name="UserId" Type="int" Nullable="false" />
           <Property Name="FirstName" Type="varchar" MaxLength="50" />
           <Property Name="LastName" Type="varchar" MaxLength="50" />
@@ -1529,7 +1540,6 @@
           <Property Name="MemberType" Type="varchar" MaxLength="50" />
           <Property Name="ImageUrl" Type="varchar" MaxLength="200" />
           <Property Name="UserProfileUrl" Type="varchar" />
-          <Property Name="CommunityOrganization" Type="varchar" MaxLength="100" />
           <Property Name="IsAnOrgMbr" Type="int" Nullable="false" />
           <Property Name="OrgMemberTypeId" Type="int" Nullable="false" />
           <Property Name="OrgMemberType" Type="varchar" Nullable="false" MaxLength="50" />
@@ -1607,6 +1617,7 @@
           <Property Name="Title" Type="varchar" MaxLength="200" />
           <Property Name="SortOrder" Type="int" />
           <Property Name="StatusId" Type="int" />
+          <Property Name="OrgId" Type="int" />
           <Property Name="Description" Type="varchar(max)" />
           <Property Name="FilePath" Type="varchar" MaxLength="200" />
           <Property Name="FileName" Type="varchar" MaxLength="150" />
@@ -1615,6 +1626,8 @@
           <Property Name="DocumentRowId" Type="uniqueidentifier" />
           <Property Name="MimeType" Type="varchar" MaxLength="150" />
           <Property Name="Created" Type="datetime" Nullable="false" />
+          <Property Name="CreatedById" Type="int" />
+          <Property Name="PrivilegeTypeId" Type="int" />
         </EntityType>
         <!--Errors Found During Generation:
       warning 6002: The table/view 'IsleContent.dbo.Content.TagSummary' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.
@@ -1711,7 +1724,7 @@
           <Property Name="ContentPrivilege" Type="varchar" MaxLength="50" />
           <Property Name="ConditionsOfUseId" Type="int" Nullable="false" />
           <Property Name="ResourceVersionId" Type="int" Nullable="false" />
-          <Property Name="ResourceUrl" Type="varchar" MaxLength="500" />
+          <Property Name="ResourceUrl" Type="varchar" MaxLength="600" />
           <Property Name="ResourceIntId" Type="int" />
           <Property Name="IsPublished" Type="bit" Nullable="false" />
           <Property Name="UseRightsUrl" Type="varchar" Nullable="false" MaxLength="200" />
@@ -1738,7 +1751,6 @@
             <PropertyRef Name="Title" />
             <PropertyRef Name="ContentTitle" />
             <PropertyRef Name="Summary" />
-            <PropertyRef Name="FileCnt" />
             <PropertyRef Name="ContentType" />
             <PropertyRef Name="SortOrder" />
             <PropertyRef Name="ParentId" />
@@ -1751,7 +1763,6 @@
           <Property Name="Title" Type="varchar" Nullable="false" MaxLength="200" />
           <Property Name="ContentTitle" Type="varchar" Nullable="false" MaxLength="254" />
           <Property Name="Summary" Type="varchar(max)" Nullable="false" />
-          <Property Name="FileCnt" Type="int" Nullable="false" />
           <Property Name="TypeId" Type="int" />
           <Property Name="ContentType" Type="varchar" Nullable="false" MaxLength="50" />
           <Property Name="StatusId" Type="int" />
@@ -2109,6 +2120,7 @@
             <PropertyRef Name="ResourceIntId" />
             
             <PropertyRef Name="Title" />
+            <PropertyRef Name="ResourceUrl" />
             <PropertyRef Name="ResourceVersionIntId" />
           </Key>
           <Property Name="LibraryId" Type="int" Nullable="false" />
@@ -2134,7 +2146,10 @@
           <Property Name="IsActive" Type="bit" />
           <Property Name="ResourceCreated" Type="datetime" />
           <Property Name="Title" Type="nvarchar" Nullable="false" MaxLength="300" />
+          <Property Name="ResourceUrl" Type="varchar" Nullable="false" MaxLength="600" />
+          <Property Name="Description" Type="nvarchar(max)" />
           <Property Name="ResourceVersionIntId" Type="int" Nullable="false" />
+          <Property Name="SortTitle" Type="nvarchar" MaxLength="300" />
         </EntityType>
         <!--Errors Found During Generation:
       warning 6002: The table/view 'IsleContent.dbo.LR.ConditionOfUse_Select' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.
@@ -3402,6 +3417,7 @@
           <Property Name="Description" Type="String" MaxLength="300" Unicode="false" FixedLength="false" />
           <Property Name="Created" Type="DateTime" Precision="3" />
           <NavigationProperty Name="Libraries" Relationship="IsleContentModel.FK_Library_Library_Type" FromRole="Library_Type" ToRole="Library" />
+          <Property Type="Binary" Name="timestampc" MaxLength="8" FixedLength="true" a:StoreGeneratedPattern="Computed" xmlns:a="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
         </EntityType>
         <Association Name="FK_Content_Supplement_Codes_ContentPrivilege">
           <End Role="Codes_ContentPrivilege" Type="IsleContentModel.Codes_ContentPrivilege" Multiplicity="0..1" />
@@ -3718,6 +3734,7 @@
             <PropertyRef Name="ResourceIntId" />
             <PropertyRef Name="Title" />
             <PropertyRef Name="ResourceVersionIntId" />
+            <PropertyRef Name="ResourceUrl" />
           </Key>
           <Property Type="Int32" Name="LibraryId" Nullable="false" />
           <Property Type="String" Name="Library" Nullable="false" MaxLength="200" FixedLength="false" Unicode="false" />
@@ -3743,6 +3760,9 @@
           <Property Type="Int32" Name="ResourceVersionIntId" Nullable="false" />
           <Property Type="Boolean" Name="IsActive" />
           <Property Type="Int32" Name="LibraryResourceCount" />
+          <Property Type="String" Name="ResourceUrl" Nullable="false" MaxLength="600" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="Description" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="SortTitle" MaxLength="300" FixedLength="false" Unicode="true" />
         </EntityType>
         <Association Name="FK_Library_SectionSubscription_Codes_SubscriptionType">
           <End Type="IsleContentModel.Codes_SubscriptionType" Role="Codes_SubscriptionType" Multiplicity="0..1">
@@ -3898,13 +3918,17 @@
           <Property Type="String" Name="ActivityType" Nullable="false" MaxLength="25" FixedLength="false" Unicode="false" />
           <Property Type="String" Name="Activity" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
           <Property Type="String" Name="Event" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
-          <Property Type="String" Name="Comment" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="Comment" MaxLength="1000" FixedLength="false" Unicode="false" />
           <Property Type="Int32" Name="TargetUserId" />
           <Property Type="Int32" Name="ActionByUserId" />
           <Property Type="Int32" Name="ActivityObjectId" />
-          <Property Type="Int32" Name="Int2" />
-          <Property Type="String" Name="RelatedImageUrl" MaxLength="200" FixedLength="false" Unicode="false" />
-          <Property Type="String" Name="RelatedTargetUrl" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="RelatedImageUrl" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="RelatedTargetUrl" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="SessionId" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="IPAddress" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="Int32" Name="ObjectRelatedId" />
+          <Property Type="Int32" Name="TargetObjectId" />
+          <Property Type="String" Name="Referrer" MaxLength="1000" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="Codes_LibraryMemberType">
           <Key>
@@ -4385,7 +4409,6 @@
             <PropertyRef Name="Title" />
             <PropertyRef Name="ContentTitle" />
             <PropertyRef Name="Summary" />
-            <PropertyRef Name="FileCnt" />
             <PropertyRef Name="ContentType" />
             <PropertyRef Name="SortOrder" />
             <PropertyRef Name="ParentId" />
@@ -4398,7 +4421,6 @@
           <Property Type="String" Name="Title" Nullable="false" MaxLength="200" FixedLength="false" Unicode="false" />
           <Property Type="String" Name="ContentTitle" Nullable="false" MaxLength="254" FixedLength="false" Unicode="false" />
           <Property Type="String" Name="Summary" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="false" />
-          <Property Type="Int32" Name="FileCnt" Nullable="false" />
           <Property Type="Int32" Name="TypeId" />
           <Property Type="String" Name="ContentType" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Type="Int32" Name="StatusId" />
@@ -4483,7 +4505,7 @@
           <Property Type="String" Name="ContentPrivilege" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Type="Int32" Name="ConditionsOfUseId" Nullable="false" />
           <Property Type="Int32" Name="ResourceVersionId" Nullable="false" />
-          <Property Type="String" Name="ResourceUrl" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="ResourceUrl" MaxLength="600" FixedLength="false" Unicode="false" />
           <Property Type="Int32" Name="ResourceIntId" />
           <Property Type="Boolean" Name="IsPublished" Nullable="false" />
           <Property Type="String" Name="UseRightsUrl" Nullable="false" MaxLength="200" FixedLength="false" Unicode="false" />
@@ -5011,6 +5033,9 @@
           <Property Type="Int32" Name="SortOrder" />
           <Property Type="Int32" Name="StatusId" />
           <Property Type="String" Name="Description" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Type="Int32" Name="OrgId" />
+          <Property Type="Int32" Name="CreatedById" />
+          <Property Type="Int32" Name="PrivilegeTypeId" />
         </EntityType>
         <Association Name="FK_Content_Document_Version">
           <End Type="IsleContentModel.Document_Version" Role="Document_Version" Multiplicity="0..1">
@@ -5398,6 +5423,7 @@
           <EntitySetMapping Name="Library_Type">
             <EntityTypeMapping TypeName="IsleContentModel.Library_Type">
               <MappingFragment StoreEntitySet="Library_Type">
+                <ScalarProperty Name="timestampc" ColumnName="timestampc" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="Title" ColumnName="Title" />
                 <ScalarProperty Name="Description" ColumnName="Description" />
@@ -5540,6 +5566,9 @@
           <EntitySetMapping Name="Library_SectionResourceSummary">
             <EntityTypeMapping TypeName="IsleContentModel.Library_SectionResourceSummary">
               <MappingFragment StoreEntitySet="Library_SectionResourceSummary">
+                <ScalarProperty Name="SortTitle" ColumnName="SortTitle" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="ResourceUrl" ColumnName="ResourceUrl" />
                 <ScalarProperty Name="LibraryResourceCount" ColumnName="LibraryResourceCount" />
                 <ScalarProperty Name="IsActive" ColumnName="IsActive" />
                 <ScalarProperty Name="ResourceVersionIntId" ColumnName="ResourceVersionIntId" />
@@ -5635,9 +5664,13 @@
           <EntitySetMapping Name="ActivityLogs">
             <EntityTypeMapping TypeName="IsleContentModel.ActivityLog">
               <MappingFragment StoreEntitySet="ActivityLog">
+                <ScalarProperty Name="Referrer" ColumnName="Referrer" />
+                <ScalarProperty Name="TargetObjectId" ColumnName="TargetObjectId" />
+                <ScalarProperty Name="ObjectRelatedId" ColumnName="ObjectRelatedId" />
+                <ScalarProperty Name="IPAddress" ColumnName="IPAddress" />
+                <ScalarProperty Name="SessionId" ColumnName="SessionId" />
                 <ScalarProperty Name="RelatedTargetUrl" ColumnName="RelatedTargetUrl" />
                 <ScalarProperty Name="RelatedImageUrl" ColumnName="RelatedImageUrl" />
-                <ScalarProperty Name="Int2" ColumnName="Int2" />
                 <ScalarProperty Name="ActivityObjectId" ColumnName="ActivityObjectId" />
                 <ScalarProperty Name="ActionByUserId" ColumnName="ActionByUserId" />
                 <ScalarProperty Name="TargetUserId" ColumnName="TargetUserId" />
@@ -5899,7 +5932,6 @@
                 <ScalarProperty Name="StatusId" ColumnName="StatusId" />
                 <ScalarProperty Name="ContentType" ColumnName="ContentType" />
                 <ScalarProperty Name="TypeId" ColumnName="TypeId" />
-                <ScalarProperty Name="FileCnt" ColumnName="FileCnt" />
                 <ScalarProperty Name="Summary" ColumnName="Summary" />
                 <ScalarProperty Name="ContentTitle" ColumnName="ContentTitle" />
                 <ScalarProperty Name="Title" ColumnName="Title" />
@@ -6296,6 +6328,9 @@
           <EntitySetMapping Name="Content_DocumentSummary">
             <EntityTypeMapping TypeName="IsleContentModel.Content_DocumentSummary">
               <MappingFragment StoreEntitySet="Content_DocumentSummary">
+                <ScalarProperty Name="PrivilegeTypeId" ColumnName="PrivilegeTypeId" />
+                <ScalarProperty Name="CreatedById" ColumnName="CreatedById" />
+                <ScalarProperty Name="OrgId" ColumnName="OrgId" />
                 <ScalarProperty Name="Description" ColumnName="Description" />
                 <ScalarProperty Name="StatusId" ColumnName="StatusId" />
                 <ScalarProperty Name="SortOrder" ColumnName="SortOrder" />

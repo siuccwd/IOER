@@ -56,14 +56,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SQLHelper.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Content Include="bin\Debug\ILPathways.Common.dll" />
-    <Content Include="bin\Debug\ILPathways.Common.pdb" />
-    <Content Include="bin\Debug\Microsoft.ApplicationBlocks.Data.dll" />
-    <Content Include="bin\Release\ILPathways.Common.dll" />
-    <Content Include="bin\Release\ILPathways.Common.pdb" />
-    <Content Include="bin\Release\Microsoft.ApplicationBlocks.Data.dll" />
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

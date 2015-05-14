@@ -19,6 +19,6 @@ namespace ILPathways {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ILPathways.LRW.controls.ElasticSearch3 searchController;
+        protected global::ILPathways.Controls.SearchV6.SearchV6 searchController;
     }
 }

@@ -53,6 +53,7 @@
                         <asp:LinkButton ID="deleteRowButton" CommandArgument='<%# Eval("Id") %>' CommandName="DeleteRow" CausesValidation="false" OnClientClick="return confirm('Are you certain that you want to remove this member?');" runat="server">Remove</asp:LinkButton>
                     </ItemTemplate>
                 </asp:TemplateField>
+                <asp:BoundField DataField="UserId" HeaderText="Id" Visible="true"></asp:BoundField>
 
                 <asp:TemplateField HeaderText="First Name" SortExpression="FirstName">
                     <ItemTemplate>

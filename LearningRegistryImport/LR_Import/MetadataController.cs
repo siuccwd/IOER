@@ -57,13 +57,20 @@ namespace LearningRegistryCache2
                 submitterName = TrimWhitespace(list[0].InnerText);
             }
 
-            Resource oldResource = versionManager.GetByResourceUrlAndSubmitter(url, submitterName);
+            //Resource oldResource = versionManager.GetByResourceUrlAndSubmitter(url, submitterName);
+            //string searchUrl = url.Replace("'", "''");
+            Resource oldResource = versionManager.GetActiveVersionByResourceUrl(url);
             if (oldResource != null && oldResource.RowId.ToString() != BaseDataManager.DEFAULT_GUID)
             {
                 resource = oldResource;
-                resource.Version.ResourceId = resource.RowId;
+                ResourceVersion version = CopyOldToNewResourceVersion(resource.Version);
+                new ResourceVersionManager().SetActiveState(false, resource.Version.Id);
+                resource.Version = version;
+                resource.Version.ResourceIntId = resource.Id;
                 resource.Version.LRDocId = docId;
                 resource.Version.Submitter = submitterName;
+                //isOldVersion = true;
+                LearningRegistry.deleteResourceIdList += string.Format("{0},", resource.Id);
             }
             else
             {
@@ -81,16 +88,17 @@ namespace LearningRegistryCache2
                     resource.FavoriteCount = 0;
                     resource.ViewCount = 0;
                     resourceManager.Create(resource, ref status);
-                    resource.Version.ResourceId = resource.RowId;
                     resource.Version.ResourceIntId = resource.Id;
 
                     resource.Version.Submitter = submitterName;
+                    //isOldVersion = false;
                 }
                 else
                 {
                     resource = oldResource;
                     resource.Version.Submitter = submitterName;
-                    resource.Version.ResourceId = resource.RowId;
+                    resource.Version.ResourceIntId = resource.Id;
+                    //isOldVersion = false;
                 }
                 resource.ResourceUrl = url;
                 resource.Version.LRDocId = docId;
@@ -161,6 +169,35 @@ namespace LearningRegistryCache2
             }
 
             return resource;
+        }
+
+        private ResourceVersion CopyOldToNewResourceVersion(ResourceVersion version)
+        {
+            ResourceVersion vers = new ResourceVersion();
+            vers.Id = 0;
+            vers.ResourceIntId = version.ResourceIntId;
+            vers.Title = version.Title;
+            vers.Description = version.Description;
+            vers.LRDocId = version.LRDocId;
+            vers.Publisher = version.Publisher;
+            vers.Creator = version.Creator;
+            vers.Rights = version.Rights;
+            vers.AccessRights = version.AccessRights;
+            vers.Modified = version.Modified;
+            vers.Submitter = version.Submitter;
+            vers.Imported = version.Imported;
+            vers.Created = version.Created;
+            vers.TypicalLearningTime = version.TypicalLearningTime;
+            vers.IsSkeletonFromParadata = false;
+            vers.IsActive = true;
+            vers.Requirements = version.Requirements;
+            vers.SortTitle = version.SortTitle;
+            vers.Schema = version.Schema;
+            vers.AccessRightsId = version.AccessRightsId;
+            vers.InteractivityTypeId = version.InteractivityTypeId;
+            vers.InteractivityType = version.InteractivityType;
+
+            return vers;
         }
 
 
@@ -262,6 +299,9 @@ namespace LearningRegistryCache2
             description = description.Replace("\r\n", " ");
             description = description.Replace("\\t", " ");
             description = description.Replace("\t", " ");
+
+            Regex stripHtml = new Regex(@"&lt;\S(.*?)&gt;");
+            description = stripHtml.Replace(description, "");
 
             return description;
         }

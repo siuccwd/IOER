@@ -32,6 +32,8 @@ namespace LearningRegistryCache2
             bool isValid = false;
             XmlNodeList list;
             XmlNamespaceManager nsm = null;
+            string titleString = "";
+            string descriptionString = "";
 
             Resource resource = LoadCommonMetadata(docId, url, payloadPlacement, record, payload, ref isValid);
             if (!isValid)
@@ -71,7 +73,11 @@ namespace LearningRegistryCache2
                     xdoc.LoadXml(node1.OuterXml);
                     list = GetLomElementsByTagName(xdoc, "string");
                     foreach(XmlNode node2 in list) {
-                        resource.Version.Title = TrimWhitespace(node2.InnerText);
+                        titleString = TrimWhitespace(node2.InnerText);
+                        if (titleString.Length > resource.Version.Title.Length)
+                        {
+                            resource.Version.Title = titleString;
+                        }
                         found = true;
                         break;
                     }
@@ -113,7 +119,11 @@ namespace LearningRegistryCache2
                     list = GetLomElementsByTagName(xdoc, "string");
                     foreach (XmlNode node2 in list)
                     {
-                        resource.Version.Description = CleanseDescription(TrimWhitespace(node2.InnerText));
+                        descriptionString = CleanseDescription(TrimWhitespace(node2.InnerText));
+                        if (descriptionString.Length > resource.Version.Description.Length)
+                        {
+                            resource.Version.Description = descriptionString;
+                        }
                         found = true;
                         break;
                     }
@@ -318,13 +328,13 @@ namespace LearningRegistryCache2
                 if (CheckForGoodLanguage(resource.Id) == true)
                 {
                     // Add to Elastic Search index
-                    UpdateElasticSearchList(resource.Id);
+                    LearningRegistry.resourceIdList.Add(resource.Id);
                 }
                 else
                 {
                     // Deactivate resource - no good language
                     resource.IsActive = false;
-                    resourceManager.UpdateByRowId( resource );
+                    resourceManager.UpdateById(resource);
                 }
             }
             catch (Exception ex)
@@ -393,7 +403,7 @@ namespace LearningRegistryCache2
                                                 }
                                                 string subj = ApplySubjectEditRules(subjectItem);
                                                 ResourceSubject resSubject = new ResourceSubject();
-                                                resSubject.ResourceId = resource.RowId;
+                                                //resSubject.ResourceId = resource.RowId;
                                                 resSubject.ResourceIntId = resource.Id;
                                                 resSubject.Subject = TrimWhitespace(subj);
                                                 status = subjectManager.Create(resSubject);
@@ -414,7 +424,7 @@ namespace LearningRegistryCache2
                                         }
                                         subject = ApplySubjectEditRules(subject);
                                         ResourceSubject resSubject = new ResourceSubject();
-                                        resSubject.ResourceId = resource.RowId;
+                                        //resSubject.ResourceId = resource.RowId;
                                         resSubject.ResourceIntId = resource.Id;
                                         resSubject.Subject = TrimWhitespace(subject);
                                         status = subjectManager.Create(resSubject);
@@ -506,7 +516,7 @@ namespace LearningRegistryCache2
                     foreach (XmlNode node2 in list2)
                     {
                         ResourceChildItem audience = new ResourceChildItem();
-                        audience.ResourceId = resource.RowId;
+                       // audience.ResourceId = resource.RowId;
                         audience.ResourceIntId = resource.Id;
                         audience.OriginalValue = TrimWhitespace(node2.InnerText);
                         audienceManager.CreateFromEntity(audience, ref status);
@@ -539,7 +549,7 @@ namespace LearningRegistryCache2
                 foreach (XmlNode node1 in list1)
                 {
                     ResourceChildItem language = new ResourceChildItem();
-                    language.ResourceId = resource.RowId;
+                    //language.ResourceId = resource.RowId;
                     language.ResourceIntId = resource.Id;
                     language.OriginalValue = TrimWhitespace(node1.InnerText);
                     languageManager.Import(language, ref status);
@@ -556,7 +566,7 @@ namespace LearningRegistryCache2
             {
                 // No language found - assume English but log it
                 ResourceChildItem language = new ResourceChildItem();
-                language.ResourceId = resource.RowId;
+               // language.ResourceId = resource.RowId;
                 language.ResourceIntId = resource.Id;
                 language.OriginalValue = "English";
                 languageManager.Import(language, ref status);
@@ -595,7 +605,7 @@ namespace LearningRegistryCache2
                     foreach (XmlNode node2 in list2)
                     {
                         ResourceChildItem type = new ResourceChildItem();
-                        type.ResourceId = resource.RowId;
+                      //  type.ResourceId = resource.RowId;
                         type.ResourceIntId = resource.Id;
                         type.OriginalValue = TrimWhitespace(node2.InnerText);
 
@@ -633,7 +643,7 @@ namespace LearningRegistryCache2
                 foreach (XmlNode node1 in list1)
                 {
                     ResourceChildItem format = new ResourceChildItem();
-                    format.ResourceId = resource.RowId;
+                  //  format.ResourceId = resource.RowId;
                     format.ResourceIntId = resource.Id;
                     format.OriginalValue = TrimWhitespace(node1.InnerText);
 

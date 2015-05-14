@@ -11,6 +11,8 @@ using LRWarehouse.Business;
 using ErrorType = LRWarehouse.Business.ErrorType;
 using ErrorRouting = LRWarehouse.Business.ErrorRouting;
 using ResourceSubject = LRWarehouse.Business.ResourceSubject;
+using Isle.DTO;
+
 
 namespace LRWarehouse.DAL
 {
@@ -117,28 +119,30 @@ namespace LRWarehouse.DAL
         /// <param name="createdById"></param>
         /// <param name="statusMessage"></param>
         /// <returns></returns>
-        public int Create( Resource pEntity, int createdById, ref string statusMessage )
-        {
-            ///create the resource
-            int resourceIntId = Create( pEntity, ref statusMessage );
+        //private int Create( Resource pEntity, int createdById, int pPublishedForOrgId, ref string statusMessage )
+        //{
+        //    ///create the resource
+        //    int resourceIntId = Create( pEntity, pPublishedForOrgId, ref statusMessage );
 
-            //check pEntity.CreatedById == 0, as the create method will do the published by if present
-            if ( pEntity != null && pEntity.Id > 0 && pEntity.CreatedById == 0 && createdById > 0 )
-            {
-                resourceIntId = pEntity.Id;
-                Create_ResourcePublishedBy( resourceIntId, createdById, ref statusMessage );
-            }
-            else
-            {
-                //need to log something
+        //    // Ensure entity was created (an id exists), and not already done in the Create method
+        //    //check pEntity.CreatedById == 0 (to prevent dup insert), as the create method will do the published by if present
+        //    if ( pEntity != null && pEntity.Id > 0 && pEntity.CreatedById == 0 && createdById > 0 )
+        //    {
+        //        resourceIntId = pEntity.Id;
+        //        Create_ResourcePublishedBy( resourceIntId, createdById, pPublishedForOrgId, ref statusMessage );
+        //    }
+        //    else
+        //    {
+        //        //need to log something
 
-            }
+        //    }
 
-            return resourceIntId;
-        }
+        //    return resourceIntId;
+        //}
 
         /// <summary>
         /// Create a resource
+        /// 15-03-25 mparsons - the resourse entity now includes a new property: PublishedForOrgId
         /// </summary>
         /// <param name="pEntity"></param>
         /// <param name="statusMessage"></param>
@@ -146,7 +150,7 @@ namespace LRWarehouse.DAL
         public int Create( Resource pEntity, ref string statusMessage )
         {
             statusMessage = "";
-            string rowId = "";
+            //string rowId = "";
             int newId = 0;
 
             try
@@ -166,13 +170,54 @@ namespace LRWarehouse.DAL
                     dr.Read();
                     newId = int.Parse( dr[ 0 ].ToString() );
                     pEntity.Id = newId;
-                    if ( dr.VisibleFieldCount > 1 )
-                        rowId = dr[ 1 ].ToString();
+                    //if ( dr.VisibleFieldCount > 1 )
+                    //    rowId = dr[ 1 ].ToString();
 
                     if ( pEntity != null && pEntity.Id > 0 && pEntity.CreatedById > 0 )
                     {
-                        Create_ResourcePublishedBy( pEntity.Id, pEntity.CreatedById, ref statusMessage );
+                        Create_ResourcePublishedBy( pEntity.Id, pEntity.CreatedById, pEntity.PublishedForOrgId, ref statusMessage );
                     }
+                }
+                dr.Close();
+                dr = null;
+                statusMessage = "successful";
+
+            }
+            catch ( Exception ex )
+            {
+                LogError( "ResourceManager.Create(): " + ex.ToString() );
+                statusMessage = ex.Message;
+            }
+            return newId;
+        }//
+
+        public int CreateByUrl( string resourceUrl, ref string statusMessage )
+        {
+            statusMessage = "";
+            
+            int newId = 0;
+
+            try
+            {
+                SqlParameter[] arParms = new SqlParameter[ 4 ];
+                arParms[ 0 ] = new SqlParameter( "@ResourceUrl", resourceUrl );
+                arParms[ 1 ] = new SqlParameter( "@ViewCount", 0 );
+                arParms[ 2 ] = new SqlParameter( "@FavoriteCount", 0 );
+
+                //TODO - remove HasPathwayGradeLevel
+                arParms[ 3 ] = new SqlParameter( "@HasPathwayGradeLevel", false );
+
+                SqlDataReader dr = SqlHelper.ExecuteReader( ConnString, CommandType.StoredProcedure, "ResourceInsert", arParms );
+                if ( dr.HasRows )
+                {
+                    dr.Read();
+                    newId = int.Parse( dr[ 0 ].ToString() );
+                                        
+
+                    //if ( pEntity != null && pEntity.Id > 0 && pEntity.CreatedById > 0 )
+                    //{
+                    //    Create_ResourcePublishedBy( pEntity.Id, pEntity.CreatedById, pEntity.PublishedForOrgId, ref statusMessage );
+                    //}
                 }
                 dr.Close();
                 dr = null;
@@ -193,16 +238,17 @@ namespace LRWarehouse.DAL
         /// <param name="resourceIntId"></param>
         /// <param name="createdById"></param>
         /// <param name="statusMessage"></param>
-        public void Create_ResourcePublishedBy( int resourceIntId, int createdById, ref string statusMessage )
+        public void Create_ResourcePublishedBy( int resourceIntId, int createdById, int pPublishedForOrgId, ref string statusMessage )
         {
             //create PublishedBy
             try
             {
 
                 #region parameters
-                SqlParameter[] sqlParameters = new SqlParameter[ 2 ];
+                SqlParameter[] sqlParameters = new SqlParameter[ 3 ];
                 sqlParameters[ 0 ] = new SqlParameter( "@ResourceIntId", resourceIntId );
                 sqlParameters[ 1 ] = new SqlParameter( "@PublishedById", createdById );
+                sqlParameters[ 2 ] = new SqlParameter( "@PublishedForOrgId", pPublishedForOrgId );
                 #endregion
 
                 SqlHelper.ExecuteNonQuery( LRWarehouse(), "[Resource.PublishedByInsert]", sqlParameters );
@@ -223,7 +269,7 @@ namespace LRWarehouse.DAL
         /// </summary>
         /// <param name="pEntity"></param>
         /// <returns></returns>
-        public string UpdateByRowId( Resource pEntity )
+        private string UpdateByRowId( Resource pEntity )
         {
             string status = "successful";
             try
@@ -687,6 +733,40 @@ namespace LRWarehouse.DAL
             return resource;
         }
         #endregion
+        #region == resource access
+
+        public bool CanUserEditResource( int pResourceId, int userId )
+        {
+            bool canEdit = false;
+            ObjectMember mbr = new ObjectMember();
+            try
+            {
+                SqlParameter[] sqlParameters = new SqlParameter[ 2 ];
+                sqlParameters[ 0 ] = new SqlParameter( "@ResourceId", pResourceId );
+                sqlParameters[ 1 ] = new SqlParameter( "@UserId", userId );
+
+                DataSet ds = SqlHelper.ExecuteDataset( ReadOnlyConnString, CommandType.StoredProcedure, "[Resource.CanEditMetaData]", sqlParameters );
+                if ( DoesDataSetHaveRows( ds ) )
+                {
+                    foreach ( DataRow dr in ds.Tables[ 0 ].Rows )
+                    {
+                        bool isAuthor = GetRowColumn( dr, "IsAuthor", false );
+                        bool hasOrgAccess = GetRowColumn( dr, "HasOrgAccess", false );
+                        if ( isAuthor || hasOrgAccess )
+                            return true;
+                    }
+                }
+                
+            }
+            catch ( Exception ex )
+            {
+                LogError( "ResourceManager.CanUserEditResource(): " + ex.ToString() );
+            }
+
+            return canEdit;
+        }
+
+        #endregion 
 
         #region Publish Pending
         /// <summary>

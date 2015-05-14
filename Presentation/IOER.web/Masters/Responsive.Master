@@ -16,7 +16,7 @@
         if (typeof(window.console) == "undefined") {
             console = { log: function () { } };
         }
-        </script>
+    </script>
     <script src="/Scripts/jquery-2.1.1.min.js"></script>
     <link rel="Stylesheet" type="text/css" href="/Styles/ISLE.css" />
     <link href="/Styles/CustomControls.css" rel="stylesheet" type="text/css" />

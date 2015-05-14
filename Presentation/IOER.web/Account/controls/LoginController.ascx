@@ -1,6 +1,11 @@
 ﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="LoginController.ascx.cs" Inherits="ILPathways.Account.controls.LoginController" %>
 
 <script type="text/javascript" language="javascript">
+  $(document).ready(function () {
+    //fix IE sometimes being stupid
+    $("form").removeAttr("onsubmit");
+  });
+
   function validateLoginForm() {
     var errorMessage = "";
     if ($("#mainSection #userName").val() == "") {
@@ -9,8 +14,14 @@
     if ($("#mainSection #password").val() == "") {
       errorMessage += "Please enter a Password.\n";
     }
-    if (errorMessage != "") { alert(errorMessage); }
-    $("form").removeAttr("onsubmit");
+    if (errorMessage != "") {
+      alert(errorMessage);
+      return false;
+    }
+    else {
+      $("form").removeAttr("onsubmit");
+      return true;
+    }
   }
 </script>
 

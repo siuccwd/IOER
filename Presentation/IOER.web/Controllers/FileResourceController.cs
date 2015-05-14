@@ -24,7 +24,7 @@ using LRWarehouse.Business;
 namespace ILPathways.Controllers
 {
     /// <summary>
-    /// Class for handling file system related methods
+    /// Class for handling file system related methods 
     /// </summary>
     public class FileResourceController
     {
@@ -36,10 +36,10 @@ namespace ILPathways.Controllers
 
         public struct PathParts
         {
-            public string basePath;
-            public string root;
-            public string parent;
-            public string child;
+            public string basePath; //from web.config
+            public string root;     //Personal or org rowId
+            public string parent;   //userid for personal, folder name for org. Using guid, but should use something shorter!
+            public string child;    //??Seems to be usually empty
 
             public string filePath;
             public string url;
@@ -810,7 +810,7 @@ namespace ILPathways.Controllers
 
             if ( parentItem != null && parentItem.Id > 0 )
             {
-                if ( CreateDocument( fileUpload, entity, fileResource.OrgId, ref statusMessage ) == true )
+                if ( CreateDocument( fileUpload, entity, parentItem, ref statusMessage ) == true )
                 {
                     fileResource.DocumentRowId = entity.RowId;
                     fileResource.DocumentUrl = entity.ResourceUrl;
@@ -820,7 +820,8 @@ namespace ILPathways.Controllers
                 {
                     //reason should already be in the statusmessage
                 }
-            } else if ( CreateDocument( fileUpload, entity, parentItem, ref statusMessage ) == true )
+            }
+            else if ( CreateDocument( fileUpload, entity, fileResource.OrgId, ref statusMessage ) == true )
             {
                 fileResource.DocumentRowId = entity.RowId;
                 fileResource.DocumentUrl = entity.ResourceUrl;
@@ -897,7 +898,7 @@ namespace ILPathways.Controllers
 
                 //string url = DetermineDocumentUrl( entity.CreatedById, parentItem.OrgId, orgRowId, entity.FileName );
 
-                entity.ResourceUrl = url;
+                entity.ResourceUrl = url + "/" + entity.FileName;
 
                 UploadFile( fileUpload, entity.FilePath, entity.FileName );
                 //rewind for db save
@@ -1000,7 +1001,7 @@ namespace ILPathways.Controllers
                 //entity.FilePath = DetermineDocumentPath( entity.CreatedById, owningOrgId, orgRowId );
                 //string url = DetermineDocumentUrl( entity.CreatedById, owningOrgId, orgRowId, entity.FileName );
 
-                entity.ResourceUrl = url;
+                entity.ResourceUrl = url + "/" + entity.FileName;
 
                 UploadFile( fileUpload, entity.FilePath, entity.FileName );
                 //rewind for db save
@@ -1401,7 +1402,7 @@ namespace ILPathways.Controllers
         /// <returns></returns>
         public static PathParts DetermineDocumentPathUsingParentItem( ContentItem parentEntity )
         {
-            //first check for existing/know path
+            //first check for existing/known path
             if ( parentEntity.HasDocument() )
             {
                 //fill path
@@ -1420,6 +1421,8 @@ namespace ILPathways.Controllers
             else if ( parentEntity.DocumentRowId != null && parentEntity.IsValidRowId( parentEntity.DocumentRowId ) )
             {
                 //WARNING - SHOULD NOT GET HERE. DON'T WANT TO CALL CALL TO DAO FROM HERE! or maybe?
+                string msg = string.Format("EntityId: {0}, title: {1}", parentEntity.Id, parentEntity.Title );
+                EmailManager.NotifyAdmin( "Unexpected path hit in DetermineDocumentPathUsingParentItem ***", msg );
 
             }
             //determine if the orgRowId will be used
@@ -1587,11 +1590,12 @@ namespace ILPathways.Controllers
         {
             parts.url = "/" + parts.root + "/" + parts.parent;
             if ( parts.child.Length > 0 )
-                parts.filePath += "/" + parts.child;
+                parts.url += "/" + parts.child;
 
             string baseUrl = UtilityManager.GetAppKeyValue( "path.ContentOutputUrl", "/ContentDocs/" );
             string path = baseUrl + parts.url + "/" + docFileName;
-
+            path = path.Replace( "/\\", "/" );
+            path = path.Replace( "//", "/" );
             return path;
         }//
 

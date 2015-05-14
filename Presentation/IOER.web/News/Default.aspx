@@ -4,6 +4,7 @@
 <asp:Content ID="Content1" ContentPlaceHolderID="HeadContent" runat="server"></asp:Content>
 
 <asp:Content ID="Content2" ContentPlaceHolderID="BodyContent" runat="server">
+  <% Response.Redirect( "/" ); %>
   <script type="text/javascript">
     $("form").removeAttr("onsubmit");
   </script>

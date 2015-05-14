@@ -13,7 +13,11 @@ using System.Web.Services;
 using System.Data;
 using LRWarehouse.Business;
 using LRWarehouse.DAL;
-
+using IPB = ILPathways.Business;
+using ILPathways.classes;
+using Isle.BizServices;
+using LRWarehouse.Business.ResourceV2;
+ 
 namespace ILPathways.Services
 {
     /// <summary>
@@ -30,7 +34,7 @@ namespace ILPathways.Services
         string className = "ElasticSearchService";
         ResourceJSONManager jsonManager = new ResourceJSONManager();
 
-        [WebMethod]
+        [WebMethod( EnableSession = true )]
         public string GetByVersionID( string versionID )
         {
             dynamic container = new Dictionary<string, object>();
@@ -43,24 +47,37 @@ namespace ILPathways.Services
             return new ElasticSearchManager().Search( jsonQuery );
         }
 
-        [WebMethod]
+        [WebMethod( EnableSession = true )]
         public void AddResourceView( string intID, string ID )
         {
             int userID = GetUserID( ID );
             int id = int.Parse( intID );
 
             new ResourceViewManager().Create( id, userID );
-            new ElasticSearchManager().RefreshResource( id );
+            //new ElasticSearchManager().RefreshResource( id );
+            new Isle.BizServices.ResourceV2Services().RefreshResource( id );
         }
 
-        [WebMethod]
+        /// <summary>
+        /// Add detail view for a resource.
+        /// 15-03-25 mparsons - This was not being used - apparantly we didn't want to publish to the LR.
+        ///                     It would be useful for activity. So from this point on, we will log as activity.
+        /// </summary>
+        /// <param name="intID"></param>
+        /// <param name="ID"></param>
+        [WebMethod( EnableSession = true )]
         public void AddDetailView( string intID, string ID )
         {
             int userID = GetUserID( ID );
-            int id = int.Parse( intID );
+            int resourceId = int.Parse( intID );
 
-            new ResourceViewManager().CreateDetailPageView( id, userID );
-            new ElasticSearchManager().RefreshResource( id );
+            new ResourceViewManager().CreateDetailPageView( resourceId, userID );
+
+            //Skipping - this is done on the detail page
+            //ActivityBizServices.ResourceDetailHit( resourceId, "title", userID );
+
+            //new ElasticSearchManager().RefreshResource( id );
+            new Isle.BizServices.ResourceV2Services().RefreshResource( resourceId );
         }
 
         [WebMethod]
@@ -215,8 +232,8 @@ namespace ILPathways.Services
           public string title { get; set; }
           public bool selected { get; set; }
         }
-        
-        [WebMethod]
+
+        [WebMethod( EnableSession = true )]
         public string DoSearchV5( JSONQueryV5 query )
         {
           //Clean up text
@@ -385,7 +402,7 @@ namespace ILPathways.Services
           public List<int> items { get; set; }
         }
 
-        [WebMethod]
+        [WebMethod( EnableSession = true )]
         public string DoSearch4( JSONQuery2 query, string targetFields )
         {
             //Clean up query text
@@ -514,6 +531,8 @@ namespace ILPathways.Services
               from = query.start
             };
 
+            IPB.IWebUser user = SessionManager.GetUserFromSession( Session );
+
             //ID-based Narrowing options
             foreach ( jsonFilter item in query.narrowingOptions.idFilters )
             {
@@ -522,6 +541,12 @@ namespace ILPathways.Services
                 foreach ( jsonFilterItem filter in item.items )
                 {
                     ints.Add( filter.id );
+
+                    if ( item.field.ToLower().Equals( "collectionids" ) )
+                    {
+                        //could be many, but not currently
+                        ActivityBizServices.CollectionHit( filter.id, user, "Visit" );
+                    }
                 }
                 finalFilter.Add( item.es, ints.ToArray() );
 
@@ -530,6 +555,8 @@ namespace ILPathways.Services
                     terms = finalFilter
                 };
                 jsonQ.query.@bool.must.Add( newItem );
+
+               
             }
 
             string jsonQuery = serializer.Serialize( jsonQ ).Replace( "\"sort\":{\"\":\"\"},", "" );
@@ -583,131 +610,7 @@ namespace ILPathways.Services
             public string field { get; set; }
             public string order { get; set; }
         }
-      /*
-        [WebMethod]
-        public string DoSearch2( JSONQuery query )
-        {
-            //Clean up query text
-            query.searchText = query.searchText
-                .Replace( "(", "" ).Replace( ")", "" )
-                .Replace( "<", "" ).Replace( ">", "" )
-                .Replace( "{", "" ).Replace( "}", "" )
-                .Replace( "\\", "" );
 
-            //Setup the list of fields to do full-text searches on
-            string[] searchFields = new string[] { "accessRights", "audiences", "clusters", "description", "gradeLevelAliases", "gradeLevels", "educationalUses", "groupTypes", "keywords", "languages", "mediaTypes", "notationParts", "publisher", "resourceTypes", "standardNotations", "subjects", "title", "url", "urlParts", "usageRights" };
-
-            //This will hold required items
-            List<object> mustListNew = new List<object>();
-
-            //Sorting options
-            object sorting;
-            if ( query.sort != "|" )
-            {
-                string[] sortParts = query.sort.Split( '|' );
-                Dictionary<string, string> sort = new Dictionary<string, string>();
-                sort.Add( sortParts[ 0 ], sortParts[ 1 ] );
-                sorting = sort;
-            }
-            else
-            {
-                sorting = new { };
-            }
-
-            //This is the JSON that gets sent to elasticSearch
-            dynamic jsonQ = new
-            {
-                sort = sorting,
-                query = new
-                {
-                    @bool = new
-                    {
-                        must = new List<object>
-                        {
-                            new
-                            {
-                                query_string = new
-                                {
-                                    query = query.searchText,
-                                    use_dis_max = true,
-                                    default_operator = "and",
-                                    fields = searchFields
-                                }
-                            },
-                            new
-                            {
-                                terms = new
-                                {
-                                    url = new string[] 
-                                    {
-                                        "http", "https", "ftp"
-                                    }
-                                }
-                            }
-                        },
-                        should = new List<object>
-                        {
-                            new 
-                            {
-                                match_phrase = new 
-                                {
-                                    title = new 
-                                    {
-                                        query = query.searchText,
-                                        slop = 1,
-                                        boost = 10
-                                    }
-                                }
-                            },
-                            new 
-                            {
-                                match_phrase = new 
-                                {
-                                    description = new 
-                                    {
-                                        query = query.searchText,
-                                        slop = 3,
-                                        boost = 5
-                                    }
-                                }
-                            },
-                            new 
-                            {
-                                match_phrase = new 
-                                {
-                                    keywords = new 
-                                    {
-                                        query = query.searchText,
-                                        slop = 8,
-                                        boost = 2
-                                    }
-                                }
-                            }
-                        }
-                    }
-                },
-                size = query.size,
-                from = query.start
-            };
-
-            //Narrowing options
-            foreach ( Dictionary<string, int[]> item in query.narrowingOptions )
-            {
-                object newItem = new
-                {
-                    terms = item
-                };
-                jsonQ.query.@bool.must.Add( newItem );
-            }
-
-            string jsonQuery = serializer.Serialize( jsonQ );
-
-            ElasticSearchManager eManager = new ElasticSearchManager();
-            //return eManager.DoElasticSearch( jsonQuery );
-            return eManager.Search( jsonQuery );
-
-        }
-      */
         [WebMethod]
         public string DoAPISearch( string text, List<APIFilter> filters, APIOptions options )
         {
@@ -748,6 +651,154 @@ namespace ILPathways.Services
           public int pageSize { get; set; }
           public string sortField { get; set; }
           public string sortOrder { get; set; }
+        }
+
+        [WebMethod( EnableSession = true )]
+        public Services.UtilityService.GenericReturn DoSearchCollection7( JSONQueryV7 input )
+        {
+          //Clean up text
+          var specialCharacters = new List<string>() { "=", "&&", "||", "<", ">", "!", "(", ")", "{", "}", "[", "]", "^", "~", "?", "\\", "/", ":" }; //also " and * but those can be useful
+          input.text = input.text.Trim();
+          foreach ( var item in specialCharacters )
+          {
+            input.text = input.text.Replace( item, " " );
+          }
+          input.text = input.text.Replace( "|", " OR " );
+
+          if ( string.IsNullOrWhiteSpace( input.text ) )
+          {
+            input.text = "*";
+          }
+
+          //Setup the list of fields to do full-text searches on
+          //TODO: figure out how to make a text search for a tag return stuff with that tag
+          var searchFields = new List<string>() { "ResourceId^99", "LrDocId", "Title^5", "Title.English^10", "Title.Ngram", "Title.Raw^10", "Description", "Description.English", "Description.Ngram", "Description.Raw^2", "Url", "Url.Raw^5", "Creator^5", "Publisher^5", "Publisher.Ngram", "Publisher.English^3", "Publisher.Raw^2", "Submitter^2", "Keywords", "Keywords.English", "Keywords.Ngram", "Keywords.Raw^2", "GradeAliases", "StandardNotations", "StandardNotations.Ngram", "StandardNotations.Raw^2", "Fields.Tags^5", "Fields.Tags.Raw^10" };
+          var listifiedText = input.text.Split(' ').Where(m => m.IndexOf("-") != 0).ToList();
+          var positiveText = "";
+          foreach ( var item in listifiedText ) { positiveText = positiveText + item + " "; }
+
+          //Construct the query object
+          dynamic query = new
+          {
+            @bool = new
+            {
+              must = new List<object>
+              {
+                new { query_string = new { query = input.text, use_dis_max = true, default_operator = "and", lenient = true, fields = searchFields } },
+              },
+              should = new List<object>
+              {
+                new { nested = new { path = "Fields", query = new { @bool = new { should = new {
+                  query_string = new { query = input.text, use_dis_max = true, default_operator = "and", lenient = true, fields = new List<string>() { "Fields.Tags^5", "Fields.Tags.Raw^10" } } 
+                } } } } },
+                //new { match_phrase = new { Title = new { query = input.text, slop = 5, boost = 10.0 } } },
+                //new { match_phrase = new { Description = new { query = input.text, slop = 2, boost = 2.5 } } },
+                //new { match_phrase = new { Keywords = new { query = input.text, slop = 1, boost = 1.5 } } },
+              },
+              must_not = new List<object>
+              {
+
+              }
+            }
+          };
+
+          //Add the filters
+          foreach ( var item in input.fields )
+          {
+            query.@bool.must.Add(
+              new { nested = new { path = "Fields", query = new { @bool = new { must = new List<object> 
+                { 
+                  //new { match = new Dictionary<string,int>() { { "Fields.Id", item.Id } } }, 
+                  new { terms = new Dictionary<string, List<int>>() { { "Fields.Ids", item.Ids } } } 
+                } 
+              } } } } 
+            );
+          }
+
+          //Standards
+          if ( input.allStandardIDs.Count() > 0 )
+          {
+            query.@bool.must.Add(
+              new { terms = new { StandardIds = input.allStandardIDs } }
+            );
+          }
+
+          //Library and Collection IDs
+          if ( input.libraryIDs.Count() > 0 )
+          {
+            query.@bool.must.Add(
+              new { terms = new { LibraryIds = input.libraryIDs } }
+            );
+          }
+          if ( input.collectionIDs.Count() > 0 )
+          {
+            query.@bool.must.Add(
+              new { terms = new { CollectionIds = input.collectionIDs } }
+            );
+          }
+
+          //filter things out
+          if( input.not.Count() > 0 )
+          {
+            query.@bool.must_not.Add(
+              new { query_string = new { query = input.not, use_dis_max = false, default_operator = "or", lenient = false, fields = new List<string>() { "Publisher", "Publisher.Ngram", "Publisher.English", "Publisher.Raw", "Submitter" } } }
+            );
+          }
+
+          //Holds the final result
+          dynamic jsonQuery;
+
+          //Add sort only if sort is needed
+          if ( input.sort.field != "" && input.sort.order != "" )
+          {
+            jsonQuery = new
+            {
+              sort = new Dictionary<string, object>() { { input.sort.field, new { order = input.sort.order } } },
+              size = input.size,
+              from = input.start,
+              query = query
+            };
+          }
+          else
+          {
+            jsonQuery = new
+            {
+              size = input.size,
+              from = input.start,
+              query = query
+            };
+          }
+
+          var queryJSON = serializer.Serialize( jsonQuery );
+          var result = new ElasticSearchManager().Search( queryJSON, "mainSearchCollection", "resource" );
+
+          return Services.UtilityService.DoReturn( result, true, "", new { currentlyRebuildingIndex = ( ServiceHelper.GetAppKeyValue( "currentlyRebuildingIndex", "no" ) == "yes" ) } );
+          //return Services.UtilityService.DoReturn( result, true, "", queryJSON );
+          //return Services.UtilityService.DoReturn( result, true, "", null );
+        }
+        public class JSONQueryV7
+        {
+          public JSONQueryV7()
+          {
+            fields = new List<FieldES>();
+            allStandardIDs = new List<int>();
+            libraryIDs = new List<int>();
+            collectionIDs = new List<int>();
+            sort = new SortV7();
+          }
+          public string text { get; set; }
+          public List<FieldES> fields { get; set; }
+          public List<int> allStandardIDs { get; set; }
+          public List<int> libraryIDs { get; set; }
+          public List<int> collectionIDs { get; set; }
+          public SortV7 sort { get; set; }
+          public int size { get; set; }
+          public int start { get; set; }
+          public string not { get; set; }
+        }
+        public class SortV7 {
+          public string field { get; set; }
+          public string order { get; set; }
         }
     }
 }

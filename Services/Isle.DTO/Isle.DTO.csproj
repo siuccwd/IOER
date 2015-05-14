@@ -51,6 +51,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Common\AJAXResponse.cs" />
+    <Compile Include="Common\HierarchyActivityRecord.cs" />
+    <Compile Include="Common\LibraryActivitySummary.cs" />
     <Compile Include="Common\ObjectMember.cs" />
     <Compile Include="Common\SiteParams.cs" />
     <Compile Include="Content\ContentNode.cs" />
@@ -62,9 +64,9 @@
     <Compile Include="Dashboard\DashboardDTO.cs" />
     <Compile Include="Dashboard\DashboardResourceDTO.cs" />
     <Compile Include="Dashboard\ResourcesBox.cs" />
-    <Compile Include="Filters\Filters.cs" />
     <Compile Include="Filters\Site.cs" />
     <Compile Include="Filters\SiteTagCategory.cs" />
+    <Compile Include="Filters\Filters.cs" />
     <Compile Include="Library\CollectionDTO.cs" />
     <Compile Include="Library\LibraryContributeDTO.cs" />
     <Compile Include="Library\LibraryDTO.cs" />
@@ -93,6 +95,7 @@
       <Name>LRWarehouse.Business</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

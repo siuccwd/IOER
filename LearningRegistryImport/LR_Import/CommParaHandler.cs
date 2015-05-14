@@ -98,7 +98,7 @@ namespace LearningRegistryCache2
             } //foreach
 
             // Write the basic record
-            resourceManager.UpdateByRowId( resource );
+            resourceManager.UpdateById(resource);
 
             // Process strings
             list = payload.GetElementsByTagName("string");

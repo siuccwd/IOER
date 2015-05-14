@@ -22,6 +22,15 @@ namespace ILPathways.Controls.Curriculum {
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl curriculumContent;
         
         /// <summary>
+        /// activityRenderer control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::ILPathways.Activity.ActivityRenderer activityRenderer;
+        
+        /// <summary>
         /// error control.
         /// </summary>
         /// <remarks>
@@ -65,5 +74,14 @@ namespace ILPathways.Controls.Curriculum {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Literal widgetUrlPattern;
+        
+        /// <summary>
+        /// activityDaysAgo control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Literal activityDaysAgo;
     }
 }

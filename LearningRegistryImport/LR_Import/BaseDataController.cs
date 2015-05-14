@@ -10,6 +10,7 @@ using System.Xml;
 using LRWarehouse.Business;
 using LRWarehouse.DAL;
 using LearningRegistryCache2.App_Code.Classes;
+using Isle.BizServices;
 
 namespace LearningRegistryCache2
 {
@@ -19,6 +20,7 @@ namespace LearningRegistryCache2
         ResourceKeywordManager resourceKeywordManager;
         ResourceClusterManager clusterManager;
         public ElasticSearchManager searchManager;
+        public ResourceBizService resourceBizService;
 
         public static List<ManualResetEvent> doneEvents = new List<ManualResetEvent>(1000);
 
@@ -28,6 +30,7 @@ namespace LearningRegistryCache2
             resourceKeywordManager=new ResourceKeywordManager();
             clusterManager = new ResourceClusterManager();
             searchManager = new ElasticSearchManager();
+            resourceBizService = new ResourceBizService();
         }
 
         #region === Keyword Helper Methods ===
@@ -76,7 +79,7 @@ namespace LearningRegistryCache2
                     {
                         string key = ApplyKeyEditRules(keyItem);
                         ResourceChildItem keys = new ResourceChildItem();
-                        keys.ResourceId = resource.RowId;
+                        //keys.ResourceId = resource.RowId;
                         keys.ResourceIntId = resource.Id;
                         keys.OriginalValue = key;
                         resourceKeywordManager.Create(keys, ref status);
@@ -91,7 +94,7 @@ namespace LearningRegistryCache2
             {
                 keyword = ApplyKeyEditRules(keyword);
                 ResourceChildItem keys = new ResourceChildItem();
-                keys.ResourceId = resource.RowId;
+                //keys.ResourceId = resource.RowId;
                 keys.ResourceIntId = resource.Id;
                 keys.OriginalValue = keyword;
                 resourceKeywordManager.Create(keys, ref status);
@@ -297,30 +300,8 @@ namespace LearningRegistryCache2
             return str;
         }
 
-        public void UpdateElasticSearchList(int resourceIntId)
-        {
-            if (LearningRegistry.resourceIdList.Length == 0)
-            {
-                LearningRegistry.resourceIdList = ",";
-            }
-            if (LearningRegistry.resourceIdList.IndexOf("," + resourceIntId.ToString() + ",") == -1)
-            {
-                LearningRegistry.resourceIdList = LearningRegistry.resourceIdList + resourceIntId.ToString() + ',';
-            }
-/*            string status = "successful";
-            Console.WriteLine("Updating Elastic Search");
 
-            DataSet ds = searchManager.GetSqlDataForElasticSearch(resourceIntId, ref status);
-            if (status != "successful")
-            {
-                auditReportingManager.LogMessage(LearningRegistry.reportId, LearningRegistry.fileName, "", "", ErrorType.Error, ErrorRouting.Technical, status);
-                return;
-            }
-            if (ElasticSearchManager.DoesDataSetHaveRows(ds))
-            {
-                searchManager.CreateOrReplaceRecord(ds);
-            } */
-        }
+
 
 #endregion
     }

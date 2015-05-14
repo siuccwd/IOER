@@ -40,7 +40,7 @@
 			<h3>Widgets</h3>
 			<ul>
         <li><a href="/widgets">Configure IOER Widgets for your Site</a></li>
-        <li><a href="/Pages/SamplePage.aspx">Widgets Sample Page</a></li>
+        <!--<li><a href="/Pages/SamplePage.aspx">Widgets Sample Page</a></li>-->
         
 			</ul>
 		</div>

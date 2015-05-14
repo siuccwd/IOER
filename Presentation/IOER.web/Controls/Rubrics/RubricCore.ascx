@@ -195,9 +195,9 @@
     $(document).ready(function() { $("#scoreboardWrapper").remove(); });
   </script>
   <h1 class="isleH1">IOER Resource Evaluator</h1>
-  <!--<p>Please select a Rubric to evaluate this Resource:</p>-->
+  <p>Please select a Rubric to evaluate this Resource:</p>
 
-  <asp:RadioButtonList ID="rblSelectRubric" runat="server" RepeatLayout="Flow" CssClass="rblRubricSelector" Visible="false" />
+  <asp:RadioButtonList ID="rblSelectRubric" runat="server" RepeatLayout="Flow" CssClass="rblRubricSelector" Visible="true" />
 
   <p>Please select a Previewing option:</p>
   <div id="rblPreviewSelector" class="rbl">

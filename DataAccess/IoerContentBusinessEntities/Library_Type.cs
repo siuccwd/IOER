@@ -23,6 +23,7 @@ namespace IoerContentBusinessEntities
         public string Title { get; set; }
         public string Description { get; set; }
         public Nullable<System.DateTime> Created { get; set; }
+        public byte[] timestampc { get; set; }
     
         public virtual ICollection<Library> Libraries { get; set; }
     }

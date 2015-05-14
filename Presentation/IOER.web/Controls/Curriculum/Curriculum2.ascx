@@ -33,6 +33,17 @@
                 <label><input type="checkbox" name="cbxlMainGradeLevels" id="cbx_<%=item.Id %>" value="<%=item.Id %>" /> <%=item.Title %></label>
           <%} %>
           </div>
+
+          <asp:Panel ID="orgsPanel" runat="server" >
+            <h2 class="mid">Content Owner</h2>
+          <div class="inputList">
+              <select id="ddlOrgs">
+          <%  foreach(var item in orgs) {%>
+                <option value="<%=item.Id %>"><%=item.Title %></option>
+          <%} %>
+              </select>
+          </div>
+        </asp:Panel>
         </div>
         <div id="nodeDetails" class="">
           <h2 class="mid">Basic Info</h2>

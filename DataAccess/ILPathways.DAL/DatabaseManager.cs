@@ -298,7 +298,7 @@ namespace ILPathways.DAL
             }
             catch ( Exception ex )
             {
-                BaseDataManager.LogError( ex, thisClassName + ".ExecuteProc(): " );
+                BaseDataManager.LogError( ex, thisClassName + ".ExecuteProc(): " + procedureName );
                 return null;
             }
 

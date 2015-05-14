@@ -55,6 +55,11 @@ namespace ILPathways.LRW.controls
                 userGUID = WebUser.RowId.ToString();
                 //DoLibraryChecks( WebUser );
             }
+            else
+            {
+                //check for claim
+                IsWNUserAuthorized();
+            }
 
             if ( IsValidRecord() )
             {
@@ -66,7 +71,28 @@ namespace ILPathways.LRW.controls
                 error.Visible = true;
             }
         }
+        private bool IsWNUserAuthorized()
+        {
+            bool isValid = false;
+            try
+            {
+                //var identity = ( System.Security.Claims.ClaimsIdentity ) HttpContext.User.Identity;
+                //if ( identity != null && identity.Claims != null )
+                //{
+                //    var roles = identity.Claims.Where( w => w.Type == "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
+                //                                    && ( w.Value == "Program Administrator" || w.Value == "Program Staff" ) )
+                //                                    .ToList();
+                //    if ( roles != null && roles.Count > 0 )
+                //        isValid = true;
+                //}
+            }
+            catch ( Exception ex )
+            {
+                LoggingHelper.LogError( ex, "IsWNUserAuthorized" );
+            }
 
+            return isValid;
+        }
         protected void GetResource( int resourceVersionID )
         {
             
@@ -84,7 +110,7 @@ namespace ILPathways.LRW.controls
                 userGUID = "";
               }
             }
-            
+
             resourceText = "var resource = " + serializer.Serialize( new Services.DetailService6().LoadAllResourceData( resourceVersionID, userGUID ) ) + ";";
             codeTables = "var codeTables = " + serializer.Serialize( new Services.DetailService6().GetCodeTables() ) + ";";
         }
@@ -130,6 +156,10 @@ namespace ILPathways.LRW.controls
                     {
                         resourceIntID = entity.ResourceIntId;
                         isActive = entity.IsActive;
+
+                        int libId = FormHelper.GetRequestKeyValue( "libId", 0 );
+                        int colId = FormHelper.GetRequestKeyValue( "colId", 0 );
+                        ActivityBizServices.ResourceHit( resourceIntID, entity.Title, libId, colId, WebUser );
                     }
 
                     return ( resourceVersionID != 0 && isActive );
@@ -156,6 +186,7 @@ namespace ILPathways.LRW.controls
             btnDeactivateResource.Visible = false;
             btnCancelChanges.Visible = false;
             btnRegenerateThumbnail.Visible = false;
+            btnUbertag.Visible = false;
 
             if ( IsUserAuthenticated() )
             {
@@ -169,16 +200,36 @@ namespace ILPathways.LRW.controls
                     FormPrivileges.SetOrgPrivileges();
                 }
 
-                //check if was the author, (or, next, if from same org)
-                ObjectMember mbr = MyManager.GetResourceAccess( resourceIntID, WebUser.Id );
                 isUserAuthor = false;
-                if ( mbr.MemberTypeId > 2 )
+                //check if was the author, (or, next, if from same org)
+                //ObjectMember mbr = MyManager.GetResourceAccess( resourceIntID, WebUser.Id );
+                //if ( mbr.MemberTypeId > 2 )
+                //{
+                //    //the following is not implemented yet. Will enable an author to update title and description
+                //    isUserAuthor = true;
+                //    isUserAdmin = true;
+                //    //be sure to not lower the privilegs
+                //    if ( FormPrivileges.CreatePrivilege < ( int ) EPrivilegeDepth.Region )
+                //    {
+                //        //set to region, not sure if enough?
+                //        FormPrivileges.SetBasicPrivileges(3);
+                //    }
+                //}
+                bool canEdit = MyManager.CanUserEditResource( resourceIntID, WebUser.Id );
+                if ( canEdit )
                 {
-                    //the following is not implemented yet. Will enable an author to update title and description
+                    //Will enable an author to update title and description
                     isUserAuthor = true;
-                    FormPrivileges.SetOrgPrivileges();
+                    //first seeing if setting as an admin is OK, or if gives to much privilege
+                    isUserAdmin = true;
+                    //be sure to not lower the privilegs
+                    if ( FormPrivileges.CreatePrivilege < ( int ) EPrivilegeDepth.Region )
+                    {
+                        //set to region, not sure if enough?
+                        FormPrivileges.SetBasicPrivileges( 3 );
+                    }
                 }
-                
+
                 if ( FormPrivileges.CanUpdate() )
                 {
                     btnStartUpdateMode.Visible = true;
@@ -189,6 +240,8 @@ namespace ILPathways.LRW.controls
 
                 if ( FormPrivileges.CreatePrivilege > ( int )EPrivilegeDepth.Region )
                 {
+                    btnUbertag.Visible = true;
+                    btnUbertag.Attributes[ "onclick" ] = "window.location.href = '/ubertagger?resourceid=" + resourceIntID + "'";
                     btnDeactivateResource.Visible = true;
                     btnReActivateResource.Visible = true;
                     btnRegenerateThumbnail.Visible = true;

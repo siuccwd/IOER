@@ -20,7 +20,7 @@ using ResBiz = Isle.BizServices.ResourceBizService;
 namespace ILPathways.Services
 {
     /// <summary>
-    /// Summary description for DetailService6
+    /// Summary description for DetailService6 
     /// </summary>
     [WebService( Namespace = "http://tempuri.org/" )]
     [WebServiceBinding( ConformsTo = WsiProfiles.BasicProfile1_1 )]
@@ -33,7 +33,7 @@ namespace ILPathways.Services
         UtilityService utilService = new UtilityService();
 
         #region Data getters
-        [WebMethod]
+        [WebMethod( EnableSession = true )]
         public jsonDetail LoadAllResourceData( int vid, string userGUID )
         {
             var detail = new jsonDetail();
@@ -69,7 +69,7 @@ namespace ILPathways.Services
                 detail.itemType = GetMVF( "itemType", detail.intID, false, "Item Type" );
                 detail.accessibilityControl = GetMVF( "accessibilityControl", detail.intID, false, "Accessibility Control" );
                 detail.accessibilityFeature = GetMVF( "accessibilityFeature", detail.intID, false, "Accessibility Feature" );
-                detail.accessibilityHazard = GetMVF( "accessibilityHazard", detail.intID, false, "accessibility Hazard" );
+                detail.accessibilityHazard = GetMVF( "accessibilityHazard", detail.intID, false, "Accessibility Hazard" );
                 detail.accessRights = GetMVF( "accessRights", detail.intID, false, "Access Rights" );
                 detail.language = GetMVF( "language", detail.intID, false, "Language" );
                 detail.careerCluster = GetMVF( "careerCluster", detail.intID, true, "Career Cluster" );
@@ -203,7 +203,7 @@ namespace ILPathways.Services
         #endregion
 
         #region Data setters
-        [WebMethod]
+        [WebMethod( EnableSession = true )]
         public string DoStandardRating( string userGUID, int standardID, int rating, int intID )
         {
           var user = GetUser(userGUID);
@@ -221,7 +221,7 @@ namespace ILPathways.Services
           return utilService.ImmediateReturn( detail.standards, true, "okay", null );
         }
 
-        [WebMethod]
+        [WebMethod( EnableSession = true )]
         public string AddToCollection( string userGUID, int libraryID, int collectionID, int intID )
         {
           string status = "";
@@ -275,7 +275,7 @@ namespace ILPathways.Services
           return null;
         }
 
-        [WebMethod]
+        [WebMethod( EnableSession = true )]
         public string PostComment( string userGUID, string text, int versionID )
         {
             var response = new jsonCommentResponse();
@@ -308,7 +308,8 @@ namespace ILPathways.Services
                 if ( commentID > 0 )
                 {
                     //new ElasticSearchManager().AddComment( intID.ToString() );
-                    new ElasticSearchManager().RefreshResource( intID );
+                    //new ElasticSearchManager().RefreshResource( intID );
+                    new Isle.BizServices.ResourceV2Services().RefreshResource( intID );
                     response.validComment = true;
                     response.comments = GetComments( intID );
                 }
@@ -330,42 +331,50 @@ namespace ILPathways.Services
             return new ElasticSearchManager().FindMoreLikeThis( intID, text, parameters.Split( ',' ) );
         }
 
-        [WebMethod]
+        [WebMethod( EnableSession = true )]
         public string AddLike( string userGUID, int versionID )
         {
             return serializer.Serialize( AddLikeDislike( userGUID, versionID, true ) );
         }
 
-        [WebMethod]
+                
+        [WebMethod( EnableSession = true )]
         public string AddDislike( string userGUID, int versionID )
         {
             return serializer.Serialize( AddLikeDislike( userGUID, versionID, false ) );
         }
 
-        [WebMethod]
+        [WebMethod( EnableSession = true )]
         public string AddClickThrough( string userGUID, int versionID )
         {
-            var intID = utilService.GetIntIDFromVersionID( versionID );
-            new ResourceViewManager().Create( intID, GetUserID( userGUID ) );
-            //new ElasticSearchManager().AddResourceView( intID.ToString() );
-            new ElasticSearchManager().RefreshResource( intID );
+            var version = new ResourceVersionManager().Get( versionID );
 
-            return serializer.Serialize( GetClickThroughs( intID ) );
+            new ResourceV2Services().AddResourceClickThrough( version.ResourceIntId, GetUser( userGUID ), version.Title );
+
+            //new ResourceViewManager().Create( intID, GetUserID( userGUID ) );
+
+            //ActivityBizServices.ResourceClickThroughHit( intID, userGUID, "" );
+            //new ElasticSearchManager().AddResourceView( intID.ToString() );
+            //new ElasticSearchManager().RefreshResource( intID );
+            //new Isle.BizServices.ResourceV2Services().RefreshResource( intID );
+
+            return serializer.Serialize( GetClickThroughs( version.ResourceIntId ) );
         }
 
-        [WebMethod]
+        [WebMethod( EnableSession = true )]
         public string UpdateResource( int versionID, string userGUID, InputResource update )
         {
             //validate user and resource
             var userID = GetUserID( userGUID );
             if ( userID == 0 ) { return null; }
-            var intID = utilService.GetIntIDFromVersionID( versionID );
-            if ( intID == 0 ) { return null; }
+            var resourceIntID = utilService.GetIntIDFromVersionID( versionID );
+            if ( resourceIntID == 0 ) { return null; }
             var resourceManager = new ResourceManager();
             var versionManager = new ResourceVersionManager();
-            var resource = resourceManager.Get( intID );
+            var resource = resourceManager.Get( resourceIntID );
             resource.Version = versionManager.Get( versionID );
             if ( resource.IsValid == false ) { return null; }
+
             var user = new AccountManager().Get( userID );
 
             //validate text inputs
@@ -375,8 +384,25 @@ namespace ILPathways.Services
             bool didTitle_DescChange = false;
 
             //do admin-only updates
+            //TODO - need to add handling for organization related resources
+            //      - would be nice if don't have to duplicate code from detail page!
+            //duplicating for now:
+            bool canEdit = ResBiz.CanUserEditResource( resourceIntID, user.Id );
+            bool canUpdate = false;
             var permissions = SecurityManager.GetGroupObjectPrivileges( user, "ILPathways.LRW.Pages.ResourceDetail" );
-            if ( permissions.CreatePrivilege > ( int )ILPathways.Business.EPrivilegeDepth.State )
+
+            if ( permissions.CanUpdate() == false )
+            {
+                LoggingHelper.DoTrace( 2, string.Format("DetailService6.UpdateResource. Unexpected state of cannot update for userId: {0}, email: {1}", user.Id, user.Email ));
+            }
+
+            if ( UtilityManager.GetAppKeyValue( "allowingOpenPublishing", "no" ) == "yes" )
+                canUpdate = true;
+            if ( canEdit || permissions.CanUpdate() )
+                canUpdate = true;
+
+            if ( canEdit 
+                || permissions.CreatePrivilege > ( int )ILPathways.Business.EPrivilegeDepth.State )
             {
 
                 if ( update.title != resource.Version.Title
@@ -402,7 +428,7 @@ namespace ILPathways.Services
             }
 
             //do remaining updates
-            if ( permissions.CanUpdate() )
+            if ( canUpdate )
             {
                 resource.Version.Rights = update.usageRights;
                 resource.Version.TypicalLearningTime = update.timeRequired;
@@ -414,23 +440,23 @@ namespace ILPathways.Services
                 if (didTitle_DescChange == true)
                     new ContentServices().HandleSyncResourceVersionChgs( resource.Version );
 
-                ProcessMVF( update.gradeLevel, userID, intID, "gradeLevel" );
-                ProcessMVF( update.careerCluster, userID, intID, "careerCluster" );
-                ProcessMVF( update.endUser, userID, intID, "endUser" );
-                ProcessMVF( update.groupType, userID, intID, "groupType" );
-                ProcessMVF( update.resourceType, userID, intID, "resourceType" );
-                ProcessMVF( update.mediaType, userID, intID, "mediaType" );
-                ProcessMVF( update.educationalUse, userID, intID, "educationalUse" );
-                ProcessMVF( update.k12subject, userID, intID, "subject" );
+                ProcessMVF( update.gradeLevel, userID, resourceIntID, "gradeLevel" );
+                ProcessMVF( update.careerCluster, userID, resourceIntID, "careerCluster" );
+                ProcessMVF( update.endUser, userID, resourceIntID, "endUser" );
+                ProcessMVF( update.groupType, userID, resourceIntID, "groupType" );
+                ProcessMVF( update.resourceType, userID, resourceIntID, "resourceType" );
+                ProcessMVF( update.mediaType, userID, resourceIntID, "mediaType" );
+                ProcessMVF( update.educationalUse, userID, resourceIntID, "educationalUse" );
+                ProcessMVF( update.k12subject, userID, resourceIntID, "subject" );
 
-                ProcessMVF( update.accessibilityControl, userID, intID, "accessibilityControl" );
-                ProcessMVF( update.accessibilityFeature, userID, intID, "accessibilityFeature" );
-                ProcessMVF( update.accessibilityHazard, userID, intID, "accessibilityHazard" );
+                ProcessMVF( update.accessibilityControl, userID, resourceIntID, "accessibilityControl" );
+                ProcessMVF( update.accessibilityFeature, userID, resourceIntID, "accessibilityFeature" );
+                ProcessMVF( update.accessibilityHazard, userID, resourceIntID, "accessibilityHazard" );
 
-                new ResourceLanguageManager().Create( intID, update.language.id, update.language.value, userID, ref status );
+                new ResourceLanguageManager().Create( resourceIntID, update.language.id, update.language.value, userID, ref status );
                 if ( update.itemType.id != 0 )
                 {
-                    new ResourceItemTypeManager().Create( intID, update.itemType.id, userID, ref status );
+                    new ResourceItemTypeManager().Create( resourceIntID, update.itemType.id, userID, ref status );
                 }
 
                 var standardsManager = new ResourceStandardManager();
@@ -438,7 +464,7 @@ namespace ILPathways.Services
                 {
                     ResourceStandard item = new ResourceStandard();
                     item.CreatedById = userID;
-                    item.ResourceIntId = intID;
+                    item.ResourceIntId = resourceIntID;
                     item.StandardId = standard.id;
                     item.StandardNotationCode = standard.code;
                     item.AlignmentTypeCodeId = standard.alignment.id;
@@ -447,12 +473,15 @@ namespace ILPathways.Services
 
                 }
 
-                AddFreeTextItems( new ResourceKeywordManager(), update.keyword, userID, intID );
-                AddFreeTextItems( new ResourceSubjectManager(), update.subject, userID, intID );
+                AddFreeTextItems( new ResourceKeywordManager(), update.keyword, userID, resourceIntID );
+                AddFreeTextItems( new ResourceSubjectManager(), update.subject, userID, resourceIntID );
+
+                ActivityBizServices.SiteActivityAdd( "Resource", "Tag", string.Format( "Resource ID: {0} was tagged by {1}", resourceIntID, user.FullName() ), user.Id, 0, resourceIntID );
 
                 //Update elasticsearch
-                //new ElasticSearchManager().RefreshRecord( intID );
-                new ElasticSearchManager().RefreshResource( intID );
+                //new ElasticSearchManager().RefreshRecord( resourceIntID );
+                //new ElasticSearchManager().RefreshResource( resourceIntID );
+                new Isle.BizServices.ResourceV2Services().RefreshResource( resourceIntID );
             }
 
             //return updated resource
@@ -487,7 +516,7 @@ namespace ILPathways.Services
             return "There was a problem processing your request. Please ensure you are logged in.";
         }
 
-        [WebMethod]
+        [WebMethod( EnableSession = true )]
         public string DeactivateResource( string userGUID, int versionID )
         {
             var user = GetUser( userGUID );
@@ -503,6 +532,7 @@ namespace ILPathways.Services
                     
                     //var esManager = new ElasticSearchManager();
                     //new ElasticSearchManager().DeleteByVersionID( versionID, ref response );
+                    new ResourceV2Services().DeleteResourceByVersionID( versionID );
 
                     ActivityBizServices.SiteActivityAdd( "Resource", "Deactivate", string.Format( "Resource VersionID: {0} was deactivated by {1}", versionID, user.FullName() ), user.Id, 0, versionID );
 
@@ -728,39 +758,37 @@ namespace ILPathways.Services
 
         public jsonParadata AddLikeDislike( string userGUID, int versionID, bool isLike )
         {
-            int intID = utilService.GetIntIDFromVersionID( versionID );
+            int resourceId = utilService.GetIntIDFromVersionID( versionID );
             Patron user = GetUser( userGUID );
 
             if ( user.Id == 0 ) { return null; }
             var manager = new ResourceLikeManager();
             var like = new ResourceLike();
 
-            //Need a proc for this
-            DataSet ds = ResBiz.DoQuery( "SELECT * FROM [Resource.Like] WHERE [ResourceIntId] = " + intID + " AND [CreatedById] = " + user.Id );
-            if ( ResBiz.DoesDataSetHaveRows( ds ) )
+            if ( ResourceBizService.HasLikeDislike(user.Id, resourceId ))
             {
-                return GetParadata( intID, user );
+                return GetParadata( resourceId, user );
             }
 
-            like.IsLike = isLike;
-            like.CreatedById = user.Id;
-            like.ResourceIntId = intID;
-            string status = "";
+            //like.IsLike = isLike;
+            //like.CreatedById = user.Id;
+            //like.ResourceIntId = resourceId;
+            //string status = "";
+            new ResourceBizService().AddLikeDislike( user.Id, resourceId, isLike );
+            //manager.Create( like, ref status );
 
-            manager.Create( like, ref status );
-
-            return GetParadata( intID, user );
+            return GetParadata( resourceId, user );
         }
 
         public int GetClickThroughs( int intID )
         {
-            int count = 0;
+            int count = ResBiz.ResourceClickThroughs(intID);
             //Need a proc for this
-            DataSet ds = ResBiz.DoQuery( "SELECT COUNT(*) AS 'Count' FROM [Resource.View] WHERE ResourceIntId = " + intID );
-            if ( ResBiz.DoesDataSetHaveRows( ds ) )
-            {
-                count = GetInt( ds.Tables[ 0 ].Rows[ 0 ], "Count" );
-            }
+            //DataSet ds = ResBiz.DoQuery( "SELECT COUNT(*) AS 'Count' FROM [Resource.View] WHERE ResourceIntId = " + intID );
+            //if ( ResBiz.DoesDataSetHaveRows( ds ) )
+            //{
+            //    count = GetInt( ds.Tables[ 0 ].Rows[ 0 ], "Count" );
+            //}
             return count;
         }
 

@@ -5,9 +5,14 @@ $(document).ready(function () {
   showPanel("pnlDetails"); //Show the details panel and trigger any related methods, like highlighting the associated tab
   linkedCollectionID == 0 ? pickLibrary() : pickCollection(linkedCollectionID); //If there isn't a valid linked collection (server sets this to 0 if there's no "col" param), select the Library. Otherwise select the desired collection.
   showActiveTitle(); //Trigger the method that shows the currently selected (or hovered) collection
-  setTimeout(updateNarrowing, 500); //Auto-search. updateNarrowing is in the ElasticSearch file, but loaded in memory when the document is ready, and thus accessible from here.
+  //setTimeout(updateNarrowing, 500); //Auto-search. updateNarrowing is in the ElasticSearch file, but loaded in memory when the document is ready, and thus accessible from here.
   setupAccessLevelDDLs();
   expandCollapsePanels();
+
+  //Inject library stuff on search result load
+  $(window).on("resultsRendered", function () {
+    renderLibraryControls();
+  });
 
   if (typeof (parent.hasSelector) == "function") {
     $("<div style=\"text-align: center;\"><input type=\"button\" id=\"btnSendExternal\" onclick=\"sendResultsExternal()\" value=\"Send the Displayed Resources to External Site\" /></div>").insertAfter("#resultCount");
@@ -249,15 +254,15 @@ function renderSettings() {
 }
 
 function renderLibraryControls() {
-  $("#ioerResults .result_list").each(function () { //foreach search result...
+  $("#searchResults .result.list").each(function () { //foreach search result...
     //Basic Data
     var item = $(this); //create a jQuery object for this result
-    var intID = parseInt(item.attr("data-intID")); //Grab attributes from this result's HTML
-    var vid = parseInt(item.attr("data-vid"));
+    var intID = parseInt(item.attr("data-resourceID")); //Grab attributes from this result's HTML
     var index = item.index(); //This item's position in the result list
-    var inAllLibraries = debugResults.hits.hits[index]._source.libraryIDs;
-    var inAllCollections = debugResults.hits.hits[index]._source.collectionIDs; //debugResults comes from the ElasticSearch file. It's normally used for debugging via console, but it's reliably available. It's the object returned by ElasticSearch itself, so we have to dig into it to get to what we want--in this case, the list of every collection that this Resource is in, regardless of Library
-    var box = item.find(".libraryControls"); //"box" is the actual part of the displayed search result where the drop-down lists will be inserted
+    var vid = currentResults.hits.hits[index]._source.VersionId;
+    var inAllLibraries = currentResults.hits.hits[index]._source.LibraryIds;
+    var inAllCollections = currentResults.hits.hits[index]._source.CollectionIds; //currentResults is the object returned by ElasticSearch itself, so we have to dig into it to get to what we want--in this case, the list of every collection that this Resource is in, regardless of Library
+    var box = item.find(".modBox_before"); //"box" is the actual part of the displayed search result where the drop-down lists will be inserted
     var ddl = $("#template_ddl").html().replace(/{vid}/g, vid).replace(/{intID}/g, intID); //Grab the HTML for the drop-down lists and inject the attributes we grabbed a moment ago
     var active = getActive(); //Get the currently-selected object (Library or Collection)
     var saveButton = $("<input></input>") //Create the Save button for this set of DDLs
@@ -389,6 +394,12 @@ function renderLibraryControls() {
     //Trigger the default state of the DDLs
     ddlActions.trigger("change");
 
+    //Append library/collection ID to the URL - for stat tracking
+    var appendString = "?libId=" + libraryData.library.id + (active.isLibrary ? "" : "&colId=" + active.data.id);
+    var url = item.find(".data h2 a");
+    var url2 = item.find(".thumbnailLink");
+    url.attr("href", url.attr("href") + appendString);
+    url2.attr("href", url2.attr("href") + appendString);
   });
 }
 
@@ -398,21 +409,21 @@ function renderFilters() {
     $("#btnResetSearch").click();
   }, 250);
   var active = getActive();
-  var filterLinks = $("#filterLinks a").not("[data-name=searchTips]");
+  var filterLinks = $("#categories input");
   filterLinks.hide();
   for (i in active.data.filters) {
     var current = active.data.filters[i]; //current set of filters
 
     //Show or hide the top level filter link
     if (current.ids.length > 0) {
-      filterLinks.filter("[data-name=" + current.name + "]").show();
+      filterLinks.filter("[data-filterid=" + current.id + "]").show();
     }
 
     //Show or hide items within the filter
-    var links = $(".filterBox[data-filterName=" + current.name + "] .list a");
-    links.hide();
+    var tags = $(".tagList[data-filterid=" + current.id + "] label");
+    tags.hide();
     for (j in current.ids) {
-      links.filter("[data-id=" + current.ids[j] + "]").show();
+      tags.find("input[data-id=" + current.ids[j] + "]").parent().show();
     }
   }
 }
@@ -528,7 +539,18 @@ function pickLibCol(item) {
   renderSettings();
   renderFilters();
   renderShareFollow();
-  updateNarrowing(); //auto-search with the current object as a filter
+
+  libraryIDs = [];
+  collectionIDs = [];
+  var activeThing = getActive();
+  if (activeThing.isLibrary) {
+    libraryIDs = [activeThing.data.id];
+  }
+  else {
+    collectionIDs = [activeThing.data.id];
+  }
+  pipeline("resetCountdown");
+  //updateNarrowing(); //auto-search with the current object as a filter
   $("#searchBar").attr("placeholder", "Search " + item.title + "...");
   return false;
 }
@@ -716,7 +738,7 @@ function addLikeDislike(isLike) {
 
 //Handle copy/move/delete operations on a Resource
 function doResourceAction(intID) { //Find the relevant set of DDLs by finding the relevant search result by intID
-  var box = $(".result_list[data-intID=" + intID + "]").find(".libraryControls");
+  var box = $(".result.list[data-resourceID=" + intID + "]").find(".modBox_before");
   if (!libraryData.isMyLibrary && !libraryData.hasEditAccess) { //If it isn't my library or one I manage, then I only need to worry about Copying
     //Copy
     doCopy(box, intID);
@@ -843,6 +865,10 @@ function readText(jInput, minLength, name) {
 function refreshData(data) {
   if (data == "") { //...but only if it's not empty.
     alert("There was an error processing your request. Please try again later.");
+    return false;
+  }
+  else if(typeof(data) == "string") {
+    alert(data);
     return false;
   }
   libraryData = data; //Replace the object

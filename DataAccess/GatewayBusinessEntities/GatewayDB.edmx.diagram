@@ -58,6 +58,7 @@
         <AssociationConnector Association="GatewayModel1.FK_Organization_MemberRole_Organization_Contact" />
         <EntityTypeShape EntityType="GatewayModel1.Organization_AdminMembers" Width="2" PointX="16.375" PointY="16.875" FillColor="255, 192, 128" />
         <EntityTypeShape EntityType="GatewayModel1.Organization_MemberSummary" Width="2.625" PointX="21.875" PointY="16.75" FillColor="255, 192, 128" />
+        <EntityTypeShape EntityType="GatewayModel1.Organization_MemberCrosstab" Width="1.5" PointX="2.8464622771583787" PointY="5.6615726676124956" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

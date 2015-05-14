@@ -36,6 +36,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -89,6 +90,7 @@
     <Compile Include="ResourceSubject.cs" />
     <Compile Include="ResourceSubjectCollection.cs" />
     <Compile Include="ResourceTag.cs" />
+    <Compile Include="ResourceV2.cs" />
     <Compile Include="ResourceVersion.cs" />
     <Compile Include="Rule.cs" />
     <Compile Include="SerializableDictionary.cs" />

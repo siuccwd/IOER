@@ -414,6 +414,14 @@
         //Checkboxes
         setupCBXLs();
 
+        //Auto-show standards browser
+        if (window.location.href.toLowerCase().indexOf("showstandards") > -1) {
+          setTimeout(function () {
+            showFilterLinks();
+            showFilter("standardsBrowser");
+          }, 1000);
+        }
+
         //Remove 3D from IE
         if (/*@cc_on!@*/!1) { //wacky IE detection
           $("#ddlRendering option[value=3d]").remove();
@@ -1407,19 +1415,19 @@
 
     <div id="templates" style="display:none;">
 
-      <div id="template_filter">
+      <script type="text/template" id="template_filter">
         <div class="filterBox" data-filtername="{name}" data-showing="false">
           <a href="#" class="closeBox">X</a>
           <h2>{title}</h2>
           <div class="list" data-type="id" data-title="{title}" data-es="{es}">{list}</div>
         </div>
-      </div>
+      </script>
 
-      <div id="template_listItem">
+      <script type="text/template" id="template_listItem">
         <a href="#" data-selected="false" onclick="toggleCBXLI(this);return false;" data-id="{id}" data-name="{text}">{text}</a>
-      </div>
+      </script>
 
-      <div id="template_result_list">
+      <script type="text/template" id="template_result_list">
         <div class="result result_list" data-vid="{vid}" data-intid="{intID}">
           <a class="thumbnailLink" href="/Resource/{intID}/{simpleTitle}" target="_resultWindow">
             {thumbnail}
@@ -1440,9 +1448,9 @@
             <div class="miniMetadata"><div class="created">Created {created}</div>{metadata}</div>
           </div>
         </div>
-      </div>
+      </script>
 
-      <div id="template_result_grid">
+      <script type="text/template" id="template_result_grid">
         <div class="result result_grid" data-vid="{vid}" data-intid="{intID}">
           <a class="thumbnailLink" href="/Resource/{intID}/{simpleTitle}" target="_resultWindow">
             {thumbnail}
@@ -1450,43 +1458,43 @@
             {paradata}
           </a>
         </div>
-      </div>
+      </script>
 
-      <div id="template_result_compact">
+      <script type="text/template" id="template_result_compact">
         <div class="result result_compact">
           <h2><a href="/Resource/{intID}/{simpleTitle}" target="_resultWindow">{title}</a></h2>
           <p class="fadeCollapse">
             {description}
           </p>
         </div>
-      </div>
+      </script>
 
-      <div id="template_thumbnail">
+      <script type="text/template" id="template_thumbnail">
         <img id="imgThumbnail" runat="server" class="thumbnail" src="//ioer.ilsharedlearning.org/OERThumbs/large/{intID}-large.png" onerror="fixThumbnail({intID}, '{url}', this)" />
-      </div>
+      </script>
     
-      <div id="template_FileThumbnail">
+      <script type="text/template" id="template_FileThumbnail">
         <img class="file thumbnail" src="/images/icons/{file}" alt="{header}" />
-      </div>
+      </script>
 
-      <div id="template_thumbdiv">
+      <script type="text/template" id="template_thumbdiv">
         <div class="thumbnail">
           <h3>{header}</h3>
           <p>{text}</p>
         </div>
-      </div>
+      </script>
 
-      <div id="template_activeFilterList">
+      <script type="text/template" id="template_activeFilterList">
         <!--<h3>{group}</h3>-->
         <div class="activeList">{list}</div>
-      </div>
+      </script>
 
-      <div id="template_activeFilterListItem">
+      <script type="text/template" id="template_activeFilterListItem">
         <div class="activeFilterItem"><a href="#" onclick="removeFilter(this);return false;" data-group="{group}" data-name="{text}" data-id="{id}">X</a> {text}</div>
-      </div>
+      </script>
 
-      <div id="template_metadataLink">
+      <script type="text/template" id="template_metadataLink">
         <a href="#" onclick="searchFor('{itemRaw}')" class="metadataLink">{itemText}</a>
-      </div>
+      </script>
 
     </div>

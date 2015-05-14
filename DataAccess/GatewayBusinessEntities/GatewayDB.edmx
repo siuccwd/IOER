@@ -51,6 +51,7 @@
       [LR_PatronOrgSummary].[JobTitle] AS [JobTitle], 
       [LR_PatronOrgSummary].[RoleProfile] AS [RoleProfile], 
       [LR_PatronOrgSummary].[ImageUrl] AS [ImageUrl], 
+      [LR_PatronOrgSummary].[HasProfile] AS [HasProfile], 
       [LR_PatronOrgSummary].[UserProfileUrl] AS [UserProfileUrl], 
       [LR_PatronOrgSummary].[UserRowId] AS [UserRowId], 
       [LR_PatronOrgSummary].[OrganizationId] AS [OrganizationId], 
@@ -75,6 +76,18 @@
       [Organization_AdminMembers].[BaseOrgId] AS [BaseOrgId], 
       [Organization_AdminMembers].[BaseOrganization] AS [BaseOrganization]
       FROM [dbo].[Organization.AdminMembers] AS [Organization_AdminMembers]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="Organization_MemberCrosstab" EntityType="GatewayModel1.Store.Organization_MemberCrosstab" store:Type="Views" store:Schema="dbo" store:Name="Organization_MemberCrosstab">
+            <DefiningQuery>SELECT 
+      [Organization_MemberCrosstab].[Organization] AS [Organization], 
+      [Organization_MemberCrosstab].[OrgId] AS [OrgId], 
+      [Organization_MemberCrosstab].[Administrator] AS [Administrator], 
+      [Organization_MemberCrosstab].[Employee] AS [Employee], 
+      [Organization_MemberCrosstab].[External] AS [External], 
+      [Organization_MemberCrosstab].[Student] AS [Student], 
+      [Organization_MemberCrosstab].[All] AS [All], 
+      [Organization_MemberCrosstab].[Other] AS [Other]
+      FROM [dbo].[Organization_MemberCrosstab] AS [Organization_MemberCrosstab]</DefiningQuery>
           </EntitySet>
           <EntitySet Name="Organization_MemberSummary" EntityType="GatewayModel1.Store.Organization_MemberSummary" store:Type="Views" store:Schema="dbo" store:Name="Organization_MemberSummary">
             <DefiningQuery>SELECT 
@@ -390,10 +403,11 @@
           <Property Name="Parameters" Type="varchar" MaxLength="300" />
           <Property Name="IsPostback" Type="bit" />
           <Property Name="Userid" Type="varchar" MaxLength="50" />
-          <Property Name="Comment" Type="varchar" MaxLength="250" />
+          <Property Name="Comment" Type="varchar" MaxLength="500" />
           <Property Name="RemoteIP" Type="varchar" MaxLength="25" />
           <Property Name="ServerName" Type="varchar" MaxLength="25" />
           <Property Name="CurrentZip" Type="varchar" MaxLength="12" />
+          <Property Name="Referrer" Type="varchar" MaxLength="500" />
         </EntityType>
         <EntityType Name="Codes_AuthorizationLevel">
           <Key>
@@ -640,6 +654,7 @@
           <Key>
             <PropertyRef Name="UserId" />
             <PropertyRef Name="UserName" />
+            <PropertyRef Name="HasProfile" />
             <PropertyRef Name="UserRowId" />
           </Key>
           <Property Name="UserId" Type="int" Nullable="false" />
@@ -654,6 +669,7 @@
           <Property Name="JobTitle" Type="varchar" MaxLength="100" />
           <Property Name="RoleProfile" Type="varchar" MaxLength="500" />
           <Property Name="ImageUrl" Type="varchar" MaxLength="200" />
+          <Property Name="HasProfile" Type="int" Nullable="false" />
           <Property Name="UserProfileUrl" Type="varchar" />
           <Property Name="UserRowId" Type="uniqueidentifier" Nullable="false" />
           <Property Name="OrganizationId" Type="int" />
@@ -685,6 +701,22 @@
           <Property Name="MemberAdded" Type="datetime" Nullable="false" />
           <Property Name="BaseOrgId" Type="int" />
           <Property Name="BaseOrganization" Type="varchar" MaxLength="100" />
+        </EntityType>
+        <!--Errors Found During Generation:
+      warning 6002: The table/view 'Gateway.dbo.Organization_MemberCrosstab' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.
+      -->
+        <EntityType Name="Organization_MemberCrosstab">
+          <Key>
+            <PropertyRef Name="Organization" />
+          </Key>
+          <Property Name="Organization" Type="varchar" Nullable="false" MaxLength="100" />
+          <Property Name="OrgId" Type="int" />
+          <Property Name="Administrator" Type="int" />
+          <Property Name="Employee" Type="int" />
+          <Property Name="External" Type="int" />
+          <Property Name="Student" Type="int" />
+          <Property Name="All" Type="int" />
+          <Property Name="Other" Type="int" />
         </EntityType>
         <!--Errors Found During Generation:
       warning 6002: The table/view 'Gateway.dbo.Organization_MemberSummary' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.
@@ -1081,6 +1113,7 @@
           </AssociationSet>
           <EntitySet Name="Organization_AdminMembers" EntityType="GatewayModel1.Organization_AdminMembers" />
           <EntitySet Name="Organization_MemberSummary" EntityType="GatewayModel1.Organization_MemberSummary" />
+          <EntitySet Name="Organization_MemberCrosstab" EntityType="GatewayModel1.Organization_MemberCrosstab" />
         </EntityContainer>
         <EntityType Name="AppGroup">
           <Key>
@@ -1543,6 +1576,7 @@
             <PropertyRef Name="UserId" />
             <PropertyRef Name="UserName" />
             <PropertyRef Name="UserRowId" />
+            <PropertyRef Name="HasProfile" />
           </Key>
           <Property Name="UserId" Type="Int32" Nullable="false" />
           <Property Name="UserName" Type="String" Nullable="false" MaxLength="50" Unicode="false" FixedLength="false" />
@@ -1562,6 +1596,7 @@
           <Property Type="DateTime" Name="LastUpdated" Precision="3" />
           <Property Type="Boolean" Name="IsActive" />
           <Property Type="String" Name="UserProfileUrl" MaxLength="8000" FixedLength="false" Unicode="false" />
+          <Property Type="Int32" Name="HasProfile" Nullable="false" />
         </EntityType>
         <Association Name="FK_AppGroup_OrgMember_AppGroup">
           <End Role="AppGroup" Type="GatewayModel1.AppGroup" Multiplicity="1">
@@ -1795,10 +1830,11 @@
           <Property Type="String" Name="Parameters" MaxLength="300" FixedLength="false" Unicode="false" />
           <Property Type="Boolean" Name="IsPostback" />
           <Property Type="String" Name="Userid" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Type="String" Name="Comment" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="Comment" MaxLength="500" FixedLength="false" Unicode="false" />
           <Property Type="String" Name="RemoteIP" MaxLength="25" FixedLength="false" Unicode="false" />
           <Property Type="String" Name="ServerName" MaxLength="25" FixedLength="false" Unicode="false" />
           <Property Type="String" Name="CurrentZip" MaxLength="12" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="Referrer" MaxLength="500" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="Codes_State">
           <Key>
@@ -1898,6 +1934,19 @@
           <Property Type="DateTime" Name="Created" Nullable="false" Precision="3" />
           <Property Type="Int32" Name="CreatedById" />
           <Property Type="Int32" Name="LastUpdatedById" />
+        </EntityType>
+        <EntityType Name="Organization_MemberCrosstab">
+          <Key>
+            <PropertyRef Name="Organization" />
+          </Key>
+          <Property Type="String" Name="Organization" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Type="Int32" Name="OrgId" />
+          <Property Type="Int32" Name="Administrator" />
+          <Property Type="Int32" Name="Employee" />
+          <Property Type="Int32" Name="External" />
+          <Property Type="Int32" Name="Student" />
+          <Property Type="Int32" Name="All" />
+          <Property Type="Int32" Name="Other" />
         </EntityType>
       </Schema>
     </edmx:ConceptualModels>
@@ -2354,6 +2403,7 @@
           <EntitySetMapping Name="LR_PatronOrgSummary">
             <EntityTypeMapping TypeName="GatewayModel1.LR_PatronOrgSummary">
               <MappingFragment StoreEntitySet="LR_PatronOrgSummary">
+                <ScalarProperty Name="HasProfile" ColumnName="HasProfile" />
                 <ScalarProperty Name="UserProfileUrl" ColumnName="UserProfileUrl" />
                 <ScalarProperty Name="IsActive" ColumnName="IsActive" />
                 <ScalarProperty Name="LastUpdated" ColumnName="LastUpdated" />
@@ -2378,6 +2428,7 @@
           <EntitySetMapping Name="AppVisitLogs">
             <EntityTypeMapping TypeName="GatewayModel1.AppVisitLog">
               <MappingFragment StoreEntitySet="AppVisitLog">
+                <ScalarProperty Name="Referrer" ColumnName="Referrer" />
                 <ScalarProperty Name="CurrentZip" ColumnName="CurrentZip" />
                 <ScalarProperty Name="ServerName" ColumnName="ServerName" />
                 <ScalarProperty Name="RemoteIP" ColumnName="RemoteIP" />
@@ -2456,6 +2507,20 @@
                 <ScalarProperty Name="Organization" ColumnName="Organization" />
                 <ScalarProperty Name="OrgId" ColumnName="OrgId" />
                 <ScalarProperty Name="OrgMbrId" ColumnName="OrgMbrId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Organization_MemberCrosstab">
+            <EntityTypeMapping TypeName="GatewayModel1.Organization_MemberCrosstab">
+              <MappingFragment StoreEntitySet="Organization_MemberCrosstab">
+                <ScalarProperty Name="Other" ColumnName="Other" />
+                <ScalarProperty Name="All" ColumnName="All" />
+                <ScalarProperty Name="Student" ColumnName="Student" />
+                <ScalarProperty Name="External" ColumnName="External" />
+                <ScalarProperty Name="Employee" ColumnName="Employee" />
+                <ScalarProperty Name="Administrator" ColumnName="Administrator" />
+                <ScalarProperty Name="OrgId" ColumnName="OrgId" />
+                <ScalarProperty Name="Organization" ColumnName="Organization" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

@@ -43,7 +43,8 @@ namespace ILPathways
             else if ( Request.QueryString[ "mode" ] == "replaceResource" & Request.QueryString[ "auth" ] == "admin" )
             {
                 //new ElasticSearchManager().CreateOrReplaceRecord( int.Parse( Request.QueryString[ "intID" ] ) );
-                new ElasticSearchManager().RefreshResource( int.Parse( Request.QueryString[ "intID" ] ) );
+                //new ElasticSearchManager().RefreshResource( int.Parse( Request.QueryString[ "intID" ] ) );
+                new Isle.BizServices.ResourceV2Services().RefreshResource( int.Parse( Request.QueryString[ "intID" ] ) );
             }
         }
 

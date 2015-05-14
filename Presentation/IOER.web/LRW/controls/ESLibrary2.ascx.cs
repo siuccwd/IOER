@@ -30,6 +30,7 @@ namespace ILPathways.LRW.controls
         public string libraryGuid { get; set; }
         public string collectionGuid { get; set; }
         public string currentFilters;
+        public string activityJSON { get; set; }
 
         /// <summary>
         /// Handle page load
@@ -38,9 +39,20 @@ namespace ILPathways.LRW.controls
         /// <param name="e"></param>
         protected void Page_Load( object sender, EventArgs e )
         {
+          //Prevent duplicate page loads - still not sure what causes this or how to fix it
+          if ( Request.Url == Request.UrlReferrer && !Page.IsPostBack ) { return; }
+
             if ( !Page.IsPostBack )
             {
-              libInfoString = new JavaScriptSerializer().Serialize( GetLibrary() );
+              var serializer = new JavaScriptSerializer();
+              libInfoString = serializer.Serialize( GetLibrary() );
+              activityJSON = serializer.Serialize( 
+                new ActivityBizServices().ActivityTotals_Library( 
+                  libraryID, 
+                  DateTime.Now.AddDays(-1 * int.Parse(activityDaysAgo.Text)), 
+                  DateTime.Now 
+                ).FirstOrDefault() ?? new Isle.DTO.HierarchyActivityRecord() 
+              );
             }
         }
 

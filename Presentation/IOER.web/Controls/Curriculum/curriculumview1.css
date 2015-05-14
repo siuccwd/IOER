@@ -1,6 +1,7 @@
 ﻿  /* Header */
   #content { position: relative; min-height: 500px; }
   #curriculumHeader { position: relative; padding-left: 140px; min-height: 100px; margin-bottom: 10px; }
+  #curriculumHeader::after { content: " "; display: block; height: 0; clear: both; }
   #curriculumAvatar { display: block; position: absolute; left: 0; top: 0; height: 100px; width: 133px; background: transparent url('') center center no-repeat; background-size: contain; background-color: #EEE; border-radius: 5px; overflow: hidden; }
   #btnShowTools { display: block; width: auto; padding: 10px; float: left; margin: 5px; }
   #breadcrumbs { display: inline; }

@@ -28,7 +28,6 @@ namespace ILPathways.DAL
         const string INSERT_PROC = "[Library.ResourceInsert]";
         const string UPDATE_PROC = "[Library.ResourceUpdate]";
 
-
         /// <summary>
         /// Default constructor
         /// </summary>
@@ -258,37 +257,25 @@ namespace ILPathways.DAL
         /// <returns></returns>
         public int ResourceCopyById( int libraryResourceId, int toCollectionId, int userId, ref string statusMessage )
         {
-            return ResourceCopy( libraryResourceId, 0, 0, toCollectionId, userId, ref statusMessage );
+            return ResourceCopy( libraryResourceId, 0, toCollectionId, userId, ref statusMessage );
         }//
 
         /// <summary>
         /// Copy a library resource to new collection using resourceIntId and target collection Id
+        /// 14-01-09 mparsons - removing @SourceLibrarySectionId (will physically remove later)
+        /// 15-03-25 mparsons - actually removed @SourceLibrarySectionId 
         /// </summary>
         /// <param name="resourceIntId"></param>
         /// <param name="toCollectionId"></param>
         /// <param name="userId"></param>
         /// <param name="statusMessage"></param>
         /// <returns></returns>
-        public int ResourceCopy(  int resourceIntId, int toCollectionId, int userId, ref string statusMessage )
+        public int ResourceCopy( int resourceIntId, int toCollectionId, int userId, ref string statusMessage )
         {
-            return ResourceCopy( 0, 0, resourceIntId, toCollectionId, userId, ref statusMessage );
+            return ResourceCopy( 0, resourceIntId, toCollectionId, userId, ref statusMessage );
         }//
 
-        /// <summary>
-        /// Copy a library resource to new collection using resourceIntId and target collection Id
-        /// </summary>
-        /// <param name="fromCollectionId"></param>
-        /// <param name="resourceIntId"></param>
-        /// <param name="toCollectionId"></param>
-        /// <param name="userId"></param>
-        /// <param name="statusMessage"></param>
-        /// <returns></returns>
-        private int ResourceCopy( int fromCollectionId, int resourceIntId, int toCollectionId, int userId, ref string statusMessage )
-        {
-            return ResourceCopy( 0, fromCollectionId, resourceIntId, toCollectionId, userId, ref statusMessage );
-        }//
-
-        private int ResourceCopy( int libraryResourceId, int fromCollectionId, int resourceIntId, int toCollectionId, int userId, ref string statusMessage )
+        private int ResourceCopy( int libraryResourceId, int resourceIntId, int toCollectionId, int userId, ref string statusMessage )
         {
             int newId = 0;
             using ( SqlConnection conn = new SqlConnection( ContentConnection() ) )
@@ -296,12 +283,12 @@ namespace ILPathways.DAL
                 try
                 {
                     #region parameters
-                    SqlParameter[] sqlParameters = new SqlParameter[ 5 ];
+                    SqlParameter[] sqlParameters = new SqlParameter[ 4 ];
                     sqlParameters[ 0 ] = new SqlParameter( "@LibraryResourceId", libraryResourceId );
-                    sqlParameters[ 1 ] = new SqlParameter( "@SourceLibrarySectionId", fromCollectionId );
-                    sqlParameters[ 2 ] = new SqlParameter( "@ResourceIntId", resourceIntId );
-                    sqlParameters[ 3 ] = new SqlParameter( "@NewLibrarySectionId", toCollectionId );
-                    sqlParameters[ 4 ] = new SqlParameter( "@CreatedById", userId );
+                    //sqlParameters[ 1 ] = new SqlParameter( "@SourceLibrarySectionId", fromCollectionId );
+                    sqlParameters[ 1 ] = new SqlParameter( "@ResourceIntId", resourceIntId );
+                    sqlParameters[ 2 ] = new SqlParameter( "@NewLibrarySectionId", toCollectionId );
+                    sqlParameters[ 3 ] = new SqlParameter( "@CreatedById", userId );
 
                     #endregion
 
@@ -324,7 +311,7 @@ namespace ILPathways.DAL
                     }
                     else
                     {
-                        LogError( ex, className + string.Format( ".ResourceCopy() for Id: {0}, fromCollectionId: {1}, toCollectionId: {2}", libraryResourceId, fromCollectionId, toCollectionId ) );
+                        LogError( ex, className + string.Format( ".ResourceCopy() for Id: {0}, or resourceIntId: {1}, toCollectionId: {2}", libraryResourceId, resourceIntId, toCollectionId ) );
                         statusMessage = className + "- Unsuccessful: ResourceCopy(): " + ex.Message.ToString();
                     }
                 }
@@ -380,7 +367,7 @@ namespace ILPathways.DAL
                     }
                     else
                     {
-                        LogError( ex, className + string.Format( ".ResourceMove() for Id: {0}, fromCollectionId: {1}, toCollectionId: {2}", libraryResourceId, fromCollectionId, toCollectionId ) );
+                        LogError( ex, className + string.Format( ".ResourceMove() for Id: {0}, or resourceIntId: {1}, fromCollectionId: {2}, toCollectionId: {3}", libraryResourceId, resourceIntId, fromCollectionId, toCollectionId ) );
                         statusMessage = className + "- Unsuccessful: ResourceMove(): " + ex.Message.ToString();
                     }
                 }
@@ -628,6 +615,7 @@ namespace ILPathways.DAL
         }
         /// <summary>
         /// Search for Library Resource related data using passed parameters
+        /// typically used with widgets where a limited number of resources are pulled for a collection
         /// </summary>
         /// <param name="pFilter"></param>
         /// <param name="pOrderBy">Sort order of results. If blank, the proc should have a default sort order</param>
@@ -641,6 +629,7 @@ namespace ILPathways.DAL
             List<LibraryResource> entities = new List<LibraryResource>();
 
             DataSet ds = Search( pFilter, pOrderBy, pStartPageIndex, pMaximumRows, ref pTotalRows );
+            //DataSet ds = SearchFromIoer( pFilter, pOrderBy, pStartPageIndex, pMaximumRows, ref pTotalRows );
             try
             {
                 if ( DoesDataSetHaveRows( ds ) )
@@ -662,7 +651,74 @@ namespace ILPathways.DAL
             }
         }
 
+        /// <summary>
+        /// Do a library resource search, but doing through IOER database - for better performance.
+        /// TODO
+        /// - review the actual columns returned from this version
+        /// - might be better to have a different DTO
+        /// - always on top resources
+        /// - show who added resource to library
+        /// - when added to the library
+        /// - include target url
+        /// </summary>
+        /// <param name="pFilter"></param>
+        /// <param name="pOrderBy"></param>
+        /// <param name="pStartPageIndex"></param>
+        /// <param name="pMaximumRows"></param>
+        /// <param name="pTotalRows"></param>
+        /// <returns></returns>
+        public List<LibraryResource> SearchFromIoer( string pFilter, string pOrderBy, int pStartPageIndex, int pMaximumRows, ref int pTotalRows )
+        {
+            LibraryResource entity = new LibraryResource();
+            List<LibraryResource> entities = new List<LibraryResource>();
 
+
+            DataSet ds = SearchViaIoer( pFilter, pOrderBy, pStartPageIndex, pMaximumRows, ref pTotalRows );
+            try
+            {
+                if ( DoesDataSetHaveRows( ds ) )
+                {
+                    foreach ( DataRow dr in ds.Tables[ 0 ].Rows )
+                    {
+                        //need to customize fill, as likely for a full search
+                        //entity = this.Fill( dr );
+                        entity = new LibraryResource();
+                        entity.IsValid = true;
+
+                        entity.Id = GetRowColumn( dr, "LibraryResourceId", 0 );
+                        if ( entity.Id == 0 )
+                            entity.Id = GetRowColumn( dr, "Id", 0 );
+
+                        entity.LibraryId = GetRowColumn( dr, "LibraryId", 0 );
+                        entity.LibrarySectionId = GetRowColumn( dr, "LibrarySectionId", 0 );
+                        entity.CollectionTitle = GetRowColumn( dr, "LibrarySection", "" );
+
+                        entity.Title = GetRowPossibleColumn( dr, "Title", "" );
+                        entity.Description = GetRowPossibleColumn( dr, "Description", "" );
+                        entity.SortTitle = GetRowPossibleColumn( dr, "SortTitle", "" );
+                        entity.ResourceUrl = GetRowPossibleColumn( dr, "ResourceUrl", "" );
+                        entity.ResourceIntId = GetRowColumn( dr, "ResourceIntId", 0 );
+                        entity.ResourceVersionIntId = GetRowColumn( dr, "ResourceVersionIntId", 0 );
+                        entity.SetImageUrls();
+
+                        entity.Created = GetRowColumn( dr, "DateAddedToCollection", System.DateTime.MinValue );
+                        entity.CreatedById = GetRowColumn( dr, "libResourceCreatedById", 0 );
+                        entity.CreatedBy = GetRowPossibleColumn( dr, "CreatedBy", "" );
+                        entity.CreatedByImageUrl = GetRowPossibleColumn( dr, "CreatedByImageUrl", "" );
+                        entity.ProfileUrl = string.Format( "/Profile/{0}/{1}", entity.CreatedById, entity.CreatedBy.Replace( " ", "" ) );
+
+                        entities.Add( entity );
+                    }
+                }
+                return entities;
+            }
+            catch ( Exception ex )
+            {
+                LogError( ex, className + ".SearchFromIoer() " );
+                return null;
+
+            }
+        }
         /// <summary>
         /// Search for Library Resource related data using passed parameters
         /// </summary>
@@ -672,6 +728,54 @@ namespace ILPathways.DAL
         /// <param name="pMaximumRows"></param>
         /// <param name="pTotalRows"></param>
         /// <returns></returns>
+        public DataSet SearchViaIoer( string pFilter, string pOrderBy, int pStartPageIndex, int pMaximumRows, ref int pTotalRows )
+        {
+
+            int outputCol = 4;
+            SqlParameter[] sqlParameters = new SqlParameter[ 5 ];
+            sqlParameters[ 0 ] = new SqlParameter( "@Filter", pFilter );
+            sqlParameters[ 1 ] = new SqlParameter( "@SortOrder", pOrderBy );
+
+            sqlParameters[ 2 ] = new SqlParameter( "@StartPageIndex", SqlDbType.Int );
+            sqlParameters[ 2 ].Value = pStartPageIndex;
+
+            sqlParameters[ 3 ] = new SqlParameter( "@PageSize", SqlDbType.Int );
+            sqlParameters[ 3 ].Value = pMaximumRows;
+
+            sqlParameters[ outputCol ] = new SqlParameter( "@TotalRows", SqlDbType.Int );
+            sqlParameters[ outputCol ].Direction = ParameterDirection.Output;
+
+            //NOTE - using prod in ioer database - confusing, YES
+            using ( SqlConnection conn = new SqlConnection( GetReadOnlyConnection() ) )
+            {
+                DataSet ds = new DataSet();
+                try
+                {
+                    ds = SqlHelper.ExecuteDataset( conn, CommandType.StoredProcedure, "[Library.ResourceSearch]", sqlParameters );
+                    //get output paramter
+                    string rows = sqlParameters[ outputCol ].Value.ToString();
+                    try
+                    {
+                        pTotalRows = Int32.Parse( rows );
+                    }
+                    catch
+                    {
+                        pTotalRows = 0;
+                    }
+
+                    if ( ds.HasErrors )
+                    {
+                        return null;
+                    }
+                    return ds;
+                }
+                catch ( Exception ex )
+                {
+                    LogError( ex, className + ".SearchViaIoer() " );
+                    return null;
+                }
+            }
+        }
         public DataSet Search( string pFilter, string pOrderBy, int pStartPageIndex, int pMaximumRows, ref int pTotalRows )
         {
 

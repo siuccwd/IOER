@@ -133,7 +133,7 @@
 	</asp:gridview>
 
 	<div style="float:left;">
-	  <wcl:PagerV2_8 ID="pager2" runat="server" Visible="false" OnCommand="pager_Command" GenerateFirstLastSection="true" FirstClause="First Page" PreviousClause="Prev." NextClause="Next"  LastClause="Last Page" PageSize="15" CompactModePageCount="10" NormalModePageCount="10"  GenerateGoToSection="true" GeneratePagerInfoSection="true"   />
+	  <wcl:PagerV2_8 ID="pager2" runat="server" Visible="false" OnCommand="pager_Command" GenerateFirstLastSection="true" FirstClause="First Page" PreviousClause="Prev." NextClause="Next"  LastClause="Last Page" PageSize="25" CompactModePageCount="10" NormalModePageCount="10"  GenerateGoToSection="true" GeneratePagerInfoSection="true"   />
 	</div>	
 <br class="clearFloat" />
 </div>			
@@ -206,7 +206,7 @@
                                     <asp:LinkButton ID="deleteRowButton" CommandArgument='<%# Eval("Id") %>' CommandName="DeleteRow" CausesValidation="false" OnClientClick="return confirm('Are you certain that you want to remove this member?');" runat="server">Remove</asp:LinkButton>
                                 </ItemTemplate>
                             </asp:TemplateField>
-
+                            <asp:BoundField DataField="UserId" HeaderText="Id" Visible="true"></asp:BoundField>
                             <asp:TemplateField HeaderText="First Name" SortExpression="FirstName">
                                 <ItemTemplate>
                                     <asp:Label ID="gridlblFirstName" runat="server" Text='<%# Bind("FirstName") %>'></asp:Label>

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Xml;
 //using LearningRegistryCache2.App_Code.Classes;
 using OLDDM = LearningRegistryCache2.App_Code.DataManagers;
@@ -230,7 +231,7 @@ namespace LearningRegistryCache2
                 }
             }
 
-            UpdateElasticSearchList(resource.Id);
+            LearningRegistry.resourceIdList.Add(resource.Id);
         }// LrParadataMap()
 
         protected void HandleViews(Resource resource, XmlDocument payload, string docId)
@@ -268,7 +269,7 @@ namespace LearningRegistryCache2
                 }
 
                 resource.ViewCount += viewCount;
-                resourceManager.UpdateByRowId( resource );
+                resourceManager.UpdateById(resource);
             }
             catch (Exception ex)
             {
@@ -314,7 +315,7 @@ namespace LearningRegistryCache2
                 }
 
                 resource.FavoriteCount += favoriteCount;
-                resourceManager.UpdateByRowId( resource );
+                resourceManager.UpdateById(resource);
             }
             catch (Exception ex)
             {
@@ -343,7 +344,6 @@ namespace LearningRegistryCache2
                 }
 
                 ResourceComment comment = new ResourceComment();
-                comment.ResourceId = resource.RowId;
                 comment.ResourceIntId = resource.Id;
                 XmlNodeList dateList = payload.GetElementsByTagName("date");
                 if (dateList.Count != 0)
@@ -355,7 +355,6 @@ namespace LearningRegistryCache2
                     comment.Created = DateTime.Now;
                 }
                 //comment.ResourceIntId = resource.Id;
-                comment.IsActive = true;
                 comment.CreatedById = 0;
                 comment.Comment = TrimWhitespace(list[0].InnerText);
                 XmlNodeList actors = payload.GetElementsByTagName("actor");
@@ -369,12 +368,16 @@ namespace LearningRegistryCache2
                     comment.CreatedBy = BuildCreatedBy(actors[0]);
                 }
                 comment.DocId = docId;
+                bool isDuplicate = CheckForDuplicates(comment);
 
-                status = commentManager.Import(comment);
-                if (status != "successful")
+                if (!isDuplicate)
                 {
-                    auditReportingManager.LogMessage(LearningRegistry.reportId, LearningRegistry.fileName, docId, resource.ResourceUrl,
-                        ErrorType.Error, ErrorRouting.Technical, status);
+                    status = commentManager.Import(comment);
+                    if (status != "successful")
+                    {
+                        auditReportingManager.LogMessage(LearningRegistry.reportId, LearningRegistry.fileName, docId, resource.ResourceUrl,
+                            ErrorType.Error, ErrorRouting.Technical, status);
+                    }
                 }
             }
             catch (Exception ex)
@@ -384,6 +387,32 @@ namespace LearningRegistryCache2
             }
 
             return;
+        }
+
+        protected bool CheckForDuplicates(ResourceComment comment)
+        {
+            bool result = false;
+            string comparisonText = comment.Comment.ToLower();
+            string dq = "\"";
+            Regex massageEx = new Regex(@"\s|[!@#$%^&*()\-_=+\[{\]};:'\" + dq + @",./<>?]");
+            comparisonText = massageEx.Replace(comparisonText, "");
+
+            DataSet ds = commentManager.Select(comment.ResourceIntId);
+            if (ResourceCommentManager.DoesDataSetHaveRows(ds))
+            {
+                foreach (DataRow dr in ds.Tables[0].Rows)
+                {
+                    string text = ResourceCommentManager.GetRowColumn(dr, "Comment", "");
+                    text = text.ToLower();
+                    text = massageEx.Replace(text, "");
+                    if (text == comparisonText)
+                    {
+                        result = true;
+                        break;
+                    }
+                }
+            }
+            return result;
         }
 
         protected string BuildCreatedBy(XmlNode node)
@@ -474,7 +503,6 @@ namespace LearningRegistryCache2
                 }
                 string identifier = TrimWhitespace(list.Item(0).InnerText);
                 ResourceStandard standard = new ResourceStandard();
-                standard.ResourceId = resource.RowId;
                 standard.ResourceIntId = resource.Id;
                 standard.StandardId = 0;
                 standard.StandardUrl = identifier;
@@ -592,7 +620,7 @@ namespace LearningRegistryCache2
                     return;
                 }
                 resource.ResourceUrl = TrimWhitespace(list[0].InnerText);
-                resourceManager.UpdateByRowId( resource );
+                resourceManager.UpdateById(resource);
             }
             catch (Exception ex)
             {

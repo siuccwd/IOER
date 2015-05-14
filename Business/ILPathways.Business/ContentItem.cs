@@ -348,7 +348,7 @@ namespace ILPathways.Business
             else 
                 return "";
         }
-        private bool _isPublished = false;
+       // private bool _isPublished = false;
         /// <summary>
         /// Gets/Sets IsPublished
         /// TODO - should probably just depend on the statusId = 5??
@@ -357,20 +357,24 @@ namespace ILPathways.Business
         {
             get
             {
-                return this._isPublished;
-            }
-            set
-            {
-                if ( this._isPublished == value )
-                {
-                    //Ignore set
-                }
+                if ( StatusId == 5 )
+                    return true;
                 else
-                {
-                    this._isPublished = value;
-                    HasChanged = true;
-                }
+                    return false;
+                //return this._isPublished;
             }
+            //set
+            //{
+            //    if ( this._isPublished == value )
+            //    {
+            //        //Ignore set
+            //    }
+            //    else
+            //    {
+            //        this._isPublished = value;
+            //        HasChanged = true;
+            //    }
+            //}
         }
 
         private int _privilegeTypeId;

@@ -64,6 +64,7 @@ namespace ILPathways.Controls.Curriculum
     public object comments { get; set; }
     public string commentsList { get; set; }
     public bool hasFeaturedItem { get; set; }
+    public string activityJSON { get; set; }
 
     protected void Page_Load( object sender, EventArgs e )
     {
@@ -117,7 +118,7 @@ namespace ILPathways.Controls.Curriculum
             new ActivityBizServices().NodeHit( curriculumNode, currentNode, currentUser );
         }
         //Get tree
-        tree = new CurriculumService().GetTreeJSON( curriculumID, userGUID );
+        tree = new CurriculumService().GetTreeJSON( curriculumID, userGUID, allowCaching );
       }
       catch( Exception ex )
       {
@@ -164,6 +165,15 @@ namespace ILPathways.Controls.Curriculum
 
       //Has featured item
       hasFeaturedItem = !string.IsNullOrWhiteSpace( currentNode.AutoPreviewUrl );
+
+      //Get Activity
+      activityJSON = serializer.Serialize(
+        new ActivityBizServices().ActivityTotals_LearningLists(
+          currentNodeID,
+          DateTime.Now.AddDays( -1 * int.Parse( activityDaysAgo.Text ) ),
+          DateTime.Now
+        ).FirstOrDefault() ?? new Isle.DTO.HierarchyActivityRecord()
+      );
     }
 
     public JSONNode GetFromTree( JSONNode tree, int id )

@@ -12,7 +12,9 @@
   <script type="text/javascript" src="/scripts/tooltipv2.js"></script>
 
   <script type="text/javascript">
-    <%=myLibrariesString %>
+      <%=myLibrariesString %>
+      <%=orgData %>
+      <%=selectedOrgOutput %>
   </script>
   <script type="text/javascript" src="/scripts/publish3.js"></script>
 
@@ -35,6 +37,7 @@
     .listPanel ul li label:hover { background-color: #EAEAEA; }
     .listPanel ul li input { position: absolute; top: 2px; left: 2px; }
     .listPanel select { width: 100%; }
+    .listPanel ul li input[type=button] { position: static; width: 100%; }
 
     .toolTipContent { font-weight: normal; }
 
@@ -138,6 +141,15 @@
         <custom:StandardsBrowser ID="standardsBrowser" runat="server" />
         <input type="hidden" class="hdnStandards" runat="server" id="hdnStandards" />
       </div>
+
+        <div class="section">
+        <span>Publishing Resource for myself or an Organization</span>
+        <p>This step is optional. If publishing the resource for yourself do nothing. If publishing for an organization, select the applicable one below. Only organizations where you are a member will be displayed.</p>
+        <select id="ddlOrg" name="ddlOrg">
+        </select>
+       
+      </div>
+
       <div class="section">
         <span>Library & Collection</span>
         <p>You can specify a Library and Collection to add this Resource to immediately after submission.</p>

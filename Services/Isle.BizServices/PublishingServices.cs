@@ -10,7 +10,7 @@ using System.Web.Script.Serialization;
 using ILPathways.Business;
 using ILPathways.Common;
 using ILPathways.Utilities;
-using Isle.DataContracts;
+//using Isle.DataContracts;
 using LearningRegistry;
 using LearningRegistry.RDDD;
 using LRWarehouse.Business;
@@ -292,7 +292,8 @@ namespace Isle.BizServices
                     //Publish to ElasticSearch
                     ResourceJSONFlat flat = new ResourceJSONManager().GetJSONFlatByIntID( resourceIntId )[ 0 ];
                     //new ElasticSearchManager().CreateOrReplaceRecord( flat );
-                    new ElasticSearchManager().RefreshResource( flat.intID ); //Kludge - need to get ID more efficiently
+                    //new ElasticSearchManager().RefreshResource( flat.intID ); //Kludge - need to get ID more efficiently
+                    new Isle.BizServices.ResourceV2Services().RefreshResource( flat.intID );
 
                     //Set status messages
                     SetConsoleSuccessMessage( "Successful Publish of saved resource" );
@@ -358,6 +359,20 @@ namespace Isle.BizServices
 
         #endregion
 
+        /// <summary>
+        /// publishing
+        /// 15-04-15 mparsons - explictly passing , rather than getting from Resource object to identify where called from, and ensure set as needed. Then MAYBE will just use in object?
+        /// </summary>
+        /// <param name="input"></param>
+        /// <param name="isSuccessful"></param>
+        /// <param name="status"></param>
+        /// <param name="versionID"></param>
+        /// <param name="intID"></param>
+        /// <param name="sortTitle"></param>
+        /// <param name="updatingElasticSearch"></param>
+        /// <param name="skipLRPublish"></param>
+        /// <param name="user"></param>
+        /// <param name="publishForOrgId">Optional will be a valid OrgId if user is publishing for an org</param>
         public static void PublishToAll( Resource input,
             ref bool isSuccessful,
             ref string status,
@@ -366,7 +381,8 @@ namespace Isle.BizServices
             ref string sortTitle,
             bool updatingElasticSearch,
             bool skipLRPublish,
-            Patron user )
+            Patron user,
+            int publishForOrgId)
         {
             bool success = true;
             string tempStatus = "";
@@ -394,7 +410,7 @@ namespace Isle.BizServices
             input.Version.LRDocId = lrDocID;
 
             //If successful, publish to Database. This will give us a Resource Version ID
-            PublishToDatabase( input, ref success, ref tempStatus, ref versionID, ref intID, ref sortTitle );
+            PublishToDatabase( input, publishForOrgId, ref success, ref tempStatus, ref versionID, ref intID, ref sortTitle );
             if ( !success )
             {
                 isSuccessful = false;
@@ -420,6 +436,9 @@ namespace Isle.BizServices
                     return;
                 }
             }
+
+            new ActivityBizServices().PublishActivity( input, user );
+
             isSuccessful = true;
             status = "okay";
             SetConsoleSuccessMessage( "Successfully published the Resource" );
@@ -430,6 +449,67 @@ namespace Isle.BizServices
             SendPublishNotification( user, input );
         }
 
+        public static void PublishToLearningRegistry( string payload, 
+          string url, 
+          string submitter, 
+          List<string> keywords, 
+          ref bool successful, 
+          ref string status, 
+          ref string lrDocID )
+        {
+          //Create document
+          lr_document doc = new lr_document();
+          doc.resource_data_type = "metadata";
+          doc.payload_placement = "inline";
+          doc.payload_schema = new List<string> { "LRMI" };
+          doc.resource_data = payload;
+          doc.resource_locator = url;
+
+          //Identity info
+          lr_identity identity = new lr_identity();
+          identity.submitter_type = "agent";
+          identity.submitter = "ISLE OER on Behalf of " + submitter;
+          identity.signer = "ISLE OER";
+          doc.identity = identity;
+
+          //keywords
+          doc.keys = keywords;
+
+          //Sign the document
+          string PgpKeyringLocation = Path.Combine( HttpRuntime.AppDomainAppPath, "App_Data/lrpriv.asc" );
+          string keyData = File.ReadAllText( PgpKeyringLocation );
+          string[] PublicKeyLocations = new string[] { "http://pgp.mit.edu:11371/pks/lookup?op=get&search=0x6ce0837335049763" };
+          string UserID = "ISLEOER (Data Signing Key) <info@siuccwd.com>";
+          string password = "89k7SMteVzPUY";
+          PgpSigner signer = new PgpSigner( PublicKeyLocations, keyData, UserID, password );
+          doc = signer.Sign( doc );
+
+          //Build the envelope
+          lr_Envelope envelope = new lr_Envelope();
+          envelope.documents.Add( doc );
+
+          //Do publish
+          string node = UtilityManager.GetAppKeyValue( "learningRegistryNodePublish" ); //"https://node01.public.learningregistry.net", "http://sandbox.learningregistry.org/"
+          string clientID = "info@siuccwd.com";
+          string clientPassword = "in5t@ll3r";
+          LRClient client = new LRClient( node, clientID, clientPassword );
+          try
+          {
+            //Do publish
+            PublishResponse response = client.Publish( envelope );
+
+            //Set return values
+            successful = true;
+            lrDocID = response.document_results.ElementAt( 0 ).doc_ID;
+            status = "Successfully published. LR Doc ID: " + lrDocID;
+          }
+          catch ( Exception ex )
+          {
+            successful = false;
+            lrDocID = "";
+            status = "Failed to Publish: " + ex.Message;
+          }
+        }
 
         public static void PublishToLearningRegistry( Resource input, 
                     ref bool successful, 
@@ -439,65 +519,136 @@ namespace Isle.BizServices
             //Create payload
             var payload = new ResourceJSONManager().GetJSONLRMIFromResource( input );
 
-            //Create document
-            lr_document doc = new lr_document();
-            doc.resource_data_type = "metadata";
-            doc.payload_placement = "inline";
-            doc.payload_schema = new List<string> { "LRMI" };
-            doc.resource_data = payload;
-            doc.resource_locator = input.ResourceUrl;
-
-            //Identity info
-            lr_identity identity = new lr_identity();
-            identity.submitter_type = "agent";
-            identity.submitter = "ISLE OER on Behalf of " + input.Version.Submitter;
-            identity.signer = "ISLE OER";
-            doc.identity = identity;
-
-            //keywords
-            foreach ( ResourceChildItem word in input.Keyword )
-            {
-                doc.keys.Add( word.OriginalValue.Trim() );
-            }
-
-            //Sign the document
-            string PgpKeyringLocation = Path.Combine( HttpRuntime.AppDomainAppPath, "App_Data/lrpriv.asc" );
-            string keyData = File.ReadAllText( PgpKeyringLocation );
-            string[] PublicKeyLocations = new string[] { "http://pgp.mit.edu:11371/pks/lookup?op=get&search=0x6ce0837335049763" };
-            string UserID = "ISLEOER (Data Signing Key) <info@siuccwd.com>";
-            string password = "89k7SMteVzPUY";
-            PgpSigner signer = new PgpSigner( PublicKeyLocations, keyData, UserID, password );
-            doc = signer.Sign( doc );
-
-            //Build the envelope
-            lr_Envelope envelope = new lr_Envelope();
-            envelope.documents.Add( doc );
-
-            //Do publish
-            string node = UtilityManager.GetAppKeyValue( "learningRegistryNodePublish" ); //"https://node01.public.learningregistry.net", "http://sandbox.learningregistry.org/"
-            string clientID = "info@siuccwd.com";
-            string clientPassword = "in5t@ll3r";
-            LRClient client = new LRClient( node, clientID, clientPassword );
-            try
-            {
-                //Do publish
-                PublishResponse response = client.Publish( envelope );
-
-                //Set return values
-                successful = true;
-                lrDocID = response.document_results.ElementAt( 0 ).doc_ID;
-                status = "Successfully published. LR Doc ID: " + lrDocID;
-            }
-            catch ( Exception ex )
-            {
-                successful = false;
-                lrDocID = "";
-                status = "Failed to Publish: " + ex.Message;
-            }
+            PublishToLearningRegistry( 
+              new JavaScriptSerializer().Serialize( payload ), 
+              input.ResourceUrl, 
+              input.Version.Submitter, 
+              input.Keyword.Select( m => m.OriginalValue.Trim() ).ToList(), 
+              ref successful, 
+              ref status, 
+              ref lrDocID 
+            );
         }
+
+      public static void PublishToDatabase( LRWarehouse.Business.ResourceV2.ResourceDTO input
+                      , int publishForOrgId
+                      , List<int> selectedTags
+                      , ref bool successful
+                      , ref string status
+                      , ref int versionID
+                      , ref int intID
+                      , ref string sortTitle )
+      {
+        string statusMessage = "";
+        ResourceManager resMgr = new ResourceManager();
+
+        try
+        {
+          //Resource
+          //Create new resource
+            //MP - why just the url. Doesn't handle published by without a userId???
+          if ( input.ResourceId == 0 )
+          {
+              intID = resMgr.CreateByUrl( input.Url, ref status );
+                input.ResourceId = intID;
+          }
+            //MP
+          if ( input.CreatedById > 0 )
+          {
+              resMgr.Create_ResourcePublishedBy( intID, input.CreatedById, publishForOrgId, ref statusMessage );
+          }
+          //Version
+          var accessRights = input.Fields.Where( m => m.Schema == "accessRights" ).FirstOrDefault().Tags.Where( t => t.Selected ).FirstOrDefault();
+          var versionManager = new ResourceVersionManager();
+          var version = new ResourceVersion()
+          {
+            Id = versionID,
+            LRDocId = input.LrDocId,
+            Title = input.Title,
+            Description = input.Description,
+            Publisher = input.Publisher,
+            Creator = input.Creator,
+            Rights = input.UsageRights.Url,
+            AccessRights = accessRights.Title,
+            Modified = DateTime.Now,
+            Submitter = input.Submitter,
+            Created = DateTime.Now, //Still not sure if this means "resource creation" or "table record creation" date. Going with the safer of the two
+            TypicalLearningTime = "", //No longer used
+            IsSkeletonFromParadata = false,
+            Schema = "LRMI",
+            AccessRightsId = accessRights.Id,
+            InteractivityTypeId = 0, //No longer used
+            ResourceIntId = intID,
+            Requirements = input.Requirements
+          };
+          if ( versionID == 0 )
+          {
+            versionID = versionManager.Create( version, ref status );
+          }
+          else
+          {
+            versionManager.UpdateById( version );
+          }
+
+          //Keywords
+          var keywordManager = new ResourceKeywordManager();
+          foreach ( var item in input.Keywords )
+          {
+            keywordManager.Create( new ResourceChildItem()
+            {
+              ResourceIntId = intID,
+              OriginalValue = item,
+              CreatedById = input.CreatedById
+            }, ref status );
+          }
+
+          //Standards
+          var standardManager = new ResourceStandardManager();
+          foreach ( var item in input.Standards )
+          {
+            standardManager.Create( new ResourceStandard()
+            {
+              ResourceIntId = intID,
+              StandardId = item.StandardId,
+              AlignmentTypeCodeId = item.AlignmentTypeId,
+              AlignmentDegreeId = item.AlignmentDegreeId,
+              AlignmentTypeValue = item.AlignmentType,
+              AlignmentDegree = item.AlignmentDegree,
+              CreatedById = input.CreatedById,
+              AlignedById = input.CreatedById,
+              StandardDescription = item.Description,
+              StandardNotationCode = item.NotationCode
+            }, ref status );
+          }
+
+          //Tags
+          //SelectMany condenses resulting lists into a single list--here it condenses the lists of selected tags into a single list
+          //from which the IDs are selected
+          //List<int> tags = input.Fields.SelectMany( t => t.Tags.Where( s => s.Selected ) ).ToList().Select( t => t.Id ).ToList();
+          //Actually, we just want to add the new tags, because EF doesn't do a duplicate check
+          try
+          {
+            new IOERBusinessEntities.EFResourceManager().Resource_CreateTags( selectedTags, input.ResourceId, input.CreatedById );
+          }
+          catch ( Exception ex )
+          {
+            throw new Exception( "Entity Framework Error: " + ex.Message + ";<br />InnerException: " + ex.InnerException.Message + ";<br />" + ex.InnerException.ToString() + ";" );
+          }
+
+          sortTitle = versionManager.Get( versionID ).SortTitle.Replace( " ", "_" );
+          successful = true;
+          status = "okay";
+        }
+        catch ( Exception ex )
+        {
+          successful = false;
+          status = ex.Message;
+        }
+      }
 
 
         public static void PublishToDatabase( Resource input
+                        , int publishForOrgId
                         , ref bool successful
                         , ref string status
                         , ref int versionID
@@ -506,12 +657,21 @@ namespace Isle.BizServices
         {
             try
             {
+                string statusMessage = "";
                 ResourceDataManager dataManager = new ResourceDataManager();
-
-                //Resource
-                intID = new ResourceManager().Create( input, ref status );
+                ResourceManager resMgr = new ResourceManager();
+                input.PublishedForOrgId = publishForOrgId;
+                //Resource. Use method that just uses url. Published by will be handled here
+                //intID = resMgr.Create( input, ref status );
+                intID = resMgr.CreateByUrl( input.ResourceUrl, ref status );
                 input.Id = intID;
                 input.Version.ResourceIntId = intID;
+
+                //published by. Probably better to do here, rather than burying it?
+                if ( input.CreatedById > 0 )
+                {
+                    resMgr.Create_ResourcePublishedBy( intID, input.CreatedById, publishForOrgId, ref statusMessage );
+                }
 
                 //Version
                 var versionManager = new ResourceVersionManager();
@@ -672,7 +832,8 @@ namespace Isle.BizServices
             try
             {
                 //new ElasticSearchManager().CreateOrReplaceRecord( resourceId );
-                new ElasticSearchManager().RefreshResource( resourceId );
+                //new ElasticSearchManager().RefreshResource( resourceId );
+                new Isle.BizServices.ResourceV2Services().RefreshResource( resourceId );
                 successful = true;
                 status = "okay";
             }
@@ -681,6 +842,70 @@ namespace Isle.BizServices
                 successful = false;
                 status = ex.Message;
             }
+        }
+
+        public static void BuildSaveLRDocument( Resource input, 
+                ref bool successful, 
+                ref string status )
+        {
+            var envelope = CreateLREnvelope( input, ref successful, ref status );
+            var pending = new PublishPending()
+            {
+                ResourceId = input.Id,
+                ResourceVersionId = input.Version.Id,
+                Reason = "Resource requires approval.",
+                CreatedById = input.CreatedById,
+                LREnvelope = new JavaScriptSerializer().Serialize( envelope )
+            };
+
+            new ResourceManager().PublishPending_Create( pending, ref status );
+
+        }
+
+        public static lr_Envelope CreateLREnvelope( Resource input, ref bool successful, ref string status )
+        {
+            //Create payload
+            var payload = new ResourceJSONManager().GetJSONLRMIFromResource( input );
+
+            //Create document
+            lr_document doc = new lr_document();
+            doc.resource_data_type = "metadata";
+            doc.payload_placement = "inline";
+            doc.payload_schema = new List<string> { "LRMI" };
+            doc.resource_data = payload;
+            doc.resource_locator = input.ResourceUrl;
+
+            //Identity info
+            lr_identity identity = new lr_identity();
+            identity.submitter_type = "agent";
+            identity.submitter = "ISLE OER on Behalf of " + input.Version.Submitter;
+            identity.signer = "ISLE OER";
+            doc.identity = identity;
+
+            //keywords
+            foreach ( ResourceChildItem word in input.Keyword )
+            {
+                doc.keys.Add( word.OriginalValue.Trim() );
+            }
+
+            //Sign the document
+            string PgpKeyringLocation = Path.Combine( HttpRuntime.AppDomainAppPath, "App_Data/lrpriv.asc" );
+            string keyData = File.ReadAllText( PgpKeyringLocation );
+            string[] PublicKeyLocations = new string[] { "http://pgp.mit.edu:11371/pks/lookup?op=get&search=0x6ce0837335049763" };
+            string UserID = "ISLEOER (Data Signing Key) <info@siuccwd.com>";
+            string password = "89k7SMteVzPUY";
+            PgpSigner signer = new PgpSigner( PublicKeyLocations, keyData, UserID, password );
+            doc = signer.Sign( doc );
+
+            //Build the envelope
+            lr_Envelope envelope = new lr_Envelope();
+            envelope.documents.Add( doc );
+
+            return envelope;
+        }
+        public static void GenerateThumbnail( int resourceID, string url )
+        {
+          new Thumbnailer().CreateThumbnail( resourceID, url );
         }
     }
 }

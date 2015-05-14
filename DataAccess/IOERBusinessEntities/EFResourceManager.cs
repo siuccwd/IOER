@@ -12,7 +12,7 @@ namespace IOERBusinessEntities
 {
     public class EFResourceManager
     {
-        static string thisClassName = "EFResourceManager";
+        static string thisClassName = "EFResourceManager"; 
         
         DateTime DefaultDate = new System.DateTime( 1970, 1, 1 );
 
@@ -97,6 +97,17 @@ namespace IOERBusinessEntities
             }
         }
 
+        public void Resource_CreateTags( List<int> tags, int resourceID, int createdById )
+        {
+          using ( var context = new ResourceContext() )
+          {
+            if ( tags.Count() > 0 )
+            {
+              ResourceTag_Create( context, new ResourceTransformDTO() { Id = resourceID, CreatedById = createdById, ResourceTagsIds = tags } );
+            }
+          }
+        }
+
         public int Resource_CompleteUpdate( ResourceTransformDTO entity )
         {
 
@@ -166,6 +177,7 @@ namespace IOERBusinessEntities
             using ( var context = new ResourceContext() )
             {
                 Resource efEntity = context.Resources
+                            .Include( "Resource_Version" )
                             .SingleOrDefault( s => s.Id == resourceId );
 
                 if ( efEntity != null && efEntity.Id > 0 )
@@ -175,6 +187,19 @@ namespace IOERBusinessEntities
                     entity.ViewCount = efEntity.ViewCount != null ? (int) efEntity.ViewCount : 0;
                     entity.FavoriteCount = efEntity.FavoriteCount != null ? ( int ) efEntity.FavoriteCount : 0;
                     entity.Created = (DateTime) efEntity.Created;
+                    
+                    if ( efEntity.Resource_Version != null && efEntity.Resource_Version.Count > 0 )
+                    {
+                        //just get first active one
+                        foreach ( Resource_Version rv in efEntity.Resource_Version )
+                        {
+                            if ( rv.IsActive == true )
+                            {
+                                entity.Version = ResourceVersion_ToMap( rv );
+                                break;
+                            }
+                        }
+                    }
                     
                 }
             }
@@ -556,6 +581,9 @@ namespace IOERBusinessEntities
             Resource_PublishedBy e = new Resource_PublishedBy();
             e.ResourceIntId = entity.Id;
             e.PublishedById = entity.CreatedById;
+            if (entity.PublishedForOrgId > 0)
+                e.PublishedForOrgId = entity.PublishedForOrgId;
+
             e.Created = System.DateTime.Now;
 
             context.Resource_PublishedBy.Add( e );
@@ -593,32 +621,43 @@ namespace IOERBusinessEntities
             using ( var context = new ResourceContext() )
             {
                 Patron_ResourceSummary efEntity = context.Patron_ResourceSummary
-                            .SingleOrDefault( s => (s.ResourceId == resourceId && s.UserId == userId) );
+                            .SingleOrDefault( s => (s.ResourceId == resourceId && s.UserId == userId));
 
                 if ( efEntity != null && efEntity.ResourceId > 0 )
                 {
-                    mbr.ObjectId = efEntity.ResourceId;
-                    //actual author
-                    mbr.UserId = efEntity.UserId;
                     mbr.FirstName = efEntity.FirstName;
                     mbr.LastName = efEntity.LastName;
                     mbr.Email = efEntity.Email;
 
-                    mbr.OrgId = efEntity.OrganizationId != null ? ( int ) efEntity.OrganizationId : 0 ;
+                    mbr.OrgId = efEntity.OrganizationId != null ? ( int ) efEntity.OrganizationId : 0;
                     mbr.Organization = efEntity.Organization;
 
                     mbr.MemberTypeId = 4;
                     mbr.MemberType = "Administrator";
-                    mbr.Created = (DateTime) efEntity.Published;
+                    mbr.Created = ( DateTime ) efEntity.Published;
                     mbr.MemberImageUrl = efEntity.ImageUrl;
 
+                }
+                else
+                {
+                    //check org level access
+                    //where res was published for an org
+                    //and current user has an appropriate content role for the org
                 }
 
             }
 
             return mbr;
         }
-        public static ObjectMember IsUserResourceAuthor( int resourceId, int userId, int orgId )
+
+        /// <summary>
+        /// NOTE - not ready for use
+        /// </summary>
+        /// <param name="resourceId"></param>
+        /// <param name="userId"></param>
+        /// <param name="orgId"></param>
+        /// <returns></returns>
+        private static ObjectMember IsUserResourceAuthor( int resourceId, int userId, int orgId )
         {
             ObjectMember mbr = new ObjectMember();
             Patron_ResourceSummary res = new Patron_ResourceSummary();
@@ -1144,7 +1183,60 @@ namespace IOERBusinessEntities
 
         #endregion
 
+        #region likes
 
+        public static bool HasLikeDislike( int resourceId, int userId )
+        {
+            bool hasLike = false;
+   
+            using ( var context = new ResourceContext() )
+          {
+
+                Resource_Like item = context.Resource_Like
+                        .SingleOrDefault( s => s.ResourceIntId == resourceId && s.CreatedById == userId);
+                if ( item != null && item.Id > 0 )
+                    hasLike = true;
+            }
+
+            return hasLike;
+        }
+
+        #endregion
+
+        #region analytics
+
+        public static int ResourceViewCount( int resourceId )
+        {
+            int count = 0;
+
+            using ( var context = new ResourceContext() )
+            {
+                count = context.Resource_View
+                .Where( s => s.ResourceIntId == resourceId )
+                .Count();
+            }
+
+            return count;
+        }
+        
+        public static int ResourceLikeGroupCount( int resourceId )
+        {
+            int count = 0;
+
+            using ( var context = new ResourceContext() )
+            {
+                var query = context.Resource_Like
+                    .Where( s => s.ResourceIntId == resourceId )
+                   .GroupBy( p => p.IsLike )
+                   .Select( g => new { name = g.Key, count = g.Count() } );
+
+             
+                
+            }
+
+            return count;
+        }
+        #endregion
         #region === special resource summary - for web service calls - thinkGate
         /// <summary>
         /// Retrieve resource summary for display - not a complete resource

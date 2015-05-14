@@ -18,7 +18,6 @@ namespace IoerContentBusinessEntities
         public string Title { get; set; }
         public string ContentTitle { get; set; }
         public string Summary { get; set; }
-        public int FileCnt { get; set; }
         public Nullable<int> TypeId { get; set; }
         public string ContentType { get; set; }
         public Nullable<int> StatusId { get; set; }

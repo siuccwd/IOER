@@ -112,37 +112,45 @@ namespace LearningRegistryCache2
             }
             else // Batch Processing
             {
-                string status = "";
-                Console.WriteLine("Getting LR_Import System.Process record");
-                SystemProcessManager spm = new SystemProcessManager();
-                SystemProcess process = spm.GetByCode("LR_Import", ref status);
-                if (status != "successful")
+                string report = "";
+                try
                 {
-                    Console.WriteLine(status);
-                    Console.Write("Press <enter> key... ");
-                    Console.ReadLine();
-                    return;
+                    string status = "";
+                    Console.WriteLine("Getting LR_Import System.Process record");
+                    SystemProcessManager spm = new SystemProcessManager();
+                    SystemProcess process = spm.GetByCode("LR_Import", ref status);
+                    if (status != "successful")
+                    {
+                        Console.WriteLine(status);
+                        Console.Write("Press <enter> key... ");
+                        Console.ReadLine();
+                        return;
+                    }
+                    if (process == null)
+                    {
+                        Console.WriteLine("LR_Import process not found.");
+                        Console.Write("Press <enter> key... ");
+                        Console.ReadLine();
+                        return;
+                    }
+
+                    Console.WriteLine("Retrieved LR_Import System.Process record");
+                    startDate = process.LastRunDate.ToString();
+                    endDate = DateTime.Now.ToString();
+                    lr.ExtractData(startDate, endDate, true);
+                    process.LastRunDate = DateTime.Parse(endDate);
+                    spm.Update(process);
+                    filePath = lr.GetFilePath(DateTime.Parse(endDate), true) + "*.xml";
+                    lr.ProcessPath(filePath, true);
+                    //WaitHandle.WaitAll(BaseDataController.doneEvents.ToArray());
                 }
-                if (process == null)
+                catch (Exception ex)
                 {
-                    Console.WriteLine("LR_Import process not found.");
-                    Console.Write("Press <enter> key... ");
-                    Console.ReadLine();
-                    return;
+                    BaseDataManager.LogError("Program.Main(): " + ex.ToString());
+                    report += "An exception occurred: " + ex.ToString() + "\n\n\n";
                 }
-
-                Console.WriteLine("Retrieved LR_Import System.Process record");
-                startDate = process.LastRunDate.ToString();
-                endDate = DateTime.Now.ToString();
-                lr.ExtractData(startDate, endDate, true);
-                process.LastRunDate = DateTime.Parse(endDate);
-                spm.Update(process);
-                filePath = lr.GetFilePath(DateTime.Parse(endDate), true) + "*.xml";
-                lr.ProcessPath(filePath, true);
-                //WaitHandle.WaitAll(BaseDataController.doneEvents.ToArray());
-
                 //Dump counts to an email or something here
-                string report = DateTime.Now.ToShortDateString() + System.Environment.NewLine
+                report += DateTime.Now.ToShortDateString() + System.Environment.NewLine
                     + LearningRegistry.lrRecordsRead + " records read" + System.Environment.NewLine
                     + LearningRegistry.lrRecordsProcessed + " records processed" + System.Environment.NewLine
                     + LearningRegistry.lrRecordsSpam + " records were spam" + System.Environment.NewLine
@@ -150,6 +158,15 @@ namespace LearningRegistryCache2
                     + LearningRegistry.lrRecordsEmptySchema + " records had no schema" + System.Environment.NewLine
                     + LearningRegistry.lrRecordsBadDataType + " records with bad resource data type" + System.Environment.NewLine;
                     //+ LearningRegistry.lrRecordsBadPayloadPlacement + " records with bad payload placement" + System.Environment.NewLine + System.Environment.NewLine;
+
+                if (LearningRegistry.HasEsUploadErrors)
+                {
+                    report += System.Environment.NewLine + "***** ATTENTION ***** ATTENTION ***** ATTENTION *****" + System.Environment.NewLine
+                        + "     There were errors uploading documents to Elastic Search.  Please Review File "
+                        + ConfigurationManager.AppSettings["esIdLog"].Replace("[date]", LearningRegistry.EsIdDate)
+                        + " for affected Resource IntIds." + System.Environment.NewLine
+                        + "***** ATTENTION ***** ATTENTION ***** ATTENTION *****" + System.Environment.NewLine;
+                }
                 try
                 {
                     System.IO.File.WriteAllText( @"C:\IOER_Tools\ImportReports\" + DateTime.Now.ToString( "yyyy-dd-MM" ) + ".txt", report );

@@ -15,6 +15,7 @@ namespace Isle.BizServices
     public class DocumentServices
     {
         static string thisClassName = "DocumentServices";
+        
 
         public static DocumentVersion Document_Version_Get( Guid id )
         {
@@ -45,6 +46,24 @@ namespace Isle.BizServices
             string message = mgr.UpdateFileInfo( entity );
 
             return message;
+        }
+
+        public bool DocumentVersion_Delete( Guid? id, ref string statusMessage )
+        {
+            bool isSuccessful = false;
+            try
+            {
+                statusMessage = "";
+                EFManager myEfManager = new EFManager();
+                isSuccessful = myEfManager.Document_Version_Delete( id, ref statusMessage );
+                
+            }
+            catch ( Exception ex )
+            {
+                isSuccessful = false;
+                statusMessage = ex.Message;
+            }
+            return isSuccessful;
         }
 
         public static string HandleDocumentCaching( string targetFolder, DocumentVersion document )

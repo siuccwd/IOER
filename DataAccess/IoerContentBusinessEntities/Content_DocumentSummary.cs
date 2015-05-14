@@ -29,5 +29,8 @@ namespace IoerContentBusinessEntities
         public Nullable<int> SortOrder { get; set; }
         public Nullable<int> StatusId { get; set; }
         public string Description { get; set; }
+        public Nullable<int> OrgId { get; set; }
+        public Nullable<int> CreatedById { get; set; }
+        public Nullable<int> PrivilegeTypeId { get; set; }
     }
 }

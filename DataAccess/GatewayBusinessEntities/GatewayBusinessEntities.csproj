@@ -39,11 +39,11 @@
     </Reference>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\EntityFramework.6.1.2\lib\net40\EntityFramework.dll</HintPath>
+      <HintPath>..\..\LR_Import\packages\EntityFramework.6.0.0\lib\net40\EntityFramework.dll</HintPath>
     </Reference>
     <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\EntityFramework.6.1.2\lib\net40\EntityFramework.SqlServer.dll</HintPath>
+      <HintPath>..\..\LR_Import\packages\EntityFramework.6.0.0\lib\net40\EntityFramework.SqlServer.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
@@ -168,6 +168,9 @@
     <Compile Include="Organization_Member.cs">
       <DependentUpon>GatewayDB.tt</DependentUpon>
     </Compile>
+    <Compile Include="Organization_MemberCrosstab.cs">
+      <DependentUpon>GatewayDB.tt</DependentUpon>
+    </Compile>
     <Compile Include="Organization_MemberRole.cs">
       <DependentUpon>GatewayDB.tt</DependentUpon>
     </Compile>
@@ -180,7 +183,9 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.Config" />
+    <None Include="App.Config">
+      <SubType>Designer</SubType>
+    </None>
     <EntityDeploy Include="GatewayDB.edmx">
       <Generator>EntityModelCodeGenerator</Generator>
       <LastGenOutput>GatewayDB.Designer.cs</LastGenOutput>

@@ -25,11 +25,11 @@ namespace LRWarehouse.DAL
             try
             {
                 #region sqlParameters
-                SqlParameter[] parameter = new SqlParameter[4];
-                parameter[0] = new SqlParameter("@ResourceId", entity.ResourceId);
-                parameter[1] = new SqlParameter("@ResourceIntId", entity.ResourceIntId);
-                parameter[2] = new SqlParameter("@IsLike", entity.IsLike);
-                parameter[3] = new SqlParameter("@CreatedById", entity.CreatedById);
+                SqlParameter[] parameter = new SqlParameter[3];
+              //  parameter[0] = new SqlParameter("@ResourceId", entity.ResourceId);
+                parameter[0] = new SqlParameter("@ResourceIntId", entity.ResourceIntId);
+                parameter[1] = new SqlParameter("@IsLike", entity.IsLike);
+                parameter[2] = new SqlParameter("@CreatedById", entity.CreatedById);
                 #endregion
 
                 DataSet ds = SqlHelper.ExecuteDataset(ConnString, CommandType.StoredProcedure, INSERT_PROC, parameter);
@@ -45,6 +45,34 @@ namespace LRWarehouse.DAL
             }
             
             return retVal;
+        }
+
+        public ResourceLike HasLike( int id, int userId, ref string status )
+        {
+            ResourceLike like = new ResourceLike();
+            status = "successful";
+
+            try
+            {
+                #region sqlParameters
+                SqlParameter[] parameter = new SqlParameter[ 1 ];
+                parameter[ 0 ] = new SqlParameter( "@Id", id );
+                #endregion
+
+                DataSet ds = SqlHelper.ExecuteDataset( ReadOnlyConnString, CommandType.StoredProcedure, GET_PROC, parameter );
+                if ( DoesDataSetHaveRows( ds ) )
+                {
+                    like = Fill( ds.Tables[ 0 ].Rows[ 0 ] );
+                }
+            }
+            catch ( Exception ex )
+            {
+                LogError( className + ".Get(): " + ex.ToString() );
+                status = ex.Message;
+                return null;
+            }
+
+            return like;
         }
 
         public ResourceLike Get(int id, ref string status)
@@ -79,7 +107,7 @@ namespace LRWarehouse.DAL
         {
             ResourceLike like = new ResourceLike();
             like.Id = GetRowColumn(dr, "Id", 0);
-            like.ResourceId = new Guid(GetRowColumn(dr, "ResourceId", DEFAULT_GUID));
+           // like.ResourceId = new Guid(GetRowColumn(dr, "ResourceId", DEFAULT_GUID));
             like.ResourceIntId = GetRowColumn(dr, "ResourceIntId", 0);
             like.IsLike = GetRowColumn(dr, "IsLike", false);
             like.Created = GetRowColumn(dr, "Created", DateTime.Now);

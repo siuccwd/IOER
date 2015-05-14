@@ -10,6 +10,7 @@ $(document).ready(function () {
   $("form").attr("onsubmit", "return false;");
   setupValidation();
   setupKeywords();
+  setupOrgDDLs();
   setupLibColDDLs();
 
   //Clear form (kludge)
@@ -26,6 +27,7 @@ $(document).ready(function () {
     }
   });
 
+  addSelectAlls();
 }); //document.ready
 
 
@@ -99,6 +101,28 @@ function setupLibColDDLs() {
   });
 }
 
+function setupOrgDDLs() {
+    var box = $("#ddlOrg");
+    //Reset the list
+    box.html("");
+    for (i in orgData) {
+        var current = orgData[i];
+        addOption(box, current.Id, current.Title);
+    }
+
+    if (selectedOrgID > 0) {
+        box.find("option[value=" + selectedOrgID + "]").attr("selected", "selected");
+        //??
+        //box.trigger("change");
+    }
+}
+function addOption(box, value, html) {
+    box.append(
+      $("<option></option>")
+        .attr("value", value)
+        .html(html)
+    );
+}
 //Validate and Publish
 function validateAndPublish() {
   //Confirm user intent
@@ -156,6 +180,50 @@ function packKeywords() {
   var box = $(".hdnKeywords");
   box.val(JSON.stringify(enteredKeywords));
 }
+
+function addSelectAlls() {
+  $("ul[tablename=gradeLevel]").prepend(
+    $("<li></li>")
+    .append(
+      $("<input></input>")
+      .attr("type", "button")
+      .attr("value", "All High School")
+      .attr("id", "btn_allHighSchool")
+    )
+  );
+  $("ul[tablename=gradeLevel]").prepend(
+    $("<li></li>")
+    .append(
+      $("<input></input>")
+      .attr("type", "button")
+      .attr("value", "All Elementary")
+      .attr("id", "btn_allElementary")
+    )
+  );
+  $("ul[tablename=careerCluster]").prepend(
+    $("<li></li>")
+    .append(
+      $("<input></input>")
+      .attr("type", "button")
+      .attr("value", "All Career Clusters")
+      .attr("id", "btn_allClusters")
+    )
+  );
+  $("#btn_allElementary").on("click", function () {
+    for (var i = 1; i <= 10; i++) {
+      $("ul[tablename=gradeLevel] span[itemid=" + i + "] input").prop("checked", true).trigger("change");
+    }
+  });
+  $("#btn_allHighSchool").on("click", function () {
+    for (var i = 11; i <= 14; i++) {
+      $("ul[tablename=gradeLevel] span[itemid=" + i + "] input").prop("checked", true).trigger("change");
+    }
+  });
+  $("#btn_allClusters").on("click", function () {
+    $("ul[tablename=careerCluster] span input:not([value=0])").prop("checked", true).trigger("change");
+  });
+}
+
 
 /*---     ---     Validation      ---     ---*/
 function setupValidation() {

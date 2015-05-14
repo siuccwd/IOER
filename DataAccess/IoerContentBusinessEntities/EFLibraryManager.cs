@@ -355,7 +355,7 @@ namespace IoerContentBusinessEntities
             ILP.LibrarySection to = new ILP.LibrarySection();
             to.Id = fromEntity.Id;
             to.LibraryId = fromEntity.LibraryId;
-            to.SectionTypeId = fromEntity.SectionTypeId == null ? 1 : ( int ) fromEntity.SectionTypeId;
+            to.SectionTypeId = fromEntity.SectionTypeId < 1 ? 1 : ( int ) fromEntity.SectionTypeId;
             //get type
             if (fromEntity.Library_SectionType != null && fromEntity.Library_SectionType.Title != null)
                 to.SectionType = fromEntity.Library_SectionType.Title;
@@ -371,8 +371,8 @@ namespace IoerContentBusinessEntities
             if ( fromEntity.Library != null && fromEntity.Library.Id > 0 )
                 to.ParentLibrary = Library_ToMap( fromEntity.Library );
 
-            to.PublicAccessLevel = fromEntity.PublicAccessLevel == null ? EObjectAccessLevel.ReadOnly : ( EObjectAccessLevel ) fromEntity.PublicAccessLevel;
-            to.OrgAccessLevel = fromEntity.OrgAccessLevel == null ? EObjectAccessLevel.ReadOnly : ( EObjectAccessLevel ) fromEntity.OrgAccessLevel;
+            to.PublicAccessLevel = fromEntity.PublicAccessLevel == 0 ? EObjectAccessLevel.ReadOnly : ( EObjectAccessLevel ) fromEntity.PublicAccessLevel;
+            to.OrgAccessLevel = fromEntity.OrgAccessLevel == 0 ? EObjectAccessLevel.ReadOnly : ( EObjectAccessLevel ) fromEntity.OrgAccessLevel;
 
             to.Created = fromEntity.Created == null || ( System.DateTime ) fromEntity.Created <= to.DefaultDate ? to.DefaultDate 
                     : ( System.DateTime ) fromEntity.Created;

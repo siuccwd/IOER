@@ -62,6 +62,8 @@
   <ItemGroup>
     <Compile Include="Common\Utilities.cs" />
     <Compile Include="Filters\FiltersFactory.cs" />
+    <Compile Include="Library\LibraryFactory.cs" />
+    <Compile Include="Paradata\ParadataFactory.cs" />
     <Compile Include="Resource\ResourceFactory.cs" />
     <Compile Include="Search\SearchContact.cs" />
     <Compile Include="Search\SearchFactory.cs" />

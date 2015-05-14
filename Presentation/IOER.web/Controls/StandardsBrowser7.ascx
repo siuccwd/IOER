@@ -9,14 +9,22 @@
 <script type="text/javascript" src="/Scripts/standards/jsonILPhysicalDevelopment.js"></script>
 <script type="text/javascript" src="/Scripts/standards/jsonILSocialScience.js"></script>
 <script type="text/javascript" src="/Scripts/standards/jsonILSocialEmotional.js"></script>
+<script type="text/javascript" src="/Scripts/standards/jsonILAdultEdReading.js"></script>
+<script type="text/javascript" src="/Scripts/standards/jsonILAdultEdWriting.js"></script>
+<script type="text/javascript" src="/Scripts/standards/jsonILAdultEdMath2.js"></script>
+<script type="text/javascript" src="/Scripts/standards/jsonILAdultEdELA.js"></script>
+<script type="text/javascript" src="/Scripts/standards/jsonILForeignLanguage.js"></script>
+<script type="text/javascript" src="/Scripts/standards/jsonFinance_k12pfe.js"></script>
+<script type="text/javascript" src="/Scripts/standards/jsonFinance_vncse.js"></script>
+<script type="text/javascript" src="/Scripts/standards/jsonFinance_nsfl.js"></script>
 <script type="text/javascript">
   var SB7mode = (typeof (SB7mode) == "undefined" ? "tbd" : SB7mode); //search, tag, browse, widget, dev
   var useSecureURL = (typeof (useSecureURL) == "undefined" ? false : useSecureURL);
   var curriculumMode = (typeof (curriculumMode) == "undefined" ? false : curriculumMode); //Determine whether or not to show/use the "major/supporting/additional" standards stuff
-  var inputBodies = { math: "jsonMath", ela: "jsonELA", ngss: "jsonNGSS", nhes: "jsonNHES", ilfinearts: "jsonILFineArts", ilphysicaldevelopment: "jsonILPhysicalDevelopment", ilsocialscience: "jsonILSocialScience", ilsocialemotional: "jsonILSocialEmotional" };
-  var prefixes = { jsonMath: "CCSS.Math.Content.", jsonELA: "CCSS.ELA-Literacy.", jsonNHES: "NHES.", jsonNGSS: "NGSS-", jsonILFineArts: "IL.FA.", jsonILPhysicalDevelopment: "IL.PD.", jsonSocialScience: "IL.SS.", jsonILSocialEmotional: "IL.SED." };
-  var bodies = { none: null, jsonMath: jsonMath, jsonELA: jsonELA, jsonNHES: jsonNHES, jsonNGSS: jsonNGSS, jsonILFineArts: jsonILFineArts, jsonILPhysicalDevelopment: jsonILPhysicalDevelopment, jsonILSocialScience: jsonILSocialScience, jsonILSocialEmotional: jsonILSocialEmotional };
-  var grades = [ "none", "K", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12" ];
+  var inputBodies = { math: "jsonMath", ela: "jsonELA", ngss: "jsonNGSS", nhes: "jsonNHES", ilfinearts: "jsonILFineArts", ilphysicaldevelopment: "jsonILPhysicalDevelopment", ilsocialscience: "jsonILSocialScience", ilsocialemotional: "jsonILSocialEmotional", iladultedreading: "jsonILAdultEdReading", iladultedwriting: "jsonILAdultEdWriting", iladultedmath: "jsonILAdultEdMath", iladultedela: "jsonILAdultEdELA", ilforeignlanguage: "jsonILForeignLanguage", finance_k12pfe: "jsonFinance_k12pfe", finance_vncse: "jsonFinance_vncse", finance_nsfl: "jsonFinance_nsfl" };
+  var prefixes = { jsonMath: "CCSS.Math.Content.", jsonELA: "CCSS.ELA-Literacy.", jsonNHES: "NHES.", jsonNGSS: "NGSS-", jsonILFineArts: "IL.FA.", jsonILPhysicalDevelopment: "IL.PD.", jsonSocialScience: "IL.SS.", jsonILSocialEmotional: "IL.SED.", jsonILAdultEdReading: "IL.ABE.Reading.", jsonILAdultEdWriting: "IL.ABE.Writing.", jsonILAdultEdMath: "IL.ABE.Math.", jsonILAdultEdELA: "IL.ABE.ELA.", jsonILForeignLanguage: "IL.FL.", jsonFinance_k12pfe: "Finance.K12PFE.", jsonFinance_vncse: "Finance.VNCSE.", jsonFinance_nsfl: "Finance.NSFL" };
+  var bodies = { none: null, jsonMath: jsonMath, jsonELA: jsonELA, jsonNHES: jsonNHES, jsonNGSS: jsonNGSS, jsonILFineArts: jsonILFineArts, jsonILPhysicalDevelopment: jsonILPhysicalDevelopment, jsonILSocialScience: jsonILSocialScience, jsonILSocialEmotional: jsonILSocialEmotional, jsonILAdultEdReading: jsonILAdultEdReading, jsonILAdultEdWriting: jsonILAdultEdWriting, jsonILAdultEdMath: jsonILAdultEdMath, jsonILAdultEdELA: jsonILAdultEdELA, jsonILForeignLanguage: jsonILForeignLanguage, jsonFinance_k12pfe: jsonFinance_k12pfe, jsonFinance_vncse: jsonFinance_vncse, jsonFinance_nsfl: jsonFinance_nsfl };
+  var grades = [ "none", "K", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "Adult" ];
   var currentBody = [];
   var currentGrade = "none";
   var currentDomain = null;
@@ -171,6 +179,21 @@
     currentBody = bodies[targetBody];
     currentGrade = targetGrade;
 
+    //Convenience
+    if (targetBody.toLowerCase().indexOf("adult") > -1 && targetGrade != "Adult") {
+      $("#SBddlGrade option").hide();
+      $("#SBddlGrade option[value=Adult]").prop("selected", true).show();
+      populateDomains();
+      return;
+    }
+    else if (targetBody.toLowerCase().indexOf("adult") == -1 && targetGrade == "Adult") {
+      $("#SBddlGrade option").show();
+      $("#SBddlGrade option[value=Adult]").hide();
+      $("#SBddlGrade option[value=none]").prop("selected", true);
+      populateDomains();
+      return;
+    }
+
     renderDomains();
   }
 
@@ -218,6 +241,7 @@
     selectedStandards = replacement;
 
     renderSelectedStandards();
+    $(window).trigger("standard_removed");
   }
 
   //Do a search with the selected IDs and IDs under them in the hierarchy
@@ -246,16 +270,21 @@
       }
       allSelectedIDs = replacement;
 
-      allSelectedStandards = [].concat(selectedStandards);
-      for (i in allSelectedIDs) {
-        var item = getLayer(allSelectedIDs[i]);
-        if (item != null) {
-          allSelectedStandards.push(item);
-        }
-      }
+      determineAllSelectedStandards();
+
       //Call the external search mechanism
       $(window).trigger("SB7search", [selectedStandards, allSelectedIDs, allSelectedStandards]);
       showButtonOnNextResults = true;
+    }
+  }
+
+  function determineAllSelectedStandards() {
+    allSelectedStandards = [].concat(selectedStandards);
+    for (i in allSelectedIDs) {
+      var item = getLayer(allSelectedIDs[i]);
+      if (item != null) {
+        allSelectedStandards.push(item);
+      }
     }
   }
 
@@ -321,7 +350,8 @@
     for (i in currentBody[0].children) {
       var item = getLayer(currentBody[0].children[i], true);
       if (item != null) {
-        ddl.append("<option value=\"" + currentBody[i].id + "\">" + getName(currentBody[i]) + "</option>");
+        //ddl.append("<option value=\"" + currentBody[i].id + "\">" + getName(currentBody[i]) + "</option>");
+        ddl.append("<option value=\"" + currentBody[i].id + "\">" + currentBody[i].description + "</option>");
       }
     }
     
@@ -514,9 +544,10 @@
   #SB7 #SBtree .treeItem[data-depth=d1] input[type=checkbox] { margin: 6px 5px }
   #SB7 #SBtree .treeItem[data-depth=d2] input[type=checkbox] { margin: 5px 5px; }
   #SB7 #SBtree .treeItem[data-depth=d1]:hover *, #SB7 #SBtree .treeItem[data-depth=d1]:focus * { color: #FFF; }
+  #SB7 #SBtree .treeItem ol, #SB7 #SBtree .treeItem ul { margin-left: 25px; }
 
   #SB7 #SBselected { margin-bottom: 10px; }
-  #SB7 #SBselected .selectedStandard { padding: 2px 25px 2px 2px; position: relative; border: 1px solid #CCC; border-radius: 5px; margin-bottom: 5px; }
+  #SB7 #SBselected .selectedStandard { padding: 2px 25px 3px 2px; position: relative; border: 1px solid #CCC; border-radius: 5px; margin-bottom: 5px; }
   #SB7 #SBselected .selectedStandard a { position: absolute; top: 2px; right: 2px; display: block; width: 20px; height: 20px; line-height: 20px; margin: 0 0 2px 5px; color: #FFF; background-color: #D33; border-radius: 5px; text-align: center; font-weight: bold; }
   #SB7 #SBselected .selectedStandard a:hover, #SB7 #SBselected .selectedStandard a:focus { background-color: #F00; }
 
@@ -540,14 +571,28 @@
   <div id="SBddlBox">
     <select id="SBddlBody" class="SBddl">
       <option selected="selected" value="none">Select a Standard Body...</option>
-      <option value="jsonMath">Common Core Math Standards</option>
-      <option value="jsonELA">Common Core ELA/Literacy Standards</option>
-      <option value="jsonNGSS">Next Generation Science Standards</option>
-      <option value="jsonNHES">National Health Education Standards</option>
-      <option value="jsonILFineArts">Illinois Fine Arts Standards</option>
-      <option value="jsonILPhysicalDevelopment">Illinois Physical Development and Health Standards</option>
-      <option value="jsonILSocialScience">Illinois Social Science Standards</option>
-      <option value="jsonILSocialEmotional">Illinois Social/Emotional Development Standards</option>
+      <optgroup label="K-12 Education">
+        <option value="jsonMath">Common Core Math Standards</option>
+        <option value="jsonELA">Common Core ELA/Literacy Standards</option>
+        <option value="jsonNGSS">Next Generation Science Standards</option>
+        <option value="jsonILFineArts">Illinois Fine Arts Standards</option>
+        <option value="jsonILPhysicalDevelopment">Illinois Physical Development and Health Standards</option>
+        <option value="jsonILSocialScience">Illinois Social Science Standards</option>
+        <option value="jsonILSocialEmotional">Illinois Social/Emotional Development Standards</option>
+        <option value="jsonILForeignLanguage">Illinois Foreign Language Standards</option>
+      </optgroup>
+      <optgroup label="Adult Education">
+        <option value="jsonILAdultEdReading">Illinois Adult Education (ABE/ASE) Reading Standards</option>
+        <option value="jsonILAdultEdWriting">Illinois Adult Education (ABE/ASE) Writing Standards</option>
+        <option value="jsonILAdultEdMath">Illinois Adult Education (ABE/ASE) Mathematics Standards</option>
+        <option value="jsonILAdultEdELA">Illinois Adult Education (ABE/ASE) English Language Arts Standards</option>
+      </optgroup>
+      <optgroup label="National Standards">
+        <option value="jsonNHES">National Health Education Standards</option>
+        <option value="jsonFinance_k12pfe">National Standards in K-12 Personal Finance Education</option>
+        <option value="jsonFinance_vncse">Voluntary National Content Standards in Economics</option>
+        <option value="jsonFinance_nsfl">National Standards for Financial Literacy</option>
+      </optgroup>
     </select>
     <select id="SBddlGrade" class="SBddl">
       <option selected="selected" value="none">Select a Grade Level...</option>
@@ -564,6 +609,7 @@
       <option value="10">10th Grade</option>
       <option value="11">11th Grade</option>
       <option value="12">12th Grade</option>
+      <option value="Adult">Adult Education</option>
     </select>
     <select id="SBddlDomain" class="SBddl">
       <option selected="selected" value="none">Select a Domain...</option>

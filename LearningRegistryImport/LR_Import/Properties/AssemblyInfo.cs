@@ -8,9 +8,9 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle( "LR_Import" )]
 [assembly: AssemblyDescription( "" )]
 [assembly: AssemblyConfiguration( "" )]
-[assembly: AssemblyCompany( "" )]
+[assembly: AssemblyCompany( "Microsoft" )]
 [assembly: AssemblyProduct( "LR_Import" )]
-[assembly: AssemblyCopyright( "Copyright ©  2014" )]
+[assembly: AssemblyCopyright( "Copyright © Microsoft 2012" )]
 [assembly: AssemblyTrademark( "" )]
 [assembly: AssemblyCulture( "" )]
 
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible( false )]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid( "a2d7fa08-b698-4c52-b821-0f43423526b4" )]
+[assembly: Guid( "7a534c42-4371-4b73-8f01-a3cc3c5dcf08" )]
 
 // Version information for an assembly consists of the following four values:
 //

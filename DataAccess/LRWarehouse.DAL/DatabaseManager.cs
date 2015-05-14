@@ -1113,7 +1113,7 @@ INSERT INTO [dbo].[ProjectSector] ([ProjectId],[SectorId] ,[CreatedById]			)
             }
             catch ( Exception ex )
             {
-                BaseDataManager.LogError( ex, thisClassName + ".ExecuteProc(): " );
+                BaseDataManager.LogError( ex, thisClassName + ".ExecuteProc(). Proc: " + procedureName );
                 return null;
             }
 

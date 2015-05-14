@@ -24,6 +24,7 @@
     var nextNodeID = <%=nextNodeID %>;
     var nextNodeSortOrder = <%=nextNodeSortOrder %>;
     var outdentNodeID = <%=outdentNodeID %>;
+    var outdentSortID = <%=outdentSortID %>;
 
     //Page Properties for standards browser
     var curriculumMode = true;
@@ -100,7 +101,7 @@
           moveNode(previousNodeID, -1, -1, $("#btnDoNodeAction"));
           break;
         case "outdentNode":
-          moveNode(outdentNodeID, -1, -1, $("#btnDoNodeAction"));
+          moveNode(outdentNodeID, outdentSortID, -1, $("#btnDoNodeAction"));
           break;
         case "deleteNode":
           deleteNode($("#btnDoNodeAction"));
@@ -647,7 +648,7 @@
 
     function success_node_create(data){
       if(data.valid){
-        window.location.href = "/my/curriculum/" + data.data;
+        window.location.href = "/my/learninglist/" + data.data;
       }
       else {
         alert(data.status);
@@ -656,7 +657,13 @@
 
     function success_node_delete(data){
       if(data.valid){
-        window.location.href = "/my/curriculum/" + data.data;
+        if(data.extra){ //deleted top level node
+          alert("The learning list has been deleted.");
+          window.location.href = "/My/Authored.aspx";
+        }
+        else {
+          window.location.href = "/my/learninglist/" + data.data;
+        }
       }
       else {
         alert(data.status);
@@ -665,7 +672,7 @@
 
     function success_node_move(data){
       if(data.valid){
-        window.location.href = "/my/curriculum/" + data.data;
+        window.location.href = "/my/learninglist/" + data.data;
       }
       else {
         alert(data.status);
@@ -979,7 +986,7 @@
               <asp:DropDownList ID="ddlNodePermissions" CssClass="ddlNodePermissions" runat="server"></asp:DropDownList>
               <% if( currentNode.Id == curriculumID ) { %>
               <label>Custom Learning List Image (will be resized to 400x300 pixels)</label>
-              <img src="<%=(string.IsNullOrWhiteSpace(currentNode.ImageUrl) ? "/images/icons/icon_upload_400x300.png" : currentNode.ImageUrl) %>" id="curriculumImageDisplay" />
+              <img src="<%=(string.IsNullOrWhiteSpace(currentNode.ImageUrl) ? "/images/icons/icon_upload_400x300.png" : currentNode.ImageUrl.Replace( @"\", "" )) %>" id="curriculumImageDisplay" />
               <iframe id="curriculumImage" class="fileIframe" src="/controls/curriculum/curriculumfileupload.aspx?usage=curriculumimage"></iframe>
                 <% if (false) { %>
                 <div id="topLevelOptions">
@@ -1138,9 +1145,9 @@
       <h3>Title</h3>
       <input type="text" id="txtStarterTitle" class="txtStarterTitle" runat="server" placeholder="Enter a title" />
       <h3>Description</h3>
-      <textarea id="txtStarterDescription" class="txtStarterDescription" runat="server" placeholder="Enter a description"></textarea>
-      <%--<h3>Create learning list on behalf of an organization (optional):</h3>--%>
-      <select id="ddlOrganization" class="ddlOrganization" runat="server" visible="false"></select>
+      <textarea id="txtStarterDescription" class="txtStarterDescription" runat="server" placeholder="Enter a description"></textarea> 
+      <h3>Create learning list on behalf of an organization (optional):</h3>
+      <select id="ddlOrganization" class="ddlOrganization" runat="server" visible="true"></select>
       <input type="button" class="isleButton bgBlue" value="Create!" onclick="submitForm();" />
     </div>
   </div>

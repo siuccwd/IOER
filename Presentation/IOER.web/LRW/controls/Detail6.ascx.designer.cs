@@ -94,6 +94,15 @@ namespace ILPathways.LRW.controls {
         protected global::System.Web.UI.HtmlControls.HtmlInputButton btnRegenerateThumbnail;
         
         /// <summary>
+        /// btnUbertag control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlInputButton btnUbertag;
+        
+        /// <summary>
         /// usageRightsSelector control.
         /// </summary>
         /// <remarks>
@@ -139,16 +148,7 @@ namespace ILPathways.LRW.controls {
         protected global::System.Web.UI.WebControls.Panel Panel1;
         
         /// <summary>
-        /// txtFormSecurityName control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Literal txtFormSecurityName;
-
-        /// <summary>
-        /// txtFormSecurityName control.
+        /// txtGeneralSecurity control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
@@ -157,12 +157,12 @@ namespace ILPathways.LRW.controls {
         protected global::System.Web.UI.WebControls.Literal txtGeneralSecurity;
         
         /// <summary>
-        /// Literal1 control.
+        /// txtFormSecurityName control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Literal Literal1;
+        protected global::System.Web.UI.WebControls.Literal txtFormSecurityName;
     }
 }

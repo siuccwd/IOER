@@ -27,7 +27,6 @@ namespace ILPathways.Services.AdminService1Components
         } );
       }
       return results;
-      //throw new NotImplementedException( "Not implemented yet!" );
     }
     public List<UserDTO> ListAllMembers( int manageID )
     {
@@ -36,8 +35,7 @@ namespace ILPathways.Services.AdminService1Components
     }
     public List<UserDTO> ListMembers( int manageID, int privilegeID )
     {
-      //Need a more efficent way to get this
-      var data = service.Learninglist_AllUsers( manageID ).Where( m => m.MemberTypeId == privilegeID ).ToList();
+      var data = service.LearningList_AllUsers( manageID, privilegeID );
       return GetUserDTOs( data );
     }
     private List<UserDTO> GetUserDTOs( List<Isle.DTO.ObjectMember> data )
@@ -59,7 +57,8 @@ namespace ILPathways.Services.AdminService1Components
     }
     public List<UserDTO> ListPendingInvitations( int manageID )
     {
-      throw new NotImplementedException( "Sorry, listing pending invitations is not implemented yet." );
+      var data = service.LearningListMembers_ListPending( manageID );
+      return GetUserDTOs( data );
     }
 
     //Set methods
@@ -130,30 +129,46 @@ namespace ILPathways.Services.AdminService1Components
     }
     public Valid Member_DenyMembership( int manageID, Patron user, int memberID, string customMessage )
     {
-      throw new NotImplementedException( "Not implemented yet!" );
+      var status = "";
+      var success = service.LearningListMember_DenyPending( manageID, user.Id, memberID, customMessage, ref status );
+      var result = new Valid()
+      {
+        id = memberID,
+        valid = success,
+        extra = status
+      };
+
+      result.text = success ? "Membership denied." : "There was an error denying this membership.";
+
+      return result;
     }
     public Valid Member_InviteExistingUser( int manageID, Patron user, Patron invitee, int privilegeID, string customMessage )
     {
-      var result = new Valid() { id = invitee.Id };
-      //service.InviteExistingUser(manageID, user, invitee, privilegeID, customMessage);
+      var status = "";
+      var success = service.InviteExistingUser( manageID, user.Id, invitee.Id, privilegeID, customMessage, ref status );
+      var result = new Valid()
+      {
+        id = invitee.Id,
+        valid = success,
+        extra = status
+      };
 
-      //Temporary
-      result.valid = false;
-      result.text = "Sorry, this feature isn't implemented yet.";
-      //End Temporary
+      result.text = success ? "Member invited." : "There was an error inviting this member.";
 
       return result;
     }
     public Valid Member_InviteNewUser( int manageID, Patron user, string validatedEmail, int privilegeID, string customMessage )
     {
-      var result = new Valid() { id = 0 }; //Keep this 0
-      //service.InviteNewUser(manageID, user, validatedEmail, invitee, privilegeID, customMessage);
+      var status = "";
+      var success = service.InviteNewUser( manageID, user.Id, validatedEmail, privilegeID, customMessage, ref status );
+      var result = new Valid()
+      {
+        valid = success,
+        extra = status
+      };
 
-      //Temporary
-      result.valid = false;
-      result.text = "Sorry, this feature isn't implemented yet.";
-      //End Temporary
-      
+      result.text = success ? "Member invited." : "There was an error inviting this member.";
+
       return result;
     }
 

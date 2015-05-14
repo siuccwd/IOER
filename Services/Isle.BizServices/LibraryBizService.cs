@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 
 using Isle.BizServices;
-using Isle.DataContracts;
+//using Isle.DataContracts;
 using ILPathways.Business;
 using ILPathways.Common;
 using Library = ILPathways.Business.Library;
@@ -107,7 +107,10 @@ namespace Isle.BizServices
         /// <returns></returns>
         public int Create( Library entity, ref string statusMessage )
         {
-            return myMgr.Create( entity, ref statusMessage );
+            int id = myMgr.Create( entity, ref statusMessage );
+            ThisUser user = AccountServices.GetUser(entity.CreatedById);
+            ActivityBizServices.LibraryHit( entity, user, "Create" );
+            return id;
         }
 
         /// <summary>
@@ -365,7 +368,13 @@ namespace Isle.BizServices
         /// <returns></returns>
         public int LibrarySectionCreate( LibrarySection entity, ref string statusMessage )
         {
-            return LibrarySectionManager.Create( entity, ref statusMessage );
+
+            int id = LibrarySectionManager.Create( entity, ref statusMessage );
+            ThisUser user = AccountServices.GetUser( entity.CreatedById );
+
+            ActivityBizServices.CollectionHit( id, user, "Create" );
+            
+            return id;
         }
 
         public string LibrarySectionUpdate( LibrarySection entity )
@@ -403,6 +412,9 @@ namespace Isle.BizServices
                         LibraryResourceCreate( toLibraryId, newSectionId, rid, createdById, ref statusMessage );
                     }
                     statusMessage = string.Format("Copied the collection and {0} resources to the requested library.", cntr);
+
+                    //ThisUser user = AccountServices.GetUser( createdById );
+                    //ActivityBizServices.LibraryHit( entity, user, "Copied Collection" );
                 }
             }
 
@@ -418,21 +430,6 @@ namespace Isle.BizServices
         {
             return LibrarySectionManager.GetLibraryDefaultSection( libraryId );
         }//
-
-        //public LibrarySection GetLibrarySection_MyAuthored( ThisUser user )
-        //{
-        //    return LibrarySectionManager.GetLibrarySection_MyAuthored( user );
-        //}//
-
-        //public LibrarySection GetLibrarySection_MyAuthored( int libraryId )
-        //{
-        //    return LibrarySectionManager.GetLibrarySection_MyAuthored( libraryId );
-        //}//
-
-        //public LibrarySection GetLibrarySection_MyAuthored( int libraryId, bool createIfMissing )
-        //{
-        //    return LibrarySectionManager.GetLibrarySection_MyAuthored( libraryId, createIfMissing );
-        //}//
 
         public LibrarySection LibrarySectionGet( int sectionId )
         {
@@ -810,7 +807,7 @@ namespace Isle.BizServices
         /// <param name="libraryResourceId"></param>
         /// <param name="statusMessage"></param>
         /// <returns></returns>
-        public bool LibraryResourceDeleteById( int libraryResourceId, ref string statusMessage )
+        private bool LibraryResourceDeleteByIdx( int libraryResourceId, ref string statusMessage )
         {
             bool result = false;
 
@@ -835,11 +832,13 @@ namespace Isle.BizServices
         /// <param name="resourceIntId"></param>
         /// <param name="statusMessage"></param>
         /// <returns></returns>
-        public bool LibraryResourceDelete( int fromCollectionId, int resourceIntId, ref string statusMessage )
+        public bool LibraryResourceDelete( int fromCollectionId, int resourceIntId, IWebUser user, ref string statusMessage )
         {
             bool result = libResManager.Delete( fromCollectionId, resourceIntId, ref statusMessage );
             if ( result == true )
             {
+                ActivityBizServices.LibResourceActivity( fromCollectionId, resourceIntId, user, "Delete" );
+
                 LibraryResource_UpdateElasticSearchForAllLibrariesAndSectionsForResource( resourceIntId );
 
                 ResourceBizService.DecreaseFavorites( resourceIntId );
@@ -909,7 +908,8 @@ namespace Isle.BizServices
            }
             #endregion
             newId= LibraryResourceCreate( entity.LibraryId, entity.LibrarySectionId, entity.ResourceIntId, user, ref statusMessage );
-           
+
+            
             return newId;
         }//
 
@@ -920,7 +920,10 @@ namespace Isle.BizServices
             LibrarySection collection = LibrarySectionManager.Get( collectionId );
             int libraryId = collection.LibraryId;
             ThisUser user = AccountServices.GetUser( createdById );
-            return LibraryResourceCreate( libraryId, collectionId, resourceIntId, user, ref statusMessage );
+            int id = LibraryResourceCreate( libraryId, collectionId, resourceIntId, user, ref statusMessage );
+            //ActivityBizServices.LibResourceActivity( collectionId, resourceIntId, user, "Add" );
+
+            return id;
         }//
 
         public int LibraryResourceCreate( int libraryId, int collectionId, int resourceIntId, int createdById, ref string statusMessage )
@@ -959,6 +962,7 @@ namespace Isle.BizServices
                     //refresh index for resId
                     LibraryResource_UpdateElasticSearchForAllLibrariesAndSectionsForResource( resourceIntId );
                     statusMessage = "Successful";
+                    ActivityBizServices.LibResourceActivity( collectionId, resourceIntId, user, "Resource Add" );
                 }
                 else
                 {
@@ -966,6 +970,7 @@ namespace Isle.BizServices
                     SendResourceApprovalRequestEmail( libraryId, user, entity, ref statusMessage );
 
                     statusMessage = "Submission requires approval.";
+                    ActivityBizServices.LibResourceActivity( collectionId, resourceIntId, user, "Resource Add - Pending" );
                 }
             }
             else
@@ -1032,6 +1037,8 @@ namespace Isle.BizServices
 
                     //send email 
                     SendApprovalConfirmationEmail( entity, user );
+
+                    ActivityBizServices.LibResourceActivity( entity.LibrarySectionId, libraryResourceId, user, "Activated" );
                 }
                 else
                 {
@@ -1072,6 +1079,8 @@ namespace Isle.BizServices
                     //not in ES, so no action necessary
                     //notify contributor - need to add reason
                     SendRejectionEmail( entity, admin, reason );
+
+                    ActivityBizServices.LibResourceActivity( entity.LibrarySectionId, libraryResourceId, admin, "Submission Denied" );
                 }
             }
             return result;
@@ -1092,7 +1101,9 @@ namespace Isle.BizServices
             LibraryResource entity = libResManager.Get( libraryResourceId );
             if ( entity != null && entity.Id > 0 )
             {
-                return ResourceCopy( entity.ResourceIntId, toCollectionId, userId, ref statusMessage );
+                ThisUser user = AccountServices.GetUser( userId );
+
+                return ResourceCopy( entity.ResourceIntId, entity.LibraryId, toCollectionId, user, ref statusMessage );
             }
             else
             {
@@ -1112,18 +1123,20 @@ namespace Isle.BizServices
         /// <param name="userId"></param>
         /// <param name="statusMessage"></param>
         /// <returns></returns>
-        public int ResourceCopy( int resourceIntId, int toCollectionId, int userId, ref string statusMessage )
+        public int ResourceCopy( int resourceIntId, int fromLibraryId, int toCollectionId, ThisUser user, ref string statusMessage )
         {
             string doingLibResourcesApproval = UtilityManager.GetAppKeyValue( "doingLibResourcesApproval", "no" );
             bool isActive = true;
             LibrarySection lsec = new LibrarySection();
+            Library lib = Get( fromLibraryId );
             //do check in library - for use with incrementing favourites
             bool isInLibrary = IsResourceInLibraryByCollectionId( toCollectionId, resourceIntId );
+//            ThisUser user = AccountServices.GetUser( userId );
 
             if ( doingLibResourcesApproval == "yes" )
             {
                 lsec = LibrarySectionManager.Get( toCollectionId );
-                bool isApprovalRequired = new LibraryManager().IsLibraryApprovalRequired( lsec.LibraryId, userId );
+                bool isApprovalRequired = new LibraryManager().IsLibraryApprovalRequired( lsec.LibraryId, user.Id );
                 if ( isApprovalRequired )
                 {
                     isActive = false;
@@ -1131,9 +1144,10 @@ namespace Isle.BizServices
                 }
             }
 
-            int id = libResManager.ResourceCopy( resourceIntId, toCollectionId, userId, ref statusMessage );
+            int id = libResManager.ResourceCopy( resourceIntId, toCollectionId, user.Id, ref statusMessage );
             if ( id > 0 )
             {
+
                 if ( isActive )
                 {
                     //update favourites 
@@ -1141,13 +1155,16 @@ namespace Isle.BizServices
                         ResourceBizService.UpdateFavorite( resourceIntId );
 
                     LibraryResource_UpdateElasticSearchForAllLibrariesAndSectionsForResource( resourceIntId );
+                    ActivityBizServices.LibResourceCopy( fromLibraryId, toCollectionId, resourceIntId, user, "Copied" );
                 }
                 else
                 {
                     LibraryResource entity = new LibraryResourceManager().Get( id );
-                    ThisUser user = AccountServices.GetUser( userId );
+                    
                     //send email
                     SendResourceApprovalRequestEmail( lsec.LibraryId, user, entity, ref statusMessage );
+                    //probably should have required the source collection
+                    ActivityBizServices.LibResourceCopy( fromLibraryId, toCollectionId, resourceIntId, user, "Copy - Pending" );
                 }
             }
             else
@@ -1178,6 +1195,7 @@ namespace Isle.BizServices
             string doingLibResourcesApproval = UtilityManager.GetAppKeyValue( "doingLibResourcesApproval", "no" );
             bool isActive = true;
             LibrarySection lsec = new LibrarySection();
+            ThisUser user = AccountServices.GetUser( userId );
 
             if ( doingLibResourcesApproval == "yes" )
             {
@@ -1196,13 +1214,15 @@ namespace Isle.BizServices
                 if ( isActive )
                 {
                     LibraryResource_UpdateElasticSearchForAllLibrariesAndSectionsForResource( resourceIntId );
+                    ActivityBizServices.LibResourceActivity( fromCollectionId, toCollectionId, resourceIntId, user, "Moved" );
                 }
                 else
                 {
                     LibraryResource entity = EFDAL.EFLibraryManager.LibraryResource_Get( toCollectionId, resourceIntId );
-                    ThisUser user = AccountServices.GetUser( userId );
+                    
                     //send email
                     SendResourceApprovalRequestEmail( lsec.LibraryId, user, entity, ref statusMessage );
+                    ActivityBizServices.LibResourceActivity( fromCollectionId, toCollectionId, resourceIntId, user, "Moved - Pending" );
                 }
             }
             else
@@ -1337,107 +1357,107 @@ namespace Isle.BizServices
 
         #region ====== OBSOLETE/NOT USED ===============================================
 
-        private LibraryResourceSearchResponse ResourceSearch( LibraryResourceSearchRequest request )
-        {
-            int totalRows = 0;
-            string message = "";
-            LibraryResourceSearchResponse searchResponse = new LibraryResourceSearchResponse();
+        //private LibraryResourceSearchResponse ResourceSearch( LibraryResourceSearchRequest request )
+        //{
+        //    int totalRows = 0;
+        //    string message = "";
+        //    LibraryResourceSearchResponse searchResponse = new LibraryResourceSearchResponse();
 
-            //search
-            DataSet ds = libResManager.Search( request.Filter, request.SortOrder, request.StartingPageNbr, request.PageSize, ref totalRows );
+        //    //search
+        //    DataSet ds = libResManager.Search( request.Filter, request.SortOrder, request.StartingPageNbr, request.PageSize, ref totalRows );
 
-            List<LibraryResourceDataContract> dataContractList = new List<LibraryResourceDataContract>();
-            if ( LibManager.DoesDataSetHaveRows( ds ) )
-            {
-                //check for error message
-                if ( ServiceHelper.HasErrorMessage( ds ) )
-                {
-                    message = ServiceHelper.GetWsMessage( ds );
-                    searchResponse.Error.Message += message + "; ";
-                    searchResponse.Status = StatusEnumDataContract.Failure;
-                }
-                else
-                {
-                    LibraryResourceDataContract dataContract;
-                    foreach ( DataRow dr in ds.Tables[ 0 ].DefaultView.Table.Rows )
-                    {
-                        dataContract = new LibraryResourceDataContract();
-                        dataContract = Fill( dr, false );
-                        dataContractList.Add( dataContract );
+        //    List<LibraryResourceDataContract> dataContractList = new List<LibraryResourceDataContract>();
+        //    if ( LibManager.DoesDataSetHaveRows( ds ) )
+        //    {
+        //        //check for error message
+        //        if ( ServiceHelper.HasErrorMessage( ds ) )
+        //        {
+        //            message = ServiceHelper.GetWsMessage( ds );
+        //            searchResponse.Error.Message += message + "; ";
+        //            searchResponse.Status = StatusEnumDataContract.Failure;
+        //        }
+        //        else
+        //        {
+        //            LibraryResourceDataContract dataContract;
+        //            foreach ( DataRow dr in ds.Tables[ 0 ].DefaultView.Table.Rows )
+        //            {
+        //                dataContract = new LibraryResourceDataContract();
+        //                dataContract = Fill( dr, false );
+        //                dataContractList.Add( dataContract );
 
-                    } //end foreach
-                }
-            }
-            else
-            {
-                searchResponse.Error.Message += "No records found for search request; ";
-                searchResponse.Status = StatusEnumDataContract.NoData;
-            }
+        //            } //end foreach
+        //        }
+        //    }
+        //    else
+        //    {
+        //        searchResponse.Error.Message += "No records found for search request; ";
+        //        searchResponse.Status = StatusEnumDataContract.NoData;
+        //    }
 
 
-            searchResponse = new LibraryResourceSearchResponse { ResourceList = dataContractList };
-            searchResponse.ResultCount = dataContractList.Count;
-            searchResponse.TotalRows = totalRows;
+        //    searchResponse = new LibraryResourceSearchResponse { ResourceList = dataContractList };
+        //    searchResponse.ResultCount = dataContractList.Count;
+        //    searchResponse.TotalRows = totalRows;
 
-            return searchResponse;
-        }
+        //    return searchResponse;
+        //}
 
-        private LibraryResourceDataContract Fill( DataRow dr, bool includeRelatedData )
-        {
-            LibraryResourceDataContract entity = new LibraryResourceDataContract();
+        //private LibraryResourceDataContract Fill( DataRow dr, bool includeRelatedData )
+        //{
+        //    LibraryResourceDataContract entity = new LibraryResourceDataContract();
 
-            entity.NbrComments = GetRowColumn( dr, "NbrComments", 0 );
-            entity.NbrStandards = GetRowColumn( dr, "NbrStandards", 0 );
-            entity.LibrarySection = GetRowColumn( dr, "LibrarySection", "" );
-            entity.LibrarySectionId = GetRowColumn( dr, "LibrarySectionId", 0 );
+        //    entity.NbrComments = GetRowColumn( dr, "NbrComments", 0 );
+        //    entity.NbrStandards = GetRowColumn( dr, "NbrStandards", 0 );
+        //    entity.LibrarySection = GetRowColumn( dr, "LibrarySection", "" );
+        //    entity.LibrarySectionId = GetRowColumn( dr, "LibrarySectionId", 0 );
 
-            //NEW - get integer version of resource id
-            entity.ResourceIntId = GetRowColumn( dr, "ResourceIntId", 0 );
-            entity.ResourceVersionIntId = GetRowColumn( dr, "ResourceVersionIntId", 0 );
+        //    //NEW - get integer version of resource id
+        //    entity.ResourceIntId = GetRowColumn( dr, "ResourceIntId", 0 );
+        //    entity.ResourceVersionIntId = GetRowColumn( dr, "ResourceVersionIntId", 0 );
 
-            entity.Title = GetRowColumn( dr, "Title", "missing" );
-            entity.Description = GetRowColumn( dr, "Description", "" );
+        //    entity.Title = GetRowColumn( dr, "Title", "missing" );
+        //    entity.Description = GetRowColumn( dr, "Description", "" );
 
-            //get parent url
-            entity.ResourceUrl = GetRowColumn( dr, "ResourceUrl", "" );
-            //entity.LRDocId = GetRowColumn( dr, "DocId", "" );
-            entity.Publisher = GetRowColumn( dr, "Publisher", "" );
-            entity.Creator = GetRowColumn( dr, "Creator", "" );
-            //entity.Submitter = GetRowColumn( dr, "Submitter", "" );
-            //entity.TypicalLearningTime = GetRowColumn( dr, "TypicalLearningTime", "" );
+        //    //get parent url
+        //    entity.ResourceUrl = GetRowColumn( dr, "ResourceUrl", "" );
+        //    //entity.LRDocId = GetRowColumn( dr, "DocId", "" );
+        //    entity.Publisher = GetRowColumn( dr, "Publisher", "" );
+        //    entity.Creator = GetRowColumn( dr, "Creator", "" );
+        //    //entity.Submitter = GetRowColumn( dr, "Submitter", "" );
+        //    //entity.TypicalLearningTime = GetRowColumn( dr, "TypicalLearningTime", "" );
 
-            entity.LikeCount = GetRowColumn( dr, "LikeCount", 0 );
-            entity.DislikeCount = GetRowColumn( dr, "DislikeCount", 0 );
-            entity.Rights = GetRowColumn( dr, "Rights", "" );
-            entity.AccessRights = GetRowColumn( dr, "AccessRights", "" );
-            //entity.AccessRightsId = GetRowColumn( dr, "AccessRightsId", 0 );
+        //    entity.LikeCount = GetRowColumn( dr, "LikeCount", 0 );
+        //    entity.DislikeCount = GetRowColumn( dr, "DislikeCount", 0 );
+        //    entity.Rights = GetRowColumn( dr, "Rights", "" );
+        //    entity.AccessRights = GetRowColumn( dr, "AccessRights", "" );
+        //    //entity.AccessRightsId = GetRowColumn( dr, "AccessRightsId", 0 );
 
-            //entity.InteractivityTypeId = GetRowColumn( dr, "InteractivityTypeId", 0 );
-            // entity.InteractivityType = GetRowColumn( dr, "InteractivityType", "" );
+        //    //entity.InteractivityTypeId = GetRowColumn( dr, "InteractivityTypeId", 0 );
+        //    // entity.InteractivityType = GetRowColumn( dr, "InteractivityType", "" );
 
-            entity.Modified = GetRowColumn( dr, "Modified", System.DateTime.MinValue );
-            //entity.Created = GetRowColumn( dr, "Imported", System.DateTime.MinValue );
-            // entity.SortTitle = GetRowColumn( dr, "SortTitle", "" );
-            // entity.Schema = GetRowColumn( dr, "Schema", "" );
+        //    entity.Modified = GetRowColumn( dr, "Modified", System.DateTime.MinValue );
+        //    //entity.Created = GetRowColumn( dr, "Imported", System.DateTime.MinValue );
+        //    // entity.SortTitle = GetRowColumn( dr, "SortTitle", "" );
+        //    // entity.Schema = GetRowColumn( dr, "Schema", "" );
 
-            if ( includeRelatedData == true )
-            {
+        //    if ( includeRelatedData == true )
+        //    {
 
-                entity.Subjects = GetRowColumn( dr, "Subjects", "" );
-                entity.EducationLevels = GetRowColumn( dr, "EducationLevels", "" );
-                entity.Keywords = GetRowColumn( dr, "Keywords", "" );
-                entity.LanguageList = GetRowColumn( dr, "LanguageList", "" );
-                entity.ResourceTypesList = GetRowColumn( dr, "ResourceTypesList", "" );
-                // entity.AudienceList = GetRowColumn( dr, "AudienceList", "" );
-                if ( entity.ResourceTypesList.Length > 0 )
-                {
-                    entity.ResourceTypesList = entity.ResourceTypesList.Replace( "&lt;", "<" );
-                    entity.ResourceTypesList = entity.ResourceTypesList.Replace( "&gt;", ">" );
-                }
-            }
+        //        entity.Subjects = GetRowColumn( dr, "Subjects", "" );
+        //        entity.EducationLevels = GetRowColumn( dr, "EducationLevels", "" );
+        //        entity.Keywords = GetRowColumn( dr, "Keywords", "" );
+        //        entity.LanguageList = GetRowColumn( dr, "LanguageList", "" );
+        //        entity.ResourceTypesList = GetRowColumn( dr, "ResourceTypesList", "" );
+        //        // entity.AudienceList = GetRowColumn( dr, "AudienceList", "" );
+        //        if ( entity.ResourceTypesList.Length > 0 )
+        //        {
+        //            entity.ResourceTypesList = entity.ResourceTypesList.Replace( "&lt;", "<" );
+        //            entity.ResourceTypesList = entity.ResourceTypesList.Replace( "&gt;", ">" );
+        //        }
+        //    }
 
-            return entity;
-        }//
+        //    return entity;
+        //}//
         #endregion
 
 
@@ -1459,7 +1479,8 @@ namespace Isle.BizServices
             //call elasticSearch method to update lists
 
             //new LRWarehouse.DAL.ElasticSearchManager().RefreshLibraryCollectionTotals( resourceIntId, libList, collList );
-            new LRWarehouse.DAL.ElasticSearchManager().RefreshResource( resourceIntId );
+            //new LRWarehouse.DAL.ElasticSearchManager().RefreshResource( resourceIntId );
+            new Isle.BizServices.ResourceV2Services().RefreshResource( resourceIntId );
 
             return result;
         }//
@@ -1473,7 +1494,8 @@ namespace Isle.BizServices
             //call elasticSearch method to update lists
 
             //new LRWarehouse.DAL.ElasticSearchManager().RefreshLibraryCollectionTotals( resourceIntId, libList, collList );
-            new LRWarehouse.DAL.ElasticSearchManager().RefreshResource( resourceIntId );
+            //new LRWarehouse.DAL.ElasticSearchManager().RefreshResource( resourceIntId );
+            new Isle.BizServices.ResourceV2Services().RefreshResource( resourceIntId );
 
             return result;
         }//
@@ -2313,5 +2335,59 @@ namespace Isle.BizServices
             return entity;
         }
         #endregion
+
+        #region WIP methods
+        //These methods aren't truly implemented yet, but serve as placeholders
+        //They don't necessarily need to be static if it helps to do them normally
+        //I'm also not committed to the method/variable names below, so feel free to adjust them to fit your desired pattern/schema
+
+        //List pending members for a library
+        public List<LibraryMember> LibraryMembers_ListPending( int libraryId )
+        {
+          throw new NotImplementedException( "Sorry, listing pending members is not implemented yet." );
+        }
+
+        //Deny a pending membership
+        //Note: userId is the ID of the user performing the denial
+        //Note: customMessage is sent to the denied member, presumably to indicate why they were denied. We don't -have- to implement this part.
+        //Should return a bool indicating whether or not the denial was successful, and a status message explaining any failure. 
+        //The status message will be hidden from the user but findable to us for debugging purposes.
+        public bool LibraryMember_DenyPending( int libraryId, int userId, int pendingMemberId, string customMessage, ref string status )
+        {
+          throw new NotImplementedException( "Sorry, denying memberships is not implemented yet." );
+        }
+
+        //Invite an existing IOER user
+        //Again, userId is the user performing the action
+        //roleId is the role to be assigned to the invited person once they are approved for membership
+        //roleId should correspond to the organization's roles. If this is an issue, let me know.
+        //customMessage is ideally sent to the invitee
+        //status should explain any failure and will be hidden from the user
+        public bool InviteExistingUser( int libraryId, int userId, int inviteeId, int roleId, string customMessage, ref string status )
+        {
+          throw new NotImplementedException( "Sorry, inviting existing users is not implemented yet." );
+        }
+
+        //Invite a non-existing user by email
+        //userId is the performing user
+        //The email should already be validated by this point but feel free to validate it further
+        //roleId is an organization role for the member to have once they're all finished
+        //customMessage would make good email filler text
+        //status is for us, not the users
+        //should return a bool indicating successful invitation or failure to invite
+        public bool InviteNewUser( int libraryId, int userId, string inviteeEmail, int roleId, string customMessage, ref string status )
+        {
+          throw new NotImplementedException( "Sorry, inviting new users is not implemented yet." );
+        }
+
+        //Gets all organization members of a certain role
+        //The current hack below accomplishes this, but is not very efficient
+        public List<LibraryMember> LibraryMembers_GetAll( int libraryId, int roleId )
+        {
+          return LibraryMembers_GetAll( libraryId ).Where( m => m.MemberTypeId == roleId ).ToList();
+        }
+
+        #endregion
+
     }
 }

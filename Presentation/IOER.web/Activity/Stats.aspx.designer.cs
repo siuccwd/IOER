@@ -19,6 +19,6 @@ namespace ILPathways.Activity {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ILPathways.Activity.Stats1 StatsList;
+        protected global::ILPathways.Activity.Stats2 StatsList;
     }
 }

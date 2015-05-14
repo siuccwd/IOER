@@ -6,6 +6,7 @@
   <script type="text/javascript" src="/scripts/tooltipv2.js"></script>
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="BodyContent" runat="server">
+  <%-- 
   <script type="text/javascript">
     var standardsBrowserOptions = { body: null, grade: null, helperUrl: null };
     var searchOptions = { button: null, css: null }
@@ -191,6 +192,29 @@
       <h3>More Examples</h3>
       <p>Check out the <a href="/Pages/SamplePage.aspx">Sample Page</a> to see more IOER widgets in action.</p>
     </div>
+    --%>
+  
+  <div id="content">
+    <h1 class="isleH1">IOER Widgets</h1>
+
+    <style type="text/css">
+      #widgetsFrame { border: none; width: 100%; }
+    </style>
+    <script type="text/javascript">
+      $(document).ready(function () {
+        $(window).on("message", function (msg) {
+          var message = $.parseJSON(msg.originalEvent.data);
+          console.log(message.action);
+          if (message.action == "resize") {
+            console.log(message.height);
+            $("#widgetsFrame").attr("style", "height: " + message.height);
+          }
+        });
+      });
+    </script>
+    <iframe src="https://apps.il-work-net.com/worknetminiapps/widgets" id="widgetsFrame"></iframe>
+
   </div>
+
 
 </asp:Content>

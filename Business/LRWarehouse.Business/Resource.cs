@@ -28,6 +28,7 @@ namespace LRWarehouse.Business
 		}
         
         //public bool IsActive { get; set; }
+        public int PublishedForOrgId { get; set; }
 
         private int _viewCount;
         public int ViewCount

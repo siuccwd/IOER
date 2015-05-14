@@ -10,7 +10,7 @@ using AutoMapper;
 using ILPathways.Business;
 using ILPathways.Utilities;
 using Isle.BizServices;
-using Isle.DataContracts;
+//using Isle.DataContracts;
 using Isle.DTO;
 
 using LRWarehouse.Business;
@@ -367,7 +367,20 @@ namespace Isle.BizServices
         /// <returns></returns>
         public static ObjectMember GetResourceAccess( int resourceId, int userId ) 
         {
+
             return EfMgr.GetResourceAccess( resourceId, userId );
+        }
+
+        /// <summary>
+        /// Determine if the user can edit the metadata for the resource
+        /// Usually means is either the publisher or where the resource was published under the context of an org, the user has appropriate content privileges
+        /// </summary>
+        /// <param name="resourceId"></param>
+        /// <param name="userId"></param>
+        /// <returns></returns>
+        public static bool CanUserEditResource( int resourceId, int userId )
+        {
+            return new ResourceManager().CanUserEditResource( resourceId, userId );
         }
         #endregion
 
@@ -490,7 +503,8 @@ namespace Isle.BizServices
 
                     //Update elasticsearch
                     //new ElasticSearchManager().RefreshRecord( entity.ResourceIntId );
-                    new ElasticSearchManager().RefreshResource( entity.ResourceIntId );
+                    //new ElasticSearchManager().RefreshResource( entity.ResourceIntId );
+                    new Isle.BizServices.ResourceV2Services().RefreshResource( entity.ResourceIntId );
 
                     statusMessage = "Resource Reactivated";
                 }
@@ -1491,8 +1505,8 @@ namespace Isle.BizServices
             if ( commentID > 0 )
             {
                 //??why
-                new ElasticSearchManager().RefreshResource( resourceId );
-                
+                //new ElasticSearchManager().RefreshResource( resourceId );
+                new Isle.BizServices.ResourceV2Services().RefreshResource( resourceId );
             }
             else
             {
@@ -1545,6 +1559,10 @@ namespace Isle.BizServices
             return id;
         }
 
+        public static bool HasLikeDislike( int userId, int resourceId )
+        {
+            return EfMgr.HasLikeDislike( resourceId, userId );
+        }
         public static ResourceLikeSummary Resource_GetLikeSummmary( int resourceIntId, int userId, ref string status )
         {
             ResourceLikeSummary entity = new ResourceLikeSummary();
@@ -1555,232 +1573,242 @@ namespace Isle.BizServices
         }
 
         #endregion
-
-        #region OLD methods, called from webservices
-        public ResourceGetResponse ResourceGet( ResourceGetRequest request )
+        public static int ResourceClickThroughs( int resourceId )
         {
-            //Mapper.CreateMap<ResourceGetRequest, ResourceVersion>();
-            //ResourceVersion searchBEO = Mapper.Map<ResourceGetRequest, ResourceVersion>( request );
-
-            ResourceVersion myBEO = myVersionManager.Display( request.ResourceVersionId );
-
-            //ResourceDataContract dataContract = Mapper.Map<ResourceVersion, ResourceDataContract>( myBEO );
-            ResourceDataContract dataContract = MapToContract( myBEO );
-
-
-            ResourceGetResponse searchResponse = new ResourceGetResponse { Resource = dataContract };
-
-            return searchResponse;
-
-        }
-
-
-        public ResourceSearchResponse ResourceSearch( ResourceSearchRequest request )
-        {
-            //Mapper.CreateMap<ResourceGetRequest, ResourceVersion>();
-            //ResourceVersion searchBEO = Mapper.Map<ResourceGetRequest, ResourceVersion>( request );
-            int totalRows = 0;
-
-            //search
-            DataSet ds = new LRManager().Search( request.Filter, request.SortOrder, request.StartingPageNbr, request.PageSize, request.OutputRelTables, ref totalRows );
-
-            List<ResourceDataContract> dataContractList = new List<ResourceDataContract>();
-
-
-            foreach ( DataRow dr in ds.Tables[ 0 ].DefaultView.Table.Rows )
+            int count = 0;
+            //Need a proc for this
+            DataSet ds = DoQuery( "SELECT COUNT(*) AS 'Count' FROM [Resource.View] WHERE ResourceIntId = " + resourceId );
+            if ( DoesDataSetHaveRows( ds ) )
             {
-                //LRWarehouse.Business.ResourceVersion row = myVersionManager.Fill( dr, true );
-                //ResourceDataContract dataContract = Mapper.Map<ResourceVersion, ResourceDataContract>( row );
-                ResourceDataContract dataContract = Fill( dr, false );
-                dataContractList.Add( dataContract );
-
-            } //end foreach
-
-            ////map from entity list to data contract list
-            //List<ResourceDataContract> dataContractList = Mapper.Map<List<ResourceVersion>, List<ResourceDataContract>>( beoList );
-
-            ResourceSearchResponse searchResponse = new ResourceSearchResponse { ResourceList = dataContractList };
-            searchResponse.ResultCount = dataContractList.Count;
-            searchResponse.TotalRows = totalRows;
-
-            //DataSet ds = lrManager.Search( request.Filter, request.SortOrder, request.StartingPageNbr, request.PageSize, ref totalRows );
-
-            //ResourceDataContract dataContract = Mapper.Map<ResourceVersion, ResourceDataContract>( myBEO );
-
-            //ResourceSearchResponse searchResponse = new ResourceSearchResponse { ResourceList = dataContract };
-            //searchResponse.ResultCount = partnerDataContractList.Count;
-
-            return searchResponse;
-        }
-
-        public ResourceSearchResponse ResourceFTSearch( ResourceSearchRequest request )
-        {
-            int totalRows = 0;
-
-            //search
-            DataSet ds = new LRManager().Search( request.Filter, request.SortOrder, request.StartingPageNbr, request.PageSize, request.OutputRelTables, ref totalRows );
-
-            List<ResourceDataContract> dataContractList = new List<ResourceDataContract>();
-
-
-            foreach ( DataRow dr in ds.Tables[ 0 ].DefaultView.Table.Rows )
-            {
-                ResourceDataContract dataContract = Fill( dr, false );
-                dataContractList.Add( dataContract );
-
-            } //end foreach
-
-            ResourceSearchResponse searchResponse = new ResourceSearchResponse { ResourceList = dataContractList };
-            searchResponse.ResultCount = dataContractList.Count;
-            searchResponse.TotalRows = totalRows;
-
-            return searchResponse;
-        }
-        public ResourceDataContract Fill( DataRow dr, bool includeRelatedData )
-        {
-            ResourceDataContract entity = new ResourceDataContract();
-
-            //string rowId = GetRowColumn( dr, "RowId", "" );
-            //if ( rowId.Length > 35 )
-            //    entity.RowId = new Guid( rowId );
-
-            //rowId = GetRowColumn( dr, "ResourceId", "" );
-            //if ( rowId.Length > 35 )
-            //    entity.ResourceId = new Guid( rowId );
-
-            //NEW - get integer version of resource id
-            entity.ResourceIntId = GetRowColumn( dr, "ResourceIntId", 0 );
-            entity.ResourceVersionIntId = GetRowColumn( dr, "ResourceVersionIntId", 0 );
-
-            entity.Title = GetRowColumn( dr, "Title", "missing" );
-            entity.Description = GetRowColumn( dr, "Description", "" );
-
-            //get parent url
-            entity.ResourceUrl = GetRowColumn( dr, "ResourceUrl", "" );
-            //entity.LRDocId = GetRowColumn( dr, "DocId", "" );
-            entity.Publisher = GetRowColumn( dr, "Publisher", "" );
-            entity.Creator = GetRowColumn( dr, "Creator", "" );
-            //entity.Submitter = GetRowColumn( dr, "Submitter", "" );
-            //entity.TypicalLearningTime = GetRowColumn( dr, "TypicalLearningTime", "" );
-
-            entity.LikeCount = GetRowColumn( dr, "LikeCount", 0 );
-            entity.DislikeCount = GetRowColumn( dr, "DislikeCount", 0 );
-
-            entity.Rights = GetRowColumn( dr, "Rights", "" );
-            entity.AccessRights = GetRowColumn( dr, "AccessRights", "" );
-            entity.AccessRightsId = GetRowColumn( dr, "AccessRightsId", 0 );
-
-            //entity.InteractivityTypeId = GetRowColumn( dr, "InteractivityTypeId", 0 );
-            // entity.InteractivityType = GetRowColumn( dr, "InteractivityType", "" );
-
-            entity.Modified = GetRowColumn( dr, "Modified", System.DateTime.MinValue );
-            //entity.Created = GetRowColumn( dr, "Imported", System.DateTime.MinValue );
-            // entity.SortTitle = GetRowColumn( dr, "SortTitle", "" );
-            // entity.Schema = GetRowColumn( dr, "Schema", "" );
-
-            if ( includeRelatedData == true )
-            {
-
-                entity.Subjects = GetRowColumn( dr, "Subjects", "" );
-                entity.EducationLevels = GetRowColumn( dr, "EducationLevels", "" );
-                entity.Keywords = GetRowColumn( dr, "Keywords", "" );
-                entity.LanguageList = GetRowColumn( dr, "LanguageList", "" );
-                entity.ResourceTypesList = GetRowColumn( dr, "ResourceTypesList", "" );
-                // entity.AudienceList = GetRowColumn( dr, "AudienceList", "" );
-                if ( entity.ResourceTypesList.Length > 0 )
-                {
-                    entity.ResourceTypesList = entity.ResourceTypesList.Replace( "&lt;", "<" );
-                    entity.ResourceTypesList = entity.ResourceTypesList.Replace( "&gt;", ">" );
-                }
+                count = GetRowColumn( ds.Tables[ 0 ].Rows[ 0 ], "Count",0 );
             }
-
-            return entity;
-        }//
-
-        private ResourceDataContract MapToContract( ResourceVersion request )
-        {
-            ResourceDataContract dataContract = new ResourceDataContract();
-            //dataContract.ResourceId = request.ResourceId;
-            //dataContract.ResourceVersionId = request.ResourceVersionId;
-            //dataContract.RowId = request.ResourceVersionId;
-
-            dataContract.Title = request.Title;
-            dataContract.Description = request.Description;
-
-            dataContract.AccessRights = request.AccessRights;
-            dataContract.Creator = request.Creator;
-            dataContract.EducationLevels = request.EducationLevels;
-            dataContract.Imported = request.Imported;
-            dataContract.Keywords = request.Keywords;
-            dataContract.LanguageList = request.LanguageList;
-            //dataContract.LRDocId = request.LRDocId;
-            dataContract.Modified = request.Modified;
-            dataContract.Publisher = request.Publisher;
-            dataContract.ResourceUrl = request.ResourceUrl;
-            dataContract.Rights = request.Rights;
-            dataContract.Subjects = request.Subjects;
-            dataContract.Submitter = request.Submitter;
-            dataContract.TypicalLearningTime = request.TypicalLearningTime;
-
-            return dataContract;
+            return count;
         }
+        #region OLD methods, called from webservices
+        //public ResourceGetResponse ResourceGet( ResourceGetRequest request )
+        //{
+        //    //Mapper.CreateMap<ResourceGetRequest, ResourceVersion>();
+        //    //ResourceVersion searchBEO = Mapper.Map<ResourceGetRequest, ResourceVersion>( request );
 
-        public ResourceSearchResponse ResourceSearch2( ResourceSearchRequest request )
-        {
-            LRManager lrManager = new LRManager();
-            //Mapper.CreateMap<ResourceGetRequest, ResourceVersion>();
-            //ResourceVersion searchBEO = Mapper.Map<ResourceGetRequest, ResourceVersion>( request );
-            int totalRows = 0;
+        //    ResourceVersion myBEO = myVersionManager.Display( request.ResourceVersionId );
 
-            //search
-            List<ResourceVersion> beoList = lrManager.SearchToList( request.Filter, request.SortOrder, request.StartingPageNbr, request.PageSize, request.OutputRelTables, ref totalRows );
-
-            //map from entity list to data contract list
-            List<ResourceDataContract> dataContractList = Mapper.Map<List<ResourceVersion>, List<ResourceDataContract>>( beoList );
-
-            ResourceSearchResponse searchResponse = new ResourceSearchResponse { ResourceList = dataContractList };
-            searchResponse.ResultCount = dataContractList.Count;
-            searchResponse.TotalRows = totalRows;
-
-            //DataSet ds = lrManager.Search( request.Filter, request.SortOrder, request.StartingPageNbr, request.PageSize, ref totalRows );
-
-            //ResourceDataContract dataContract = Mapper.Map<ResourceVersion, ResourceDataContract>( myBEO );
-
-            //ResourceSearchResponse searchResponse = new ResourceSearchResponse { ResourceList = dataContract };
-            //searchResponse.ResultCount = partnerDataContractList.Count;
-
-            return searchResponse;
-
-        }
+        //    //ResourceDataContract dataContract = Mapper.Map<ResourceVersion, ResourceDataContract>( myBEO );
+        //    ResourceDataContract dataContract = MapToContract( myBEO );
 
 
-        public ResourceSearchResponse ResourceSearch_FullText( ResourceSearchRequest request )
-        {
-            LRManager lrManager = new LRManager();
-            //Mapper.CreateMap<ResourceGetRequest, ResourceVersion>();
-            //ResourceVersion searchBEO = Mapper.Map<ResourceGetRequest, ResourceVersion>( request );
-            int totalRows = 0;
+        //    ResourceGetResponse searchResponse = new ResourceGetResponse { Resource = dataContract };
 
-            //search
-            List<ResourceVersion> beoList = lrManager.SearchToList( request.Filter, request.SortOrder, request.StartingPageNbr, request.PageSize, request.OutputRelTables, ref totalRows );
+        //    return searchResponse;
 
-            //map from entity list to data contract list
-            List<ResourceDataContract> dataContractList = Mapper.Map<List<ResourceVersion>, List<ResourceDataContract>>( beoList );
+        //}
 
-            ResourceSearchResponse searchResponse = new ResourceSearchResponse { ResourceList = dataContractList };
-            searchResponse.ResultCount = dataContractList.Count;
-            searchResponse.TotalRows = totalRows;
 
-            //DataSet ds = lrManager.Search( request.Filter, request.SortOrder, request.StartingPageNbr, request.PageSize, ref totalRows );
+        //public ResourceSearchResponse ResourceSearch( ResourceSearchRequest request )
+        //{
+        //    //Mapper.CreateMap<ResourceGetRequest, ResourceVersion>();
+        //    //ResourceVersion searchBEO = Mapper.Map<ResourceGetRequest, ResourceVersion>( request );
+        //    int totalRows = 0;
 
-            //ResourceDataContract dataContract = Mapper.Map<ResourceVersion, ResourceDataContract>( myBEO );
+        //    //search
+        //    DataSet ds = new LRManager().Search( request.Filter, request.SortOrder, request.StartingPageNbr, request.PageSize, request.OutputRelTables, ref totalRows );
 
-            //ResourceSearchResponse searchResponse = new ResourceSearchResponse { ResourceList = dataContract };
-            //searchResponse.ResultCount = partnerDataContractList.Count;
+        //    List<ResourceDataContract> dataContractList = new List<ResourceDataContract>();
 
-            return searchResponse;
 
-        }
+        //    foreach ( DataRow dr in ds.Tables[ 0 ].DefaultView.Table.Rows )
+        //    {
+        //        //LRWarehouse.Business.ResourceVersion row = myVersionManager.Fill( dr, true );
+        //        //ResourceDataContract dataContract = Mapper.Map<ResourceVersion, ResourceDataContract>( row );
+        //        ResourceDataContract dataContract = Fill( dr, false );
+        //        dataContractList.Add( dataContract );
+
+        //    } //end foreach
+
+        //    ////map from entity list to data contract list
+        //    //List<ResourceDataContract> dataContractList = Mapper.Map<List<ResourceVersion>, List<ResourceDataContract>>( beoList );
+
+        //    ResourceSearchResponse searchResponse = new ResourceSearchResponse { ResourceList = dataContractList };
+        //    searchResponse.ResultCount = dataContractList.Count;
+        //    searchResponse.TotalRows = totalRows;
+
+        //    //DataSet ds = lrManager.Search( request.Filter, request.SortOrder, request.StartingPageNbr, request.PageSize, ref totalRows );
+
+        //    //ResourceDataContract dataContract = Mapper.Map<ResourceVersion, ResourceDataContract>( myBEO );
+
+        //    //ResourceSearchResponse searchResponse = new ResourceSearchResponse { ResourceList = dataContract };
+        //    //searchResponse.ResultCount = partnerDataContractList.Count;
+
+        //    return searchResponse;
+        //}
+
+        //public ResourceSearchResponse ResourceFTSearch( ResourceSearchRequest request )
+        //{
+        //    int totalRows = 0;
+
+        //    //search
+        //    DataSet ds = new LRManager().Search( request.Filter, request.SortOrder, request.StartingPageNbr, request.PageSize, request.OutputRelTables, ref totalRows );
+
+        //    List<ResourceDataContract> dataContractList = new List<ResourceDataContract>();
+
+
+        //    foreach ( DataRow dr in ds.Tables[ 0 ].DefaultView.Table.Rows )
+        //    {
+        //        ResourceDataContract dataContract = Fill( dr, false );
+        //        dataContractList.Add( dataContract );
+
+        //    } //end foreach
+
+        //    ResourceSearchResponse searchResponse = new ResourceSearchResponse { ResourceList = dataContractList };
+        //    searchResponse.ResultCount = dataContractList.Count;
+        //    searchResponse.TotalRows = totalRows;
+
+        //    return searchResponse;
+        //}
+        //public ResourceDataContract Fill( DataRow dr, bool includeRelatedData )
+        //{
+        //    ResourceDataContract entity = new ResourceDataContract();
+
+        //    //string rowId = GetRowColumn( dr, "RowId", "" );
+        //    //if ( rowId.Length > 35 )
+        //    //    entity.RowId = new Guid( rowId );
+
+        //    //rowId = GetRowColumn( dr, "ResourceId", "" );
+        //    //if ( rowId.Length > 35 )
+        //    //    entity.ResourceId = new Guid( rowId );
+
+        //    //NEW - get integer version of resource id
+        //    entity.ResourceIntId = GetRowColumn( dr, "ResourceIntId", 0 );
+        //    entity.ResourceVersionIntId = GetRowColumn( dr, "ResourceVersionIntId", 0 );
+
+        //    entity.Title = GetRowColumn( dr, "Title", "missing" );
+        //    entity.Description = GetRowColumn( dr, "Description", "" );
+
+        //    //get parent url
+        //    entity.ResourceUrl = GetRowColumn( dr, "ResourceUrl", "" );
+        //    //entity.LRDocId = GetRowColumn( dr, "DocId", "" );
+        //    entity.Publisher = GetRowColumn( dr, "Publisher", "" );
+        //    entity.Creator = GetRowColumn( dr, "Creator", "" );
+        //    //entity.Submitter = GetRowColumn( dr, "Submitter", "" );
+        //    //entity.TypicalLearningTime = GetRowColumn( dr, "TypicalLearningTime", "" );
+
+        //    entity.LikeCount = GetRowColumn( dr, "LikeCount", 0 );
+        //    entity.DislikeCount = GetRowColumn( dr, "DislikeCount", 0 );
+
+        //    entity.Rights = GetRowColumn( dr, "Rights", "" );
+        //    entity.AccessRights = GetRowColumn( dr, "AccessRights", "" );
+        //    entity.AccessRightsId = GetRowColumn( dr, "AccessRightsId", 0 );
+
+        //    //entity.InteractivityTypeId = GetRowColumn( dr, "InteractivityTypeId", 0 );
+        //    // entity.InteractivityType = GetRowColumn( dr, "InteractivityType", "" );
+
+        //    entity.Modified = GetRowColumn( dr, "Modified", System.DateTime.MinValue );
+        //    //entity.Created = GetRowColumn( dr, "Imported", System.DateTime.MinValue );
+        //    // entity.SortTitle = GetRowColumn( dr, "SortTitle", "" );
+        //    // entity.Schema = GetRowColumn( dr, "Schema", "" );
+
+        //    if ( includeRelatedData == true )
+        //    {
+
+        //        entity.Subjects = GetRowColumn( dr, "Subjects", "" );
+        //        entity.EducationLevels = GetRowColumn( dr, "EducationLevels", "" );
+        //        entity.Keywords = GetRowColumn( dr, "Keywords", "" );
+        //        entity.LanguageList = GetRowColumn( dr, "LanguageList", "" );
+        //        entity.ResourceTypesList = GetRowColumn( dr, "ResourceTypesList", "" );
+        //        // entity.AudienceList = GetRowColumn( dr, "AudienceList", "" );
+        //        if ( entity.ResourceTypesList.Length > 0 )
+        //        {
+        //            entity.ResourceTypesList = entity.ResourceTypesList.Replace( "&lt;", "<" );
+        //            entity.ResourceTypesList = entity.ResourceTypesList.Replace( "&gt;", ">" );
+        //        }
+        //    }
+
+        //    return entity;
+        //}//
+
+        //private ResourceDataContract MapToContract( ResourceVersion request )
+        //{
+        //    ResourceDataContract dataContract = new ResourceDataContract();
+        //    //dataContract.ResourceId = request.ResourceId;
+        //    //dataContract.ResourceVersionId = request.ResourceVersionId;
+        //    //dataContract.RowId = request.ResourceVersionId;
+
+        //    dataContract.Title = request.Title;
+        //    dataContract.Description = request.Description;
+
+        //    dataContract.AccessRights = request.AccessRights;
+        //    dataContract.Creator = request.Creator;
+        //    dataContract.EducationLevels = request.EducationLevels;
+        //    dataContract.Imported = request.Imported;
+        //    dataContract.Keywords = request.Keywords;
+        //    dataContract.LanguageList = request.LanguageList;
+        //    //dataContract.LRDocId = request.LRDocId;
+        //    dataContract.Modified = request.Modified;
+        //    dataContract.Publisher = request.Publisher;
+        //    dataContract.ResourceUrl = request.ResourceUrl;
+        //    dataContract.Rights = request.Rights;
+        //    dataContract.Subjects = request.Subjects;
+        //    dataContract.Submitter = request.Submitter;
+        //    dataContract.TypicalLearningTime = request.TypicalLearningTime;
+
+        //    return dataContract;
+        //}
+
+        //public ResourceSearchResponse ResourceSearch2( ResourceSearchRequest request )
+        //{
+        //    LRManager lrManager = new LRManager();
+        //    //Mapper.CreateMap<ResourceGetRequest, ResourceVersion>();
+        //    //ResourceVersion searchBEO = Mapper.Map<ResourceGetRequest, ResourceVersion>( request );
+        //    int totalRows = 0;
+
+        //    //search
+        //    List<ResourceVersion> beoList = lrManager.SearchToList( request.Filter, request.SortOrder, request.StartingPageNbr, request.PageSize, request.OutputRelTables, ref totalRows );
+
+        //    //map from entity list to data contract list
+        //    List<ResourceDataContract> dataContractList = Mapper.Map<List<ResourceVersion>, List<ResourceDataContract>>( beoList );
+
+        //    ResourceSearchResponse searchResponse = new ResourceSearchResponse { ResourceList = dataContractList };
+        //    searchResponse.ResultCount = dataContractList.Count;
+        //    searchResponse.TotalRows = totalRows;
+
+        //    //DataSet ds = lrManager.Search( request.Filter, request.SortOrder, request.StartingPageNbr, request.PageSize, ref totalRows );
+
+        //    //ResourceDataContract dataContract = Mapper.Map<ResourceVersion, ResourceDataContract>( myBEO );
+
+        //    //ResourceSearchResponse searchResponse = new ResourceSearchResponse { ResourceList = dataContract };
+        //    //searchResponse.ResultCount = partnerDataContractList.Count;
+
+        //    return searchResponse;
+
+        //}
+
+
+        //public ResourceSearchResponse ResourceSearch_FullText( ResourceSearchRequest request )
+        //{
+        //    LRManager lrManager = new LRManager();
+        //    //Mapper.CreateMap<ResourceGetRequest, ResourceVersion>();
+        //    //ResourceVersion searchBEO = Mapper.Map<ResourceGetRequest, ResourceVersion>( request );
+        //    int totalRows = 0;
+
+        //    //search
+        //    List<ResourceVersion> beoList = lrManager.SearchToList( request.Filter, request.SortOrder, request.StartingPageNbr, request.PageSize, request.OutputRelTables, ref totalRows );
+
+        //    //map from entity list to data contract list
+        //    List<ResourceDataContract> dataContractList = Mapper.Map<List<ResourceVersion>, List<ResourceDataContract>>( beoList );
+
+        //    ResourceSearchResponse searchResponse = new ResourceSearchResponse { ResourceList = dataContractList };
+        //    searchResponse.ResultCount = dataContractList.Count;
+        //    searchResponse.TotalRows = totalRows;
+
+        //    //DataSet ds = lrManager.Search( request.Filter, request.SortOrder, request.StartingPageNbr, request.PageSize, ref totalRows );
+
+        //    //ResourceDataContract dataContract = Mapper.Map<ResourceVersion, ResourceDataContract>( myBEO );
+
+        //    //ResourceSearchResponse searchResponse = new ResourceSearchResponse { ResourceList = dataContract };
+        //    //searchResponse.ResultCount = partnerDataContractList.Count;
+
+        //    return searchResponse;
+
+        //}
         #endregion
 
         /// <summary>

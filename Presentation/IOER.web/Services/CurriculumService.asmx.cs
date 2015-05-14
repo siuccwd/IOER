@@ -33,17 +33,24 @@ namespace ILPathways.Services
     public string GetTree( int id )
     {
       return utilService.ImmediateReturn( GetTreeJSON( id ), true, "okay", null );
-    }
+  }
 
     public JSONNode GetTreeJSON( int id, string userGUID )
     {
-      var data = GetTreeOutline( id, userGUID );
+        return GetTreeJSON( id, userGUID, true );
+    }
+
+    public JSONNode GetTreeJSON( int id, string userGUID, bool allowCaching )
+    {
+      //var data = GetTreeOutline( id, userGUID );
+        var data = curriculumServices.GetPublicCurriculumOutline( id, userGUID, allowCaching );
       var output = GetChildNodes( data, 0 );
       return output;
     }
     public JSONNode GetTreeJSON( int id )
     {
-        var data = GetTreeOutline( id );
+        //var data = GetTreeOutline( id );
+        var data = curriculumServices.GetPublicCurriculumOutline( id, true );
       var output = GetChildNodes( data, 0 );
 
       return output;
@@ -63,18 +70,18 @@ namespace ILPathways.Services
 
       return output;
     }
-    public ContentNode GetTreeOutline( int id, string userGUID )
-    {
-        //retrieve public view of curriculum
-        //if user has access, all nodes will be returned
-        return curriculumServices.GetPublicCurriculumOutline( id, userGUID );
-    }
-    public ContentNode GetTreeOutline( int id )
-    {
-        //retrieve public view of curriculum
-        //will need user if nodes can be privileged
-        return curriculumServices.GetPublicCurriculumOutline( id );
-    }
+    //public ContentNode GetTreeOutline( int id, string userGUID )
+    //{
+    //    //retrieve public view of curriculum
+    //    //if user has access, all nodes will be returned
+    //    return curriculumServices.GetPublicCurriculumOutline( id, userGUID );
+    //}
+    //public ContentNode GetTreeOutline( int id )
+    //{
+    //    //retrieve public view of curriculum
+    //    //will need user if nodes can be privileged
+    //    return curriculumServices.GetPublicCurriculumOutline( id );
+    //}
     [WebMethod]
     public string DisplayNode( string userGUID, int id )
     {

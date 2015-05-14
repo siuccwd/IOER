@@ -26,5 +26,6 @@ namespace GatewayBusinessEntities
         public string RemoteIP { get; set; }
         public string ServerName { get; set; }
         public string CurrentZip { get; set; }
+        public string Referrer { get; set; }
     }
 }

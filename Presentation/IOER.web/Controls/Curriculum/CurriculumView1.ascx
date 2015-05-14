@@ -1,4 +1,5 @@
 ﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="CurriculumView1.ascx.cs" Inherits="ILPathways.Controls.Curriculum.CurriculumView1" %>
+<%@ Register TagPrefix="uc1" TagName="ActivityRenderer" Src="/Activity/ActivityRenderer.ascx" %>
 
 <% if(curriculumContent.Visible) { %>
 <div id="curriculumContent" runat="server">
@@ -7,6 +8,7 @@
     //From server
     var files = <%=filesList %>;
     var hasFeaturedItem = <%=(hasFeaturedItem ? "true" : "false") %>;
+    var curriculumID = <%=curriculumNode.Id %>;
     var nodeID = <%=currentNode.Id %>;
     var comments = <%=commentsList %>;
     var isWidget = <%=( isWidget ? "true" : "false" ) %>;
@@ -23,12 +25,14 @@
   <script type="text/javascript" src="/Controls/Curriculum/curriculumview1.js"></script>
   <link rel="stylesheet" href="/controls/curriculum/curriculumview1.css" type="text/css" />
 
+  <uc1:ActivityRenderer id="activityRenderer" runat="server" />
+
   <!-- The header -->
   <div id="curriculumHeader">
-    <% var avatar = curriculumNode.ImageUrl;
+    <% var avatar = curriculumNode.ImageUrl.Replace( @"\", "" );
        if ( string.IsNullOrWhiteSpace( avatar ) )
        {
-         avatar = string.IsNullOrWhiteSpace(curriculumNode.ResourceThumbnailImageUrl) ? "/images/ioer_med.png" : curriculumNode.ResourceThumbnailImageUrl;
+         avatar = string.IsNullOrWhiteSpace( curriculumNode.ResourceThumbnailImageUrl ) ? "/images/ioer_med.png" : curriculumNode.ResourceThumbnailImageUrl.Replace( @"\", "" ); ;
        }
     %>
     <div style="background-image: url('<%=avatar %>');" id="curriculumAvatar"></div>
@@ -48,6 +52,7 @@
       <input type="button" class="isleButton bgBlue selected" value="Learning List Map" data-id="tab_curriculumMap" onclick="toggleTab('tab_curriculumMap')" />
       <input type="button" class="isleButton bgBlue" value="Help & Info" data-id="tab_helpInfo" onclick="toggleTab('tab_helpInfo')" />
       <input type="button" class="isleButton bgBlue" value="Timeline & Follow Updates" data-id="tab_timeline" onclick="toggleTab('tab_timeline')" />
+      <input type="button" class="isleButton bgBlue" value="Activity & Statistics" data-id="tab_activity" onclick="toggleTab('tab_activity')" />
       <input type="button" class="isleButton bgBlue" value="Embed Widget" data-id="tab_embed" onclick="toggleTab('tab_embed')" />
       <input type="button" class="isleButton bgBlue" value="Like & Comment" data-id="tab_community" onclick="toggleTab('tab_community')" />
     </div>
@@ -107,6 +112,26 @@
           <p class="grayMessage">No Timeline Events found for this Learning List</p>
           <% } %>
         </div>
+      </div>
+      <!-- Activity -->
+      <div class="tab" id="tab_activity">
+        <h2 class="mid">Activity for this Learning List in the last <%=activityDaysAgo.Text %> days</h2>
+        <script type="text/javascript">
+          var activityData = <%=activityJSON %>;
+
+          $(document).ready(function() {
+            $("#activityBlock").html(getActivity("totals", activityData.Activity, {timespan: "", timescale: "day(s)", object_views: "Views (This layer):", resource_views: null, total_views: "Views (This layer and below):", parent_downloads: "Downloads (This layer):", total_downloads: "Downloads (This layer and below):" }));
+            for(i in activityData.ChildrenActivity){
+              $("#activityChildrenBlock").append(getActivity("totals", activityData.ChildrenActivity[i], { timespan: "", timescale: "day(s)", child_views: "Views:", child_downloads: "Downloads:" }));
+            }
+          });
+        </script>
+        <style type="text/css">
+          #tab_activity .activity.totals { width: 48%; min-width: 300px; }
+        </style>
+        <div id="activityBlock"></div>
+        <h2 class="mid">Applicable activity directly below this Layer in the last <%=activityDaysAgo.Text %> days</h2>
+        <div id="activityChildrenBlock"></div>
       </div>
       <!-- Embed -->
       <div class="tab" id="tab_embed">
@@ -406,3 +431,4 @@
 </asp:Literal>
 <asp:Literal ID="urlPattern" runat="server" Visible="false">/learninglist/{nodeID}/{shortTitle}</asp:Literal>
 <asp:Literal ID="widgetUrlPattern" runat="server" Visible="false">/widgets/learninglist?node={nodeID}</asp:Literal>
+<asp:Literal ID="activityDaysAgo" runat="server" Visible="false">90</asp:Literal>

@@ -32,7 +32,7 @@ namespace Isle.BizServices
         MyManager myMgr = new MyManager();
 
         EFDAL.IsleContentContext ctx = new EFDAL.IsleContentContext();
-        EFManager myManager = new EFManager();
+        EFManager myEfManager = new EFManager();
 		/// <summary>
 		/// Default constructor
 		/// </summary>
@@ -55,7 +55,9 @@ namespace Isle.BizServices
             {
                 //may need to check if part of a connector relationship
                 //also, related doc version is deleted.
-                isValid = myManager.Content_Delete( pId, ref statusMessage );
+                //isValid = myEfManager.Content_Delete( pId, ref statusMessage );
+                //15-01-28 MP - moved up delete to here to enable use of other services at this level
+                isValid = Content_Delete( pId, ref statusMessage );
                 //assumes if failed, the status message will have details
 
                 //if resource exists, need to set inactive
@@ -66,6 +68,67 @@ namespace Isle.BizServices
             }
             return isValid;
 		}//
+        private bool Content_Delete( int id, ref string statusMessage )
+        {
+            bool isSuccessful = false;
+            try
+            {
+                statusMessage = "";
+                using ( var context = new EFDAL.IsleContentContext() )
+                {
+                    EFDAL.Content item = context.Contents.SingleOrDefault( s => s.Id == id );
+
+                    if ( item != null && item.Id > 0 )
+                    {
+                        //will need to delete resource
+                        //14-12-04 MP - added code at the services level to check this!
+                        //15-01-28 MP - note in a cascade delete, the resources will need to be handled!!
+                        int resourceId = item.ResourceIntId == null ? 0 : ( int ) item.ResourceIntId;
+
+                        context.Contents.Remove( item );
+                        context.SaveChanges();
+                        isSuccessful = true;
+
+                        //TODO - need to check for and delete a related resource
+                        //delete doc version
+                        if ( item.DocumentRowId != null
+                            && item.DocumentRowId.ToString().Length == 36
+                            && item.DocumentRowId.ToString() != ContentItem.DEFAULT_GUID )
+                        {
+                            myEfManager.Document_Version_Delete( item.DocumentRowId, ref statusMessage );
+                        }
+                       
+
+                        // =========== delete child nodes ==========================
+                        List<EFDAL.Content> eflist = context.Contents
+                            .Where( s => s.ParentId == id )
+                            .OrderBy( s => s.Id )
+                            .ToList();
+
+                        if ( eflist != null && eflist.Count > 0 )
+                        {
+                            foreach ( EFDAL.Content efom in eflist )
+                            {
+                                Content_Delete( efom.Id, ref statusMessage );
+                                //if resource exists, need to set inactive
+                                if ( efom.ResourceIntId != null && efom.ResourceIntId > 0 )
+                                {
+                                    Isle.BizServices.ResourceBizService.Resource_SetInactive( ( int ) efom.ResourceIntId, ref statusMessage );
+                                }
+                            }
+                            statusMessage = string.Format( "Also removed all child items ({0})", eflist.Count );
+                        }
+
+                    }
+                }
+            }
+            catch ( Exception ex )
+            {
+                isSuccessful = false;
+                statusMessage = ex.Message;
+            }
+            return isSuccessful;
+        }
 
 
 		/// <summary>
@@ -81,7 +144,7 @@ namespace Isle.BizServices
 		}
         public int Create_ef( ContentItem entity, ref string statusMessage )
         {
-            return myManager.ContentAdd( entity, ref statusMessage );
+            return myEfManager.ContentAdd( entity, ref statusMessage );
         }
 		/// <summary>
 		/// Update an Content record
@@ -95,7 +158,7 @@ namespace Isle.BizServices
             //result = myMgr.ContentUpdate( entity );
             //else
             //{
-                if ( myManager.ContentUpdate( entity ) )
+                if ( myEfManager.ContentUpdate( entity ) )
                     result = "successful";
             //}
             if ( entity.HasResourceId() )
@@ -130,7 +193,7 @@ namespace Isle.BizServices
         {
             ContentItem item = Get( contentId );
             item.StatusId = ContentItem.PUBLISHED_STATUS;
-            item.IsPublished = true;
+            //item.IsPublished = true;
 
             return UpdateAfterQuickPub( item );
         }//
@@ -149,7 +212,7 @@ namespace Isle.BizServices
                 //if found set 1, else use 4. Read the Fine Print
             }
             string result = ""; //myMgr.Update( entity );
-            if ( myManager.ContentUpdate( entity ) )
+            if ( myEfManager.ContentUpdate( entity ) )
                 result = "successful";
             return result;  // myMgr.Update( entity );
 
@@ -170,7 +233,7 @@ namespace Isle.BizServices
                     if ( entity.HasChanged )
                     {
                         //may want a date check, just in case??
-                        myManager.ContentUpdate( entity );
+                        myEfManager.ContentUpdate( entity );
                         //myMgr.Update( entity );
                     }
                 }
@@ -380,7 +443,7 @@ namespace Isle.BizServices
 
         public bool ContentConnectorDelete( int parentId, int childId, ref string statusMessage )
         {
-            return myManager.ContentConnector_Delete( parentId, childId, ref statusMessage );
+            return myEfManager.ContentConnector_Delete( parentId, childId, ref statusMessage );
  }
 
         protected ContentNode GetCurriculumOutline( int pContentId, bool publishedOnly )
@@ -624,8 +687,9 @@ namespace Isle.BizServices
             if ( res != null && res.Id > 0 )
             {
                 ResourceReplace( res, user, toNode );
-
+                //re: publish for org, should be same as source. But don't have explicit question
                 PublishingServices.PublishToDatabase( res
+                    ,user.OrgId
                         , ref isValid
                         , ref statusMessage
                         , ref versionID

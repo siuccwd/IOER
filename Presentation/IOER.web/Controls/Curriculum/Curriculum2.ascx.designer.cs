@@ -22,6 +22,15 @@ namespace ILPathways.Controls.Curriculum {
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl createMode;
         
         /// <summary>
+        /// orgsPanel control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel orgsPanel;
+        
+        /// <summary>
         /// viewMode control.
         /// </summary>
         /// <remarks>

@@ -213,431 +213,431 @@ margin-top: 15px; }
     </div>
     <div class="rightCol" >
         <div id="currContentSection">
-        <div >
-        <h2 id="h2libraryTitle" ><asp:Label ID="litCurrentLibrary" CssClass="libraryTitle" Text="No Library Selected" runat="server"></asp:Label></h2>
-            <div style="display:none;">
-        <h3>Current Collection: <asp:Literal ID="litCurrentCollection" Text="" runat="server"></asp:Literal></h3>
-                </div>
-        </div>
-        <div class="actionsSectionPanel">
-
-    <!-- ================= Library======================================= -->
-    <asp:Panel ID="LibraryPanel" runat="server" Visible="false">
-         <asp:Panel ID="orgsPanel" runat="server" Visible="false">
-            <div class="labelColumn">Organizations</div>
-            <div class="dataColumn">
-                <asp:DropDownList ID="ddlOrgs" runat="server" ></asp:DropDownList>
+            <div >
+            <h2 id="h2libraryTitle" ><asp:Label ID="litCurrentLibrary" CssClass="libraryTitle" Text="No Library Selected" runat="server"></asp:Label></h2>
+                <div style="display:none;">
+            <h3>Current Collection: <asp:Literal ID="litCurrentCollection" Text="" runat="server"></asp:Literal></h3>
+                    </div>
             </div>
-         </asp:Panel>
-             <uc1:LibraryMtce runat="server" ID="LibraryMtce1" DefaultLibraryTypeId="2" InitializeOnRequest="false" />
+            <div class="actionsSectionPanel">
 
-
-    </asp:Panel>    
-    <!-- ================= collection===================================== -->
-        <asp:Panel ID="collectionPanel" runat="server" Visible="false">
-
-        </asp:Panel>                
-    <!-- ================= members======================================== -->
-        <asp:Panel ID="membersPanel" runat="server" Visible="false">
-            <h2>Members</h2>
-            <div class="labelColumn">&nbsp;</div>
-            <div class="dataColumn">
-                <asp:LinkButton ID="pendingMembers" runat="server" Visible="true" Text="Show Pending Members" OnClick="pendingMembers_Click"></asp:LinkButton>
-            </div>
-
-            <hr />
-            <asp:Panel ID="mbrSearchPanel" runat="server" Visible="true">
-                <div class="labelColumn">
-                    <asp:Label ID="Label6" AssociatedControlID="ddlFilterMemberType" runat="server">Member Type </asp:Label></div>
+        <!-- ================= Library======================================= -->
+        <asp:Panel ID="LibraryPanel" runat="server" Visible="false">
+             <asp:Panel ID="orgsPanel" runat="server" Visible="false">
+                <div class="labelColumn">Organizations</div>
                 <div class="dataColumn">
-                    <asp:DropDownList ID="ddlFilterMemberType" runat="server">
-                        <asp:ListItem Text="All" Value=""></asp:ListItem>
-                        <asp:ListItem Text="Pending" Value="0"></asp:ListItem>
-                        <asp:ListItem Text="Reader" Value="1"></asp:ListItem>
-                        <asp:ListItem Text="Contributor" Value="2"></asp:ListItem>
-                        <asp:ListItem Text="Curator" Value="3"></asp:ListItem>
-                        <asp:ListItem Text="Administrator" Value="4"></asp:ListItem>
-                    </asp:DropDownList>
+                    <asp:DropDownList ID="ddlOrgs" runat="server" ></asp:DropDownList>
                 </div>
-                <div style="display: none;">
-                    <asp:Label ID="Label1" runat="server">Keyword:</asp:Label>
-                    <asp:TextBox ID="txtKeyword" runat="server" Width="300px"></asp:TextBox>
-                </div>
-                <br />
+             </asp:Panel>
+                 <uc1:LibraryMtce runat="server" ID="LibraryMtce1" DefaultLibraryTypeId="2" InitializeOnRequest="false" />
+
+
+        </asp:Panel>    
+        <!-- ================= collection===================================== -->
+            <asp:Panel ID="collectionPanel" runat="server" Visible="false">
+
+            </asp:Panel>                
+        <!-- ================= members======================================== -->
+            <asp:Panel ID="membersPanel" runat="server" Visible="false">
+                <h2>Members</h2>
                 <div class="labelColumn">&nbsp;</div>
                 <div class="dataColumn">
-                    <asp:Button ID="searchLink" runat="server" Text="Search" OnClick="searchLink_Click"></asp:Button>
+                    <asp:LinkButton ID="pendingMembers" runat="server" Visible="true" Text="Show Pending Members" OnClick="pendingMembers_Click"></asp:LinkButton>
                 </div>
 
-            </asp:Panel>
-
-            <div style="width: 100%">
-                <div class="clear" style="float: right;">
-                    <div class="labelColumn" style="vertical-align: middle;">Page Size</div>
-                    <div class="dataColumn" style="text-align: center; font-size: 100%;">
-                        <asp:DropDownList ID="ddlPageSizeList" runat="server" Enabled="false" AutoPostBack="True" OnSelectedIndexChanged="PageSizeList_OnSelectedIndexChanged"></asp:DropDownList>
+                <hr />
+                <asp:Panel ID="mbrSearchPanel" runat="server" Visible="true">
+                    <div class="labelColumn">
+                        <asp:Label ID="Label6" AssociatedControlID="ddlFilterMemberType" runat="server">Member Type </asp:Label></div>
+                    <div class="dataColumn">
+                        <asp:DropDownList ID="ddlFilterMemberType" runat="server">
+                            <asp:ListItem Text="All" Value=""></asp:ListItem>
+                            <asp:ListItem Text="Pending" Value="0"></asp:ListItem>
+                            <asp:ListItem Text="Reader" Value="1"></asp:ListItem>
+                            <asp:ListItem Text="Contributor" Value="2"></asp:ListItem>
+                            <asp:ListItem Text="Curator" Value="3"></asp:ListItem>
+                            <asp:ListItem Text="Administrator" Value="4"></asp:ListItem>
+                        </asp:DropDownList>
                     </div>
-                </div>
+                    <div style="display: none;">
+                        <asp:Label ID="Label1" runat="server">Keyword:</asp:Label>
+                        <asp:TextBox ID="txtKeyword" runat="server" Width="300px"></asp:TextBox>
+                    </div>
+                    <br />
+                    <div class="labelColumn">&nbsp;</div>
+                    <div class="dataColumn">
+                        <asp:Button ID="searchLink" runat="server" Text="Search" OnClick="searchLink_Click"></asp:Button>
+                    </div>
 
-                <br class="clearFloat" />
-                <asp:GridView ID="membersGrid" runat="server" AutoGenerateColumns="False"
-                    AllowPaging="true" PageSize="50" AllowSorting="false"
-                    AutoGenerateEditButton="True" DataKeyNames="Id"
-                    OnRowCommand="membersGrid_RowCommand"
-                    OnPageIndexChanging="membersGrid_PageIndexChanging"
-                    OnSorting="membersGrid_Sorting"
-                    OnRowEditing="EditRecord"
-                    OnRowDataBound="membersGrid_RowDataBound"
-                    OnRowCancelingEdit="CancelRecord"
-                    OnRowUpdating="UpdateRecord"
-                    BorderStyle="None" BorderWidth="0px" CellPadding="3" GridLines="Horizontal" Width="100%"
-                    CaptionAlign="Top"
-                    UseAccessibleHeader="true">
-                    <HeaderStyle CssClass="gridResultsHeader" HorizontalAlign="Left" />
-                    <Columns>
-                        <asp:TemplateField Visible="false" HeaderText="Select">
-                            <ItemTemplate>
-                                <asp:LinkButton ID="selectButton" CommandArgument='<%# Eval("Id") %>' CommandName="SelectRow" CausesValidation="false" runat="server">
-			Select</asp:LinkButton>
-                            </ItemTemplate>
-                        </asp:TemplateField>
-                        <asp:TemplateField HeaderText="Remove"  ItemStyle-CssClass="removeCol">
-                            <ItemTemplate>
-                                <asp:LinkButton ID="deleteRowButton" CommandArgument='<%# Eval("Id") %>' CommandName="DeleteRow" CausesValidation="false" OnClientClick="return confirm('Are you certain that you want to remove this member?');" runat="server">Remove</asp:LinkButton>
-                            </ItemTemplate>
-                        </asp:TemplateField>
-                        <asp:BoundField DataField="Library" HeaderText="Library" Visible="true"></asp:BoundField>
-                        <asp:TemplateField HeaderText="Member/Organization" SortExpression="SortName">
-                            <EditItemTemplate>
-                                <asp:Label ID="gridlblMemberName" runat="server" Text='<%# Bind("MemberName") %>'></asp:Label>
-                            </EditItemTemplate>
-                            <ItemTemplate>
-                                <asp:Label ID="gridlblMemberName2" runat="server" Text='<%# Bind("MemberName") %>'></asp:Label>
-                                <br /><%# Eval( "Organization" )%>
-                            </ItemTemplate>
-                        </asp:TemplateField>
+                </asp:Panel>
 
-                        <asp:TemplateField HeaderText="Member Type" SortExpression="MemberType">
-                            <EditItemTemplate>
-                                <asp:Label ID="gridlblLibMbrMsg" Visible="false" runat="server"></asp:Label>
-                                <asp:DropDownList ID="gridDdlTypes" Visible="true" runat="server"></asp:DropDownList>
-                                <%--  <asp:RequiredFieldValidator ID="rfvGridTypes" runat="server" ErrorMessage="A Member Type is required!" ControlToValidate="gridDdlTypes"></asp:RequiredFieldValidator>--%>
-                            </EditItemTemplate>
-                            <ItemTemplate>
-                                <asp:Label ID="gridlblMemberName" runat="server" Text='<%# Bind("MemberType") %>'></asp:Label>
-                            </ItemTemplate>
-                        </asp:TemplateField>
+                <div style="width: 100%">
+                    <div class="clear" style="float: right;">
+                        <div class="labelColumn" style="vertical-align: middle;">Page Size</div>
+                        <div class="dataColumn" style="text-align: center; font-size: 100%;">
+                            <asp:DropDownList ID="ddlPageSizeList" runat="server" Enabled="false" AutoPostBack="True" OnSelectedIndexChanged="PageSizeList_OnSelectedIndexChanged"></asp:DropDownList>
+                        </div>
+                    </div>
 
-                        <asp:TemplateField HeaderText="Library Org. Association"  >
-                            <EditItemTemplate>
-                                <asp:Label ID="gridlblNoOrgMbrMsg" Visible="false" runat="server" Text="N/A - no organization for this library"></asp:Label>
-                                <asp:DropDownList ID="gridDdlOrgMbrType" Visible="false" runat="server"></asp:DropDownList>
+                    <br class="clearFloat" />
+                    <asp:GridView ID="membersGrid" runat="server" AutoGenerateColumns="False"
+                        AllowPaging="true" PageSize="50" AllowSorting="false"
+                        AutoGenerateEditButton="True" DataKeyNames="Id"
+                        OnRowCommand="membersGrid_RowCommand"
+                        OnPageIndexChanging="membersGrid_PageIndexChanging"
+                        OnSorting="membersGrid_Sorting"
+                        OnRowEditing="EditRecord"
+                        OnRowDataBound="membersGrid_RowDataBound"
+                        OnRowCancelingEdit="CancelRecord"
+                        OnRowUpdating="UpdateRecord"
+                        BorderStyle="None" BorderWidth="0px" CellPadding="3" GridLines="Horizontal" Width="100%"
+                        CaptionAlign="Top"
+                        UseAccessibleHeader="true">
+                        <HeaderStyle CssClass="gridResultsHeader" HorizontalAlign="Left" />
+                        <Columns>
+                            <asp:TemplateField Visible="false" HeaderText="Select">
+                                <ItemTemplate>
+                                    <asp:LinkButton ID="selectButton" CommandArgument='<%# Eval("Id") %>' CommandName="SelectRow" CausesValidation="false" runat="server">
+			    Select</asp:LinkButton>
+                                </ItemTemplate>
+                            </asp:TemplateField>
+                            <asp:TemplateField HeaderText="Remove"  ItemStyle-CssClass="removeCol">
+                                <ItemTemplate>
+                                    <asp:LinkButton ID="deleteRowButton" CommandArgument='<%# Eval("Id") %>' CommandName="DeleteRow" CausesValidation="false" OnClientClick="return confirm('Are you certain that you want to remove this member?');" runat="server">Remove</asp:LinkButton>
+                                </ItemTemplate>
+                            </asp:TemplateField>
+                            <asp:BoundField DataField="Library" HeaderText="Library" Visible="true"></asp:BoundField>
+                            <asp:TemplateField HeaderText="Member/Organization" SortExpression="SortName">
+                                <EditItemTemplate>
+                                    <asp:Label ID="gridlblMemberName" runat="server" Text='<%# Bind("MemberName") %>'></asp:Label>
+                                </EditItemTemplate>
+                                <ItemTemplate>
+                                    <asp:Label ID="gridlblMemberName2" runat="server" Text='<%# Bind("MemberName") %>'></asp:Label>
+                                    <br /><%# Eval( "Organization" )%>
+                                </ItemTemplate>
+                            </asp:TemplateField>
+
+                            <asp:TemplateField HeaderText="Member Type" SortExpression="MemberType">
+                                <EditItemTemplate>
+                                    <asp:Label ID="gridlblLibMbrMsg" Visible="false" runat="server"></asp:Label>
+                                    <asp:DropDownList ID="gridDdlTypes" Visible="true" runat="server"></asp:DropDownList>
+                                    <%--  <asp:RequiredFieldValidator ID="rfvGridTypes" runat="server" ErrorMessage="A Member Type is required!" ControlToValidate="gridDdlTypes"></asp:RequiredFieldValidator>--%>
+                                </EditItemTemplate>
+                                <ItemTemplate>
+                                    <asp:Label ID="gridlblMemberName" runat="server" Text='<%# Bind("MemberType") %>'></asp:Label>
+                                </ItemTemplate>
+                            </asp:TemplateField>
+
+                            <asp:TemplateField HeaderText="Library Org. Association"  >
+                                <EditItemTemplate>
+                                    <asp:Label ID="gridlblNoOrgMbrMsg" Visible="false" runat="server" Text="N/A - no organization for this library"></asp:Label>
+                                    <asp:DropDownList ID="gridDdlOrgMbrType" Visible="false" runat="server"></asp:DropDownList>
                                    
-                            </EditItemTemplate>
-                            <ItemTemplate>
-                                <asp:Label ID="gridlblOrgMbrType" runat="server" Text='<%# Bind("OrgMemberType") %>'></asp:Label>
-                            </ItemTemplate>
-                        </asp:TemplateField>
+                                </EditItemTemplate>
+                                <ItemTemplate>
+                                    <asp:Label ID="gridlblOrgMbrType" runat="server" Text='<%# Bind("OrgMemberType") %>'></asp:Label>
+                                </ItemTemplate>
+                            </asp:TemplateField>
 
                            
-                        <asp:BoundField DataField="MemberTypeId" HeaderText="Member Type Id" Visible="false"></asp:BoundField>
-                        <asp:BoundField DataField="OrganizationId" HeaderText="Org. Id" Visible="false"></asp:BoundField>
+                            <asp:BoundField DataField="MemberTypeId" HeaderText="Member Type Id" Visible="false"></asp:BoundField>
+                            <asp:BoundField DataField="OrganizationId" HeaderText="Org. Id" Visible="false"></asp:BoundField>
 
-                        <asp:TemplateField HeaderText="Last Updated" ItemStyle-HorizontalAlign="Right" SortExpression="LastUpdated">
-                            <EditItemTemplate>
-                                <asp:Label ID="gridlblLastUpdated" runat="server" Text='<%# Bind("LastUpdated", "{0:d}") %>'></asp:Label>
-                            </EditItemTemplate>
-                            <ItemTemplate>
-                                <asp:Label ID="gridlblLastUpdated2" runat="server" Text='<%# Bind("LastUpdated","{0:d}") %>'></asp:Label>
-                            </ItemTemplate>
-                        </asp:TemplateField>
-                        <asp:BoundField DataField="Created" Visible="false" HeaderText="Added" SortExpression="Created" DataFormatString="{0:d}"></asp:BoundField>
+                            <asp:TemplateField HeaderText="Last Updated" ItemStyle-HorizontalAlign="Right" SortExpression="LastUpdated">
+                                <EditItemTemplate>
+                                    <asp:Label ID="gridlblLastUpdated" runat="server" Text='<%# Bind("LastUpdated", "{0:d}") %>'></asp:Label>
+                                </EditItemTemplate>
+                                <ItemTemplate>
+                                    <asp:Label ID="gridlblLastUpdated2" runat="server" Text='<%# Bind("LastUpdated","{0:d}") %>'></asp:Label>
+                                </ItemTemplate>
+                            </asp:TemplateField>
+                            <asp:BoundField DataField="Created" Visible="false" HeaderText="Added" SortExpression="Created" DataFormatString="{0:d}"></asp:BoundField>
 
-                    </Columns>
-                    <PagerSettings Visible="false"
-                        Mode="NumericFirstLast"
-                        FirstPageText="First"
-                        LastPageText="Last"
-                        PageButtonCount="5"
-                        Position="TopAndBottom" />
+                        </Columns>
+                        <PagerSettings Visible="false"
+                            Mode="NumericFirstLast"
+                            FirstPageText="First"
+                            LastPageText="Last"
+                            PageButtonCount="5"
+                            Position="TopAndBottom" />
 
-                </asp:GridView>
-                <div style="float: left; margin-top: 10px;">
-                    <wcl:PagerV2_8 ID="pager2" runat="server" Visible="false" OnCommand="pager_Command" GenerateFirstLastSection="true" FirstClause="First Page" PreviousClause="Prev." NextClause="Next" LastClause="Last Page" PageSize="25" CompactModePageCount="10" NormalModePageCount="10" GenerateGoToSection="false" GeneratePagerInfoSection="true" />
+                    </asp:GridView>
+                    <div style="float: left; margin-top: 10px;">
+                        <wcl:PagerV2_8 ID="pager2" runat="server" Visible="false" OnCommand="pager_Command" GenerateFirstLastSection="true" FirstClause="First Page" PreviousClause="Prev." NextClause="Next" LastClause="Last Page" PageSize="25" CompactModePageCount="10" NormalModePageCount="10" GenerateGoToSection="false" GeneratePagerInfoSection="true" />
+                    </div>
+                    <br class="clearFloat" />
                 </div>
-                <br class="clearFloat" />
-            </div>
-        </asp:Panel>
+            </asp:Panel>
 
-    <!-- ================= invitations==================================== -->
-        <asp:Panel ID="invitationsPanel" runat="server" Visible="false">
-            <h3 >Invitations</h3>
-               <asp:LinkButton ID="showInvitations" runat="server" Visible="false" Text="Show Pending Invitations" OnClick="showInvitations_Click"></asp:LinkButton>
-            <br />
-                <asp:Panel ID="invitePanelStart" runat="server" visible="true" >
-                    <div id="inviteToggle" style="display:inline-block; width:100%;" class="instructionToggle" onclick="ShowHideSection('inviteInstructions');" >Show/Hide Instructions</div>
-                    <div id="inviteInstructions" style="display:none;" >
-                        You may invite people to:
-                    <ul>
-                        <li><strong>View</strong> the selected library (if not already publically available)</li>
-                        <li><strong>Contribute</strong> to the selected library (if the library does not already have open contributions (see library settings)</li>
-                        <li><strong>Curate</strong> the selected library. A curator can contribute to a library and may also perform administrative functions on the library - that is use this page to manager members, etc.</li>
-                        <li><strong>Administer</strong> the selected library. An administrator has the same privileges as a curator, but may also add curators, and other administrators.</li>
-                    </ul>
+        <!-- ================= invitations==================================== -->
+            <asp:Panel ID="invitationsPanel" runat="server" Visible="false">
+                <h3 >Invitations</h3>
+                   <asp:LinkButton ID="showInvitations" runat="server" Visible="false" Text="Show Pending Invitations" OnClick="showInvitations_Click"></asp:LinkButton>
+                <br />
+                    <asp:Panel ID="invitePanelStart" runat="server" visible="true" >
+                        <div id="inviteToggle" style="display:inline-block; width:100%;" class="instructionToggle" onclick="ShowHideSection('inviteInstructions');" >Show/Hide Instructions</div>
+                        <div id="inviteInstructions" style="display:none;" >
+                            You may invite people to:
+                        <ul>
+                            <li><strong>View</strong> the selected library (if not already publically available)</li>
+                            <li><strong>Contribute</strong> to the selected library (if the library does not already have open contributions (see library settings)</li>
+                            <li><strong>Curate</strong> the selected library. A curator can contribute to a library and may also perform administrative functions on the library - that is use this page to manager members, etc.</li>
+                            <li><strong>Administer</strong> the selected library. An administrator has the same privileges as a curator, but may also add curators, and other administrators.</li>
+                        </ul>
                    
-                    <p>You start by entering the email address of the invitee and library role. The system will first search for an existing account for the email. If an account has not yet been created for the invitee, you can choose to create a starting account. This will result in an easier registration process for the invitee. You can also specify if the invitee should be added to your organization. <br />NOTE: this function will soon be available from an organization administration page and will ease managing library members.</p>
-                    </div>
-
-                    <div class="labelColumn"><asp:Label ID="Label2" AssociatedControlID="txtEmail"  runat="server" >Email</asp:Label></div>
-                    <div class="dataColumn"><asp:TextBox ID="txtEmail" runat="server" Width="300px"></asp:TextBox> </div>
-                    <div class="clearFloat"></div>
-
-                    <div class="labelColumn"><asp:Label ID="Label3" AssociatedControlID="ddlMemberType"  runat="server" >Member Type </asp:Label></div>
-                    <div class="dataColumn">
-                        <asp:DropDownList ID="ddlMemberType" runat="server">
-                            <asp:ListItem Text="Reader"         Value="1" Selected="True"></asp:ListItem>
-                            <asp:ListItem Text="Contributor"    Value="2" ></asp:ListItem>
-                            <asp:ListItem Text="Curator"        Value="3" ></asp:ListItem>
-                            <asp:ListItem Text="Administrator"  Value="4" ></asp:ListItem>
-                        </asp:DropDownList>
+                        <p>You start by entering the email address of the invitee and library role. The system will first search for an existing account for the email. If an account has not yet been created for the invitee, you can choose to create a starting account. This will result in an easier registration process for the invitee. You can also specify if the invitee should be added to your organization. <br />NOTE: this function will soon be available from an organization administration page and will ease managing library members.</p>
                         </div>
+
+                        <div class="labelColumn"><asp:Label ID="Label2" AssociatedControlID="txtEmail"  runat="server" >Email</asp:Label></div>
+                        <div class="dataColumn"><asp:TextBox ID="txtEmail" runat="server" Width="300px"></asp:TextBox> </div>
+                        <div class="clearFloat"></div>
+
+                        <div class="labelColumn"><asp:Label ID="Label3" AssociatedControlID="ddlMemberType"  runat="server" >Member Type </asp:Label></div>
                         <div class="dataColumn">
-                        <a class="toolTipLink" id="A1" title="Library Member Type|Valid member types:<ul><li>Reader - has read access to the library (typically used where library does not have public access).</li><li>Contributor - can add resources the library (typically used where the library does not have open contributions and user is not part of organization with implicit contribution to organization libraries)</li><li>Curator - a curator may manage the library, including managing members, and approving resources</li><li>Administrator - can manage curators and other administrators</li></ul>"><img
-			src="/images/icons/infoBubble.gif" alt="" /></a>
-                    </div>
-                    <div class="clearFloat"></div>
-                    <div class="labelColumn">&nbsp;</div>
-                    <div class="dataColumn" style="margin-top: 10px;">
-                    <asp:LinkButton ID="inviteStep2Link" runat="server" Text="Continue" CssClass="defaultButton" OnClick="inviteStep2Link_Click"></asp:LinkButton>
+                            <asp:DropDownList ID="ddlMemberType" runat="server">
+                                <asp:ListItem Text="Reader"         Value="1" Selected="True"></asp:ListItem>
+                                <asp:ListItem Text="Contributor"    Value="2" ></asp:ListItem>
+                                <asp:ListItem Text="Curator"        Value="3" ></asp:ListItem>
+                                <asp:ListItem Text="Administrator"  Value="4" ></asp:ListItem>
+                            </asp:DropDownList>
+                            </div>
+                            <div class="dataColumn">
+                            <a class="toolTipLink" id="A1" title="Library Member Type|Valid member types:<ul><li>Reader - has read access to the library (typically used where library does not have public access).</li><li>Contributor - can add resources the library (typically used where the library does not have open contributions and user is not part of organization with implicit contribution to organization libraries)</li><li>Curator - a curator may manage the library, including managing members, and approving resources</li><li>Administrator - can manage curators and other administrators</li></ul>"><img
+			    src="/images/icons/infoBubble.gif" alt="" /></a>
                         </div>
-                </asp:Panel>
-            <!-- ========================================================================================== -->
-                <asp:Panel ID="invitePanel2" runat="server" visible="false" >
-                    <asp:Literal runat="server" ID="notFoundMsg"  Visible="false"><p>The requested email was not found in our system. You can create a quick account for the invitee (saving them time) or just have them create the account upon responding to this invitation. Either:</p>
-                    <ul>
-                        <li>Enter the first and last name below (a temporary password will be generated) and indicate if this user should also be added to your organization</li>
-                        <li>Or, just indicate if the user should be added to your organization after registering</li>
-                    </ul>
-                    
-                        </asp:literal>
-                    <p>Indicate if this user should be added to your organization:</p>
-                    <asp:label ID="userFoundMsg" runat="server" Visible="false"></asp:label>
-                    
-                    <div class="isleBox">
-                    <h3>Why should I add a user to this organization?</h3>
-                    <p>This is an optional step. However, organization members:</p>
-                    <ul>
-                        <li>Will have immediate access to all existing organization libraries that allow implicit access to organization members </li>
-                        <li>Will have immediate access to new (created in the future) organization libraries that allow implicit access to organization members </li>
-                        <li>Will have immediate <b>contribute</b> capability to any organization library that allows open contribute (with or without approval) to organization members </li>
-                        <li>Immediate access to any organization related function added to the system in the future</li>
-                    </ul>
-                    </div>
-                    <asp:RadioButtonList ID="rblAddToOrg" runat="server">
-                        <asp:ListItem Text="Do NOT add To My Organization" Value="0" Selected="True"></asp:ListItem>
-                        <asp:ListItem Text="Add as Administration"            Value="1"></asp:ListItem>
-                        <asp:ListItem Text="Add as Staff member/Employee"     Value="2"></asp:ListItem>
-                        <asp:ListItem Text="Add as Student"                   Value="3"></asp:ListItem>
-                        <asp:ListItem Text="Add as Contrator/External"        Value="4"></asp:ListItem>
-                    </asp:RadioButtonList>
-                    <br />
-                    <asp:Button ID="inviteStep3NoAcct" Visible="false" runat="server" Text="Continue (do not create account)" OnClick="inviteStep3NoAcct_Click" CssClass="defaultButton" CausesValidation="false" ></asp:Button>
-                    <asp:Button ID="inviteStep4HasAcct" Visible="false" runat="server" Text="Continue" OnClick="inviteStep4HasAcct_Click" CssClass="defaultButton"  CausesValidation="false"></asp:Button>
-                    <br />
-                    <asp:Panel ID="createAcctPanel" runat="server" Visible="false">
-                        <br />
-                    <h3>Create Account:</h3>
-                    <div class="labelColumn"><asp:Label ID="Label4" AssociatedControlID="txtFirstName"  runat="server" >First Name</asp:Label></div>
-                    <div class="dataColumn"><asp:TextBox ID="txtFirstName" runat="server" Width="300px"></asp:TextBox> </div>
-                    <div class="clearFloat"></div>
-                    <div class="labelColumn"><asp:Label ID="Label5" AssociatedControlID="txtLastName"  runat="server" >Last Name</asp:Label></div>
-                    <div class="dataColumn"><asp:TextBox ID="txtLastName" runat="server" Width="300px"></asp:TextBox> </div>
-                    <div class="clearFloat"></div>
-                    <div class="labelColumn">&nbsp;</div>
-                    <div class="dataColumn" style="margin-top:10px;"><asp:Button ID="inviteStep5CreateAcct" runat="server" Text="Continue and Create Account" OnClick="inviteStep5CreateAcct_Click" CssClass="defaultButton" ></asp:Button> </div>
-                    
+                        <div class="clearFloat"></div>
+                        <div class="labelColumn">&nbsp;</div>
+                        <div class="dataColumn" style="margin-top: 10px;">
+                        <asp:LinkButton ID="inviteStep2Link" runat="server" Text="Continue" CssClass="defaultButton" OnClick="inviteStep2Link_Click"></asp:LinkButton>
+                            </div>
                     </asp:Panel>
-                </asp:Panel>
-            
-                <asp:Panel ID="orgRolePanel" runat="server" Visible="false">
-                    <!-- User should have some min org admin role to assign these.
-                        - also should probably not be able to assign a role above their own? 
-                        -->
-                   <p>You may optionally assign organization roles for this person. If applicable, select one or more roles to be assigned to this person.</p>
+                <!-- ========================================================================================== -->
+                    <asp:Panel ID="invitePanel2" runat="server" visible="false" >
+                        <asp:Literal runat="server" ID="notFoundMsg"  Visible="false"><p>The requested email was not found in our system. You can create a quick account for the invitee (saving them time) or just have them create the account upon responding to this invitation. Either:</p>
+                        <ul>
+                            <li>Enter the first and last name below (a temporary password will be generated) and indicate if this user should also be added to your organization</li>
+                            <li>Or, just indicate if the user should be added to your organization after registering</li>
+                        </ul>
                     
-                    <asp:CheckBoxList ID="cblOrgRoles" runat="server"></asp:CheckBoxList>
-                    <br />
-                    <asp:Button ID="btnOrgRoleContinue" Visible="true" runat="server" Text="Continue" OnClick="inviteOrgRole_Click" CssClass="defaultButton" CausesValidation="false" ></asp:Button>
-                </asp:Panel>
+                            </asp:literal>
+                        <p>Indicate if this user should be added to your organization:</p>
+                        <asp:label ID="userFoundMsg" runat="server" Visible="false"></asp:label>
+                    
+                        <div class="isleBox">
+                        <h3>Why should I add a user to this organization?</h3>
+                        <p>This is an optional step. However, organization members:</p>
+                        <ul>
+                            <li>Will have immediate access to all existing organization libraries that allow implicit access to organization members </li>
+                            <li>Will have immediate access to new (created in the future) organization libraries that allow implicit access to organization members </li>
+                            <li>Will have immediate <b>contribute</b> capability to any organization library that allows open contribute (with or without approval) to organization members </li>
+                            <li>Immediate access to any organization related function added to the system in the future</li>
+                        </ul>
+                        </div>
+                        <asp:RadioButtonList ID="rblAddToOrg" runat="server">
+                            <asp:ListItem Text="Do NOT add To My Organization" Value="0" Selected="True"></asp:ListItem>
+                            <asp:ListItem Text="Add as Administration"            Value="1"></asp:ListItem>
+                            <asp:ListItem Text="Add as Staff member/Employee"     Value="2"></asp:ListItem>
+                            <asp:ListItem Text="Add as Student"                   Value="3"></asp:ListItem>
+                            <asp:ListItem Text="Add as Contrator/External"        Value="4"></asp:ListItem>
+                        </asp:RadioButtonList>
+                        <br />
+                        <asp:Button ID="inviteStep3NoAcct" Visible="false" runat="server" Text="Continue (do not create account)" OnClick="inviteStep3NoAcct_Click" CssClass="defaultButton" CausesValidation="false" ></asp:Button>
+                        <asp:Button ID="inviteStep4HasAcct" Visible="false" runat="server" Text="Continue" OnClick="inviteStep4HasAcct_Click" CssClass="defaultButton"  CausesValidation="false"></asp:Button>
+                        <br />
+                        <asp:Panel ID="createAcctPanel" runat="server" Visible="false">
+                            <br />
+                        <h3>Create Account:</h3>
+                        <div class="labelColumn"><asp:Label ID="Label4" AssociatedControlID="txtFirstName"  runat="server" >First Name</asp:Label></div>
+                        <div class="dataColumn"><asp:TextBox ID="txtFirstName" runat="server" Width="300px"></asp:TextBox> </div>
+                        <div class="clearFloat"></div>
+                        <div class="labelColumn"><asp:Label ID="Label5" AssociatedControlID="txtLastName"  runat="server" >Last Name</asp:Label></div>
+                        <div class="dataColumn"><asp:TextBox ID="txtLastName" runat="server" Width="300px"></asp:TextBox> </div>
+                        <div class="clearFloat"></div>
+                        <div class="labelColumn">&nbsp;</div>
+                        <div class="dataColumn" style="margin-top:10px;"><asp:Button ID="inviteStep5CreateAcct" runat="server" Text="Continue and Create Account" OnClick="inviteStep5CreateAcct_Click" CssClass="defaultButton" ></asp:Button> </div>
+                    
+                        </asp:Panel>
+                    </asp:Panel>
             
-                <asp:Panel ID="messagePanel" runat="server" Visible="false">
-                    <h3>Optionally add a Message</h3>
-                    <div class="dataColumn">Enter message <a class="toolTipLink" id="tipFile" title="Custom Message|You may optionally include a custom message. This will useful if the invitee is not familiar with this website or may not know how to start using the site."><img
-			src="/images/icons/infoBubble.gif" alt="" /></a></div>
-                    <asp:TextBox ID="inviteMessage" Visible="false" runat="server" Rows="3" style="width:90%;" TextMode="MultiLine"></asp:TextBox>
-                    <obout:EditorPopupHolder runat="server" id="popupHolder"  />
-                	<obout:Editor ID="txtMessage" runat="server" Height="200px" Width="95%">
-                        <EditPanel ID="EditPanel1" FullHtml="false" runat="server"></EditPanel>
-                        <TopToolBar Appearance="Lite" >
-                            <AddButtons>
-                                <obout:HorizontalSeparator ID="HorizontalSeparator1" runat="server" />
-                                <obout:OrderedList /><obout:BulletedList />
-                                <obout:InsertLink /><obout:RemoveLink />
-                            </AddButtons>
-                        </TopToolBar>
-                        <BottomToolBar ShowDesignButton="true" ShowHtmlTextButton="true" ShowPreviewButton="true" ShowFullScreenButton="true" ></BottomToolBar>
-                     </obout:Editor>
+                    <asp:Panel ID="orgRolePanel" runat="server" Visible="false">
+                        <!-- User should have some min org admin role to assign these.
+                            - also should probably not be able to assign a role above their own? 
+                            -->
+                       <p>You may optionally assign organization roles for this person. If applicable, select one or more roles to be assigned to this person.</p>
+                    
+                        <asp:CheckBoxList ID="cblOrgRoles" runat="server"></asp:CheckBoxList>
+                        <br />
+                        <asp:Button ID="btnOrgRoleContinue" Visible="true" runat="server" Text="Continue" OnClick="inviteOrgRole_Click" CssClass="defaultButton" CausesValidation="false" ></asp:Button>
+                    </asp:Panel>
+            
+                    <asp:Panel ID="messagePanel" runat="server" Visible="false">
+                        <h3>Optionally add a Message</h3>
+                        <div class="dataColumn">Enter message <a class="toolTipLink" id="tipFile" title="Custom Message|You may optionally include a custom message. This will useful if the invitee is not familiar with this website or may not know how to start using the site."><img
+			    src="/images/icons/infoBubble.gif" alt="" /></a></div>
+                        <asp:TextBox ID="inviteMessage" Visible="false" runat="server" Rows="3" style="width:90%;" TextMode="MultiLine"></asp:TextBox>
+                        <obout:EditorPopupHolder runat="server" id="popupHolder"  />
+                	    <obout:Editor ID="txtMessage" runat="server" Height="200px" Width="95%">
+                            <EditPanel ID="EditPanel1" FullHtml="false" runat="server"></EditPanel>
+                            <TopToolBar Appearance="Lite" >
+                                <AddButtons>
+                                    <obout:HorizontalSeparator ID="HorizontalSeparator1" runat="server" />
+                                    <obout:OrderedList /><obout:BulletedList />
+                                    <obout:InsertLink /><obout:RemoveLink />
+                                </AddButtons>
+                            </TopToolBar>
+                            <BottomToolBar ShowDesignButton="true" ShowHtmlTextButton="true" ShowPreviewButton="true" ShowFullScreenButton="true" ></BottomToolBar>
+                         </obout:Editor>
 
-                    <asp:Button ID="inviteStep6Final" Visible="true" runat="server" Text="Finish" OnClientClick="setSubmitState()" OnClick="inviteStep6Final_Click" CssClass="defaultButton btnSubmit" ></asp:Button>
-                    <p id="processing">Processing, Please wait...</p>
-                </asp:Panel>
-                <asp:Panel ID="finshInvitePanel" runat="server" Visible="false">
-                    <h3>Completed Invitation</h3>
-                    <p>The invitation has been sent.</p>
-                    <p>Click the <u>Start a New Invitation</u> link below to send another invitation.</p>
-                     <asp:LinkButton ID="newInvitationLink" runat="server" Text="Start a New Invitation"  OnClick="newInvitationLink_Click"></asp:LinkButton>
-                </asp:Panel>
+                        <asp:Button ID="inviteStep6Final" Visible="true" runat="server" Text="Finish" OnClientClick="setSubmitState()" OnClick="inviteStep6Final_Click" CssClass="defaultButton btnSubmit" ></asp:Button>
+                        <p id="processing">Processing, Please wait...</p>
+                    </asp:Panel>
+                    <asp:Panel ID="finshInvitePanel" runat="server" Visible="false">
+                        <h3>Completed Invitation</h3>
+                        <p>The invitation has been sent.</p>
+                        <p>Click the <u>Start a New Invitation</u> link below to send another invitation.</p>
+                         <asp:LinkButton ID="newInvitationLink" runat="server" Text="Start a New Invitation"  OnClick="newInvitationLink_Click"></asp:LinkButton>
+                    </asp:Panel>
 
-                <asp:Panel ID="pendingInvitesPanel" runat="server" visible="false" >
-                    <h3>Pending Invitations</h3>
-                </asp:Panel>
+                    <asp:Panel ID="pendingInvitesPanel" runat="server" visible="false" >
+                        <h3>Pending Invitations</h3>
+                    </asp:Panel>
 
-            <asp:RequiredFieldValidator id="rfvEmail" runat="server" Display="None" ControlToValidate="txtEmail" ErrorMessage="Please enter an email address"  Enabled="false"></asp:RequiredFieldValidator>
-            <asp:RequiredFieldValidator id="rfvFirstName" runat="server" Display="None" ControlToValidate="txtFirstName"  ErrorMessage="Please enter a first name"  Enabled="false"></asp:RequiredFieldValidator>
-            <asp:RequiredFieldValidator id="rfvLastName" runat="server" Display="None" ControlToValidate="txtLastName"  ErrorMessage="Please enter a last name"  Enabled="false"></asp:RequiredFieldValidator>
-        </asp:Panel>
+                <asp:RequiredFieldValidator id="rfvEmail" runat="server" Display="None" ControlToValidate="txtEmail" ErrorMessage="Please enter an email address"  Enabled="false"></asp:RequiredFieldValidator>
+                <asp:RequiredFieldValidator id="rfvFirstName" runat="server" Display="None" ControlToValidate="txtFirstName"  ErrorMessage="Please enter a first name"  Enabled="false"></asp:RequiredFieldValidator>
+                <asp:RequiredFieldValidator id="rfvLastName" runat="server" Display="None" ControlToValidate="txtLastName"  ErrorMessage="Please enter a last name"  Enabled="false"></asp:RequiredFieldValidator>
+            </asp:Panel>
 
-    <!-- ================= followers ==================================== -->
-        <asp:Panel ID="followersPanel" runat="server" Visible="false">
+        <!-- ================= followers ==================================== -->
+            <asp:Panel ID="followersPanel" runat="server" Visible="false">
 
-        </asp:Panel>  
+            </asp:Panel>  
 
-    <!-- ================= approvals ===================================== -->
-        <asp:Panel ID="approvePanel" runat="server" Visible="false">
-            <h3>Approve or Reject Pending Resources</h3>
-            <script type="text/javascript">
-              var pendingResources = <%=pendingResources %>;
-              var userGUID = "<%=userGUID %>";
-              var libraryID = <%=CurrentLibraryId %>;
-              $(document).ready(function() {
-                loadApprovalData();
-              });
+        <!-- ================= approvals ===================================== -->
+            <asp:Panel ID="approvePanel" runat="server" Visible="false">
+                <h3>Approve or Reject Pending Resources</h3>
+                <script type="text/javascript">
+                  var pendingResources = <%=pendingResources %>;
+                  var userGUID = "<%=userGUID %>";
+                  var libraryID = <%=CurrentLibraryId %>;
+                  $(document).ready(function() {
+                    loadApprovalData();
+                  });
 
-              function loadApprovalData() {
-                var template = $("#template_pendingResource").html();
-                var pendingBox = $("#pendingResources");
-                pendingBox.html("");
-                for(i in pendingResources){
-                  var item = pendingResources[i];
-                  pendingBox.append(
-                    template
-                      .replace(/{id}/g, item.id)
-                      .replace(/{title}/g, item.title)
-                      .replace(/{submitter}/g, item.submittingUserName)
-                      .replace(/{userID}/g, item.submittingUserID)
-                      .replace(/{date}/g, item.submittedOnDate)
-                      .replace(/{resourceURL}/g, item.resourceURL)
-                      .replace(/{collection}/g, item.targetCollectionTitle)
-                      .replace(/{libraryID}/g, item.targetLibraryID)
-                      .replace(/{collectionID}/g, item.targetCollectionID)
-                      .replace(/{thumbsrc}/g, "src=\"//ioer.ilsharedlearning.org/OERThumbs/large/" + item.resourceIntId + "-large.png\"")
-                  );
-                }
-              }
-
-              function approveAll() {
-                $(".pendingResourceControls input[value=true]").prop("checked", "checked");
-              }
-              function rejectAll() {
-                $(".pendingResourceControls input[value=false]").prop("checked", "checked");
-              }
-              function ignoreAll() {
-                $(".pendingResourceControls input[value=none]").prop("checked", "checked");
-              }
-
-              function saveApprovals() {
-                //Hold the data 
-                var approvals = [];
-                //Fill out the data
-                $("#pendingResources .pendingResourceControls").each(function() {
-                  var selection = $(this).find("input:checked");
-                  var reason = $(this).find("input[type=text]").val();
-                  var selectedValue = selection.attr("value");
-                  var id = parseInt(selection.attr("data-resourceID"));
-                  if(selectedValue == "true" || selectedValue == "false"){ //Only take action if needed
-                    approvals.push({ id: id, approved: selectedValue == "true", reason: reason });
+                  function loadApprovalData() {
+                    var template = $("#template_pendingResource").html();
+                    var pendingBox = $("#pendingResources");
+                    pendingBox.html("");
+                    for(i in pendingResources){
+                      var item = pendingResources[i];
+                      pendingBox.append(
+                        template
+                          .replace(/{id}/g, item.id)
+                          .replace(/{title}/g, item.title)
+                          .replace(/{submitter}/g, item.submittingUserName)
+                          .replace(/{userID}/g, item.submittingUserID)
+                          .replace(/{date}/g, item.submittedOnDate)
+                          .replace(/{resourceURL}/g, item.resourceURL)
+                          .replace(/{collection}/g, item.targetCollectionTitle)
+                          .replace(/{libraryID}/g, item.targetLibraryID)
+                          .replace(/{collectionID}/g, item.targetCollectionID)
+                          .replace(/{thumbsrc}/g, "src=\"//ioer.ilsharedlearning.org/OERThumbs/large/" + item.resourceIntId + "-large.png\"")
+                      );
+                    }
                   }
-                });
-                //AJAX call
-                doAjax("SaveApprovalsJSON", { libraryID: libraryID, userGUID: userGUID, approvals: approvals }, successSaveApprovals);
-              }
 
-              function doAjax(method, data, success){
-                $.ajax({
-                  url: "/Services/LibraryService.asmx/" + method,
-                  async: true,
-                  success: function(msg){ success($.parseJSON(msg.d)); },
-                  type: "POST",
-                  data: JSON.stringify(data),
-                  contentType: "application/json; charset=utf-8",
-                  dataType: "json"
-                });
-              }
+                  function approveAll() {
+                    $(".pendingResourceControls input[value=true]").prop("checked", "checked");
+                  }
+                  function rejectAll() {
+                    $(".pendingResourceControls input[value=false]").prop("checked", "checked");
+                  }
+                  function ignoreAll() {
+                    $(".pendingResourceControls input[value=none]").prop("checked", "checked");
+                  }
 
-              function successSaveApprovals(data){
-                if(data.isValid){
-                  pendingResources = data.data;
-                  loadApprovalData();
-                }
-                else {
-                  alert(data.status);
-                }
-              }
-            </script>
-            <link rel="stylesheet" type="text/css" href="/styles/common2.css" />
-            <style type="text/css">
-              .pendingResource { position: relative; margin-bottom: 5px; padding: 5px; background-color: #EEE; border-radius: 5px; padding: 5px 105px 5px 130px; min-height: 100px; }
-              .pendingResource img { position: absolute; top: 5px; right: 5px; width: 120px; }
-              .pendingResourceControls { position: absolute; top: 5px; left: 5px; width: 120px; }
-              .pendingResourceControls label { display: block; border-radius: 5px; padding: 1px 3px; }
-              .pendingResourceControls label:hover, .pendingResourceControls label:focus { cursor: pointer; background-color: #DDD; }
-              .pendingResourceControls input[type=text] { width: 100%; margin-top: 2px; }
-              #pendingResourceButtons { padding: 0 5px; margin-bottom: 5px; }
-              #pendingResourceButtons input { display: inline-block; width: 100px; vertical-align: top; }
-              #pendingResourceButtons input.bgLightGray { color: #333; }
-              #pendingResourceButtons input.bgLightGray:hover, #pendingResourceButtons input.bgLightGray:focus { color: #FFF; }
-            </style>  
+                  function saveApprovals() {
+                    //Hold the data 
+                    var approvals = [];
+                    //Fill out the data
+                    $("#pendingResources .pendingResourceControls").each(function() {
+                      var selection = $(this).find("input:checked");
+                      var reason = $(this).find("input[type=text]").val();
+                      var selectedValue = selection.attr("value");
+                      var id = parseInt(selection.attr("data-resourceID"));
+                      if(selectedValue == "true" || selectedValue == "false"){ //Only take action if needed
+                        approvals.push({ id: id, approved: selectedValue == "true", reason: reason });
+                      }
+                    });
+                    //AJAX call
+                    doAjax("SaveApprovalsJSON", { libraryID: libraryID, userGUID: userGUID, approvals: approvals }, successSaveApprovals);
+                  }
 
-            <div id="pendingResourceButtons">
-              <input type="button" class="isleButton bgLightGray " onclick="ignoreAll()" value="No Actions" />
-              <input type="button" class="isleButton bgGreen" onclick="approveAll();" value="Approve All" />
-              <input type="button" class="isleButton bgRed" onclick="rejectAll();" value="Reject All" />
-              <input type="button" class="isleButton bgBlue" onclick="saveApprovals();" value="Confirm" />
-            </div>
-            <div id="pendingResources"></div>
+                  function doAjax(method, data, success){
+                    $.ajax({
+                      url: "/Services/LibraryService.asmx/" + method,
+                      async: true,
+                      success: function(msg){ success($.parseJSON(msg.d)); },
+                      type: "POST",
+                      data: JSON.stringify(data),
+                      contentType: "application/json; charset=utf-8",
+                      dataType: "json"
+                    });
+                  }
+
+                  function successSaveApprovals(data){
+                    if(data.isValid){
+                      pendingResources = data.data;
+                      loadApprovalData();
+                    }
+                    else {
+                      alert(data.status);
+                    }
+                  }
+                </script>
+                <link rel="stylesheet" type="text/css" href="/styles/common2.css" />
+                <style type="text/css">
+                  .pendingResource { position: relative; margin-bottom: 5px; padding: 5px; background-color: #EEE; border-radius: 5px; padding: 5px 105px 5px 130px; min-height: 100px; }
+                  .pendingResource img { position: absolute; top: 5px; right: 5px; width: 120px; }
+                  .pendingResourceControls { position: absolute; top: 5px; left: 5px; width: 120px; }
+                  .pendingResourceControls label { display: block; border-radius: 5px; padding: 1px 3px; }
+                  .pendingResourceControls label:hover, .pendingResourceControls label:focus { cursor: pointer; background-color: #DDD; }
+                  .pendingResourceControls input[type=text] { width: 100%; margin-top: 2px; }
+                  #pendingResourceButtons { padding: 0 5px; margin-bottom: 5px; }
+                  #pendingResourceButtons input { display: inline-block; width: 100px; vertical-align: top; }
+                  #pendingResourceButtons input.bgLightGray { color: #333; }
+                  #pendingResourceButtons input.bgLightGray:hover, #pendingResourceButtons input.bgLightGray:focus { color: #FFF; }
+                </style>  
+
+                <div id="pendingResourceButtons">
+                  <input type="button" class="isleButton bgLightGray " onclick="ignoreAll()" value="No Actions" />
+                  <input type="button" class="isleButton bgGreen" onclick="approveAll();" value="Approve All" />
+                  <input type="button" class="isleButton bgRed" onclick="rejectAll();" value="Reject All" />
+                  <input type="button" class="isleButton bgBlue" onclick="saveApprovals();" value="Confirm" />
+                </div>
+                <div id="pendingResources"></div>
             
-            <div id="template_pendingResource" style="display: none;">
-              <div class="pendingResource" data-resourceID="{id}">
-                <img {thumbsrc} />
-                <div class="pendingResourceInfo">
-                  <div class="submitter"><a href="/profile/{userID}/" target="_blank">{submitter}</a> Submitted on {date}:</div>
-                  <div class="title"><b>{title}</b></div>
-                  <div class="targetCollection">to <i><a href="/library/collection/{libraryID}/{collectionID}/">{collection}</a></i></div>
-                  <div class="approveLinks">
-                      <a href="{resourceURL}" target="_blank">View Resource</a> | <a href="/Resource/{id}" target="_blank">View Metadata</a>
+                <div id="template_pendingResource" style="display: none;">
+                  <div class="pendingResource" data-resourceID="{id}">
+                    <img {thumbsrc} />
+                    <div class="pendingResourceInfo">
+                      <div class="submitter"><a href="/profile/{userID}/" target="_blank">{submitter}</a> Submitted on {date}:</div>
+                      <div class="title"><b>{title}</b></div>
+                      <div class="targetCollection">to <i><a href="/library/collection/{libraryID}/{collectionID}/">{collection}</a></i></div>
+                      <div class="approveLinks">
+                          <a href="{resourceURL}" target="_blank">View Resource</a> | <a href="/Resource/{id}" target="_blank">View Metadata</a>
+                      </div>
+                    </div>
+                    <div class="pendingResourceControls">
+                      <label for="noaction_{id}"><input type="radio" name="decide_{id}" id="noaction_{id}" data-resourceID="{id}" value="none" checked="checked" /> No Action</label>
+                      <label for="approve_{id}"><input type="radio" name="decide_{id}" id="approve_{id}" data-resourceID="{id}" value="true" /> Approve</label>
+                      <label for="reject_{id}"><input type="radio" name="decide_{id}" id="reject_{id}" data-resourceID="{id}" value="false" /> Reject</label>
+                      <input type="text" name="reason_{id}" placeholder="Reason..." />
+                    </div>
                   </div>
                 </div>
-                <div class="pendingResourceControls">
-                  <label for="noaction_{id}"><input type="radio" name="decide_{id}" id="noaction_{id}" data-resourceID="{id}" value="none" checked="checked" /> No Action</label>
-                  <label for="approve_{id}"><input type="radio" name="decide_{id}" id="approve_{id}" data-resourceID="{id}" value="true" /> Approve</label>
-                  <label for="reject_{id}"><input type="radio" name="decide_{id}" id="reject_{id}" data-resourceID="{id}" value="false" /> Reject</label>
-                  <input type="text" name="reason_{id}" placeholder="Reason..." />
-                </div>
-              </div>
-            </div>
-        </asp:Panel>
+            </asp:Panel>
 
-        </div>
+            </div>
         </div>
 
         <div id="formInstructionsSection" >

@@ -284,47 +284,67 @@ namespace ILPathways.LRW.controls
 
             string statusMessage = "";
             IOERUser user = GetAppUser();
-            bool isSuccessful = true; ;
+            bool isSuccessful = true;
+            string sortTitle = "";
+            int intID = 0;
             //Publish!
-            ResourcePublishUpdateController pubController = new ResourcePublishUpdateController();
-            PublishController newPubController = new PublishController();
+            //ResourcePublishUpdateController pubController = new ResourcePublishUpdateController();
+            //PublishController newPubController = new PublishController();
+
+
+            //TODO - add option to publish to an org   **************************
+            int publishForOrgId = 0;
             try
             {
                 if ( LRPublishAction.Equals( "no" ) )
                 {
-                    pubController.PublishToDatabase( resource, ref resourceVersionID, ref statusMessage );
+                    PublishingServices.PublishToDatabase( resource, 
+                        publishForOrgId,
+                        ref isSuccessful,
+                        ref statusMessage,
+                        ref resourceVersionID, 
+                        ref intID,
+                        ref sortTitle );
                     justPublished = "true";
                     publishedMessage = "Successfully tagged your resource";
                 }
                 else if ( LRPublishAction.Equals( "save" ) )
                 {
-                    pubController.PublishToDatabase( resource, ref resourceVersionID, ref statusMessage );
+                    PublishingServices.PublishToDatabase(resource,
+                        publishForOrgId,
+                       ref isSuccessful,
+                        ref statusMessage,
+                        ref resourceVersionID,
+                        ref intID,
+                        ref sortTitle );
 
-                    pubController.BuildSaveLRDocument( resource, ref statusMessage );
+                    PublishingServices.BuildSaveLRDocument( resource, 
+                        ref isSuccessful,
+                        ref statusMessage );
 
                     justPublished = "true";
                     publishedMessage = "Successfully tagged your resource.";
                 }
                 else
                 {
-                    int intID = 0;
                     bool skipLRPublish = false;
                     bool updatingElasticSearch = true;
-                    string sortTitle= "";
 
                     //pubController.PublishToAll( resource, ref resourceVersionID, ref statusMessage );
-                    newPubController.PublishToAll( resource, 
+                    PublishingServices.PublishToAll( resource, 
                                 ref isSuccessful, 
                                 ref statusMessage, 
                                 ref resourceVersionID, 
                                 ref intID, 
                                 ref sortTitle,
                                 updatingElasticSearch,
-                                skipLRPublish );
+                                skipLRPublish,
+                                (Patron) WebUser,
+                                publishForOrgId );
 
                     justPublished = "true";
                     publishedMessage = "Successful Publish.";
-                    new PublishController().SendPublishNotification( user, resource );
+                    PublishingServices.SendPublishNotification( user, resource );
                 }
                 if ( AuthoredResourceID > 0 )
                 {

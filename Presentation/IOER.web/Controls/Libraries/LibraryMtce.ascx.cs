@@ -150,11 +150,15 @@ namespace ILPathways.Controls.Libraries
                 //??necesary?
                 OrgCodesList = orgCodesList;
                 //already contains: Select an Organization (so set index accordingly)
+                //MP ===> doesn't actually contain latter!!!! Could check first entry??
                 DataBaseHelper.PopulateList( this.ddlOrgs, orgCodesList, "Id", "Title", "" );
-                if ( orgCodesList.Count == 2 ) //select row, + one org
+
+
+                //15-02-02 mp - there is no select entry.
+                if ( orgCodesList.Count == 2 ) 
                 {
-                    ddlOrgs.SelectedIndex = 1;
-                    ddlOrgs.Enabled = false;
+                    //ddlOrgs.SelectedIndex = 1;
+                    //ddlOrgs.Enabled = false;
                 }
                 this.orgPanel.Visible = true;
                 ddlOrgs.Visible = true;
@@ -534,9 +538,15 @@ namespace ILPathways.Controls.Libraries
             }
             else
             {
+                //15-02-02 mp - in the context of lib admin, there is not a select option, so there is always a select
+                //                    && this.ddlOrgs.SelectedIndex < 1 
+                int orgId = 0;
+                if ( ddlOrgs.SelectedIndex > -1 )
+                    orgId = Int32.Parse( ddlOrgs.SelectedValue );
+
                 int libTypeId = Int32.Parse( ddlLibraryType.SelectedValue );
                 if ( ddlOrgs.Visible == true
-                    && this.ddlOrgs.SelectedIndex < 1 
+                    && orgId == 0 
                     && libTypeId == 2 )
                 {
                     SetConsoleErrorMessage( "Please select the organization that will administer (own) this library" );
@@ -558,37 +568,7 @@ namespace ILPathways.Controls.Libraries
 
             return isValid;
         } //
-        private bool HasRequiredFieldsOLD()
-        {
-            // check additional required fields
-            rfvTitle.Validate();
-            if ( rfvTitle.IsValid == false )
-            {
-                //NOTE: this may not be necessary anylonger if validator messages are properly picked up by all uplevel browsers!!!!
-                this.AddReqValidatorError( vsErrorSummary, rfvTitle.ErrorMessage, "txtTitle" );
-            }
-
-            if ( this.ddlLibraryType.SelectedIndex < 1 )
-            {
-                this.AddReqValidatorError( vsErrorSummary, "Please select a library type", "ddlLibraryType", true );
-            }
-            else
-            {
-                int libTypeId = Int32.Parse( ddlLibraryType.SelectedValue );
-                if ( this.ddlOrgs.SelectedIndex < 1 && libTypeId == 2 )
-                {
-                    this.AddReqValidatorError( vsErrorSummary, "Please select the organization that will administer (own) this library", "txtTitle", true );
-                }
-            }
-            if ( vsErrorSummary.Controls.Count > 0 )
-            {
-                return false;
-            }
-            else
-            {
-                return true;
-            }
-        } //
+        
         private bool DoValidations()
         {
             bool isValid = true;
@@ -676,9 +656,13 @@ namespace ILPathways.Controls.Libraries
                     entity.OrgAccessLevel = ( EObjectAccessLevel ) Int32.Parse( ddlOrgAccessLevel.SelectedValue );
                 else
                     entity.OrgAccessLevel = EObjectAccessLevel.ReadOnly;
-                
-                if (ddlOrgs.SelectedIndex > 0 )
-                    entity.OrgId = Int32.Parse( ddlOrgs.SelectedValue );
+
+                if ( ddlOrgs.SelectedIndex > -1 )
+                {
+                    int orgId = Int32.Parse( ddlOrgs.SelectedValue );
+                    if (orgId > 0)
+                        entity.OrgId = orgId;
+                }
 
                 entity.LastUpdated = System.DateTime.Now;
                 entity.LastUpdatedById = WebUser.Id;		//include for future use

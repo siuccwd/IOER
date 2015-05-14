@@ -166,6 +166,8 @@ function preview(id, useGoogle) {
     }
   }
   triggerResize(1100);
+  //Make AJAX tracking call
+  trackActivity(id);
 }
 //Alternate preview
 function previewWithGoogle() {
@@ -296,6 +298,14 @@ function like(id, button, type) {
   doAjax("CurriculumService1", "Like", { nodeID: id }, successAddLike, $(button), type);
 }
 
+//Track Activity
+function trackActivity(contentID) {
+  //Assemble AJAX stuff
+  var data = { curriculumID: curriculumID, nodeID: nodeID, contentID: contentID };
+  //Do AJAX call
+  doAjax("ActivityService", "LearningList_DocumentHit", data, successTrackActivity, null, null);
+}
+
 /* ---   ---   ---   AJAX   ---   ---   --- */
 function doAjax(service, method, data, success, button, extra) {
   if (button) { button.attr("disabled", "disabled"); }
@@ -344,6 +354,10 @@ function successGetFollowing(data) {
   if (data.valid) {
     $("#ddlTimelineSubscribe option[value=" + data.type + "]").prop("selected", true);
   }
+}
+
+function successTrackActivity(data) {
+  console.log(data);
 }
 
 /* ---   ---   ---   Rendering   ---   ---   --- */

@@ -131,7 +131,7 @@ namespace Isle.BizServices
         }
 
         #region Site Activity - sessions/visits
-        public static void LogSessionStart( string sessionId, string serverName, string comment, string remoteIP )
+        public static void LogSessionStart( string sessionId, string serverName, string comment, string remoteIP, string referrer )
         {
             bool showingTrace = false;
             GatewayEntities1 ctx = new GatewayEntities1();
@@ -143,6 +143,8 @@ namespace Isle.BizServices
             log.ServerName = serverName;
             log.Comment = comment;
             log.Application = "IOER";
+            log.Referrer = referrer;
+
             try
             {
                 ctx.AppVisitLogs.Add( log );

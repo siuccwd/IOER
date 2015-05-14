@@ -518,7 +518,6 @@ namespace LRWarehouse.Business
       public string url { get; set; }
       public string lrDocID { get; set; }
       public string requirements { get; set; }
-      public string timeRequired { get; set; }
       public string creator { get; set; }
       public string publisher { get; set; }
       public string submitter { get; set; }

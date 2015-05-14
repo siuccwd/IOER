@@ -36,6 +36,8 @@
           <EntitySet Name="Resource_ItemType" EntityType="ResourceModel.Store.Resource_ItemType" store:Type="Tables" Schema="dbo" Table="Resource.ItemType" />
           <EntitySet Name="Resource_Keyword" EntityType="ResourceModel.Store.Resource_Keyword" store:Type="Tables" Schema="dbo" Table="Resource.Keyword" />
           <EntitySet Name="Resource_Language" EntityType="ResourceModel.Store.Resource_Language" store:Type="Tables" Schema="dbo" Table="Resource.Language" />
+          <EntitySet Name="Resource_Like" EntityType="ResourceModel.Store.Resource_Like" store:Type="Tables" Schema="dbo" Table="Resource.Like" />
+          <EntitySet Name="Resource_LikeSummary" EntityType="ResourceModel.Store.Resource_LikeSummary" store:Type="Tables" Schema="dbo" Table="Resource.LikeSummary" />
           <EntitySet Name="Resource_PublishedBy" EntityType="ResourceModel.Store.Resource_PublishedBy" store:Type="Tables" Schema="dbo" Table="Resource.PublishedBy" />
           <EntitySet Name="Resource_ResourceType" EntityType="ResourceModel.Store.Resource_ResourceType" store:Type="Tables" Schema="dbo" Table="Resource.ResourceType" />
           <EntitySet Name="Resource_Standard" EntityType="ResourceModel.Store.Resource_Standard" store:Type="Tables" Schema="dbo" Table="Resource.Standard" />
@@ -44,6 +46,7 @@
           <EntitySet Name="Resource_Tag" EntityType="ResourceModel.Store.Resource_Tag" store:Type="Tables" Schema="dbo" Table="Resource.Tag" />
           <EntitySet Name="Resource_Text" EntityType="ResourceModel.Store.Resource_Text" store:Type="Tables" Schema="dbo" Table="Resource.Text" />
           <EntitySet Name="Resource_Version" EntityType="ResourceModel.Store.Resource_Version" store:Type="Tables" Schema="dbo" Table="Resource.Version" />
+          <EntitySet Name="Resource_View" EntityType="ResourceModel.Store.Resource_View" store:Type="Tables" Schema="dbo" Table="Resource.View" />
           <EntitySet Name="Standard_SubjectStandardConnector" EntityType="ResourceModel.Store.Standard_SubjectStandardConnector" store:Type="Tables" Schema="dbo" Table="Standard.SubjectStandardConnector" />
           <EntitySet Name="StandardBody" EntityType="ResourceModel.Store.StandardBody" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="StandardBody_Node" EntityType="ResourceModel.Store.StandardBody_Node" store:Type="Tables" Schema="dbo" Table="StandardBody.Node" />
@@ -118,6 +121,7 @@
       [Patron_Summary].[JobTitle] AS [JobTitle], 
       [Patron_Summary].[RoleProfile] AS [RoleProfile], 
       [Patron_Summary].[ImageUrl] AS [ImageUrl], 
+      [Patron_Summary].[UserProfileUrl] AS [UserProfileUrl], 
       [Patron_Summary].[OrganizationId] AS [OrganizationId], 
       [Patron_Summary].[Organization] AS [Organization], 
       [Patron_Summary].[PublishingRoleId] AS [PublishingRoleId], 
@@ -592,7 +596,7 @@
           <Property Name="ResourceIntId" Type="int" Nullable="false" />
           <Property Name="EvaluationId" Type="int" Nullable="false" />
           <Property Name="Score" Type="int" Nullable="false" />
-          <Property Name="UserHasCertification" Type="bit" />
+          <Property Name="UserHasCertification" Type="bit" Nullable="false" />
           <Property Name="CreatedById" Type="int" />
           <Property Name="Created" Type="datetime" />
           <Property Name="StandardId" Type="int" />
@@ -693,6 +697,27 @@
           <Property Name="Created" Type="datetime" />
           <Property Name="CreatedById" Type="int" />
         </EntityType>
+        <EntityType Name="Resource_Like">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="ResourceIntId" Type="int" />
+          <Property Name="IsLike" Type="bit" />
+          <Property Name="Created" Type="datetime" />
+          <Property Name="CreatedById" Type="int" />
+        </EntityType>
+        <EntityType Name="Resource_LikeSummary">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="ResourceIntId" Type="int" />
+          <Property Name="LikeCount" Type="int" />
+          <Property Name="DislikeCount" Type="int" />
+          <Property Name="LastUpdated" Type="datetime" />
+          <Property Name="ResourceId" Type="uniqueidentifier" />
+        </EntityType>
         <EntityType Name="Resource_PublishedBy">
           <Key>
             <PropertyRef Name="ResourceIntId" />
@@ -700,6 +725,7 @@
           <Property Name="ResourceIntId" Type="int" Nullable="false" />
           <Property Name="PublishedById" Type="int" Nullable="false" />
           <Property Name="Created" Type="datetime" />
+          <Property Name="PublishedForOrgId" Type="int" />
         </EntityType>
         <EntityType Name="Resource_ResourceType">
           <Key>
@@ -797,6 +823,15 @@
           <Property Name="InteractivityTypeId" Type="int" />
           <Property Name="InteractivityType" Type="varchar" MaxLength="100" />
           <Property Name="RowId" Type="uniqueidentifier" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Resource_View">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="ResourceIntId" Type="int" />
+          <Property Name="Created" Type="datetime" />
+          <Property Name="CreatedById" Type="int" />
         </EntityType>
         <EntityType Name="Standard_SubjectStandardConnector">
           <Key>
@@ -972,6 +1007,7 @@
           <Property Name="JobTitle" Type="varchar" MaxLength="100" />
           <Property Name="RoleProfile" Type="varchar" MaxLength="500" />
           <Property Name="ImageUrl" Type="varchar" MaxLength="200" />
+          <Property Name="UserProfileUrl" Type="varchar" />
           <Property Name="OrganizationId" Type="int" />
           <Property Name="Organization" Type="varchar" MaxLength="100" />
           <Property Name="PublishingRoleId" Type="int" />
@@ -1570,6 +1606,9 @@
           <EntitySet Name="Codes_TagCategoryValue_summary" EntityType="ResourceModel.Codes_TagCategoryValue_summary" />
           <EntitySet Name="Patron_ResourceSummary" EntityType="ResourceModel.Patron_ResourceSummary" />
           <EntitySet Name="Patron_Summary" EntityType="ResourceModel.Patron_Summary" />
+          <EntitySet Name="Resource_Like" EntityType="ResourceModel.Resource_Like" />
+          <EntitySet Name="Resource_LikeSummary" EntityType="ResourceModel.Resource_LikeSummary" />
+          <EntitySet Name="Resource_View" EntityType="ResourceModel.Resource_View" />
           </EntityContainer>
         <EntityType Name="EmailNotice">
           <Key>
@@ -2129,6 +2168,7 @@
           <Property Type="Int32" Name="PublishedById" Nullable="false" />
           <Property Type="DateTime" Name="Created" Precision="3" />
           <NavigationProperty Name="Resource" Relationship="ResourceModel.ResourceResource_PublishedBy" FromRole="Resource_PublishedBy" ToRole="Resource" />
+          <Property Type="Int32" Name="PublishedForOrgId" />
         </EntityType>
         <EntityType Name="StandardBody">
           <Key>
@@ -2545,7 +2585,7 @@
           <Property Type="Int32" Name="ResourceIntId" Nullable="false" />
           <Property Type="Int32" Name="EvaluationId" Nullable="false" />
           <Property Type="Int32" Name="Score" Nullable="false" />
-          <Property Type="Boolean" Name="UserHasCertification" />
+          <Property Type="Boolean" Name="UserHasCertification" Nullable="false" />
           <Property Type="Int32" Name="CreatedById" />
           <Property Type="DateTime" Name="Created" Precision="3" />
           <NavigationProperty Name="Resource_EvaluationSection" Relationship="ResourceModel.FK_Resource_EvaluationSection_Resource_Evaluation1" FromRole="Resource_Evaluation" ToRole="Resource_EvaluationSection" />
@@ -2780,6 +2820,37 @@
           <Property Type="DateTime" Name="Created" Precision="3" />
           <Property Type="DateTime" Name="LastUpdated" Precision="3" />
           <Property Type="Guid" Name="UserRowId" Nullable="false" />
+          <Property Type="String" Name="UserProfileUrl" MaxLength="8000" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="Resource_Like">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="Int32" Name="ResourceIntId" />
+          <Property Type="Boolean" Name="IsLike" />
+          <Property Type="DateTime" Name="Created" Precision="3" />
+          <Property Type="Int32" Name="CreatedById" />
+        </EntityType>
+        <EntityType Name="Resource_LikeSummary">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="Int32" Name="ResourceIntId" />
+          <Property Type="Int32" Name="LikeCount" />
+          <Property Type="Int32" Name="DislikeCount" />
+          <Property Type="DateTime" Name="LastUpdated" Precision="3" />
+          <Property Type="Guid" Name="ResourceId" />
+        </EntityType>
+        <EntityType Name="Resource_View">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="Int32" Name="ResourceIntId" />
+          <Property Type="DateTime" Name="Created" Precision="3" />
+          <Property Type="Int32" Name="CreatedById" />
         </EntityType>
         </Schema>
     </edmx:ConceptualModels>
@@ -3151,6 +3222,7 @@
           <EntitySetMapping Name="Resource_PublishedBy">
             <EntityTypeMapping TypeName="ResourceModel.Resource_PublishedBy">
               <MappingFragment StoreEntitySet="Resource_PublishedBy">
+                <ScalarProperty Name="PublishedForOrgId" ColumnName="PublishedForOrgId" />
                 <ScalarProperty Name="Created" ColumnName="Created" />
                 <ScalarProperty Name="PublishedById" ColumnName="PublishedById" />
                 <ScalarProperty Name="ResourceIntId" ColumnName="ResourceIntId" />
@@ -3552,6 +3624,7 @@
           <EntitySetMapping Name="Patron_Summary">
             <EntityTypeMapping TypeName="ResourceModel.Patron_Summary">
               <MappingFragment StoreEntitySet="Patron_Summary">
+                <ScalarProperty Name="UserProfileUrl" ColumnName="UserProfileUrl" />
                 <ScalarProperty Name="UserRowId" ColumnName="UserRowId" />
                 <ScalarProperty Name="LastUpdated" ColumnName="LastUpdated" />
                 <ScalarProperty Name="Created" ColumnName="Created" />
@@ -3570,6 +3643,39 @@
                 <ScalarProperty Name="LastName" ColumnName="LastName" />
                 <ScalarProperty Name="FirstName" ColumnName="FirstName" />
                 <ScalarProperty Name="UserName" ColumnName="UserName" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Resource_Like">
+            <EntityTypeMapping TypeName="ResourceModel.Resource_Like">
+              <MappingFragment StoreEntitySet="Resource_Like">
+                <ScalarProperty Name="CreatedById" ColumnName="CreatedById" />
+                <ScalarProperty Name="Created" ColumnName="Created" />
+                <ScalarProperty Name="IsLike" ColumnName="IsLike" />
+                <ScalarProperty Name="ResourceIntId" ColumnName="ResourceIntId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Resource_LikeSummary">
+            <EntityTypeMapping TypeName="ResourceModel.Resource_LikeSummary">
+              <MappingFragment StoreEntitySet="Resource_LikeSummary">
+                <ScalarProperty Name="ResourceId" ColumnName="ResourceId" />
+                <ScalarProperty Name="LastUpdated" ColumnName="LastUpdated" />
+                <ScalarProperty Name="DislikeCount" ColumnName="DislikeCount" />
+                <ScalarProperty Name="LikeCount" ColumnName="LikeCount" />
+                <ScalarProperty Name="ResourceIntId" ColumnName="ResourceIntId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Resource_View">
+            <EntityTypeMapping TypeName="ResourceModel.Resource_View">
+              <MappingFragment StoreEntitySet="Resource_View">
+                <ScalarProperty Name="CreatedById" ColumnName="CreatedById" />
+                <ScalarProperty Name="Created" ColumnName="Created" />
+                <ScalarProperty Name="ResourceIntId" ColumnName="ResourceIntId" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>

@@ -91,6 +91,25 @@ namespace ILPathways.Business
       }
     }
 
+    private int _resourceIntId;
+    /// <summary>
+    /// Gets/Sets ResourceIntId
+    /// </summary>
+    public int ResourceIntId
+    {
+        get
+        {
+            return this._resourceIntId;
+        }
+        set
+        {
+            if ( this._resourceIntId != value )
+            {
+                this._resourceIntId = value;
+                HasChanged = true;
+            }
+        }
+    }
     private string _comment = "";
     /// <summary>
     /// Gets/Sets Comment
@@ -123,25 +142,6 @@ namespace ILPathways.Business
     public string Description { get; set; }
     public string ResourceUrl { get; set; }
 
-    private int _resourceIntId;
-    /// <summary>
-    /// Gets/Sets ResourceIntId
-    /// </summary>
-    public int ResourceIntId
-    {
-        get
-        {
-            return this._resourceIntId;
-        }
-        set
-        {
-            if ( this._resourceIntId != value )
-            {
-                this._resourceIntId = value;
-                HasChanged = true;
-            }
-        }
-    }
     public int ResourceVersionIntId { get; set; }
     public string DetailPageUrl { get; set; }
 

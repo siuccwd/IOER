@@ -49,7 +49,7 @@
     });
 
     function doSearch() {
-      window.open( (useSecureURL ? "https://ioer.ilsharedlearning.org/secure/IsleSSO.aspx?nextUrl=" : "") + "http://ioer.ilsharedlearning.org/search.aspx?q=" + $("#txtSearch").val(), "_blank");
+      window.open( (useSecureURL ? "https://ioer.ilsharedlearning.org/secure/IsleSSO.aspx?nextUrl=" : "") + "http://ioer.ilsharedlearning.org/search.aspx?text=" + $("#txtSearch").val(), "_blank");
     }
   </script>
   <style type="text/css">

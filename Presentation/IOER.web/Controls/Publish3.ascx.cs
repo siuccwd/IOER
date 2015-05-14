@@ -17,6 +17,8 @@ namespace ILPathways.Controls
   public partial class Publish3 : BaseUserControl
   {
     public string myLibrariesString { get; set; }
+    public string orgData { get; set; }
+    public string selectedOrgOutput { get; set; }
     List<DDLLibrary> libraries = new List<DDLLibrary>();
     LibraryBizService libService = new LibraryBizService();
     JavaScriptSerializer serializer = new JavaScriptSerializer();
@@ -68,6 +70,17 @@ namespace ILPathways.Controls
       }
 
       //Regardless
+      Startup();
+    }
+
+    public void Startup()
+    {
+        // get org members where can contribute
+        var orgs = OrganizationBizService.OrganizationMembersCodes_WithContentPrivileges( WebUser.Id );
+        orgData = "var orgData = " + new JavaScriptSerializer().Serialize( orgs ) + ";";
+        selectedOrgOutput = "var selectedOrgID = 0";
+        var publishForOrgId = GetSelectedOrg();
+
       myLibrariesString = "var myLibraries = [];";
       if(IsUserAuthenticated()) 
       {
@@ -277,27 +290,28 @@ namespace ILPathways.Controls
     void PublishResource()
     {
       //Setup objects
-      var output = new Resource();
-      output.Version = new ResourceVersion();
+      var resource = new Resource();
+      resource.Version = new ResourceVersion();
 
       //Fill objects
-
+      resource.CreatedById = WebUser.Id;
+      resource.PublishedForOrgId = 0;       //************* TBD ********
       //Title
-      output.Version.Title = txtTitle.Value;
+      resource.Version.Title = txtTitle.Value;
       //Resource URL
-      output.ResourceUrl = txtURL.Value;
-      output.Version.ResourceUrl = txtURL.Value;
+      resource.ResourceUrl = txtURL.Value;
+      resource.Version.ResourceUrl = txtURL.Value;
       //Description
-      output.Version.Description = txtDescription.Value;
+      resource.Version.Description = txtDescription.Value;
       //Keywords
       foreach ( var item in serializer.Deserialize<List<string>>( hdnKeywords.Value ) )
       {
-        output.Keyword.Add( new ResourceChildItem() { CreatedById = WebUser.Id, OriginalValue = item } );
+        resource.Keyword.Add( new ResourceChildItem() { CreatedById = WebUser.Id, OriginalValue = item } );
       }
 
 
       //Language
-      output.Language.Add( new ResourceChildItem() 
+      resource.Language.Add( new ResourceChildItem() 
         { 
           CreatedById = WebUser.Id, 
           CodeId = int.Parse( ddlLanguage.GetCheckedItems().First().Value ), 
@@ -305,24 +319,24 @@ namespace ILPathways.Controls
         } 
       );
       //Access Rights
-      output.Version.AccessRightsId = int.Parse( ddlAccessRights.GetCheckedItems().First().Value );
-      output.Version.AccessRights = ddlAccessRights.GetCheckedItems().First().Text;
+      resource.Version.AccessRightsId = int.Parse( ddlAccessRights.GetCheckedItems().First().Value );
+      resource.Version.AccessRights = ddlAccessRights.GetCheckedItems().First().Text;
       //Usage Rights
-      output.Version.Rights = usageRightsSelector.conditionsURL;
+      resource.Version.Rights = usageRightsSelector.conditionsURL;
       //Creator
-      output.Version.Creator = txtCreator.Value;
+      resource.Version.Creator = txtCreator.Value;
       //Publisher
-      output.Version.Publisher = txtPublisher.Value;
+      resource.Version.Publisher = txtPublisher.Value;
       //Submitter
-      output.Version.Submitter = WebUser.FullName();
+      resource.Version.Submitter = WebUser.FullName();
       //Requirements
-      output.Version.Requirements = txtRequirements.Value;
+      resource.Version.Requirements = txtRequirements.Value;
       //Learning Standards
       if ( hdnStandards.Value != "" )
       {
         foreach ( var item in serializer.Deserialize<List<InputStandard>>( hdnStandards.Value ) )
         {
-          output.Standard.Add( new ResourceStandard()
+          resource.Standard.Add( new ResourceStandard()
             {
               CreatedById = WebUser.Id,
               StandardId = item.id,
@@ -334,21 +348,21 @@ namespace ILPathways.Controls
         }
       }
       //Resource Type
-      output.ResourceType = ProcessCBXL( cbxlResourceType.GetCheckedItems() );
+      resource.ResourceType = ProcessCBXL( cbxlResourceType.GetCheckedItems() );
       //Media Type
-      output.ResourceFormat = ProcessCBXL( cbxlMediaType.GetCheckedItems() );
+      resource.ResourceFormat = ProcessCBXL( cbxlMediaType.GetCheckedItems() );
       //K-12 Subject
-      output.SubjectMap = ProcessCBXL( cbxlK12Subject.GetCheckedItems() );
+      resource.SubjectMap = ProcessCBXL( cbxlK12Subject.GetCheckedItems() );
       //Educational Use
-      output.EducationalUse = ProcessCBXL( cbxlEducationalUse.GetCheckedItems() );
+      resource.EducationalUse = ProcessCBXL( cbxlEducationalUse.GetCheckedItems() );
       //Career Cluster
-      output.ClusterMap = ProcessCBXL( cbxlCareerCluster.GetCheckedItems() );
+      resource.ClusterMap = ProcessCBXL( cbxlCareerCluster.GetCheckedItems() );
       //Grade Level
-      output.Gradelevel = ProcessCBXL( cbxlGradeLevel.GetCheckedItems() );
+      resource.Gradelevel = ProcessCBXL( cbxlGradeLevel.GetCheckedItems() );
       //End User
-      output.Audience = ProcessCBXL( cbxlEndUser.GetCheckedItems() );
+      resource.Audience = ProcessCBXL( cbxlEndUser.GetCheckedItems() );
       //Group Type
-      output.GroupType = ProcessCBXL( cbxlGroupType.GetCheckedItems() );
+      resource.GroupType = ProcessCBXL( cbxlGroupType.GetCheckedItems() );
 
       bool success = true;
       string status = "";
@@ -363,22 +377,52 @@ namespace ILPathways.Controls
           string statusMsg = new ContentServices().UpdateAfterPublish( AuthoredResourceID );
       }
 
+      //TODO - add option to publish to an org   **************************
+      int publishForOrgId = GetSelectedOrg();
 
-      var publishController = new Controllers.PublishController();
+      //var publishController = new Controllers.PublishController();
       if ( LRPublishAction == "no" )
       {
-        publishController.PublishToDatabase( output, ref success, ref status, ref versionID, ref intID, ref sortTitle );
+          PublishingServices.PublishToDatabase( resource, 
+              publishForOrgId,
+            ref success, 
+            ref status, 
+            ref versionID, 
+            ref intID, 
+            ref sortTitle );
+
+          //log - could have been a test, or could have been another reason?
+          new ActivityBizServices().PublishActivity( resource, WebUser, "Saved (skipped published)" );
       }
       else if ( LRPublishAction == "save" )
       {
-        publishController.PublishToDatabase( output, ref success, ref status, ref versionID, ref intID, ref sortTitle );
-        output.Id = intID;
-        output.Version.Id = versionID;
-        publishController.BuildSaveLRDocument( output, ref success, ref status );
+        PublishingServices.PublishToDatabase( resource,
+            publishForOrgId,
+                ref success, 
+                ref status, 
+                ref versionID, 
+                ref intID, 
+                ref sortTitle );
+
+        resource.Id = intID;
+        resource.Version.Id = versionID;
+        PublishingServices.BuildSaveLRDocument( resource, ref success, ref status );
+
+          //not sure if this should be logged - until actually done?
+        new ActivityBizServices().PublishActivity( resource, WebUser, "Saved (not published)" );
       }
       else
       {
-        publishController.PublishToAll( output, ref success, ref status, ref versionID, ref intID, ref sortTitle, true, false );
+          PublishingServices.PublishToAll( resource, 
+            ref success, 
+            ref status, 
+            ref versionID, 
+            ref intID, 
+            ref sortTitle, 
+            true, 
+            false,
+            (Patron) WebUser,
+            publishForOrgId);
       }
 
       if ( success )
@@ -400,7 +444,7 @@ namespace ILPathways.Controls
         {
           bool hasApproval = false;
           string statusMessage2 = "";
-          bool isValid = ILPathways.Controllers.ContentController.HandleContentApproval( output, AuthoredResourceID, user, ref hasApproval, ref statusMessage2 );
+          bool isValid = ILPathways.Controllers.ContentController.HandleContentApproval( resource, AuthoredResourceID, user, ref hasApproval, ref statusMessage2 );
           if ( hasApproval )
           {
             SetConsoleSuccessMessage("<p>NOTE: Approval is required, an email has been sent requesting a review of this resource.</p>");
@@ -411,6 +455,22 @@ namespace ILPathways.Controls
       {
         SetConsoleErrorMessage( status );
       }
+    }
+    public int GetSelectedOrg()
+    {
+        int orgID = 0;
+        try
+        {
+            orgID = int.Parse( Request.Form.GetValues( "ddlOrg" )[ 0 ] );
+        }
+        catch ( Exception ex )
+        {
+            orgID = 0;
+
+        }
+        selectedOrgOutput = "var selectedOrgID = " + orgID + ";";
+        return orgID;
+
     }
 
     protected List<ResourceChildItem> ProcessCBXL( List<ListItem> input )

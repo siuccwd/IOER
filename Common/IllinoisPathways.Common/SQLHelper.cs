@@ -1955,11 +1955,11 @@ namespace Microsoft.ApplicationBlocks.Data
                 // Set the parameters values
                 AssignParameterValues( commandParameters, dataRow );
 
-                return SqlHelper.ExecuteNonQuery( connectionString, CommandType.StoredProcedure, spName, commandParameters );
+                return ExecuteNonQuery( connectionString, CommandType.StoredProcedure, spName, commandParameters );
             }
             else
             {
-                return SqlHelper.ExecuteNonQuery( connectionString, CommandType.StoredProcedure, spName );
+                return ExecuteNonQuery( connectionString, CommandType.StoredProcedure, spName );
             }
         }
 
@@ -1987,11 +1987,11 @@ namespace Microsoft.ApplicationBlocks.Data
                 // Set the parameters values
                 AssignParameterValues( commandParameters, dataRow );
 
-                return SqlHelper.ExecuteNonQuery( connection, CommandType.StoredProcedure, spName, commandParameters );
+                return ExecuteNonQuery( connection, CommandType.StoredProcedure, spName, commandParameters );
             }
             else
             {
-                return SqlHelper.ExecuteNonQuery( connection, CommandType.StoredProcedure, spName );
+                return ExecuteNonQuery( connection, CommandType.StoredProcedure, spName );
             }
         }
 
@@ -2020,11 +2020,11 @@ namespace Microsoft.ApplicationBlocks.Data
                 // Set the parameters values
                 AssignParameterValues( commandParameters, dataRow );
 
-                return SqlHelper.ExecuteNonQuery( transaction, CommandType.StoredProcedure, spName, commandParameters );
+                return ExecuteNonQuery( transaction, CommandType.StoredProcedure, spName, commandParameters );
             }
             else
             {
-                return SqlHelper.ExecuteNonQuery( transaction, CommandType.StoredProcedure, spName );
+                return ExecuteNonQuery( transaction, CommandType.StoredProcedure, spName );
             }
         }
         #endregion

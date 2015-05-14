@@ -170,7 +170,7 @@ namespace ILPathways.Controls.AppItems
         protected void HandleActionType()
         {
 
-            string guid = GetRequestKeyValue( "RowId", CurrentRecord.DEFAULT_GUID);
+            string guid = GetRequestKeyValue( "RowId", ContentItem.DEFAULT_GUID );
             Action = GetRequestKeyValue( "action", "" );
             if ( Action.Trim() != "" )
             {
@@ -178,10 +178,10 @@ namespace ILPathways.Controls.AppItems
 
                 if ( Action.ToLower().IndexOf( "step" ) > -1 )
                 {
-                    guid = CurrentRecord.DEFAULT_GUID;
+                    guid = ContentItem.DEFAULT_GUID;
                 }
 
-                if ( guid != CurrentRecord.DEFAULT_GUID )
+                if ( guid != ContentItem.DEFAULT_GUID )
                 {
                     txtDesc2.Text = txtDesc2.Text.Replace( "@RowId", guid );
                     CBLCategoryNewsletter.Visible = false;
@@ -191,12 +191,12 @@ namespace ILPathways.Controls.AppItems
                 }
                 else
                 {
-                    ProcessActionFields( CurrentRecord.DEFAULT_GUID );
+                    ProcessActionFields( ContentItem.DEFAULT_GUID );
                 }
             }
             else
             {
-                if ( guid != CurrentRecord.DEFAULT_GUID )
+                if ( guid != ContentItem.DEFAULT_GUID )
                 {
                     //if have id and no action, assume manage preferences??
                     pnlSubscribe.Visible = true;

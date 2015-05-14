@@ -167,8 +167,9 @@
         <h2>Info</h2>
         <div class="navLinks">
           <a href="/IOER_Timeline">IOER Timeline</a>
+          <a href="/activity/stats.aspx">IOER Activity &amp; Statistics</a>
           <a href="/Help/Guide.aspx">User Guide</a>
-          <a href="/News/Default.aspx">IOER News</a>
+          <!--<a href="/News/Default.aspx">IOER News</a>-->
         </div>
       </div>
 

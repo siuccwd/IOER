@@ -1949,39 +1949,6 @@ namespace ILPathways.Library
         } //
         #endregion
 
-        /// <summary>
-        /// Format a string for friendly url display
-        /// NOTE: with change to use the sort title, a number of the rules can be skipped
-        /// ==> note that we need to handle authored content first
-        /// </summary>
-        /// <param name="text"></param>
-        /// <returns></returns>
-        private string FormatFriendlyTitleDELETEME( string text )
-        {
-            string title = text;
-            title = title.Replace( " - ", "-" );
-            //convert
-            title = title.Replace( ".", "-" );
-            title = title.Replace( "%", "percent" );
-            //remove
-
-            title = title.Replace( "&#039;", "" );
-            title = title.Replace( ",", "" );
-            title = title.Replace( "'", "" );
-            title = title.Replace( "$", "" );
-            title = title.Replace( "+", "" );
-            title = title.Replace( "#", "" );
-            title = title.Replace( "?", "" );
-            title = title.Replace( ":", "" );
-            title = title.Replace( "\"", "" );
-            title = title.Replace( ")", "" );
-            title = title.Replace( "(", "" );
-
-            title = title.Replace( " ", "_" );
-
-            title = Server.HtmlEncode( title );
-            return title;
-        }//
 
         #region === Miscellaneous helper methods: defaults, IsDatatype, etc. ===
         /// <summary>

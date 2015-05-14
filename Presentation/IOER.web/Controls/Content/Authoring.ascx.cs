@@ -2,14 +2,11 @@
 using System.Collections.Generic;
 using System.Data;
 using System.IO;
-using System.Linq;
 using System.Net;
 using System.Text;
-using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
-using AjaxControlToolkit;
 using Obout.Ajax.UI.TreeView;
 using GDAL = Isle.BizServices;
 using ILPathways.Business;
@@ -22,7 +19,6 @@ using Isle.BizServices;
 using Isle.DTO;
 using LRWarehouse.DAL;
 using LRWarehouse.Business;
-using LDAL = LRWarehouse.DAL;
 using BDM = LRWarehouse.DAL.BaseDataManager;
 using AppUser = LRWarehouse.Business.Patron; //ILPathways.Business.AppUser;
 
@@ -1521,7 +1517,7 @@ namespace ILPathways.Controls.Content
             documentRowId = this.txtDocumentRowId.Text;
 
             if ( documentRowId.Length < 10
-                || documentRowId == entity.DEFAULT_GUID
+                || documentRowId == ContentItem.DEFAULT_GUID
                 || uploadOnly == true )
             {
                 isUpdate = false;
@@ -2146,7 +2142,6 @@ namespace ILPathways.Controls.Content
         /// <summary>
         /// Populate form controls
         /// </summary>
-        /// <param name="recId"></param>
         private void PopulateControls()
         {
             bool hasHomeContent = false;
@@ -2177,7 +2172,14 @@ namespace ILPathways.Controls.Content
             BDM.PopulateList( this.ddlNodeContentType, list, "Id", "Title", "" );
 
         }
+        private void SetOrgContent()
+        {
+            //may only allow on first create?
+            List<CodeItem> list = myManager.ContentType_ActiveList();
+            //
+            BDM.PopulateList( this.ddlNodeContentType, list, "Id", "Title", "" );
 
+        }
         private void SetContentType2( bool hasHomeContent )
         {
 
@@ -3050,7 +3052,7 @@ namespace ILPathways.Controls.Content
                     entity.PrivilegeTypeId = CurrentRecord.PrivilegeTypeId;
                     entity.ConditionsOfUseId = CurrentRecord.ConditionsOfUseId;
 
-                    entity.IsPublished = false;
+                    //entity.IsPublished = false;
                     entity.IsOrgContentOwner = CurrentRecord.IsOrgContentOwner;
                     entity.OrgId = CurrentRecord.OrgId;
                     //entity.ResourceVersionId = 0;

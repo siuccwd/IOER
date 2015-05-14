@@ -32,7 +32,7 @@ namespace ILPathways.Services
       AccountServices accountService = new AccountServices();
       JavaScriptSerializer serializer = new JavaScriptSerializer();
 
-      [WebMethod]
+      [WebMethod( EnableSession = true )]
       public string GetAllLibraryInfo( string userGUID, int libraryID )
       {
           LibraryData output = GetAllLibraryData( userGUID, libraryID );
@@ -80,7 +80,7 @@ namespace ILPathways.Services
         }
 
         output.myLibraries = GetMyLibraries( user );
-        ActivityBizServices.LibraryHit( library, user, "Select" );
+        ActivityBizServices.LibraryHit( library, user, "Visit" );
 
         return output;
       }
@@ -88,7 +88,7 @@ namespace ILPathways.Services
 
       #region GET methods 
       /* Get a Library */
-      [WebMethod]
+      [WebMethod( EnableSession = true )]
       public string GetLibrary( string userGUID, int libraryID )
       {
         var user = GetUser( userGUID );
@@ -126,7 +126,7 @@ namespace ILPathways.Services
           output.createdByID = library.CreatedById;
           if ( getFilters )
           {
-            output.filters = GetFilters( library.Id, 0 );
+            output.filters = GetFiltersNew( library.Id, 0 );
           }
             //don't log as typically just collecting libraries for dropdown lists
           //ActivityBizServices.LibraryHit( library.Id, user.Id, "Get" );
@@ -269,7 +269,7 @@ namespace ILPathways.Services
           col.paradata = GetParadata( user, null, section, doSubscriptionCheck );          
           if ( getFilters )
           {
-            col.filters = GetFilters( 0, col.id );
+            col.filters = GetFiltersNew( 0, col.id );
           }
           output.Add( col );
         }
@@ -296,6 +296,23 @@ namespace ILPathways.Services
       }
 
       /* Get Available Filters */
+      public List<JSONFilter> GetFiltersNew( int libraryID, int collectionID )
+      {
+        var output = new List<JSONFilter>();
+        var data = new ResourceV2Services().GetFieldsForLibCol( new List<int>() { libraryID }, new List<int>() { collectionID }, 1 );
+
+        foreach ( var item in data )
+        {
+          output.Add( new JSONFilter()
+          {
+            id = item.Id,
+            name = item.Schema,
+            ids = item.Tags.Select( t => t.Id ).ToList()
+          } );
+        }
+
+        return output;
+      }
       public List<JSONFilter> GetFilters( int libraryID, int collectionID )
       {
         var maps = new string[][] {
@@ -361,7 +378,7 @@ namespace ILPathways.Services
 
       #region Update Methods
       /* Post a Comment */
-      [WebMethod]
+      [WebMethod( EnableSession = true )]
       public string PostComment( string userGUID, int libraryID, int collectionID, string text )
       {
         var user = GetUser( userGUID );
@@ -390,7 +407,7 @@ namespace ILPathways.Services
       }
 
       /* Update Following Option */
-      [WebMethod]
+      [WebMethod( EnableSession = true )]
       public string UpdateFollowingOption( string userGUID, int libraryID, bool isLibrary, int collectionID, int typeID )
       {
         var user = GetUser( userGUID );
@@ -457,29 +474,29 @@ namespace ILPathways.Services
         return serializer.Serialize( GetAllLibraryData( user, libraryID ) );
       }
 
-      [WebMethod]
+      [WebMethod( EnableSession = true )]
       public string ActionCopy( string userGUID, int libraryID, int toCollection, int intID )
       {
         //Check user
         var user = GetUser( userGUID );
         if ( !user.IsValid ) 
         { 
-          return ""; 
+          return "Invalid user"; 
         }
 
         //Check user can edit the collection to copy to
         var collection = libService.LibrarySectionGet( toCollection );
-        if ( !libService.LibrarySection_DoesUserHaveEditAccess( collection.LibraryId, collection.Id, user.Id ) ) 
+        if ( !libService.LibrarySection_DoesUserHaveContributeAccess( collection.LibraryId, collection.Id, user.Id ) ) 
         {
-          return "";
+          return "Sorry, you don't have permission to do that.";
         }
 
         //Do the copy
         string status = "";
-        var id = libService.ResourceCopy( intID, toCollection, user.Id, ref status );
+        var id = libService.ResourceCopy( intID, libraryID, toCollection, user, ref status );
         if ( id == 0 ) 
         {   
-            return ""; 
+            return "Sorry, there was a problem copying the resource."; 
         }
         else 
         {
@@ -489,7 +506,7 @@ namespace ILPathways.Services
         }
       }
 
-      [WebMethod]
+      [WebMethod( EnableSession = true )]
       public string ActionMove( string userGUID, int libraryID, int fromCollection, int toCollection, int intID )
       {
         try
@@ -531,7 +548,7 @@ namespace ILPathways.Services
         }
       }
 
-      [WebMethod]
+      [WebMethod( EnableSession = true )]
       public string ActionDelete( string userGUID, int libraryID, int fromCollection, int intID )
       {
         //Check user
@@ -549,19 +566,19 @@ namespace ILPathways.Services
         }
 
         string status = "";
-        var result = libService.LibraryResourceDelete( fromCollection, intID, ref status );
+        var result = libService.LibraryResourceDelete( fromCollection, intID, user, ref status );
         if ( result == false ) 
         { 
           return ""; 
         }
         else
         {
-            ActivityBizServices.LibraryHit( libraryID, user, "Resource Delete" );
+
           return serializer.Serialize( GetAllLibraryData( user, libraryID ) );
         }
       }
 
-      [WebMethod]
+      [WebMethod( EnableSession = true )]
       public string UpdateLibCol( string userGUID, int collectionID, string title, string description, bool isLibrary, int publicAccessLevel, int organizationAccessLevel, bool makeDefault, int libraryID )
       {
         var user = GetUser( userGUID );
@@ -623,7 +640,7 @@ namespace ILPathways.Services
         return serializer.Serialize( GetAllLibraryData( user, library ) );
       }
 
-      [WebMethod]
+      [WebMethod( EnableSession = true )]
       public string CreateCollection( string userGUID, int collectionID, string title, string description, bool isLibrary, int publicAccessLevel, int organizationAccessLevel, bool makeDefault, int libraryID )
       {
         var user = GetUser( userGUID );
@@ -657,7 +674,6 @@ namespace ILPathways.Services
         collection.ImageUrl = "";
 
         libService.LibrarySectionCreate( collection, ref status );
-        ActivityBizServices.LibraryHit( libraryID, user, "Create Collection" );
 
         return serializer.Serialize( GetAllLibraryData( user, library ) );
       }
@@ -694,7 +710,7 @@ namespace ILPathways.Services
       }
 
       /* Add Like/Dislike */
-      [WebMethod]
+      [WebMethod( EnableSession = true )]
       public string AddLikeDislike( string userGUID, int libraryID, int collectionID, bool isLike )
       {
         //Get User
@@ -730,7 +746,7 @@ namespace ILPathways.Services
       }
 
       /* Request to Join a Library */
-      [WebMethod]
+      [WebMethod( EnableSession = true )]
       public string RequestJoin( string userGUID, int libraryID, string message )
       {
         //Note: the extra parameter at the end of the ImmediateReturn is in this case used to indicate whether or not to replace the join request area with the text of the message returned.
@@ -985,6 +1001,7 @@ namespace ILPathways.Services
       public class JSONFilter
       {
         public string name { get; set; }
+        public int id { get; set; }
         public List<int> ids { get; set; }
       }
 

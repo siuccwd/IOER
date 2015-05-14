@@ -1,6 +1,8 @@
 ﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Masters/Pathway.Master" AutoEventWireup="true" CodeBehind="Library2.aspx.cs" Inherits="ILPathways.My.Library2" %>
-<%@ Register TagPrefix="uc1" TagName="librarySearch" Src="/LRW/controls/LibrarySearch.ascx" %>
-<%--<%@ Register TagPrefix="uc1" TagName="librarySearch" Src="/LRW/controls/ESLibrary.ascx" %>--%>
+
+<%@ Register Src="~/Controls/Libraries/Library.ascx" TagPrefix="uc2" TagName="Library" %>
+
+
 
 
 <asp:Content ID="Content1" ContentPlaceHolderID="HeadContent" runat="server">
@@ -8,9 +10,7 @@
 </asp:Content>
 
 <asp:Content ID="Content2" ContentPlaceHolderID="BodyContent" runat="server">
-<%--<uc1:librarysearch ID="librarySearch1" runat="server" />--%>
-
-<uc1:librarySearch ID="librarySearch1" IsPersonalLibraryView="true" DisplayURL="/My/Library.aspx"  runat="server" />
 
 
+    <uc2:Library runat="server" ID="Library1" />
 </asp:Content>

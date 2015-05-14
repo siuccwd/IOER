@@ -1,14 +1,16 @@
 ﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="ESLibrary2.ascx.cs" Inherits="ILPathways.LRW.controls.ESLibrary2" %>
-<%@ Register TagPrefix="uc1" TagName="Search" Src="/LRW/Controls/ElasticSearch3.ascx" %>
-<%--<%@ Register TagPrefix="uc1" TagName="Search" Src="/Controls/ImportedSearch.ascx" %>--%>
+<%--<%@ Register TagPrefix="uc1" TagName="Search" Src="/LRW/Controls/ElasticSearch3.ascx" %>
+<%@ Register TagPrefix="uc1" TagName="Search" Src="/Controls/ImportedSearch.ascx" %>--%>
+<%@ Register TagPrefix="uc1" TagName="ActivityRenderer" Src="/Activity/ActivityRenderer.ascx" %>
+<%@ Register TagPrefix="uc1" TagName="Search" Src="/Controls/SearchV6/SearchV6.ascx" %>
 
 
 <div id="libraryStuff" runat="server">
   <!-- from server -->
   <script type="text/javascript">
     var libraryData = <%=libInfoString %>;
-      var userGUID = "<%=userGUID %>";
-      var proxyId = "<%=proxyId %>";
+    var userGUID = "<%=userGUID %>";
+    var proxyId = "<%=proxyId %>";
     var linkedCollectionID = <%=linkedCollectionID %>;
 
   </script>
@@ -47,10 +49,10 @@
     p.middle { text-align: center; padding: 10px; font-style: italic; color: #555; }
     .panel { padding-top: 5px; }
     #libColTitle { padding-bottom: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-right: 70px; }
-    .libraryControls { width: 55%; }
-    .libraryControls select { width: 100%; margin-bottom: 2px; }
-    /*.libraryControls select.halfWidth { width: 50%; }*/
-    .libraryControls select option[disabled=disabled] { font-style: italic; color: #999; }
+    .modBox_before { width: 55%; }
+    .modBox_before select { width: 100%; margin-bottom: 2px; }
+    /*.modBox_before select.halfWidth { width: 50%; }*/
+    .modBox_before select option[disabled=disabled] { font-style: italic; color: #999; }
 
     /* Library/Collection Selector */
     #libColSelector { position: relative; padding-top: 25px; }
@@ -187,7 +189,7 @@
       font-size: 14px;
       line-height: 25px;
       color: #FFF;
-      background: url('') no-repeat right 3px top 50% #FF5707;
+      background: no-repeat right 3px top 50% #FF5707;
       background-size: 15px 15px;
     }
     #libraryHeaderContent[data-collapsed=true] a[data-id=expandCollapse] { background-image: url('/images/arrow-right-offwhite.png'); }
@@ -308,8 +310,8 @@
     }
     @media screen and (max-width:650px) {
       #pnlComments #postCommentBox, #pnlComments #commentsBox { width: 100%; position: static; margin: 5px 0; }
-      .libraryControls select, .libraryControls select.halfWidth, .libraryControls input { width: 100%; }
-      .libraryControls input { margin-top: 10px; }
+      .modBox_before select, .modBox_before select.halfWidth, .modBox_before input { width: 100%; }
+      .modBox_before input { margin-top: 10px; }
       #pnlComments .comment .owner, #pnlComments .comment .commentText { width: 100%; display: block; text-align: left; }
       #pnlComments .comment .owner .date { position: absolute; top: 0; right: 2px; }
       #pnlComments .comment .owner .name { margin-right: 55px; }
@@ -328,21 +330,29 @@
     }
 
     /* Icons */
-    .tab { background: url('') 5px center no-repeat; width: 40px; height: 40px; }
+    .tab { background: 5px center no-repeat; width: 40px; height: 40px; }
     .tab[data-id=pnlDetails] { background-image: url('/images/icons/icon_library_bg.png'); }
     .tab[data-id=pnlShareFollow] { background-image: url('/images/icons/icon_loginaccount_bg.png'); }
     .tab[data-id=pnlComments] { background-image: url('/images/icons/icon_comments_bg.png'); }
     .tab[data-id=pnlSettings] { background-image: url('/images/icons/icon_myisle_bg.png'); }
     .tab[data-id=pnlAddResources] { background-image: url('/images/icons/icon_resources_bg.png'); }
     .tab[data-id=pnlJoinLibrary] { background-image: url('/images/icons/icon_swirl_bg.png'); }
+    .tab[data-id=pnlActivity] { background-image: url('/images/icons/icon_click-throughs_bg.png'); }
 
     #libTabBox a.tab { width: auto; padding-left: 40px; }
     @media screen and (max-width: 700px) {
       #libTabBox a.tab { width: 40px; padding-left: 0; }
       #libTabBox a.tab span { display: none; }
     }
+
+    /* Patches */
+    #libraryHeader { padding-right: 35px; }
+    #content .theme #searchHeader { margin-right: 5px; }
   </style>
 
+  <uc1:ActivityRenderer id="activityRenderer" runat="server" />
+
+<div id="content">
   <div id="libraryHeader">
     <div id="libTabBox">
       <a href="#" class="tab" data-id="pnlDetails" onclick="showPanel('pnlDetails'); return false;" title="Library/Collection"><span>Details</span></a>
@@ -351,6 +361,7 @@
       <a href="#" class="tab" data-id="pnlSettings" onclick="showPanel('pnlSettings'); return false;" id="settingsTab" runat="server" title="Settings"><span>Settings</span></a>
       <a href="#" class="tab" data-id="pnlAddResources" onclick="showPanel('pnlAddResources'); return false;" id="addTab" runat="server" title="Add Resources"><span>Add Resources</span></a>
       <a href="#" class="tab" data-id="pnlJoinLibrary" onclick="showPanel('pnlJoinLibrary'); return false;" id="joinTab" runat="server" title="Become a Member of this Library"><span>Join This Library</span></a>
+      <a href="#" class="tab" data-id="pnlActivity" onclick="showPanel('pnlActivity'); return false;" id="activityTab" title="Activity for this Library"><span>Activity</span></a>
     </div>
     <div id="libraryHeaderContent">
       <a href="#" data-id="expandCollapse" onclick="expandCollapsePanels(); return false;">Collapse</a>
@@ -506,20 +517,57 @@
             </div>
           </div>
           <!-- /pnlShareFollow -->
+          <!-- pnlActivity -->
+          <div id="pnlActivity" class="panel">
+            <script type="text/javascript">
+              var activityData = <%=activityJSON %>;
+
+              $(document).ready(function() {
+                $("#libraryActivity").html(getActivity("totals", activityData.Activity, { "timespan": "", "timescale": "day(s)", "library_views": "Library Views:", "resource_views": "Resource Views" }));
+                if(activityData.ChildrenActivity.length == 0){
+                  $("#collectionsActivity").html("<p>No recent activity.</p>");
+                }
+                else {
+                  for(i in activityData.ChildrenActivity){
+                    $("#collectionsActivity").append(getActivity("totals", activityData.ChildrenActivity[i], { "timespan": "", "timescale": "day(s)", "collection_views": "Collection Views:", "resource_views": "Resource Views" }));
+                  }
+                }
+              });
+            </script>
+            <style type="text/css">
+              .activity.divbars .activityItem { margin: 5px 0.5%; display: inline-block; vertical-align: top; width: 32%; }
+              .activity.divbars .activityItem .title, .activity.divbars .activityItem .activityData { display: inline-block; vertical-align: middle; }
+              .activity.divbars .activityItem .title { width: 125px; text-align: right; padding: 5px; }
+              .activity.divbars .activityItem .activityData { width: calc(100% - 125px); }
+              @media (max-width: 850px) {
+                .activity.divbars .activityItem .title { width: 100px; }
+                .activity.divbars .activityItem .activityData { width: calc(100% - 100px); }
+                .activity.divbars .activityItem { width: 100%; display: block; padding: 0 10px; margin: 10px 0; }
+              }
+            </style>
+            <h3 class="panelHeader">Activity for this Library (Last <%=activityDaysAgo.Text %> days):</h3>
+            <div id="libraryActivity"></div>
+            <h3>Activity for this Library's Collections (Last <%=activityDaysAgo.Text %> days):</h3>
+            <div id="collectionsActivity"></div>
+          </div>
+          <!-- /pnlActivity -->
         </div> <!-- /libPanelHolder -->
       </div><!-- /libraryHeaderContent -->
     </div> <!-- /libraryHeader -->
   
+  <uc1:Search ID="searchControl" runat="server" />
 </div><!-- /libraryStuff -->
 
+
+</div>
 <div id="templates" style="display:none;">
-  <div id="template_collectionIcon">
+  <script type="text/template" id="template_collectionIcon">
     <a href="#" onclick="pickCollection({id}); return false;" data-collectionID="{id}" class="collectionIcon" title="{title}">
       <img alt="{title}" class="iconImg" />
       <div class="collectionTitle">{title}</div>
     </a>
-  </div>
-  <div id="template_comment">
+  </script>
+  <script type="text/template" id="template_comment">
     <div class="comment" data-id="{id}">
       <div class="owner">
         <div class="name" title="{name}">{name}</div>
@@ -527,13 +575,13 @@
       </div>
       <p class="commentText">{text}</p>
     </div>
-  </div>
-  <div id="template_ddl">
+  </script>
+  <script type="text/template" id="template_ddl">
     <select data-vid="{vid}" data-intID="{intID}"></select>
-  </div>
+  </script>
 </div>
 
-<uc1:Search ID="searchControl" runat="server" />
+
 <div id="error" runat="server" style="padding: 50px 5px; text-align: center" visible="false"></div>
 <div id="noLibraryYet" runat="server" style="padding: 25px;" visible="false">
   <style type="text/css">
@@ -595,4 +643,6 @@
         <p>Your library was created for you!  <br />Your library is public, if you would like to change access to your library, use the Settings tab.</p><p>Within your library is a default collection; you may add collections to your library and share with others.  Use the Settings tab to add titles, descriptions and images.</p>  </asp:Label>
 
 <asp:Literal ID="libraryCreateMsg" runat="server" Visible="false">Your personal library was created. <br />Be sure to review the getting started guide for information on libraries</asp:Literal>
+  <asp:Literal ID="activityDaysAgo" runat="server" Visible="false">90</asp:Literal>
 </div>
+

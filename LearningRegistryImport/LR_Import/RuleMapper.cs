@@ -34,7 +34,7 @@ namespace LearningRegistryCache2
             string filter = "";
             ResourceChildItem map = new ResourceChildItem();
 
-            map.ResourceId = property.ResourceId;
+            map.ResourceIntId = property.ResourceIntId;
             map.OriginalValue = property.Value;
 
             filter = string.Format("PropertyTypeId = {0} AND OriginalValue = '{1}' AND IsActive = 'True' AND IsRegEx = 'False'",property.PropertyTypeId, property.Value.Replace("'","''"));
@@ -78,7 +78,7 @@ namespace LearningRegistryCache2
             bool isMapped = false;
             string filter = "";
             ResourceCluster cluster = new ResourceCluster();
-            cluster.ResourceId = collection[0].ResourceId;
+            cluster.ResourceIntId = collection[ 0 ].ResourceIntId;
             DataRow[] rows;
 
             foreach (ResourceProperty property in collection)
@@ -90,7 +90,7 @@ namespace LearningRegistryCache2
                     rows = ClusterRules.Select(filter);
                     if (rows.Length > 0)
                     {
-                        cluster.ResourceId = property.ResourceId;
+                        cluster.ResourceIntId = property.ResourceIntId;
                         cluster.ClusterId = BaseDataManager.GetRowColumn(rows[0], "MappedId", 0);
                         isMapped = true;
                     }
@@ -113,7 +113,7 @@ namespace LearningRegistryCache2
                             if (matches.Count > 0)
                             {
                                 cluster.ClusterId = rule.MappedId;
-                                cluster.ResourceId = property.ResourceId;
+                                cluster.ResourceIntId = property.ResourceIntId;
                                 isMapped = true;
                                 break;
                             }

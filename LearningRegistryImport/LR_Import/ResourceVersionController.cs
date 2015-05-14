@@ -81,6 +81,33 @@ namespace LR_Import
 
         }
 
+        public Resource GetActiveVersionByResourceUrl(string resourceUrl)
+        {
+            string status = "successful";
+            string filter = string.Format("ResourceUrl='{0}' AND vers.IsActive = 'True'", resourceUrl.Replace("'", "''"));
+            DataSet ds = new DataSet();
+            Resource resource = new Resource();
+
+            resource = resourceManager.GetByResourceUrl(resourceUrl, ref status);
+            if (status != "successful")
+            {
+                auditManager.LogMessage(LearningRegistry.reportId, LearningRegistry.fileName, "", "", ErrorType.Error, ErrorRouting.Technical, status);
+            }
+            if (resource == null)
+            {
+                return null;
+            }
+            else
+            {
+                ds = versionManager.Select(filter, 4);
+                if (DoesDataSetHaveRows(ds))
+                {
+                    resource.Version = versionManager.Fill(ds.Tables[0].Rows[0], false);
+                }
+            }
+            return resource;
+        }
+
         public DataSet GetByResourceUrl(string resourceUrl)
         {
             string filter = string.Format("ResourceUrl='{0}'", resourceUrl);

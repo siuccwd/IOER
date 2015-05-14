@@ -23,8 +23,10 @@ namespace ILPathways.Controls
   public partial class QuickContribute : BaseUserControl
   {
     public string mode { get; set; }
+    public string orgData { get; set; }
     public string libraryData { get; set; }
     public string maxFileSize { get; set; }
+    public string selectedOrgOutput { get; set; }
     public string selectedLibraryOutput { get; set; }
     public string selectedCollectionOutput { get; set; }
     public bool isDebugMode { get; set; }
@@ -97,6 +99,11 @@ namespace ILPathways.Controls
       }
 
       user = ( Patron ) WebUser;
+
+        // get org members where can contribute
+      var orgs = OrganizationBizService.OrganizationMembersCodes_WithContentPrivileges( user.Id );
+      orgData = "var orgData = " + new JavaScriptSerializer().Serialize( orgs ) + ";";
+      selectedOrgOutput = "var selectedOrgID = 0";
 
       //Get the user's library data
       var libraries = new Services.ESLibrary2Service().GetMyLibrariesWithContribute( user );
@@ -641,7 +648,7 @@ namespace ILPathways.Controls
       var selectedLibrary = 0;
       var selectedCollection = 0;
       GetSelectedLibraryAndCollection( ref selectedLibrary, ref selectedCollection );
-
+      var publishForOrgId = GetSelectedOrg();
 
         //Do the publish
         bool successfulPublish = false;
@@ -669,18 +676,24 @@ namespace ILPathways.Controls
             string statusMsg = new ContentServices().UpdateAfterPublish( contentId );
         }
 
-        new Controllers.PublishController().PublishToAll(resource
+        //TBD - will populate once org list added
+        resource.PublishedForOrgId= 0;
+
+        PublishingServices.PublishToAll( resource
                     , ref successfulPublish
                     , ref publishStatus
                     , ref versionID
                     , ref resourceIntID
                     , ref sortTitle 
                     , updatingElasticSearch
-                    ,skipLRPublish );
+                    , skipLRPublish
+                    , user
+                    , publishForOrgId );
 
         //Add to the Selected Library and Collection
         if ( successfulPublish )
         {
+
           int docContentId = 0;
             //TODO ==================
             //update the content item for resourceId and contents rights id/url
@@ -707,7 +720,7 @@ namespace ILPathways.Controls
 
                             item.StatusId = ContentItem.PUBLISHED_STATUS;
                             item.UseRightsUrl = resource.Version.Rights;
-                            item.IsPublished = true;
+                            //item.IsPublished = true;
                             item.PrivilegeTypeId = accessRightsId;
                             string statusMsg = new ContentServices().UpdateAfterQuickPub( item );
                             if ( item.DocumentRowId != null && item.IsValidRowId( item.DocumentRowId ) )
@@ -835,6 +848,23 @@ namespace ILPathways.Controls
       }
       selectedLibraryOutput = "var selectedLibraryID = " + libraryID + ";";
       selectedCollectionOutput = "var selectedCollectionID = " + collectionID + ";";
+    }
+
+    public int GetSelectedOrg()
+    {
+        int orgID = 0;
+        try
+        {
+            orgID = int.Parse( Request.Form.GetValues( "ddlOrg" )[ 0 ] );
+        }
+        catch ( Exception ex )
+        {
+            orgID = 0;
+            
+        }
+        selectedOrgOutput = "var selectedOrgID = " + orgID + ";";
+        return orgID;
+
     }
 
     public string ValidateText( string input, int minLength, string title, ref bool canDoPublish )

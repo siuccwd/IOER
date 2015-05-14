@@ -14,7 +14,7 @@
     <RootNamespace>ILPathways</RootNamespace>
     <AssemblyName>IllinoisPathways</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
-    <UseIISExpress>true</UseIISExpress>
+    <UseIISExpress>false</UseIISExpress>
     <SccProjectName>SAK</SccProjectName>
     <SccLocalPath>SAK</SccLocalPath>
     <SccAuxPath>SAK</SccAuxPath>
@@ -29,6 +29,8 @@
     <IISExpressAnonymousAuthentication />
     <IISExpressWindowsAuthentication />
     <IISExpressUseClassicPipelineMode />
+    <WebGreaseLibPath>..\..\packages\WebGrease.1.5.2\lib</WebGreaseLibPath>
+    <TargetOfficeVersion>15.0</TargetOfficeVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -37,8 +39,9 @@
     <OutputPath>bin\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
+    <WarningLevel>2</WarningLevel>
     <DocumentationFile>bin\IllinoisPathways.XML</DocumentationFile>
+    <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -53,16 +56,15 @@
     <Reference Include="Accessibility">
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
-    <Reference Include="AjaxControlToolkit, Version=4.1.7.1213, Culture=neutral, PublicKeyToken=28f01b0e84b6d53e, processorArchitecture=MSIL">
+    <Reference Include="AjaxControlToolkit, Version=4.1.60501.0, Culture=neutral, PublicKeyToken=28f01b0e84b6d53e, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\AjaxControlToolkit.7.1213\lib\40\AjaxControlToolkit.dll</HintPath>
+      <HintPath>..\..\Library\AjaxControlToolkit.dll</HintPath>
     </Reference>
-    <Reference Include="AjaxMin, Version=5.13.5463.15277, Culture=neutral, PublicKeyToken=21ef50ce11b5d80f, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\AjaxMin.5.13.5463.15282\lib\net40\AjaxMin.dll</HintPath>
+    <Reference Include="AjaxMin">
+      <HintPath>..\..\packages\AjaxMin.5.5.5091.22839\lib\net40\AjaxMin.dll</HintPath>
     </Reference>
     <Reference Include="Antlr3.Runtime">
-      <HintPath>..\..\packages\Antlr.3.5.0.2\lib\Antlr3.Runtime.dll</HintPath>
+      <HintPath>..\..\packages\Antlr.3.4.1.9004\lib\Antlr3.Runtime.dll</HintPath>
     </Reference>
     <Reference Include="AutoMapper, Version=3.1.1.0, Culture=neutral, PublicKeyToken=be96cd2c38ef1005, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -74,9 +76,6 @@
     <Reference Include="BouncyCastle.Crypto">
       <HintPath>..\..\Library\BouncyCastle.Crypto.dll</HintPath>
     </Reference>
-    <Reference Include="HtmlAgilityPack">
-      <HintPath>..\..\packages\HtmlAgilityPack.1.4.9\lib\Net40\HtmlAgilityPack.dll</HintPath>
-    </Reference>
     <Reference Include="ImageResizer">
       <HintPath>..\..\Library\ImageResizer.dll</HintPath>
     </Reference>
@@ -85,38 +84,32 @@
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
     <Reference Include="Ionic.Zip">
-      <HintPath>..\..\packages\DotNetZip.1.9.3\lib\net20\Ionic.Zip.dll</HintPath>
+      <HintPath>..\..\packages\DotNetZip.1.9.2\lib\net20\Ionic.Zip.dll</HintPath>
     </Reference>
     <Reference Include="LumenWorks.Framework.IO">
       <HintPath>..\..\Library\LumenWorks.Framework.IO.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.ApplicationBlocks.Data, Version=2.0.0.0, Culture=neutral">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Library\Microsoft.ApplicationBlocks.Data.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.AspNet.FriendlyUrls">
       <HintPath>..\..\packages\Microsoft.AspNet.FriendlyUrls.Core.1.0.2\lib\net40\Microsoft.AspNet.FriendlyUrls.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="Microsoft.Data.Edm, Version=5.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\Microsoft.Data.Edm.5.2.0\lib\net40\Microsoft.Data.Edm.dll</HintPath>
+    <Reference Include="Microsoft.IdentityModel, Version=3.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.Data.OData, Version=5.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\Microsoft.Data.OData.5.2.0\lib\net40\Microsoft.Data.OData.dll</HintPath>
+    <Reference Include="Microsoft.IdentityModel.Extensions, Version=2.0.0.0, Culture=neutral, PublicKeyToken=69c3241e6f0468ca, processorArchitecture=MSIL">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.SharePoint.Client, Version=15.0.0.0">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.SharePoint.Client.Runtime, Version=15.0.0.0">
+      <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.Web.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <Private>True</Private>
       <HintPath>..\..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.WindowsAzure.Configuration">
-      <HintPath>..\..\packages\Microsoft.WindowsAzure.ConfigurationManager.1.8.0.0\lib\net35-full\Microsoft.WindowsAzure.Configuration.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.WindowsAzure.Storage">
-      <HintPath>..\..\packages\WindowsAzure.Storage.2.1.0.3\lib\net40\Microsoft.WindowsAzure.Storage.dll</HintPath>
-    </Reference>
-    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+    <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\Newtonsoft.Json.6.0.8\lib\net40\Newtonsoft.Json.dll</HintPath>
     </Reference>
@@ -137,29 +130,30 @@
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="System.Data.Services.Client" />
+    <Reference Include="System.IdentityModel" />
     <Reference Include="System.Net" />
     <Reference Include="System.Net.Http, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\Microsoft.Net.Http.2.0.20710.0\lib\net40\System.Net.Http.dll</HintPath>
     </Reference>
+    <Reference Include="System.Net.Http.Formatting, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.AspNet.WebApi.Client.4.0.20710.0\lib\net40\System.Net.Http.Formatting.dll</HintPath>
+    </Reference>
     <Reference Include="System.Net.Http.WebRequest, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\Microsoft.Net.Http.2.0.20710.0\lib\net40\System.Net.Http.WebRequest.dll</HintPath>
     </Reference>
     <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Security" />
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.ServiceModel.Web" />
     <Reference Include="System.Drawing" />
-    <Reference Include="System.Spatial, Version=5.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\System.Spatial.5.2.0\lib\net40\System.Spatial.dll</HintPath>
-    </Reference>
     <Reference Include="System.Web" />
     <Reference Include="System.Web.ApplicationServices" />
     <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Web.Http, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Microsoft.AspNet.WebApi.Core.4.0.30506.0\lib\net40\System.Web.Http.dll</HintPath>
+      <HintPath>..\..\packages\Microsoft.AspNet.WebApi.Core.4.0.20710.0\lib\net40\System.Web.Http.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Http.WebHost, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.AspNet.WebApi.WebHost.4.0.20710.0\lib\net40\System.Web.Http.WebHost.dll</HintPath>
     </Reference>
     <Reference Include="System.Xml" />
     <Reference Include="System.Configuration" />
@@ -168,27 +162,29 @@
     <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.Web.Entity" />
     <Reference Include="System.Xml.Linq" />
-    <Reference Include="WebControlLibrary, Version=1.0.4562.26195, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="WebControlLibrary, Version=1.0.4960.22541, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Library\WebControlLibrary.dll</HintPath>
     </Reference>
-    <Reference Include="workNetCustomGridView, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Library\workNetCustomGridView.dll</HintPath>
+    <Reference Include="WebGrease">
+      <HintPath>..\..\packages\WebGrease.1.5.2\lib\WebGrease.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Account\controls\AccountRegisterUpdateController.ascx" />
+    <Content Include="Account\controls\Dashboard.ascx" />
     <Content Include="Account\controls\Registration2.ascx" />
-    <Content Include="Account\controls\UserProfile.ascx" />
     <Content Include="Account\controls\UserProfile2.ascx" />
     <Content Include="Account\ForgotPassword.aspx" />
     <Content Include="Account\Login.aspx" />
     <Content Include="Account\controls\LoginController.ascx" />
     <Content Include="Account\Profile.aspx" />
-    <Content Include="Account\Profile2.aspx" />
     <Content Include="Account\Register.aspx" />
+    <Content Include="Account\Success.aspx" />
+    <Content Include="Activity\ActivityRenderer.ascx" />
     <Content Include="Activity\Default.aspx" />
+    <Content Include="Activity\Stats.aspx" />
+    <Content Include="Activity\Stats1.ascx" />
+    <Content Include="Activity\Stats2.ascx" />
     <Content Include="Admin\AdminStuff.aspx" />
     <Content Include="Admin\CCSS_Import.aspx" />
     <Content Include="Admin\DataDump.aspx" />
@@ -300,12 +296,15 @@
     <Content Include="Communities\Community.aspx" />
     <Content Include="Communities\Default.aspx" />
     <Content Include="Contribute\Default.aspx" />
+    <Content Include="Controls\Account\AccountSearch.ascx" />
     <Content Include="Controls\Activity1.ascx" />
+    <Content Include="Controls\Admin\BigAdmin1.ascx" />
     <Content Include="Controls\Community\Community1.ascx" />
     <Content Include="Controls\Community\Home.ascx" />
     <Content Include="Controls\Content\Authoring.ascx" />
     <Content Include="Controls\Content\ContentDisplay.ascx" />
     <Content Include="Controls\Content\ContentSearch.ascx" />
+    <Content Include="Controls\Content\Curriculum.ascx" />
     <Content Include="Controls\Content\DocumentEditor.ascx" />
     <Content Include="Controls\Curriculum\Curriculum1.ascx" />
     <Content Include="Controls\Curriculum\Curriculum2.ascx" />
@@ -323,16 +322,107 @@
     <Content Include="Controls\ImportedSearch.ascx" />
     <Content Include="Controls\Includes\Header6.ascx" />
     <Content Include="Controls\Includes\Header7.ascx" />
-    <Content Include="Controls\Includes\SessionHints.ascx" />
     <Content Include="Controls\Libraries\LibrariesSearch.ascx" />
+    <Content Include="Controls\Libraries\Library.ascx" />
     <Content Include="Controls\Libraries\LibraryAdmin.ascx" />
-    <Content Include="Controls\Libraries\LibraryAdminManager.ascx" />
     <Content Include="Controls\Libraries\LibraryMemberInvite.ascx" />
     <Content Include="Controls\Libraries\LibraryMtce.ascx" />
     <Content Include="Controls\OrgMgmt\ContactMgmt.ascx" />
     <Content Include="Controls\OrgMgmt\Import.ascx" />
     <Content Include="Controls\OrgMgmt\OrganizationMgmt.ascx" />
     <Content Include="Controls\OrgMgmt\OrgSearch.ascx" />
+    <Content Include="Controls\SearchV5\Index.aspx" />
+    <Content Include="Controls\SearchV6\Default.aspx" />
+    <Content Include="Controls\SearchV6\Library.aspx" />
+    <Content Include="Controls\SearchV6\SearchV6.ascx" />
+    <Content Include="Controls\SearchV6\Themes\ubersearch.ascx" />
+    <Content Include="Controls\SearchV6\Themes\images\wn_userguide_personwithdisability_50x50.png" />
+    <Content Include="Controls\SearchV6\Themes\images\wn_userguide_employer_50x50.png" />
+    <Content Include="Controls\SearchV6\Themes\images\wn_userguide_generalpublic_50x50.png" />
+    <Content Include="Controls\SearchV6\Themes\images\wn_userguide_immigrant_50x50.png" />
+    <Content Include="Controls\SearchV6\Themes\images\wn_userguide_laidoffworker_50x50.png" />
+    <Content Include="Controls\SearchV6\Themes\images\wn_userguide_reentryperson_50x50.png" />
+    <Content Include="Controls\SearchV6\Themes\images\wn_userguide_veteran_50x50.png" />
+    <Content Include="Controls\SearchV6\Themes\images\wn_userguide_workforcepartner_50x50.png" />
+    <Content Include="Controls\SearchV6\Themes\images\wn_userguide_youth_50x50.png" />
+    <Content Include="Controls\SearchV6\Themes\ioer_library.ascx" />
+    <Content Include="Controls\SearchV6\Themes\ioer.ascx" />
+    <Content Include="Controls\SearchV6\Themes\wn_search.ascx" />
+    <Content Include="Controls\SearchV6\Themes\wn_userguide.ascx" />
+    <Content Include="Controls\Splash3.ascx" />
+    <Content Include="Controls\UberTaggerV1\UberTaggerV1.ascx" />
+    <Content Include="Controls\UberTaggerV2\Index.aspx" />
+    <Content Include="Controls\UberTaggerV2\UberTaggerV2.ascx" />
+    <Content Include="Controls\UberTaggerV2\upload.aspx" />
+    <Content Include="images\icons\icon_community_black_large.png" />
+    <Content Include="images\icons\icon_community_white_large.png" />
+    <Content Include="images\icons\icon_help_black_large.png" />
+    <Content Include="images\icons\icon_help_white_large.png" />
+    <Content Include="images\icons\icon_library_black_large.png" />
+    <Content Include="images\icons\icon_library_white_large.png" />
+    <Content Include="images\icons\icon_myisle_med.png" />
+    <Content Include="images\icons\icon_resources_black_large.png" />
+    <Content Include="images\icons\icon_resources_white_large.png" />
+    <Content Include="images\icons\icon_search_black_large.png" />
+    <Content Include="images\icons\icon_search_white_large.png" />
+    <Content Include="images\icons\icon_standards_med.png" />
+    <Content Include="images\icons\icon_swirl_black_large.png" />
+    <Content Include="images\icons\icon_swirl_white_large.png" />
+    <Content Include="images\icons\icon_tag_black_large.png" />
+    <Content Include="images\icons\icon_tag_white_large.png" />
+    <Content Include="images\icons\icon_upload_400x300.png" />
+    <Content Include="images\icons\icon_upload_black_large.png" />
+    <Content Include="images\icons\icon_upload_white_large.png" />
+    <Content Include="images\icons\icon_zip_400x300.png" />
+    <Content Include="images\icons\icon_zip_med.png" />
+    <Content Include="My\Curriculum.aspx" />
+    <Content Include="My\Library2.aspx" />
+    <Content Include="Pages\curriculae.aspx" />
+    <Content Include="Pages\default.aspx" />
+    <Content Include="Scripts\hint.js" />
+    <Content Include="Scripts\jscommon.js" />
+    <Content Include="Scripts\jstree\jstree.js" />
+    <Content Include="Scripts\jstree\jstree.min.js" />
+    <Content Include="Scripts\jstree\libs\document-register-element.js" />
+    <Content Include="Scripts\jstree\libs\require.js" />
+    <Content Include="Scripts\jstree\themes\default\32px.png" />
+    <Content Include="Scripts\jstree\themes\default\40px.png" />
+    <Content Include="Scripts\jstree\themes\default\style.css" />
+    <Content Include="Scripts\jstree\themes\default\style.min.css" />
+    <Content Include="Scripts\jstree\themes\default\throbber.gif" />
+    <Content Include="Scripts\jstree\themes\ioer\32px.png" />
+    <Content Include="Scripts\jstree\themes\ioer\40px.png" />
+    <Content Include="Scripts\jstree\themes\ioer\style.css" />
+    <Content Include="Scripts\jstree\themes\ioer\throbber.gif" />
+    <Content Include="Scripts\standards\jsonFinance_k12pfe.js" />
+    <Content Include="Scripts\standards\jsonFinance_nsfl.js" />
+    <Content Include="Scripts\standards\jsonFinance_vncse.js" />
+    <Content Include="Scripts\standards\jsonILForeignLanguage.js" />
+    <Content Include="Scripts\standards\jsonILAdultEdELA.js" />
+    <Content Include="Scripts\standards\jsonILAdultEdMath.js" />
+    <Content Include="Scripts\standards\jsonILAdultEdMath2.js" />
+    <Content Include="Scripts\standards\jsonILAdultEdReading.js" />
+    <Content Include="Scripts\standards\jsonILAdultEdWriting.js" />
+    <Content Include="Scripts\standards\jsonILSocialEmotional.js" />
+    <Content Include="Scripts\standards\jsonNHES.js" />
+    <Content Include="Controls\Includes\SessionHints.ascx" />
+    <Content Include="Scripts\widgets\resizer.js" />
+    <Content Include="Scripts\widgets\postmessagereceiver.js" />
+    <Content Include="Services\ActivityService.asmx" />
+    <Content Include="Services\AdminService1.asmx" />
+    <Content Include="Services\CurriculumService1.asmx" />
+    <Content Include="Services\HintsService.asmx" />
+    <Content Include="Services\LibraryAJAXService.asmx" />
+    <Content Include="Services\StandardsService.asmx" />
+    <Content Include="Styles\hint.css" />
+    <Content Include="UberTagger.aspx" />
+    <Content Include="Widgets\FullSearch\Default.aspx" />
+    <Content Include="Widgets\LearningList\Default.aspx" />
+    <Content Include="Widgets\PreviewerV1\Default.aspx" />
+    <Content Include="Widgets\PreviewerV1\load.js" />
+    <Content Include="Widgets\PreviewerV1\PreviewerV1.ascx" />
+    <Content Include="Widgets\PreviewerV1\previewerv1.css" />
+    <Content Include="Widgets\PreviewerV1\previewerv1.js" />
     <Content Include="Controls\Publish3.ascx" />
     <Content Include="Controls\QuickContribute.ascx" />
     <Content Include="Controls\Rubric4.ascx" />
@@ -340,16 +430,32 @@
     <Content Include="Controls\Rubrics\CCSSELA3-12Rubric.ascx" />
     <Content Include="Controls\Rubrics\CCSSELAK-2Rubric.ascx" />
     <Content Include="Controls\Rubrics\CCSSMathRubric.ascx" />
-    <Content Include="Controls\Rubrics\RubricCore.ascx" />
     <Content Include="Controls\Rubrics\Shared\ccss.js" />
-    <Content Include="Controls\SearchV5\Index.aspx" />
     <Content Include="Controls\SearchV5\SearchV5.ascx" />
     <Content Include="Controls\SearchV5\searchv5.css" />
     <Content Include="Controls\SearchV5\searchv5.js" />
+    <Content Include="images\BlankImage.png" />
+    <Content Include="images\icons\icon_ratings_med.png" />
+    <Content Include="images\logo_achieve.png" />
+    <Content Include="images\logo_asn.png" />
+    <Content Include="images\logo_cc.jpg" />
+    <Content Include="images\logo_ceds.jpg" />
+    <Content Include="images\logo_lr.png" />
+    <Content Include="images\logo_lrmi.png" />
+    <Content Include="images\rotatorResizer.png" />
+    <Content Include="Pages\ContactUs.aspx" />
+    <Content Include="images\arrow-down-offwhite.png" />
+    <Content Include="images\arrow-up-offwhite.png" />
+    <Content Include="Pages\gooruPlayer.aspx" />
+    <Content Include="Pages\NationalInitiatives.aspx" />
+    <Content Include="Pages\TestSamplePage.aspx" />
+    <Content Include="Rubrics\Default.aspx" />
+    <Content Include="Controls\Rubrics\RubricCore.ascx" />
     <Content Include="Controls\SocialBox\SocialBox1.ascx" />
     <Content Include="Controls\Splash.ascx" />
     <Content Include="Controls\Splash2.ascx" />
     <Content Include="Controls\SplashMini.ascx" />
+    <Content Include="Controls\StandardsBrowser7.ascx" />
     <Content Include="favicon.ico" />
     <Content Include="Feed\Default.aspx" />
     <Content Include="Feed\Feed1.ascx" />
@@ -360,27 +466,27 @@
     <Content Include="Help\images\curriculumNodeStatus.png" />
     <Content Include="Help\images\documentOptions.png" />
     <Content Include="Help\Libraries.aspx" />
-    <Content Include="images\arrow-down-offwhite.png" />
     <Content Include="images\arrow-left-offwhite.png" />
     <Content Include="images\arrow-right-offwhite.png" />
-    <Content Include="images\arrow-up-offwhite.png" />
-    <Content Include="images\BlankImage.png" />
     <Content Include="images\books-15.png" />
     <Content Include="images\books-25.png" />
     <Content Include="images\books-50.png" />
     <Content Include="images\defaultLibraryImg.png" />
     <Content Include="images\defaultProfileImg.jpg" />
-    <Content Include="images\icons\200px-Adobe_PDF_Icon.png" />
-    <Content Include="images\icons\comments-small.png" />
     <Content Include="images\icons\download-orange.png" />
     <Content Include="images\icons\download_icon.png" />
+    <Content Include="images\icons\filethumbs\filethumb_unavailable_400x300.png" />
+    <Content Include="images\icons\icon_upload.png" />
+    <Content Include="images\icons\icon_upload_bg.png" />
+    <Content Include="images\icons\ioer_favicon.ico" />
+    <Content Include="images\icons\200px-Adobe_PDF_Icon.png" />
+    <Content Include="images\icons\comments-small.png" />
     <Content Include="images\icons\filethumbs\filethumb_docx_200x150.png" />
     <Content Include="images\icons\filethumbs\filethumb_docx_400x300.png" />
     <Content Include="images\icons\filethumbs\filethumb_pdf_200x150.png" />
     <Content Include="images\icons\filethumbs\filethumb_pdf_400x300.png" />
     <Content Include="images\icons\filethumbs\filethumb_pptx_200x150.png" />
     <Content Include="images\icons\filethumbs\filethumb_pptx_400x300.png" />
-    <Content Include="images\icons\filethumbs\filethumb_unavailable_400x300.png" />
     <Content Include="images\icons\filethumbs\filethumb_xlsx_200x150.png" />
     <Content Include="images\icons\filethumbs\filethumb_xlsx_400x300.png" />
     <Content Include="images\icons\icon-click.png" />
@@ -392,23 +498,17 @@
     <Content Include="images\icons\icon_comments.png" />
     <Content Include="images\icons\icon_comments_bg.png" />
     <Content Include="images\icons\icon_comments_med.png" />
-    <Content Include="images\icons\icon_community_black_large.png" />
     <Content Include="images\icons\icon_community_med.png" />
-    <Content Include="images\icons\icon_community_white_large.png" />
     <Content Include="images\icons\icon_create.png" />
     <Content Include="images\icons\icon_create_bg.png" />
     <Content Include="images\icons\icon_create_med.png" />
     <Content Include="images\icons\icon_dislikes_white.png" />
     <Content Include="images\icons\icon_help.png" />
     <Content Include="images\icons\icon_help_bg.png" />
-    <Content Include="images\icons\icon_help_black_large.png" />
     <Content Include="images\icons\icon_help_med.png" />
-    <Content Include="images\icons\icon_help_white_large.png" />
     <Content Include="images\icons\icon_keywords.png" />
     <Content Include="images\icons\icon_keywords_bg.png" />
-    <Content Include="images\icons\icon_library_black_large.png" />
     <Content Include="images\icons\icon_library_med.png" />
-    <Content Include="images\icons\icon_library_white_large.png" />
     <Content Include="images\icons\icon_likes.png" />
     <Content Include="images\icons\icon_likes_bg.png" />
     <Content Include="images\icons\icon_library.png" />
@@ -423,64 +523,40 @@
     <Content Include="images\icons\icon_myisle_bg.png" />
     <Content Include="images\icons\icon_ratings.png" />
     <Content Include="images\icons\icon_ratings_bg.png" />
-    <Content Include="images\icons\icon_ratings_med.png" />
     <Content Include="images\icons\icon_report.png" />
     <Content Include="images\icons\icon_report_bg.png" />
     <Content Include="images\icons\icon_resources.png" />
     <Content Include="images\icons\icon_resources_bg.png" />
-    <Content Include="images\icons\icon_resources_black_large.png" />
     <Content Include="images\icons\icon_resources_med.png" />
-    <Content Include="images\icons\icon_resources_white_large.png" />
     <Content Include="images\icons\icon_search.png" />
     <Content Include="images\icons\icon_search_bg.png" />
-    <Content Include="images\icons\icon_search_black_large.png" />
     <Content Include="images\icons\icon_search_med.png" />
-    <Content Include="images\icons\icon_search_white_large.png" />
     <Content Include="images\icons\icon_standards.png" />
     <Content Include="images\icons\icon_standards_bg.png" />
-    <Content Include="images\icons\icon_standards_med.png" />
     <Content Include="images\icons\icon_standards_rated_bg.png" />
     <Content Include="images\icons\icon_subjects.png" />
     <Content Include="images\icons\icon_subjects_bg.png" />
     <Content Include="images\icons\icon_swirl.png" />
     <Content Include="images\icons\icon_swirl_bg.png" />
-    <Content Include="images\icons\icon_swirl_black_large.png" />
     <Content Include="images\icons\icon_swirl_med.png" />
-    <Content Include="images\icons\icon_swirl_white_large.png" />
     <Content Include="images\icons\icon_tag.png" />
     <Content Include="images\icons\icon_tag_bg.png" />
     <Content Include="images\icons\icon_dislikes.png" />
     <Content Include="images\icons\icon_dislikes_bg.png" />
-    <Content Include="images\icons\icon_tag_black_large.png" />
     <Content Include="images\icons\icon_tag_med.png" />
-    <Content Include="images\icons\icon_tag_white_large.png" />
-    <Content Include="images\icons\icon_upload.png" />
-    <Content Include="images\icons\icon_upload_400x300.png" />
-    <Content Include="images\icons\icon_upload_bg.png" />
-    <Content Include="images\icons\icon_upload_black_large.png" />
     <Content Include="images\icons\icon_upload_med.png" />
-    <Content Include="images\icons\icon_upload_white_large.png" />
-    <Content Include="images\icons\icon_zip_400x300.png" />
-    <Content Include="images\icons\icon_zip_med.png" />
-    <Content Include="images\icons\ioer_favicon.ico" />
+    <Content Include="images\icons\warning.gif" />
     <Content Include="images\ioer_med.png" />
     <Content Include="images\ioer_med_bigtext.png" />
     <Content Include="images\isle.png" />
-    <Content Include="images\logo_achieve.png" />
-    <Content Include="images\logo_asn.png" />
-    <Content Include="images\logo_cc.jpg" />
-    <Content Include="images\logo_ceds.jpg" />
-    <Content Include="images\logo_lr.png" />
-    <Content Include="images\logo_lrmi.png" />
     <Content Include="images\NotAvailable.png" />
-    <Content Include="images\rotatorResizer.png" />
     <Content Include="images\scoreboard.png" />
     <Content Include="images\ThumbnailResizer.png" />
+    <Content Include="images\unwait.png" />
     <Content Include="images\wait.gif" />
     <Content Include="images\youtube-autoresizer.png" />
     <Content Include="Libraries\Admin.aspx" />
     <Content Include="IslePortalLandingPage.aspx" />
-    <Content Include="Libraries\Favorites.aspx" />
     <Content Include="LRW\controls\Dashboard1.ascx" />
     <Content Include="LRW\controls\Detail6.ascx" />
     <Content Include="LRW\controls\ElasticSearch3.ascx" />
@@ -492,7 +568,6 @@
     <Content Include="LRW\controls\StandardsRater.ascx" />
     <Content Include="LRW\controls\TagList.ascx" />
     <Content Include="My\Avatar.aspx" />
-    <Content Include="My\Curriculum.aspx" />
     <Content Include="My\Dashboard.aspx" />
     <Content Include="My\DocumentEditor.aspx" />
     <Content Include="Organizations\Default.aspx" />
@@ -500,21 +575,14 @@
     <Content Include="Organizations\UnityPoint\Default.aspx" />
     <Content Include="Organizations\UnityPoint\logo.png" />
     <Content Include="Organizations\UnityPoint\school.png" />
-    <Content Include="Pages\CalendarTest.aspx" />
-    <Content Include="Pages\ContactUs.aspx" />
-    <Content Include="Pages\curriculae.aspx" />
     <Content Include="Pages\Dashboard.aspx" />
-    <Content Include="Pages\default.aspx" />
-    <Content Include="Pages\gooruPlayer.aspx" />
     <Content Include="Pages\GooruSearch.aspx" />
     <Content Include="Pages\HS_Home.aspx" />
     <Content Include="Pages\IT_Home.aspx" />
+    <Content Include="Pages\CalendarTest.aspx" />
     <Content Include="Pages\IT_Home2.aspx" />
-    <Content Include="Pages\Login.aspx" />
-    <Content Include="Pages\NationalInitiatives.aspx" />
-    <Content Include="Pages\ql.aspx" />
     <Content Include="Pages\SamplePage.aspx" />
-    <Content Include="Pages\TestSamplePage.aspx" />
+    <Content Include="Pages\Login.aspx" />
     <Content Include="PortalSplash.aspx" />
     <Content Include="Profiles\Default.aspx" />
     <Content Include="Repository\Default.aspx" />
@@ -541,46 +609,35 @@
     <Content Include="Libraries\Library.aspx" />
     <Content Include="LRW\controls\SearchConfig.ascx" />
     <Content Include="Publishers.aspx" />
-    <Content Include="Rubrics\Default.aspx" />
     <Content Include="Scripts\detail6.js" />
     <Content Include="Scripts\ESLibrary2.js" />
+    <Content Include="Masters\Previewer2.Master" />
+    <Content Include="Masters\Plain.Master" />
+    <None Include="Properties\PublishProfiles\prod webdeploy.pubxml" />
+    <None Include="Properties\PublishProfiles\workNet %28production%29.pubxml" />
+    <None Include="Scripts\jquery-1.10.2.intellisense.js" />
+    <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
+    <Content Include="Scripts\jquery-2.1.1.min.js" />
     <Content Include="Scripts\jquery.cookie.js" />
     <Content Include="Scripts\jquery.Jcrop.js" />
     <Content Include="Scripts\jquery.Jcrop.min.js" />
     <Content Include="Scripts\jquery.jcrop.preview.js" />
-    <Content Include="Scripts\jscommon.js" />
-    <Content Include="Scripts\jstree\jstree.js" />
-    <Content Include="Scripts\jstree\jstree.min.js" />
-    <Content Include="Scripts\jstree\libs\document-register-element.js" />
-    <Content Include="Scripts\jstree\libs\require.js" />
-    <Content Include="Scripts\jstree\themes\default\32px.png" />
-    <Content Include="Scripts\jstree\themes\default\40px.png" />
-    <Content Include="Scripts\jstree\themes\default\style.css" />
-    <Content Include="Scripts\jstree\themes\default\style.min.css" />
-    <Content Include="Scripts\jstree\themes\default\throbber.gif" />
-    <Content Include="Scripts\jstree\themes\ioer\32px.png" />
-    <Content Include="Scripts\jstree\themes\ioer\40px.png" />
-    <Content Include="Scripts\jstree\themes\ioer\style.css" />
-    <Content Include="Scripts\jstree\themes\ioer\throbber.gif" />
     <Content Include="Scripts\LibrariesSearch2.js" />
     <Content Include="Scripts\OrgSearch.js" />
     <Content Include="Scripts\paradataRenderer.js" />
     <Content Include="Scripts\publish3.js" />
     <Content Include="Scripts\searchWidget.js" />
     <Content Include="Scripts\slider2.js" />
-    <Content Include="Scripts\standards\jsonAB.js" />
     <Content Include="Scripts\standards\jsonELA-trimmed.js" />
     <Content Include="Scripts\standards\jsonELA.js" />
     <Content Include="Scripts\standards\jsonILFineArts.js" />
     <Content Include="Scripts\standards\jsonILPhysicalDevelopment.js" />
-    <Content Include="Scripts\standards\jsonILSocialEmotional.js" />
     <Content Include="Scripts\standards\jsonILSocialScience.js" />
     <Content Include="Scripts\standards\jsonMath-trimmed.js" />
     <Content Include="Scripts\standards\jsonMath.js" />
     <Content Include="Scripts\standards\jsonNGSS-trimmed.js" />
     <Content Include="Scripts\standards\jsonNGSS.js" />
-    <Content Include="Scripts\standards\jsonNHES.js" />
     <Content Include="Scripts\standards\xframeCommunication.js" />
     <Content Include="Scripts\toolTipV2.js" />
     <Content Include="Scripts\widgetSearch.js" />
@@ -588,24 +645,46 @@
     <Content Include="Masters\Responsive.Master" />
     <Content Include="Masters\Previewer.Master" />
     <Content Include="Masters\Responsive2.Master" />
-    <Content Include="packages.config" />
-    <Content Include="Masters\Plain.Master" />
-    <Content Include="Masters\Previewer2.Master" />
+    <Content Include="Scripts\_references.js" />
+    <Content Include="Services\CurriculumService.asmx" />
+    <Content Include="Services\OrganizationService.asmx" />
+    <Content Include="testing\JSONtesting.aspx" />
+    <Content Include="testing\placeholder.aspx" />
+    <Content Include="testing\Plain.aspx" />
+    <Content Include="testing\postmessagetest\postMessageChild.htm" />
+    <Content Include="testing\postmessagetest\postMessageParent.htm" />
+    <Content Include="testing\Protection\compressed\noworker.nude.min.js" />
+    <Content Include="testing\Protection\compressed\nude.min.js" />
+    <Content Include="testing\Protection\compressed\worker.nude.min.js" />
+    <Content Include="testing\Protection\Default.htm" />
+    <Content Include="testing\Protection\tests\noworker.nude.js" />
+    <Content Include="testing\Protection\tests\nude.js" />
+    <Content Include="testing\Protection\Nude.min.js" />
+    <Content Include="testing\Protection\tests\images\1.jpg" />
+    <Content Include="testing\Protection\tests\images\2.jpg" />
+    <Content Include="testing\Protection\tests\images\3.jpg" />
+    <Content Include="testing\Protection\tests\images\4.jpg" />
+    <Content Include="testing\Protection\tests\index.html" />
+    <Content Include="testing\Protection\tests\noworker.nude.min.js" />
+    <Content Include="testing\Protection\tests\nude.min.js" />
+    <Content Include="testing\Protection\tests\style.css" />
+    <Content Include="testing\Protection\tests\test.nude.js" />
+    <Content Include="testing\Protection\tests\worker.nude.min.js" />
+    <Content Include="testing\Protection\tests\worker.nude.js" />
+    <Content Include="testing\TestWSCall_to_json.html" />
+    <Content Include="testing\WebApi\WebForm1.aspx" />
+    <Content Include="TGLandingPage.aspx" />
     <Content Include="Widgets\Collection\Default.aspx" />
     <Content Include="Widgets\Curriculum\Default.aspx" />
     <Content Include="Widgets\Default.aspx" />
-    <Content Include="Widgets\LearningList\Default.aspx" />
     <Content Include="Widgets\Library\Default.aspx" />
     <Content Include="Widgets\Library\Library1.ascx" />
-    <Content Include="Widgets\PreviewerV1\Default.aspx" />
-    <Content Include="Widgets\PreviewerV1\load.js" />
-    <Content Include="Widgets\PreviewerV1\PreviewerV1.ascx" />
-    <Content Include="Widgets\PreviewerV1\previewerv1.css" />
-    <Content Include="Widgets\PreviewerV1\previewerv1.js" />
+    <Content Include="packages.config" />
     <Content Include="Widgets\ResourceSelector\Default.aspx" />
     <Content Include="Widgets\ResourceSelector\Selector1.ascx" />
     <Content Include="Widgets\Search\Default.aspx" />
     <Content Include="Widgets\Standards\Default.aspx" />
+    <Content Include="Scripts\jquery-1.10.2.min.map" />
     <None Include="Service References\com.illinoisworknet.www.vos\vos.disco" />
     <None Include="Service References\com.illinoisworknet.www.vos\configuration91.svcinfo" />
     <None Include="Service References\com.illinoisworknet.www.vos\configuration.svcinfo" />
@@ -614,25 +693,17 @@
       <LastGenOutput>Reference.cs</LastGenOutput>
     </None>
     <Content Include="Scripts\widgets\ioersearch.js" />
-    <Content Include="Scripts\widgets\postmessagereceiver.js" />
-    <Content Include="Scripts\widgets\resizer.js" />
     <Content Include="Scripts\widgets\standardsbrowser.js" />
     <Content Include="Scripts\widgets\widgetloader.js" />
-    <None Include="Scripts\_references.js" />
     <Content Include="secure\controls\IsleSSO.ascx" />
     <Content Include="secure\IsleSSO.aspx" />
     <Content Include="Server.aspx" />
-    <Content Include="Services\AdminService1.asmx" />
     <Content Include="Services\CommunityService.asmx" />
-    <Content Include="Services\CurriculumService.asmx" />
-    <Content Include="Services\CurriculumService1.asmx" />
     <Content Include="Services\Dashboard2Service.asmx" />
     <Content Include="Services\DashboardService.asmx" />
     <Content Include="Services\DetailService6.asmx" />
     <Content Include="Services\ESLibrary2Service.asmx" />
-    <Content Include="Services\HintsService.asmx" />
     <Content Include="Services\LibraryService.asmx" />
-    <Content Include="Services\OrganizationService.asmx" />
     <Content Include="Services\PublisherService.asmx" />
     <Content Include="Services\ResourceService.asmx" />
     <Content Include="Services\UtilityService.asmx" />
@@ -774,16 +845,6 @@
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
     <None Include="Service References\AppItemsServiceReference\items.wsdl" />
-    <None Include="Service References\CodeTableServiceReference\CodeTableService.wsdl" />
-    <None Include="Service References\CodeTableServiceReference\CodeTableService.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Service References\CodeTableServiceReference\CodeTableService1.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Service References\CodeTableServiceReference\CodeTableService2.xsd">
-      <SubType>Designer</SubType>
-    </None>
     <None Include="Service References\com.illinoisworknet.www.vos\vos.wsdl" />
     <None Include="Service References\EmailNoticeServiceReference\EmailNoticeWS.wsdl" />
     <None Include="Service References\EmailNoticeServiceReference\IlPathways.EmailNoticeServiceReference.EmailNotice.datasource">
@@ -889,13 +950,6 @@
       <Generator>WCF Proxy Generator</Generator>
       <LastGenOutput>Reference.cs</LastGenOutput>
     </None>
-    <Content Include="Service References\CodeTableServiceReference\CodeTableService.disco" />
-    <Content Include="Service References\CodeTableServiceReference\configuration.svcinfo" />
-    <Content Include="Service References\CodeTableServiceReference\configuration91.svcinfo" />
-    <Content Include="Service References\CodeTableServiceReference\Reference.svcmap">
-      <Generator>WCF Proxy Generator</Generator>
-      <LastGenOutput>Reference1.cs</LastGenOutput>
-    </Content>
     <None Include="Service References\LibraryServiceReference\LibraryService.disco" />
     <None Include="Service References\LibraryServiceReference\configuration91.svcinfo" />
     <None Include="Service References\LibraryServiceReference\configuration.svcinfo" />
@@ -920,7 +974,6 @@
     <Content Include="Styles\Flyout.css" />
     <Content Include="Styles\footerResponsive.css" />
     <Content Include="Styles\Header.css" />
-    <Content Include="Styles\hint.css" />
     <Content Include="Styles\ISLE.css" />
     <Content Include="Styles\Isle_large.css" />
     <Content Include="Styles\Jcrop.gif" />
@@ -941,7 +994,6 @@
     <Content Include="Services\SearchService.asmx" />
     <None Include="Service References\workNetSubscriptionReference\Subscriptions.wsdl" />
     <Content Include="Styles\toolTipV2.css" />
-    <Content Include="TGLandingPage.aspx" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
@@ -954,14 +1006,15 @@
     <None Include="Service References\workNetGlossary\glossaryws.wsdl" />
     <None Include="Service References\workNetSubscriptionReference\ILPathways.workNetSubscriptionReference.AppItemAnnouncementSubscription.datasource" />
     <None Include="Service References\workNetSubscriptionReference\Subscriptions.wsdl" />
+    <Content Include="testing\Protection\README" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Account\controls\AccountRegisterUpdateController.ascx.cs">
-      <DependentUpon>AccountRegisterUpdateController.ascx</DependentUpon>
+    <Compile Include="Account\controls\Dashboard.ascx.cs">
+      <DependentUpon>Dashboard.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Account\controls\AccountRegisterUpdateController.ascx.designer.cs">
-      <DependentUpon>AccountRegisterUpdateController.ascx</DependentUpon>
+    <Compile Include="Account\controls\Dashboard.ascx.designer.cs">
+      <DependentUpon>Dashboard.ascx</DependentUpon>
     </Compile>
     <Compile Include="Account\controls\Registration2.ascx.cs">
       <DependentUpon>Registration2.ascx</DependentUpon>
@@ -969,13 +1022,6 @@
     </Compile>
     <Compile Include="Account\controls\Registration2.ascx.designer.cs">
       <DependentUpon>Registration2.ascx</DependentUpon>
-    </Compile>
-    <Compile Include="Account\controls\UserProfile.ascx.cs">
-      <DependentUpon>UserProfile.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Account\controls\UserProfile.ascx.designer.cs">
-      <DependentUpon>UserProfile.ascx</DependentUpon>
     </Compile>
     <Compile Include="Account\controls\UserProfile2.ascx.cs">
       <DependentUpon>UserProfile2.ascx</DependentUpon>
@@ -991,12 +1037,19 @@
     <Compile Include="Account\ForgotPassword.aspx.designer.cs">
       <DependentUpon>ForgotPassword.aspx</DependentUpon>
     </Compile>
-    <Compile Include="Account\Profile2.aspx.cs">
-      <DependentUpon>Profile2.aspx</DependentUpon>
+    <Compile Include="Account\Success.aspx.cs">
+      <DependentUpon>Success.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Account\Profile2.aspx.designer.cs">
-      <DependentUpon>Profile2.aspx</DependentUpon>
+    <Compile Include="Account\Success.aspx.designer.cs">
+      <DependentUpon>Success.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Activity\ActivityRenderer.ascx.cs">
+      <DependentUpon>ActivityRenderer.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Activity\ActivityRenderer.ascx.designer.cs">
+      <DependentUpon>ActivityRenderer.ascx</DependentUpon>
     </Compile>
     <Compile Include="Activity\Default.aspx.cs">
       <DependentUpon>Default.aspx</DependentUpon>
@@ -1004,6 +1057,27 @@
     </Compile>
     <Compile Include="Activity\Default.aspx.designer.cs">
       <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Activity\Stats.aspx.cs">
+      <DependentUpon>Stats.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Activity\Stats.aspx.designer.cs">
+      <DependentUpon>Stats.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Activity\Stats1.ascx.cs">
+      <DependentUpon>Stats1.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Activity\Stats1.ascx.designer.cs">
+      <DependentUpon>Stats1.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Activity\Stats2.ascx.cs">
+      <DependentUpon>Stats2.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Activity\Stats2.ascx.designer.cs">
+      <DependentUpon>Stats2.ascx</DependentUpon>
     </Compile>
     <Compile Include="Admin\AdminStuff.aspx.cs">
       <DependentUpon>AdminStuff.aspx</DependentUpon>
@@ -1110,6 +1184,8 @@
     <Compile Include="AppCode\HTMLEditor\CustomButtonsAndPopups.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
+    <Compile Include="App_Packages\TaskHelpers.Sources.0.1\TaskHelpers.cs" />
+    <Compile Include="App_Packages\TaskHelpers.Sources.0.1\TaskHelpersExtensions.cs" />
     <Compile Include="AuthenticationBehavior.cs" />
     <Compile Include="Communities\Community.aspx.cs">
       <DependentUpon>Community.aspx</DependentUpon>
@@ -1138,19 +1214,10 @@
     <Compile Include="Controllers\BaseController.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Controllers\CodeTableController.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Controllers\ContentController.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Controllers\EmailController.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Controllers\EventFailureEventArgs.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Controllers\EventFailureEventHandler.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Controllers\FaqController.cs">
@@ -1168,19 +1235,10 @@
     <Compile Include="Controllers\NewsController.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Controllers\PublishController.cs">
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
     <Compile Include="Controllers\ResourceCheckBoxFiller.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Controllers\ResourceDataRetriever.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Controllers\ResourcePublishUpdateController.cs">
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Controllers\ResourceVersionController.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Controllers\SearchController.cs">
@@ -1195,12 +1253,26 @@
     <Compile Include="Controllers\UserController.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Controls\Account\AccountSearch.ascx.cs">
+      <DependentUpon>AccountSearch.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\Account\AccountSearch.ascx.designer.cs">
+      <DependentUpon>AccountSearch.ascx</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Activity1.ascx.cs">
       <DependentUpon>Activity1.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Controls\Activity1.ascx.designer.cs">
       <DependentUpon>Activity1.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Admin\BigAdmin1.ascx.cs">
+      <DependentUpon>BigAdmin1.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\Admin\BigAdmin1.ascx.designer.cs">
+      <DependentUpon>BigAdmin1.ascx</DependentUpon>
     </Compile>
     <Compile Include="Controls\Community\Community1.ascx.cs">
       <DependentUpon>Community1.ascx</DependentUpon>
@@ -1236,6 +1308,13 @@
     </Compile>
     <Compile Include="Controls\Content\ContentSearch.ascx.designer.cs">
       <DependentUpon>ContentSearch.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Content\Curriculum.ascx.cs">
+      <DependentUpon>Curriculum.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\Content\Curriculum.ascx.designer.cs">
+      <DependentUpon>Curriculum.ascx</DependentUpon>
     </Compile>
     <Compile Include="Controls\Content\DocumentEditor.ascx.cs">
       <DependentUpon>DocumentEditor.ascx</DependentUpon>
@@ -1328,13 +1407,6 @@
     <Compile Include="Controls\Includes\Header7.ascx.designer.cs">
       <DependentUpon>Header7.ascx</DependentUpon>
     </Compile>
-    <Compile Include="Controls\Includes\SessionHints.ascx.cs">
-      <DependentUpon>SessionHints.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Controls\Includes\SessionHints.ascx.designer.cs">
-      <DependentUpon>SessionHints.ascx</DependentUpon>
-    </Compile>
     <Compile Include="Controls\Libraries\LibrariesSearch.ascx.cs">
       <DependentUpon>LibrariesSearch.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -1342,19 +1414,19 @@
     <Compile Include="Controls\Libraries\LibrariesSearch.ascx.designer.cs">
       <DependentUpon>LibrariesSearch.ascx</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Libraries\Library.ascx.cs">
+      <DependentUpon>Library.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\Libraries\Library.ascx.designer.cs">
+      <DependentUpon>Library.ascx</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Libraries\LibraryAdmin.ascx.cs">
       <DependentUpon>LibraryAdmin.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Controls\Libraries\LibraryAdmin.ascx.designer.cs">
       <DependentUpon>LibraryAdmin.ascx</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\Libraries\LibraryAdminManager.ascx.cs">
-      <DependentUpon>LibraryAdminManager.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Controls\Libraries\LibraryAdminManager.ascx.designer.cs">
-      <DependentUpon>LibraryAdminManager.ascx</DependentUpon>
     </Compile>
     <Compile Include="Controls\Libraries\LibraryMemberInvite.ascx.cs">
       <DependentUpon>LibraryMemberInvite.ascx</DependentUpon>
@@ -1397,6 +1469,213 @@
     </Compile>
     <Compile Include="Controls\OrgMgmt\OrgSearch.ascx.designer.cs">
       <DependentUpon>OrgSearch.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\SearchV5\Index.aspx.cs">
+      <DependentUpon>Index.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\SearchV5\Index.aspx.designer.cs">
+      <DependentUpon>Index.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\SearchV6\Default.aspx.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\SearchV6\Default.aspx.designer.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\SearchV6\Library.aspx.cs">
+      <DependentUpon>Library.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\SearchV6\Library.aspx.designer.cs">
+      <DependentUpon>Library.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\SearchV6\SearchV6.ascx.cs">
+      <DependentUpon>SearchV6.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\SearchV6\SearchV6.ascx.designer.cs">
+      <DependentUpon>SearchV6.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\SearchV6\Themes\ubersearch.ascx.cs">
+      <DependentUpon>ubersearch.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\SearchV6\Themes\ubersearch.ascx.designer.cs">
+      <DependentUpon>ubersearch.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\SearchV6\Themes\ioer_library.ascx.cs">
+      <DependentUpon>ioer_library.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\SearchV6\Themes\ioer_library.ascx.designer.cs">
+      <DependentUpon>ioer_library.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\SearchV6\Themes\ioer.ascx.cs">
+      <DependentUpon>ioer.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\SearchV6\Themes\ioer.ascx.designer.cs">
+      <DependentUpon>ioer.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\SearchV6\Themes\SearchTheme.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\SearchV6\Themes\wn_search.ascx.cs">
+      <DependentUpon>wn_search.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\SearchV6\Themes\wn_search.ascx.designer.cs">
+      <DependentUpon>wn_search.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\SearchV6\Themes\wn_userguide.ascx.cs">
+      <DependentUpon>wn_userguide.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\SearchV6\Themes\wn_userguide.ascx.designer.cs">
+      <DependentUpon>wn_userguide.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Splash3.ascx.cs">
+      <DependentUpon>Splash3.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\Splash3.ascx.designer.cs">
+      <DependentUpon>Splash3.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\UberTaggerV1\UberTaggerV1.ascx.cs">
+      <DependentUpon>UberTaggerV1.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\UberTaggerV1\UberTaggerV1.ascx.designer.cs">
+      <DependentUpon>UberTaggerV1.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\UberTaggerV2\Index.aspx.cs">
+      <DependentUpon>Index.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\UberTaggerV2\Index.aspx.designer.cs">
+      <DependentUpon>Index.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\UberTaggerV2\UberTaggerV2.ascx.cs">
+      <DependentUpon>UberTaggerV2.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\UberTaggerV2\UberTaggerV2.ascx.designer.cs">
+      <DependentUpon>UberTaggerV2.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\UberTaggerV2\upload.aspx.cs">
+      <DependentUpon>upload.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\UberTaggerV2\upload.aspx.designer.cs">
+      <DependentUpon>upload.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Masters\Plain.Master.cs">
+      <DependentUpon>Plain.Master</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Masters\Plain.Master.designer.cs">
+      <DependentUpon>Plain.Master</DependentUpon>
+    </Compile>
+    <Compile Include="My\Curriculum.aspx.cs">
+      <DependentUpon>Curriculum.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="My\Curriculum.aspx.designer.cs">
+      <DependentUpon>Curriculum.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="My\Library2.aspx.cs">
+      <DependentUpon>Library2.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="My\Library2.aspx.designer.cs">
+      <DependentUpon>Library2.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\curriculae.aspx.cs">
+      <DependentUpon>curriculae.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\curriculae.aspx.designer.cs">
+      <DependentUpon>curriculae.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\default.aspx.cs">
+      <DependentUpon>default.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\default.aspx.designer.cs">
+      <DependentUpon>default.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Includes\SessionHints.ascx.cs">
+      <DependentUpon>SessionHints.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\Includes\SessionHints.ascx.designer.cs">
+      <DependentUpon>SessionHints.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Services\ActivityService.asmx.cs">
+      <DependentUpon>ActivityService.asmx</DependentUpon>
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Services\AdminService1.asmx.cs">
+      <DependentUpon>AdminService1.asmx</DependentUpon>
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Services\AdminService1Components\Community.cs" />
+    <Compile Include="Services\AdminService1Components\IManageObject.cs" />
+    <Compile Include="Services\AdminService1Components\LearningList.cs" />
+    <Compile Include="Services\AdminService1Components\Library.cs" />
+    <Compile Include="Services\AdminService1Components\Organization.cs" />
+    <Compile Include="Services\CurriculumService1.asmx.cs">
+      <DependentUpon>CurriculumService1.asmx</DependentUpon>
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Services\HintsService.asmx.cs">
+      <DependentUpon>HintsService.asmx</DependentUpon>
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Services\LibraryAJAXService.asmx.cs">
+      <DependentUpon>LibraryAJAXService.asmx</DependentUpon>
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Services\StandardsService.asmx.cs">
+      <DependentUpon>StandardsService.asmx</DependentUpon>
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UberTagger.aspx.cs">
+      <DependentUpon>UberTagger.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="UberTagger.aspx.designer.cs">
+      <DependentUpon>UberTagger.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Widgets\FullSearch\Default.aspx.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Widgets\FullSearch\Default.aspx.designer.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Widgets\LearningList\Default.aspx.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Widgets\LearningList\Default.aspx.designer.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Widgets\PreviewerV1\Default.aspx.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Widgets\PreviewerV1\Default.aspx.designer.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Widgets\PreviewerV1\PreviewerV1.ascx.cs">
+      <DependentUpon>PreviewerV1.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Widgets\PreviewerV1\PreviewerV1.ascx.designer.cs">
+      <DependentUpon>PreviewerV1.ascx</DependentUpon>
     </Compile>
     <Compile Include="Controls\Publish3.ascx.cs">
       <DependentUpon>Publish3.ascx</DependentUpon>
@@ -1450,26 +1729,61 @@
     <Compile Include="Controls\Rubrics\RubricClasses.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Controls\Rubrics\RubricCore.ascx.cs">
-      <DependentUpon>RubricCore.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Controls\Rubrics\RubricCore.ascx.designer.cs">
-      <DependentUpon>RubricCore.ascx</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\SearchV5\Index.aspx.cs">
-      <DependentUpon>Index.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Controls\SearchV5\Index.aspx.designer.cs">
-      <DependentUpon>Index.aspx</DependentUpon>
-    </Compile>
     <Compile Include="Controls\SearchV5\SearchV5.ascx.cs">
       <DependentUpon>SearchV5.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Controls\SearchV5\SearchV5.ascx.designer.cs">
       <DependentUpon>SearchV5.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Masters\Previewer2.Master.cs">
+      <DependentUpon>Previewer2.Master</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Masters\Previewer2.Master.designer.cs">
+      <DependentUpon>Previewer2.Master</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\ContactUs.aspx.cs">
+      <DependentUpon>ContactUs.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\ContactUs.aspx.designer.cs">
+      <DependentUpon>ContactUs.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\gooruPlayer.aspx.cs">
+      <DependentUpon>gooruPlayer.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\gooruPlayer.aspx.designer.cs">
+      <DependentUpon>gooruPlayer.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\TestSamplePage.aspx.cs">
+      <DependentUpon>TestSamplePage.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\TestSamplePage.aspx.designer.cs">
+      <DependentUpon>TestSamplePage.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\NationalInitiatives.aspx.cs">
+      <DependentUpon>NationalInitiatives.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\NationalInitiatives.aspx.designer.cs">
+      <DependentUpon>NationalInitiatives.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Rubrics\Default.aspx.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Rubrics\Default.aspx.designer.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Rubrics\RubricCore.ascx.cs">
+      <DependentUpon>RubricCore.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\Rubrics\RubricCore.ascx.designer.cs">
+      <DependentUpon>RubricCore.ascx</DependentUpon>
     </Compile>
     <Compile Include="Controls\SocialBox\SocialBox1.ascx.cs">
       <DependentUpon>SocialBox1.ascx</DependentUpon>
@@ -1498,6 +1812,13 @@
     </Compile>
     <Compile Include="Controls\SplashMini.ascx.designer.cs">
       <DependentUpon>SplashMini.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\StandardsBrowser7.ascx.cs">
+      <DependentUpon>StandardsBrowser7.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\StandardsBrowser7.ascx.designer.cs">
+      <DependentUpon>StandardsBrowser7.ascx</DependentUpon>
     </Compile>
     <Compile Include="Feed\Default.aspx.cs">
       <DependentUpon>Default.aspx</DependentUpon>
@@ -1561,13 +1882,6 @@
     </Compile>
     <Compile Include="IslePortalLandingPage.aspx.designer.cs">
       <DependentUpon>IslePortalLandingPage.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Libraries\Favorites.aspx.cs">
-      <DependentUpon>Favorites.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Libraries\Favorites.aspx.designer.cs">
-      <DependentUpon>Favorites.aspx</DependentUpon>
     </Compile>
     <Compile Include="LRW\controls\Dashboard1.ascx.cs">
       <DependentUpon>Dashboard1.ascx</DependentUpon>
@@ -1639,26 +1953,12 @@
     <Compile Include="LRW\controls\TagList.ascx.designer.cs">
       <DependentUpon>TagList.ascx</DependentUpon>
     </Compile>
-    <Compile Include="Masters\Plain.Master.cs">
-      <DependentUpon>Plain.Master</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Masters\Plain.Master.designer.cs">
-      <DependentUpon>Plain.Master</DependentUpon>
-    </Compile>
     <Compile Include="Masters\Previewer.Master.cs">
       <DependentUpon>Previewer.Master</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Masters\Previewer.Master.designer.cs">
       <DependentUpon>Previewer.Master</DependentUpon>
-    </Compile>
-    <Compile Include="Masters\Previewer2.Master.cs">
-      <DependentUpon>Previewer2.Master</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Masters\Previewer2.Master.designer.cs">
-      <DependentUpon>Previewer2.Master</DependentUpon>
     </Compile>
     <Compile Include="Masters\Responsive.Master.cs">
       <DependentUpon>Responsive.Master</DependentUpon>
@@ -1680,13 +1980,6 @@
     </Compile>
     <Compile Include="My\Avatar.aspx.designer.cs">
       <DependentUpon>Avatar.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="My\Curriculum.aspx.cs">
-      <DependentUpon>Curriculum.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="My\Curriculum.aspx.designer.cs">
-      <DependentUpon>Curriculum.aspx</DependentUpon>
     </Compile>
     <Compile Include="My\Dashboard.aspx.cs">
       <DependentUpon>Dashboard.aspx</DependentUpon>
@@ -1723,27 +2016,6 @@
     <Compile Include="Organizations\UnityPoint\Default.aspx.designer.cs">
       <DependentUpon>Default.aspx</DependentUpon>
     </Compile>
-    <Compile Include="Pages\CalendarTest.aspx.cs">
-      <DependentUpon>CalendarTest.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Pages\CalendarTest.aspx.designer.cs">
-      <DependentUpon>CalendarTest.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Pages\ContactUs.aspx.cs">
-      <DependentUpon>ContactUs.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Pages\ContactUs.aspx.designer.cs">
-      <DependentUpon>ContactUs.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Pages\curriculae.aspx.cs">
-      <DependentUpon>curriculae.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Pages\curriculae.aspx.designer.cs">
-      <DependentUpon>curriculae.aspx</DependentUpon>
-    </Compile>
     <Compile Include="Pages\Dashboard.aspx.cs">
       <DependentUpon>Dashboard.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -1751,33 +2023,12 @@
     <Compile Include="Pages\Dashboard.aspx.designer.cs">
       <DependentUpon>Dashboard.aspx</DependentUpon>
     </Compile>
-    <Compile Include="Pages\default.aspx.cs">
-      <DependentUpon>default.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Pages\default.aspx.designer.cs">
-      <DependentUpon>default.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Pages\gooruPlayer.aspx.cs">
-      <DependentUpon>gooruPlayer.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Pages\gooruPlayer.aspx.designer.cs">
-      <DependentUpon>gooruPlayer.aspx</DependentUpon>
-    </Compile>
     <Compile Include="Pages\GooruSearch.aspx.cs">
       <DependentUpon>GooruSearch.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Pages\GooruSearch.aspx.designer.cs">
       <DependentUpon>GooruSearch.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Pages\HS_Home.aspx.cs">
-      <DependentUpon>HS_Home.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Pages\HS_Home.aspx.designer.cs">
-      <DependentUpon>HS_Home.aspx</DependentUpon>
     </Compile>
     <Compile Include="Pages\IT_Home.aspx.cs">
       <DependentUpon>IT_Home.aspx</DependentUpon>
@@ -1793,27 +2044,6 @@
     <Compile Include="Pages\IT_Home2.aspx.designer.cs">
       <DependentUpon>IT_Home2.aspx</DependentUpon>
     </Compile>
-    <Compile Include="Pages\Login.aspx.cs">
-      <DependentUpon>Login.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Pages\Login.aspx.designer.cs">
-      <DependentUpon>Login.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Pages\NationalInitiatives.aspx.cs">
-      <DependentUpon>NationalInitiatives.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Pages\NationalInitiatives.aspx.designer.cs">
-      <DependentUpon>NationalInitiatives.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Pages\ql.aspx.cs">
-      <DependentUpon>ql.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Pages\ql.aspx.designer.cs">
-      <DependentUpon>ql.aspx</DependentUpon>
-    </Compile>
     <Compile Include="Pages\SamplePage.aspx.cs">
       <DependentUpon>SamplePage.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -1821,12 +2051,12 @@
     <Compile Include="Pages\SamplePage.aspx.designer.cs">
       <DependentUpon>SamplePage.aspx</DependentUpon>
     </Compile>
-    <Compile Include="Pages\TestSamplePage.aspx.cs">
-      <DependentUpon>TestSamplePage.aspx</DependentUpon>
+    <Compile Include="Pages\Login.aspx.cs">
+      <DependentUpon>Login.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Pages\TestSamplePage.aspx.designer.cs">
-      <DependentUpon>TestSamplePage.aspx</DependentUpon>
+    <Compile Include="Pages\Login.aspx.designer.cs">
+      <DependentUpon>Login.aspx</DependentUpon>
     </Compile>
     <Compile Include="PortalSplash.aspx.cs">
       <DependentUpon>PortalSplash.aspx</DependentUpon>
@@ -1961,13 +2191,6 @@
     <Compile Include="Publishers.aspx.designer.cs">
       <DependentUpon>Publishers.aspx</DependentUpon>
     </Compile>
-    <Compile Include="Rubrics\Default.aspx.cs">
-      <DependentUpon>Default.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Rubrics\Default.aspx.designer.cs">
-      <DependentUpon>Default.aspx</DependentUpon>
-    </Compile>
     <Compile Include="secure\controls\IsleSSO.ascx.cs">
       <DependentUpon>IsleSSO.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -1994,25 +2217,12 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Reference.svcmap</DependentUpon>
     </Compile>
-    <Compile Include="Services\AdminService1.asmx.cs">
-      <DependentUpon>AdminService1.asmx</DependentUpon>
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Services\AdminService1Components\Community.cs" />
-    <Compile Include="Services\AdminService1Components\IManageObject.cs" />
-    <Compile Include="Services\AdminService1Components\LearningList.cs" />
-    <Compile Include="Services\AdminService1Components\Library.cs" />
-    <Compile Include="Services\AdminService1Components\Organization.cs" />
     <Compile Include="Services\CommunityService.asmx.cs">
       <DependentUpon>CommunityService.asmx</DependentUpon>
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Services\CurriculumService.asmx.cs">
       <DependentUpon>CurriculumService.asmx</DependentUpon>
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Services\CurriculumService1.asmx.cs">
-      <DependentUpon>CurriculumService1.asmx</DependentUpon>
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Services\Dashboard2Service.asmx.cs">
@@ -2029,10 +2239,6 @@
     </Compile>
     <Compile Include="Services\ESLibrary2Service.asmx.cs">
       <DependentUpon>ESLibrary2Service.asmx</DependentUpon>
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Services\HintsService.asmx.cs">
-      <DependentUpon>HintsService.asmx</DependentUpon>
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Services\LibraryService.asmx.cs">
@@ -2188,11 +2394,6 @@
     <Compile Include="Rubric.aspx.designer.cs">
       <DependentUpon>Rubric.aspx</DependentUpon>
     </Compile>
-    <Compile Include="Service References\CodeTableServiceReference\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.svcmap</DependentUpon>
-    </Compile>
     <Compile Include="Service References\FaqServiceReference\Reference.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -2213,6 +2414,34 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Reference.svcmap</DependentUpon>
     </Compile>
+    <Compile Include="testing\JSONtesting.aspx.cs">
+      <DependentUpon>JSONtesting.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="testing\JSONtesting.aspx.designer.cs">
+      <DependentUpon>JSONtesting.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="testing\placeholder.aspx.cs">
+      <DependentUpon>placeholder.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="testing\placeholder.aspx.designer.cs">
+      <DependentUpon>placeholder.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="testing\Plain.aspx.cs">
+      <DependentUpon>Plain.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="testing\Plain.aspx.designer.cs">
+      <DependentUpon>Plain.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="testing\WebApi\WebForm1.aspx.cs">
+      <DependentUpon>WebForm1.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="testing\WebApi\WebForm1.aspx.designer.cs">
+      <DependentUpon>WebForm1.aspx</DependentUpon>
+    </Compile>
     <Compile Include="TGLandingPage.aspx.cs">
       <DependentUpon>TGLandingPage.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -2220,6 +2449,7 @@
     <Compile Include="TGLandingPage.aspx.designer.cs">
       <DependentUpon>TGLandingPage.aspx</DependentUpon>
     </Compile>
+    <Compile Include="TokenHelper.cs" />
     <Compile Include="Widgets\Collection\Default.aspx.cs">
       <DependentUpon>Default.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -2241,13 +2471,6 @@
     <Compile Include="Widgets\Default.aspx.designer.cs">
       <DependentUpon>Default.aspx</DependentUpon>
     </Compile>
-    <Compile Include="Widgets\LearningList\Default.aspx.cs">
-      <DependentUpon>Default.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Widgets\LearningList\Default.aspx.designer.cs">
-      <DependentUpon>Default.aspx</DependentUpon>
-    </Compile>
     <Compile Include="Widgets\Library\Default.aspx.cs">
       <DependentUpon>Default.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -2261,20 +2484,6 @@
     </Compile>
     <Compile Include="Widgets\Library\Library1.ascx.designer.cs">
       <DependentUpon>Library1.ascx</DependentUpon>
-    </Compile>
-    <Compile Include="Widgets\PreviewerV1\Default.aspx.cs">
-      <DependentUpon>Default.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Widgets\PreviewerV1\Default.aspx.designer.cs">
-      <DependentUpon>Default.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Widgets\PreviewerV1\PreviewerV1.ascx.cs">
-      <DependentUpon>PreviewerV1.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Widgets\PreviewerV1\PreviewerV1.ascx.designer.cs">
-      <DependentUpon>PreviewerV1.ascx</DependentUpon>
     </Compile>
     <Compile Include="Widgets\ResourceSelector\Default.aspx.cs">
       <DependentUpon>Default.aspx</DependentUpon>
@@ -2534,7 +2743,6 @@
   <ItemGroup>
     <WCFMetadataStorage Include="Service References\AccountServiceReference\" />
     <WCFMetadataStorage Include="Service References\AppItemsServiceReference\" />
-    <WCFMetadataStorage Include="Service References\CodeTableServiceReference\" />
     <WCFMetadataStorage Include="Service References\com.illinoisworknet.www.vos\" />
     <WCFMetadataStorage Include="Service References\EmailNoticeServiceReference\" />
     <WCFMetadataStorage Include="Service References\FaqServiceReference\" />
@@ -2605,7 +2813,9 @@
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>42394</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://localhost:42394/</IISUrl>
+          <IISUrl>http://localhost:2012</IISUrl>
+          <OverrideIISAppRootUrl>True</OverrideIISAppRootUrl>
+          <IISAppRootUrl>http://localhost:2012</IISAppRootUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>

@@ -230,6 +230,42 @@ namespace Isle.BizServices
             }
             return wsMessage;
         } //
+
+        /// <summary>
+        /// Convert a comma-separated list (as a string) to a list of integers
+        /// </summary>
+        /// <param name="csl">A comma-separated list of integers</param>
+        /// <returns>A List of integers. Returns an empty list on error.</returns>
+        public static List<int> CommaSeparatedListToIntegerList( string csl )
+        {
+          try
+          {
+            return CommaSeparatedListToStringList( csl ).Select( int.Parse ).ToList();
+          }
+          catch
+          {
+            return new List<int>();
+          }
+
+        }
+
+        /// <summary>
+        /// Convert a comma-separated list (as a string) to a list of strings
+        /// </summary>
+        /// <param name="csl">A comma-separated list of strings</param>
+        /// <returns>A List of strings. Returns an empty list on error.</returns>
+        public static List<string> CommaSeparatedListToStringList( string csl )
+        {
+          try
+          {
+            return csl.Trim().Split( new string[] { "," }, StringSplitOptions.RemoveEmptyEntries ).ToList();
+          }
+          catch
+          {
+            return new List<string>();
+          }
+        }
+
         #endregion
 
         #region === Dataset helper Methods ===
@@ -729,6 +765,8 @@ namespace Isle.BizServices
 
             try
             {
+                if ( UtilityManager.GetAppKeyValue( "notifyOnException", "no" ).ToLower() == "yes" )
+                    notifyAdmin = true;
 
                 string serverName = GetAppKeyValue( "serverName", "unknown" );
 
@@ -751,7 +789,7 @@ namespace Isle.BizServices
                 if ( parmsString.Length > 0 )
                     errMsg += "\r\nParameters: " + parmsString;
 
-                LogError( errMsg );
+                LogError( errMsg, notifyAdmin );
             }
             catch
             {
@@ -821,6 +859,21 @@ namespace Isle.BizServices
                 }
             }
         } //
+
+        /// <summary>
+        /// Sends an email message to the system administrator
+        /// </summary>
+        /// <param name="subject">Email subject</param>
+        /// <param name="message">Email message</param>
+        /// <returns>True id message was sent successfully, otherwise false</returns>
+        public static bool NotifyAdmin( string subject, string message )
+        {
+            string emailTo = UtilityManager.GetAppKeyValue( "systemAdminEmail", "mparsons@siuccwd.com" );
+            //work on implementing some specific routing based on error type
+
+
+            return EmailManager.NotifyAdmin( emailTo, subject, message );
+        } 
 
 
         /// <summary>

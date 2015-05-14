@@ -8,6 +8,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
 
+using ILPathways.Utilities;
 //using LearningRegistryCache2.App_Code.Classes;
 using OLDDM = LearningRegistryCache2.App_Code.DataManagers;
 using LRWarehouse.Business;
@@ -29,6 +30,7 @@ namespace LearningRegistryCache2
         private CommParaHandler commParaHandler = new CommParaHandler();
         private LRParadataHandler lrParaHandler = new LRParadataHandler();
         private LrmiHandler lrmiHandler = new LrmiHandler();
+        private BlacklistedHostManager blacklistedHostManager = new BlacklistedHostManager();
         
 
         private OLDDM.LearningRegistryManager registryManager = new OLDDM.LearningRegistryManager();
@@ -38,7 +40,8 @@ namespace LearningRegistryCache2
 
         public static int reportId = 0;
         public static string fileName = "";
-        public static string resourceIdList = "";
+        public static List<int> resourceIdList = new List<int>();
+        public static string deleteResourceIdList = "";
         public static string EmailBody = "";
         public static int lrRecordsRead = 0;
         public static int lrRecordsProcessed = 0;
@@ -47,6 +50,8 @@ namespace LearningRegistryCache2
         public static int lrRecordsEmptySchema = 0;
         public static int lrRecordsBadDataType = 0;
         public static int lrRecordsBadPayloadPlacement = 0;
+        public static bool HasEsUploadErrors = false;
+        public static string EsIdDate = DateTime.Now.ToString("yyyy-MM-dd");
 
         public LearningRegistry()
         {
@@ -180,7 +185,7 @@ namespace LearningRegistryCache2
             reportId = auditReportingManager.CreateReport();
             XmlDocument doc = new XmlDocument();
             doc.Load(fileName);
-            resourceIdList = "";
+            resourceIdList = new List<int>();
 
 
             XmlNodeList records = doc.GetElementsByTagName("record");
@@ -206,17 +211,41 @@ namespace LearningRegistryCache2
 
             // Update ElasticSearch
             string status = "successful";
-            if (resourceIdList.Length > 1)
+            string collectionName = UtilityManager.GetAppKeyValue( "elasticSearchCollection", "collection5" );
+            // NO longer deleting resources from ES Index since ES uses IntId instead of VersionId.  Kept for historical purposes.
+            /*if (deleteResourceIdList.Length > 1)
             {
-                resourceIdList = resourceIdList.Substring(1, resourceIdList.Length - 2);
-                DataSet resourceList = searchManager.GetSqlDataForElasticSearch(resourceIdList, ref status);
-                if (ElasticSearchManager.DoesDataSetHaveRows(resourceList))
+                deleteResourceIdList = deleteResourceIdList.Substring(0, deleteResourceIdList.Length - 1);
+                string[] deleteVersionList = deleteResourceIdList.Split(',');
+                searchManager.MassDeleteByIntID(deleteVersionList, ref status);
+            }*/
+            if (resourceIdList.Count > 0)
+            {
+                try
                 {
-                    searchManager.BulkUpload(resourceList);
+                    searchManager.RefreshResources(resourceIdList);
+                }
+                catch (Exception ex)
+                {
+                    HasEsUploadErrors = true;
+                    string fn = ConfigurationManager.AppSettings["esIdLog"].Replace("[date]", EsIdDate);
+                    using (StreamWriter sw = File.AppendText(fn))
+                    {
+                        foreach (int id in resourceIdList)
+                        {
+                            sw.WriteLine(id+",");
+                        }
+                    }
                 }
             }
             // Update data warehouse totals
             string whtStatus = DatabaseManager.UpdateWarehouseTotals();
+            if (whtStatus != "successful")
+            {
+                auditReportingManager.LogMessage(reportId, fileName, "", "", ErrorType.Error, ErrorRouting.Technical, whtStatus);
+            }
+            // Update publisher totals
+            string pubStatus = DatabaseManager.UpdatePublisherTotals();
             if (whtStatus != "successful")
             {
                 auditReportingManager.LogMessage(reportId, fileName, "", "", ErrorType.Error, ErrorRouting.Technical, whtStatus);
@@ -259,7 +288,7 @@ namespace LearningRegistryCache2
             list = xdoc.GetElementsByTagName("resource_locator");
             if (list.Count > 0)
             {
-                url = TrimWhitespace(list[0].InnerText);
+                url = resourceBizService.CleanseUrl(TrimWhitespace(list[0].InnerText));
             }
             else
             {
@@ -331,6 +360,36 @@ namespace LearningRegistryCache2
                         break;
                     }
                 }
+            }
+
+            // Check for malware/phishing/blacklist
+            try
+            {
+                string status = "";
+                Uri uri = new Uri(url);
+                BlacklistedHost bh = blacklistedHostManager.GetByHostname(uri.Host, ref status);
+                if (bh != null)
+                {
+                    auditReportingManager.LogMessage(reportId, fileName, docID, url, ErrorType.Error, ErrorRouting.Program,
+                        "This URL is suspected to be a phishing page, contain malware, or may otherwise be inappropriate.");
+                    passedEdits = false;
+                }
+                else
+                {
+                    string reputation = ILPathways.Utilities.UtilityManager.CheckUnsafeUrl(url);
+                    if (reputation == "Blacklisted")
+                    {
+                        auditReportingManager.LogMessage(reportId, fileName, docID, url, ErrorType.Error, ErrorRouting.Program,
+                            "This URL is suspected to be a phishing page, contain malware, or may otherwise be inappropriate.  " +
+                            "Learn more about phishing at www.antiphishing.org.  Learn more about malware at www.stopbadware.org.  " +
+                            "Advisory provided by Google at http://code.google.com/apis/safebrowsing/safebrowsing_faq.html#whyAdvisory.");
+                        passedEdits = false;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                auditReportingManager.LogMessage(reportId, fileName, docID, url, ErrorType.Error, ErrorRouting.Technical, "LearningRegistry.ProcessNode(): " + ex.Message);
             }
             if (resourceDataType != "metadata" && resourceDataType != "paradata")
             {
@@ -560,20 +619,25 @@ namespace LearningRegistryCache2
         public void UndeleteResources()
         {
             DataSet ds = resourceManager.GetListOfResourcesToUndelete(true);
+            string collectionName = UtilityManager.GetAppKeyValue( "elasticSearchCollection", "collection5" );
+
+
             if (ResourceManager.DoesDataSetHaveRows(ds))
             {
+                List<int> undelResIds = new List<int>();
                 foreach (DataRow dr in ds.Tables[0].Rows)
                 {
                     string listOfResources = ResourceManager.GetRowColumn(dr, "ResourceIds", "");
-                    string status = "successful";
-                    DataSet resourceList = searchManager.GetSqlDataForElasticSearch(listOfResources, ref status);
-                    if (ElasticSearchManager.DoesDataSetHaveRows(resourceList))
+                    string[] resIds = listOfResources.Split(',');
+                    foreach (string id in resIds)
                     {
-                        searchManager.BulkUpload(resourceList);
+                        undelResIds.Add(int.Parse(id));
+                    }
+                    string status = "successful";
+                    searchManager.RefreshResources(undelResIds);
                         // Pause so as to not overwhelm ElasticSearch
                         Console.WriteLine("Sleeping 60 seconds so as to not overwhelm ElasticSearch");
                         System.Threading.Thread.Sleep(60000);
-                    }
                 }
             }
         }

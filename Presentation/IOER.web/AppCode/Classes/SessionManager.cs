@@ -71,9 +71,16 @@ namespace ILPathways.classes
         /// and if not found check for an MCMS user
         /// </summary>
         /// <returns></returns>
+        public static WBE.IWebUser GetUserFromSession( HttpSessionState session )
+        {
+            return GetUserFromSession( session, WU.Constants.USER_REGISTER  );
+        } //
         public static WBE.IWebUser GetUserFromSession( HttpSessionState session, string userType )
         {
             WBE.IWebUser appUser = null;
+            if ( session == null )
+                return appUser;
+
             if ( userType.Equals( WU.Constants.USER_REGISTER ) )
             {
                 appUser = ( WBE.IWebUser ) session[ WU.Constants.USER_REGISTER ];

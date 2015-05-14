@@ -10,6 +10,7 @@ using ILPathways.Common;
 using ILPathways.DAL;
 using ILPathways.Utilities;
 using ThisUser = LRWarehouse.Business.Patron;
+using Isle.DTO;
 
 namespace Isle.BizServices
 {
@@ -822,6 +823,74 @@ namespace Isle.BizServices
         }
 
         /// <summary>
+        /// Return all where user can contribute content
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>
+        public static List<OrganizationMember> OrganizationMembers_WithContentPrivileges( int userId )
+        {
+            string pFilter = string.Format( "UserId = {0} AND OrgMbrId in (SELECT omr.OrgMemberId  From [Organization.MemberRole] omr where  omr.RoleId in (1,2,5) ) ", userId );
+            string pOrderBy = "";
+            int pStartPageIndex = 0;
+            //just in case, limit list - use different method if need all for a search, etc
+            int pMaximumRows = 1000;
+            int pTotalRows = 0;
+
+            OrganizationMember code = new OrganizationMember();
+
+            List<OrganizationMember> list = OrganizationMemberManager.SearchAsList( pFilter, pOrderBy, pStartPageIndex, pMaximumRows, ref pTotalRows );
+            if ( list != null && list.Count > 0 )
+            {
+                //inject 
+                code = new OrganizationMember();
+                code.Id = 0;
+                code.Organization = "Select Organization (optional)";
+                list.Insert(0, code );
+            }
+            else
+            {
+                //nothing. interface will handle
+            }
+            return list;
+        }
+
+        public static List<CodeItem> OrganizationMembersCodes_WithContentPrivileges( int userId )
+        {
+            string pFilter = string.Format( "UserId = {0} AND OrgMbrId in (SELECT omr.OrgMemberId  From [Organization.MemberRole] omr where  omr.RoleId in (1,2,5) ) ", userId );
+            string pOrderBy = "";
+            int pStartPageIndex = 0;
+            //just in case, limit list - use different method if need all for a search, etc
+            int pMaximumRows = 1000;
+            int pTotalRows = 0;
+
+            List<CodeItem> list = new List<CodeItem>();
+            CodeItem code = new CodeItem();
+            DataSet ds = OrganizationMemberManager.Search( pFilter, pOrderBy, pStartPageIndex, pMaximumRows, ref pTotalRows );
+            if ( DatabaseManager.DoesDataSetHaveRows( ds ) )
+            {
+                code = new CodeItem();
+                code.Id = 0;
+                code.Title = "Select Organization (optional)";
+                code.Description = "";
+                code.WarehouseTotal = 0;
+                code.SortOrder = 10;
+                list.Add( code );
+
+                foreach ( DataRow dr in ds.Tables[ 0 ].DefaultView.Table.Rows )
+                {
+                    code = new CodeItem();
+                    code.Id = GetRowColumn( dr, "OrgId", 0 );
+                    code.Title = GetRowColumn( dr, "Organization", "Missing" );
+                    code.Description = "";
+                    code.WarehouseTotal = 0;
+                    code.SortOrder = 10;
+                    list.Add( code );
+                } //end foreach
+            }
+
+            return list;
+        }
+        /// <summary>
         /// Organization Member search - does not include roles in returned list
         /// </summary>
         /// <param name="pFilter"></param>
@@ -830,6 +899,7 @@ namespace Isle.BizServices
         /// <param name="pMaximumRows"></param>
         /// <param name="pTotalRows"></param>
         /// <returns></returns>
+        /// 
         public static List<OrganizationMember> OrganizationMember_Search( string pFilter, string pOrderBy, int pStartPageIndex, int pMaximumRows, ref int pTotalRows )
         {
             return OrganizationMember_Search( pFilter, pOrderBy, pStartPageIndex, pMaximumRows, false, ref pTotalRows );
@@ -839,7 +909,7 @@ namespace Isle.BizServices
         {
 
             List<OrganizationMember> list = OrganizationMemberManager.SearchAsList( pFilter, pOrderBy, pStartPageIndex, pMaximumRows, ref pTotalRows );
-
+            
             using ( var context = new EFDAL.GatewayContext() )
             {
                 //?? get all the roles for each one, or include an eagar parameter?
@@ -930,6 +1000,63 @@ namespace Isle.BizServices
             return to;
         }
 
+
+        /// <summary>
+        /// Retrieve cross tab of organization member type totals
+        /// </summary>
+        /// <param name="includeOrphanCount">True - also show row for users with no organization affiliation</param>
+        /// <returns></returns>
+        public static List<HierarchyActivityRecord> OrganizationMember_Crosstab( bool includeOrphanCount)
+        {
+
+            List<HierarchyActivityRecord> list = new List<HierarchyActivityRecord>();
+            HierarchyActivityRecord entity = new HierarchyActivityRecord();
+            ActivityCount activityCount = new ActivityCount();
+
+            using ( var context = new EFDAL.GatewayContext() )
+            {
+                List<EFDAL.Organization_MemberCrosstab> items = context.Organization_MemberCrosstab
+                                    .Where( s => ( int ) s.OrgId > 0 
+                                            || ( includeOrphanCount == true ) )
+                                    .ToList();
+                if ( items.Count > 0 )
+                {
+                    int cntr = 0;
+                    foreach ( EFDAL.Organization_MemberCrosstab item in items )
+                    {
+                        cntr++;
+                        entity = new HierarchyActivityRecord();
+
+                        activityCount = new ActivityCount();
+                        activityCount.Id = (int) item.OrgId;
+                        activityCount.Title = item.Organization;
+
+                        Activties_AddItem( activityCount, ( int ) item.Administrator, "administrator" );
+                        Activties_AddItem( activityCount, ( int ) item.Employee, "employee" );
+                        Activties_AddItem( activityCount, ( int ) item.Student, "student" );
+                        Activties_AddItem( activityCount, ( int ) item.External, "external" );
+                        Activties_AddItem( activityCount, ( int ) item.Other, "other" );
+                        Activties_AddItem( activityCount, ( int ) item.All, "line_total" );
+
+                        entity.Activity = activityCount;
+                        //entity.ChildrenActivity.Add( activityCount );
+
+                        list.Add( entity );
+                    }
+                }
+            }
+
+            return list;
+        }
+        private static void Activties_AddItem( ActivityCount activityCount,
+                    int views, 
+                    string label )
+        {
+
+            //int views = GetRowColumn( dr, title, 0 );
+            var cids = new List<int>() { views };
+            activityCount.Activities.Add( label, cids );
+        }
         #endregion
 
         #region === organization member roles
@@ -1135,5 +1262,52 @@ namespace Isle.BizServices
             return list;
         }//
         #endregion
+
+      #region WIP methods
+        //These methods aren't truly implemented yet, but serve as placeholders
+        //They don't necessarily need to be static if it helps to do them normally
+        //I'm also not committed to the method/variable names below, so feel free to adjust them to fit your desired pattern/schema
+
+        //Deny a pending membership
+        //Note: userId is the ID of the user performing the denial
+        //Note: customMessage is sent to the denied member, presumably to indicate why they were denied. We don't -have- to implement this part.
+        //Should return a bool indicating whether or not the denial was successful, and a status message explaining any failure. 
+        //The status message will be hidden from the user but findable to us for debugging purposes.
+        public static bool OrganizationMember_DenyPending( int organizationId, int userId, int pendingMemberId, string customMessage, ref string status )
+        {
+            throw new NotImplementedException( "Sorry, denying memberships is not implemented yet." );
+        }
+
+        //Invite an existing IOER user
+        //Again, userId is the user performing the action
+        //roleId is the role to be assigned to the invited person once they are approved for membership
+        //roleId should correspond to the organization's roles. If this is an issue, let me know.
+        //customMessage is ideally sent to the invitee
+        //status should explain any failure and will be hidden from the user
+        public static bool InviteExistingUser( int organizationId, int userId, int inviteeId, int roleId, string customMessage, ref string status )
+        {
+            throw new NotImplementedException( "Sorry, inviting existing users is not implemented yet." );
+        }
+
+        //Invite a non-existing user by email
+        //userId is the performing user
+        //The email should already be validated by this point but feel free to validate it further
+        //roleId is an organization role for the member to have once they're all finished
+        //customMessage would make good email filler text
+        //status is for us, not the users
+        //should return a bool indicating successful invitation or failure to invite
+        public static bool InviteNewUser( int organizationId, int userId, string inviteeEmail, int roleId, string customMessage, ref string status )
+        {
+            throw new NotImplementedException( "Sorry, inviting new users is not implemented yet." );
+        }
+        
+        //Gets all organization members of a certain role
+        //The current hack below accomplishes this, but is not very efficient
+        public static List<OrganizationMember> OrganizationMember_GetAll( int organizationId, int roleId )
+        {
+          return OrganizationMember_GetAll( organizationId ).Where( m => m.OrgMemberTypeId == roleId ).ToList();
+        }
+
+      #endregion
     }
 }

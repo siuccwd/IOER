@@ -62,24 +62,30 @@ namespace Isle.BizServices
         /// </summary>
         /// <param name="pContentId"></param>
         /// <returns></returns>
-        public ContentNode GetPublicCurriculumOutline( int pContentId )
+        public ContentNode GetPublicCurriculumOutline( int pContentId, bool allowCaching )
         {
-            return GetCurriculumOutline( pContentId, true );
+            return GetCurriculumOutline( pContentId, true, allowCaching );
         }
 
         public ContentNode GetPublicCurriculumOutline( int pContentId, string userGuid )
+        {
+            return GetCurriculumOutline( pContentId, true, true );
+        }
+
+        public ContentNode GetPublicCurriculumOutline( int pContentId, string userGuid, bool allowCaching )
         {
             //if user has access, get all
             //note need to check if author!
             ContentPartner cp = ContentPartner_Get( pContentId, userGuid );
             if (cp != null && cp.PartnerTypeId > 1)
-                return GetCurriculumOutline( pContentId, false );
-            else 
-                return GetCurriculumOutline( pContentId, true );
+                return GetCurriculumOutline( pContentId, false, allowCaching );
+            else
+                return GetCurriculumOutline( pContentId, true, allowCaching );
         }
 
         /// <summary>
         /// Get a curriculum outline for edit use - calling will verify user for use
+        /// NOTE: USED BY OLD AUTHOR TOOL ONLY, NOT LEARNING LIST EDITOR
         /// </summary>
         /// <param name="pContentId"></param>
         /// <returns></returns>
@@ -89,7 +95,7 @@ namespace Isle.BizServices
         }
         public ContentNode GetCurriculumOutlineForEdit( int pContentId )
         {
-            return GetCurriculumOutline( pContentId, false );
+            return GetCurriculumOutline( pContentId, false, false );
         }
 
         public int Curriculum_AddHistory( int contentId, string message, int createdById )
@@ -481,5 +487,60 @@ namespace Isle.BizServices
 
 
         #endregion
+
+        #region WIP methods
+        //These methods aren't truly implemented yet, but serve as placeholders
+        //They don't necessarily need to be static if it helps to do them normally
+        //I'm also not committed to the method/variable names below, so feel free to adjust them to fit your desired pattern/schema
+
+        //List pending members for a learning list
+        public List<ObjectMember> LearningListMembers_ListPending( int learningListId )
+        {
+          throw new NotImplementedException( "Sorry, listing pending members is not implemented yet." );
+        }
+
+        //Deny a pending membership
+        //Note: userId is the ID of the user performing the denial
+        //Note: customMessage is sent to the denied member, presumably to indicate why they were denied. We don't -have- to implement this part.
+        //Should return a bool indicating whether or not the denial was successful, and a status message explaining any failure. 
+        //The status message will be hidden from the user but findable to us for debugging purposes.
+        public bool LearningListMember_DenyPending( int learningListId, int userId, int pendingMemberId, string customMessage, ref string status )
+        {
+          throw new NotImplementedException( "Sorry, denying memberships is not implemented yet." );
+        }
+
+        //Invite an existing IOER user
+        //Again, userId is the user performing the action
+        //roleId is the role to be assigned to the invited person once they are approved for membership
+        //roleId should correspond to the organization's roles. If this is an issue, let me know.
+        //customMessage is ideally sent to the invitee
+        //status should explain any failure and will be hidden from the user
+        public bool InviteExistingUser( int learningListId, int userId, int inviteeId, int roleId, string customMessage, ref string status )
+        {
+          throw new NotImplementedException( "Sorry, inviting existing users is not implemented yet." );
+        }
+
+        //Invite a non-existing user by email
+        //userId is the performing user
+        //The email should already be validated by this point but feel free to validate it further
+        //roleId is an organization role for the member to have once they're all finished
+        //customMessage would make good email filler text
+        //status is for us, not the users
+        //should return a bool indicating successful invitation or failure to invite
+        public bool InviteNewUser( int learningListId, int userId, string inviteeEmail, int roleId, string customMessage, ref string status )
+        {
+          throw new NotImplementedException( "Sorry, inviting new users is not implemented yet." );
+        }
+
+        //Gets all organization members of a certain role
+        //The current hack below accomplishes this, but is not very efficient
+        public List<ObjectMember> LearningList_AllUsers( int learningListId, int roleId )
+        {
+          //May need to capitalize the L in the method below?
+          return Learninglist_AllUsers( learningListId ).Where( m => m.MemberTypeId == roleId ).ToList();
+        }
+
+        #endregion
+
     }
 }

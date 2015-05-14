@@ -60,6 +60,7 @@ namespace ILPathways.Controls.Curriculum
     public int previousNodeSortOrder { get; set; }
     public int nextNodeSortOrder { get; set; }
     public int outdentNodeID { get; set; }
+    public int outdentSortID { get; set; }
 
     #endregion
 
@@ -99,7 +100,7 @@ namespace ILPathways.Controls.Curriculum
         
         //kill if this fails
         if ( !LoadParameters() ) { return; }
-
+           
         LoadStandards();
         LoadAttachments();
         LoadNodeSiblings();
@@ -119,7 +120,7 @@ namespace ILPathways.Controls.Curriculum
       //Get data
       var title = txtStarterTitle.Value;
       var description = txtStarterDescription.Value;
-      var organizationID = 0;// int.Parse( ddlOrganization.Items[ ddlOrganization.SelectedIndex ].Value );
+      var organizationID = int.Parse( ddlOrganization.Items[ ddlOrganization.SelectedIndex ].Value );
       var utilityService = new UtilityService();
       var overallValid = true;
       var valid = true;
@@ -266,7 +267,10 @@ namespace ILPathways.Controls.Curriculum
       nextNodeID = nextNode == null ? -1 : nextNode.Id;
       nextNodeSortOrder = nextNode == null ? -1 : nextNode.SortOrder;
       //Get parent of parent node
-      outdentNodeID = curriculumServices.Get( currentNode.ParentId ).ParentId;
+      var parentNode = curriculumServices.Get( currentNode.ParentId );
+      outdentNodeID = parentNode.ParentId;
+      //Handle outdenting better
+      outdentSortID = parentNode.SortOrder + 5;
     }
 
     #endregion

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Data;
 using System.Data.SqlTypes;
 using System.Text;
@@ -46,6 +47,11 @@ namespace LearningRegistryCache2
             string status = "successful";
             XmlNodeList list;
             string payload = "";
+            bool createMetadataFromParadata = false;
+            if (!bool.TryParse(ConfigurationManager.AppSettings["createMetadataFromParadata"], out createMetadataFromParadata))
+            {
+                createMetadataFromParadata = false;
+            }
 
             if (payloadPlacement == "inline")
             {
@@ -105,82 +111,89 @@ namespace LearningRegistryCache2
                 {
                     reportingManager.LogMessage(LearningRegistry.reportId, LearningRegistry.fileName, docId, url, ErrorType.Error, ErrorRouting.Technical, status);
                 }
-                if (resource == null || resource.Message.ToLower()=="not found")
+                if (resource == null || resource.Message.ToLower() == "not found")
                 {
-
-                    // Resource does not exist, create it
-                    resource = new Resource();
-                    resource.ResourceUrl = url;
-                    resource.FavoriteCount = 0;
-                    resource.ViewCount = 0;
-                    resourceManager.Create(resource, ref status);
-                    if (status != "successful")
+                    if (createMetadataFromParadata)
                     {
-                        reportingManager.LogMessage(LearningRegistry.reportId, LearningRegistry.fileName, docId, url, ErrorType.Error, ErrorRouting.Technical, status);
-                    }
-
-                    list = xdoc.GetElementsByTagName("submitter");
-                    resource.Version.Submitter = TrimWhitespace(list[0].InnerText);
-                    // Since metadata doesn't exist, let's create a skeleton metadata version.
-                    resource.Version.ResourceId = resource.RowId;
-                    resource.Version.LRDocId = docId;
-                    resource.Version.Title = new OLDDM.HttpManager().GetPageTitle(url, ref status);
-                    if (status != "successful")
-                    {
-                        reportingManager.LogMessage(LearningRegistry.reportId, LearningRegistry.fileName, docId, url, ErrorType.Error, ErrorRouting.Technical, status);
-                    }
-                    else
-                    {
-                        status = "OK";
-                        if (!IsGoodTitle(resource.Version.Title, ref status))
+                        // Resource does not exist, create it
+                        resource = new Resource();
+                        resource.ResourceUrl = url;
+                        resource.FavoriteCount = 0;
+                        resource.ViewCount = 0;
+                        resourceManager.Create(resource, ref status);
+                        if (status != "successful")
                         {
-                            resource.Version.IsActive = false;
-                            reportingManager.LogMessage(LearningRegistry.reportId, LearningRegistry.fileName, docId, url, ErrorType.Error, ErrorRouting.Program, status);
+                            reportingManager.LogMessage(LearningRegistry.reportId, LearningRegistry.fileName, docId, url, ErrorType.Error, ErrorRouting.Technical, status);
                         }
 
-                        ManualResetEvent doneEvent = new ManualResetEvent(false);
-                        doneEvents.Add(doneEvent);
-                        ImageGenerator imageGenerator = new ImageGenerator(resource.ResourceUrl, resource.Id, doneEvent);
-                        ThreadPool.QueueUserWorkItem(imageGenerator.ImageGeneratorThreadPoolCallback, doneEvent);
-                    }
-                    try
-                    {
-                        Uri uri = new Uri(url);
-                        resource.Version.Publisher = uri.Host;
-                        resource.Version.Creator = uri.Host;
-                    }
-                    catch (Exception ex)
-                    {
-                        reportingManager.LogMessage(LearningRegistry.reportId, LearningRegistry.fileName, docId, url, ErrorType.Error, ErrorRouting.Technical, ex.ToString());
-                        resource.Version.Publisher = "Unknown";
-                        resource.Version.Creator = "Unknown";
-                    }
-                    resource.Version.Modified = DateTime.Now;
-                    resource.Version.Imported = DateTime.Now;
-                    resource.Version.Created = DateTime.Now;
-                    list = xdoc.GetElementsByTagName("payload_schema");
-                    foreach (XmlNode node in list)
-                    {
-                        resource.Version.Schema = TrimWhitespace(node.InnerText);
-                        break;
-                    }
-                    resource.Version.IsSkeletonFromParadata = true;
-                    if (resource.Version.Title == null || resource.Version.Title == "")
-                    {
-                        reportingManager.LogMessage(LearningRegistry.reportId, LearningRegistry.fileName, docId, url, ErrorType.Error, ErrorRouting.Program,
-                            "No title found.  Using URL for title.");
-                        resource.Version.Title = url;
-                    }
-                    versionManager.Create(resource.Version, ref status);
+                        list = xdoc.GetElementsByTagName("submitter");
+                        resource.Version.Submitter = TrimWhitespace(list[0].InnerText);
+                        // Since metadata doesn't exist, let's create a skeleton metadata version.
+                        resource.Version.ResourceIntId = resource.Id;
+                        resource.Version.LRDocId = docId;
+                        resource.Version.Title = new OLDDM.HttpManager().GetPageTitle(url, ref status);
+                        if (status != "successful")
+                        {
+                            reportingManager.LogMessage(LearningRegistry.reportId, LearningRegistry.fileName, docId, url, ErrorType.Error, ErrorRouting.Technical, status);
+                        }
+                        else
+                        {
+                            status = "OK";
+                            if (!IsGoodTitle(resource.Version.Title, ref status))
+                            {
+                                resource.Version.IsActive = false;
+                                reportingManager.LogMessage(LearningRegistry.reportId, LearningRegistry.fileName, docId, url, ErrorType.Error, ErrorRouting.Program, status);
+                            }
 
-                    if (status == "successful")
-                    {
-                        UpdateElasticSearchList(resource.Id);
-                        return resource;
+                            ManualResetEvent doneEvent = new ManualResetEvent(false);
+                            doneEvents.Add(doneEvent);
+                            ImageGenerator imageGenerator = new ImageGenerator(resource.ResourceUrl, resource.Id, doneEvent);
+                            ThreadPool.QueueUserWorkItem(imageGenerator.ImageGeneratorThreadPoolCallback, doneEvent);
+                        }
+                        try
+                        {
+                            Uri uri = new Uri(url);
+                            resource.Version.Publisher = uri.Host;
+                            resource.Version.Creator = uri.Host;
+                        }
+                        catch (Exception ex)
+                        {
+                            reportingManager.LogMessage(LearningRegistry.reportId, LearningRegistry.fileName, docId, url, ErrorType.Error, ErrorRouting.Technical, ex.ToString());
+                            resource.Version.Publisher = "Unknown";
+                            resource.Version.Creator = "Unknown";
+                        }
+                        resource.Version.Modified = DateTime.Now;
+                        resource.Version.Imported = DateTime.Now;
+                        resource.Version.Created = DateTime.Now;
+                        list = xdoc.GetElementsByTagName("payload_schema");
+                        foreach (XmlNode node in list)
+                        {
+                            resource.Version.Schema = TrimWhitespace(node.InnerText);
+                            break;
+                        }
+                        resource.Version.IsSkeletonFromParadata = true;
+                        if (resource.Version.Title == null || resource.Version.Title == "")
+                        {
+                            reportingManager.LogMessage(LearningRegistry.reportId, LearningRegistry.fileName, docId, url, ErrorType.Error, ErrorRouting.Program,
+                                "No title found.  Using URL for title.");
+                            resource.Version.Title = url;
+                        }
+                        versionManager.Create(resource.Version, ref status);
+
+                        if (status == "successful")
+                        {
+                            LearningRegistry.resourceIdList.Add(resource.Id);
+                            return resource;
+                        }
+                        else
+                        {
+                            return null;
+                        }
                     }
                     else
                     {
-                        return null;
+                        resource.IsValid = isValid = false;
+                        return resource;
                     }
                 }
                 return resource;
@@ -192,6 +205,12 @@ namespace LearningRegistryCache2
             string status = "successful";
             Resource resource = new Resource();
             XmlNodeList list;
+            bool createMetadataFromParadata = false;
+            if (!bool.TryParse(ConfigurationManager.AppSettings["createMetadataFromParadata"], out createMetadataFromParadata))
+            {
+                createMetadataFromParadata = false;
+            }
+
             string page = new OLDDM.HttpManager().GetPage(url, ref status);
             if (status != "successful")
             {
@@ -221,42 +240,55 @@ namespace LearningRegistryCache2
                     {
                         reportingManager.LogMessage(LearningRegistry.reportId, LearningRegistry.fileName, docId, url, ErrorType.Error, ErrorRouting.Technical, status);
                     }
-                    if(resource == null || resource.RowId.ToString() == resource.DEFAULT_GUID) 
+                    if (resource == null || resource.RowId.ToString() == resource.DEFAULT_GUID)
                     {
-                        // Resource does not exist, create it
-                        resource = new Resource();
-                        resource.ResourceUrl = url;
-                        resource.FavoriteCount = 0;
-                        resource.ViewCount = 0;
-                        resourceManager.Create(resource, ref status);
-                        resource.Version.ResourceId = resource.RowId;
-                        list = xdoc.GetElementsByTagName("submitter");
-                        resource.Version.Submitter = list[0].InnerText.Trim();
-                        resource.Version.LRDocId=docId;
-                        resource.Version.Modified=DateTime.Now;
-                        resource.Version.Imported=DateTime.Now;
-                        resource.Version.Created=DateTime.Now;
-                        Match titleMatch = titleRegex.Match(page);
-                        resource.Version.Title = titleMatch.Value.Replace("<title>", "");
-                        resource.Version.Title = resource.Version.Title.Substring(0, resource.Version.Title.IndexOf("|"));
-                        resource.Version.Title = TrimWhitespace(resource.Version.Title);
-                        Match authorMatch = authorRegex.Match(page);
-                        resource.Version.Creator = authorMatch.Value.Replace("<span itemprop=\"author\">", "");
-                        resource.Version.Creator = resource.Version.Creator.Replace("</span>", "");
-                        resource.Version.Creator = TrimWhitespace(resource.Version.Creator);
-                        resource.Version.Publisher = resource.Version.Creator;
-                        Match descriptionMatch = descriptionRegex.Match(page);
-                        resource.Version.Description = descriptionMatch.Value.Replace("<dd itemprop=\"description\">", "");
-                        resource.Version.Description = resource.Version.Description.Replace("</dd>", "");
-                        resource.Version.Description = TrimWhitespace(resource.Version.Description);
-
-                        status = "OK";
-                        if (!IsGoodTitle(resource.Version.Title, ref status))
+                        if (createMetadataFromParadata)
                         {
-                            resource.Version.IsActive = false;
-                            reportingManager.LogMessage(LearningRegistry.reportId, LearningRegistry.fileName, docId, resource.ResourceUrl, ErrorType.Error, ErrorRouting.Program, status);
+                            // Resource does not exist, create it
+                            resource = new Resource();
+                            resource.ResourceUrl = url;
+                            resource.FavoriteCount = 0;
+                            resource.ViewCount = 0;
+                            resourceManager.Create(resource, ref status);
+                            resource.Version.ResourceIntId = resource.Id;
+                            list = xdoc.GetElementsByTagName("submitter");
+                            resource.Version.Submitter = list[0].InnerText.Trim();
+                            resource.Version.LRDocId = docId;
+                            resource.Version.Modified = DateTime.Now;
+                            resource.Version.Imported = DateTime.Now;
+                            resource.Version.Created = DateTime.Now;
+                            Match titleMatch = titleRegex.Match(page);
+                            resource.Version.Title = titleMatch.Value.Replace("<title>", "");
+                            if (resource.Version.Title.IndexOf("|") > -1)
+                            {
+                                resource.Version.Title = resource.Version.Title.Substring(0, resource.Version.Title.IndexOf("|"));
+                            }
+                            resource.Version.Title = TrimWhitespace(resource.Version.Title);
+                            Match authorMatch = authorRegex.Match(page);
+                            resource.Version.Creator = authorMatch.Value.Replace("<span itemprop=\"author\">", "");
+                            resource.Version.Creator = resource.Version.Creator.Replace("</span>", "");
+                            resource.Version.Creator = TrimWhitespace(resource.Version.Creator);
+                            resource.Version.Publisher = resource.Version.Creator;
+                            Match descriptionMatch = descriptionRegex.Match(page);
+                            resource.Version.Description = descriptionMatch.Value.Replace("<dd itemprop=\"description\">", "");
+                            resource.Version.Description = resource.Version.Description.Replace("</dd>", "");
+                            resource.Version.Description = TrimWhitespace(resource.Version.Description);
+
+                            status = "OK";
+                            if (!IsGoodTitle(resource.Version.Title, ref status))
+                            {
+                                resource.Version.IsActive = false;
+                                reportingManager.LogMessage(LearningRegistry.reportId, LearningRegistry.fileName, docId, resource.ResourceUrl, ErrorType.Error, ErrorRouting.Program, status);
+                            }
+                            versionManager.Create(resource.Version, ref status);
                         }
-                        versionManager.Create(resource.Version, ref status);
+                        else
+                        {
+                            reportingManager.LogMessage(LearningRegistry.reportId, LearningRegistry.fileName, docId, resource.ResourceUrl, ErrorType.Warning, ErrorRouting.Program,
+                                "Paradata found without pre-existing metadata.  Paradata ignored.");
+                            resource.IsValid = isValid = false;
+                            return resource;
+                        }
                     }
                 }
             }

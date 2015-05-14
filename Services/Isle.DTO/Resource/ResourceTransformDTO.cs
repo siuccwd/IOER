@@ -38,6 +38,8 @@ namespace Isle.DTO
         public string ResourceUrl { get; set; }
         public System.Guid RowId { get; set; }
         public int CreatedById { get; set; }
+
+        public int PublishedForOrgId { get; set; }
         
         public int ViewCount { get; set; }
         public int FavoriteCount { get; set; }

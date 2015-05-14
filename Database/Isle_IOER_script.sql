@@ -1,20 +1,6 @@
 USE [Isle_IOER]
 GO
-/****** Object:  User [lrAdmin]    Script Date: 3/9/2014 10:15:35 PM ******/
-CREATE USER [lrAdmin] FOR LOGIN [lrAdmin] WITH DEFAULT_SCHEMA=[dbo]
-GO
-/****** Object:  User [lrReader]    Script Date: 3/9/2014 10:15:35 PM ******/
-CREATE USER [lrReader] FOR LOGIN [lrReader] WITH DEFAULT_SCHEMA=[dbo]
-GO
-ALTER ROLE [db_owner] ADD MEMBER [lrAdmin]
-GO
-ALTER ROLE [db_datareader] ADD MEMBER [lrAdmin]
-GO
-ALTER ROLE [db_datawriter] ADD MEMBER [lrAdmin]
-GO
-ALTER ROLE [db_datareader] ADD MEMBER [lrReader]
-GO
-/****** Object:  StoredProcedure [dbo].[aspAllDatabaseTableCounts]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[aspAllDatabaseTableCounts]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -226,7 +212,7 @@ drop table #tmpDbTables
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[aspCreateProcedure_Delete]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[aspCreateProcedure_Delete]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -359,7 +345,7 @@ End
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[aspCreateProcedure_Get]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[aspCreateProcedure_Get]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -469,7 +455,7 @@ End
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[aspCreateProcedure_GetSingle]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[aspCreateProcedure_GetSingle]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -612,7 +598,7 @@ End
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[aspCreateProcedure_Insert]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[aspCreateProcedure_Insert]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -816,7 +802,7 @@ End
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[aspCreateProcedure_Update]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[aspCreateProcedure_Update]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1005,7 +991,7 @@ End
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[aspCreateProcedures]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[aspCreateProcedures]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1141,7 +1127,7 @@ Deallocate curTables
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[aspGenerateColumnDef]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[aspGenerateColumnDef]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1356,7 +1342,7 @@ drop table #genColDef
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[aspGenerateDBDictionary]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[aspGenerateDBDictionary]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1391,7 +1377,7 @@ where a.type = 'U' order by a.name
 
 END
 GO
-/****** Object:  StoredProcedure [dbo].[AuditReport.Detail_Insert]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[AuditReport.Detail_Insert]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1424,7 +1410,7 @@ END
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[AuditReport_Insert]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[AuditReport_Insert]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1448,7 +1434,31 @@ BEGIN
 END
 
 GO
-/****** Object:  StoredProcedure [dbo].[CareerClusterSelect]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Blacklist.HostsGetByHost]    Script Date: 2/22/2015 10:28:07 AM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+-- =============================================
+-- Author:	    Jerome Grimmer
+-- Create date: 3/11/2014
+-- Description:	Get Blacklisted host by host name
+-- =============================================
+CREATE PROCEDURE [dbo].[Blacklist.HostsGetByHost]
+	@Hostname varchar(100)
+AS
+BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+
+	SELECT Id, Hostname, RecordSource, Created, CreatedById, LastUpdated, LastUpdatedId
+	FROM [Blacklist.Hosts]
+	WHERE Hostname = @Hostname
+END
+
+GO
+/****** Object:  StoredProcedure [dbo].[CareerClusterSelect]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1491,7 +1501,7 @@ END
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[Codes.AccessibilityApiSelect]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Codes.AccessibilityApiSelect]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1518,7 +1528,7 @@ FROM [Codes.AccessibilityApi]
 END
 
 GO
-/****** Object:  StoredProcedure [dbo].[Codes.AccessibilityControlGet]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Codes.AccessibilityControlGet]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1542,7 +1552,34 @@ BEGIN
 END
 
 GO
-/****** Object:  StoredProcedure [dbo].[Codes.AccessibilityFeatureGet]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Codes.AccessibilityControlSelect]    Script Date: 2/22/2015 10:28:07 AM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+-- =============================================
+-- Author:		Jerome Grimmer
+-- Create date: 2/10/2014
+-- Description:	Select rows from Codes.AccessibilityControl
+-- =============================================
+CREATE PROCEDURE [dbo].[Codes.AccessibilityControlSelect] 
+	@Filter varchar(500)
+AS
+BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+
+	DECLARE @Sql varchar(1000)
+	SET @Sql = 'SELECT Id, Title, Description, IsActive, WarehouseTotal, schemaValue
+FROM [Codes.AccessibilityControl]
+'+@Filter
+	PRINT @Sql
+	EXEC(@Sql)
+END
+
+GO
+/****** Object:  StoredProcedure [dbo].[Codes.AccessibilityFeatureGet]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1566,7 +1603,7 @@ BEGIN
 END
 
 GO
-/****** Object:  StoredProcedure [dbo].[Codes.AccessibilityFeatureSelect]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Codes.AccessibilityFeatureSelect]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1593,7 +1630,7 @@ FROM [Codes.AccessibilityFeature]
 END
 
 GO
-/****** Object:  StoredProcedure [dbo].[Codes.AccessibilityHazardGet]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Codes.AccessibilityHazardGet]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1617,7 +1654,7 @@ BEGIN
 END
 
 GO
-/****** Object:  StoredProcedure [dbo].[Codes.AccessibilityHazardSelect]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Codes.AccessibilityHazardSelect]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1644,7 +1681,7 @@ FROM [Codes.AccessibilityHazard]
 END
 
 GO
-/****** Object:  StoredProcedure [dbo].[Codes.GradeLevelGet]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Codes.GradeLevelGet]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1695,7 +1732,7 @@ AND (Description = @Description OR @Description is null)
 AND (AlignmentUrl = @AlignmentUrl OR @AlignmentUrl is null)
 
 GO
-/****** Object:  StoredProcedure [dbo].[Codes.GradeLevelSelectByAgeRange]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Codes.GradeLevelSelectByAgeRange]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1735,7 +1772,7 @@ BEGIN
 END
 
 GO
-/****** Object:  StoredProcedure [dbo].[Codes.LanguageSelect]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Codes.LanguageSelect]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1763,7 +1800,7 @@ END
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[Codes.RatingTypeGet]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Codes.RatingTypeGet]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1793,7 +1830,7 @@ BEGIN
 END
 
 GO
-/****** Object:  StoredProcedure [dbo].[Codes.RatingTypeInsert]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Codes.RatingTypeInsert]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1820,7 +1857,7 @@ BEGIN
 END
 
 GO
-/****** Object:  StoredProcedure [dbo].[Codes.ResPropertyType_Lookup]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Codes.ResPropertyType_Lookup]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1844,7 +1881,7 @@ BEGIN
 END
 
 GO
-/****** Object:  StoredProcedure [dbo].[Codes_EducationLevel_Select]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Codes_EducationLevel_Select]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1871,7 +1908,7 @@ END
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[Codes_ResourceType_Select]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Codes_ResourceType_Select]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1895,7 +1932,7 @@ SELECT [Id]
 END
 
 GO
-/****** Object:  StoredProcedure [dbo].[CodeTable_Select]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[CodeTable_Select]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1947,7 +1984,7 @@ Order by
 END
 
 GO
-/****** Object:  StoredProcedure [dbo].[CodeTables_UpdatePublisherTotals]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[CodeTables_UpdatePublisherTotals]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -2050,24 +2087,61 @@ print 'Set inactive = ' + convert(varchar, isnull(@@rowcount,0))
   
 
 GO
-/****** Object:  StoredProcedure [dbo].[CodeTables_UpdateWarehouseTotals]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[CodeTables_UpdateWarehouseTotals]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+/*
+UPDATE [dbo].[Resource.Subject]
+   SET [CodeId] = code.Id
+--		select [ResourceIntId] ,[Subject], code.Id
+from [Resource.Subject] base
+inner join [Codes.subject] code on base.Subject = code.Title
+ 
+
+*/
 
 
 /*
-Exec CodeTables_UpdateWarehouseTotals 10
+Exec CodeTables_UpdateWarehouseTotals 5
 */
 -- =========================================================================
 -- 13/03/04 mparsons - was taking too long, so split up
+-- 14/05/28 mparsons - added Codes.TagValue. Leaving others for now
 -- =========================================================================
 CREATE  Procedure [dbo].[CodeTables_UpdateWarehouseTotals]
     @debugLevel int = 0
 
 AS
 --declare @debugLevel int
+-- ==========================================================
+print 'updating all Codes.TagValue ...'
+UPDATE [dbo].[Codes.TagValue]
+   SET [WarehouseTotal] = base.WarehouseTotal
+from [Codes.TagValue] codes      
+Inner join ( 
+SELECT [TagValueId],count(*) AS wareHouseTotal
+  FROM [dbo].[Resource.Tag] base
+  inner join [Resource] rvs on base.ResourceIntId = rvs.Id
+  where rvs.IsActive = 1
+  group by [TagValueId]
+    ) base on codes.Id = base.[TagValueId]
+-- ==========================================================
+print 'updating StandardBody.Node ...'
+UPDATE [dbo].[StandardBody.Node]
+   SET [WarehouseTotal] = base.WarehouseTotal
+-- select codes.Title, base.WarehouseTotal      
+FROM [dbo].[StandardBody.Node] codes
+Inner join ( 
+SELECT StandardId ,count(*) AS wareHouseTotal
+  FROM [dbo].[Resource.Standard] base
+  inner join [Resource.Version_Summary] rvs on base.ResourceIntId = rvs.ResourceIntId
+    group by StandardId
+    ) base on codes.Id = base.StandardId
+print 'Updated = ' + convert(varchar, isnull(@@rowcount,0)) 
+
+-- *** TODO - remove the follwing after convertion ***
 -- ==========================================================
 print 'updating Codes.ResourceType ...'
 UPDATE [dbo].[Codes.ResourceType]
@@ -2243,26 +2317,26 @@ SELECT EducationUseId ,count(*) AS wareHouseTotal
     group by EducationUseId
     ) base on codes.Id = base.EducationUseId
 print 'Updated = ' + convert(varchar, isnull(@@rowcount,0)) 
-
 -- ==========================================================
-print 'updating StandardBody.Node ...'
-UPDATE [dbo].[StandardBody.Node]
-   SET [WarehouseTotal] = base.WarehouseTotal
--- select codes.Title, base.WarehouseTotal      
-FROM [dbo].[StandardBody.Node] codes
+print 'updating Subjects ...'
+UPDATE [dbo].[Codes.Subject]
+SET [WarehouseTotal] = base.WarehouseTotal
+-- select codes.Title, base.WarehouseTotal  
+FROM [dbo].[Codes.Subject] codes
 Inner join ( 
-SELECT StandardId ,count(*) AS wareHouseTotal
-  FROM [dbo].[Resource.Standard] base
+SELECT [CodeId],count(*) AS wareHouseTotal
+  FROM [dbo].[Resource.Subject] base
   inner join [Resource.Version_Summary] rvs on base.ResourceIntId = rvs.ResourceIntId
-    group by StandardId
-    ) base on codes.Id = base.StandardId
-print 'Updated = ' + convert(varchar, isnull(@@rowcount,0)) 
+  group by [CodeId]
+    ) base on codes.Id = base.[CodeId]
+
+print 'Updated = ' + convert(varchar, isnull(@@rowcount,0))
 
 -- ==========================================================
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[ConditionsOfUse_Select]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[ConditionsOfUse_Select]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -2283,7 +2357,7 @@ ORDER BY SortOrderAuthoring
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[ConvertGradesToK12Ages]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[ConvertGradesToK12Ages]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -2309,7 +2383,7 @@ BEGIN
 END
 
 GO
-/****** Object:  StoredProcedure [dbo].[CreatorSearch]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[CreatorSearch]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -2432,7 +2506,7 @@ set @Sql2= 'SELECT distinct  count(Creator) FROM [dbo].[Resource.Version] rv '
   select @TotalRows= RowsFound from @TempItems
 
 GO
-/****** Object:  StoredProcedure [dbo].[EmailNoticeDelete]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[EmailNoticeDelete]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER OFF
@@ -2446,7 +2520,7 @@ DELETE FROM EmailNotice
 WHERE id = @id
 
 GO
-/****** Object:  StoredProcedure [dbo].[EmailNoticeGet]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[EmailNoticeGet]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -2494,7 +2568,7 @@ And		(LanguageCode = @LangCode or @LangCode is null)
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[EmailNoticeInsert]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[EmailNoticeInsert]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -2578,7 +2652,7 @@ Values (
 select SCOPE_IDENTITY() as id
 
 GO
-/****** Object:  StoredProcedure [dbo].[EmailNoticeSelect]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[EmailNoticeSelect]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -2637,7 +2711,7 @@ Order By
 		Title, LanguageCode
 
 GO
-/****** Object:  StoredProcedure [dbo].[EmailNoticeUpdate]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[EmailNoticeUpdate]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -2702,7 +2776,43 @@ SET
 WHERE id = @id
 
 GO
-/****** Object:  StoredProcedure [dbo].[Library.ResourceInsert]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Library.ResourceGet]    Script Date: 2/22/2015 10:28:07 AM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+/*
+[Library.ResourceGet] 31
+*/
+CREATE PROCEDURE [dbo].[Library.ResourceGet]
+    @Id int
+As
+SELECT     
+	libres.Id, 
+	libres.Id As LibraryResourceId,
+    LibrarySectionId, 
+    libres.ResourceIntId, 
+	lr.ResourceVersionIntId,
+	 CASE
+      WHEN lr.Title IS NULL THEN 'No Title'
+      WHEN len(lr.Title) = 0 THEN 'No Title'
+      ELSE lr.Title
+    END AS Title,
+	lr.ResourceUrl,
+	lr.SortTitle,
+    Comment, 
+    Created, 
+    CreatedById
+FROM [Library.Resource] libres
+Inner join  [dbo].[lr.ResourceVersion_Summary] lr on libres.ResourceIntId = lr.ResourceIntId
+
+WHERE libres.Id = @Id
+
+grant execute on [Library.ResourceGet] to Public
+
+GO
+/****** Object:  StoredProcedure [dbo].[Library.ResourceInsert]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -2827,7 +2937,7 @@ select @newLibResId = SCOPE_IDENTITY()
 select @newLibResId  as Id
 
 GO
-/****** Object:  StoredProcedure [dbo].[Library.SubscriptionGet]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Library.SubscriptionGet]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -2869,7 +2979,7 @@ And (UserId = @UserId or @UserId is null)
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[Map.CleanseUrlSelect]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Map.CleanseUrlSelect]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -2893,7 +3003,7 @@ BEGIN
 END
 
 GO
-/****** Object:  StoredProcedure [dbo].[Map.PathwayRules_Load]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Map.PathwayRules_Load]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -2919,7 +3029,7 @@ BEGIN
 END
 
 GO
-/****** Object:  StoredProcedure [dbo].[Map.Rules_Load]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Map.Rules_Load]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -2959,7 +3069,276 @@ BEGIN
 END
 
 GO
-/****** Object:  StoredProcedure [dbo].[ParadataPublish.Comment]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[MapClusters.Search]    Script Date: 2/22/2015 10:28:07 AM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+/*
+
+-- ===========================================================
+
+DECLARE @RC int,@Filter varchar(500), @StartPageIndex int, @PageSize int, @totalRows int,@SortOrder varchar(100)
+set @SortOrder = '' 
+set @Filter = ' CommunityId = 2 AND createdById = 2 '
+
+set @Filter = ' MappedClusterId= 1 '
+set @StartPageIndex = 1
+set @PageSize = 25
+
+exec [MapClusters.Search] @Filter, @SortOrder, @StartPageIndex  ,@PageSize  ,@totalRows OUTPUT
+
+select 'total rows = ' + convert(varchar,@totalRows)
+
+
+*/
+
+/* =================================================
+= MapClusters.Search
+=		@StartPageIndex - starting page number. If interface is at 20 when next page is requested, this would be set to 21?
+=		@PageSize - number of records on a page
+=		@totalRows OUTPUT - total available rows. Used by interface to build a custom pager
+= ------------------------------------------------------
+= Modifications
+= 14-03-17 mparsons - Created 
+-- ================================================= */
+Create PROCEDURE [dbo].[MapClusters.Search]
+		@Filter				varchar(500)
+		,@SortOrder			varchar(500)
+		,@StartPageIndex	int
+		,@PageSize		    int
+		,@TotalRows			int OUTPUT
+AS 
+DECLARE 
+	@first_id			int
+	,@startRow		int
+	,@debugLevel	int
+	,@SQL             varchar(5000)
+	,@OrderBy         varchar(100)
+
+	SET NOCOUNT ON;
+
+-- ==========================================================
+Set @debugLevel = 4
+if len(@SortOrder) > 0
+	set @OrderBy = ' Order by ' + @SortOrder
+else 
+  set @OrderBy = ' Order by [FilterValue] '
+--===================================================
+-- Calculate the range
+--===================================================
+SET @StartPageIndex =  (@StartPageIndex - 1)  * @PageSize
+IF @StartPageIndex < 1        SET @StartPageIndex = 1
+
+ 
+-- =================================
+CREATE TABLE #tempWorkTable(
+	RowNumber int PRIMARY KEY IDENTITY(1,1) NOT NULL,
+	Id int NOT NULL,
+	MappedClusterId int
+
+)
+-- =================================
+
+  if len(@Filter) > 0 begin
+     if charindex( 'where', @Filter ) = 0 OR charindex( 'where',  @Filter ) > 10
+        set @Filter =     ' where ' + @Filter 
+     end
+	 else begin 
+	 set @Filter =     '  '
+	 end
+ 
+set @SQL = 'SELECT [Id]  ,[MappedClusterId]   FROM [dbo].[Map.CareerCluster] mcc  '  
+	  + @Filter
+
+
+if charindex( 'order by', lower(@Filter) ) = 0 
+	set @SQL = 	@SQL + @OrderBy
+if @debugLevel > 3 begin
+  print '@SQL len: '  +  convert(varchar,len(@SQL))
+	print @SQL
+	end
+	
+INSERT INTO #tempWorkTable (Id, MappedClusterId)
+exec (@sql)
+   SELECT @TotalRows = @@ROWCOUNT
+-- =================================
+
+print 'added to temp table: ' + convert(varchar,@TotalRows)
+if @debugLevel > 7 begin
+  select * from #tempWorkTable
+  end
+
+-- Show the StartPageIndex
+--===================================================
+PRINT '@StartPageIndex = ' + convert(varchar,@StartPageIndex)
+
+SET ROWCOUNT @StartPageIndex
+--SELECT @first_id = RowNumber FROM #tempWorkTable   ORDER BY RowNumber
+SELECT @first_id = @StartPageIndex
+PRINT '@first_id = ' + convert(varchar,@first_id)
+
+if @first_id = 1 set @first_id = 0
+--set max to return
+SET ROWCOUNT @PageSize
+
+SELECT     Distinct
+		RowNumber,
+		base.[Id]
+      ,[FilterValue]
+      ,[IsRegex]
+      ,base.[MappedClusterId]
+	  ,cc.Title as ClusterTitle
+      ,base.[IsActive]
+      ,[Created]
+      ,[LastUpdated]
+      ,[LastUpdatedBy]
+
+From #tempWorkTable temp
+inner join [dbo].[Map.CareerCluster] base on temp.Id = base.Id
+inner join [dbo].[codes.CareerCluster] cc on base.MappedClusterId = cc.Id
+WHERE RowNumber > @first_id 
+order by RowNumber		
+
+SET ROWCOUNT 0
+
+GO
+/****** Object:  StoredProcedure [dbo].[MapK12Subject.Search]    Script Date: 2/22/2015 10:28:07 AM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+/*
+
+-- ===========================================================
+
+DECLARE @RC int,@Filter varchar(500), @StartPageIndex int, @PageSize int, @totalRows int,@SortOrder varchar(100)
+set @SortOrder = '' 
+set @Filter = ''
+
+set @Filter = ' MappedSubjectId= 4 '
+
+set @StartPageIndex = 1
+set @PageSize = 25
+
+exec [MapK12Subject.Search] @Filter, @SortOrder, @StartPageIndex  ,@PageSize  ,@totalRows OUTPUT
+
+select 'total rows = ' + convert(varchar,@totalRows)
+
+
+*/
+
+/* =================================================
+= MapK12Subject.Search
+=		@StartPageIndex - starting page number. If interface is at 20 when next page is requested, this would be set to 21?
+=		@PageSize - number of records on a page
+=		@totalRows OUTPUT - total available rows. Used by interface to build a custom pager
+= ------------------------------------------------------
+= Modifications
+= 14-03-17 mparsons - Created 
+-- ================================================= */
+Create PROCEDURE [dbo].[MapK12Subject.Search]
+		@Filter				varchar(500)
+		,@SortOrder			varchar(500)
+		,@StartPageIndex	int
+		,@PageSize		    int
+		,@TotalRows			int OUTPUT
+AS 
+DECLARE 
+	@first_id			int
+	,@startRow		int
+	,@debugLevel	int
+	,@SQL             varchar(5000)
+	,@OrderBy         varchar(100)
+
+	SET NOCOUNT ON;
+
+-- ==========================================================
+Set @debugLevel = 4
+if len(@SortOrder) > 0
+	set @OrderBy = ' Order by ' + @SortOrder
+else 
+  set @OrderBy = ' Order by [FilterValue] '
+--===================================================
+-- Calculate the range
+--===================================================
+SET @StartPageIndex =  (@StartPageIndex - 1)  * @PageSize
+IF @StartPageIndex < 1        SET @StartPageIndex = 1
+
+ 
+-- =================================
+CREATE TABLE #tempWorkTable(
+	RowNumber int PRIMARY KEY IDENTITY(1,1) NOT NULL,
+	Id int NOT NULL,
+	MappedSubjectId int
+
+)
+-- =================================
+
+  if len(@Filter) > 0 begin
+     if charindex( 'where', @Filter ) = 0 OR charindex( 'where',  @Filter ) > 10
+        set @Filter =     ' where ' + @Filter 
+     end
+	 else begin 
+	 set @Filter =     '  '
+	 end
+ 
+set @SQL = 'SELECT [Id]  ,[MappedSubjectId]   FROM [dbo].[Map.K12Subject] mcc  '  
+	  + @Filter
+
+
+if charindex( 'order by', lower(@Filter) ) = 0 
+	set @SQL = 	@SQL + @OrderBy
+if @debugLevel > 3 begin
+  print '@SQL len: '  +  convert(varchar,len(@SQL))
+	print @SQL
+	end
+	
+INSERT INTO #tempWorkTable (Id, MappedSubjectId)
+exec (@sql)
+   SELECT @TotalRows = @@ROWCOUNT
+-- =================================
+
+print 'added to temp table: ' + convert(varchar,@TotalRows)
+if @debugLevel > 7 begin
+  select * from #tempWorkTable
+  end
+
+-- Show the StartPageIndex
+--===================================================
+PRINT '@StartPageIndex = ' + convert(varchar,@StartPageIndex)
+
+SET ROWCOUNT @StartPageIndex
+--SELECT @first_id = RowNumber FROM #tempWorkTable   ORDER BY RowNumber
+SELECT @first_id = @StartPageIndex
+PRINT '@first_id = ' + convert(varchar,@first_id)
+
+if @first_id = 1 set @first_id = 0
+--set max to return
+SET ROWCOUNT @PageSize
+
+SELECT     Distinct
+		RowNumber,
+		base.[Id]
+      ,[FilterValue]
+      ,[IsRegex]
+      ,base.[MappedSubjectId], cc.Title As SubjectTitle
+      ,base.[IsActive]
+      ,base.[Created]
+      ,base.[LastUpdated]
+      ,base.[LastUpdatedBy]
+
+From #tempWorkTable temp
+inner join [dbo].[Map.K12Subject]  base on temp.Id = base.Id
+inner join [dbo].[Codes.Subject] cc on base.MappedSubjectId = cc.Id
+
+WHERE RowNumber > @first_id 
+order by RowNumber		
+
+SET ROWCOUNT 0
+
+GO
+/****** Object:  StoredProcedure [dbo].[ParadataPublish.Comment]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -2989,7 +3368,7 @@ BEGIN
 END
 
 GO
-/****** Object:  StoredProcedure [dbo].[ParadataPublish.Evaluation]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[ParadataPublish.Evaluation]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -3032,7 +3411,7 @@ BEGIN
 END
 
 GO
-/****** Object:  StoredProcedure [dbo].[ParadataPublish.Favorite]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[ParadataPublish.Favorite]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -3063,7 +3442,7 @@ BEGIN
 END
 
 GO
-/****** Object:  StoredProcedure [dbo].[ParadataPublish.Like]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[ParadataPublish.Like]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -3098,7 +3477,7 @@ BEGIN
 END
 
 GO
-/****** Object:  StoredProcedure [dbo].[ParadataPublish.View]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[ParadataPublish.View]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -3131,7 +3510,7 @@ BEGIN
 END
 
 GO
-/****** Object:  StoredProcedure [dbo].[Patron.ExternalAccountGet]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Patron.ExternalAccountGet]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -3167,7 +3546,7 @@ And (ExternalSiteId = @ExternalSiteId OR @ExternalSiteId is null)
 And (Token = @Token OR @Token is null)
 
 GO
-/****** Object:  StoredProcedure [dbo].[Patron.ExternalAccountInsert]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Patron.ExternalAccountInsert]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -3203,7 +3582,7 @@ Values (
 select SCOPE_IDENTITY() as Id
 
 GO
-/****** Object:  StoredProcedure [dbo].[Patron.GetByExtAccount]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Patron.GetByExtAccount]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -3246,7 +3625,7 @@ And (Token = @Token OR @Token is null)
 And (ExternalSiteId = @ExternalSiteId OR @ExternalSiteId is null)
 
 GO
-/****** Object:  StoredProcedure [dbo].[Patron.ProfileAssignOrgId]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Patron.ProfileAssignOrgId]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -3284,7 +3663,7 @@ else begin
 	end
 
 GO
-/****** Object:  StoredProcedure [dbo].[Patron.ProfileGet]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Patron.ProfileGet]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -3305,18 +3684,18 @@ SELECT     UserId,
 	base.ImageUrl,  
     RoleProfile, 
     OrganizationId, 
-    org.Name as Organization,
+    isnull(org.Name, '') as Organization,
     base.Created, 
     base.CreatedById, 
     base.LastUpdated, 
     base.LastUpdatedId
 FROM [Patron.Profile] base
 left join [Codes.AudienceType] pr on base.PublishingRoleId = pr.id
-left join [Gateway].[dbo].[Organization_Summary] org on OrganizationId = org.Id
+left join [Gateway.OrgSummary] org on OrganizationId = org.Id
 WHERE base.UserId = @UserId
 
 GO
-/****** Object:  StoredProcedure [dbo].[Patron.ProfileInsert]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Patron.ProfileInsert]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -3362,7 +3741,7 @@ Values (
 select @@RowCount as Id
 
 GO
-/****** Object:  StoredProcedure [dbo].[Patron.ProfileUpdate]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Patron.ProfileUpdate]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -3483,7 +3862,7 @@ print 'check for proflie'
 		end
 
 GO
-/****** Object:  StoredProcedure [dbo].[Patron.RecoverPassword]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Patron.RecoverPassword]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -3530,7 +3909,7 @@ WHERE
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[PatronAuthorize]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[PatronAuthorize]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -3587,7 +3966,7 @@ OR @Password = '24-E5-6B-78-02-F9-CE-CD-FB-40-F7-EB-08-56-06-B7' --Y&U*I(O)P_{+
 And (IsActive = 1)
 
 GO
-/****** Object:  StoredProcedure [dbo].[PatronGet]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[PatronGet]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -3647,7 +4026,7 @@ And (Email = @Email OR @Email is null)
 And (RowId = @RowId OR @RowId is null)
 
 GO
-/****** Object:  StoredProcedure [dbo].[PatronInsert]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[PatronInsert]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -3701,7 +4080,7 @@ select SCOPE_IDENTITY() as Id
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[PatronSelect]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[PatronSelect]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -3722,7 +4101,7 @@ FROM [Patron]
 ORDER BY LastName, FirstName
 
 GO
-/****** Object:  StoredProcedure [dbo].[PatronUpdate]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[PatronUpdate]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -3761,13 +4140,14 @@ SET
     FirstName = @FirstName, 
     LastName = @LastName, 
     Email = @Email, 
-    IsActive = @IsActive 
+    IsActive = @IsActive,
+	LastUpdated = getdate() 
     
 WHERE Id = @Id
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[Publish.PendingGet]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Publish.PendingGet]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -3799,7 +4179,7 @@ AND (ResourceVersionIntId = @ResourceVersionId or @ResourceVersionId is null)
 AND (Id = @Id or @Id is null)
 
 GO
-/****** Object:  StoredProcedure [dbo].[Publish.PendingInsert]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Publish.PendingInsert]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -3842,7 +4222,7 @@ Values (
 select SCOPE_IDENTITY() as Id
 
 GO
-/****** Object:  StoredProcedure [dbo].[Publish.PendingUpdate]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Publish.PendingUpdate]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -3873,7 +4253,7 @@ SET
 WHERE Id = @Id
 
 GO
-/****** Object:  StoredProcedure [dbo].[PublisherSearch]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[PublisherSearch]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -3994,7 +4374,7 @@ set @Sql2= 'SELECT count(*) FROM [dbo].[PublisherSummary]  '
   select @TotalRows= RowsFound from @TempItems
 
 GO
-/****** Object:  StoredProcedure [dbo].[RatingTypeGet]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[RatingTypeGet]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -4024,7 +4404,7 @@ BEGIN
 END
 
 GO
-/****** Object:  StoredProcedure [dbo].[RatingTypeInsert]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[RatingTypeInsert]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -4051,7 +4431,7 @@ BEGIN
 END
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.AccessibilityApiImport]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.AccessibilityApiImport]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -4153,7 +4533,7 @@ BEGIN
 END
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.AccessibilityApiInsert]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.AccessibilityApiInsert]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -4184,7 +4564,7 @@ BEGIN
 END
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.AccessibilityApiSelect]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.AccessibilityApiSelect]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -4213,7 +4593,31 @@ BEGIN
 END
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.AccessibilityControlImport]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.AccessibilityControl_SelectedCodes]    Script Date: 2/22/2015 10:28:07 AM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+/*
+[Resource.AccessibilityControl_SelectedCodes] 448010
+*/
+Create PROCEDURE [dbo].[Resource.AccessibilityControl_SelectedCodes]
+    @ResourceIntId int
+As
+SELECT distinct
+	code.Id, code.Title, code.[Description]
+   -- ,ResourceIntId
+	,CASE
+		WHEN rpw.ResourceIntId IS NOT NULL THEN 'true'
+		ELSE 'false'
+	END as IsSelected
+FROM [dbo].[Codes.AccessibilityControl] code
+Left Join [Resource.AccessibilityControl] rpw on code.Id = rpw.AccessibilityControlId
+		and rpw.ResourceIntId = @ResourceIntId
+		where code.IsActive = 1
+
+GO
+/****** Object:  StoredProcedure [dbo].[Resource.AccessibilityControlImport]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -4315,7 +4719,7 @@ BEGIN
 END
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.AccessibilityControlInsert]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.AccessibilityControlInsert]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -4346,7 +4750,7 @@ BEGIN
 END
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.AccessibilityControlSelect]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.AccessibilityControlSelect]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -4375,7 +4779,31 @@ BEGIN
 END
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.AccessibilityFeatureImport]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.AccessibilityFeature_SelectedCodes]    Script Date: 2/22/2015 10:28:07 AM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+/*
+[Resource.AccessibilityFeature_SelectedCodes] 448010
+*/
+Create PROCEDURE [dbo].[Resource.AccessibilityFeature_SelectedCodes]
+    @ResourceIntId int
+As
+SELECT distinct
+	code.Id, code.Title, code.[Description]
+   -- ,ResourceIntId
+	,CASE
+		WHEN rpw.ResourceIntId IS NOT NULL THEN 'true'
+		ELSE 'false'
+	END as IsSelected
+FROM [dbo].[Codes.AccessibilityFeature] code
+Left Join [Resource.AccessibilityFeature] rpw on code.Id = rpw.AccessibilityFeatureId
+		and rpw.ResourceIntId = @ResourceIntId
+		where code.IsActive = 1
+
+GO
+/****** Object:  StoredProcedure [dbo].[Resource.AccessibilityFeatureImport]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -4460,6 +4888,8 @@ BEGIN
 			SELECT @exists = base.Id
 			FROM [Resource.AccessibilityFeature] base
 			WHERE base.ResourceIntId = @ResourceIntId AND base.AccessibilityFeatureId = @CodeId
+			IF @SuppressOutput = 0
+				PRINT '[exists test complete]'
 			IF @exists IS NOT NULL AND @exists <> 0 BEGIN
 				SET @newId = @exists
 				SET @IsDuplicate = 1
@@ -4468,6 +4898,8 @@ BEGIN
 			END ELSE BEGIN
 				INSERT INTO [Resource.AccessibilityFeature] (ResourceIntId, AccessibilityFeatureId, OriginalValue)
 				VALUES (@ResourceIntId, @CodeId, @OriginalValue)
+				IF @SuppressOutput = 0
+					PRINT '[inserted]'
 			END
 		END
 		SET @TotalRows = @@ROWCOUNT
@@ -4477,7 +4909,7 @@ BEGIN
 END
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.AccessibilityFeatureInsert]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.AccessibilityFeatureInsert]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -4508,7 +4940,7 @@ BEGIN
 END
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.AccessibilityFeatureSelect]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.AccessibilityFeatureSelect]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -4537,11 +4969,36 @@ BEGIN
 END
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.AccessibilityHazardImport]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.AccessibilityHazard_SelectedCodes]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+/*
+[Resource.AccessibilityHazard_SelectedCodes] 448010
+*/
+Create PROCEDURE [dbo].[Resource.AccessibilityHazard_SelectedCodes]
+    @ResourceIntId int
+As
+SELECT distinct
+	code.Id, code.Title, code.[Description]
+   -- ,ResourceIntId
+	,CASE
+		WHEN rpw.ResourceIntId IS NOT NULL THEN 'true'
+		ELSE 'false'
+	END as IsSelected
+FROM [dbo].[Codes.AccessibilityHazard] code
+Left Join [Resource.AccessibilityHazard] rpw on code.Id = rpw.AccessibilityHazardId
+		and rpw.ResourceIntId = @ResourceIntId
+		where code.IsActive = 1
+
+GO
+/****** Object:  StoredProcedure [dbo].[Resource.AccessibilityHazardImport]    Script Date: 2/22/2015 10:28:07 AM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
 -- =============================================
 -- Author:		Jerome Grimmer
 -- Create date: 2/10/2014
@@ -4653,8 +5110,9 @@ BEGIN
 			SELECT @NewId AS Id, @IsDuplicate AS IsDuplicate
 END
 
+
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.AccessibilityHazardInsert]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.AccessibilityHazardInsert]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -4701,7 +5159,7 @@ BEGIN
 END
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.AccessibilityHazardSelect]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.AccessibilityHazardSelect]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -4731,7 +5189,7 @@ BEGIN
 END
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.AccessRights_SelectedCodes]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.AccessRights_SelectedCodes]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -4755,7 +5213,7 @@ Left Join [Resource.Version] rpw on code.Id = rpw.AccessRightsId
 		where code.IsActive = 1
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.AgeRangeGetByIntId]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.AgeRangeGetByIntId]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -4780,7 +5238,7 @@ BEGIN
 END
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.AgeRangeImport]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.AgeRangeImport]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -4850,7 +5308,7 @@ BEGIN
 END
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.AssessmentType_Import]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.AssessmentType_Import]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -5031,7 +5489,7 @@ end
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.AssessmentType_SelectedCodes]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.AssessmentType_SelectedCodes]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -5058,7 +5516,7 @@ Order by 2
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.AssessmentTypeDelete]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.AssessmentTypeDelete]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -5081,7 +5539,7 @@ And (AssessmentTypeId = @AssessmentTypeId OR @AssessmentTypeId is NULL)
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.AssessmentTypeInsert]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.AssessmentTypeInsert]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -5115,7 +5573,7 @@ select SCOPE_IDENTITY() as Id
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.AssessmentTypeSelect]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.AssessmentTypeSelect]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -5139,7 +5597,7 @@ order by codes.Title
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.Cluster_Import]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.Cluster_Import]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -5258,7 +5716,7 @@ if @ClusterId > 0 begin
 end
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.Cluster_PopulateEnergy]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.Cluster_PopulateEnergy]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -5390,13 +5848,14 @@ end
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.Cluster_PopulateFromMapping]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.Cluster_PopulateFromMapping]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 
 /*
+
 select count(*) from [Resource]
 go
 
@@ -5417,7 +5876,7 @@ where rclu.[ClusterId] is not null
 GO
 
 UPDATE [dbo].[Map.CareerCluster]
-   SET [IsActive] = 0
+   SET [IsActive] = 1
  WHERE Id < 72
 GO
 
@@ -5425,19 +5884,23 @@ GO
 
 
 EXECUTE [dbo].[Resource.Cluster_PopulateFromMapping] 0, 91
-go
-EXECUTE [dbo].[Resource.Cluster_PopulateFromMapping] 0, 1
+
+
+set statistics time on   
+EXECUTE [dbo].[Resource.Cluster_PopulateFromMapping] 0, 11
+set statistics time off    
 
 */
 
 /*
 Map clusters 
+Loop thru defined mapping values, and apply to existing resources
 
 Notes
 - should join to resource version to only target resources already in the pathway
 - add a date or means to only target recent additions rather than the whole database
 */
-Create PROCEDURE [dbo].[Resource.Cluster_PopulateFromMapping]
+CREATE PROCEDURE [dbo].[Resource.Cluster_PopulateFromMapping]
             @MaxRecords int
             ,@clusterId int
 
@@ -5462,6 +5925,7 @@ set @debugLevel= 10
 set @affectedCount= 0
 set @totalCount= 0
 
+SET NOCOUNT ON;
 -- ===============================================
 select 'started',  getdate()
 	-- Loop thru and call proc
@@ -5488,16 +5952,18 @@ select 'started',  getdate()
 		
     -- === via title =======================================================  		
     INSERT INTO [dbo].[Resource.Cluster]
-               ([ResourceId]
+               ([ResourceIntId]
                ,[ClusterId])
-    SELECT distinct lrs.ResourceId,  @MappedClusterId
+    SELECT distinct lrs.ResourceIntId,  @MappedClusterId
     FROM dbo.[Resource.Version_Summary] lrs 
-    left join [dbo].[Resource.Cluster] rc on lrs.ResourceId = rc.ResourceId AND rc.ClusterId = @MappedClusterId
+    left join [dbo].[Resource.Cluster] rc on lrs.ResourceIntId = rc.ResourceIntId AND rc.ClusterId = @MappedClusterId
+	--Left Join [dbo].[Resource.KeywordsCsvList] keys on lrs.ResourceIntId = keys.ResourceIntId
+	--Left Join [dbo].[Resource.SubjectsCsvList] subs on lrs.ResourceIntId = subs.ResourceIntId
     where rc.[ClusterId] is null
     And (lrs.Title like @Filter 
-       --  OR lrs.[Description] like @Filter
-         OR lrs.Subjects like @Filter
-         OR lrs.Keywords like @Filter
+         OR lrs.[Description] like @Filter
+        -- OR keys.Keywords like @Filter
+        -- OR subs.Subjects like @Filter
          )
     set @affectedCount = @@rowcount
     if @affectedCount is not null AND @affectedCount > 0 begin
@@ -5514,26 +5980,40 @@ select 'started',  getdate()
     
     
     -- === via subjects =======================================================    
-    --INSERT INTO [dbo].[Resource.Cluster]
-    --           ([ResourceId]
-    --           ,[ClusterId])
-    --SELECT distinct lrs.ResourceId,  @MappedClusterId
-    --FROM dbo.[Resource.Subject] lrs 
-    --left join [dbo].[Resource.Cluster] rc on lrs.ResourceId = rc.ResourceId AND rc.ClusterId = @MappedClusterId
-    --where rc.[ClusterId] is null
-    --And lrs.SubjectsIdx like @Filter
-    --if @@rowcount > 0 print '&& match found on subjects'
+    INSERT INTO [dbo].[Resource.Cluster]
+               ([ResourceIntId]
+               ,[ClusterId])
+    SELECT distinct lrs.ResourceIntId,  @MappedClusterId
+    FROM dbo.[Resource.Subject] lrs 
+    left join [dbo].[Resource.Cluster] rc on lrs.ResourceIntId = rc.ResourceIntId AND rc.ClusterId = @MappedClusterId
+    where rc.[ClusterId] is null
+    And lrs.Subject like @Filter
+
+	set @affectedCount = @@rowcount
+    if @affectedCount is not null AND @affectedCount > 0 begin
+      set @totalCount= @totalCount + @affectedCount
+      print '$$$$$$$ match found on subjects for cluster. Count: '  
+              + convert(varchar, @affectedCount)  + '. #' 
+	  end
+    
   	 
   	-- === via keywords =======================================================
-   -- INSERT INTO [dbo].[Resource.Cluster]
-   --            ([ResourceId]
-   --            ,[ClusterId])
-   -- SELECT distinct lrs.ResourceId,  @MappedClusterId
-   -- FROM dbo.[Resource.Keyword] lrs 
-   -- left join [dbo].[Resource.Cluster] rc on lrs.ResourceId = rc.ResourceId AND rc.ClusterId = @MappedClusterId
-   -- where rc.[ClusterId] is null
-   -- And lrs.KeywordsIdx like @Filter
-  	--if @@rowcount > 0 print '&& match found on keywords'
+    INSERT INTO [dbo].[Resource.Cluster]
+               ([ResourceIntId]
+               ,[ClusterId])
+    SELECT distinct lrs.ResourceIntId,  @MappedClusterId
+    FROM dbo.[Resource.Keyword] lrs 
+    left join [dbo].[Resource.Cluster] rc on lrs.ResourceIntId = rc.ResourceIntId AND rc.ClusterId = @MappedClusterId
+    where rc.[ClusterId] is null
+    And lrs.Keyword like @Filter
+
+  	set @affectedCount = @@rowcount
+    if @affectedCount is not null AND @affectedCount > 0 begin
+      set @totalCount= @totalCount + @affectedCount
+      print 'KKKKKKK match found on keywords for cluster. Count: '  
+              + convert(varchar, @affectedCount)  + '. #' 
+	  end
+    
   	 
 		FETCH NEXT FROM thisCursor INTO @FilterValue, @MappedClusterId, @MapId
 	END
@@ -5548,7 +6028,176 @@ end
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.ClusterDelete2]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.Cluster_PopulateResourceFromMapping]    Script Date: 2/22/2015 10:28:07 AM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+/*
+
+select count(*) from [Resource]
+go
+
+SELECT top 1000
+ base.[ResourceId]
+      ,[ClusterId]
+      ,[ResourceUrl]
+      ,[Title]
+      ,[Description]
+      ,[Keywords]
+      ,[Subjects]
+  FROM [Resource.Version_Summary] base
+  Left join [dbo].[Resource.Cluster] rclu 
+          on base.ResourceId = rclu.ResourceId And rclu.[ClusterId] = 91
+where rclu.[ClusterId] is not null
+  
+  
+GO
+
+UPDATE [dbo].[Map.CareerCluster]
+   SET [IsActive] = 1
+ WHERE Id < 72
+GO
+
+
+
+
+EXECUTE [dbo].[Resource.Cluster_PopulateFromMapping] 0, 91
+
+
+
+EXECUTE [dbo].[Resource..Cluster_PopulateResourceFromMapping] 450295, 0
+
+
+*/
+
+/*
+Map clusters 
+Loop thru defined mapping values, and apply to existing resources
+
+Notes
+- should join to resource version to only target resources already in the pathway
+- add a date or means to only target recent additions rather than the whole database
+*/
+CREATE PROCEDURE [dbo].[Resource.Cluster_PopulateResourceFromMapping]
+            @ResourceIntId int
+            ,@clusterId int
+
+As
+begin 
+          
+Declare 
+@MapId int
+,@MappedClusterId int
+,@FilterValue varchar(200)
+,@Filter varchar(200)
+,@cntr int
+--,@clusterId int
+,@interval int
+,@debugLevel int
+,@affectedCount int
+,@totalCount int
+set @interval= 25
+set @cntr= 0
+--set @clusterId = 91
+set @debugLevel= 10
+set @affectedCount= 0
+set @totalCount= 0
+
+SET NOCOUNT ON;
+-- ===============================================
+select 'started',  getdate()
+	-- Loop thru and call proc
+	DECLARE thisCursor CURSOR FOR
+      SELECT  FilterValue, MappedClusterId, Id
+      FROM   [Map.CareerCluster]
+      where IsActive= 1 
+      AND (MappedClusterId = @clusterId or @clusterId = 0)
+
+	OPEN thisCursor
+	FETCH NEXT FROM thisCursor INTO @FilterValue, @MappedClusterId, @MapId
+	WHILE @@FETCH_STATUS = 0 BEGIN
+	  set @cntr = @cntr+ 1  
+		  
+    select @cntr As Cntr,convert(varchar, @MappedClusterId) As ClusterId,@FilterValue	As Filter
+    print convert(varchar, @cntr) + '. Cluster/Filter: ' + convert(varchar, @MappedClusterId) + ' - ' + @FilterValue		
+		set @Filter = '%' + ltrim(rtrim(@FilterValue)) + '%'
+		
+    -- === via title =======================================================  		
+    INSERT INTO [dbo].[Resource.Cluster]
+               ([ResourceIntId]
+               ,[ClusterId])
+    SELECT distinct lrs.ResourceIntId,  @MappedClusterId
+    FROM dbo.[Resource.Version_Summary] lrs 
+    left join [dbo].[Resource.Cluster] rc on lrs.ResourceIntId = rc.ResourceIntId AND rc.ClusterId = @MappedClusterId
+    where lrs.ResourceIntId = @ResourceIntId 
+	AND rc.[ClusterId] is null
+    And (lrs.Title like @Filter 
+         OR lrs.[Description] like @Filter
+         )
+    set @affectedCount = @@rowcount
+    if @affectedCount is not null AND @affectedCount > 0 begin
+      set @totalCount= @totalCount + @affectedCount
+      print '-> match found for cluster using filter. Count: '  
+              + convert(varchar, @affectedCount)  + '. #' 
+              + convert(varchar, @MappedClusterId) + ' - ' + @Filter
+      --if ((@dupsCntr / @interval) * @interval) = @dupsCntr 
+      
+      end
+
+    -- === via subjects =======================================================    
+    INSERT INTO [dbo].[Resource.Cluster]
+               ([ResourceIntId]
+               ,[ClusterId])
+    SELECT distinct lrs.ResourceIntId,  @MappedClusterId
+    FROM dbo.[Resource.Subject] lrs 
+    left join [dbo].[Resource.Cluster] rc on lrs.ResourceIntId = rc.ResourceIntId AND rc.ClusterId = @MappedClusterId
+        where lrs.ResourceIntId = @ResourceIntId 
+	AND rc.[ClusterId] is null
+    And lrs.Subject like @Filter
+
+	set @affectedCount = @@rowcount
+    if @affectedCount is not null AND @affectedCount > 0 begin
+      set @totalCount= @totalCount + @affectedCount
+      print '$$$$$$$ match found on subjects for cluster. Count: '  
+              + convert(varchar, @affectedCount)  + '. #' 
+	  end
+    
+  	 
+  	-- === via keywords =======================================================
+    INSERT INTO [dbo].[Resource.Cluster]
+               ([ResourceIntId]
+               ,[ClusterId])
+    SELECT distinct lrs.ResourceIntId,  @MappedClusterId
+    FROM dbo.[Resource.Keyword] lrs 
+    left join [dbo].[Resource.Cluster] rc on lrs.ResourceIntId = rc.ResourceIntId AND rc.ClusterId = @MappedClusterId
+    where lrs.ResourceIntId = @ResourceIntId 
+	AND rc.[ClusterId] is null
+    And lrs.Keyword like @Filter
+
+  	set @affectedCount = @@rowcount
+    if @affectedCount is not null AND @affectedCount > 0 begin
+      set @totalCount= @totalCount + @affectedCount
+      print 'KKKKKKK match found on keywords for cluster. Count: '  
+              + convert(varchar, @affectedCount)  + '. #' 
+	  end
+    
+  	 
+		FETCH NEXT FROM thisCursor INTO @FilterValue, @MappedClusterId, @MapId
+	END
+	CLOSE thisCursor
+	DEALLOCATE thisCursor
+	select 'completed',  getdate()
+  select 'processed records: ' + convert(varchar, @cntr)
+  select 'Clusters created: ' + convert(varchar, @totalCount)
+  
+  
+end
+
+
+GO
+/****** Object:  StoredProcedure [dbo].[Resource.ClusterDelete2]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -5564,7 +6213,7 @@ WHERE ClusterId = @ClusterId AND
 ResourceIntId = @ResourceIntId
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.ClusterGet2]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.ClusterGet2]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -5593,7 +6242,7 @@ BEGIN
 END
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.ClusterInsert2]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.ClusterInsert2]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -5643,7 +6292,7 @@ Values (
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.ClusterSelect]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.ClusterSelect]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -5667,7 +6316,7 @@ Order by cc.IlPathwayName
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.ClusterSelect_SelectedCodes2]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.ClusterSelect_SelectedCodes2]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -5698,7 +6347,7 @@ where IsIlPathway = 1
 Order by base.IlPathwayName
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.ClusterSelect2]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.ClusterSelect2]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -5722,7 +6371,7 @@ Order by cc.IlPathwayName
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.Comment_Import]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.Comment_Import]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -5731,6 +6380,8 @@ GO
 -- Author:		Jerome Grimmer
 -- Create date: 2/28/2013
 -- Description:	Import Comment from Learning Registry
+-- mods
+-- 14-10-10 mparsons - removed resourceId from insert
 -- =============================================
 CREATE PROCEDURE [dbo].[Resource.Comment_Import] 
 	@ResourceIntId int,
@@ -5760,13 +6411,13 @@ BEGIN
 	WHERE ResourceId = @ResourceId AND DocId = @DocId
 
 	IF @RowCount = 0 BEGIN
-		INSERT INTO [Resource.Comment] (ResourceIntId, Comment, IsActive, Created, CreatedBy, ResourceId, Commenter, DocId)
-		VALUES (@ResourceIntId,@Comment, @IsActive, @Created, @CreatedBy, @ResourceId, @Commenter, @DocId)
+		INSERT INTO [Resource.Comment] (ResourceIntId, Comment, IsActive, Created, CreatedBy, Commenter, DocId)
+		VALUES (@ResourceIntId,@Comment, @IsActive, @Created, @CreatedBy, @Commenter, @DocId)
 	END
 END
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.CommentDelete]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.CommentDelete]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -5778,7 +6429,7 @@ DELETE FROM [Resource.Comment]
 WHERE Id = @Id
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.CommentInsert]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.CommentInsert]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -5818,7 +6469,7 @@ Values (
 select SCOPE_IDENTITY() as Id
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.CommentSelect]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.CommentSelect]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -5842,7 +6493,7 @@ Order by created desc
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.ConditionsOfUse_Select]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.ConditionsOfUse_Select]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -5863,7 +6514,7 @@ WHERE [IsActive] = 1
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.DetailViewInsert]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.DetailViewInsert]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -5898,7 +6549,7 @@ BEGIN
 END
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.EducationUse_SelectedCodes]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.EducationUse_SelectedCodes]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -5926,7 +6577,7 @@ Order by code.Title ASC
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.EducationUseDelete]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.EducationUseDelete]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -5942,7 +6593,7 @@ WHERE ResourceId = @ResourceIntId
 AND EducationUseId = @EducationUseId
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.EducationUseGet]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.EducationUseGet]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -5977,7 +6628,7 @@ And (EducationUseId = @EducationUseId or @EducationUseId is null )
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.EducationUseImport]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.EducationUseImport]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -6127,7 +6778,7 @@ end
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.EducationUseInsert]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.EducationUseInsert]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -6167,7 +6818,7 @@ Values (
 select SCOPE_IDENTITY() as Id
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.EducationUseSelect]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.EducationUseSelect]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -6202,7 +6853,7 @@ BEGIN
 END
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.EvaluationGet]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.EvaluationGet]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -6226,7 +6877,7 @@ WHERE Id = @Id
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.EvaluationInsert]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.EvaluationInsert]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -6279,7 +6930,7 @@ select SCOPE_IDENTITY() as Id
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.EvaluationSelect]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.EvaluationSelect]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -6316,7 +6967,7 @@ WHERE (ResourceIntId = @ResourceIntId OR @ResourceIntId IS NULL) AND
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.Format_Import]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.Format_Import]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -6473,7 +7124,7 @@ end
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.Format_ImportFromMappingOrphan]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.Format_ImportFromMappingOrphan]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -6593,7 +7244,7 @@ end
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.Format_SelectedCodes]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.Format_SelectedCodes]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -6619,7 +7270,7 @@ Order by 2
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.FormatDelete]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.FormatDelete]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -6633,7 +7284,7 @@ WHERE ResourceId = @ResourceId
 AND CodeId = @CodeId
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.FormatGet]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.FormatGet]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -6653,7 +7304,7 @@ BEGIN
 END
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.FormatGetById]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.FormatGetById]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -6675,7 +7326,7 @@ END
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.FormatInsert]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.FormatInsert]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -6800,7 +7451,7 @@ END
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.FormatSelect]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.FormatSelect]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -6823,7 +7474,7 @@ BEGIN
 END
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.FormatSelect2]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.FormatSelect2]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -6844,7 +7495,7 @@ END
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.FormatUpdate]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.FormatUpdate]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -6865,7 +7516,7 @@ BEGIN
 END
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.GradeLevel_Delete]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.GradeLevel_Delete]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -6885,7 +7536,7 @@ WHERE
 OR  (Id = @Id)    
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.GradeLevel_Import]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.GradeLevel_Import]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -7082,7 +7733,7 @@ end
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.GradeLevel_ImportFromMappingOrphan]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.GradeLevel_ImportFromMappingOrphan]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -7199,7 +7850,7 @@ end
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.GradeLevel_Insert]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.GradeLevel_Insert]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -7281,7 +7932,7 @@ End
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.GradeLevel_SelectedCodes]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.GradeLevel_SelectedCodes]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -7308,7 +7959,7 @@ Order by code.[SortOrder]
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.GradeLevelSelect]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.GradeLevelSelect]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -7331,7 +7982,7 @@ SELECT [Id]
   WHERE (ResourceIntId = @ResourceIntId)
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.GroupType_SelectedCodes]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.GroupType_SelectedCodes]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -7358,7 +8009,7 @@ Order by 2
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.GroupTypeDelete]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.GroupTypeDelete]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -7379,7 +8030,7 @@ And (GroupTypeId = @GroupTypeId OR @GroupTypeId is NULL)
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.GroupTypeImport]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.GroupTypeImport]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -7414,7 +8065,7 @@ GO
 Description:      [Resource.GroupTypeImport]
 ------------------------------------------------------
 Modifications
-
+14-05-09 mparsons - removed ResourceRowId
 =============================================
 
 */
@@ -7423,7 +8074,7 @@ CREATE PROCEDURE [dbo].[Resource.GroupTypeImport]
           @GroupTypeId	int,
           @OriginalValue  varchar(100)
           ,@TotalRows     int OUTPUT
-          ,@ResourceRowId uniqueidentifier
+         -- ,@ResourceRowId uniqueidentifier
 As
 declare @NewId uniqueidentifier
 , @id int
@@ -7531,7 +8182,7 @@ end
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.GroupTypeInsert]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.GroupTypeInsert]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -7563,7 +8214,7 @@ Values (
 select SCOPE_IDENTITY() as Id
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.GroupTypeSelect]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.GroupTypeSelect]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -7585,7 +8236,7 @@ order by codes.Title
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.IntendedAudience_Import]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.IntendedAudience_Import]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -7596,7 +8247,8 @@ Description:      [Resource.IntendedAudience_Import]
 ------------------------------------------------------
 Modifications
 2013-03-13 jgrimmer - Added @ResourceIntId 
-2013-04-19 jgrimmer - Modified keyword check to use ResourceIntId 
+2013-04-19 jgrimmer - Modified keyword check to use ResourceIntId
+2014-05-09 mparsons - overdue chg to use res int id, not res id
 =============================================
 
 */
@@ -7651,16 +8303,16 @@ if @IntendedAudienceId is null begin
 	If @IntendedAudienceId is null OR @IntendedAudienceId = 0	begin	
     --no mapping, write to exceptions table and return
     -- when called from interface, may need real message?
-    if NOT exists(SELECT [ResourceId] FROM [dbo].[Audit.AudienceType_Orphan]
-    where [ResourceId]= @ResourceId and [OriginalValue] = @OriginalValue) begin
+    if NOT exists(SELECT [ResourceIntId] FROM [dbo].[Audit.AudienceType_Orphan]
+    where [ResourceIntId]= @ResourceIntId and [OriginalValue] = @OriginalValue) begin
       print '@@ no mapping, writing to audit table: ' + @OriginalValue
       INSERT INTO [dbo].[Audit.AudienceType_Orphan]
            ([RowId]
-           ,[ResourceId]
+           ,[ResourceIntId]
            ,[OriginalValue])
       VALUES
            (newId()
-           ,@ResourceId
+           ,@ResourceIntId
            ,@OriginalValue)
       
       end    
@@ -7683,7 +8335,7 @@ if @IntendedAudienceId > 0 begin
 -- exists check for dups, or allow fail on dup
   select @exists = base.[RowId]
 	from [dbo].[Resource.IntendedAudience] base
-	where base.[ResourceId] = @ResourceId
+	where base.[ResourceIntId] = @ResourceIntId
 	And base.[AudienceId] = @IntendedAudienceId
 	
 	if @exists is not NULL AND @exists != '00000000-0000-0000-0000-000000000000' begin
@@ -7694,14 +8346,12 @@ if @IntendedAudienceId > 0 begin
 	else begin
     INSERT INTO [dbo].[Resource.IntendedAudience]
 	    ([RowId]
-	    ,[ResourceId]
 	    ,[AudienceId]
 	    ,OriginalAudience
 	    ,ResourceIntId)
 
     select
 	    @NewId,
-	    @ResourceId, 
 	    @IntendedAudienceId, 
 	    @OriginalValue,
 	    @ResourceIntId
@@ -7715,19 +8365,13 @@ end
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.IntendedAudience_ImportFromMappingOrphan]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.IntendedAudience_ImportFromMappingOrphan]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-/*
-Attempt to import Resource.IntendedAudience from the Audit.AudienceType_Orphan table
-this would be run on demand after attempted cleanups of the mapping
-We also need a process to permanently ignore some mappings
-*/
 
--- 2013-03-13 jgrimmer - Added ResourceIntId
 CREATE PROCEDURE [dbo].[Resource.IntendedAudience_ImportFromMappingOrphan]
             @MaxRecords int,
             @DebugLevel int
@@ -7754,7 +8398,7 @@ select 'started',  getdate()
   FROM [dbo].[Audit.AudienceType_Orphan] base
   Inner join [Map.AudienceType] map on base.[OriginalValue] = map.OriginalValue
   Inner join [dbo].[Codes.AudienceType] codes on map.[CodeId] = codes.Id
-  Inner join [Resource] ON base.ResourceId = [Resource].RowId
+  Inner join [Resource] ON base.ResourceIntId = [Resource].Id
   where 
       (base.IsActive is null OR base.IsActive = 1)
   And (base.[FoundMapping] is null OR base.[FoundMapping] = 0)
@@ -7799,10 +8443,10 @@ select 'started',  getdate()
         FROM [Map.AudienceType] map 
         inner join [dbo].[Codes.AudienceType] codes on map.[CodeId] = codes.Id
         inner join [dbo].[Resource.IntendedAudience] red 
-              on @ResourceId = red.ResourceId 
+              on @ResourceIntId = red.ResourceIntId 
               and red.[AudienceId] = codes.id
          where map.OriginalValue  = @Value
-         group by red.ResourceId
+         group by red.ResourceIntId
          
     	if @existsCntr > 0 begin
 		    if @DebugLevel > 5
@@ -7832,7 +8476,7 @@ end
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.IntendedAudience_SelectedCodes]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.IntendedAudience_SelectedCodes]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -7858,7 +8502,7 @@ Order by 2
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.IntendedAudienceDelete]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.IntendedAudienceDelete]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -7872,7 +8516,7 @@ WHERE ResourceId = @ResourceId
 AND AudienceId = @AudienceId
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.IntendedAudienceGet]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.IntendedAudienceGet]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -7891,7 +8535,7 @@ BEGIN
 END
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.IntendedAudienceGetByResourceIdAudienceId]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.IntendedAudienceGetByResourceIdAudienceId]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -7916,7 +8560,7 @@ BEGIN
 END
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.IntendedAudienceInsert]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.IntendedAudienceInsert]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -7976,7 +8620,7 @@ Values (
 select @NewId as Id
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.IntendedAudienceInsert2]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.IntendedAudienceInsert2]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -8027,7 +8671,7 @@ Values (
 select @NewId as Id
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.IntendedAudienceSelect]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.IntendedAudienceSelect]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -8052,7 +8696,7 @@ BEGIN
 END
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.IntendedAudienceUpdate]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.IntendedAudienceUpdate]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -8072,7 +8716,7 @@ BEGIN
 END
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.ItemType_Import]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.ItemType_Import]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -8195,7 +8839,7 @@ end
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.ItemType_SelectedCodes]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.ItemType_SelectedCodes]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -8220,7 +8864,7 @@ Left Join dbo.[Resource.ItemType] rpw on code.Id = rpw.ItemTypeId
 Order by 2
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.ItemTypeDelete]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.ItemTypeDelete]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -8241,7 +8885,7 @@ And (ItemTypeId = @ItemTypeId OR @ItemTypeId is NULL)
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.ItemTypeInsert]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.ItemTypeInsert]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -8274,7 +8918,7 @@ Values (
 select SCOPE_IDENTITY() as Id
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.ItemTypeSelect]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.ItemTypeSelect]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -8296,7 +8940,7 @@ order by codes.Title
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.ItemTypeUpdate]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.ItemTypeUpdate]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -8320,7 +8964,7 @@ SET
 WHERE Id = @Id
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.KeywordGet]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.KeywordGet]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -8344,7 +8988,7 @@ END
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.KeywordInsert]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.KeywordInsert]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -8415,7 +9059,7 @@ END
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.KeywordInsertUpdate]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.KeywordInsertUpdate]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -8452,7 +9096,7 @@ END
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.KeywordSelect]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.KeywordSelect]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -8478,7 +9122,7 @@ END
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.Language_Import]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.Language_Import]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -8626,7 +9270,7 @@ end
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.Language_ImportFromMappingOrphan]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.Language_ImportFromMappingOrphan]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -8752,7 +9396,7 @@ end
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.Language_SelectedCodes]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.Language_SelectedCodes]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -8779,7 +9423,7 @@ Order by 2
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.LanguageInsert]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.LanguageInsert]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -8818,7 +9462,7 @@ BEGIN
 END
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.LanguageSelect]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.LanguageSelect]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -8859,7 +9503,7 @@ END
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.LanguageSelect2]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.LanguageSelect2]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -8896,7 +9540,7 @@ BEGIN
 END
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.LikeGet]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.LikeGet]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -8920,7 +9564,7 @@ BEGIN
 END
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.LikeGetDisplay]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.LikeGetDisplay]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -8930,16 +9574,22 @@ GO
 -- Author:		Jerome Grimmer
 -- Create date: 3/7/2013
 -- Description:	Get resource Like Summary
+-- mods
+-- 14-10-10 mparsons - added HasRating to simplify checking if user has rated the resource
 -- =============================================
 CREATE PROCEDURE [dbo].[Resource.LikeGetDisplay]
-	@Id int, @UserId int
+	@Id int, 
+	@UserId int
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
 	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
 
-	SELECT rls.ResourceIntId, rls.LikeCount, rls.DislikeCount, IsNull(YouLikeThis,'False') AS YouLikeThis, isnull(YouDislikeThis,'False') AS YouDislikeThis
+	SELECT rls.ResourceIntId, rls.LikeCount
+		, rls.DislikeCount, IsNull(YouLikeThis,'False') AS YouLikeThis
+		, isnull(YouDislikeThis,'False') AS YouDislikeThis
+		, case when isnull(ylt.ResourceIntId, 0) > 0 then 1 else 0 end As HasRating
 	FROM [Resource.LikesSummary] rls
 	LEFT JOIN (SELECT ResourceIntId,
 		CASE WHEN IsLike = 'True' THEN 'True' ELSE 'False' END AS YouLikeThis,
@@ -8948,9 +9598,8 @@ BEGIN
 	WHERE rls.ResourceIntId = @Id
 END
 
-
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.LikeInsert]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.LikeInsert]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -8975,7 +9624,7 @@ BEGIN
 END
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.LikeSelect]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.LikeSelect]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -9005,7 +9654,7 @@ BEGIN
 END
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.LikeSummaryGet]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.LikeSummaryGet]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -9029,7 +9678,7 @@ BEGIN
 END
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.LikeSummaryInsert]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.LikeSummaryInsert]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -9054,7 +9703,7 @@ BEGIN
 END
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.LikeSummaryUpdate]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.LikeSummaryUpdate]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -9080,7 +9729,7 @@ BEGIN
 END
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.LinkCheckAdd]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.LinkCheckAdd]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -9106,7 +9755,7 @@ BEGIN
 END
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.LinkCheckGet]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.LinkCheckGet]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -9126,7 +9775,7 @@ INNER JOIN [Resource] res ON rlc.ResourceIntId = res.Id
 WHERE rlc.Id = @Id
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.LinkCheckSelect]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.LinkCheckSelect]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -9159,7 +9808,7 @@ WHERE (rlc.LastCheckDate < @EndDate) AND
 	(res.ResourceUrl LIKE @HostName OR @HostName IS NULL)
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.LinkCheckUpdate]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.LinkCheckUpdate]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -9181,7 +9830,7 @@ SET
 WHERE Id = @Id
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.PathwaySelect]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.PathwaySelect]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -9208,7 +9857,7 @@ where IsIlPathway = 1
 Order by base.IlPathwayName
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.PropertyInsert]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.PropertyInsert]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -9298,7 +9947,7 @@ else begin
 select @NewId as Id
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.PropertySelect]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.PropertySelect]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -9325,7 +9974,7 @@ BEGIN
 END
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.PublishedByInsert]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.PublishedByInsert]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -9374,7 +10023,7 @@ Values (
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.RatingSummaryDelete]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.RatingSummaryDelete]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -9399,7 +10048,7 @@ BEGIN
 END
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.RatingSummaryGet]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.RatingSummaryGet]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -9436,7 +10085,7 @@ BEGIN
 END
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.RatingSummaryInsert]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.RatingSummaryInsert]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -9471,7 +10120,7 @@ BEGIN
 END
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.RatingSummaryUpdate]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.RatingSummaryUpdate]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -9505,7 +10154,7 @@ BEGIN
 END
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.RecommendationDelete]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.RecommendationDelete]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -9517,7 +10166,7 @@ DELETE FROM [Resource.Recommendation]
 WHERE Id = @Id
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.RecommendationGet]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.RecommendationGet]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -9536,7 +10185,7 @@ FROM [Resource.Recommendation]
 WHERE Id = @Id
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.RecommendationInsert]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.RecommendationInsert]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -9572,7 +10221,7 @@ Values (
 select SCOPE_IDENTITY() as Id
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.RecommendationSelect]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.RecommendationSelect]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -9594,7 +10243,7 @@ Order by Created
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.RecommendationUpdate]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.RecommendationUpdate]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -9617,7 +10266,7 @@ SET
 WHERE Id = @Id
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.RelatedUrlDelete]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.RelatedUrlDelete]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -9629,7 +10278,7 @@ DELETE FROM [Resource.RelatedUrl]
 WHERE Id = @Id
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.RelatedUrlGet]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.RelatedUrlGet]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -9648,7 +10297,7 @@ FROM [Resource.RelatedUrl]
 WHERE Id = @Id
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.RelatedUrlInsert]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.RelatedUrlInsert]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -9681,7 +10330,7 @@ Values (
 select SCOPE_IDENTITY() as Id
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.RelatedUrlSelect]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.RelatedUrlSelect]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -9706,7 +10355,7 @@ Order by RelatedUrl
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.ResourceType_FixUnknownTypes]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.ResourceType_FixUnknownTypes]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -9811,7 +10460,7 @@ end
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.ResourceType_ImportFromMappingOrphan]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.ResourceType_ImportFromMappingOrphan]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -9832,7 +10481,7 @@ CREATE PROCEDURE [dbo].[Resource.ResourceType_ImportFromMappingOrphan]
 As
 begin 
           
-Declare @ResourceId uniqueidentifier
+Declare @ResourceId varchar(40)
 ,@ResourceIntId int
 ,@RowId uniqueidentifier
 ,@Value varchar(200)
@@ -9851,7 +10500,7 @@ select 'started',  getdate()
   FROM [dbo].[Audit.ResourceType_Orphan] base
   Inner join [Map.ResourceType] map on base.[OriginalValue] = map.LRValue
   Inner join [dbo].[Codes.ResourceType] codes on map.[CodeId] = codes.Id
-  Inner join [Resource] ON base.[ResourceId] = [Resource].RowId
+  Inner join [Resource] ON base.[ResourceIntId] = [Resource].Id
   where 
       (base.IsActive is null OR base.IsActive = 1)
   And (base.[FoundMapping] is null OR base.[FoundMapping] = 0)
@@ -9896,10 +10545,10 @@ select 'started',  getdate()
         FROM [Map.ResourceType] map 
         inner join [dbo].[Codes.ResourceType] codes on map.[CodeId] = codes.Id
         inner join [dbo].[Resource.ResourceType] red 
-              on @ResourceId = red.ResourceId 
+              on @ResourceIntId = red.ResourceIntId 
               and red.[ResourceTypeId] = codes.id
          where map.LRValue  = @Value
-         group by red.ResourceId
+         group by red.ResourceIntId
          
     	if @existsCntr > 0 begin
 		    if @DebugLevel > 5
@@ -9929,7 +10578,7 @@ end
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.ResourceType_SelectedCodes]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.ResourceType_SelectedCodes]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -9955,7 +10604,7 @@ Order by 2
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.ResourceTypeDelete]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.ResourceTypeDelete]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -9974,7 +10623,7 @@ WHERE ResourceIntId = @ResourceIntId
 AND ResourceTypeId = @ResourceTypeId
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.ResourceTypeGet]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.ResourceTypeGet]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -10016,7 +10665,7 @@ BEGIN
 
 END
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.ResourceTypeImport]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.ResourceTypeImport]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -10026,10 +10675,11 @@ GO
 
 
 -- ====================================================================
-DECLARE @RC int, @ResourceId uniqueidentifier, @ResourceTypeId int, @OriginalValue varchar(100),@TotalRows     int
+DECLARE @RC int, @ResourceId uniqueidentifier, @ResourceIntId int, @ResourceTypeId int, @OriginalValue varchar(100),@TotalRows     int
 
 set @ResourceTypeId= 0
-set @ResourceId = '7F1427AF-ABB8-4CCD-AC00-000BB5EE7C30'
+set @ResourceId = ''
+set @ResourceIntId= 11
 set @OriginalValue = 'Syllabus'
 
 set @ResourceId = 'c73542af-bdaf-4043-be18-417d5a68e6be'
@@ -10039,7 +10689,7 @@ set @OriginalValue = 'Image/jpg2'
 
 EXECUTE @RC = [dbo].[Resource.ResourceTypeImport] 
    @ResourceId, @ResourceTypeId
-  ,@OriginalValue, @totalRows OUTPUT
+  ,@OriginalValue, @totalRows OUTPUT, @ResourceIntId
 
 GO
 
@@ -10053,15 +10703,16 @@ Modifications
 12-11-15 jgrimmer - added keyword check.  If exists as keyword, delete the keyword.
 13-03-14 jgrimmer - added ResourceIntId
 13-04-19 jgrimmer - Modified keyword check to use ResourceIntId
+14-05-09 mparsons - changed any references to resourceId to ResourceIntId (should have been done last year!)
 =============================================
 
 */
 CREATE PROCEDURE [dbo].[Resource.ResourceTypeImport]
-          @ResourceId uniqueidentifier, 
+          @ResourceId		varchar(40), 
           @ResourceTypeId	int,
-          @OriginalValue varchar(100)
-          ,@TotalRows     int OUTPUT
-          ,@ResourceIntId int
+          @OriginalValue	varchar(100)
+          ,@TotalRows		int OUTPUT
+          ,@ResourceIntId	int
 
 As
 declare @NewId uniqueidentifier
@@ -10108,16 +10759,16 @@ if @ResourceTypeId is null begin
 	If @ResourceTypeId is null OR @ResourceTypeId = 0	begin	
     --no mapping, write to exceptions table and return
     -- when called from interface, may need real message?
-    if NOT exists(SELECT [ResourceId] FROM [dbo].[Audit.ResourceType_Orphan] 
-    where [ResourceId]= @ResourceId and [OriginalValue] = @OriginalValue) begin
+    if NOT exists(SELECT [ResourceIntId] FROM [dbo].[Audit.ResourceType_Orphan] 
+    where [ResourceIntId]= @ResourceIntId and [OriginalValue] = @OriginalValue) begin
       print '@@ no mapping, writing to audit table: ' + @OriginalValue
       INSERT INTO [dbo].[Audit.ResourceType_Orphan]
            ([RowId]
-           ,[ResourceId]
+           ,[ResourceIntId]
            ,[OriginalValue])
       VALUES
            (newId()
-           ,@ResourceId
+           ,@ResourceIntId
            ,@OriginalValue)
       
       end    
@@ -10142,7 +10793,7 @@ if @ResourceTypeId > 0 begin
 -- exists check for dups, or allow fail on dup
   select @exists = base.[RowId]
 	from [dbo].[Resource.ResourceType] base
-	where base.[ResourceId] = @ResourceId
+	where base.[ResourceIntId] = @ResourceIntId
 	And base.[ResourceTypeId] = @ResourceTypeId
 	
 	if @exists is not NULL AND @exists != '00000000-0000-0000-0000-000000000000' begin
@@ -10154,14 +10805,12 @@ if @ResourceTypeId > 0 begin
 	else begin
     INSERT INTO [dbo].[Resource.ResourceType]
 	    ([RowId]
-	    ,[ResourceId]
 	    ,[ResourceTypeId]
 	    ,[OriginalType]
 	    ,[ResourceIntId])
 
     select
 	    @NewId,
-	    @ResourceId, 
 	    @ResourceTypeId, 
 	    @OriginalValue,
 	    @ResourceIntId
@@ -10175,7 +10824,7 @@ end
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.ResourceTypeInsert]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.ResourceTypeInsert]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -10324,7 +10973,7 @@ end
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.ResourceTypeSelect]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.ResourceTypeSelect]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -10359,7 +11008,7 @@ END
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.ResourceTypeSelect2]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.ResourceTypeSelect2]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -10386,7 +11035,7 @@ END
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.Standard_Import]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.Standard_Import]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -10398,11 +11047,13 @@ GO
 --
 -- 2013-03-14 jgrimmer - Added ResourceIntId
 -- 2013-04-17 jgrimmer - Added AlignmentTypeValue
+-- 2014-08-14 jgrimmer - Removed ResourceId, as we're using ResourceIntId instead
+-- 2014-11-06 jgrimmer - Changed @OriginalValue to @StandardUrl, and added @NotationCode parameter
 -- =============================================
 CREATE PROCEDURE [dbo].[Resource.Standard_Import]
-	@ResourceId uniqueidentifier,
 	@StandardId int,
-	@OriginalValue varchar(100),
+	@StandardUrl varchar(100),
+	@NotationCode varchar(100),
 	@TotalRows int output,
 	@ResourceIntId int,
 	@AlignmentTypeValue varchar(200)
@@ -10415,14 +11066,16 @@ BEGIN
 	DECLARE @NewId uniqueidentifier,
 		@mapperId int,
 		@exists int,
-		@alignmentTypeId int
+		@alignmentTypeId int,
+		@OriginalValue varchar(100)
 		
 	SET @NewId = NEWID()
 	SET @TotalRows = 0
-	IF @OriginalValue = '' SET @OriginalValue = NULL
+	IF @StandardUrl = '' SET @StandardUrl = NULL
+	IF @NotationCode = '' SET @NotationCode = NULL
 	IF @StandardId < 1 SET @StandardId = NULL
 	
-	IF @OriginalValue IS NULL AND @StandardId IS NULL BEGIN
+	IF @StandardUrl IS NULL AND @StandardId IS NULL AND @NotationCode IS NULL BEGIN
 		PRINT 'no values provided'
 		return -1
 	END
@@ -10434,25 +11087,33 @@ BEGIN
 		PRINT 'checking for mapping'
 		SELECT @StandardId = isnull(Id,0)
 		FROM [StandardBody.Node] mapper
-		WHERE mapper.NotationCode = @OriginalValue OR mapper.StandardGuid = @OriginalValue
-			OR mapper.StandardUrl = @OriginalValue OR mapper.AltUrl = @OriginalValue
+		WHERE mapper.NotationCode = @StandardUrl OR mapper.StandardGuid = @StandardUrl
+			OR mapper.StandardUrl = @StandardUrl OR mapper.AltUrl = @StandardUrl
 		PRINT '@StandardId = '+convert(varchar,@StandardId)	
 		IF @StandardId = 0 OR @StandardId IS NULL BEGIN
-		-- no mapping, write to archive table and return
-		-- when called from interface, may need real message?
-			IF NOT exists(SELECT [ResourceIntId] FROM [Audit.ResourceStandard_Orphan]
-				WHERE ResourceIntId = @ResourceIntId AND StandardUrl = @OriginalValue) BEGIN
-				PRINT '@@ no mapping, writing to audit table: ' + @OriginalValue
-				INSERT INTO [Audit.ResourceStandard_Orphan] (ResourceIntId, StandardUrl, StandardAlignment, Created)
-				VALUES (@ResourceIntId, @OriginalValue, @AlignmentTypeValue, GETDATE())
-				SET @TotalRows = @@rowcount
-				RETURN 0
-			END ELSE BEGIN
-				PRINT '@@ no mapping, ALREADY IN audit table: ' + @OriginalValue
-				SET @TotalRows = @@rowcount
-				RETURN 0
-			END
-		END
+		-- check notationCode
+			SELECT @StandardId = isnull(Id,0)
+			FROM [StandardBody.Node] mapper
+			WHERE mapper.NotationCode = @NotationCode OR mapper.StandardGuid = @NotationCode
+				OR mapper.StandardUrl = @NotationCode OR mapper.AltUrl = @NotationCode
+			PRINT '@StandardId = '+convert(varchar,@StandardId)
+			IF @StandardId = 0 OR @StandardId IS NULL BEGIN --quepasa
+			-- no mapping, write to archive table and return
+			-- when called from interface, may need real message?
+				IF NOT exists(SELECT [ResourceIntId] FROM [Audit.ResourceStandard_Orphan]
+					WHERE ResourceIntId = @ResourceIntId AND StandardUrl = @StandardUrl) BEGIN
+					PRINT '@@ no mapping, writing to audit table: ' + @StandardUrl
+					INSERT INTO [Audit.ResourceStandard_Orphan] (ResourceIntId, StandardUrl, NotationCode, StandardAlignment, Created)
+					VALUES (@ResourceIntId, @StandardUrl, @NotationCode, @AlignmentTypeValue, GETDATE())
+					SET @TotalRows = @@rowcount
+					RETURN 0
+				END ELSE BEGIN
+					PRINT '@@ no mapping, ALREADY IN audit table: ' + @StandardUrl
+					SET @TotalRows = @@rowcount
+					RETURN 0
+				END
+			END ELSE SET @OriginalValue = @NotationCode
+		END ELSE SET @OriginalValue = @StandardUrl
 	END
 
 -- Second, see if mapping exists for Alignment Type (default value = 'Teaches')
@@ -10486,7 +11147,7 @@ BEGIN
 END
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.StandardDelete]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.StandardDelete]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -10498,7 +11159,7 @@ DELETE FROM [Resource.Standard]
 WHERE Id = @Id
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.StandardGet]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.StandardGet]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -10533,7 +11194,7 @@ left join [Codes.AlignmentDegree] cad on base.AlignmentDegreeId = cad.Id
 WHERE base.Id = @Id
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.StandardInsert]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.StandardInsert]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -10577,7 +11238,7 @@ select SCOPE_IDENTITY() as Id
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.StandardSelect]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.StandardSelect]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -10615,7 +11276,211 @@ Order by AlignmentTypeValue
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.SubjectGet]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.Subject_PopulateFromMapping]    Script Date: 2/22/2015 10:28:07 AM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+/*
+
+select count(*) from [Resource]
+go
+
+SELECT top 1000
+ base.[ResourceIntId]
+      ,[ClusterId]
+      ,[ResourceUrl]
+      ,[Title]
+      ,[Description]
+      ,keys.[Keywords]
+      ,subs.[Subjects]
+  FROM [Resource.Version_Summary] base
+  Left join [dbo].[Resource.Cluster] rclu 
+          on base.ResourceIntId = rclu.ResourceIntId And rclu.[ClusterId] = 91
+	Left Join [dbo].[Resource.KeywordsCsvList] keys on base.ResourceIntId = keys.ResourceIntId
+	Left Join [dbo].[Resource.SubjectsCsvList] subs on base.ResourceIntId = subs.ResourceIntId
+where rclu.[ClusterId] is not null
+  
+  
+GO
+
+UPDATE [dbo].[Map.Subject]
+   SET [IsActive] = 1
+ WHERE Id < 72
+GO
+
+
+
+
+EXECUTE [dbo].[Resource.Subject_PopulateFromMapping] 0, 91
+
+
+EXECUTE [dbo].[Resource.Subject_PopulateFromMapping] 0, 8
+ 
+
+*/
+
+/*
+Map Subjects 
+Loop thru defined mapping values, and apply to existing resources
+
+Notes
+- should join to resource version to only target resources already in the pathway
+- add a date or means to only target recent additions rather than the whole database
+	===> would not pick up new filters if we did the latter
+*/
+CREATE PROCEDURE [dbo].[Resource.Subject_PopulateFromMapping]
+            @MaxRecords int
+            ,@SubjectId int
+
+As
+begin 
+          
+Declare 
+@MapId int
+,@MappedSubjectId int
+,@Subject varchar(100)
+,@FilterValue varchar(200)
+,@Filter varchar(200)
+,@cntr int
+,@interval int
+,@debugLevel int
+,@affectedCount int
+,@totalCount int
+set @interval= 25
+set @cntr= 0
+set @debugLevel= 10
+set @affectedCount= 0
+set @totalCount= 0
+
+SET NOCOUNT ON;
+-- ===============================================
+select 'started',  getdate()
+	-- Loop thru and call proc
+	DECLARE thisCursor CURSOR FOR
+      SELECT  FilterValue, MappedSubjectId, base.Id, codes.Title
+      FROM   [Map.K12Subject] base
+	  Inner join [Codes.Subject] codes on base.MappedSubjectId = codes.Id
+      where base.IsActive= 1 
+      AND (MappedSubjectId = @SubjectId or @SubjectId = 0)
+
+	OPEN thisCursor
+	FETCH NEXT FROM thisCursor INTO @FilterValue, @MappedSubjectId, @MapId, @Subject
+	WHILE @@FETCH_STATUS = 0 BEGIN
+	  set @cntr = @cntr+ 1
+	  if @MaxRecords > 0 AND @cntr > @MaxRecords begin
+		  print '### Early exit based on @MaxRecords = ' + convert(varchar, @MaxRecords)
+		  select 'exiting',  getdate()
+		  set @cntr = @cntr - 1
+		  BREAK
+		  End	  
+		  
+    select @cntr As Cntr,convert(varchar, @MappedSubjectId) As SubjectId,@FilterValue	As Filter
+    print convert(varchar, @cntr) + '. Subject/Filter: ' + convert(varchar, @MappedSubjectId) + ' - ' + @FilterValue		
+		set @Filter = '%' + ltrim(rtrim(@FilterValue)) + '%'
+		
+    -- === via title =======================================================  		
+    INSERT INTO [dbo].[Resource.Subject]
+               ([ResourceIntId]
+               ,[CodeId], Subject)
+    SELECT distinct lrs.ResourceIntId,  @MappedSubjectId, @Subject
+    FROM dbo.[Resource.Version_Summary] lrs 
+    left join [dbo].[Resource.Subject] rc on lrs.ResourceIntId = rc.ResourceIntId AND rc.CodeId = @MappedSubjectId
+	--Left Join [dbo].[Resource.KeywordsCsvList] keys on lrs.ResourceIntId = keys.ResourceIntId
+	--Left Join [dbo].[Resource.SubjectsCsvList] subs on lrs.ResourceIntId = subs.ResourceIntId
+    where rc.[CodeId] is null
+    And (lrs.Title like @Filter 
+         OR lrs.[Description] like @Filter
+        -- OR keys.Keywords like @Filter
+        -- OR subs.Subjects like @Filter
+         )
+    set @affectedCount = @@rowcount
+    if @affectedCount is not null AND @affectedCount > 0 begin
+      set @totalCount= @totalCount + @affectedCount
+      print '-> match found for Subject using filter. Count: '  
+              + convert(varchar, @affectedCount)  + '. #' 
+              + convert(varchar, @MappedSubjectId) + ' - ' + @Filter
+      --if ((@dupsCntr / @interval) * @interval) = @dupsCntr 
+      
+      end
+
+    -- todo - once run, could arbitrarily set to false?
+    --      - probably only useful for initial runs, as in prod will run regularly against new records
+    
+  	-- === via keywords =======================================================
+    INSERT INTO [dbo].[Resource.Subject]
+               ([ResourceIntId]
+               ,[CodeId], Subject)
+    SELECT distinct lrs.ResourceIntId,  @MappedSubjectId, @Subject
+    FROM dbo.[Resource.Keyword] lrs 
+    left join [dbo].[Resource.Subject] rc on lrs.ResourceIntId = rc.ResourceIntId AND rc.CodeId = @MappedSubjectId
+    where rc.[CodeId] is null
+    And lrs.Keyword like @Filter
+
+  	set @affectedCount = @@rowcount
+    if @affectedCount is not null AND @affectedCount > 0 begin
+      set @totalCount= @totalCount + @affectedCount
+      print 'KKKKKKK match found on keywords for Subject. Count: '  
+              + convert(varchar, @affectedCount)  + '. #' 
+	  end
+    
+    
+    -- === via subjects =======================================================   
+	-- different - probably an update 
+	UPDATE [dbo].[Resource.Subject]
+		SET [CodeId] = @MappedSubjectId
+	From [dbo].[Resource.Subject] base
+	where base.[CodeId] is null
+    And base.Subject like @Filter
+
+	set @affectedCount = @@rowcount
+    if @affectedCount is not null AND @affectedCount > 0 begin
+      set @totalCount= @totalCount + @affectedCount
+      print '$$$$$$$ match found on subjects for Subject. Count: '  
+              + convert(varchar, @affectedCount)  + '. #' 
+	  end
+    
+  	 -- =====================================
+  	 
+	FETCH NEXT FROM thisCursor INTO @FilterValue, @MappedSubjectId, @MapId, @Subject
+	END
+	CLOSE thisCursor
+	DEALLOCATE thisCursor
+	select 'completed',  getdate()
+  select 'processed records: ' + convert(varchar, @cntr)
+  select 'Subjects created: ' + convert(varchar, @totalCount)
+  
+  
+end
+
+
+GO
+/****** Object:  StoredProcedure [dbo].[Resource.Subject_SelectedCodes]    Script Date: 2/22/2015 10:28:07 AM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+/*
+[Resource.Subject_SelectedCodes] 448010
+*/
+Create PROCEDURE [dbo].[Resource.Subject_SelectedCodes]
+    @ResourceIntId int
+As
+SELECT distinct
+	code.Id, code.Title, code.[Description]
+   -- ,ResourceIntId
+	,CASE
+		WHEN rpw.ResourceIntId IS NOT NULL THEN 'true'
+		ELSE 'false'
+	END as IsSelected
+FROM [dbo].[Codes.Subject] code
+Left Join [Resource.Subject] rpw on code.Id = rpw.CodeId
+		and rpw.ResourceIntId = @ResourceIntId
+		where code.IsActive = 1
+
+GO
+/****** Object:  StoredProcedure [dbo].[Resource.SubjectGet]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -10639,20 +11504,29 @@ SELECT [Id]
       ,[Subject]
       ,[Created]
       ,[CreatedById]
+	  ,CodeId
   FROM [dbo].[Resource.Subject]
  WHERE ResourceIntId = @ResourceIntId
 END
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.SubjectImport]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.SubjectImport]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+/*
+
+exec [dbo].[Resource.SubjectInsert2] 449805  ,'Arts'  ,2
+
+
+*/
+
 /*************************************************************
 Modifications
 2012-11-15 jgrimmer - Added duplicate checking and keyword check
 2013-03-14 jgrimmer - Added ResourceIntId
+2014-04-17 mparsons - added handling for k12 subjects
 */
 CREATE PROCEDURE [dbo].[Resource.SubjectImport]
 	@ResourceIntId int,
@@ -10662,7 +11536,7 @@ BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
 	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
-	DECLARE @KeywordId int,
+	DECLARE @KeywordId int, @CodeId int,
 			@exists int
 	
 
@@ -10676,6 +11550,13 @@ BEGIN
 		DELETE FROM [Resource.Keyword]
 		WHERE Id = @KeywordId
 	END
+	--=========================================================
+	-- Do K12 subject check.  If found, use codeId.
+	SELECT @CodeId = isnull(Id, 0)
+	FROM [Codes.Subject]
+	WHERE Title = @Subject 
+		
+	if isnull(@CodeId,0) = 0 set @CodeId = NULL
 
     --=========================================================
     -- Do Duplicate check.  If already in table, skip the add
@@ -10686,13 +11567,13 @@ BEGIN
 	  print 'found duplicate'
 	end
 	else begin
-	    INSERT INTO [Resource.Subject] (ResourceIntId, [Subject], Created, CreatedById)
-		VALUES (@ResourceIntId, @Subject, GETDATE(), NULL)
+	    INSERT INTO [Resource.Subject] (ResourceIntId, [Subject], Created, CreatedById, CodeId)
+		VALUES (@ResourceIntId, @Subject, GETDATE(), NULL, @CodeId)
 	end    
 END
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.SubjectInsert]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.SubjectInsert]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -10753,12 +11634,44 @@ BEGIN
 END
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.SubjectInsert2]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.SubjectInsert2]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 /*
+select top 100 * from [Resource.PublishedBy] 
+where PublishedById = 2
+--
+
+SELECT rs.[Id],rs.[ResourceIntId]
+      ,PublishedById
+      ,rs.[Subject],rs.[Created]
+
+  FROM [dbo].[Resource.Subject] rs
+  inner join [Resource.PublishedBy] rp on rs.ResourceIntId = rp.ResourceIntId
+where 
+PublishedById= 2  
+  order by 2, 3
+  --
+  
+SELECT rs.[Id],rs.[ResourceIntId]
+      ,PublishedById
+      ,rs.[Keyword],rs.[Created]
+
+  FROM [dbo].[Resource.Keyword] rs
+  inner join [Resource.PublishedBy] rp on rs.ResourceIntId = rp.ResourceIntId
+where 
+PublishedById= 2
+
+--rs.[ResourceIntId] = 288525  
+  order by 2, 3
+ 
+ 
+ 
+exec [dbo].[Resource.SubjectInsert2] 449805  ,'Arts'  ,2
+
+
 
 
 */
@@ -10766,8 +11679,9 @@ GO
 Modifications
 2012-11-15 jgrimmer - Added duplicate checking and keyword check
 2013-03-14 jgrimmer - Added ResourceIntId
+2014-04-17 mparsons - added handling for k12 subjects
 */
-Create PROCEDURE [dbo].[Resource.SubjectInsert2]
+CREATE PROCEDURE [dbo].[Resource.SubjectInsert2]
 	@ResourceIntId int,
 	@Subject varchar(100),
 	@CreatedById int
@@ -10777,7 +11691,7 @@ BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
 	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
-	DECLARE @KeywordId int,
+	DECLARE @KeywordId int, @CodeId int,
 			@exists int
 	
 	--IF @ResourceIntId = 0 SELECT @ResourceIntId = Id FROM [Resource] WHERE RowId = @ResourceId
@@ -10794,6 +11708,14 @@ BEGIN
 		WHERE Id = @KeywordId
 	END
 
+	--=========================================================
+	-- Do K12 subject check.  If found, use codeId.
+	SELECT @CodeId = isnull(Id, 0)
+	FROM [Codes.Subject]
+	WHERE Title = @Subject 
+		
+	if isnull(@CodeId,0) = 0 set @CodeId = NULL
+
   --=========================================================
   -- Do Duplicate check.  If already in table, skip the add
   SELECT @exists = Id
@@ -10803,13 +11725,13 @@ BEGIN
     print 'found duplicate'
   end
   else begin
-      INSERT INTO [Resource.Subject] ( ResourceIntId, [Subject], CreatedById)
-	  VALUES ( @ResourceIntId, @Subject, @CreatedById)
+      INSERT INTO [Resource.Subject] ( ResourceIntId, [Subject], CreatedById, CodeId)
+	  VALUES ( @ResourceIntId, @Subject, @CreatedById, @CodeId)
   end    
 END
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.SubjectSelect]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.SubjectSelect]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -10833,7 +11755,7 @@ SELECT [Id]
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.Version_Display]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.Version_Display]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -10927,7 +11849,7 @@ BEGIN
 END
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.Version_Import]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.Version_Import]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -10945,10 +11867,10 @@ GO
 -- 2013-05-03 jgrimmer - Added @ResourceIntId (how did I miss this one?!)
 -- 2013-06-20 jgrimmer - Removed ResourceId
 -- 2014-02-24 jgrimmer - changed Title and Description to nvarchar to handle foreign languages such as Arabic.
+-- 2014-04-17 mparsons - removed @ResourceId 
 -- =============================================
 CREATE PROCEDURE [dbo].[Resource.Version_Import]
 	@RowId	uniqueidentifier,
-	@ResourceId uniqueidentifier,
 	@DocId varchar(500),
 	@Title nvarchar(300),
 	@Description nvarchar(max),
@@ -11045,7 +11967,7 @@ END
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.VersionDelete]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.VersionDelete]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -11068,7 +11990,7 @@ BEGIN
 END
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.VersionDescriptionFix]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.VersionDescriptionFix]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -11090,7 +12012,7 @@ BEGIN
 END
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.VersionGet]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.VersionGet]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -11181,7 +12103,7 @@ END
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.VersionGetById]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.VersionGetById]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -11253,7 +12175,7 @@ BEGIN
 END
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.VersionInsert]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.VersionInsert]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -11271,9 +12193,9 @@ GO
 -- 2013-03-15 nargo	   - added Requirements
 -- 2013-05-30 nargo    - temp fix for ResourceId
 -- 2013-06-27 nargo	   - switched to return integer ID
+-- 2014-04-17 mparsons - removed @ResourceId 
 -- =============================================
 CREATE PROCEDURE [dbo].[Resource.VersionInsert]
-	@ResourceId uniqueidentifier,
 	@DocId varchar(500),
 	@Title varchar(200),
 	@Description varchar(max),
@@ -11327,7 +12249,6 @@ BEGIN
 	SET @NewId = NEWID()
 	
 	INSERT INTO [Resource.Version] (RowId, 
-	--ResourceId, 
 	DocId, Title, [Description],
 		Publisher, Creator, Rights, AccessRights, Modified, Submitter, Imported, Created,
 		TypicalLearningTime, IsSkeletonFromParadata, [Schema], SortTitle
@@ -11338,7 +12259,6 @@ BEGIN
 		)
 		
 	VALUES (@NewId, 
-	--@ResourceId, 
 	@DocId, @Title, @Description, 
 		@Publisher, @Creator, @Rights, @AccessRights, @Modified, @Submitter, GETDATE(),	@Created, 
 		@TypicalLearningTime, @IsSkeletonFromParadata, @Schema, dbo.BuildSortTitle(@Title)
@@ -11352,7 +12272,7 @@ END
 SELECT SCOPE_IDENTITY() as Id, @NewId As RowId
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.VersionSelect]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.VersionSelect]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -11422,7 +12342,7 @@ END
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.VersionUpdate]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.VersionUpdate]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -11496,7 +12416,7 @@ END
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.VersionUpdateByRowId]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.VersionUpdateByRowId]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -11574,7 +12494,7 @@ END
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.VersionUpdateDocId]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.VersionUpdateDocId]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -11599,7 +12519,7 @@ BEGIN
 END
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource.ViewInsert]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource.ViewInsert]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -11632,11 +12552,15 @@ BEGIN
 END
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource_BuildElasticSearch]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource_BuildElasticSearch]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+/*
+[Resource_BuildElasticSearch] '449897'
+
+*/
 -- =============================================
 -- Author:		Jerome Grimmer
 -- Create date: 6/4/2013
@@ -11650,6 +12574,10 @@ GO
 -- 2014-02-03 jgrimmer - Modify favorites to rely on [Resource].FavoriteCount only.  It is detail/library page's responsibility to update that count.
 --						 Also add Submitter.
 -- 2014-02-25 jgrimmer - Modified to include only resource versions which are active.
+-- 2014-05-19 jgrimmer - Exclude resources from Smarter Balance, since Illinois is a PARCC member and not a Smarter Balance member state.
+
+-- 2014-05-22 mparsons - added back missing accessibility steps
+-- 2014-05-28 mparsons - added sortTitle
 -- =============================================
 CREATE PROCEDURE [dbo].[Resource_BuildElasticSearch]
 	--@ResourceIntId int,
@@ -11732,12 +12660,21 @@ BEGIN
 		favorites int,
 		likeCount int,
 		dislikeCount int,
-		submitter varchar(100))
+		submitter varchar(100),
+		accessibilityApiIDs nvarchar(max),
+		accessibilityApis nvarchar(max),
+		accessibilityControlIDs nvarchar(max),
+		accessibilityControls nvarchar(max),
+		accessibilityFeatureIDs nvarchar(max),
+		accessibilityFeatures nvarchar(max),
+		accessibilityHazardIDs nvarchar(max),
+		accessibilityHazards nvarchar(max),
+		sortTitle nvarchar(300))
 
 	-- Get Resource/ResourceVersion information
 	INSERT INTO #workTable (versionId, intId, title, [description], publisher,
 		created, accessRights, accessRightsId, LastUpdated, url, usageRightsUrl, usageRights, usageRightsID, usageRightsIconURL, usageRightsMiniIconURL, viewsCount, 
-		favorites, submitter)
+		favorites, submitter, sortTitle)
 	SELECT rv.Id, rv.ResourceIntId, rv.Title, rv.[Description], rv.Publisher, rv.Created, rv.AccessRights, rv.AccessRightsId, GETDATE(), r.ResourceUrl,
 	rv.Rights, 
 	CASE 
@@ -11760,13 +12697,14 @@ BEGIN
 		WHEN rv.Rights IS NOT NULL AND cou.Id IS NULL THEN '/images/icons/rightsreserved.png'
 		ELSE NULL
 	END AS usageRightsMiniIconUrl,
-	ViewCount, r.FavoriteCount, rv.Submitter
+	ViewCount, r.FavoriteCount, rv.Submitter,
+	[dbo].[BuildSortTitle] (rv.[Title])
 	FROM #resourceIntIds ridl
 	INNER JOIN [Resource.Version] rv ON ridl.intID = rv.ResourceIntId
 	INNER JOIN [Resource] r ON rv.ResourceIntId = r.Id
 	LEFT JOIN [ConditionOfUse] cou ON rv.Rights = cou.Url
 	WHERE ResourceIntId NOT IN (SELECT ResourceIntId FROM [Resource.Link] WHERE IsDeleted = 'True') AND 
-		(cou.Id IS NULL OR cou.Id <> 3) AND r.IsActive = 'True' and rv.IsActive = 'True'
+		(cou.Id IS NULL OR cou.Id <> 3) AND r.IsActive = 'True' and rv.IsActive = 'True' AND Submitter NOT LIKE '%@smarterbalanced.org%'
 	
 	-- Keywords
 	PRINT 'Keywords'
@@ -12206,6 +13144,126 @@ BEGIN
 		(#workTable.detailViews <> rs.Favorites OR
 		(#workTable.detailViews IS NULL AND rs.Favorites IS NOT NULL)) */
 
+
+	-- accessibilityApi IDs
+	PRINT 'AccessibilityApi IDs'
+	UPDATE #workTable
+	SET accessibilityApiIDs = rs.accessibilityApiIDs
+	FROM (SELECT ResourceIntId, left(accessibilityApiIDs, LEN(accessibilityApiIDs) - 1) AS accessibilityApiIDs
+		FROM (SELECT ResourceIntId, (
+			SELECT convert(nvarchar,itbl.[AccessibilityApiId])+','
+			FROM [Resource.AccessibilityApi] itbl
+			WHERE itbl.ResourceIntId = tbl.ResourceIntId
+			for xml path('')) accessibilityApiIDs
+		FROM [Resource.AccessibilityApi] tbl
+		GROUP BY ResourceIntId) otab) rs
+	WHERE rs.ResourceIntId = #workTable.intID
+		
+	-- accessibilityApis
+	PRINT 'AccessibilityApis'
+	UPDATE #workTable
+	SET accessibilityApis = rs.accessibilityApi,
+		LastUpdated = GETDATE()
+	FROM (SELECT ResourceIntId, left(accessibilityApi, LEN(accessibilityApi) - 1) AS accessibilityApi
+		FROM (SELECT ResourceIntId, (
+			SELECT [Codes.AccessibilityApi].Title+','
+			FROM [Resource.AccessibilityApi] itbl
+			INNER JOIN [Codes.AccessibilityApi] ON itbl.AccessibilityApiId = [Codes.AccessibilityApi].Id
+			WHERE itbl.ResourceIntId = tbl.ResourceIntId
+			for xml path('')) accessibilityApi
+		FROM [Resource.AccessibilityApi] tbl
+		GROUP BY ResourceIntId) otab) rs
+	WHERE rs.ResourceIntId = #workTable.intID
+
+	-- accessibilityControl IDs
+	PRINT 'AccessibilityControl IDs'
+	UPDATE #workTable
+	SET accessibilityControlIDs = rs.accessibilityControlIDs
+	FROM (SELECT ResourceIntId, left(accessibilityControlIDs, LEN(accessibilityControlIDs) - 1) AS accessibilityControlIDs
+		FROM (SELECT ResourceIntId, (
+			SELECT convert(nvarchar,itbl.[AccessibilityControlId])+','
+			FROM [Resource.AccessibilityControl] itbl
+			WHERE itbl.ResourceIntId = tbl.ResourceIntId
+			for xml path('')) accessibilityControlIDs
+		FROM [Resource.AccessibilityControl] tbl
+		GROUP BY ResourceIntId) otab) rs
+	WHERE rs.ResourceIntId = #workTable.intID
+		
+	-- accessibilityControls
+	PRINT 'AccessibilityControls'
+	UPDATE #workTable
+	SET accessibilityControls = rs.accessibilityControl,
+		LastUpdated = GETDATE()
+	FROM (SELECT ResourceIntId, left(accessibilityControl, LEN(accessibilityControl) - 1) AS accessibilityControl
+		FROM (SELECT ResourceIntId, (
+			SELECT [Codes.AccessibilityControl].Title+','
+			FROM [Resource.AccessibilityControl] itbl
+			INNER JOIN [Codes.AccessibilityControl] ON itbl.AccessibilityControlId = [Codes.AccessibilityControl].Id
+			WHERE itbl.ResourceIntId = tbl.ResourceIntId
+			for xml path('')) accessibilityControl
+		FROM [Resource.AccessibilityControl] tbl
+		GROUP BY ResourceIntId) otab) rs
+	WHERE rs.ResourceIntId = #workTable.intID
+
+	-- accessibilityFeature IDs
+	PRINT 'AccessibilityFeature IDs'
+	UPDATE #workTable
+	SET accessibilityFeatureIDs = rs.accessibilityFeatureIDs
+	FROM (SELECT ResourceIntId, left(accessibilityFeatureIDs, LEN(accessibilityFeatureIDs) - 1) AS accessibilityFeatureIDs
+		FROM (SELECT ResourceIntId, (
+			SELECT convert(nvarchar,itbl.[AccessibilityFeatureId])+','
+			FROM [Resource.AccessibilityFeature] itbl
+			WHERE itbl.ResourceIntId = tbl.ResourceIntId
+			for xml path('')) accessibilityFeatureIDs
+		FROM [Resource.AccessibilityFeature] tbl
+		GROUP BY ResourceIntId) otab) rs
+	WHERE rs.ResourceIntId = #workTable.intID
+		
+	-- accessibilityFeatures
+	PRINT 'AccessibilityFeatures'
+	UPDATE #workTable
+	SET accessibilityFeatures = rs.accessibilityFeature,
+		LastUpdated = GETDATE()
+	FROM (SELECT ResourceIntId, left(accessibilityFeature, LEN(accessibilityFeature) - 1) AS accessibilityFeature
+		FROM (SELECT ResourceIntId, (
+			SELECT [Codes.AccessibilityFeature].Title+','
+			FROM [Resource.AccessibilityFeature] itbl
+			INNER JOIN [Codes.AccessibilityFeature] ON itbl.AccessibilityFeatureId = [Codes.AccessibilityFeature].Id
+			WHERE itbl.ResourceIntId = tbl.ResourceIntId
+			for xml path('')) accessibilityFeature
+		FROM [Resource.AccessibilityFeature] tbl
+		GROUP BY ResourceIntId) otab) rs
+	WHERE rs.ResourceIntId = #workTable.intID
+
+	-- accessibilityHazard IDs
+	PRINT 'AccessibilityHazard IDs'
+	UPDATE #workTable
+	SET accessibilityHazardIDs = rs.accessibilityHazardIDs
+	FROM (SELECT ResourceIntId, left(accessibilityHazardIDs, LEN(accessibilityHazardIDs) - 1) AS accessibilityHazardIDs
+		FROM (SELECT ResourceIntId, (
+			SELECT convert(nvarchar,itbl.[AccessibilityHazardId])+','
+			FROM [Resource.AccessibilityHazard] itbl
+			WHERE itbl.ResourceIntId = tbl.ResourceIntId
+			for xml path('')) accessibilityHazardIDs
+		FROM [Resource.AccessibilityHazard] tbl
+		GROUP BY ResourceIntId) otab) rs
+	WHERE rs.ResourceIntId = #workTable.intID
+		
+	-- accessibilityHazards
+	PRINT 'AccessibilityHazards'
+	UPDATE #workTable
+	SET accessibilityHazards = rs.accessibilityHazard,
+		LastUpdated = GETDATE()
+	FROM (SELECT ResourceIntId, left(accessibilityHazard, LEN(accessibilityHazard) - 1) AS accessibilityHazard
+		FROM (SELECT ResourceIntId, (
+			SELECT [Codes.AccessibilityHazard].Title+','
+			FROM [Resource.AccessibilityHazard] itbl
+			INNER JOIN [Codes.AccessibilityHazard] ON itbl.AccessibilityHazardId = [Codes.AccessibilityHazard].Id
+			WHERE itbl.ResourceIntId = tbl.ResourceIntId
+			for xml path('')) accessibilityHazard
+		FROM [Resource.AccessibilityHazard] tbl
+		GROUP BY ResourceIntId) otab) rs
+	WHERE rs.ResourceIntId = #workTable.intID
 		
 	-- Output the data
 	SELECT
@@ -12259,7 +13317,16 @@ BEGIN
 		favorites,
 		likeCount,
 		dislikeCount,
-		submitter
+		submitter,
+		accessibilityApiIDs,
+		accessibilityApis,
+		accessibilityControlIDs,
+		accessibilityControls,
+		accessibilityFeatureIDs,
+		accessibilityFeatures,
+		accessibilityHazardIDs,
+		accessibilityHazards,
+		sortTitle
 	FROM #workTable
 	
 	DROP TABLE #workTable
@@ -12267,7 +13334,7 @@ BEGIN
 END
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource_BuildElasticSearch2]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource_BuildElasticSearch2]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -12894,7 +13961,1252 @@ BEGIN
 END
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource_IndexUpdate]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource_BuildElasticSearchV2]    Script Date: 2/22/2015 10:28:07 AM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+/*
+[Resource_BuildElasticSearchV2] '449897'
+
+*/
+-- ======================================================================
+-- Author:		Jerome Grimmer
+-- Create date: 6/4/2013
+-- Description:	Build records for a single resource for ElasticSearch
+-- TODO: Add code for IsDeleted and Evaluations
+--
+-- 2013-06-20 jgrimmer - Fixed bug with null grade level aliases
+-- 2013-07-26 jgrimmer - Added code to process a list of ResourceIntIds
+-- 2013-08-20 jgrimmer - Added LikeCount and DislikeCount
+-- 2013-11-27 jgrimmer - Added check for IsDeleted in the Link Checker database
+-- 2014-02-03 jgrimmer - Modify favorites to rely on [Resource].FavoriteCount only.  It is detail/library page's responsibility to update that count.
+--						 Also add Submitter.
+-- 2014-02-25 jgrimmer - Modified to include only resource versions which are active.
+-- 2014-05-19 jgrimmer - Exclude resources from Smarter Balance, since Illinois is a PARCC member and not a Smarter Balance member state.
+-- ======================================================================
+-- 2014-05-21 mparsons - create new version using Resource.Tag
+-- 2014-05-28 mparsons - added sortTitle
+-- ======================================================================
+
+CREATE PROCEDURE [dbo].[Resource_BuildElasticSearchV2]
+	--@ResourceIntId int,
+	@ResourceIntId varchar(max)
+AS
+BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+	
+	--Create and populate table of ResourceIntIds to process
+	CREATE TABLE #resourceIntIds (intID int)
+	/*IF @ResourceIntId <> 0 BEGIN
+		INSERT INTO #resourceIntIds (intID)
+		VALUES(@ResourceIntId)
+	END ELSE BEGIN*/
+		DECLARE @pos int,@value varchar(12),@remainder varchar(max), @categoryId int
+
+		SET @remainder = @ResourceIntId
+		SET @pos = PATINDEX('%,%',@remainder)
+		WHILE(@pos > 0) BEGIN
+			SET @value = left(@remainder,@pos - 1)
+			INSERT INTO #resourceIntIds (intID)
+			VALUES(@value)
+			SET @remainder = right(@remainder,len(@remainder) - @pos)
+			SET @pos = PATINDEX('%,%',@remainder)
+		END
+		INSERT INTO #resourceIntIds (intID)
+		VALUES(@remainder)
+	--END
+	
+	--Create workTable
+	CREATE TABLE #workTable (
+		versionID int,
+		intID int,
+		title nvarchar(300),
+		[description] nvarchar(max),
+		publisher varchar(200),
+		created datetime,
+		accessRights varchar(100),
+		accessRightsID int,
+		keywords nvarchar(max),
+		subjects nvarchar(max),
+		languageIDs nvarchar(max),
+		languages nvarchar(max),
+		clusterIDs nvarchar(max),
+		clusters nvarchar(max),
+		audienceIDs nvarchar(max),
+		audiences nvarchar(max),
+		educationLevelIDs nvarchar(max),
+		educationLevels nvarchar(max),
+		educationLevelAliases nvarchar(max),
+		resourceTypeIDs nvarchar(max),
+		resourceTypes nvarchar(max),
+		mediaTypeIDs nvarchar(max),
+		mediaTypes nvarchar(max),
+		groupTypeIDs nvarchar(max),
+		groupTypes nvarchar(max),
+		itemTypeIDs nvarchar(max),
+		itemTypes nvarchar(max),
+		standardIDs nvarchar(max),
+		standardNotations nvarchar(max),
+		LastUpdated datetime,
+		Url varchar(500),
+		libraryIDs varchar(max),
+		collectionIDs varchar(max),
+		IsDeleted bit,
+		educationalUseIDs nvarchar(max),
+		educationalUses nvarchar(max),
+		usageRights varchar(300),
+		usageRightsID int,
+		usageRightsURL varchar(700),
+		usageRightsIconURL varchar(300),
+		usageRightsMiniIconUrl varchar(300),
+		likesSummary int,
+		evaluationCount int,
+		evaluationScore int,
+		commentsCount int,
+		viewsCount int,
+		detailViews int,
+		favorites int,
+		likeCount int,
+		dislikeCount int,
+		submitter varchar(100),
+		accessibilityApiIDs nvarchar(max),
+		accessibilityApis nvarchar(max),
+		accessibilityControlIDs nvarchar(max),
+		accessibilityControls nvarchar(max),
+		accessibilityFeatureIDs nvarchar(max),
+		accessibilityFeatures nvarchar(max),
+		accessibilityHazardIDs nvarchar(max),
+		accessibilityHazards nvarchar(max),
+		[careerPlannings] [nvarchar](max) NULL,
+		[careerPlanningIDs] [nvarchar](max) NULL,
+		[disabilityTopics] [nvarchar](max) NULL,
+		[disabilityTopicIDs] [nvarchar](max) NULL,
+		[jobPreparations] [nvarchar](max) NULL,
+		[jobPreparationIDs] [nvarchar](max) NULL,
+		[employerPrograms] [nvarchar](max) NULL,
+		[employerProgramIDs] [nvarchar](max) NULL,
+		[k12Subjects] [nvarchar](max) NULL,
+		[k12SubjectIDs] [nvarchar](max) NULL,
+		[veteransServices] [nvarchar](max) NULL,
+		[veteransServiceIDs] [nvarchar](max) NULL,
+		[workSupportServices] [nvarchar](max) NULL,
+		[workSupportServiceIDs] [nvarchar](max) NULL,
+		[wfePartners] [nvarchar](max) NULL,
+		[wfePartnerIDs] [nvarchar](max) NULL,
+		[workplaceSkills] [nvarchar](max) NULL,
+		[workPlaceSkillsIDs] [nvarchar](max) NULL,
+		regions nvarchar(MAX) NULL,
+		regionIDs nvarchar(MAX) NULL,
+		targetSites nvarchar(MAX) NULL,
+		targetSiteIDs nvarchar(MAX) NULL,
+		sortTitle nvarchar(300)
+		)
+
+	-- Get Resource/ResourceVersion information
+	INSERT INTO #workTable (versionId, intId, title, [description], publisher,
+		created, accessRights, accessRightsId, LastUpdated, url, usageRightsUrl, usageRights, usageRightsID, usageRightsIconURL, usageRightsMiniIconURL, viewsCount, 
+		favorites, submitter, sortTitle)
+	SELECT rv.Id, rv.ResourceIntId, rv.Title, rv.[Description], rv.Publisher, rv.Created, rv.AccessRights, rv.AccessRightsId, GETDATE(), r.ResourceUrl,
+	rv.Rights, 
+	CASE 
+		WHEN cou.Id IS NOT NULL THEN cou.Summary
+		WHEN rv.Rights IS NOT NULL AND cou.Id IS NULL THEN 'Read the Fine Print'
+		ELSE NULL
+	END AS usageRights,
+	CASE 
+		WHEN cou.Id IS NOT NULL THEN cou.Id
+		WHEN rv.Rights IS NOT NULL AND cou.Id IS NULL THEN 4 -- Read the Fine Print
+		ELSE NULL
+	END AS usageRightsID,
+	CASE 
+		WHEN cou.Id IS NOT NULL THEN cou.IconUrl
+		WHEN rv.Rights IS NOT NULL AND cou.Id IS NULL THEN 'http://mirrors.creativecommons.org/presskit/cc.primary.srr.gif'
+		ELSE NULL
+	END usageRightsIconURL,
+	CASE 
+		WHEN cou.Id IS NOT NULL THEN cou.MiniIconUrl
+		WHEN rv.Rights IS NOT NULL AND cou.Id IS NULL THEN '/images/icons/rightsreserved.png'
+		ELSE NULL
+	END AS usageRightsMiniIconUrl,
+	ViewCount, r.FavoriteCount, rv.Submitter,
+	[dbo].[BuildSortTitle] (rv.[Title])
+	FROM #resourceIntIds ridl
+	INNER JOIN [Resource.Version] rv ON ridl.intID = rv.ResourceIntId
+	INNER JOIN [Resource] r ON rv.ResourceIntId = r.Id
+	LEFT JOIN [ConditionOfUse] cou ON rv.Rights = cou.Url
+	WHERE ResourceIntId NOT IN (SELECT ResourceIntId FROM [Resource.Link] WHERE IsDeleted = 'True') AND 
+		(cou.Id IS NULL OR cou.Id <> 3) AND r.IsActive = 'True' and rv.IsActive = 'True' AND Submitter NOT LIKE '%@smarterbalanced.org%'
+	
+	-- Keywords
+	PRINT 'Keywords'
+	UPDATE #workTable
+	SET keywords = rs.Keywords,
+		LastUpdated = GETDATE()
+	FROM (SELECT ResourceIntId, left(Keywords, LEN(Keywords) - 1) AS Keywords
+		FROM (SELECT ResourceIntId, (
+			SELECT itbl.[Keyword]+','
+			FROM [Resource.Keyword] itbl
+			WHERE itbl.ResourceIntId = tbl.ResourceIntId
+			for xml path('')) Keywords
+		FROM [Resource.Keyword] tbl
+		GROUP BY ResourceIntId) otab) rs
+	WHERE rs.ResourceIntId = #workTable.intID
+
+	-- Subjects
+	PRINT 'Subjects'
+	UPDATE #workTable
+	SET [subjects] = rs.[Subjects],
+		LastUpdated = GETDATE()
+	FROM (SELECT ResourceIntId, left(Subjects, LEN(Subjects) - 1) AS Subjects
+		FROM (SELECT ResourceIntId, (
+			SELECT itbl.[Subject]+','
+			FROM [Resource.Subject] itbl
+			WHERE itbl.ResourceIntId = tbl.ResourceIntId
+			for xml path('')) Subjects
+		FROM [Resource.Subject] tbl
+		GROUP BY ResourceIntId) otab) rs
+	WHERE rs.ResourceIntId = #workTable.intID	
+	--===================================================================
+	-- k12Subject Ids
+	set @categoryId= 20
+	UPDATE #workTable
+	SET k12SubjectIDs = rs.relatedTags,
+		LastUpdated = GETDATE()
+	FROM (SELECT ResourceIntId, left(RelatedList, LEN(RelatedList) - 1) AS relatedTags
+		FROM (SELECT ResourceIntId, (
+			SELECT convert(varchar,itbl.TagValueId)+','
+			FROM [Resource_TagSummary] itbl
+			WHERE itbl.CategoryId = @categoryId AND itbl.ResourceIntId = tbl.ResourceIntId 
+			for xml path('')) RelatedList
+			FROM [Resource_TagSummary] tbl
+		WHERE tbl.CategoryId = @categoryId
+		GROUP BY ResourceIntId) otab) rs
+	WHERE #workTable.intID = rs.ResourceIntId 
+
+	-- k12Subjects
+	
+	UPDATE #workTable
+	SET k12Subjects = rs.relatedTags,
+		LastUpdated = GETDATE()
+	FROM (SELECT ResourceIntId, left(RelatedList, LEN(RelatedList) - 1) AS relatedTags
+		FROM (SELECT ResourceIntId, (
+			SELECT  itbl.TagTitle + ','
+			FROM [Resource_TagSummary] itbl
+			WHERE itbl.CategoryId = @categoryId AND itbl.ResourceIntId = tbl.ResourceIntId 
+			for xml path('')) RelatedList
+		FROM [Resource_TagSummary] tbl
+		WHERE tbl.CategoryId = @categoryId
+		GROUP BY ResourceIntId) otab) rs
+	WHERE #workTable.intID = rs.ResourceIntId 
+
+
+	--===================================================================
+	--LanguageIDs
+	set @categoryId= 17
+	PRINT 'Language IDs'
+	UPDATE #workTable
+	SET [languageIDs] = rs.relatedTags,
+		LastUpdated = GETDATE()
+	FROM (SELECT ResourceIntId, left(RelatedList, LEN(RelatedList) - 1) AS relatedTags
+		FROM (SELECT ResourceIntId, (
+			SELECT convert(varchar,itbl.TagValueId)+','
+			FROM [Resource_TagSummary] itbl
+			WHERE itbl.CategoryId = @categoryId AND itbl.ResourceIntId = tbl.ResourceIntId 
+			for xml path('')) RelatedList
+			FROM [Resource_TagSummary] tbl
+		WHERE tbl.CategoryId = @categoryId
+		GROUP BY ResourceIntId) otab) rs
+	WHERE #workTable.intID = rs.ResourceIntId 
+			
+	-- Languages
+	PRINT 'Languages'
+	UPDATE #workTable
+	SET [languages] = rs.relatedTags,
+		LastUpdated = GETDATE()
+	FROM (SELECT ResourceIntId, left(RelatedList, LEN(RelatedList) - 1) AS relatedTags
+		FROM (SELECT ResourceIntId, (
+			SELECT  itbl.TagTitle + ','
+			FROM [Resource_TagSummary] itbl
+			WHERE itbl.CategoryId = @categoryId AND itbl.ResourceIntId = tbl.ResourceIntId 
+			for xml path('')) RelatedList
+		FROM [Resource_TagSummary] tbl
+		WHERE tbl.CategoryId = @categoryId
+		GROUP BY ResourceIntId) otab) rs
+	WHERE #workTable.intID = rs.ResourceIntId 
+
+	-- Career Cluster IDs
+	set @categoryId= 8
+	PRINT 'Cluster IDs'
+	UPDATE #workTable
+	SET clusterIDs = rs.relatedTags,
+		LastUpdated = GETDATE()
+	FROM (SELECT ResourceIntId, left(RelatedList, LEN(RelatedList) - 1) AS relatedTags
+		FROM (SELECT ResourceIntId, (
+			SELECT convert(varchar,itbl.TagValueId)+','
+			FROM [Resource_TagSummary] itbl
+			WHERE itbl.CategoryId = @categoryId AND itbl.ResourceIntId = tbl.ResourceIntId 
+			for xml path('')) RelatedList
+			FROM [Resource_TagSummary] tbl
+		WHERE tbl.CategoryId = @categoryId
+		GROUP BY ResourceIntId) otab) rs
+	WHERE #workTable.intID = rs.ResourceIntId 
+	
+	-- Clusters
+
+	PRINT 'Clusters'
+	UPDATE #workTable
+	SET clusters = rs.relatedTags,
+		LastUpdated = GETDATE()
+	FROM (SELECT ResourceIntId, left(RelatedList, LEN(RelatedList) - 1) AS relatedTags
+		FROM (SELECT ResourceIntId, (
+			SELECT  itbl.TagTitle + ','
+			FROM [Resource_TagSummary] itbl
+			WHERE itbl.CategoryId = @categoryId AND itbl.ResourceIntId = tbl.ResourceIntId 
+			for xml path('')) RelatedList
+		FROM [Resource_TagSummary] tbl
+		WHERE tbl.CategoryId = @categoryId
+		GROUP BY ResourceIntId) otab) rs
+	WHERE #workTable.intID = rs.ResourceIntId 
+
+	-- Intended Audience Ids
+	set @categoryId= 7
+	PRINT 'Intended Audience IDs'
+	UPDATE #workTable
+	SET audienceIDs = rs.relatedTags,
+		LastUpdated = GETDATE()
+	FROM (SELECT ResourceIntId, left(RelatedList, LEN(RelatedList) - 1) AS relatedTags
+		FROM (SELECT ResourceIntId, (
+			SELECT convert(varchar,itbl.TagValueId)+','
+			FROM [Resource_TagSummary] itbl
+			WHERE itbl.CategoryId = @categoryId AND itbl.ResourceIntId = tbl.ResourceIntId 
+			for xml path('')) RelatedList
+			FROM [Resource_TagSummary] tbl
+		WHERE tbl.CategoryId = @categoryId
+		GROUP BY ResourceIntId) otab) rs
+	WHERE #workTable.intID = rs.ResourceIntId 
+
+	-- Intended Audiences	
+	PRINT 'Intended Audiences'
+	UPDATE #workTable
+	SET audiences = rs.relatedTags,
+		LastUpdated = GETDATE()
+	FROM (SELECT ResourceIntId, left(RelatedList, LEN(RelatedList) - 1) AS relatedTags
+		FROM (SELECT ResourceIntId, (
+			SELECT  itbl.TagTitle + ','
+			FROM [Resource_TagSummary] itbl
+			WHERE itbl.CategoryId = @categoryId AND itbl.ResourceIntId = tbl.ResourceIntId 
+			for xml path('')) RelatedList
+		FROM [Resource_TagSummary] tbl
+		WHERE tbl.CategoryId = @categoryId
+		GROUP BY ResourceIntId) otab) rs
+	WHERE #workTable.intID = rs.ResourceIntId 
+		
+	-- GradeLevel IDs
+	set @categoryId= 13
+	PRINT 'Grade Level IDs'
+	UPDATE #workTable
+	SET educationLevelIDs = rs.relatedTags,
+		LastUpdated = GETDATE()
+	FROM (SELECT ResourceIntId, left(RelatedList, LEN(RelatedList) - 1) AS relatedTags
+		FROM (SELECT ResourceIntId, (
+			SELECT convert(varchar,itbl.TagValueId)+','
+			FROM [Resource_TagSummary] itbl
+			WHERE itbl.CategoryId = @categoryId AND itbl.ResourceIntId = tbl.ResourceIntId 
+			for xml path('')) RelatedList
+			FROM [Resource_TagSummary] tbl
+		WHERE tbl.CategoryId = @categoryId
+		GROUP BY ResourceIntId) otab) rs
+	WHERE #workTable.intID = rs.ResourceIntId 
+		
+	-- Grade Levels
+	PRINT 'Grade Levels'
+	UPDATE #workTable
+	SET educationLevels = rs.relatedTags,
+		LastUpdated = GETDATE()
+	FROM (SELECT ResourceIntId, left(RelatedList, LEN(RelatedList) - 1) AS relatedTags
+		FROM (SELECT ResourceIntId, (
+			SELECT  itbl.TagTitle + ','
+			FROM [Resource_TagSummary] itbl
+			WHERE itbl.CategoryId = @categoryId AND itbl.ResourceIntId = tbl.ResourceIntId 
+			for xml path('')) RelatedList
+		FROM [Resource_TagSummary] tbl
+		WHERE tbl.CategoryId = @categoryId
+		GROUP BY ResourceIntId) otab) rs
+	WHERE #workTable.intID = rs.ResourceIntId 
+		
+	-- Grade Level Aliases
+	PRINT 'Grade Level Aliases'
+	UPDATE #workTable
+	SET educationLevelAliases = rs.relatedTags,
+		LastUpdated = GETDATE()
+	FROM (SELECT ResourceIntId, 
+			CASE 
+			WHEN LEN(RelatedList) > 1 THEN replace(left(RelatedList, LEN(RelatedList) - 1),',,',',')
+			ELSE NULL
+		END AS RelatedTags
+
+			--,left(RelatedList, LEN(RelatedList) - 1) AS relatedTags2
+		FROM (SELECT ResourceIntId, (
+			SELECT  itbl.AliasValues + ','
+			FROM [Resource_TagSummary] itbl
+			WHERE itbl.CategoryId = @categoryId AND itbl.ResourceIntId = tbl.ResourceIntId 
+			for xml path('')) RelatedList
+		FROM [Resource_TagSummary] tbl
+		WHERE tbl.CategoryId = @categoryId
+		GROUP BY ResourceIntId) otab) rs
+	WHERE #workTable.intID = rs.ResourceIntId 
+		
+	-- =================================================================
+	-- Resource Type IDs
+	set @categoryId= 19
+	PRINT 'Resource Type IDs'
+	UPDATE #workTable
+	SET resourceTypeIDs = rs.relatedTags,
+		LastUpdated = GETDATE()
+	FROM (SELECT ResourceIntId, left(RelatedList, LEN(RelatedList) - 1) AS relatedTags
+		FROM (SELECT ResourceIntId, (
+			SELECT convert(varchar,itbl.TagValueId)+','
+			FROM [Resource_TagSummary] itbl
+			WHERE itbl.CategoryId = @categoryId AND itbl.ResourceIntId = tbl.ResourceIntId 
+			for xml path('')) RelatedList
+			FROM [Resource_TagSummary] tbl
+		WHERE tbl.CategoryId = @categoryId
+		GROUP BY ResourceIntId) otab) rs
+	WHERE #workTable.intID = rs.ResourceIntId 
+
+
+	-- Resource Types
+	PRINT 'Resource Types'
+	UPDATE #workTable
+	SET resourceTypes = rs.relatedTags,
+		LastUpdated = GETDATE()
+	FROM (SELECT ResourceIntId, left(RelatedList, LEN(RelatedList) - 1) AS relatedTags
+		FROM (SELECT ResourceIntId, (
+			SELECT  itbl.TagTitle + ','
+			FROM [Resource_TagSummary] itbl
+			WHERE itbl.CategoryId = @categoryId AND itbl.ResourceIntId = tbl.ResourceIntId 
+			for xml path('')) RelatedList
+		FROM [Resource_TagSummary] tbl
+		WHERE tbl.CategoryId = @categoryId
+		GROUP BY ResourceIntId) otab) rs
+	WHERE #workTable.intID = rs.ResourceIntId 
+
+
+	-- Resource Format IDs
+	set @categoryId= 18
+	PRINT 'Resource Format IDs'
+	UPDATE #workTable
+	SET mediaTypeIDs = rs.relatedTags,
+		LastUpdated = GETDATE()
+	FROM (SELECT ResourceIntId, left(RelatedList, LEN(RelatedList) - 1) AS relatedTags
+		FROM (SELECT ResourceIntId, (
+			SELECT convert(varchar,itbl.TagValueId)+','
+			FROM [Resource_TagSummary] itbl
+			WHERE itbl.CategoryId = @categoryId AND itbl.ResourceIntId = tbl.ResourceIntId 
+			for xml path('')) RelatedList
+			FROM [Resource_TagSummary] tbl
+		WHERE tbl.CategoryId = @categoryId
+		GROUP BY ResourceIntId) otab) rs
+	WHERE #workTable.intID = rs.ResourceIntId 
+
+	-- Resource Formats
+	PRINT 'Resource Formats'
+	UPDATE #workTable
+	SET mediaTypes = rs.relatedTags,
+		LastUpdated = GETDATE()
+	FROM (SELECT ResourceIntId, left(RelatedList, LEN(RelatedList) - 1) AS relatedTags
+		FROM (SELECT ResourceIntId, (
+			SELECT  itbl.TagTitle + ','
+			FROM [Resource_TagSummary] itbl
+			WHERE itbl.CategoryId = @categoryId AND itbl.ResourceIntId = tbl.ResourceIntId 
+			for xml path('')) RelatedList
+		FROM [Resource_TagSummary] tbl
+		WHERE tbl.CategoryId = @categoryId
+		GROUP BY ResourceIntId) otab) rs
+	WHERE #workTable.intID = rs.ResourceIntId 
+		
+	-- Group Type IDs
+	set @categoryId= 14
+	PRINT 'Group Type IDs'
+	UPDATE #workTable
+	SET groupTypeIDs = rs.relatedTags,
+		LastUpdated = GETDATE()
+	FROM (SELECT ResourceIntId, left(RelatedList, LEN(RelatedList) - 1) AS relatedTags
+		FROM (SELECT ResourceIntId, (
+			SELECT convert(varchar,itbl.TagValueId)+','
+			FROM [Resource_TagSummary] itbl
+			WHERE itbl.CategoryId = @categoryId AND itbl.ResourceIntId = tbl.ResourceIntId 
+			for xml path('')) RelatedList
+			FROM [Resource_TagSummary] tbl
+		WHERE tbl.CategoryId = @categoryId
+		GROUP BY ResourceIntId) otab) rs
+	WHERE #workTable.intID = rs.ResourceIntId 
+		
+	-- Group Types
+	PRINT 'Group Types'
+	UPDATE #workTable
+	SET groupTypes = rs.relatedTags,
+		LastUpdated = GETDATE()
+	FROM (SELECT ResourceIntId, left(RelatedList, LEN(RelatedList) - 1) AS relatedTags
+		FROM (SELECT ResourceIntId, (
+			SELECT  itbl.TagTitle + ','
+			FROM [Resource_TagSummary] itbl
+			WHERE itbl.CategoryId = @categoryId AND itbl.ResourceIntId = tbl.ResourceIntId 
+			for xml path('')) RelatedList
+		FROM [Resource_TagSummary] tbl
+		WHERE tbl.CategoryId = @categoryId
+		GROUP BY ResourceIntId) otab) rs
+	WHERE #workTable.intID = rs.ResourceIntId 
+				
+	-- Item Type IDs
+	set @categoryId= 15
+	PRINT 'Item Type IDs'	
+	UPDATE #workTable
+	SET itemTypeIDs = rs.relatedTags,
+		LastUpdated = GETDATE()
+	FROM (SELECT ResourceIntId, left(RelatedList, LEN(RelatedList) - 1) AS relatedTags
+		FROM (SELECT ResourceIntId, (
+			SELECT convert(varchar,itbl.TagValueId)+','
+			FROM [Resource_TagSummary] itbl
+			WHERE itbl.CategoryId = @categoryId AND itbl.ResourceIntId = tbl.ResourceIntId 
+			for xml path('')) RelatedList
+			FROM [Resource_TagSummary] tbl
+		WHERE tbl.CategoryId = @categoryId
+		GROUP BY ResourceIntId) otab) rs
+	WHERE #workTable.intID = rs.ResourceIntId 
+		
+	-- Item Types
+	PRINT 'Item Types'
+	UPDATE #workTable
+	SET itemTypes = rs.relatedTags,
+		LastUpdated = GETDATE()
+	FROM (SELECT ResourceIntId, left(RelatedList, LEN(RelatedList) - 1) AS relatedTags
+		FROM (SELECT ResourceIntId, (
+			SELECT  itbl.TagTitle + ','
+			FROM [Resource_TagSummary] itbl
+			WHERE itbl.CategoryId = @categoryId AND itbl.ResourceIntId = tbl.ResourceIntId 
+			for xml path('')) RelatedList
+		FROM [Resource_TagSummary] tbl
+		WHERE tbl.CategoryId = @categoryId
+		GROUP BY ResourceIntId) otab) rs
+	WHERE #workTable.intID = rs.ResourceIntId 
+
+	-- Standard IDs
+	PRINT 'Standard IDs'
+	UPDATE #workTable
+	SET standardIDs = rs.StandardIDs
+	FROM (SELECT ResourceIntId, left(StandardIDs, LEN(StandardIDs) - 1) AS StandardIDs
+		FROM (SELECT ResourceIntId, (
+			SELECT convert(nvarchar,itbl.[StandardId])+','
+			FROM [Resource.Standard] itbl
+			WHERE itbl.ResourceIntId = tbl.ResourceIntId
+			for xml path('')) StandardIDs
+		FROM [Resource.Standard] tbl
+		GROUP BY ResourceIntId) otab) rs
+	WHERE rs.ResourceIntId = #workTable.intID
+		
+	-- Standard Notations
+	PRINT 'Standards'
+	UPDATE #workTable
+	SET standardNotations = rs.Standards,
+		LastUpdated = GETDATE()
+	FROM (SELECT ResourceIntId, left(Standards, LEN(Standards) - 1) AS Standards
+		FROM (SELECT ResourceIntId, (
+			SELECT [StandardBody.Node].NotationCode+','
+			FROM [Resource.Standard] itbl
+			INNER JOIN [StandardBody.Node] ON itbl.StandardId = [StandardBody.Node].Id
+			WHERE itbl.ResourceIntId = tbl.ResourceIntId
+			for xml path('')) Standards
+		FROM [Resource.Standard] tbl
+		GROUP BY ResourceIntId) otab) rs
+	WHERE rs.ResourceIntId = #workTable.intID
+
+	-- Educational Use IDs
+	set @categoryId= 11
+	PRINT 'Educational Use IDs'
+	UPDATE #workTable
+	SET educationalUseIDs = rs.relatedTags,
+		LastUpdated = GETDATE()
+	FROM (SELECT ResourceIntId, left(RelatedList, LEN(RelatedList) - 1) AS relatedTags
+		FROM (SELECT ResourceIntId, (
+			SELECT convert(varchar,itbl.TagValueId)+','
+			FROM [Resource_TagSummary] itbl
+			WHERE itbl.CategoryId = @categoryId AND itbl.ResourceIntId = tbl.ResourceIntId 
+			for xml path('')) RelatedList
+			FROM [Resource_TagSummary] tbl
+		WHERE tbl.CategoryId = @categoryId
+		GROUP BY ResourceIntId) otab) rs
+	WHERE #workTable.intID = rs.ResourceIntId 
+
+	-- Educational Uses
+	PRINT 'Educational Uses'
+	UPDATE #workTable
+	SET educationalUses = rs.relatedTags,
+		LastUpdated = GETDATE()
+	FROM (SELECT ResourceIntId, left(RelatedList, LEN(RelatedList) - 1) AS relatedTags
+		FROM (SELECT ResourceIntId, (
+			SELECT  itbl.TagTitle + ','
+			FROM [Resource_TagSummary] itbl
+			WHERE itbl.CategoryId = @categoryId AND itbl.ResourceIntId = tbl.ResourceIntId 
+			for xml path('')) RelatedList
+		FROM [Resource_TagSummary] tbl
+		WHERE tbl.CategoryId = @categoryId
+		GROUP BY ResourceIntId) otab) rs
+	WHERE #workTable.intID = rs.ResourceIntId 
+
+	-- Likes minus dislikes
+	PRINT 'Likes - Dislikes'
+	UPDATE #workTable
+	SET likesSummary = rls.LikeCount - rls.DislikeCount,
+		LastUpdated = GETDATE()
+	FROM [Resource.LikesSummary] rls
+	WHERE rls.ResourceIntId = #workTable.intID
+	
+	-- LikeCount, DislikeCount
+	PRINT 'LikeCount, DislikeCount'
+	UPDATE #workTable
+	SET likeCount = rls.LikeCount,
+		dislikeCount = rls.DislikeCount
+	FROM [Resource.LikesSummary] rls
+	WHERE rls.ResourceIntId = #workTable.intID
+
+	-- LibraryIDs
+	PRINT 'Library IDs'
+	UPDATE #workTable
+	SET libraryIDs = rs.LibraryIDs,
+		LastUpdated = GETDATE()
+	FROM (SELECT ResourceIntId, left(LibraryIDs, LEN(LibraryIDs) - 1) AS LibraryIDs
+		FROM (SELECT ResourceIntId, (
+			SELECT convert(nvarchar,[IsleContent].[dbo].[Library.Section].LibraryId)+','
+			FROM [IsleContent].[dbo].[Library.Resource] itbl
+			INNER JOIN [IsleContent].[dbo].[Library.Section] 
+				ON itbl.LibrarySectionId = [IsleContent].[dbo].[Library.Section].Id
+			WHERE itbl.ResourceIntId = tbl.ResourceIntId
+			for xml path('')) LibraryIDs
+		FROM [IsleContent].[dbo].[Library.Resource] tbl
+		GROUP BY ResourceIntId) otab) rs
+	WHERE rs.ResourceIntId = #workTable.intID
+
+	-- Collection IDs
+	PRINT 'Collection IDs'
+	UPDATE #workTable
+	SET collectionIDs = rs.CollectionIDs,
+		LastUpdated = GETDATE()
+	FROM (SELECT ResourceIntId, left(CollectionIDs, LEN(CollectionIDs) - 1) AS CollectionIDs
+		FROM (SELECT ResourceIntId, (
+			SELECT convert(nvarchar,itbl.[LibrarySectionId])+','
+			FROM [IsleContent].[dbo].[Library.Resource] itbl
+			WHERE itbl.ResourceIntId = tbl.ResourceIntId
+			for xml path('')) CollectionIDs
+		FROM [IsleContent].[dbo].[Library.Resource] tbl
+		GROUP BY ResourceIntId) otab) rs
+	WHERE rs.ResourceIntId = #workTable.intID
+	
+	-- Comment Count
+	PRINT 'Comment Count'
+	UPDATE #workTable
+	SET commentsCount = rs.CommentsCount
+	FROM (SELECT ResourceIntId, COUNT(*) AS CommentsCount
+		FROM [Resource.Comment]
+		GROUP BY ResourceIntId) rs
+	WHERE rs.ResourceIntId = #workTable.intID
+
+	-- Detail Views
+	PRINT 'Detail Views'
+	UPDATE #workTable
+	SET detailViews = rs.DetailViews,
+		LastUpdated = GETDATE()
+	FROM (SELECT ResourceIntId, COUNT(*) AS DetailViews
+		FROM [Resource.DetailView]
+		GROUP BY ResourceIntId) rs
+	WHERE #workTable.intID = rs.ResourceIntId AND
+		(#workTable.detailViews <> rs.DetailViews OR
+		(#workTable.detailViews IS NULL AND rs.DetailViews IS NOT NULL))
+
+	-- ======================================================================
+	-- accessibilityApi IDs
+	set @categoryId= 2
+	PRINT 'AccessibilityApi IDs'
+	UPDATE #workTable
+	SET accessibilityApiIDs = rs.relatedTags,
+		LastUpdated = GETDATE()
+	FROM (SELECT ResourceIntId, left(RelatedList, LEN(RelatedList) - 1) AS relatedTags
+		FROM (SELECT ResourceIntId, (
+			SELECT convert(varchar,itbl.TagValueId)+','
+			FROM [Resource_TagSummary] itbl
+			WHERE itbl.CategoryId = @categoryId AND itbl.ResourceIntId = tbl.ResourceIntId 
+			for xml path('')) RelatedList
+			FROM [Resource_TagSummary] tbl
+		WHERE tbl.CategoryId = @categoryId
+		GROUP BY ResourceIntId) otab) rs
+	WHERE #workTable.intID = rs.ResourceIntId 
+		
+	-- accessibilityApis
+	PRINT 'AccessibilityApis'
+	UPDATE #workTable
+	SET accessibilityApis = rs.relatedTags,
+		LastUpdated = GETDATE()
+	FROM (SELECT ResourceIntId, left(RelatedList, LEN(RelatedList) - 1) AS relatedTags
+		FROM (SELECT ResourceIntId, (
+			SELECT  itbl.TagTitle + ','
+			FROM [Resource_TagSummary] itbl
+			WHERE itbl.CategoryId = @categoryId AND itbl.ResourceIntId = tbl.ResourceIntId 
+			for xml path('')) RelatedList
+		FROM [Resource_TagSummary] tbl
+		WHERE tbl.CategoryId = @categoryId
+		GROUP BY ResourceIntId) otab) rs
+	WHERE #workTable.intID = rs.ResourceIntId 
+
+	-- accessibilityControl IDs
+	set @categoryId= 3
+	PRINT 'AccessibilityControl IDs'
+	UPDATE #workTable
+	SET accessibilityControlIDs = rs.relatedTags,
+		LastUpdated = GETDATE()
+	FROM (SELECT ResourceIntId, left(RelatedList, LEN(RelatedList) - 1) AS relatedTags
+		FROM (SELECT ResourceIntId, (
+			SELECT convert(varchar,itbl.TagValueId)+','
+			FROM [Resource_TagSummary] itbl
+			WHERE itbl.CategoryId = @categoryId AND itbl.ResourceIntId = tbl.ResourceIntId 
+			for xml path('')) RelatedList
+			FROM [Resource_TagSummary] tbl
+		WHERE tbl.CategoryId = @categoryId
+		GROUP BY ResourceIntId) otab) rs
+	WHERE #workTable.intID = rs.ResourceIntId 
+		
+	-- accessibilityControls
+	PRINT 'AccessibilityControls'
+	UPDATE #workTable
+	SET accessibilityControls = rs.relatedTags,
+		LastUpdated = GETDATE()
+	FROM (SELECT ResourceIntId, left(RelatedList, LEN(RelatedList) - 1) AS relatedTags
+		FROM (SELECT ResourceIntId, (
+			SELECT  itbl.TagTitle + ','
+			FROM [Resource_TagSummary] itbl
+			WHERE itbl.CategoryId = @categoryId AND itbl.ResourceIntId = tbl.ResourceIntId 
+			for xml path('')) RelatedList
+		FROM [Resource_TagSummary] tbl
+		WHERE tbl.CategoryId = @categoryId
+		GROUP BY ResourceIntId) otab) rs
+	WHERE #workTable.intID = rs.ResourceIntId 
+
+	-- accessibilityFeature IDs
+	set @categoryId= 4
+	PRINT 'AccessibilityFeature IDs'
+	UPDATE #workTable
+	SET accessibilityFeatureIDs = rs.relatedTags,
+		LastUpdated = GETDATE()
+	FROM (SELECT ResourceIntId, left(RelatedList, LEN(RelatedList) - 1) AS relatedTags
+		FROM (SELECT ResourceIntId, (
+			SELECT convert(varchar,itbl.TagValueId)+','
+			FROM [Resource_TagSummary] itbl
+			WHERE itbl.CategoryId = @categoryId AND itbl.ResourceIntId = tbl.ResourceIntId 
+			for xml path('')) RelatedList
+			FROM [Resource_TagSummary] tbl
+		WHERE tbl.CategoryId = @categoryId
+		GROUP BY ResourceIntId) otab) rs
+	WHERE #workTable.intID = rs.ResourceIntId 
+		
+	-- accessibilityFeatures
+	PRINT 'AccessibilityFeatures'
+	UPDATE #workTable
+	SET accessibilityFeatures = rs.relatedTags,
+		LastUpdated = GETDATE()
+	FROM (SELECT ResourceIntId, left(RelatedList, LEN(RelatedList) - 1) AS relatedTags
+		FROM (SELECT ResourceIntId, (
+			SELECT  itbl.TagTitle + ','
+			FROM [Resource_TagSummary] itbl
+			WHERE itbl.CategoryId = @categoryId AND itbl.ResourceIntId = tbl.ResourceIntId 
+			for xml path('')) RelatedList
+		FROM [Resource_TagSummary] tbl
+		WHERE tbl.CategoryId = @categoryId
+		GROUP BY ResourceIntId) otab) rs
+	WHERE #workTable.intID = rs.ResourceIntId 
+
+	-- accessibilityHazard IDs
+	set @categoryId= 5
+	PRINT 'AccessibilityHazard IDs'
+	UPDATE #workTable
+	SET accessibilityHazardIDs = rs.relatedTags,
+		LastUpdated = GETDATE()
+	FROM (SELECT ResourceIntId, left(RelatedList, LEN(RelatedList) - 1) AS relatedTags
+		FROM (SELECT ResourceIntId, (
+			SELECT convert(varchar,itbl.TagValueId)+','
+			FROM [Resource_TagSummary] itbl
+			WHERE itbl.CategoryId = @categoryId AND itbl.ResourceIntId = tbl.ResourceIntId 
+			for xml path('')) RelatedList
+			FROM [Resource_TagSummary] tbl
+		WHERE tbl.CategoryId = @categoryId
+		GROUP BY ResourceIntId) otab) rs
+	WHERE #workTable.intID = rs.ResourceIntId 
+		
+	-- accessibilityHazards
+	PRINT 'AccessibilityHazards'
+	UPDATE #workTable
+	SET accessibilityHazards = rs.relatedTags,
+		LastUpdated = GETDATE()
+	FROM (SELECT ResourceIntId, left(RelatedList, LEN(RelatedList) - 1) AS relatedTags
+		FROM (SELECT ResourceIntId, (
+			SELECT  itbl.TagTitle + ','
+			FROM [Resource_TagSummary] itbl
+			WHERE itbl.CategoryId = @categoryId AND itbl.ResourceIntId = tbl.ResourceIntId 
+			for xml path('')) RelatedList
+		FROM [Resource_TagSummary] tbl
+		WHERE tbl.CategoryId = @categoryId
+		GROUP BY ResourceIntId) otab) rs
+	WHERE #workTable.intID = rs.ResourceIntId 
+
+	-- =============================================================================
+	-- 9 - career planning IDs
+	set @categoryId= 9
+	PRINT 'careerPlanningIDs'
+	UPDATE #workTable
+	SET careerPlanningIDs = rs.relatedTags,
+		LastUpdated = GETDATE()
+	FROM (SELECT ResourceIntId, left(RelatedList, LEN(RelatedList) - 1) AS relatedTags
+		FROM (SELECT ResourceIntId, (
+			SELECT convert(varchar,itbl.TagValueId)+','
+			FROM [Resource_TagSummary] itbl
+			WHERE itbl.CategoryId = @categoryId AND itbl.ResourceIntId = tbl.ResourceIntId 
+			for xml path('')) RelatedList
+			FROM [Resource_TagSummary] tbl
+		WHERE tbl.CategoryId = @categoryId
+		GROUP BY ResourceIntId) otab) rs
+	WHERE #workTable.intID = rs.ResourceIntId 
+		
+	-- accessibilityHazards
+	PRINT 'careerPlannings'
+	UPDATE #workTable
+	SET careerPlannings = rs.relatedTags,
+		LastUpdated = GETDATE()
+	FROM (SELECT ResourceIntId, left(RelatedList, LEN(RelatedList) - 1) AS relatedTags
+		FROM (SELECT ResourceIntId, (
+			SELECT  itbl.TagTitle + ','
+			FROM [Resource_TagSummary] itbl
+			WHERE itbl.CategoryId = @categoryId AND itbl.ResourceIntId = tbl.ResourceIntId 
+			for xml path('')) RelatedList
+		FROM [Resource_TagSummary] tbl
+		WHERE tbl.CategoryId = @categoryId
+		GROUP BY ResourceIntId) otab) rs
+	WHERE #workTable.intID = rs.ResourceIntId 
+
+	-- =============================================================================
+	-- disabilityTopicIDs
+	set @categoryId= 10
+	PRINT 'disabilityTopicIDs'
+	UPDATE #workTable
+	SET disabilityTopicIDs = rs.relatedTags,
+		LastUpdated = GETDATE()
+	FROM (SELECT ResourceIntId, left(RelatedList, LEN(RelatedList) - 1) AS relatedTags
+		FROM (SELECT ResourceIntId, (
+			SELECT convert(varchar,itbl.TagValueId)+','
+			FROM [Resource_TagSummary] itbl
+			WHERE itbl.CategoryId = @categoryId AND itbl.ResourceIntId = tbl.ResourceIntId 
+			for xml path('')) RelatedList
+			FROM [Resource_TagSummary] tbl
+		WHERE tbl.CategoryId = @categoryId
+		GROUP BY ResourceIntId) otab) rs
+	WHERE #workTable.intID = rs.ResourceIntId 
+		
+	-- disabilityTopics
+	PRINT 'disabilityTopics'
+	UPDATE #workTable
+	SET disabilityTopics = rs.relatedTags,
+		LastUpdated = GETDATE()
+	FROM (SELECT ResourceIntId, left(RelatedList, LEN(RelatedList) - 1) AS relatedTags
+		FROM (SELECT ResourceIntId, (
+			SELECT  itbl.TagTitle + ','
+			FROM [Resource_TagSummary] itbl
+			WHERE itbl.CategoryId = @categoryId AND itbl.ResourceIntId = tbl.ResourceIntId 
+			for xml path('')) RelatedList
+		FROM [Resource_TagSummary] tbl
+		WHERE tbl.CategoryId = @categoryId
+		GROUP BY ResourceIntId) otab) rs
+	WHERE #workTable.intID = rs.ResourceIntId 
+	
+	-- =============================================================================
+	-- employerProgramIDs
+	set @categoryId= 12
+	PRINT 'employerProgramIDs'
+	UPDATE #workTable
+	SET employerProgramIDs = rs.relatedTags,
+		LastUpdated = GETDATE()
+	FROM (SELECT ResourceIntId, left(RelatedList, LEN(RelatedList) - 1) AS relatedTags
+		FROM (SELECT ResourceIntId, (
+			SELECT convert(varchar,itbl.TagValueId)+','
+			FROM [Resource_TagSummary] itbl
+			WHERE itbl.CategoryId = @categoryId AND itbl.ResourceIntId = tbl.ResourceIntId 
+			for xml path('')) RelatedList
+			FROM [Resource_TagSummary] tbl
+		WHERE tbl.CategoryId = @categoryId
+		GROUP BY ResourceIntId) otab) rs
+	WHERE #workTable.intID = rs.ResourceIntId 
+		
+	PRINT 'employerPrograms'
+	UPDATE #workTable
+	SET employerPrograms = rs.relatedTags,
+		LastUpdated = GETDATE()
+	FROM (SELECT ResourceIntId, left(RelatedList, LEN(RelatedList) - 1) AS relatedTags
+		FROM (SELECT ResourceIntId, (
+			SELECT  itbl.TagTitle + ','
+			FROM [Resource_TagSummary] itbl
+			WHERE itbl.CategoryId = @categoryId AND itbl.ResourceIntId = tbl.ResourceIntId 
+			for xml path('')) RelatedList
+		FROM [Resource_TagSummary] tbl
+		WHERE tbl.CategoryId = @categoryId
+		GROUP BY ResourceIntId) otab) rs
+	WHERE #workTable.intID = rs.ResourceIntId 
+
+
+	-- =============================================================================
+	-- jobPreparationIDs
+	set @categoryId= 16
+	PRINT 'jobPreparationIDs'
+	UPDATE #workTable
+	SET jobPreparationIDs = rs.relatedTags,
+		LastUpdated = GETDATE()
+	FROM (SELECT ResourceIntId, left(RelatedList, LEN(RelatedList) - 1) AS relatedTags
+		FROM (SELECT ResourceIntId, (
+			SELECT convert(varchar,itbl.TagValueId)+','
+			FROM [Resource_TagSummary] itbl
+			WHERE itbl.CategoryId = @categoryId AND itbl.ResourceIntId = tbl.ResourceIntId 
+			for xml path('')) RelatedList
+			FROM [Resource_TagSummary] tbl
+		WHERE tbl.CategoryId = @categoryId
+		GROUP BY ResourceIntId) otab) rs
+	WHERE #workTable.intID = rs.ResourceIntId 
+		
+	PRINT 'jobPreparations'
+	UPDATE #workTable
+	SET jobPreparations = rs.relatedTags,
+		LastUpdated = GETDATE()
+	FROM (SELECT ResourceIntId, left(RelatedList, LEN(RelatedList) - 1) AS relatedTags
+		FROM (SELECT ResourceIntId, (
+			SELECT  itbl.TagTitle + ','
+			FROM [Resource_TagSummary] itbl
+			WHERE itbl.CategoryId = @categoryId AND itbl.ResourceIntId = tbl.ResourceIntId 
+			for xml path('')) RelatedList
+		FROM [Resource_TagSummary] tbl
+		WHERE tbl.CategoryId = @categoryId
+		GROUP BY ResourceIntId) otab) rs
+	WHERE #workTable.intID = rs.ResourceIntId 
+
+	-- =============================================================================
+	-- veteransServiceIDs
+	set @categoryId= 21
+	PRINT 'veteransServiceIDs'
+	UPDATE #workTable
+	SET veteransServiceIDs = rs.relatedTags,
+		LastUpdated = GETDATE()
+	FROM (SELECT ResourceIntId, left(RelatedList, LEN(RelatedList) - 1) AS relatedTags
+		FROM (SELECT ResourceIntId, (
+			SELECT convert(varchar,itbl.TagValueId)+','
+			FROM [Resource_TagSummary] itbl
+			WHERE itbl.CategoryId = @categoryId AND itbl.ResourceIntId = tbl.ResourceIntId 
+			for xml path('')) RelatedList
+			FROM [Resource_TagSummary] tbl
+		WHERE tbl.CategoryId = @categoryId
+		GROUP BY ResourceIntId) otab) rs
+	WHERE #workTable.intID = rs.ResourceIntId 
+		
+	PRINT 'veteransServices'
+	UPDATE #workTable
+	SET veteransServices = rs.relatedTags,
+		LastUpdated = GETDATE()
+	FROM (SELECT ResourceIntId, left(RelatedList, LEN(RelatedList) - 1) AS relatedTags
+		FROM (SELECT ResourceIntId, (
+			SELECT  itbl.TagTitle + ','
+			FROM [Resource_TagSummary] itbl
+			WHERE itbl.CategoryId = @categoryId AND itbl.ResourceIntId = tbl.ResourceIntId 
+			for xml path('')) RelatedList
+		FROM [Resource_TagSummary] tbl
+		WHERE tbl.CategoryId = @categoryId
+		GROUP BY ResourceIntId) otab) rs
+	WHERE #workTable.intID = rs.ResourceIntId 
+
+
+	-- =============================================================================
+	-- wfePartnerIDs
+	set @categoryId= 22
+	PRINT 'wfePartnerIDs'
+	UPDATE #workTable
+	SET wfePartnerIDs = rs.relatedTags,
+		LastUpdated = GETDATE()
+	FROM (SELECT ResourceIntId, left(RelatedList, LEN(RelatedList) - 1) AS relatedTags
+		FROM (SELECT ResourceIntId, (
+			SELECT convert(varchar,itbl.TagValueId)+','
+			FROM [Resource_TagSummary] itbl
+			WHERE itbl.CategoryId = @categoryId AND itbl.ResourceIntId = tbl.ResourceIntId 
+			for xml path('')) RelatedList
+			FROM [Resource_TagSummary] tbl
+		WHERE tbl.CategoryId = @categoryId
+		GROUP BY ResourceIntId) otab) rs
+	WHERE #workTable.intID = rs.ResourceIntId 
+		
+	PRINT 'wfePartners'
+	UPDATE #workTable
+	SET wfePartners = rs.relatedTags,
+		LastUpdated = GETDATE()
+	FROM (SELECT ResourceIntId, left(RelatedList, LEN(RelatedList) - 1) AS relatedTags
+		FROM (SELECT ResourceIntId, (
+			SELECT  itbl.TagTitle + ','
+			FROM [Resource_TagSummary] itbl
+			WHERE itbl.CategoryId = @categoryId AND itbl.ResourceIntId = tbl.ResourceIntId 
+			for xml path('')) RelatedList
+		FROM [Resource_TagSummary] tbl
+		WHERE tbl.CategoryId = @categoryId
+		GROUP BY ResourceIntId) otab) rs
+	WHERE #workTable.intID = rs.ResourceIntId 
+
+	
+	-- =============================================================================
+	-- workSupportServiceIDs
+	set @categoryId= 23
+	PRINT 'workSupportServiceIDs'
+	UPDATE #workTable
+	SET workSupportServiceIDs = rs.relatedTags,
+		LastUpdated = GETDATE()
+	FROM (SELECT ResourceIntId, left(RelatedList, LEN(RelatedList) - 1) AS relatedTags
+		FROM (SELECT ResourceIntId, (
+			SELECT convert(varchar,itbl.TagValueId)+','
+			FROM [Resource_TagSummary] itbl
+			WHERE itbl.CategoryId = @categoryId AND itbl.ResourceIntId = tbl.ResourceIntId 
+			for xml path('')) RelatedList
+			FROM [Resource_TagSummary] tbl
+		WHERE tbl.CategoryId = @categoryId
+		GROUP BY ResourceIntId) otab) rs
+	WHERE #workTable.intID = rs.ResourceIntId 
+		
+	PRINT 'wfePartners'
+	UPDATE #workTable
+	SET workSupportServices = rs.relatedTags,
+		LastUpdated = GETDATE()
+	FROM (SELECT ResourceIntId, left(RelatedList, LEN(RelatedList) - 1) AS relatedTags
+		FROM (SELECT ResourceIntId, (
+			SELECT  itbl.TagTitle + ','
+			FROM [Resource_TagSummary] itbl
+			WHERE itbl.CategoryId = @categoryId AND itbl.ResourceIntId = tbl.ResourceIntId 
+			for xml path('')) RelatedList
+		FROM [Resource_TagSummary] tbl
+		WHERE tbl.CategoryId = @categoryId
+		GROUP BY ResourceIntId) otab) rs
+	WHERE #workTable.intID = rs.ResourceIntId 
+
+	
+	-- =============================================================================
+	-- workPlaceSkillsIDs
+	set @categoryId= 24
+	PRINT 'workPlaceSkillsIDs'
+	UPDATE #workTable
+	SET workPlaceSkillsIDs = rs.relatedTags,
+		LastUpdated = GETDATE()
+	FROM (SELECT ResourceIntId, left(RelatedList, LEN(RelatedList) - 1) AS relatedTags
+		FROM (SELECT ResourceIntId, (
+			SELECT convert(varchar,itbl.TagValueId)+','
+			FROM [Resource_TagSummary] itbl
+			WHERE itbl.CategoryId = @categoryId AND itbl.ResourceIntId = tbl.ResourceIntId 
+			for xml path('')) RelatedList
+			FROM [Resource_TagSummary] tbl
+		WHERE tbl.CategoryId = @categoryId
+		GROUP BY ResourceIntId) otab) rs
+	WHERE #workTable.intID = rs.ResourceIntId 
+		
+	PRINT 'workPlaceSkills'
+	UPDATE #workTable
+	SET workPlaceSkills = rs.relatedTags,
+		LastUpdated = GETDATE()
+	FROM (SELECT ResourceIntId, left(RelatedList, LEN(RelatedList) - 1) AS relatedTags
+		FROM (SELECT ResourceIntId, (
+			SELECT  itbl.TagTitle + ','
+			FROM [Resource_TagSummary] itbl
+			WHERE itbl.CategoryId = @categoryId AND itbl.ResourceIntId = tbl.ResourceIntId 
+			for xml path('')) RelatedList
+		FROM [Resource_TagSummary] tbl
+		WHERE tbl.CategoryId = @categoryId
+		GROUP BY ResourceIntId) otab) rs
+	WHERE #workTable.intID = rs.ResourceIntId 
+
+	
+	-- =============================================================================
+	-- regionIDs
+	set @categoryId= 25
+	PRINT 'regionIDs'
+	UPDATE #workTable
+	SET regionIDs = rs.relatedTags,
+		LastUpdated = GETDATE()
+	FROM (SELECT ResourceIntId, left(RelatedList, LEN(RelatedList) - 1) AS relatedTags
+		FROM (SELECT ResourceIntId, (
+			SELECT convert(varchar,itbl.TagValueId)+','
+			FROM [Resource_TagSummary] itbl
+			WHERE itbl.CategoryId = @categoryId AND itbl.ResourceIntId = tbl.ResourceIntId 
+			for xml path('')) RelatedList
+			FROM [Resource_TagSummary] tbl
+		WHERE tbl.CategoryId = @categoryId
+		GROUP BY ResourceIntId) otab) rs
+	WHERE #workTable.intID = rs.ResourceIntId 
+		
+	PRINT 'regions'
+	UPDATE #workTable
+	SET regions = rs.relatedTags,
+		LastUpdated = GETDATE()
+	FROM (SELECT ResourceIntId, left(RelatedList, LEN(RelatedList) - 1) AS relatedTags
+		FROM (SELECT ResourceIntId, (
+			SELECT  itbl.TagTitle + ','
+			FROM [Resource_TagSummary] itbl
+			WHERE itbl.CategoryId = @categoryId AND itbl.ResourceIntId = tbl.ResourceIntId 
+			for xml path('')) RelatedList
+		FROM [Resource_TagSummary] tbl
+		WHERE tbl.CategoryId = @categoryId
+		GROUP BY ResourceIntId) otab) rs
+	WHERE #workTable.intID = rs.ResourceIntId 
+
+
+	-- =============================================================================
+	-- targetSiteIDs
+	set @categoryId= 27
+	PRINT 'targetSiteIDs'
+	UPDATE #workTable
+	SET targetSiteIDs = rs.relatedTags,
+		LastUpdated = GETDATE()
+	FROM (SELECT ResourceIntId, left(RelatedList, LEN(RelatedList) - 1) AS relatedTags
+		FROM (SELECT ResourceIntId, (
+			SELECT convert(varchar,itbl.TagValueId)+','
+			FROM [Resource_TagSummary] itbl
+			WHERE itbl.CategoryId = @categoryId AND itbl.ResourceIntId = tbl.ResourceIntId 
+			for xml path('')) RelatedList
+			FROM [Resource_TagSummary] tbl
+		WHERE tbl.CategoryId = @categoryId
+		GROUP BY ResourceIntId) otab) rs
+	WHERE #workTable.intID = rs.ResourceIntId 
+		
+	PRINT 'targetSites'
+	UPDATE #workTable
+	SET targetSites = rs.relatedTags,
+		LastUpdated = GETDATE()
+	FROM (SELECT ResourceIntId, left(RelatedList, LEN(RelatedList) - 1) AS relatedTags
+		FROM (SELECT ResourceIntId, (
+			SELECT  itbl.TagTitle + ','
+			FROM [Resource_TagSummary] itbl
+			WHERE itbl.CategoryId = @categoryId AND itbl.ResourceIntId = tbl.ResourceIntId 
+			for xml path('')) RelatedList
+		FROM [Resource_TagSummary] tbl
+		WHERE tbl.CategoryId = @categoryId
+		GROUP BY ResourceIntId) otab) rs
+	WHERE #workTable.intID = rs.ResourceIntId 
+
+
+-- =============================================================================
+
+-- Favorites - commented out.  Relying only on [Resource].FavoriteCount
+/*	PRINT 'Favorites'
+	UPDATE #workTable
+	SET favorites = rs.Favorites,
+		LastUpdated = GETDATE()
+	FROM (SELECT ResourceIntId, r.FavoriteCount + COUNT(*) AS Favorites
+		FROM [IsleContent].[dbo].[Library.Resource] lr
+		INNER JOIN [Resource] r ON lr.ResourceIntId = r.Id
+		GROUP BY ResourceIntId, FavoriteCount) rs
+	WHERE #workTable.intID = rs.ResourceIntId AND
+		(#workTable.detailViews <> rs.Favorites OR
+		(#workTable.detailViews IS NULL AND rs.Favorites IS NOT NULL)) */
+
+	-- ==========================================================================================		
+	-- Output the data
+	SELECT
+		versionID,
+		intID,
+		title,
+		[description],
+		publisher,
+		created,
+		accessRights,
+		accessRightsID,
+		keywords,
+		subjects,
+		languageIDs,
+		languages,
+		clusterIDs,
+		clusters,
+		audienceIDs,
+		audiences,
+		educationLevelIDs,
+		educationLevels,
+		educationLevelAliases,
+		resourceTypeIDs,
+		resourceTypes,
+		mediaTypeIDs,
+		mediaTypes,
+		groupTypeIDs,
+		groupTypes,
+		itemTypeIDs,
+		itemTypes,
+		standardIDs,
+		standardNotations,
+		LastUpdated,
+		Url,
+		libraryIDs,
+		collectionIDs,
+		IsDeleted,
+		educationalUseIDs,
+		educationalUses,
+		usageRights,
+		usageRightsID,
+		usageRightsURL,
+		usageRightsIconURL,
+		usageRightsMiniIconUrl,
+		likesSummary,
+		evaluationCount,
+		evaluationScore,
+		commentsCount,
+		viewsCount,
+		detailViews,
+		favorites,
+		likeCount,
+		dislikeCount,
+		submitter,
+		accessibilityApiIDs,
+		accessibilityApis,
+		accessibilityControlIDs,
+		accessibilityControls,
+		accessibilityFeatureIDs,
+		accessibilityFeatures,
+		accessibilityHazardIDs,
+		accessibilityHazards,
+		[careerPlannings] ,
+		[careerPlanningIDs], 
+		[disabilityTopics],
+		[disabilityTopicIDs],
+		[jobPreparations],
+		[jobPreparationIDs],
+		[employerPrograms],
+		[employerProgramIDs],
+		[k12Subjects],
+		[k12SubjectIDs],
+		[veteransServices],
+		[veteransServiceIDs],
+		[workSupportServices],
+		[workSupportServiceIDs],
+		[wfePartners],
+		[wfePartnerIDs] ,
+		[workplaceSkills],
+		[workPlaceSkillsIDs],
+		regions,
+		regionIDs,
+		targetSites,
+		targetSiteIDs,
+		sortTitle
+	FROM #workTable
+	
+	DROP TABLE #workTable
+
+END
+
+GO
+/****** Object:  StoredProcedure [dbo].[Resource_IndexUpdate]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -12909,6 +15221,9 @@ GO
 -- 2013-11-20 jgrimmer - Added check for IsDeleted in the LinkChecker database
 -- 2014-02-03 jgrimmer - Modify favorites to rely on [Resource].FavoriteCount only.  It is detail/library page's responsibility to update that count.
 --						 Also add Submitter.
+-- 2014-05-19 jgrimmer - Exclude resources from Smarter Balance, since Illinois is a PARCC member and not a Smarter Balance member state, and remove 
+--						 check for PrivateResource (docID is null)
+-- 2014-05-28 mparsons - added sortTitle
 -- =============================================
 CREATE PROCEDURE [dbo].[Resource_IndexUpdate]
 AS
@@ -12976,7 +15291,8 @@ SET title = rv.Title,
 	requirements = rv.Requirements,
 	isBasedOnUrl = RelatedUrl,
 	favorites = r.FavoriteCount,
-	submitter = rv.Submitter
+		submitter = rv.Submitter,
+	 [SortTitle] = [dbo].[BuildSortTitle] (rv.[Title])
 FROM [Resource.Version] rv
 INNER JOIN [Resource] r ON rv.ResourceIntId = r.Id
 LEFT JOIN [ConditionOfUse] cou ON rv.Rights = cou.Url
@@ -12990,7 +15306,8 @@ WHERE Resource_Index.versionId = rv.Id AND
 	 Resource_Index.requirements <> rv.Requirements OR Resource_Index.isBasedOnUrl <> rru.RelatedUrl OR
  	 Resource_Index.favorites <> r.FavoriteCount OR
 	 Resource_Index.submitter <> rv.Submitter) AND
-	 Resource_Index.intID NOT IN (SELECT ResourceIntId FROM [Resource.Link] WHERE IsDeleted = 'True')
+	 Resource_Index.intID NOT IN (SELECT ResourceIntId FROM [Resource.Link] WHERE IsDeleted = 'True') AND
+	 rv.Submitter NOT LIKE '%smarterbalanced.org%'
 
 SET @EndTime = GETDATE()
 SET @ElapsedTime = DATEDIFF(s,@StartTime,@EndTime)
@@ -13030,8 +15347,9 @@ LEFT JOIN [Resource.PublishedBy] rpb ON rv.ResourceIntId = rpb.ResourceIntId
 LEFT JOIN [ConditionOfUse] cou ON rv.Rights = cou.Url
 LEFT JOIN [Resource.RelatedUrl] rru ON r.Id = rru.ResourceIntId
 WHERE rv.Id NOT IN (SELECT versionId FROM Resource_Index) AND (cou.Id IS NULL OR cou.Id <> 3) AND r.IsActive = 'True' AND 
-	rv.IsActive = 'True' AND rv.ResourceIntId NOT IN (SELECT Id FROM PrivateResource) AND (rpb.PublishedById IS NULL OR rpb.PublishedById <> 22) AND
-	r.Id NOT IN (SELECT ResourceIntId FROM [Resource.Link] WHERE IsDeleted = 'True')
+	rv.IsActive = 'True' AND (rpb.PublishedById IS NULL OR rpb.PublishedById <> 22) AND
+	r.Id NOT IN (SELECT ResourceIntId FROM [Resource.Link] WHERE IsDeleted = 'True') AND
+	rv.Submitter NOT LIKE '%smarterbalanced.org%'
 
 SET @EndTime = GETDATE()
 SET @ElapsedTime = DATEDIFF(s,@StartTime,@EndTime)
@@ -13266,13 +15584,14 @@ FROM (SELECT ResourceIntId,
 		SELECT [Codes.GradeLevel].AliasValues+','
 		FROM [Resource.GradeLevel] itbl
 		INNER JOIN [Codes.GradeLevel] ON itbl.GradeLevelId = [Codes.GradeLevel].Id
-		WHERE itbl.ResourceIntId = tbl.ResourceIntId AND (CreatedById IS NULL OR CreatedById <> 22)
+		WHERE itbl.ResourceIntId = tbl.ResourceIntId 
+		AND (CreatedById IS NULL OR CreatedById <> 22)
 		for xml path('')) gradeLevels
 	FROM [Resource.GradeLevel] tbl
 	GROUP BY ResourceIntId) otab) el2
 WHERE Resource_Index.intId = el2.ResourceIntId AND
-	(Resource_Index.gradeLevels <> el2.gradeLevels OR
-	(Resource_Index.gradeLevels IS NULL AND el2.gradeLevels IS NOT NULL))
+	(Resource_Index.gradeLevelAliases <> el2.gradeLevels OR
+	(Resource_Index.gradeLevelAliases IS NULL AND el2.gradeLevels IS NOT NULL))
 
 SET @EndTime = GETDATE()
 SET @ElapsedTime = DATEDIFF(s,@StartTime,@EndTime)
@@ -13569,7 +15888,7 @@ FROM (SELECT ResourceIntId, left(EducationalUse, LEN(EducationalUse) - 1) AS Edu
 		INNER JOIN [Codes.EducationalUse] ON itbl.EducationUseId = [Codes.EducationalUse].Id
 		WHERE itbl.ResourceIntId = tbl.ResourceIntId AND (CreatedById IS NULL OR CreatedById <> 22)
 		for xml path('')) EducationalUse
-	FROM [Resource.Standard] tbl
+	FROM [Resource.EducationUse] tbl
 	GROUP BY ResourceIntId) otab) eu2 
 WHERE Resource_Index.intId = eu2.ResourceIntId AND
 	(Resource_Index.educationalUses <> eu2.EducationalUses OR
@@ -13651,49 +15970,6 @@ WHERE Resource_Index.intID = rs.ResourceIntId AND
 SET @EndTime = GETDATE()
 SET @ElapsedTime = DATEDIFF(s,@StartTime,@EndTime)
 PRINT 'UPDATE from [Library.Resource] = ' + convert(varchar,@ElapsedTime)
-SET @StartTime = GETDATE()
-
--- Educational Use IDs
-UPDATE Resource_Index
-SET educationalUseIDs = rs.EducationUseIDs,
-	LastUpdated = GETDATE()
-FROM (SELECT ResourceIntId, left(EducationUseIDs, LEN(EducationUseIDs) - 1) AS EducationUseIDs
-	FROM (SELECT ResourceIntId, (
-		SELECT convert(nvarchar,itbl.[EducationUseId])+','
-		FROM [Resource.EducationUse] itbl
-		WHERE itbl.ResourceIntId = tbl.ResourceIntId AND (CreatedById IS NULL OR CreatedById <> 22)
-		for xml path('')) EducationUseIDs
-	FROM [Resource.EducationUse] tbl
-	GROUP BY ResourceIntId) otab) rs
-WHERE Resource_Index.intID = rs.ResourceIntId AND
-	(Resource_Index.educationalUseIDs <> rs.EducationUseIDs OR
-	(Resource_Index.educationalUseIDs IS NULL AND rs.EducationUseIDs IS NOT NULL))
-
-SET @EndTime = GETDATE()
-SET @ElapsedTime = DATEDIFF(s,@StartTime,@EndTime)
-PRINT 'UPDATE from [Resource.EducationalUse] #1 = ' + convert(varchar,@ElapsedTime)
-SET @StartTime = GETDATE()
-
--- Educational Uses
-UPDATE Resource_Index
-SET educationalUses = rs.EducationUses,
-	LastUpdated = GETDATE()
-FROM (SELECT ResourceIntId, left(EducationUses, LEN(EducationUses) - 1) AS EducationUses
-	FROM (SELECT ResourceIntId, (
-		SELECT [Codes.EducationalUse].Title+','
-		FROM [Resource.EducationUse] itbl
-		INNER JOIN [Codes.EducationalUse] ON itbl.EducationUseId = [Codes.EducationalUse].Id
-		WHERE itbl.ResourceIntId = tbl.ResourceIntId AND (CreatedById IS NULL OR CreatedById <> 22)
-		for xml path('')) EducationUses
-	FROM [Resource.EducationUse] tbl
-	GROUP BY ResourceIntId) otab) rs
-WHERE Resource_Index.intID = rs.ResourceIntId AND
-	(Resource_Index.educationalUses <> rs.EducationUses OR
-	(Resource_Index.educationalUses IS NULL AND rs.EducationUses IS NOT NULL))
-
-SET @EndTime = GETDATE()
-SET @ElapsedTime = DATEDIFF(s,@StartTime,@EndTime)
-PRINT 'UPDATE from [Resource.EducationalUse] #2 = ' + convert(varchar,@ElapsedTime)
 SET @StartTime = GETDATE()
 
 -- Comments Count
@@ -13792,14 +16068,2328 @@ SET @ElapsedTime = DATEDIFF(s,@StartTime,@EndTime)
 PRINT 'UPDATE from [Library.Resource] = ' + convert(varchar,@ElapsedTime)
 SET @StartTime = GETDATE() */
 
+-- accessibilityApi IDs
+UPDATE Resource_Index
+SET accessibilityApiIDs = rs.relatedTags
+FROM (SELECT ResourceIntId, left(accessibilityApiIDs, LEN(accessibilityApiIDs) - 1) AS relatedTags
+	FROM (SELECT ResourceIntId, (
+		SELECT convert(nvarchar,itbl.[AccessibilityApiId])+','
+		FROM [Resource.AccessibilityApi] itbl
+		WHERE itbl.ResourceIntId = tbl.ResourceIntId
+		for xml path('')) accessibilityApiIDs
+	FROM [Resource.AccessibilityApi] tbl
+	GROUP BY ResourceIntId) otab) rs
+WHERE Resource_Index.intID = rs.ResourceIntId AND
+	(Resource_Index.accessibilityApiIDs <> rs.relatedTags OR
+	(Resource_Index.accessibilityApiIDs IS NULL AND rs.relatedTags IS NOT NULL))
 
+SET @EndTime = GETDATE()
+SET @ElapsedTime = DATEDIFF(s,@StartTime,@EndTime)
+PRINT 'UPDATE #1 from [Resource.AccessibilityApi] = ' + convert(varchar,@ElapsedTime)
+SET @StartTime = GETDATE()
+		
+-- accessibilityApis
+UPDATE Resource_Index
+SET accessibilityApis = rs.relatedTags,
+	LastUpdated = GETDATE()
+FROM (SELECT ResourceIntId, left(accessibilityApi, LEN(accessibilityApi) - 1) AS relatedTags
+	FROM (SELECT ResourceIntId, (
+		SELECT [Codes.AccessibilityApi].Title+','
+		FROM [Resource.AccessibilityApi] itbl
+		INNER JOIN [Codes.AccessibilityApi] ON itbl.AccessibilityApiId = [Codes.AccessibilityApi].Id
+		WHERE itbl.ResourceIntId = tbl.ResourceIntId
+		for xml path('')) accessibilityApi
+	FROM [Resource.AccessibilityApi] tbl
+	GROUP BY ResourceIntId) otab) rs
+WHERE Resource_Index.intID = rs.ResourceIntId AND
+	(Resource_Index.accessibilityApis <> rs.relatedTags OR
+	(Resource_Index.accessibilityApis IS NULL AND rs.relatedTags IS NOT NULL))
+
+SET @EndTime = GETDATE()
+SET @ElapsedTime = DATEDIFF(s,@StartTime,@EndTime)
+PRINT 'UPDATE #2 from [Resource.AccessibilityApi] = ' + convert(varchar,@ElapsedTime)
+SET @StartTime = GETDATE()
+
+-- accessibilityControl IDs
+UPDATE Resource_Index
+SET accessibilityControlIDs = rs.relatedTags
+FROM (SELECT ResourceIntId, left(accessibilityControlIDs, LEN(accessibilityControlIDs) - 1) AS relatedTags
+	FROM (SELECT ResourceIntId, (
+		SELECT convert(nvarchar,itbl.[AccessibilityControlId])+','
+		FROM [Resource.AccessibilityControl] itbl
+		WHERE itbl.ResourceIntId = tbl.ResourceIntId
+		for xml path('')) accessibilityControlIDs
+	FROM [Resource.AccessibilityControl] tbl
+	GROUP BY ResourceIntId) otab) rs
+WHERE Resource_Index.intID = rs.ResourceIntId AND
+	(Resource_Index.accessibilityControlIDs <> rs.relatedTags OR
+	(Resource_Index.accessibilityControlIDs IS NULL AND rs.relatedTags IS NOT NULL))
+
+SET @EndTime = GETDATE()
+SET @ElapsedTime = DATEDIFF(s,@StartTime,@EndTime)
+PRINT 'UPDATE #1 from [Resource.AccessibilityControl] = ' + convert(varchar,@ElapsedTime)
+SET @StartTime = GETDATE()
+		
+-- accessibilityControls
+UPDATE Resource_Index
+SET accessibilityControls = rs.relatedTags,
+	LastUpdated = GETDATE()
+FROM (SELECT ResourceIntId, left(accessibilityControl, LEN(accessibilityControl) - 1) AS relatedTags
+	FROM (SELECT ResourceIntId, (
+		SELECT [Codes.AccessibilityControl].Title+','
+		FROM [Resource.AccessibilityControl] itbl
+		INNER JOIN [Codes.AccessibilityControl] ON itbl.AccessibilityControlId = [Codes.AccessibilityControl].Id
+		WHERE itbl.ResourceIntId = tbl.ResourceIntId
+		for xml path('')) accessibilityControl
+	FROM [Resource.AccessibilityControl] tbl
+	GROUP BY ResourceIntId) otab) rs
+WHERE Resource_Index.intID = rs.ResourceIntId AND
+	(Resource_Index.accessibilityControls <> rs.relatedTags OR
+	(Resource_Index.accessibilityControls IS NULL AND rs.relatedTags IS NOT NULL))
+
+SET @EndTime = GETDATE()
+SET @ElapsedTime = DATEDIFF(s,@StartTime,@EndTime)
+PRINT 'UPDATE #2 from [Resource.AccessibilityControl] = ' + convert(varchar,@ElapsedTime)
+SET @StartTime = GETDATE()
+
+-- accessibilityFeature IDs
+UPDATE Resource_Index
+SET accessibilityFeatureIDs = rs.relatedTags
+FROM (SELECT ResourceIntId, left(accessibilityFeatureIDs, LEN(accessibilityFeatureIDs) - 1) AS relatedTags
+	FROM (SELECT ResourceIntId, (
+		SELECT convert(nvarchar,itbl.[AccessibilityFeatureId])+','
+		FROM [Resource.AccessibilityFeature] itbl
+		WHERE itbl.ResourceIntId = tbl.ResourceIntId
+		for xml path('')) accessibilityFeatureIDs
+	FROM [Resource.AccessibilityFeature] tbl
+	GROUP BY ResourceIntId) otab) rs
+WHERE Resource_Index.intID = rs.ResourceIntId AND
+	(Resource_Index.accessibilityFeatureIDs <> rs.relatedTags OR
+	(Resource_Index.accessibilityFeatureIDs IS NULL AND rs.relatedTags IS NOT NULL))
+
+SET @EndTime = GETDATE()
+SET @ElapsedTime = DATEDIFF(s,@StartTime,@EndTime)
+PRINT 'UPDATE #1 from [Resource.AccessibilityFeature] = ' + convert(varchar,@ElapsedTime)
+SET @StartTime = GETDATE()
+		
+-- accessibilityFeatures
+UPDATE Resource_Index
+SET accessibilityFeatures = rs.relatedTags,
+	LastUpdated = GETDATE()
+FROM (SELECT ResourceIntId, left(accessibilityFeature, LEN(accessibilityFeature) - 1) AS relatedTags
+	FROM (SELECT ResourceIntId, (
+		SELECT [Codes.AccessibilityFeature].Title+','
+		FROM [Resource.AccessibilityFeature] itbl
+		INNER JOIN [Codes.AccessibilityFeature] ON itbl.AccessibilityFeatureId = [Codes.AccessibilityFeature].Id
+		WHERE itbl.ResourceIntId = tbl.ResourceIntId
+		for xml path('')) accessibilityFeature
+	FROM [Resource.AccessibilityFeature] tbl
+	GROUP BY ResourceIntId) otab) rs
+WHERE Resource_Index.intID = rs.ResourceIntId AND
+	(Resource_Index.accessibilityFeatures <> rs.relatedTags OR
+	(Resource_Index.accessibilityFeatures IS NULL AND rs.relatedTags IS NOT NULL))
+
+SET @EndTime = GETDATE()
+SET @ElapsedTime = DATEDIFF(s,@StartTime,@EndTime)
+PRINT 'UPDATE #2 from [Resource.AccessibilityFeature] = ' + convert(varchar,@ElapsedTime)
+SET @StartTime = GETDATE()
+
+-- accessibilityHazard IDs
+UPDATE Resource_Index
+SET accessibilityHazardIDs = rs.relatedTags
+FROM (SELECT ResourceIntId, left(accessibilityHazardIDs, LEN(accessibilityHazardIDs) - 1) AS relatedTags
+	FROM (SELECT ResourceIntId, (
+		SELECT convert(nvarchar,itbl.[AccessibilityHazardId])+','
+		FROM [Resource.AccessibilityHazard] itbl
+		WHERE itbl.ResourceIntId = tbl.ResourceIntId
+		for xml path('')) accessibilityHazardIDs
+	FROM [Resource.AccessibilityHazard] tbl
+	GROUP BY ResourceIntId) otab) rs
+WHERE Resource_Index.intID = rs.ResourceIntId AND
+	(Resource_Index.accessibilityHazardIDs <> rs.relatedTags OR
+	(Resource_Index.accessibilityHazardIDs IS NULL AND rs.relatedTags IS NOT NULL))
+
+SET @EndTime = GETDATE()
+SET @ElapsedTime = DATEDIFF(s,@StartTime,@EndTime)
+PRINT 'UPDATE #1 from [Resource.AccessibilityHazard] = ' + convert(varchar,@ElapsedTime)
+SET @StartTime = GETDATE()
+		
+-- accessibilityHazards
+UPDATE Resource_Index
+SET accessibilityHazards = rs.relatedTags,
+	LastUpdated = GETDATE()
+FROM (SELECT ResourceIntId, left(accessibilityHazard, LEN(accessibilityHazard) - 1) AS relatedTags
+	FROM (SELECT ResourceIntId, (
+		SELECT [Codes.AccessibilityHazard].Title+','
+		FROM [Resource.AccessibilityHazard] itbl
+		INNER JOIN [Codes.AccessibilityHazard] ON itbl.AccessibilityHazardId = [Codes.AccessibilityHazard].Id
+		WHERE itbl.ResourceIntId = tbl.ResourceIntId
+		for xml path('')) accessibilityHazard
+	FROM [Resource.AccessibilityHazard] tbl
+	GROUP BY ResourceIntId) otab) rs
+WHERE Resource_Index.intID = rs.ResourceIntId AND
+	(Resource_Index.accessibilityHazards <> rs.relatedTags OR
+	(Resource_Index.accessibilityHazards IS NULL AND rs.relatedTags IS NOT NULL))
+
+SET @EndTime = GETDATE()
+SET @ElapsedTime = DATEDIFF(s,@StartTime,@EndTime)
+PRINT 'UPDATE #2 from [Resource.AccessibilityHazard] = ' + convert(varchar,@ElapsedTime)
+SET @StartTime = GETDATE()
+
+-- =======================================================================
 SET @StartTime = GETDATE()
 SET @ElapsedTime = DATEDIFF(s,@InitStartTime,@FinishTime)
 PRINT 'Total Time: ' + convert(varchar,@ElapsedTime)
 END
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource_Search]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource_IndexUpdateV2]    Script Date: 2/22/2015 10:28:07 AM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+/*
+[dbo].[Resource_IndexUpdateV2]
+
+*/
+-- ======================================================================
+-- Author:		Jerome Grimmer
+-- Create date: 4/25/2013
+-- Description:	Update Resource_IndexV2 table for ElasticSearch
+--
+-- 2013-07-08 jgrimmer - Remove resources where [Resource.Version].IsActive <> 'True'
+-- 2013-08-20 jgrimmer - Added likeCount and dislikeCount
+-- 2013-11-20 jgrimmer - Added check for IsDeleted in the LinkChecker database
+-- 2014-02-03 jgrimmer - Modify favorites to rely on [Resource].FavoriteCount only.  It is detail/library page's responsibility to update that count.
+--						 Also add Submitter.
+-- 2014-05-19 jgrimmer - Exclude resources from Smarter Balance, since Illinois is a PARCC member and not a Smarter Balance member state, and remove 
+--						 check for PrivateResource (docID is null)
+-- ======================================================================
+-- 2014-05-21 mparsons - create new version using Resource.Tag
+-- 2014-05-28 mparsons - added sortTitle
+-- 2014-08-14 jgrimmer - Allow submitter to be NULL.
+-- 2014-08-08 mparsons - changed targetSiteIDs to be based on the relative CodeId, not the absolute id (not Resource.Site for now)
+-- 2014-10-16 mparsons - added qualify - renaming??
+-- 2014-10-29 mparsons - added wioaWorks (replaces wioaWorks - 23)
+-- 2014-11-25 mparsons - added layoff assistance (30)
+-- ======================================================================
+CREATE PROCEDURE [dbo].[Resource_IndexUpdateV2]
+AS
+BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+
+DECLARE @InitStartTime datetime, @StartTime datetime, @EndTime datetime, @ElapsedTime float, @FinishTime datetime, @categoryId int, @processName varchar(50)
+
+SET @StartTime = GETDATE()
+SET @InitStartTime = @StartTime
+
+-- Remove inactive resources
+DELETE
+FROM [Resource_IndexV2]
+WHERE intID IN (SELECT Id FROM [Resource] WHERE IsActive = 0) 
+OR	versionID IN (SELECT Id FROM [Resource.Version] WHERE IsActive = 0) 
+OR	intId IN (Select ResourceIntId FROM [Resource.Link] WHERE IsDeleted = 1)
+	
+SET @EndTime = GETDATE()
+SET @ElapsedTime = DATEDIFF(s,@StartTime,@EndTime)
+PRINT 'Delete inactive resources = ' + convert(varchar,@ElapsedTime)
+SET @StartTime = GETDATE()
+
+
+-- Update existing resources Resource.Version data
+UPDATE Resource_IndexV2
+SET title = rv.Title, 
+	[description] = rv.[Description],
+	publisher = rv.Publisher,
+	created = rv.Created,
+	accessRights = rv.AccessRights,
+	accessRightsID = rv.AccessRightsId,
+	LastUpdated = GETDATE(),
+	url = r.ResourceUrl,
+	usageRightsURL = rv.Rights,
+	usageRights = 
+		CASE 
+			WHEN cou.Id IS NOT NULL THEN cou.Summary
+			WHEN rv.Rights IS NOT NULL AND cou.Id IS NULL THEN 'Read the Fine Print'
+			ELSE NULL
+		END,
+	usageRightsID = 
+		CASE 
+			WHEN cou.Id IS NOT NULL THEN cou.Id
+			WHEN rv.Rights IS NOT NULL AND cou.Id IS NULL THEN 4  -- Read the Fine Print
+			ELSE NULL
+		END,
+	usageRightsIconURL = 
+		CASE 
+			WHEN cou.Id IS NOT NULL THEN cou.IconUrl
+			WHEN rv.Rights IS NOT NULL AND cou.Id IS NULL THEN 'http://mirrors.creativecommons.org/presskit/cc.primary.srr.gif'
+			ELSE NULL
+		END,
+	usageRightsMiniIconURL = 
+		CASE 
+			WHEN cou.Id IS NOT NULL THEN cou.MiniIconUrl
+			WHEN rv.Rights IS NOT NULL AND cou.Id IS NULL THEN '/images/icons/rightsreserved.png'
+			ELSE NULL
+		END,
+	viewsCount = ViewCount,
+	timeRequired = TypicalLearningTime,
+	creator = rv.Creator,
+	requirements = rv.Requirements,
+	isBasedOnUrl = RelatedUrl,
+	favorites = r.FavoriteCount,
+	submitter = rv.Submitter,
+	 [SortTitle] = [dbo].[BuildSortTitle] (rv.[Title])
+FROM [Resource.Version] rv
+INNER JOIN [Resource] r ON rv.ResourceIntId = r.Id
+LEFT JOIN [ConditionOfUse] cou ON rv.Rights = cou.Url
+LEFT JOIN [Resource.RelatedUrl] rru ON r.Id = rru.ResourceIntId
+WHERE Resource_IndexV2.versionId = rv.Id AND
+	(Resource_IndexV2.title <> rv.Title OR Resource_IndexV2.[description] <> rv.[Description] OR
+	 Resource_IndexV2.publisher <> rv.Publisher OR  Resource_IndexV2.accessRights <> rv.AccessRights OR
+	 Resource_IndexV2.accessRightsId <> rv.AccessRightsId OR Resource_IndexV2.url <> r.ResourceUrl OR
+	 Resource_IndexV2.usageRightsURL <> rv.Rights OR viewsCount <> ViewCount OR
+	 Resource_IndexV2.timeRequired <> rv.TypicalLearningTime OR Resource_IndexV2.creator <> rv.Creator OR
+	 Resource_IndexV2.requirements <> rv.Requirements OR Resource_IndexV2.isBasedOnUrl <> rru.RelatedUrl OR
+ 	 Resource_IndexV2.favorites <> r.FavoriteCount OR
+	 Resource_IndexV2.submitter <> rv.Submitter) AND
+	 Resource_IndexV2.intID NOT IN (SELECT ResourceIntId FROM [Resource.Link] WHERE IsDeleted = 'True') AND
+	 (rv.Submitter IS NULL OR rv.Submitter NOT LIKE '%smarterbalanced.org%' )
+
+SET @EndTime = GETDATE()
+SET @ElapsedTime = DATEDIFF(s,@StartTime,@EndTime)
+PRINT 'UPDATE from [Resource.Version] = ' + convert(varchar,@ElapsedTime)
+SET @StartTime = GETDATE()
+
+-- Add new resources, skipping inactive and private resources
+INSERT INTO Resource_IndexV2 (versionId, intId, title, [description], publisher,
+	created, accessRights, accessRightsId, LastUpdated, url, usageRightsUrl, usageRights, usageRightsID, usageRightsIconURL, usageRightsMiniIconURL,
+	viewsCount, timeRequired, creator, requirements, isBasedOnUrl, favorites, submitter)
+SELECT DISTINCT rv.Id, rv.ResourceIntId, rv.Title, rv.[Description], rv.Publisher, rv.Created, rv.AccessRights, rv.AccessRightsId, GETDATE(), r.ResourceUrl,
+	rv.Rights, 
+	CASE 
+		WHEN cou.Id IS NOT NULL THEN cou.Summary
+		WHEN rv.Rights IS NOT NULL AND cou.Id IS NULL THEN 'Read the Fine Print'
+		ELSE NULL
+	END AS usageRights,
+	CASE 
+		WHEN cou.Id IS NOT NULL THEN cou.Id
+		WHEN rv.Rights IS NOT NULL AND cou.Id IS NULL THEN 4 -- Read the Fine Print
+		ELSE NULL
+	END AS usageRightsId,
+	CASE 
+		WHEN cou.Id IS NOT NULL THEN cou.IconUrl
+		WHEN rv.Rights IS NOT NULL AND cou.Id IS NULL THEN 'http://mirrors.creativecommons.org/presskit/cc.primary.srr.gif'
+		ELSE NULL
+	END AS usageRightsIconURL,
+	CASE 
+		WHEN cou.Id IS NOT NULL THEN cou.MiniIconUrl
+		WHEN rv.Rights IS NOT NULL AND cou.Id IS NULL THEN '/images/icons/rightsreserved.png'
+		ELSE NULL
+	END AS usageRightsMiniIconURL,
+	ViewCount, TypicalLearningTime, Creator, Requirements, RelatedUrl, r.FavoriteCount, rv.Submitter
+FROM [Resource.Version] rv
+INNER JOIN [Resource] r ON rv.ResourceIntId = r.Id
+LEFT JOIN [Resource.PublishedBy] rpb ON rv.ResourceIntId = rpb.ResourceIntId
+LEFT JOIN [ConditionOfUse] cou ON rv.Rights = cou.Url
+LEFT JOIN [Resource.RelatedUrl] rru ON r.Id = rru.ResourceIntId
+WHERE rv.Id NOT IN 	(SELECT versionId FROM Resource_IndexV2) 
+AND (cou.Id IS NULL OR cou.Id <> 3) 
+AND r.IsActive = 1 
+AND rv.IsActive = 1 
+AND (rpb.PublishedById IS NULL OR rpb.PublishedById <> 22) 
+AND	r.Id NOT IN (SELECT ResourceIntId FROM [Resource.Link] WHERE IsDeleted = 'True') 
+AND	(rv.Submitter IS NULL OR rv.Submitter NOT LIKE '%smarterbalanced.org%' )
+
+
+SET @EndTime = GETDATE()
+SET @ElapsedTime = DATEDIFF(s,@StartTime,@EndTime)
+PRINT 'INSERT from [Resource.Version] = ' + convert(varchar,@ElapsedTime)
+SET @StartTime = GETDATE()
+
+-- Keywords
+UPDATE Resource_IndexV2
+SET keywords = rk.Keywords,
+	LastUpdated = GETDATE()
+FROM (SELECT ResourceIntId, left(Keywords, LEN(Keywords) - 1) AS Keywords
+	FROM (SELECT ResourceIntId, (
+		SELECT isnull(itbl.[Keyword],'')+','
+		FROM [Resource.Keyword] itbl
+		WHERE itbl.ResourceIntId = tbl.ResourceIntId AND (CreatedById IS NULL OR CreatedById <> 22)
+		for xml path('')) Keywords
+	FROM [Resource.Keyword] tbl
+	GROUP BY ResourceIntId) otab) rk
+WHERE Resource_IndexV2.intId = rk.ResourceIntId AND
+	(Resource_IndexV2.keywords <> rk.Keywords OR 
+	(Resource_IndexV2.keywords IS NULL AND rk.Keywords IS NOT NULL))
+
+SET @EndTime = GETDATE()
+SET @ElapsedTime = DATEDIFF(s,@StartTime,@EndTime)
+PRINT 'UPDATE from [Resource.Keyword] = ' + convert(varchar,@ElapsedTime)
+SET @StartTime = GETDATE()
+
+-- Subjects ???? how to merge k12 subject, and existing subjects
+UPDATE Resource_IndexV2
+SET [subjects] = rs.[Subjects],
+	LastUpdated = GETDATE()
+FROM (SELECT ResourceIntId, left(Subjects, LEN(Subjects) - 1) AS Subjects
+	FROM (SELECT ResourceIntId, (
+		SELECT itbl.[Subject]+','
+		FROM [Resource.Subject] itbl
+		WHERE itbl.ResourceIntId = tbl.ResourceIntId AND (CreatedById IS NULL OR CreatedById <> 22)
+		for xml path('')) Subjects
+	FROM [Resource.Subject] tbl
+	GROUP BY ResourceIntId) otab) rs 
+WHERE Resource_IndexV2.intId = rs.ResourceIntId AND
+	(Resource_IndexV2.subjects <> rs.Subjects OR
+	(Resource_IndexV2.subjects IS NULL AND rs.Subjects IS NOT NULL))
+
+SET @EndTime = GETDATE()
+SET @ElapsedTime = DATEDIFF(s,@StartTime,@EndTime)
+PRINT 'UPDATE from [Resource.Subject] = ' + convert(varchar,@ElapsedTime)
+SET @StartTime = GETDATE()
+
+-- k12Subject Ids
+UPDATE Resource_IndexV2
+SET k12SubjectIDs = rs.relatedTags,
+	LastUpdated = GETDATE()
+FROM (SELECT ResourceIntId, left(RelatedList, LEN(RelatedList) - 1) AS relatedTags
+	FROM (SELECT ResourceIntId, (
+		SELECT convert(varchar,itbl.TagValueId)+','
+		FROM [Resource_TagSummary] itbl
+		WHERE itbl.CategoryId = 20 AND itbl.ResourceIntId = tbl.ResourceIntId 
+		AND (CreatedById IS NULL OR CreatedById <> 22)
+		for xml path('')) RelatedList
+		FROM [Resource_TagSummary] tbl
+	WHERE tbl.CategoryId = 20
+	GROUP BY ResourceIntId) otab) rs
+WHERE Resource_IndexV2.intID = rs.ResourceIntId AND
+	(Resource_IndexV2.k12SubjectIDs <> rs.relatedTags OR
+	(Resource_IndexV2.k12SubjectIDs IS NULL AND rs.relatedTags IS NOT NULL))
+
+SET @EndTime = GETDATE()
+SET @ElapsedTime = DATEDIFF(s,@StartTime,@EndTime)
+PRINT 'UPDATE #1 from [k12Subject Ids] = ' + convert(varchar,@ElapsedTime)
+SET @StartTime = GETDATE()
+		
+-- k12Subjects
+UPDATE Resource_IndexV2
+SET k12Subjects = rs.relatedTags,
+	LastUpdated = GETDATE()
+FROM (SELECT ResourceIntId, left(RelatedList, LEN(RelatedList) - 1) AS relatedTags
+	FROM (SELECT ResourceIntId, (
+		SELECT  itbl.TagTitle + ','
+		FROM [Resource_TagSummary] itbl
+		WHERE itbl.CategoryId = 20 AND itbl.ResourceIntId = tbl.ResourceIntId 
+		AND (CreatedById IS NULL OR CreatedById <> 22)
+		for xml path('')) RelatedList
+	FROM [Resource_TagSummary] tbl
+	WHERE tbl.CategoryId = 20
+	GROUP BY ResourceIntId) otab) rs
+WHERE Resource_IndexV2.intID = rs.ResourceIntId AND
+	(Resource_IndexV2.k12Subjects <> rs.relatedTags OR
+	(Resource_IndexV2.k12Subjects IS NULL AND rs.relatedTags IS NOT NULL))
+
+
+SET @EndTime = GETDATE()
+SET @ElapsedTime = DATEDIFF(s,@StartTime,@EndTime)
+PRINT 'UPDATE #2 from [k12Subjects] = ' + convert(varchar,@ElapsedTime)
+SET @StartTime = GETDATE()
+
+-- Language IDs
+UPDATE Resource_IndexV2
+SET [languageIDs] = rl1.[LanguageIds],
+	LastUpdated = GETDATE()
+FROM (SELECT ResourceIntId, left(Languages, LEN(Languages) - 1) AS LanguageIds
+	FROM (SELECT ResourceIntId, (
+		SELECT convert(varchar,itbl.TagValueId)+','
+		FROM [Resource_TagSummary] itbl
+		WHERE itbl.CategoryId = 17 AND itbl.ResourceIntId = tbl.ResourceIntId
+		for xml path('')) Languages
+	FROM [Resource_TagSummary] tbl
+	WHERE tbl.CategoryId = 17
+	GROUP BY ResourceIntId) otab) rl1
+WHERE Resource_IndexV2.intId = rl1.ResourceIntId AND
+	(Resource_IndexV2.languageIDs <> rl1.LanguageIds OR
+	(Resource_IndexV2.languageIDs IS NULL AND rl1.LanguageIds IS NOT NULL))
+
+SET @EndTime = GETDATE()
+SET @ElapsedTime = DATEDIFF(s,@StartTime,@EndTime)
+PRINT 'UPDATE #1 from [Resource.Language] = ' + convert(varchar,@ElapsedTime)
+SET @StartTime = GETDATE()
+
+-- Languages
+UPDATE Resource_IndexV2
+SET [languages] = rl2.[Languages],
+	LastUpdated = GETDATE()
+FROM (SELECT ResourceIntId, left(Languages, LEN(Languages) - 1) AS Languages
+	FROM (SELECT ResourceIntId, (
+		SELECT itbl.TagTitle +','
+		FROM [Resource_TagSummary] itbl
+		WHERE itbl.CategoryId = 17 AND itbl.ResourceIntId = tbl.ResourceIntId
+		for xml path('')) Languages
+	FROM [Resource_TagSummary] tbl
+	WHERE tbl.CategoryId = 17
+	GROUP BY ResourceIntId) otab) rl2
+WHERE Resource_IndexV2.intId = rl2.ResourceIntId AND
+	(Resource_IndexV2.languages <> rl2.Languages OR
+	(Resource_IndexV2.languages IS NULL AND rl2.Languages IS NOT NULL))
+
+SET @EndTime = GETDATE()
+SET @ElapsedTime = DATEDIFF(s,@StartTime,@EndTime)
+PRINT 'UPDATE #2 from [Resource.Language] = ' + convert(varchar,@ElapsedTime)
+SET @StartTime = GETDATE()
+
+-- Career Cluster IDs
+UPDATE Resource_IndexV2
+SET clusterIDs = cc1.ClusterIds,
+	LastUpdated = GETDATE()
+FROM (SELECT ResourceIntId, left(Clusters, LEN(Clusters) - 1) AS ClusterIds
+	FROM (SELECT ResourceIntId, (
+		SELECT convert(varchar,itbl.TagValueId)+','
+		FROM [Resource_TagSummary] itbl
+		WHERE itbl.CategoryId = 8 AND itbl.ResourceIntId = tbl.ResourceIntId 
+		AND (CreatedById IS NULL OR CreatedById <> 22)
+		for xml path('')) Clusters
+	FROM [Resource_TagSummary] tbl
+	WHERE tbl.CategoryId = 8
+	GROUP BY ResourceIntId) otab) cc1
+WHERE Resource_IndexV2.intId = cc1.ResourceIntId AND
+	(Resource_IndexV2.clusterIDs <> cc1.ClusterIds OR 
+	(Resource_IndexV2.clusterIDs IS NULL AND cc1.ClusterIds IS NOT NULL))
+	
+SET @EndTime = GETDATE()
+SET @ElapsedTime = DATEDIFF(s,@StartTime,@EndTime)
+PRINT 'UPDATE #1 from [Resource.Cluster] = ' + convert(varchar,@ElapsedTime)
+SET @StartTime = GETDATE()
+
+-- Clusters
+UPDATE Resource_IndexV2
+SET clusters = cc2.Clusters,
+	LastUpdated = GETDATE()
+FROM (SELECT ResourceIntId, left(Clusters, LEN(Clusters) - 1) AS Clusters
+	FROM (SELECT ResourceIntId, (
+		SELECT  itbl.TagTitle + ','
+		FROM [Resource_TagSummary] itbl
+		WHERE itbl.CategoryId = 8 AND itbl.ResourceIntId = tbl.ResourceIntId 
+		AND (CreatedById IS NULL OR CreatedById <> 22)
+		for xml path('')) Clusters
+	FROM [Resource_TagSummary] tbl
+	WHERE tbl.CategoryId = 8
+	GROUP BY ResourceIntId) otab) cc2
+WHERE Resource_IndexV2.intId = cc2.ResourceIntId AND
+	(Resource_IndexV2.clusters <> cc2.Clusters OR
+	(Resource_IndexV2.clusters IS NULL AND cc2.Clusters IS NOT NULL))
+
+
+SET @EndTime = GETDATE()
+SET @ElapsedTime = DATEDIFF(s,@StartTime,@EndTime)
+PRINT 'UPDATE #2 from [Resource.Cluster] = ' + convert(varchar,@ElapsedTime)
+SET @StartTime = GETDATE()
+
+-- Intended Audience Ids
+UPDATE Resource_IndexV2
+SET audienceIDs = ia1.AudienceIds,
+	LastUpdated = GETDATE()
+FROM (SELECT ResourceIntId, left(Audiences, LEN(Audiences) - 1) AS AudienceIds
+	FROM (SELECT ResourceIntId, (
+		SELECT convert(varchar,itbl.TagValueId)+','
+		FROM [Resource_TagSummary] itbl
+		WHERE itbl.CategoryId = 7 AND itbl.ResourceIntId = tbl.ResourceIntId 
+		AND (CreatedById IS NULL OR CreatedById <> 22)
+		for xml path('')) Audiences
+	FROM [Resource_TagSummary] tbl
+	WHERE tbl.CategoryId = 7
+	GROUP BY ResourceIntId) otab) ia1
+WHERE Resource_IndexV2.intId = ia1.ResourceIntId AND
+	(Resource_IndexV2.audienceIDs <> ia1.AudienceIds OR
+	(Resource_IndexV2.audienceIDs IS NULL AND ia1.AudienceIds IS NOT NULL))
+	
+SET @EndTime = GETDATE()
+SET @ElapsedTime = DATEDIFF(s,@StartTime,@EndTime)
+PRINT 'UPDATE #1 from [Resource.IntendedAudience] = ' + convert(varchar,@ElapsedTime)
+SET @StartTime = GETDATE()
+
+-- Intended Audiences
+UPDATE Resource_IndexV2
+SET audiences = ia2.Audiences,
+	LastUpdated = GETDATE()
+FROM (SELECT ResourceIntId, left(Audiences, LEN(Audiences) - 1) AS Audiences
+	FROM (SELECT ResourceIntId, (
+		SELECT  itbl.TagTitle + ','
+		FROM [Resource_TagSummary] itbl
+		WHERE itbl.CategoryId = 7 AND itbl.ResourceIntId = tbl.ResourceIntId 
+		AND (CreatedById IS NULL OR CreatedById <> 22)
+		for xml path('')) Audiences
+	FROM [Resource_TagSummary] tbl
+	WHERE tbl.CategoryId = 7
+	GROUP BY ResourceIntId) otab) ia2
+WHERE Resource_IndexV2.intId = ia2.ResourceIntId AND
+	(Resource_IndexV2.audiences <> ia2.Audiences OR
+	(Resource_IndexV2.audiences IS NULL AND ia2.Audiences IS NOT NULL))
+	
+SET @EndTime = GETDATE()
+SET @ElapsedTime = DATEDIFF(s,@StartTime,@EndTime)
+PRINT 'UPDATE #2 from [Resource.IntendedAudience] = ' + convert(varchar,@ElapsedTime)
+SET @StartTime = GETDATE()
+
+-- gradeLevelIds
+UPDATE Resource_IndexV2
+SET gradeLevelIDs = el1.gradeLevelIds,
+	LastUpdated = GETDATE()
+FROM (SELECT ResourceIntId, left(gradeLevels, LEN(gradeLevels) - 1) AS gradeLevelIds
+	FROM (SELECT ResourceIntId, (
+		SELECT convert(varchar,itbl.TagValueId)+','
+		FROM [Resource_TagSummary] itbl
+		WHERE itbl.CategoryId = 13 AND itbl.ResourceIntId = tbl.ResourceIntId 
+		AND (CreatedById IS NULL OR CreatedById <> 22)
+		for xml path('')) gradeLevels
+	FROM [Resource_TagSummary] tbl
+	WHERE tbl.CategoryId = 13
+	GROUP BY ResourceIntId) otab) el1
+WHERE Resource_IndexV2.intId = el1.ResourceIntId AND
+	(Resource_IndexV2.gradeLevelIds <> el1.gradeLevelIds OR
+	(Resource_IndexV2.gradeLevelIds IS NULL AND el1.gradeLevelIds IS NOT NULL))
+
+SET @EndTime = GETDATE()
+SET @ElapsedTime = DATEDIFF(s,@StartTime,@EndTime)
+PRINT 'UPDATE #1 from [Resource.GradeLevel] = ' + convert(varchar,@ElapsedTime)
+SET @StartTime = GETDATE()
+
+-- gradeLevels
+UPDATE Resource_IndexV2
+SET gradeLevels = el2.RelatedTags,
+	LastUpdated = GETDATE()	
+FROM (SELECT ResourceIntId, left(RelatedList, LEN(RelatedList) - 1) AS RelatedTags
+	FROM (SELECT ResourceIntId, (
+		SELECT  itbl.TagTitle + ','
+		FROM [Resource_TagSummary] itbl
+		WHERE itbl.CategoryId = 13 AND itbl.ResourceIntId = tbl.ResourceIntId 
+		AND (CreatedById IS NULL OR CreatedById <> 22)
+		for xml path('')) RelatedList
+	FROM [Resource_TagSummary] tbl
+	WHERE tbl.CategoryId = 13
+	GROUP BY ResourceIntId) otab) el2
+WHERE Resource_IndexV2.intId = el2.ResourceIntId AND
+	(Resource_IndexV2.gradeLevels <> el2.RelatedTags OR
+	(Resource_IndexV2.gradeLevels IS NULL AND el2.RelatedTags IS NOT NULL))
+
+SET @EndTime = GETDATE()
+SET @ElapsedTime = DATEDIFF(s,@StartTime,@EndTime)
+PRINT 'UPDATE #2 from [Resource.GradeLevel] = ' + convert(varchar,@ElapsedTime)
+SET @StartTime = GETDATE()
+
+-- gradeLevelAliases		
+UPDATE Resource_IndexV2
+SET gradeLevelAliases = el2.RelatedTags,
+	LastUpdated = GETDATE()	
+FROM (SELECT ResourceIntId, 
+		CASE 
+			WHEN LEN(RelatedList) > 1 THEN replace(left(RelatedList, LEN(RelatedList) - 1),',,',',')
+			ELSE NULL
+		END AS RelatedTags
+	FROM (SELECT ResourceIntId, (
+		SELECT itbl.AliasValues + ','
+		FROM [Resource_TagSummary] itbl
+		WHERE itbl.CategoryId = 13 AND itbl.ResourceIntId = tbl.ResourceIntId 
+		AND (CreatedById IS NULL OR CreatedById <> 22)
+		for xml path('')) RelatedList
+	FROM [Resource_TagSummary] tbl
+	WHERE tbl.CategoryId = 13
+	GROUP BY ResourceIntId) otab) el2
+WHERE Resource_IndexV2.intId = el2.ResourceIntId AND
+	(Resource_IndexV2.gradeLevelAliases <> el2.RelatedTags OR
+	(Resource_IndexV2.gradeLevelAliases IS NULL AND el2.RelatedTags IS NOT NULL))
+
+SET @EndTime = GETDATE()
+SET @ElapsedTime = DATEDIFF(s,@StartTime,@EndTime)
+PRINT 'UPDATE #3 from [Resource.GradeLevel] = ' + convert(varchar,@ElapsedTime)
+SET @StartTime = GETDATE()
+
+-- Resource Type Ids
+UPDATE Resource_IndexV2
+SET resourceTypeIDs = rt1.ResourceTypeIds,
+	LastUpdated = GETDATE()
+FROM (SELECT ResourceIntId, left(ResourceTypes, LEN(ResourceTypes) - 1) AS ResourceTypeIds
+	FROM (SELECT ResourceIntId, (
+		SELECT convert(varchar,itbl.TagValueId)+','
+		FROM [Resource_TagSummary] itbl
+		WHERE itbl.CategoryId = 19 AND itbl.ResourceIntId = tbl.ResourceIntId 
+		AND (CreatedById IS NULL OR CreatedById <> 22)
+		for xml path('')) ResourceTypes
+	FROM [Resource_TagSummary] tbl
+	WHERE tbl.CategoryId = 19
+	GROUP BY ResourceIntId) otab) rt1
+WHERE Resource_IndexV2.intId = rt1.ResourceIntId AND
+	(Resource_IndexV2.resourceTypeIds <> rt1.ResourceTypeIds OR
+	(Resource_IndexV2.resourceTypeIds IS NULL AND rt1.ResourceTypeIds IS NOT NULL))
+
+SET @EndTime = GETDATE()
+SET @ElapsedTime = DATEDIFF(s,@StartTime,@EndTime)
+PRINT 'UPDATE #1 from [Resource.ResourceType] = ' + convert(varchar,@ElapsedTime)
+SET @StartTime = GETDATE()
+
+-- Resource Types
+UPDATE Resource_IndexV2
+SET resourceTypes = rt2.ResourceTypes,
+	LastUpdated = GETDATE()
+FROM (SELECT ResourceIntId, left(ResourceTypes, LEN(ResourceTypes) - 1) AS ResourceTypes
+	FROM (SELECT ResourceIntId, (
+		SELECT  itbl.TagTitle + ','
+		FROM [Resource_TagSummary] itbl
+		WHERE itbl.CategoryId = 19 AND itbl.ResourceIntId = tbl.ResourceIntId 
+		AND (CreatedById IS NULL OR CreatedById <> 22)
+		for xml path('')) ResourceTypes
+	FROM [Resource_TagSummary] tbl
+	WHERE tbl.CategoryId = 19
+	GROUP BY ResourceIntId) otab) rt2
+WHERE Resource_IndexV2.intId = rt2.ResourceIntId AND
+	(Resource_IndexV2.resourceTypes <> rt2.ResourceTypes OR
+	(Resource_IndexV2.resourceTypes IS NULL AND rt2.ResourceTypes IS NOT NULL))
+	
+SET @EndTime = GETDATE()
+SET @ElapsedTime = DATEDIFF(s,@StartTime,@EndTime)
+PRINT 'UPDATE #2 from [Resource.ResourceType] = ' + convert(varchar,@ElapsedTime)
+SET @StartTime = GETDATE()
+
+-- Resource Format Ids
+UPDATE Resource_IndexV2
+SET mediaTypeIDs = rf1.ResourceFormatIds,
+	LastUpdated = GETDATE()
+FROM (SELECT ResourceIntId, left(ResourceFormats, LEN(ResourceFormats) - 1) AS ResourceFormatIds
+	FROM (SELECT ResourceIntId, (
+		SELECT convert(varchar,itbl.TagValueId)+','
+		FROM [Resource_TagSummary] itbl
+		WHERE itbl.CategoryId = 18 AND itbl.ResourceIntId = tbl.ResourceIntId 
+		AND (CreatedById IS NULL OR CreatedById <> 22)
+		for xml path('')) ResourceFormats
+	FROM [Resource_TagSummary] tbl
+	WHERE tbl.CategoryId = 18
+	GROUP BY ResourceIntId) otab) rf1
+WHERE Resource_IndexV2.intId = rf1.ResourceIntId AND
+	(Resource_IndexV2.mediaTypeIDs <> rf1.ResourceFormatIds OR
+	(Resource_IndexV2.mediaTypeIDs IS NULL AND rf1.ResourceFormatIds IS NOT NULL))
+	
+SET @EndTime = GETDATE()
+SET @ElapsedTime = DATEDIFF(s,@StartTime,@EndTime)
+PRINT 'UPDATE #1 from [Resource.Format] = ' + convert(varchar,@ElapsedTime)
+SET @StartTime = GETDATE()
+
+-- Resource Formats
+UPDATE Resource_IndexV2
+SET mediaTypes = rf2.ResourceFormats,
+	LastUpdated = GETDATE()
+FROM (SELECT ResourceIntId, left(ResourceFormats, LEN(ResourceFormats) - 1) AS ResourceFormats
+	FROM (SELECT ResourceIntId, (
+		SELECT  itbl.TagTitle + ','
+		FROM [Resource_TagSummary] itbl
+		WHERE itbl.CategoryId = 18 AND itbl.ResourceIntId = tbl.ResourceIntId 
+		AND (CreatedById IS NULL OR CreatedById <> 22)
+		for xml path('')) ResourceFormats
+		FROM [Resource_TagSummary] tbl
+	WHERE tbl.CategoryId = 18
+	GROUP BY ResourceIntId) otab) rf2
+WHERE Resource_IndexV2.intId = rf2.ResourceIntId AND
+	(Resource_IndexV2.mediaTypes <> rf2.ResourceFormats OR
+	(Resource_IndexV2.mediaTypes IS NULL AND rf2.ResourceFormats IS NOT NULL))
+	
+SET @EndTime = GETDATE()
+SET @ElapsedTime = DATEDIFF(s,@StartTime,@EndTime)
+PRINT 'UPDATE #2 from [Resource.Format] = ' + convert(varchar,@ElapsedTime)
+SET @StartTime = GETDATE()
+
+-- Group Type Ids
+UPDATE Resource_IndexV2
+SET groupTypeIDs = gt1.GroupTypeIds,
+	LastUpdated = GETDATE()
+FROM (SELECT ResourceIntId, left(GroupTypes, LEN(GroupTypes) - 1) AS GroupTypeIds
+	FROM (SELECT ResourceIntId, (
+		SELECT convert(varchar,itbl.TagValueId)+','
+		FROM [Resource_TagSummary] itbl
+		WHERE itbl.CategoryId = 14 AND itbl.ResourceIntId = tbl.ResourceIntId 
+		AND (CreatedById IS NULL OR CreatedById <> 22)
+		for xml path('')) GroupTypes
+	FROM [Resource_TagSummary] tbl
+	WHERE tbl.CategoryId = 14
+	GROUP BY ResourceIntId) otab) gt1
+WHERE Resource_IndexV2.intId = gt1.ResourceIntId AND
+	(Resource_IndexV2.groupTypeIds <> gt1.GroupTypeIds OR
+	(Resource_IndexV2.groupTypeIds IS NULL AND gt1.GroupTypeIds IS NOT NULL))
+
+SET @EndTime = GETDATE()
+SET @ElapsedTime = DATEDIFF(s,@StartTime,@EndTime)
+PRINT 'UPDATE #1 from [Resource.GroupTypes] = ' + convert(varchar,@ElapsedTime)
+SET @StartTime = GETDATE()
+
+-- Group Types
+UPDATE Resource_IndexV2
+SET groupTypes = gt2.GroupTypes,
+	LastUpdated = GETDATE()
+FROM (SELECT ResourceIntId, left(GroupTypes, LEN(GroupTypes) - 1) AS GroupTypes
+	FROM (SELECT ResourceIntId, (
+		SELECT  itbl.TagTitle + ','
+		FROM [Resource_TagSummary] itbl
+		WHERE itbl.CategoryId = 14 AND itbl.ResourceIntId = tbl.ResourceIntId 
+		AND (CreatedById IS NULL OR CreatedById <> 22)
+		for xml path('')) GroupTypes
+	FROM [Resource_TagSummary] tbl
+	WHERE tbl.CategoryId = 14
+	GROUP BY ResourceIntId) otab) gt2
+WHERE Resource_IndexV2.intId = gt2.ResourceIntId AND
+	(Resource_IndexV2.groupTypes <> gt2.GroupTypes OR
+	(Resource_IndexV2.groupTypes IS NULL AND gt2.GroupTypes IS NOT NULL))
+	
+SET @EndTime = GETDATE()
+SET @ElapsedTime = DATEDIFF(s,@StartTime,@EndTime)
+PRINT 'UPDATE #2 from [Resource.GroupTypes] = ' + convert(varchar,@ElapsedTime)
+SET @StartTime = GETDATE()
+
+-- Item Type Ids
+UPDATE Resource_IndexV2
+SET itemTypeIDs = it1.ItemTypeIds,
+	LastUpdated = GETDATE()
+FROM (SELECT ResourceIntId, left(ItemTypes, LEN(ItemTypes) - 1) AS ItemTypeIds
+	FROM (SELECT ResourceIntId, (
+		SELECT convert(varchar,itbl.TagValueId)+','
+		FROM [Resource_TagSummary] itbl
+		WHERE itbl.CategoryId = 15 AND itbl.ResourceIntId = tbl.ResourceIntId 
+		AND (CreatedById IS NULL OR CreatedById <> 22)
+		for xml path('')) ItemTypes
+	FROM [Resource_TagSummary] tbl
+	WHERE tbl.CategoryId = 15
+	GROUP BY ResourceIntId) otab) it1
+WHERE Resource_IndexV2.intId = it1.ResourceIntId AND
+	(Resource_IndexV2.itemTypeIds <> it1.ItemTypeIds OR
+	(Resource_IndexV2.itemTypeIds IS NULL AND it1.ItemTypeIds IS NOT NULL))
+	
+SET @EndTime = GETDATE()
+SET @ElapsedTime = DATEDIFF(s,@StartTime,@EndTime)
+PRINT 'UPDATE #1 from [Resource.ItemTypes] = ' + convert(varchar,@ElapsedTime)
+SET @StartTime = GETDATE()
+	
+-- Item Types
+UPDATE Resource_IndexV2
+SET itemTypes = it2.ItemTypes,
+	LastUpdated = getdate()
+FROM (SELECT ResourceIntId, left(ItemTypes, LEN(ItemTypes) - 1) AS ItemTypes
+	FROM (SELECT ResourceIntId, (
+		SELECT  itbl.TagTitle + ','
+		FROM [Resource_TagSummary] itbl
+		WHERE itbl.CategoryId = 15 AND itbl.ResourceIntId = tbl.ResourceIntId 
+		AND (CreatedById IS NULL OR CreatedById <> 22)
+		for xml path('')) ItemTypes
+		FROM [Resource_TagSummary] tbl
+	WHERE tbl.CategoryId = 15
+	GROUP BY ResourceIntId) otab) it2 
+WHERE Resource_IndexV2.intId = it2.ResourceIntId AND
+	(Resource_IndexV2.itemTypes <> it2.ItemTypes OR
+	(Resource_IndexV2.itemTypes IS NULL AND it2.ItemTypes IS NOT NULL))
+	
+SET @EndTime = GETDATE()
+SET @ElapsedTime = DATEDIFF(s,@StartTime,@EndTime)
+PRINT 'UPDATE #2 from [Resource.ItemTypes] = ' + convert(varchar,@ElapsedTime)
+SET @StartTime = GETDATE()
+
+-- Standard Ids
+UPDATE Resource_IndexV2
+SET standardIDs = rst1.StandardIds,
+	LastUpdated = GETDATE()
+FROM (SELECT ResourceIntId, left(Standards, LEN(Standards) - 1) AS StandardIds
+	FROM (SELECT ResourceIntId, (
+		SELECT isnull(convert(varchar,itbl.[StandardId]),'')+','
+		FROM [Resource.Standard] itbl
+		WHERE itbl.ResourceIntId = tbl.ResourceIntId AND (CreatedById IS NULL OR CreatedById <> 22)
+		for xml path('')) Standards
+	FROM [Resource.Standard] tbl
+	GROUP BY ResourceIntId) otab) rst1
+WHERE Resource_IndexV2.intId = rst1.ResourceIntId AND
+	(Resource_IndexV2.StandardIDs <> rst1.StandardIds OR
+	(Resource_IndexV2.StandardIDs IS NULL AND rst1.StandardIds IS NOT NULL))
+	
+SET @EndTime = GETDATE()
+SET @ElapsedTime = DATEDIFF(s,@StartTime,@EndTime)
+PRINT 'UPDATE #1 from [Resource.Standards] = ' + convert(varchar,@ElapsedTime)
+SET @StartTime = GETDATE()
+
+-- Standards
+UPDATE Resource_IndexV2
+SET standardNotations = rst2.Standards,
+	LastUpdated = GETDATE()
+FROM (SELECT ResourceIntId, left(Standards, LEN(Standards) - 1) AS Standards
+	FROM (SELECT ResourceIntId, (
+		SELECT [StandardBody.Node].NotationCode+','
+		FROM [Resource.Standard] itbl
+		INNER JOIN [StandardBody.Node] ON itbl.StandardId = [StandardBody.Node].Id
+		WHERE itbl.ResourceIntId = tbl.ResourceIntId AND (CreatedById IS NULL OR CreatedById <> 22)
+		for xml path('')) Standards
+	FROM [Resource.Standard] tbl
+	GROUP BY ResourceIntId) otab) rst2 
+WHERE Resource_IndexV2.intId = rst2.ResourceIntId AND
+	(Resource_IndexV2.standardNotations <> rst2.Standards OR
+	(Resource_IndexV2.standardNotations IS NULL AND rst2.Standards IS NOT NULL))
+
+SET @EndTime = GETDATE()
+SET @ElapsedTime = DATEDIFF(s,@StartTime,@EndTime)
+SET @FinishTime = @EndTime
+PRINT 'UPDATE #2 from [Resource.Standards] = ' + convert(varchar,@ElapsedTime)
+
+-- Alignment Type IDs - ???????????????????
+UPDATE Resource_IndexV2
+SET alignmentTypeIDs = rs.AlignmentTypeIDs,
+	LastUpdated = GETDATE()
+FROM (SELECT ResourceIntId, left(AlignmentTypeIDs, LEN(AlignmentTypeIDs) - 1) AS AlignmentTypeIDs
+		FROM (SELECT ResourceIntId, (
+			SELECT convert(nvarchar,isnull(itbl.[AlignmentTypeCodeId],2))+','
+			FROM [Resource.Standard] itbl
+			WHERE itbl.ResourceIntId = tbl.ResourceIntId AND (CreatedById IS NULL OR CreatedById <> 22)
+			for xml path('')) AlignmentTypeIDs
+		FROM [Resource.Standard] tbl
+		GROUP BY ResourceIntId) otab) rs
+WHERE Resource_IndexV2.intID = rs.ResourceIntId AND 
+	(Resource_IndexV2.alignmentTypeIDs <> rs.AlignmentTypeIDs OR
+	(Resource_IndexV2.alignmentTypeIDs IS NULL AND rs.AlignmentTypeIDs IS NOT NULL))
+
+SET @EndTime = GETDATE()
+SET @ElapsedTime = DATEDIFF(s,@StartTime,@EndTime)
+SET @FinishTime = @EndTime
+PRINT 'UPDATE Alignment Type IDs = ' + convert(varchar,@ElapsedTime)
+	
+-- Alignment Types		?????????????????????
+UPDATE Resource_IndexV2
+SET alignmentTypes = rs.AlignmentTypes,
+	LastUpdated = GETDATE()
+FROM (SELECT ResourceIntId, left(AlignmentTypes, LEN(AlignmentTypes) - 1) AS AlignmentTypes
+		FROM (SELECT ResourceIntId, (
+			SELECT isnull([Codes.AlignmentType].Title,'Teaches')+','
+			FROM [Resource.Standard] itbl
+			LEFT JOIN [Codes.AlignmentType] ON itbl.AlignmentTypeCodeId = [Codes.AlignmentType].Id
+			WHERE itbl.ResourceIntId = tbl.ResourceIntId AND (CreatedById IS NULL OR CreatedById <> 22)
+			for xml path('')) AlignmentTypes
+		FROM [Resource.Standard] tbl
+		GROUP BY ResourceIntId) otab) rs
+WHERE Resource_IndexV2.intID = rs.ResourceIntId AND
+	(Resource_IndexV2.alignmentTypes <> rs.AlignmentTypes OR
+	(Resource_IndexV2.alignmentTypes IS NULL AND rs.AlignmentTypes IS NOT NULL))
+
+SET @EndTime = GETDATE()
+SET @ElapsedTime = DATEDIFF(s,@StartTime,@EndTime)
+SET @FinishTime = @EndTime
+PRINT 'UPDATE Alignment Types = ' + convert(varchar,@ElapsedTime)
+
+-- EducationalUseIds
+UPDATE Resource_IndexV2
+SET educationalUseIDs = eu1.EducationalUseIds,
+	LastUpdated = GETDATE()
+FROM (SELECT ResourceIntId, left(EducationalUse, LEN(EducationalUse) - 1) AS EducationalUseIds
+	FROM (SELECT ResourceIntId, (
+		SELECT convert(varchar,itbl.TagValueId)+','
+		FROM [Resource_TagSummary] itbl
+		WHERE itbl.CategoryId = 11 AND itbl.ResourceIntId = tbl.ResourceIntId 
+		AND (CreatedById IS NULL OR CreatedById <> 22)
+		for xml path('')) EducationalUse
+	FROM [Resource_TagSummary] tbl
+	WHERE tbl.CategoryId = 11
+	GROUP BY ResourceIntId) otab) eu1
+WHERE Resource_IndexV2.intId = eu1.ResourceIntId AND
+	(Resource_IndexV2.educationalUseIDs <> eu1.EducationalUseIds OR
+	(Resource_IndexV2.educationalUseIDs IS NULL AND eu1.EducationalUseIds IS NOT NULL))
+	
+SET @EndTime = GETDATE()
+SET @ElapsedTime = DATEDIFF(s,@StartTime,@EndTime)
+PRINT 'UPDATE #1 from [Resource.EducationUse] = ' + convert(varchar,@ElapsedTime)
+SET @StartTime = GETDATE()
+
+-- EducationalUse
+UPDATE Resource_IndexV2
+SET educationalUses = eu2.EducationalUses,
+	LastUpdated = GETDATE()
+FROM (SELECT ResourceIntId, left(EducationalUse, LEN(EducationalUse) - 1) AS EducationalUses
+	FROM (SELECT ResourceIntId, (
+		SELECT  itbl.TagTitle + ','
+		FROM [Resource_TagSummary] itbl
+		WHERE itbl.CategoryId = 11 AND itbl.ResourceIntId = tbl.ResourceIntId 
+		AND (CreatedById IS NULL OR CreatedById <> 22)
+		for xml path('')) EducationalUse
+	FROM [Resource_TagSummary] tbl
+	WHERE tbl.CategoryId = 11
+	GROUP BY ResourceIntId) otab) eu2 
+WHERE Resource_IndexV2.intId = eu2.ResourceIntId AND
+	(Resource_IndexV2.educationalUses <> eu2.EducationalUses OR
+	(Resource_IndexV2.educationalUses IS NULL AND eu2.EducationalUses IS NOT NULL))
+
+SET @EndTime = GETDATE()
+SET @ElapsedTime = DATEDIFF(s,@StartTime,@EndTime)
+PRINT 'UPDATE #2 from [Resource.EducationUse] = ' + convert(varchar,@ElapsedTime)
+SET @StartTime = GETDATE()
+
+-- Likes minus Dislikes
+UPDATE Resource_IndexV2
+SET likesSummary = rls.LikeCount - rls.DislikeCount,
+	LastUpdated = GETDATE()
+FROM [Resource.LikesSummary] rls
+WHERE Resource_IndexV2.intId = rls.ResourceIntId AND
+	((Resource_IndexV2.likesSummary <> (rls.LikeCount - rls.DislikeCount) OR
+	(Resource_IndexV2.likesSummary IS NULL AND (rls.LikeCount - rls.DislikeCount) IS NOT NULL)))
+
+SET @EndTime = GETDATE()
+SET @ElapsedTime = DATEDIFF(s,@StartTime,@EndTime)
+PRINT 'UPDATE likesSummary from [Resource.LikesSummary] = ' + convert(varchar,@ElapsedTime)
+SET @StartTime = GETDATE()
+
+-- Likes and Dislikes
+UPDATE Resource_IndexV2
+SET likeCount = rls.LikeCount,
+	dislikeCount = rls.DislikeCount,
+	LastUpdated = GETDATE()
+FROM [Resource.LikesSummary] rls
+WHERE Resource_IndexV2.intID = rls.ResourceIntId AND
+ ((Resource_IndexV2.likeCount <> rls.LikeCount OR (Resource_IndexV2.likeCount IS NULL AND rls.LikeCount IS NOT NULL)) OR
+ (Resource_IndexV2.dislikeCount <> rls.DislikeCount OR (Resource_IndexV2.dislikeCount IS NULL AND rls.DislikeCount IS NOT NULL)))
+
+SET @EndTime = GETDATE()
+SET @ElapsedTime = DATEDIFF(s,@StartTime,@EndTime)
+PRINT 'UPDATE likeCount, dislikeCount from [Resource.LikesSummary] = ' + convert(varchar,@ElapsedTime)
+SET @StartTime = GETDATE()
+	
+-- Library IDs
+UPDATE Resource_IndexV2
+SET libraryIDs = rs.LibraryIDs,
+		LastUpdated = GETDATE()
+	FROM (SELECT ResourceIntId, left(LibraryIDs, LEN(LibraryIDs) - 1) AS LibraryIDs
+		FROM (SELECT ResourceIntId, (
+			SELECT convert(nvarchar,[IsleContent].[dbo].[Library.Section].LibraryId)+','
+			FROM [IsleContent].[dbo].[Library.Resource] itbl
+			INNER JOIN [IsleContent].[dbo].[Library.Section] 
+				ON itbl.LibrarySectionId = [IsleContent].[dbo].[Library.Section].Id
+			WHERE itbl.ResourceIntId = tbl.ResourceIntId AND (itbl.CreatedById IS NULL OR itbl.CreatedById <> 22)
+			for xml path('')) LibraryIDs
+		FROM [IsleContent].[dbo].[Library.Resource] tbl
+		GROUP BY ResourceIntId) otab) rs
+WHERE Resource_IndexV2.intID = rs.ResourceIntId AND
+	(Resource_IndexV2.libraryIDs <> rs.LibraryIDs OR
+	(Resource_IndexV2.libraryIDs IS NULL AND rs.LibraryIDs IS NOT NULL))
+
+SET @EndTime = GETDATE()
+SET @ElapsedTime = DATEDIFF(s,@StartTime,@EndTime)
+PRINT 'UPDATE from [Library.Section] = ' + convert(varchar,@ElapsedTime)
+SET @StartTime = GETDATE()
+
+-- Collection IDs
+UPDATE Resource_IndexV2
+SET collectionIDs = rs.CollectionIDs,
+	LastUpdated = GETDATE()
+FROM (SELECT ResourceIntId, left(CollectionIDs, LEN(CollectionIDs) - 1) AS CollectionIDs
+	FROM (SELECT ResourceIntId, (
+		SELECT convert(nvarchar,itbl.[LibrarySectionId])+','
+		FROM [IsleContent].[dbo].[Library.Resource] itbl
+		WHERE itbl.ResourceIntId = tbl.ResourceIntId AND (CreatedById IS NULL OR CreatedById <> 22)
+		for xml path('')) CollectionIDs
+	FROM [IsleContent].[dbo].[Library.Resource] tbl
+	GROUP BY ResourceIntId) otab) rs
+WHERE Resource_IndexV2.intID = rs.ResourceIntId AND
+	(Resource_IndexV2.collectionIDs <> rs.CollectionIDs OR
+	(Resource_IndexV2.collectionIDs IS NULL AND rs.CollectionIDs IS NOT NULL))
+
+SET @EndTime = GETDATE()
+SET @ElapsedTime = DATEDIFF(s,@StartTime,@EndTime)
+PRINT 'UPDATE from [Library.Resource] = ' + convert(varchar,@ElapsedTime)
+SET @StartTime = GETDATE()
+
+-- Comments Count
+UPDATE Resource_IndexV2
+SET commentsCount = rs.CommentsCount,
+	LastUpdated = getdate()
+FROM (SELECT ResourceIntId, COUNT(*) AS CommentsCount
+	FROM [Resource.Comment]
+	WHERE (CreatedById IS NULL OR CreatedById <> 22)
+	GROUP BY ResourceIntId) rs
+WHERE Resource_IndexV2.intID = rs.ResourceIntId AND
+	(Resource_IndexV2.commentsCount <> rs.CommentsCount OR
+	(Resource_IndexV2.commentsCount IS NULL AND rs.CommentsCount IS NOT NULL))
+
+SET @EndTime = GETDATE()
+SET @ElapsedTime = DATEDIFF(s,@StartTime,@EndTime)
+PRINT 'UPDATE from [Resource.Comments] = ' + convert(varchar,@ElapsedTime)
+SET @StartTime = GETDATE()
+
+-- AssessmentTypeIDs
+UPDATE Resource_IndexV2
+SET assessmentTypeIDs = rs.relatedIds
+FROM (SELECT ResourceIntId, left(RelatedList, LEN(RelatedList) - 1) AS relatedIds
+	FROM (SELECT ResourceIntId, (
+		SELECT convert(varchar,itbl.TagValueId)+','
+		FROM [Resource_TagSummary] itbl
+		WHERE itbl.CategoryId = 25 AND itbl.ResourceIntId = tbl.ResourceIntId 
+		AND (CreatedById IS NULL OR CreatedById <> 22)
+		for xml path('')) RelatedList
+		FROM [Resource_TagSummary] tbl
+	WHERE tbl.CategoryId = 25
+	GROUP BY ResourceIntId) otab) rs
+WHERE Resource_IndexV2.intID = rs.ResourceIntId AND
+	(Resource_IndexV2.assessmentTypeIDs <> rs.relatedIds OR
+	(Resource_IndexV2.assessmentTypeIDs IS NULL AND rs.relatedIds IS NOT NULL))
+
+SET @EndTime = GETDATE()
+SET @ElapsedTime = DATEDIFF(s,@StartTime,@EndTime)
+PRINT 'UPDATE #1 from [Resource.AssessmentType] = ' + convert(varchar,@ElapsedTime)
+SET @StartTime = GETDATE()
+
+-- AssessmentTypes
+UPDATE Resource_IndexV2
+SET assessmentTypes = rs.relatedTags,
+	LastUpdated = GETDATE()
+FROM (SELECT ResourceIntId, left(RelatedList, LEN(RelatedList) - 1) AS relatedTags
+	FROM (SELECT ResourceIntId, (
+		SELECT  itbl.TagTitle + ','
+		FROM [Resource_TagSummary] itbl
+		WHERE itbl.CategoryId = 4 AND itbl.ResourceIntId = tbl.ResourceIntId 
+		AND (CreatedById IS NULL OR CreatedById <> 22)
+		for xml path('')) RelatedList
+	FROM [Resource_TagSummary] tbl
+	WHERE tbl.CategoryId = 4
+	GROUP BY ResourceIntId) otab) rs
+WHERE Resource_IndexV2.intID = rs.ResourceIntId AND
+	(Resource_IndexV2.assessmentTypes <> rs.relatedTags OR
+	(Resource_IndexV2.assessmentTypes IS NULL AND rs.relatedTags IS NOT NULL))
+
+
+SET @EndTime = GETDATE()
+SET @ElapsedTime = DATEDIFF(s,@StartTime,@EndTime)
+PRINT 'UPDATE #2 from [Resource.AssessmentType] = ' + convert(varchar,@ElapsedTime)
+SET @StartTime = GETDATE()
+
+-- DetailViews
+UPDATE Resource_IndexV2
+SET detailViews = rs.DetailViews,
+	LastUpdated = GETDATE()
+FROM (SELECT ResourceIntId, COUNT(*) AS DetailViews
+	FROM [Resource.DetailView]
+	WHERE (CreatedById IS NULL OR CreatedById <> 22)
+	GROUP BY ResourceIntId) rs
+WHERE Resource_IndexV2.intID = rs.ResourceIntId AND
+	(Resource_IndexV2.detailViews <> rs.DetailViews OR
+	(Resource_IndexV2.detailViews IS NULL AND rs.DetailViews IS NOT NULL))
+
+SET @EndTime = GETDATE()
+SET @ElapsedTime = DATEDIFF(s,@StartTime,@EndTime)
+PRINT 'UPDATE from [Resource.DetailView] = ' + convert(varchar,@ElapsedTime)
+SET @StartTime = GETDATE()
+
+-- Favorites - commented out.  Relying only on [Resource].FavoriteCount
+/* UPDATE Resource_IndexV2
+SET favorites = rs.Favorites,
+	LastUpdated = GETDATE()
+FROM (SELECT ResourceIntId, r.FavoriteCount + COUNT(*) AS Favorites
+	FROM [IsleContent].[dbo].[Library.Resource] lr
+	INNER JOIN [Resource] r ON lr.ResourceIntId = r.Id
+	WHERE (CreatedById IS NULL OR CreatedById <> 22)
+	GROUP BY ResourceIntId, FavoriteCount) rs
+WHERE Resource_IndexV2.intID = rs.ResourceIntId AND
+	(Resource_IndexV2.detailViews <> rs.Favorites OR
+	(Resource_IndexV2.detailViews IS NULL AND rs.Favorites IS NOT NULL))
+
+SET @EndTime = GETDATE()
+SET @ElapsedTime = DATEDIFF(s,@StartTime,@EndTime)
+PRINT 'UPDATE from [Library.Resource] = ' + convert(varchar,@ElapsedTime)
+SET @StartTime = GETDATE() */
+
+
+-- accessibilityApi IDs
+/*--====== why is the format different for these???
+Missing:
+WHERE Resource_IndexV2.intId = cc1.ResourceIntId AND
+	(Resource_IndexV2.clusterIDs <> cc1.ClusterIds OR 
+	(Resource_IndexV2.clusterIDs IS NULL AND cc1.ClusterIds IS NOT NULL))
+also:
+LastUpdated = GETDATE()
+
+*/
+UPDATE Resource_IndexV2
+SET accessibilityApiIDs = rs.relatedTags,
+	LastUpdated = GETDATE()
+FROM (SELECT ResourceIntId, left(RelatedList, LEN(RelatedList) - 1) AS relatedTags
+	FROM (SELECT ResourceIntId, (
+		SELECT convert(varchar,itbl.TagValueId)+','
+		FROM [Resource_TagSummary] itbl
+		WHERE itbl.CategoryId = 2 AND itbl.ResourceIntId = tbl.ResourceIntId 
+		AND (CreatedById IS NULL OR CreatedById <> 22)
+		for xml path('')) RelatedList
+		FROM [Resource_TagSummary] tbl
+	WHERE tbl.CategoryId = 2
+	GROUP BY ResourceIntId) otab) rs
+WHERE Resource_IndexV2.intID = rs.ResourceIntId AND
+	(Resource_IndexV2.accessibilityApiIDs <> rs.relatedTags OR
+	(Resource_IndexV2.accessibilityApiIDs IS NULL AND rs.relatedTags IS NOT NULL))
+
+SET @EndTime = GETDATE()
+SET @ElapsedTime = DATEDIFF(s,@StartTime,@EndTime)
+PRINT 'UPDATE #1 from [Resource.AccessibilityApi] = ' + convert(varchar,@ElapsedTime)
+SET @StartTime = GETDATE()
+		
+-- accessibilityApis
+UPDATE Resource_IndexV2
+SET accessibilityApis = rs.relatedTags,
+	LastUpdated = GETDATE()
+FROM (SELECT ResourceIntId, left(RelatedList, LEN(RelatedList) - 1) AS relatedTags
+	FROM (SELECT ResourceIntId, (
+		SELECT  itbl.TagTitle + ','
+		FROM [Resource_TagSummary] itbl
+		WHERE itbl.CategoryId = 2 AND itbl.ResourceIntId = tbl.ResourceIntId 
+		AND (CreatedById IS NULL OR CreatedById <> 22)
+		for xml path('')) RelatedList
+	FROM [Resource_TagSummary] tbl
+	WHERE tbl.CategoryId = 2
+	GROUP BY ResourceIntId) otab) rs
+WHERE Resource_IndexV2.intID = rs.ResourceIntId AND
+	(Resource_IndexV2.accessibilityApiIDs <> rs.relatedTags OR
+	(Resource_IndexV2.accessibilityApiIDs IS NULL AND rs.relatedTags IS NOT NULL))
+
+SET @EndTime = GETDATE()
+SET @ElapsedTime = DATEDIFF(s,@StartTime,@EndTime)
+PRINT 'UPDATE #2 from [Resource.AccessibilityApi] = ' + convert(varchar,@ElapsedTime)
+SET @StartTime = GETDATE()
+
+-- accessibilityControl IDs
+UPDATE Resource_IndexV2
+SET accessibilityControlIDs = rs.relatedTags,
+	LastUpdated = GETDATE()
+FROM (SELECT ResourceIntId, left(RelatedList, LEN(RelatedList) - 1) AS relatedTags
+	FROM (SELECT ResourceIntId, (
+		SELECT convert(varchar,itbl.TagValueId)+','
+		FROM [Resource_TagSummary] itbl
+		WHERE itbl.CategoryId = 3 AND itbl.ResourceIntId = tbl.ResourceIntId 
+		AND (CreatedById IS NULL OR CreatedById <> 22)
+		for xml path('')) RelatedList
+		FROM [Resource_TagSummary] tbl
+	WHERE tbl.CategoryId = 3
+	GROUP BY ResourceIntId) otab) rs
+WHERE Resource_IndexV2.intID = rs.ResourceIntId AND
+	(Resource_IndexV2.accessibilityApiIDs <> rs.relatedTags OR
+	(Resource_IndexV2.accessibilityApiIDs IS NULL AND rs.relatedTags IS NOT NULL))
+
+SET @EndTime = GETDATE()
+SET @ElapsedTime = DATEDIFF(s,@StartTime,@EndTime)
+PRINT 'UPDATE #1 from [Resource.AccessibilityControl] = ' + convert(varchar,@ElapsedTime)
+SET @StartTime = GETDATE()
+		
+-- accessibilityControls
+UPDATE Resource_IndexV2
+SET accessibilityControls = rs.relatedTags,
+	LastUpdated = GETDATE()
+FROM (SELECT ResourceIntId, left(RelatedList, LEN(RelatedList) - 1) AS relatedTags
+	FROM (SELECT ResourceIntId, (
+		SELECT  itbl.TagTitle + ','
+		FROM [Resource_TagSummary] itbl
+		WHERE itbl.CategoryId = 3 AND itbl.ResourceIntId = tbl.ResourceIntId 
+		AND (CreatedById IS NULL OR CreatedById <> 22)
+		for xml path('')) RelatedList
+	FROM [Resource_TagSummary] tbl
+	WHERE tbl.CategoryId = 3
+	GROUP BY ResourceIntId) otab) rs
+WHERE Resource_IndexV2.intID = rs.ResourceIntId AND
+	(Resource_IndexV2.accessibilityApiIDs <> rs.relatedTags OR
+	(Resource_IndexV2.accessibilityApiIDs IS NULL AND rs.relatedTags IS NOT NULL))
+
+SET @EndTime = GETDATE()
+SET @ElapsedTime = DATEDIFF(s,@StartTime,@EndTime)
+PRINT 'UPDATE #2 from [Resource.AccessibilityControl] = ' + convert(varchar,@ElapsedTime)
+SET @StartTime = GETDATE()
+
+-- accessibilityFeature IDs
+UPDATE Resource_IndexV2
+SET accessibilityFeatureIDs = rs.relatedTags,
+	LastUpdated = GETDATE()
+FROM (SELECT ResourceIntId, left(RelatedList, LEN(RelatedList) - 1) AS relatedTags
+	FROM (SELECT ResourceIntId, (
+		SELECT convert(varchar,itbl.TagValueId)+','
+		FROM [Resource_TagSummary] itbl
+		WHERE itbl.CategoryId = 4 AND itbl.ResourceIntId = tbl.ResourceIntId 
+		AND (CreatedById IS NULL OR CreatedById <> 22)
+		for xml path('')) RelatedList
+		FROM [Resource_TagSummary] tbl
+	WHERE tbl.CategoryId = 4
+	GROUP BY ResourceIntId) otab) rs
+WHERE Resource_IndexV2.intID = rs.ResourceIntId AND
+	(Resource_IndexV2.accessibilityApiIDs <> rs.relatedTags OR
+	(Resource_IndexV2.accessibilityApiIDs IS NULL AND rs.relatedTags IS NOT NULL))
+
+SET @EndTime = GETDATE()
+SET @ElapsedTime = DATEDIFF(s,@StartTime,@EndTime)
+PRINT 'UPDATE #1 from [Resource.AccessibilityFeature] = ' + convert(varchar,@ElapsedTime)
+SET @StartTime = GETDATE()
+		
+-- accessibilityFeatures
+UPDATE Resource_IndexV2
+SET accessibilityFeatures = rs.relatedTags,
+	LastUpdated = GETDATE()
+FROM (SELECT ResourceIntId, left(RelatedList, LEN(RelatedList) - 1) AS relatedTags
+	FROM (SELECT ResourceIntId, (
+		SELECT  itbl.TagTitle + ','
+		FROM [Resource_TagSummary] itbl
+		WHERE itbl.CategoryId = 4 AND itbl.ResourceIntId = tbl.ResourceIntId 
+		AND (CreatedById IS NULL OR CreatedById <> 22)
+		for xml path('')) RelatedList
+	FROM [Resource_TagSummary] tbl
+	WHERE tbl.CategoryId = 4
+	GROUP BY ResourceIntId) otab) rs
+WHERE Resource_IndexV2.intID = rs.ResourceIntId AND
+	(Resource_IndexV2.accessibilityApiIDs <> rs.relatedTags OR
+	(Resource_IndexV2.accessibilityApiIDs IS NULL AND rs.relatedTags IS NOT NULL))
+
+SET @EndTime = GETDATE()
+SET @ElapsedTime = DATEDIFF(s,@StartTime,@EndTime)
+PRINT 'UPDATE #2 from [Resource.AccessibilityFeature] = ' + convert(varchar,@ElapsedTime)
+SET @StartTime = GETDATE()
+
+-- accessibilityHazard IDs
+UPDATE Resource_IndexV2
+SET accessibilityHazardIDs = rs.relatedTags,
+	LastUpdated = GETDATE()
+FROM (SELECT ResourceIntId, left(RelatedList, LEN(RelatedList) - 1) AS relatedTags
+	FROM (SELECT ResourceIntId, (
+		SELECT convert(varchar,itbl.TagValueId)+','
+		FROM [Resource_TagSummary] itbl
+		WHERE itbl.CategoryId = 5 AND itbl.ResourceIntId = tbl.ResourceIntId 
+		AND (CreatedById IS NULL OR CreatedById <> 22)
+		for xml path('')) RelatedList
+		FROM [Resource_TagSummary] tbl
+	WHERE tbl.CategoryId = 5
+	GROUP BY ResourceIntId) otab) rs
+WHERE Resource_IndexV2.intID = rs.ResourceIntId AND
+	(Resource_IndexV2.accessibilityApiIDs <> rs.relatedTags OR
+	(Resource_IndexV2.accessibilityApiIDs IS NULL AND rs.relatedTags IS NOT NULL))
+
+SET @EndTime = GETDATE()
+SET @ElapsedTime = DATEDIFF(s,@StartTime,@EndTime)
+PRINT 'UPDATE #1 from [Resource.AccessibilityHazard] = ' + convert(varchar,@ElapsedTime)
+SET @StartTime = GETDATE()
+		
+-- accessibilityHazards
+UPDATE Resource_IndexV2
+SET accessibilityHazards = rs.relatedTags,
+	LastUpdated = GETDATE()
+FROM (SELECT ResourceIntId, left(RelatedList, LEN(RelatedList) - 1) AS relatedTags
+	FROM (SELECT ResourceIntId, (
+		SELECT  itbl.TagTitle + ','
+		FROM [Resource_TagSummary] itbl
+		WHERE itbl.CategoryId = 5 AND itbl.ResourceIntId = tbl.ResourceIntId 
+		AND (CreatedById IS NULL OR CreatedById <> 22)
+		for xml path('')) RelatedList
+	FROM [Resource_TagSummary] tbl
+	WHERE tbl.CategoryId = 5
+	GROUP BY ResourceIntId) otab) rs
+WHERE Resource_IndexV2.intID = rs.ResourceIntId AND
+	(Resource_IndexV2.accessibilityApiIDs <> rs.relatedTags OR
+	(Resource_IndexV2.accessibilityApiIDs IS NULL AND rs.relatedTags IS NOT NULL))
+
+SET @EndTime = GETDATE()
+SET @ElapsedTime = DATEDIFF(s,@StartTime,@EndTime)
+PRINT 'UPDATE #2 from [Resource.AccessibilityHazard] = ' + convert(varchar,@ElapsedTime)
+SET @StartTime = GETDATE()
+
+-- =======================================================================
+-- 9 - career planning IDs == to Training & Credentials
+set @categoryId= 9
+set @processName= '9 - Training & Credentials'
+UPDATE Resource_IndexV2
+SET trainingIDs = rs.relatedTags,
+	LastUpdated = GETDATE()
+FROM (SELECT ResourceIntId, left(RelatedList, LEN(RelatedList) - 1) AS relatedTags
+	FROM (SELECT ResourceIntId, (
+		SELECT convert(varchar,itbl.TagValueId)+','
+		FROM [Resource_TagSummary] itbl
+		WHERE itbl.CategoryId = @categoryId AND itbl.ResourceIntId = tbl.ResourceIntId 
+		for xml path('')) RelatedList
+		FROM [Resource_TagSummary] tbl
+	WHERE tbl.CategoryId = @categoryId
+	GROUP BY ResourceIntId) otab) rs
+WHERE Resource_IndexV2.intID = rs.ResourceIntId AND
+	(Resource_IndexV2.trainingIDs <> rs.relatedTags OR
+	(Resource_IndexV2.trainingIDs IS NULL AND rs.relatedTags IS NOT NULL))
+
+SET @EndTime = GETDATE()
+SET @ElapsedTime = DATEDIFF(s,@StartTime,@EndTime)
+PRINT @processName + ' UPDATE #1 = ' + convert(varchar,@ElapsedTime)
+SET @StartTime = GETDATE()
+		
+-- titles
+UPDATE Resource_IndexV2
+SET training = rs.relatedTags,
+	LastUpdated = GETDATE()
+FROM (SELECT ResourceIntId, left(RelatedList, LEN(RelatedList) - 1) AS relatedTags
+	FROM (SELECT ResourceIntId, (
+		SELECT  itbl.TagTitle + ','
+		FROM [Resource_TagSummary] itbl
+		WHERE itbl.CategoryId = @categoryId AND itbl.ResourceIntId = tbl.ResourceIntId 
+		for xml path('')) RelatedList
+	FROM [Resource_TagSummary] tbl
+	WHERE tbl.CategoryId = @categoryId
+	GROUP BY ResourceIntId) otab) rs
+WHERE Resource_IndexV2.intID = rs.ResourceIntId AND
+	(Resource_IndexV2.training <> rs.relatedTags OR
+	(Resource_IndexV2.training IS NULL AND rs.relatedTags IS NOT NULL))
+
+SET @EndTime = GETDATE()
+SET @ElapsedTime = DATEDIFF(s,@StartTime,@EndTime)
+PRINT @processName + ' UPDATE #2 = ' + convert(varchar,@ElapsedTime)
+SET @StartTime = GETDATE()
+
+-- =======================================================================
+-- Disability Topic IDs
+set @categoryId= 10
+set @processName= '10 - Disability Topic'
+UPDATE Resource_IndexV2
+SET disabilityTopicIDs = rs.relatedTags,
+	LastUpdated = GETDATE()
+FROM (SELECT ResourceIntId, left(RelatedList, LEN(RelatedList) - 1) AS relatedTags
+	FROM (SELECT ResourceIntId, (
+		SELECT convert(varchar,itbl.TagValueId)+','
+		FROM [Resource_TagSummary] itbl
+		WHERE itbl.CategoryId = @categoryId AND itbl.ResourceIntId = tbl.ResourceIntId 
+		for xml path('')) RelatedList
+		FROM [Resource_TagSummary] tbl
+	WHERE tbl.CategoryId = @categoryId
+	GROUP BY ResourceIntId) otab) rs
+WHERE Resource_IndexV2.intID = rs.ResourceIntId AND
+	(Resource_IndexV2.disabilityTopicIDs <> rs.relatedTags OR
+	(Resource_IndexV2.disabilityTopicIDs IS NULL AND rs.relatedTags IS NOT NULL))
+
+SET @EndTime = GETDATE()
+SET @ElapsedTime = DATEDIFF(s,@StartTime,@EndTime)
+PRINT @processName + ' UPDATE #1 = ' + convert(varchar,@ElapsedTime)
+SET @StartTime = GETDATE()
+		
+-- titles
+UPDATE Resource_IndexV2
+SET disabilityTopics = rs.relatedTags,
+	LastUpdated = GETDATE()
+FROM (SELECT ResourceIntId, left(RelatedList, LEN(RelatedList) - 1) AS relatedTags
+	FROM (SELECT ResourceIntId, (
+		SELECT  itbl.TagTitle + ','
+		FROM [Resource_TagSummary] itbl
+		WHERE itbl.CategoryId = @categoryId AND itbl.ResourceIntId = tbl.ResourceIntId 
+		for xml path('')) RelatedList
+	FROM [Resource_TagSummary] tbl
+	WHERE tbl.CategoryId = @categoryId
+	GROUP BY ResourceIntId) otab) rs
+WHERE Resource_IndexV2.intID = rs.ResourceIntId AND
+	(Resource_IndexV2.disabilityTopics <> rs.relatedTags OR
+	(Resource_IndexV2.disabilityTopics IS NULL AND rs.relatedTags IS NOT NULL))
+
+SET @EndTime = GETDATE()
+SET @ElapsedTime = DATEDIFF(s,@StartTime,@EndTime)
+PRINT @processName + ' UPDATE #2 = ' + convert(varchar,@ElapsedTime)
+SET @StartTime = GETDATE()
+
+-- =======================================================================
+-- Disability - Region IDs
+set @categoryId= 26
+set @processName= '26 - - Region IDs'
+UPDATE Resource_IndexV2
+SET regionIDs = rs.relatedTags,
+	LastUpdated = GETDATE()
+FROM (SELECT ResourceIntId, left(RelatedList, LEN(RelatedList) - 1) AS relatedTags
+	FROM (SELECT ResourceIntId, (
+		SELECT convert(varchar,itbl.TagValueId)+','
+		FROM [Resource_TagSummary] itbl
+		WHERE itbl.CategoryId = @categoryId AND itbl.ResourceIntId = tbl.ResourceIntId 
+		for xml path('')) RelatedList
+		FROM [Resource_TagSummary] tbl
+	WHERE tbl.CategoryId = @categoryId
+	GROUP BY ResourceIntId) otab) rs
+WHERE Resource_IndexV2.intID = rs.ResourceIntId AND
+	(Resource_IndexV2.regionIDs <> rs.relatedTags OR
+	(Resource_IndexV2.regionIDs IS NULL AND rs.relatedTags IS NOT NULL))
+
+SET @EndTime = GETDATE()
+SET @ElapsedTime = DATEDIFF(s,@StartTime,@EndTime)
+PRINT @processName + ' UPDATE #1 = ' + convert(varchar,@ElapsedTime)
+SET @StartTime = GETDATE()
+		
+-- titles
+UPDATE Resource_IndexV2
+SET regions = rs.relatedTags,
+	LastUpdated = GETDATE()
+FROM (SELECT ResourceIntId, left(RelatedList, LEN(RelatedList) - 1) AS relatedTags
+	FROM (SELECT ResourceIntId, (
+		SELECT  itbl.TagTitle + ','
+		FROM [Resource_TagSummary] itbl
+		WHERE itbl.CategoryId = @categoryId AND itbl.ResourceIntId = tbl.ResourceIntId 
+		for xml path('')) RelatedList
+	FROM [Resource_TagSummary] tbl
+	WHERE tbl.CategoryId = @categoryId
+	GROUP BY ResourceIntId) otab) rs
+WHERE Resource_IndexV2.intID = rs.ResourceIntId AND
+	(Resource_IndexV2.regions <> rs.relatedTags OR
+	(Resource_IndexV2.regions IS NULL AND rs.relatedTags IS NOT NULL))
+
+SET @EndTime = GETDATE()
+SET @ElapsedTime = DATEDIFF(s,@StartTime,@EndTime)
+PRINT @processName + ' UPDATE #2 = ' + convert(varchar,@ElapsedTime)
+SET @StartTime = GETDATE()
+
+
+-- =======================================================================
+-- Employer Program IDs  == to Network & Connect
+set @categoryId= 12
+set @processName= '12 - Network & Connect'
+UPDATE Resource_IndexV2
+SET networkingIDs = rs.relatedTags,
+	LastUpdated = GETDATE()
+FROM (SELECT ResourceIntId, left(RelatedList, LEN(RelatedList) - 1) AS relatedTags
+	FROM (SELECT ResourceIntId, (
+		SELECT convert(varchar,itbl.TagValueId)+','
+		FROM [Resource_TagSummary] itbl
+		WHERE itbl.CategoryId = @categoryId AND itbl.ResourceIntId = tbl.ResourceIntId 
+		for xml path('')) RelatedList
+		FROM [Resource_TagSummary] tbl
+	WHERE tbl.CategoryId = @categoryId
+	GROUP BY ResourceIntId) otab) rs
+WHERE Resource_IndexV2.intID = rs.ResourceIntId AND
+	(Resource_IndexV2.networkingIDs <> rs.relatedTags OR
+	(Resource_IndexV2.networkingIDs IS NULL AND rs.relatedTags IS NOT NULL))
+
+SET @EndTime = GETDATE()
+SET @ElapsedTime = DATEDIFF(s,@StartTime,@EndTime)
+PRINT @processName + ' UPDATE #1 = ' + convert(varchar,@ElapsedTime)
+SET @StartTime = GETDATE()
+		
+-- titles
+UPDATE Resource_IndexV2
+SET networking = rs.relatedTags,
+	LastUpdated = GETDATE()
+FROM (SELECT ResourceIntId, left(RelatedList, LEN(RelatedList) - 1) AS relatedTags
+	FROM (SELECT ResourceIntId, (
+		SELECT  itbl.TagTitle + ','
+		FROM [Resource_TagSummary] itbl
+		WHERE itbl.CategoryId = @categoryId AND itbl.ResourceIntId = tbl.ResourceIntId 
+		for xml path('')) RelatedList
+	FROM [Resource_TagSummary] tbl
+	WHERE tbl.CategoryId = @categoryId
+	GROUP BY ResourceIntId) otab) rs
+WHERE Resource_IndexV2.intID = rs.ResourceIntId AND
+	(Resource_IndexV2.networking <> rs.relatedTags OR
+	(Resource_IndexV2.networking IS NULL AND rs.relatedTags IS NOT NULL))
+
+SET @EndTime = GETDATE()
+SET @ElapsedTime = DATEDIFF(s,@StartTime,@EndTime)
+PRINT @processName + ' UPDATE #2 = ' + convert(varchar,@ElapsedTime)
+SET @StartTime = GETDATE()
+
+
+-- =======================================================================
+-- Job Preparation IDs		== to jobs
+set @categoryId= 16
+set @processName= '16 - Job Preparation'
+UPDATE Resource_IndexV2
+SET jobIDs = rs.relatedTags,
+	LastUpdated = GETDATE()
+FROM (SELECT ResourceIntId, left(RelatedList, LEN(RelatedList) - 1) AS relatedTags
+	FROM (SELECT ResourceIntId, (
+		SELECT convert(varchar,itbl.TagValueId)+','
+		FROM [Resource_TagSummary] itbl
+		WHERE itbl.CategoryId = @categoryId AND itbl.ResourceIntId = tbl.ResourceIntId 
+		for xml path('')) RelatedList
+		FROM [Resource_TagSummary] tbl
+	WHERE tbl.CategoryId = @categoryId
+	GROUP BY ResourceIntId) otab) rs
+WHERE Resource_IndexV2.intID = rs.ResourceIntId AND
+	(Resource_IndexV2.jobIDs <> rs.relatedTags OR
+	(Resource_IndexV2.jobIDs IS NULL AND rs.relatedTags IS NOT NULL))
+
+SET @EndTime = GETDATE()
+SET @ElapsedTime = DATEDIFF(s,@StartTime,@EndTime)
+PRINT @processName + ' UPDATE #1 = ' + convert(varchar,@ElapsedTime)
+SET @StartTime = GETDATE()
+		
+-- titles
+UPDATE Resource_IndexV2
+SET jobs = rs.relatedTags,
+	LastUpdated = GETDATE()
+FROM (SELECT ResourceIntId, left(RelatedList, LEN(RelatedList) - 1) AS relatedTags
+	FROM (SELECT ResourceIntId, (
+		SELECT  itbl.TagTitle + ','
+		FROM [Resource_TagSummary] itbl
+		WHERE itbl.CategoryId = @categoryId AND itbl.ResourceIntId = tbl.ResourceIntId 
+		for xml path('')) RelatedList
+	FROM [Resource_TagSummary] tbl
+	WHERE tbl.CategoryId = @categoryId
+	GROUP BY ResourceIntId) otab) rs
+WHERE Resource_IndexV2.intID = rs.ResourceIntId AND
+	(Resource_IndexV2.jobs <> rs.relatedTags OR
+	(Resource_IndexV2.jobs IS NULL AND rs.relatedTags IS NOT NULL))
+
+SET @EndTime = GETDATE()
+SET @ElapsedTime = DATEDIFF(s,@StartTime,@EndTime)
+PRINT @processName + ' UPDATE #2 = ' + convert(varchar,@ElapsedTime)
+SET @StartTime = GETDATE()
+
+
+-- =======================================================================
+-- Veterans Service IDs		to Resources
+set @categoryId= 21
+set @processName= '21 - Resources'
+UPDATE Resource_IndexV2
+SET resourceIDs = rs.relatedTags,
+	LastUpdated = GETDATE()
+FROM (SELECT ResourceIntId, left(RelatedList, LEN(RelatedList) - 1) AS relatedTags
+	FROM (SELECT ResourceIntId, (
+		SELECT convert(varchar,itbl.TagValueId)+','
+		FROM [Resource_TagSummary] itbl
+		WHERE itbl.CategoryId = @categoryId AND itbl.ResourceIntId = tbl.ResourceIntId 
+		for xml path('')) RelatedList
+		FROM [Resource_TagSummary] tbl
+	WHERE tbl.CategoryId = @categoryId
+	GROUP BY ResourceIntId) otab) rs
+WHERE Resource_IndexV2.intID = rs.ResourceIntId AND
+	(Resource_IndexV2.resourceIDs <> rs.relatedTags OR
+	(Resource_IndexV2.resourceIDs IS NULL AND rs.relatedTags IS NOT NULL))
+
+SET @EndTime = GETDATE()
+SET @ElapsedTime = DATEDIFF(s,@StartTime,@EndTime)
+PRINT @processName + ' UPDATE #1 = ' + convert(varchar,@ElapsedTime)
+SET @StartTime = GETDATE()
+		
+-- titles
+UPDATE Resource_IndexV2
+SET resources = rs.relatedTags,
+	LastUpdated = GETDATE()
+FROM (SELECT ResourceIntId, left(RelatedList, LEN(RelatedList) - 1) AS relatedTags
+	FROM (SELECT ResourceIntId, (
+		SELECT  itbl.TagTitle + ','
+		FROM [Resource_TagSummary] itbl
+		WHERE itbl.CategoryId = @categoryId AND itbl.ResourceIntId = tbl.ResourceIntId 
+		for xml path('')) RelatedList
+	FROM [Resource_TagSummary] tbl
+	WHERE tbl.CategoryId = @categoryId
+	GROUP BY ResourceIntId) otab) rs
+WHERE Resource_IndexV2.intID = rs.ResourceIntId AND
+	(Resource_IndexV2.resources <> rs.relatedTags OR
+	(Resource_IndexV2.resources IS NULL AND rs.relatedTags IS NOT NULL))
+
+SET @EndTime = GETDATE()
+SET @ElapsedTime = DATEDIFF(s,@StartTime,@EndTime)
+PRINT @processName + ' UPDATE #2 = ' + convert(varchar,@ElapsedTime)
+SET @StartTime = GETDATE()
+
+-- =======================================================================
+-- Workforce Education Partner IDs
+set @categoryId= 22
+set @processName= '22 - Workforce Education Partner'
+UPDATE Resource_IndexV2
+SET wfePartnerIDs = rs.relatedTags,
+	LastUpdated = GETDATE()
+FROM (SELECT ResourceIntId, left(RelatedList, LEN(RelatedList) - 1) AS relatedTags
+	FROM (SELECT ResourceIntId, (
+		SELECT convert(varchar,itbl.TagValueId)+','
+		FROM [Resource_TagSummary] itbl
+		WHERE itbl.CategoryId = @categoryId AND itbl.ResourceIntId = tbl.ResourceIntId 
+		for xml path('')) RelatedList
+		FROM [Resource_TagSummary] tbl
+	WHERE tbl.CategoryId = @categoryId
+	GROUP BY ResourceIntId) otab) rs
+WHERE Resource_IndexV2.intID = rs.ResourceIntId AND
+	(Resource_IndexV2.wfePartnerIDs <> rs.relatedTags OR
+	(Resource_IndexV2.wfePartnerIDs IS NULL AND rs.relatedTags IS NOT NULL))
+
+SET @EndTime = GETDATE()
+SET @ElapsedTime = DATEDIFF(s,@StartTime,@EndTime)
+PRINT @processName + ' UPDATE #1 = ' + convert(varchar,@ElapsedTime)
+SET @StartTime = GETDATE()
+		
+-- titles
+UPDATE Resource_IndexV2
+SET wfePartners = rs.relatedTags,
+	LastUpdated = GETDATE()
+FROM (SELECT ResourceIntId, left(RelatedList, LEN(RelatedList) - 1) AS relatedTags
+	FROM (SELECT ResourceIntId, (
+		SELECT  itbl.TagTitle + ','
+		FROM [Resource_TagSummary] itbl
+		WHERE itbl.CategoryId = @categoryId AND itbl.ResourceIntId = tbl.ResourceIntId 
+		for xml path('')) RelatedList
+	FROM [Resource_TagSummary] tbl
+	WHERE tbl.CategoryId = @categoryId
+	GROUP BY ResourceIntId) otab) rs
+WHERE Resource_IndexV2.intID = rs.ResourceIntId AND
+	(Resource_IndexV2.wfePartners <> rs.relatedTags OR
+	(Resource_IndexV2.wfePartners IS NULL AND rs.relatedTags IS NOT NULL))
+
+SET @EndTime = GETDATE()
+SET @ElapsedTime = DATEDIFF(s,@StartTime,@EndTime)
+PRINT @processName + ' UPDATE #2 = ' + convert(varchar,@ElapsedTime)
+SET @StartTime = GETDATE()
+
+
+-- =======================================================================
+-- wioaWorks (formerly workSupportServiceIDs
+set @categoryId= 23
+set @processName= '23 - wioaWorks'
+UPDATE Resource_IndexV2
+SET wioaWorksIDs = rs.relatedTags,
+	LastUpdated = GETDATE()
+FROM (SELECT ResourceIntId, left(RelatedList, LEN(RelatedList) - 1) AS relatedTags
+	FROM (SELECT ResourceIntId, (
+		SELECT convert(varchar,itbl.TagValueId)+','
+		FROM [Resource_TagSummary] itbl
+		WHERE itbl.CategoryId = @categoryId AND itbl.ResourceIntId = tbl.ResourceIntId 
+		for xml path('')) RelatedList
+		FROM [Resource_TagSummary] tbl
+	WHERE tbl.CategoryId = @categoryId
+	GROUP BY ResourceIntId) otab) rs
+WHERE Resource_IndexV2.intID = rs.ResourceIntId AND
+	(Resource_IndexV2.wioaWorksIDs <> rs.relatedTags OR
+	(Resource_IndexV2.wioaWorksIDs IS NULL AND rs.relatedTags IS NOT NULL))
+
+SET @EndTime = GETDATE()
+SET @ElapsedTime = DATEDIFF(s,@StartTime,@EndTime)
+PRINT @processName + ' UPDATE #1 = ' + convert(varchar,@ElapsedTime)
+SET @StartTime = GETDATE()
+		
+-- titles
+UPDATE Resource_IndexV2
+SET wioaWorks = rs.relatedTags,
+	LastUpdated = GETDATE()
+FROM (SELECT ResourceIntId, left(RelatedList, LEN(RelatedList) - 1) AS relatedTags
+	FROM (SELECT ResourceIntId, (
+		SELECT  itbl.TagTitle + ','
+		FROM [Resource_TagSummary] itbl
+		WHERE itbl.CategoryId = @categoryId AND itbl.ResourceIntId = tbl.ResourceIntId 
+		for xml path('')) RelatedList
+	FROM [Resource_TagSummary] tbl
+	WHERE tbl.CategoryId = @categoryId
+	GROUP BY ResourceIntId) otab) rs
+WHERE Resource_IndexV2.intID = rs.ResourceIntId AND
+	(Resource_IndexV2.wioaWorks <> rs.relatedTags OR
+	(Resource_IndexV2.wioaWorks IS NULL AND rs.relatedTags IS NOT NULL))
+
+SET @EndTime = GETDATE()
+SET @ElapsedTime = DATEDIFF(s,@StartTime,@EndTime)
+PRINT @processName + ' UPDATE #2 = ' + convert(varchar,@ElapsedTime)
+SET @StartTime = GETDATE()
+
+-- =======================================================================
+-- Workplace Skill IDs		=== Explore Careers
+set @categoryId= 24
+set @processName= '24 - explore'
+UPDATE Resource_IndexV2
+SET exploreIDs = rs.relatedTags,
+	LastUpdated = GETDATE()
+FROM (SELECT ResourceIntId, left(RelatedList, LEN(RelatedList) - 1) AS relatedTags
+	FROM (SELECT ResourceIntId, (
+		SELECT convert(varchar,itbl.TagValueId)+','
+		FROM [Resource_TagSummary] itbl
+		WHERE itbl.CategoryId = @categoryId AND itbl.ResourceIntId = tbl.ResourceIntId 
+		for xml path('')) RelatedList
+		FROM [Resource_TagSummary] tbl
+	WHERE tbl.CategoryId = @categoryId
+	GROUP BY ResourceIntId) otab) rs
+WHERE Resource_IndexV2.intID = rs.ResourceIntId AND
+	(Resource_IndexV2.exploreIDs <> rs.relatedTags OR
+	(Resource_IndexV2.exploreIDs IS NULL AND rs.relatedTags IS NOT NULL))
+
+SET @EndTime = GETDATE()
+SET @ElapsedTime = DATEDIFF(s,@StartTime,@EndTime)
+PRINT @processName + ' UPDATE #1 = ' + convert(varchar,@ElapsedTime)
+SET @StartTime = GETDATE()
+		
+-- titles
+UPDATE Resource_IndexV2
+SET explore = rs.relatedTags,
+	LastUpdated = GETDATE()
+FROM (SELECT ResourceIntId, left(RelatedList, LEN(RelatedList) - 1) AS relatedTags
+	FROM (SELECT ResourceIntId, (
+		SELECT  itbl.TagTitle + ','
+		FROM [Resource_TagSummary] itbl
+		WHERE itbl.CategoryId = @categoryId AND itbl.ResourceIntId = tbl.ResourceIntId 
+		for xml path('')) RelatedList
+	FROM [Resource_TagSummary] tbl
+	WHERE tbl.CategoryId = @categoryId
+	GROUP BY ResourceIntId) otab) rs
+WHERE Resource_IndexV2.intID = rs.ResourceIntId AND
+	(Resource_IndexV2.explore <> rs.relatedTags OR
+	(Resource_IndexV2.explore IS NULL AND rs.relatedTags IS NOT NULL))
+
+SET @EndTime = GETDATE()
+SET @ElapsedTime = DATEDIFF(s,@StartTime,@EndTime)
+PRINT @processName + ' UPDATE #2 = ' + convert(varchar,@ElapsedTime)
+SET @StartTime = GETDATE()
+
+-- =======================================================================
+-- Qualify for Jobs IDs
+set @categoryId= 29
+set @processName= '29 - Qualify'
+UPDATE Resource_IndexV2
+SET qualifyIDs = rs.relatedTags,
+	LastUpdated = GETDATE()
+FROM (SELECT ResourceIntId, left(RelatedList, LEN(RelatedList) - 1) AS relatedTags
+	FROM (SELECT ResourceIntId, (
+		SELECT convert(varchar,itbl.TagValueId)+','
+		FROM [Resource_TagSummary] itbl
+		WHERE itbl.CategoryId = @categoryId AND itbl.ResourceIntId = tbl.ResourceIntId 
+		for xml path('')) RelatedList
+		FROM [Resource_TagSummary] tbl
+	WHERE tbl.CategoryId = @categoryId
+	GROUP BY ResourceIntId) otab) rs
+WHERE Resource_IndexV2.intID = rs.ResourceIntId AND
+	(Resource_IndexV2.qualifyIDs <> rs.relatedTags OR
+	(Resource_IndexV2.qualifyIDs IS NULL AND rs.relatedTags IS NOT NULL))
+
+SET @EndTime = GETDATE()
+SET @ElapsedTime = DATEDIFF(s,@StartTime,@EndTime)
+PRINT @processName + ' UPDATE #1 = ' + convert(varchar,@ElapsedTime)
+SET @StartTime = GETDATE()
+		
+-- titles
+UPDATE Resource_IndexV2
+SET qualify = rs.relatedTags,
+	LastUpdated = GETDATE()
+FROM (SELECT ResourceIntId, left(RelatedList, LEN(RelatedList) - 1) AS relatedTags
+	FROM (SELECT ResourceIntId, (
+		SELECT  itbl.TagTitle + ','
+		FROM [Resource_TagSummary] itbl
+		WHERE itbl.CategoryId = @categoryId AND itbl.ResourceIntId = tbl.ResourceIntId 
+		for xml path('')) RelatedList
+	FROM [Resource_TagSummary] tbl
+	WHERE tbl.CategoryId = @categoryId
+	GROUP BY ResourceIntId) otab) rs
+WHERE Resource_IndexV2.intID = rs.ResourceIntId AND
+	(Resource_IndexV2.qualify <> rs.relatedTags OR
+	(Resource_IndexV2.qualify IS NULL AND rs.relatedTags IS NOT NULL))
+
+SET @EndTime = GETDATE()
+SET @ElapsedTime = DATEDIFF(s,@StartTime,@EndTime)
+PRINT @processName + ' UPDATE #2 = ' + convert(varchar,@ElapsedTime)
+SET @StartTime = GETDATE()
+
+
+-- =======================================================================
+-- Qualify for Jobs IDs
+set @categoryId= 30
+set @processName= '30 - Layoff Assistance'
+UPDATE Resource_IndexV2
+SET layoffAssistIDs = rs.relatedTags,
+	LastUpdated = GETDATE()
+FROM (SELECT ResourceIntId, left(RelatedList, LEN(RelatedList) - 1) AS relatedTags
+	FROM (SELECT ResourceIntId, (
+		SELECT convert(varchar,itbl.TagValueId)+','
+		FROM [Resource_TagSummary] itbl
+		WHERE itbl.CategoryId = @categoryId AND itbl.ResourceIntId = tbl.ResourceIntId 
+		for xml path('')) RelatedList
+		FROM [Resource_TagSummary] tbl
+	WHERE tbl.CategoryId = @categoryId
+	GROUP BY ResourceIntId) otab) rs
+WHERE Resource_IndexV2.intID = rs.ResourceIntId AND
+	(Resource_IndexV2.layoffAssistIDs <> rs.relatedTags OR
+	(Resource_IndexV2.layoffAssistIDs IS NULL AND rs.relatedTags IS NOT NULL))
+
+SET @EndTime = GETDATE()
+SET @ElapsedTime = DATEDIFF(s,@StartTime,@EndTime)
+PRINT @processName + ' UPDATE #1 = ' + convert(varchar,@ElapsedTime)
+SET @StartTime = GETDATE()
+		
+-- titles
+UPDATE Resource_IndexV2
+SET layoffAssist = rs.relatedTags,
+	LastUpdated = GETDATE()
+FROM (SELECT ResourceIntId, left(RelatedList, LEN(RelatedList) - 1) AS relatedTags
+	FROM (SELECT ResourceIntId, (
+		SELECT  itbl.TagTitle + ','
+		FROM [Resource_TagSummary] itbl
+		WHERE itbl.CategoryId = @categoryId AND itbl.ResourceIntId = tbl.ResourceIntId 
+		for xml path('')) RelatedList
+	FROM [Resource_TagSummary] tbl
+	WHERE tbl.CategoryId = @categoryId
+	GROUP BY ResourceIntId) otab) rs
+WHERE Resource_IndexV2.intID = rs.ResourceIntId AND
+	(Resource_IndexV2.layoffAssist <> rs.relatedTags OR
+	(Resource_IndexV2.layoffAssist IS NULL AND rs.relatedTags IS NOT NULL))
+
+SET @EndTime = GETDATE()
+SET @ElapsedTime = DATEDIFF(s,@StartTime,@EndTime)
+PRINT @processName + ' UPDATE #2 = ' + convert(varchar,@ElapsedTime)
+SET @StartTime = GETDATE()
+
+-- =======================================================================
+-- TargetSite IDs
+-- - use codeId rather than TagValueId. 
+-- - OR convert to use resource.site??
+set @categoryId= 27
+set @processName= '27 - TargetSite'
+--UPDATE Resource_IndexV2
+--SET targetSiteIDs = rs.relatedTags,
+--	LastUpdated = GETDATE()
+--FROM (SELECT ResourceIntId, left(RelatedList, LEN(RelatedList) - 1) AS relatedTags
+--	FROM (SELECT ResourceIntId, (
+--		SELECT convert(varchar,itbl.TagValueId)+','
+--		FROM [Resource_TagSummary] itbl
+--		WHERE itbl.CategoryId = @categoryId AND itbl.ResourceIntId = tbl.ResourceIntId 
+--		for xml path('')) RelatedList
+--		FROM [Resource_TagSummary] tbl
+--	WHERE tbl.CategoryId = @categoryId
+--	GROUP BY ResourceIntId) otab) rs
+--WHERE Resource_IndexV2.intID = rs.ResourceIntId AND
+--	(Resource_IndexV2.targetSiteIDs <> rs.relatedTags OR
+--	(Resource_IndexV2.targetSiteIDs IS NULL AND rs.relatedTags IS NOT NULL))
+
+UPDATE Resource_IndexV2
+SET targetSiteIDs = rs.relatedTags,
+	LastUpdated = GETDATE()
+FROM (SELECT ResourceIntId, left(RelatedList, LEN(RelatedList) - 1) AS relatedTags
+	FROM (SELECT ResourceIntId, (
+		SELECT convert(varchar,itbl.CodeId)+','
+		FROM [Resource_TagSummary] itbl
+		WHERE itbl.CategoryId = @categoryId AND itbl.ResourceIntId = tbl.ResourceIntId 
+		for xml path('')) RelatedList
+		FROM [Resource_TagSummary] tbl
+	WHERE tbl.CategoryId = @categoryId
+	GROUP BY ResourceIntId) otab) rs
+WHERE Resource_IndexV2.intID = rs.ResourceIntId AND
+	(Resource_IndexV2.targetSiteIDs <> rs.relatedTags OR
+	(Resource_IndexV2.targetSiteIDs IS NULL AND rs.relatedTags IS NOT NULL))
+
+SET @EndTime = GETDATE()
+SET @ElapsedTime = DATEDIFF(s,@StartTime,@EndTime)
+PRINT @processName + ' UPDATE #1 = ' + convert(varchar,@ElapsedTime)
+SET @StartTime = GETDATE()
+		
+-- titles
+UPDATE Resource_IndexV2
+SET targetSites = rs.relatedTags,
+	LastUpdated = GETDATE()
+FROM (SELECT ResourceIntId, left(RelatedList, LEN(RelatedList) - 1) AS relatedTags
+	FROM (SELECT ResourceIntId, (
+		SELECT  itbl.TagTitle + ','
+		FROM [Resource_TagSummary] itbl
+		WHERE itbl.CategoryId = @categoryId AND itbl.ResourceIntId = tbl.ResourceIntId 
+		AND (CreatedById IS NULL OR CreatedById <> 22)
+		for xml path('')) RelatedList
+	FROM [Resource_TagSummary] tbl
+	WHERE tbl.CategoryId = @categoryId
+	GROUP BY ResourceIntId) otab) rs
+WHERE Resource_IndexV2.intID = rs.ResourceIntId AND
+	(Resource_IndexV2.targetSites <> rs.relatedTags OR
+	(Resource_IndexV2.targetSites IS NULL AND rs.relatedTags IS NOT NULL))
+
+SET @EndTime = GETDATE()
+SET @ElapsedTime = DATEDIFF(s,@StartTime,@EndTime)
+PRINT @processName + ' UPDATE #2 = ' + convert(varchar,@ElapsedTime)
+SET @StartTime = GETDATE()
+-- =======================================================================
+SET @StartTime = GETDATE()
+SET @ElapsedTime = DATEDIFF(s,@InitStartTime,@FinishTime)
+PRINT 'Total Time: ' + convert(varchar,@ElapsedTime)
+END
+
+GO
+/****** Object:  StoredProcedure [dbo].[Resource_IndexV3TagsUpdate]    Script Date: 2/22/2015 10:28:07 AM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+--DROP TABLE [Resource_IndexV3Tags]
+
+/*
+CREATE TABLE [dbo].[Resource_IndexV3Tags] (
+	ResourceIntId int,
+	Titles varchar(MAX),
+	IDs varchar(MAX),
+	CategoryId int,
+	CategoryTitle varchar(50),
+	AliasValues varchar(MAX)
+)
+*/
+
+
+CREATE PROCEDURE [dbo].[Resource_IndexV3TagsUpdate]
+	@resourceID int
+AS
+
+--DECLARE @resourceID int = 0;
+/*DROP TABLE [dbo].[Resource_IndexV3Tags]
+
+CREATE TABLE [dbo].[Resource_IndexV3Tags] ( ResourceIntId int, Titles varchar(MAX), IDs varchar(MAX), CategoryId int, CategoryTitle varchar(50), AliasValues varchar(MAX) )
+	SELECT DISTINCT 
+	ResourceIntId,
+	(
+		SELECT
+		TagTitle + ','
+		FROM [Resource_TagSummary]
+		WHERE ResourceIntId = res.ResourceIntId
+		AND CategoryId = res.CategoryId
+		FOR XML PATH('') 
+	) Titles,
+	(
+		SELECT
+		convert(varchar, TagValueId) + ','
+		FROM [Resource_TagSummary]
+		WHERE ResourceIntId = res.ResourceIntId
+		AND CategoryId = res.CategoryId
+		FOR XML PATH('')
+	) IDs,
+	CategoryId,
+	CategoryTitle,
+	COALESCE(AliasValues, '')
+	FROM [Resource_TagSummary] res
+	WHERE @resourceID = 0 OR ( @resourceID != 0 AND @resourceID = ResourceIntId )
+	*/
+	
+	--Use MERGE to do Upsert
+	MERGE INTO [dbo].[Resource_IndexV3Tags] existing
+	USING (
+		SELECT DISTINCT 
+		ResourceIntId,
+		(
+			SELECT
+			TagTitle + ','
+			FROM [Resource_TagSummary]
+			WHERE ResourceIntId = res.ResourceIntId
+			AND CategoryId = res.CategoryId
+			FOR XML PATH('') 
+		) Titles,
+		(
+			SELECT
+			convert(varchar, TagValueId) + ','
+			FROM [Resource_TagSummary]
+			WHERE ResourceIntId = res.ResourceIntId
+			AND CategoryId = res.CategoryId
+			FOR XML PATH('')
+		) IDs,
+		CategoryId,
+		CategoryTitle,
+		COALESCE( --Need to concatenate AliasValues but return empty string if null
+		(
+			SELECT
+			AliasValues + ','
+			FROM [Resource_TagSummary]
+			WHERE ResourceIntId = res.ResourceIntId
+			AND CategoryId = res.CategoryId
+			FOR XML PATH('')
+		), '') AS AliasValues
+		
+		FROM [Resource_TagSummary] res
+		WHERE @resourceID = 0 OR ( @resourceID != 0 AND @resourceID = ResourceIntId )
+	) result
+	ON result.ResourceIntId = existing.ResourceIntId AND result.CategoryId = existing.CategoryId
+	WHEN MATCHED THEN --Update if found
+	UPDATE
+		SET existing.ResourceIntId = result.ResourceIntId,
+			existing.Titles = result.Titles,
+			existing.IDs = result.IDs,
+			existing.CategoryId = result.CategoryId,
+			existing.CategoryTitle = result.CategoryTitle,
+			existing.AliasValues = result.AliasValues
+	WHEN NOT MATCHED THEN --Insert if not found
+		INSERT (ResourceIntId, Titles, IDs, CategoryId, CategoryTitle, AliasValues) 
+		VALUES (result.ResourceIntId, result.Titles, result.IDs, result.CategoryId, result.CategoryTitle, result.AliasValues)
+	;
+
+	--Return result set
+	IF( @resourceID > 0 )
+	SELECT * FROM [Resource_IndexV3Tags] WHERE ResourceIntId = @resourceID
+	ELSE 
+	SELECT * FROM [Resource_IndexV3Tags]
+
+
+GO
+/****** Object:  StoredProcedure [dbo].[Resource_IndexV3TextsUpdate]    Script Date: 2/22/2015 10:28:07 AM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE PROCEDURE [dbo].[Resource_IndexV3TextsUpdate]
+	@resourceID int
+AS
+
+MERGE INTO [dbo].[Resource_IndexV3Texts] existing
+USING (
+	SELECT DISTINCT
+	--Easy Stuff
+	ver.[ResourceIntId],
+	ver.[Id] AS [ResourceVersionId],
+	ver.[DocId],
+	ver.Title,
+	ver.SortTitle AS UrlTitle,
+	ver.[Description],
+	ver.Requirements,
+	res.ResourceUrl AS Url,
+	ver.Created AS ResourceCreated,
+	ver.Creator,
+	ver.Publisher,
+	ver.Submitter,
+	ver.Rights AS RightsUrl,
+	--Special Fields
+	(
+		SELECT
+		Keyword + ','
+		FROM [Resource.Keyword]
+		WHERE ResourceIntId = ver.ResourceIntId
+		FOR XML PATH('')
+	) AS Keywords,
+	(
+		SELECT 
+		convert(varchar, sec.LibraryId) + ','
+		FROM [IsleContent].[dbo].[Library.Resource] lib
+		INNER JOIN [IsleContent].[dbo].[Library.Section] sec
+		ON lib.LibrarySectionId = sec.Id
+		WHERE lib.ResourceIntId = ver.ResourceIntId
+		FOR XML PATH('')
+	) AS LibraryIds,
+	(
+		SELECT 
+		convert(varchar, lib.LibrarySectionId) + ','
+		FROM [IsleContent].[dbo].[Library.Resource] lib
+		WHERE lib.ResourceIntId = ver.ResourceIntId
+		FOR XML PATH('')
+	) AS CollectionIds,
+	(
+		SELECT
+		convert(varchar, StandardId) + ','
+		FROM [Resource.Standard]
+		WHERE ResourceIntId = ver.ResourceIntId
+		FOR XML PATH('')
+	) AS StandardIds,
+	(
+		SELECT
+		NotationCode + ','
+		FROM [Resource.Standard] resStd
+		LEFT JOIN [StandardBody.Node] node
+		ON resStd.StandardId = node.Id
+		WHERE ResourceIntId = ver.ResourceIntId
+		FOR XML PATH('')
+	) AS StandardNotations,
+	--Paradata
+	res.FavoriteCount AS P_Favorites,
+	COALESCE ((
+		SELECT
+		COUNT(*) 
+		FROM [Resource.DetailView]
+		WHERE ResourceIntId = ver.ResourceIntId
+	), 0) AS P_ResourceViews,
+	COALESCE ((
+		SELECT
+		LikeCount
+		FROM [Resource.LikesSummary]
+		WHERE ResourceIntId = ver.ResourceIntId
+	), 0) AS P_Likes,
+	COALESCE ((
+		SELECT
+		DislikeCount
+		FROM [Resource.LikesSummary]
+		WHERE ResourceIntId = ver.ResourceIntId
+	), 0) AS P_Dislikes,
+	COALESCE ((
+		SELECT
+		CASE
+			WHEN DislikeCount = 0.0 AND LikeCount > 0.0 THEN 1.0 
+			WHEN DislikeCount = 0.0 AND LikeCount = 0.0 THEN 0.0
+			WHEN DislikeCount > 0.0 THEN ( LikeCount / DislikeCount )
+		ELSE 0.0
+		END AS Rating
+		FROM [Resource.LikesSummary]
+		WHERE ResourceIntId = ver.ResourceIntId
+	), 0.0) AS P_Rating,
+	COALESCE ((
+		SELECT
+		COUNT(*)
+		FROM [Resource.Comment]
+		WHERE ResourceIntId = ver.ResourceIntId
+	), 0) AS P_Comments,
+	COALESCE ((
+		SELECT
+		COUNT(*)
+		FROM [Resource.RatingSummary]
+		WHERE ResourceIntId = ver.ResourceIntId
+	), 0) AS P_Evaluations,
+	COALESCE ((
+		SELECT
+		AVG( ( [RatingAverage] / 4 ) )
+		FROM [Resource.RatingSummary]
+		WHERE ResourceIntId = ver.ResourceIntId
+		AND RatingTotal > 0 AND RatingAverage >= 0.0
+	), 0.0) AS P_EvaluationsScore
+	FROM [Resource.Version] ver
+	LEFT JOIN [Resource] res ON res.Id = ver.ResourceIntId
+	WHERE ver.IsActive = 1 AND res.IsActive = 1
+	AND @resourceID = 0 OR ( @resourceID != 0 AND @resourceID = ver.ResourceIntId )
+) result
+ON result.ResourceIntId = existing.ResourceIntId
+WHEN MATCHED THEN --Update if found
+UPDATE
+	SET	existing.ResourceIntId = result.ResourceIntId,
+		existing.ResourceVersionId = result.ResourceVersionId,
+		existing.DocId = result.DocId,
+		existing.Title = result.Title,
+		existing.UrlTitle = result.UrlTitle,
+		existing.[Description] = result.[Description],
+		existing.Requirements = result.Requirements,
+		existing.Url = result.Url,
+		existing.ResourceCreated = result.ResourceCreated,
+		existing.Creator = result.Creator,
+		existing.Publisher = result.Publisher,
+		existing.Submitter = result.Submitter,
+		existing.RightsUrl = result.RightsUrl,
+		existing.Keywords = result.Keywords,
+		existing.LibraryIds = result.LibraryIds,
+		existing.CollectionIds = result.CollectionIds,
+		existing.StandardIds = result.StandardIds,
+		existing.P_ResourceViews = result.P_ResourceViews,
+		existing.P_Likes = result.P_Likes,
+		existing.P_Dislikes = result.P_Dislikes,
+		existing.P_Rating = result.P_Rating,
+		existing.P_Comments = result.P_Comments,
+		existing.P_Evaluations = result.P_Evaluations,
+		existing.P_EvaluationsScore = result.P_EvaluationsScore
+WHEN NOT MATCHED THEN --Insert if not found
+	INSERT ( ResourceIntId, ResourceVersionId, DocId, Title, UrlTitle, [Description], Requirements, Url, ResourceCreated, Creator, Publisher, Submitter, RightsUrl, Keywords, LibraryIds, CollectionIds, StandardIds, P_Favorites, P_ResourceViews, P_Likes, P_Dislikes, P_Rating, P_Comments, P_Evaluations, P_EvaluationsScore)
+	VALUES ( result.ResourceIntId, result.ResourceVersionId, result.DocId, result.Title, result.UrlTitle, result.[Description], result.Requirements, result.Url, result.ResourceCreated, result.Creator, result.Publisher, result.Submitter, result.RightsUrl, result.Keywords, result.LibraryIds, result.CollectionIds, result.StandardIds, result.P_Favorites, result.P_ResourceViews, result.P_Likes, result.P_Dislikes, result.P_Rating, result.P_Comments, result.P_Evaluations, result.P_EvaluationsScore)
+;
+
+--Return results
+IF( @resourceID > 0)
+	SELECT * FROM [Resource_IndexV3Texts] WHERE ResourceIntId = @resourceID
+ELSE
+	SELECT * FROM [Resource_IndexV3Texts]
+/*
+SELECT DISTINCT
+--Easy Stuff
+ver.[ResourceIntId],
+ver.[Id] AS [ResourceVersionId],
+ver.[DocId],
+ver.Title,
+ver.SortTitle AS UrlTitle,
+ver.[Description],
+ver.Requirements,
+res.ResourceUrl AS Url,
+ver.Created AS ResourceCreated,
+ver.Creator,
+ver.Publisher,
+ver.Submitter,
+ver.Rights AS RightsUrl,
+--Special Fields
+(
+	SELECT
+	Keyword + ','
+	FROM [Resource.Keyword]
+	WHERE ResourceIntId = ver.ResourceIntId
+	FOR XML PATH('')
+) AS Keywords,
+(
+	SELECT 
+	convert(varchar, sec.LibraryId) + ','
+	FROM [IsleContent].[dbo].[Library.Resource] lib
+	INNER JOIN [IsleContent].[dbo].[Library.Section] sec
+	ON lib.LibrarySectionId = sec.Id
+	WHERE lib.ResourceIntId = ver.ResourceIntId
+	FOR XML PATH('')
+) AS LibraryIds,
+(
+	SELECT 
+	convert(varchar, lib.LibrarySectionId) + ','
+	FROM [IsleContent].[dbo].[Library.Resource] lib
+	WHERE lib.ResourceIntId = ver.ResourceIntId
+	FOR XML PATH('')
+) AS CollectionIds,
+(
+	SELECT
+	convert(varchar, StandardId) + ','
+	FROM [Resource.Standard]
+	WHERE ResourceIntId = ver.resourceIntId
+	FOR XML PATH('')
+) AS StandardIds,
+--Paradata
+res.FavoriteCount AS P_Favorites,
+COALESCE ((
+	SELECT
+	COUNT(*) 
+	FROM [Resource.DetailView]
+	WHERE ResourceIntId = ver.ResourceIntId
+), 0) AS P_ResourceViews,
+COALESCE ((
+	SELECT
+	LikeCount
+	FROM [Resource.LikesSummary]
+	WHERE ResourceIntId = ver.ResourceIntId
+), 0) AS P_Likes,
+COALESCE ((
+	SELECT
+	DislikeCount
+	FROM [Resource.LikesSummary]
+	WHERE ResourceIntId = ver.ResourceIntId
+), 0) AS P_Dislikes,
+COALESCE ((
+	SELECT
+	CASE
+		WHEN DislikeCount = 0.0 AND LikeCount > 0.0 THEN 1.0 
+		WHEN DislikeCount = 0.0 AND LikeCount = 0.0 THEN 0.0
+		WHEN DislikeCount > 0.0 THEN ( LikeCount / DislikeCount )
+	ELSE 0.0
+	END AS Rating
+	FROM [Resource.LikesSummary]
+	WHERE ResourceIntId = ver.ResourceIntId
+), 0.0) AS P_Rating,
+COALESCE ((
+	SELECT
+	COUNT(*)
+	FROM [Resource.Comment]
+	WHERE ResourceIntId = ver.ResourceIntId
+), 0) AS P_Comments,
+COALESCE ((
+	SELECT
+	COUNT(*)
+	FROM [Resource.RatingSummary]
+	WHERE ResourceIntId = ver.ResourceIntId
+), 0) AS P_Evaluations,
+COALESCE ((
+	SELECT
+	AVG( ( [RatingAverage] / 4 ) )
+	FROM [Resource.RatingSummary]
+	WHERE ResourceIntId = ver.ResourceIntId
+	AND RatingTotal > 0 AND RatingAverage >= 0.0
+), 0.0) AS P_EvaluationsScore
+FROM [Resource.Version] ver
+LEFT JOIN [Resource] res ON res.Id = ver.ResourceIntId
+WHERE ver.IsActive = 1
+AND @resourceID = 0 OR ( @resourceID != 0 AND @resourceID = ver.ResourceIntId )
+*/
+
+--DROP TABLE [Resource_IndexV3Texts]
+
+/*
+CREATE TABLE [dbo].[Resource_IndexV3Texts] (
+	ResourceIntId int,
+	ResourceVersionId int,
+	DocId varchar(MAX),
+	Title varchar(MAX),
+	UrlTitle varchar(MAX),
+	Description varchar(MAX),
+	Requirements varchar(MAX),
+	Url varchar(MAX),
+	ResourceCreated datetime,
+	Creator varchar(MAX),
+	Publisher varchar(MAX),
+	Submitter varchar(MAX),
+	RightsUrl varchar(MAX),
+	Keywords varchar(MAX),
+	LibraryIds varchar(MAX),
+	CollectionIds varchar(MAX),
+	StandardIds varchar(MAX),
+	StandardNotations varchar(MAX),
+	P_Favorites int,
+	P_ResourceViews int,
+	P_Likes int,
+	P_Dislikes int,
+	P_Rating float,
+	P_Comments int,
+	P_Evaluations int,
+	P_EvaluationsScore float
+)
+*/
+
+GO
+/****** Object:  StoredProcedure [dbo].[Resource_Search]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -14089,7 +18679,7 @@ order by RowNumber
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource_Search_FT]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource_Search_FT]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -14421,7 +19011,7 @@ if @OutputRelTables = 1 begin
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource_Search2]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource_Search2]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -14544,8 +19134,7 @@ SELECT Distinct
    -- RowNumber,
     lr.ResourceId,
     lr.ResourceIntId,
-    lr.ResourceVersionId As RowId,
-    lr.ResourceVersionId,
+    lr.ResourceVersionIntId,
     lr.ResourceUrl,
      CASE
       WHEN lr.Title IS NULL THEN ''No Title''
@@ -14604,7 +19193,7 @@ WHERE RowNumber BETWEEN ' + convert(varchar,@StartPageIndex) + ' AND ' + convert
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[Resource_SetActiveState]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Resource_SetActiveState]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -14633,7 +19222,52 @@ BEGIN
 END
 
 GO
-/****** Object:  StoredProcedure [dbo].[ResourceDelete]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[ResourceDecreaseFavorite]    Script Date: 2/22/2015 10:28:07 AM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+/*
+SELECT TOP 1000 
+Id,[ResourceUrl]
+      ,[ViewCount]
+      ,[FavoriteCount]
+      ,[Created]
+      --,[LastUpdated]
+      --,[IsActive]
+      --,[HasPathwayGradeLevel]
+      
+  FROM [Isle_IOER].[dbo].[Resource]
+  where id = 10107
+
+[ResourceDecreaseFavorite] 10107
+
+*/
+-- =============================================
+-- Author:		MP
+-- Create date: 4/21/2014
+-- Description:	decrease favorite count by 1
+
+-- =============================================
+Create PROCEDURE [dbo].[ResourceDecreaseFavorite]
+	@Id int
+AS
+declare @CurrentCnt int 
+BEGIN TRANSACTION 
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+	select @CurrentCnt= isnull(FavoriteCount, 0) from Resource where Id = @Id
+	print 'current fav count: ' + convert(varchar,@CurrentCnt)
+
+	UPDATE [Resource]
+	SET FavoriteCount = isnull(@CurrentCnt,0) - 1
+	
+	WHERE Id = @Id
+COMMIT 
+
+GO
+/****** Object:  StoredProcedure [dbo].[ResourceDelete]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -14667,7 +19301,7 @@ BEGIN
 END
 
 GO
-/****** Object:  StoredProcedure [dbo].[ResourceEducationLevel_SearchCounts]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[ResourceEducationLevel_SearchCounts]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -14777,7 +19411,7 @@ order by codes.SortOrder, codes.Title
 -- =================================
 
 GO
-/****** Object:  StoredProcedure [dbo].[ResourceGet]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[ResourceGet]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -14846,30 +19480,11 @@ BEGIN
 END
 
 GO
-/****** Object:  StoredProcedure [dbo].[ResourceInsert]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[ResourceInsert]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-/*
-
-DECLARE @ResourceUrl varchar(500)
-DECLARE @ViewCount int
-DECLARE @FavoriteCount int
-DECLARE @HasPathwayGradeLevel bit
-DECLARE @RC int
--- TODO: Set parameter values here.
-
-EXECUTE @RC = [Isle_IOER].[dbo].[ResourceInsert] 
-   'http://aaaaaa.deleteMe.com'
-  ,0
-  ,0
-  ,0
-GO
-
-
-
-*/
 -- =============================================
 -- Author:		Jerome Grimmer
 -- Create date: 6/5/2012
@@ -14879,9 +19494,10 @@ GO
 -- 2012-08-30 jgrimmer - Dropped fields found in [Resource.Version] table
 -- 2012-09-21 jgrimmer - Added Created and LastUpdated dates ==> which never made it to TFS!!!
 -- 2013-06-26 mparsons - changed, finally, to return the integer key
+-- 2014-11-27 mparsons - changed URL to 600
 -- =============================================
 CREATE PROCEDURE [dbo].[ResourceInsert]
-	@ResourceUrl varchar(500),
+	@ResourceUrl varchar(600),
 	@ViewCount int,
 	@FavoriteCount int,
 	@HasPathwayGradeLevel bit
@@ -14906,7 +19522,7 @@ END
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[ResourcePagesReader]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[ResourcePagesReader]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -15013,7 +19629,7 @@ order by ResourceIntId
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[ResourcePagesSelect]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[ResourcePagesSelect]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -15142,7 +19758,7 @@ WHERE RowNumber BETWEEN ' + convert(varchar,@StartPageIndex) + ' AND ' + convert
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[ResourceSelect]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[ResourceSelect]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -15176,7 +19792,395 @@ END
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[ResourceType_SearchCounts]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[ResourceTag.Convert]    Script Date: 2/22/2015 10:28:07 AM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+/*
+May 22 - ==> next resource format
+
+select count(*) from [Resource.Tag]
+
+SELECT 
+      [CategoryId]     ,[CategoryTitle]
+	  ,[TagTitle]	        ,[TagValueId]
+			,count(*)
+
+  FROM [Isle_IOER].[dbo].[Resource_TagSummary]
+    group by 
+	 [CategoryId]	 ,[CategoryTitle]
+	  ,[TagTitle]	        ,[TagValueId]
+*/
+
+--==> may need some cleanup ex with audience type
+/*
+SELECT     TOP (200) RowID, ResourceId, AudienceId, OriginalAudience, CreatedById, Created, ResourceIntId
+FROM         [Resource.IntendedAudience]
+WHERE     (AudienceId IS NOT NULL) AND (ResourceIntId NOT IN
+                          (SELECT     Id
+                            FROM          Resource))
+ORDER BY Created DESC
+
+*/
+
+
+-- =========================================================================
+-- Create date: 4/25/2014
+-- Description:	Populate the resource tag table from the resource child tables
+--
+-- Mods
+-- 14-05-21 mparsons - update to check for existing - for reruns
+--					 - to do - will be useful to include a date option, for ex to run after the import until latter is converted		
+-- =========================================================================
+CREATE PROCEDURE [dbo].[ResourceTag.Convert] 
+AS
+BEGIN
+	SET NOCOUNT ON;
+	
+DECLARE @StartDate datetime
+set @StartDate = '2014-05-01'
+
+--  ========== Access Rights??? --> store with RV, only one value =================
+-- if used, need to ensure only one record is created
+--INSERT INTO [dbo].[Resource.Tag]
+--           ([ResourceIntId]
+--           ,[TagValueId]
+--           ,[Created]
+--           ,[CreatedById]
+--           ,[OriginalValue])
+
+--SELECT 
+--top 1000
+--		rv.[ResourceIntId]
+--		,1		--Access Rights
+--		,rv.AccessRightsId
+--		,res.[Created]
+--		,NULL		--[CreatedById]
+--		,rv.AccessRights
+      
+--  FROM [dbo].[Resource.Version] rv
+--  inner join [Resource] res on rv.resourceIntId = res.id
+--where rv.IsActive = 1 AND AccessRightsId is not null 
+
+--GO
+--  ========== audienceType =================
+INSERT INTO [dbo].[Resource.Tag]
+           ([ResourceIntId]
+           ,[TagValueId]
+           ,[Created]
+           ,[CreatedById]
+           ,[OriginalValue])
+
+SELECT 
+--top 1000
+		[ResourceIntId]
+		--,7		--Audience Type		,[AudienceId]
+		,codes.TagValueId
+		,[Created]
+		,[CreatedById]
+		,[OriginalAudience]
+      
+  FROM [dbo].[Resource.IntendedAudience] base
+  inner join [Codes.TagCategoryValue_summary] codes on base.AudienceId = codes.TagRelativeId
+where codes.categoryId = 7
+AND [AudienceId] is not null 
+and base.Created > @StartDate
+and codes.TagValueId not in 
+	(select [TagValueId] from [Resource.Tag] where [ResourceIntId] = base.ResourceIntId)
+
+--  ========== Assessment Type =================
+INSERT INTO [dbo].[Resource.Tag]
+           ([ResourceIntId]
+           ,[TagValueId]
+           ,[Created]
+           ,[CreatedById]
+           ,[OriginalValue])
+
+SELECT 
+--top 1000
+		[ResourceIntId]
+		--,25		--Assessment Type		,[AssessmentTypeId]
+		,codes.TagValueId
+		,[Created]
+		,[CreatedById]
+		,''
+      
+  FROM [dbo].[Resource.AssessmentType] base
+  inner join [Codes.TagCategoryValue_summary] codes on base.AssessmentTypeId = codes.TagRelativeId
+where codes.categoryId = 25
+AND AssessmentTypeId is not null 
+and base.Created > @StartDate
+and codes.TagValueId not in 
+	(select [TagValueId] from [Resource.Tag] where [ResourceIntId] = base.ResourceIntId)
+
+
+
+--  ========== Career Cluster =================
+INSERT INTO [dbo].[Resource.Tag]
+           ([ResourceIntId]
+           ,[TagValueId]
+           ,[Created]
+           ,[CreatedById]
+           ,[OriginalValue])
+
+SELECT 
+--top 1000
+		[ResourceIntId]
+		--,8		--Career Cluster		,ClusterId
+		,codes.TagValueId
+		,[Created]
+		,[CreatedById]
+		,''
+      
+  FROM [dbo].[Resource.Cluster] base
+  inner join [Codes.TagCategoryValue_summary] codes on base.ClusterId = codes.TagRelativeId
+where codes.categoryId = 8
+AND ClusterId is not null 
+and base.Created > @StartDate
+and codes.TagValueId not in 
+	(select [TagValueId] from [Resource.Tag] where [ResourceIntId] = base.ResourceIntId)
+
+
+
+--  ========== Educational Use =================
+INSERT INTO [dbo].[Resource.Tag]
+           ([ResourceIntId]
+           ,[TagValueId]
+           ,[Created]
+           ,[CreatedById]
+           ,[OriginalValue])
+
+SELECT 
+--top 1000
+		[ResourceIntId]
+		--,11		--Educational Use		,EducationUseId
+		,codes.TagValueId
+		,[Created]
+		,[CreatedById]
+		,OriginalType
+      
+  FROM [dbo].[Resource.EducationUse] base
+  inner join [Codes.TagCategoryValue_summary] codes on base.EducationUseId = codes.TagRelativeId
+where codes.categoryId = 11
+AND EducationUseId is not null 
+and base.Created > @StartDate
+and codes.TagValueId not in 
+	(select [TagValueId] from [Resource.Tag] where [ResourceIntId] = base.ResourceIntId)
+
+
+--  ========== Grade Level =================
+INSERT INTO [dbo].[Resource.Tag]
+           ([ResourceIntId]
+           ,[TagValueId]
+           ,[Created]
+           ,[CreatedById]
+           ,[OriginalValue])
+
+SELECT 
+--top 1000
+		[ResourceIntId]
+		--,13		--Grade Level		,GradeLevelId
+		,codes.TagValueId
+		,[Created]
+		,[CreatedById]
+		,OriginalLevel
+      
+  FROM [dbo].[Resource.GradeLevel]  base
+  inner join [Codes.TagCategoryValue_summary] codes on base.GradeLevelId = codes.TagRelativeId
+where codes.categoryId = 13
+AND GradeLevelId is not null 
+and base.Created > @StartDate
+and codes.TagValueId not in 
+	(select [TagValueId] from [Resource.Tag] where [ResourceIntId] = base.ResourceIntId)
+
+
+--  ========== Group Type =================
+INSERT INTO [dbo].[Resource.Tag]
+           ([ResourceIntId]
+           ,[TagValueId]
+           ,[Created]
+           ,[CreatedById]
+           ,[OriginalValue])
+
+SELECT 
+--top 1000
+		[ResourceIntId]
+		--,14	--Group Type		,GroupTypeId
+		,codes.TagValueId
+		,[Created]
+		,[CreatedById]
+		,''	--OriginalLevel
+      
+  FROM [dbo].[Resource.GroupType]  base
+  inner join [Codes.TagCategoryValue_summary] codes on base.GroupTypeId = codes.TagRelativeId
+where codes.categoryId = 14
+AND  GroupTypeId is not null 
+and base.Created > @StartDate
+and codes.TagValueId not in 
+	(select [TagValueId] from [Resource.Tag] where [ResourceIntId] = base.ResourceIntId)
+
+
+--  ========== Item Type =================
+INSERT INTO [dbo].[Resource.Tag]
+           ([ResourceIntId]
+           ,[TagValueId]
+           ,[Created]
+           ,[CreatedById]
+           ,[OriginalValue])
+
+SELECT 
+--top 1000
+		[ResourceIntId]
+		--,15	--Item Type		,ItemTypeId
+		,codes.TagValueId
+		,[Created]
+		,[CreatedById]
+		,''	--OriginalLevel
+      
+  FROM [dbo].[Resource.ItemType]  base
+  inner join [Codes.TagCategoryValue_summary] codes on base.ItemTypeId = codes.TagRelativeId
+where codes.categoryId = 15
+AND  ItemTypeId is not null 
+and base.Created > @StartDate
+and codes.TagValueId not in 
+	(select [TagValueId] from [Resource.Tag] where [ResourceIntId] = base.ResourceIntId)
+
+
+--  ========== Language =================
+INSERT INTO [dbo].[Resource.Tag]
+           ([ResourceIntId]
+           ,[TagValueId]
+           ,[Created]
+           ,[CreatedById]
+           ,[OriginalValue])
+
+SELECT 
+--top 15000
+		[ResourceIntId]
+		--,17			--Language		,LanguageId
+		,codes.TagValueId
+		,[Created]
+		,[CreatedById]
+		,OriginalLanguage
+      
+  FROM [dbo].[Resource.Language]  base
+  inner join [Codes.TagCategoryValue_summary] codes on base.LanguageId = codes.TagRelativeId
+where codes.categoryId = 17
+AND  LanguageId is not null 
+and base.Created > @StartDate
+and codes.TagValueId not in 
+	(select [TagValueId] from [Resource.Tag] where [ResourceIntId] = base.ResourceIntId)
+
+
+--  ========== Resource Format =================
+INSERT INTO [dbo].[Resource.Tag]
+           ([ResourceIntId]
+           ,[TagValueId]
+           ,[Created]
+           ,[CreatedById]
+           ,[OriginalValue])
+
+SELECT 
+--top 1000
+		[ResourceIntId]
+		--,18			--Resource Format		,CodeId
+		,codes.TagValueId
+		,[Created]
+		,[CreatedById]
+		,OriginalValue
+      
+  FROM [dbo].[Resource.Format]  base
+  inner join [Codes.TagCategoryValue_summary] codes on base.CodeId = codes.TagRelativeId
+where codes.categoryId = 18
+AND  base.CodeId is not null 
+and base.Created > @StartDate
+and codes.TagValueId not in 
+	(select [TagValueId] from [Resource.Tag] where [ResourceIntId] = base.ResourceIntId)
+
+--  ========== Subject ????????????????????????? =================
+-- not sure we want to use as tab or .Text
+-- just do coded for now
+INSERT INTO [dbo].[Resource.Tag]
+           ([ResourceIntId]
+           ,[TagValueId]
+           ,[Created]
+           ,[CreatedById]
+           ,[OriginalValue])
+
+SELECT 
+--top 1000
+		[ResourceIntId]
+		--,20			--Subject		,base.CodeId
+		,codes.TagValueId
+		,[Created]
+		,[CreatedById]
+		,[Subject]
+      
+  FROM [dbo].[Resource.Subject] base 
+  inner join [Codes.TagCategoryValue_summary] codes on base.CodeId = codes.TagRelativeId
+where codes.categoryId = 20
+AND  base.CodeId is not null 
+and base.Created > @StartDate
+and codes.TagValueId not in 
+	(select [TagValueId] from [Resource.Tag] where [ResourceIntId] = base.ResourceIntId)
+
+
+--  ========== Resource Type =================
+INSERT INTO [dbo].[Resource.Tag]
+           ([ResourceIntId]
+           ,[TagValueId]
+           ,[Created]
+           ,[CreatedById]
+           ,[OriginalValue])
+
+SELECT 
+--top 1000
+		[ResourceIntId]
+		--,19			--Resource Type		,ResourceTypeId
+		,codes.TagValueId
+		,[Created]
+		,[CreatedById]
+		,OriginalType
+      
+  FROM [dbo].[Resource.ResourceType] base
+  inner join [Codes.TagCategoryValue_summary] codes on base.ResourceTypeId = codes.TagRelativeId
+where codes.categoryId = 19
+AND ResourceTypeId is not null 
+and base.Created > @StartDate
+and codes.TagValueId not in 
+	(select [TagValueId] from [Resource.Tag] where [ResourceIntId] = base.ResourceIntId)
+
+
+--  ========== target Site??? =================
+--skip for now. use current context - don't want to add 500K+ rows
+--INSERT INTO [dbo].[Resource.Tag]
+--           ([ResourceIntId]
+--           ,[TagValueId]
+--           ,[Created]
+--           ,[CreatedById]
+--           ,[OriginalValue])
+
+--SELECT 
+--top 1000
+--		[Id]
+--		,266
+--		,base.[Created]
+--		,isnull(rp.PublishedById,0)		
+--		,''
+      
+--  FROM [dbo].[Resource] base
+--  inner join [Resource.PublishedBy] rp on base.Id = rp.ResourceIntId
+--where base.IsActive = 1
+and base.Created > @StartDate
+--and 266 not in 
+--	(select [TagValueId] from [Resource.Tag] where [ResourceIntId] = base.Id)
+
+END
+
+
+GO
+/****** Object:  StoredProcedure [dbo].[ResourceType_SearchCounts]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -15286,7 +20290,7 @@ order by crt.SortOrder, crt.Title
 -- =================================
 
 GO
-/****** Object:  StoredProcedure [dbo].[ResourceUpdate]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[ResourceUpdate]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -15299,10 +20303,11 @@ GO
 -- 2012-08-24 jgrimmer - Added TypicalLearningTime
 -- 2012-09-21 jgrimmer - Removed fields moved to ResourceVersion and added Created and LastUpdated fields
 -- 2013-06-04 jgrimmer - Added IsActive
+-- 2014-11-27 mparsons - changed URL to 600
 -- =============================================
 CREATE PROCEDURE [dbo].[ResourceUpdate]
 	@RowId uniqueidentifier, 
-	@ResourceUrl varchar(500),
+	@ResourceUrl varchar(600),
 	@ViewCount int,
 	@FavoriteCount int,
 	@HasPathwayGradeLevel bit,
@@ -15326,7 +20331,7 @@ BEGIN
 END
 
 GO
-/****** Object:  StoredProcedure [dbo].[ResourceUpdateById]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[ResourceUpdateById]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -15335,11 +20340,11 @@ GO
 -- Author:		MP
 -- Create date: 2/3/2014
 -- Description:	Update Resource By Id - should replace the existing one by rowId
-
+-- 2014-11-27 mparsons - changed URL to 600
 -- =============================================
-Create PROCEDURE [dbo].[ResourceUpdateById]
+CREATE PROCEDURE [dbo].[ResourceUpdateById]
 	@Id int, 
-	@ResourceUrl varchar(500),
+	@ResourceUrl varchar(600),
 	@ViewCount int,
 	@FavoriteCount int,
 	@IsActive bit
@@ -15361,34 +20366,194 @@ BEGIN
 END
 
 GO
-/****** Object:  StoredProcedure [dbo].[ResourceUpdateFavorite]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[ResourceUpdateFavorite]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+/*
+
+[ResourceUpdateFavorite] 10107
+
+*/
 -- =============================================
 -- Author:		MP
 -- Create date: 2/3/2014
 -- Description:	update favorite count
 
 -- =============================================
-Create PROCEDURE [dbo].[ResourceUpdateFavorite]
+CREATE PROCEDURE [dbo].[ResourceUpdateFavorite]
 	@Id int
 AS
-
+declare @CurrentCnt int 
 BEGIN TRANSACTION 
 	-- SET NOCOUNT ON added to prevent extra result sets from
 	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
+	select @CurrentCnt= isnull(FavoriteCount, 0) from Resource where Id = @Id
+	print 'current fav count: ' + convert(varchar,@CurrentCnt)
 
 	UPDATE [Resource]
-	SET FavoriteCount = FavoriteCount + 1
+	SET FavoriteCount = isnull(@CurrentCnt,0) + 1
 	
 	WHERE Id = @Id
 COMMIT 
 
 GO
-/****** Object:  StoredProcedure [dbo].[ResourceVersion_SetActiveState]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[ResourceVersion_InactivateDups]    Script Date: 2/22/2015 10:28:07 AM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+/*
+--=======================================================================
+--start: 1769679
+select count(*) FROM [dbo].[Resource.Version]
+--=======================================================================
+SELECT     TOP (1000) Id, ResourceIntId, Title, IsActive, Description, Imported, Modified, Publisher, Creator, Submitter, AccessRightsId, AccessRights, Rights, DocId
+FROM         [Resource.Version]
+WHERE     (ResourceIntId IN
+                          (SELECT     r.Id
+                            FROM          Resource AS r INNER JOIN
+                                                   [Resource.Version] AS rv ON r.Id = rv.ResourceIntId
+                            WHERE      (r.IsActive = 1 AND rv.IsActive = 1)
+                            GROUP BY r.Id
+                            HAVING      (COUNT(*) > 1)
+							)
+)
+ORDER BY ResourceIntId, Id DESC
+
+  
+--=======================================================================
+
+
+EXECUTE [dbo].[ResourceVersion_InactivateDups] 1000, 1
+
+EXECUTE [dbo].[ResourceVersion_InactivateDups] 50000, 1
+go
+EXECUTE [dbo].[ResourceVersion_InactivateDups] 600, 0, 1, 1
+
+*/
+
+/*
+cleanup Versions
+
+*/
+CREATE PROCEDURE [dbo].[ResourceVersion_InactivateDups]
+            @MaxRecords int
+			,@DoingUpdate bit
+As
+begin 
+          
+Declare 
+@ShowingAllRecords bit
+,@cntr int
+
+,@KeysCount int
+,@StartingKeyId int
+,@interval int
+,@debugLevel int
+,@affectedCount int
+,@totalCount int
+,@PrevResourceIntId int
+,@BaseId int
+,@BaseDesc varchar(max)
+,@BaseTitle varchar(300)
+,@Id int
+,@ResourceIntId int
+,@Title varchar(300)
+,@Desc varchar(max)
+,@IsActive bit
+,@HoldDesc varchar(max)
+,@HoldTitle varchar(300)
+
+set @ShowingAllRecords= 0
+set @interval= 25
+set @cntr= 0
+--set @clusterId = 91
+
+set @BaseId = 0
+set @PrevResourceIntId= 0
+set @HoldTitle = ''
+set @HoldDesc = ''
+
+--set @DoingUpdate = 0
+set @debugLevel= 10
+set @affectedCount= 0
+set @totalCount= 0
+
+if @MaxRecords > 10000
+	set @ShowingAllRecords= 0
+
+-- ===============================================
+select 'started',  getdate()
+	-- Loop thru and call proc
+	DECLARE thisCursor CURSOR FOR
+      SELECT  Id, ResourceIntId, Title, [Description], IsActive
+		FROM [Resource.Version]
+		where 
+		ResourceIntId IN
+        (	SELECT     r.Id
+            FROM Resource AS r 
+			INNER JOIN [Resource.Version] AS rv ON r.Id = rv.ResourceIntId
+            WHERE      (r.IsActive = 1 AND rv.IsActive = 1)
+            GROUP BY r.Id
+            HAVING      (COUNT(*) > 1)
+		)
+		ORDER BY ResourceIntId, Id DESC
+
+	OPEN thisCursor
+	FETCH NEXT FROM thisCursor INTO @Id, @ResourceIntId, @Title,@Desc,@IsActive
+	WHILE @@FETCH_STATUS = 0 BEGIN
+		set @cntr = @cntr+ 1
+		if @MaxRecords > 0 AND @cntr > @MaxRecords begin
+			print '### Early exit based on @MaxRecords = ' + convert(varchar, @MaxRecords)
+			select 'exiting',  getdate()
+			set @cntr = @cntr - 1
+			BREAK
+			End	  
+
+		if  @PrevResourceIntId <> @ResourceIntId begin
+			-- NOTE rvId sorts desc, so keep first one - no action
+			print convert(varchar, @cntr)	
+				+ '. New-ResId: ' + convert(varchar, @ResourceIntId) 	
+				+ '. Last-Id: ' + convert(varchar, @Id) 	
+				+ '. Title: ' + @Title	
+
+			set @PrevResourceIntId = @ResourceIntId
+			set @BaseId = @Id
+			end
+		else begin
+			if @ShowingAllRecords = 1 begin
+				print convert(varchar, @cntr)	
+					+ '. Nxt-ResId: ' + convert(varchar, @ResourceIntId) 	
+					+ '. Next-Id: ' + convert(varchar, @Id) 	
+					+ '. Title: ' + @Title	
+				end
+
+			if @DoingUpdate= 1 begin
+				UPDATE [dbo].[Resource.Version]
+					SET [IsActive] = 0
+				where Id = @Id
+							
+				set @totalCount= @totalCount+1
+			end
+		end
+
+		FETCH NEXT FROM thisCursor INTO @Id, @ResourceIntId, @Title,@Desc,@IsActive
+	END
+
+	CLOSE thisCursor
+	DEALLOCATE thisCursor
+	select 'completed',  getdate()
+	select 'processed records: ' + convert(varchar, @cntr)
+	select 'Versions inactivated: ' + convert(varchar, @totalCount)
+
+end
+
+GO
+/****** Object:  StoredProcedure [dbo].[ResourceVersion_SetActiveState]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -15418,7 +20583,7 @@ END
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[ResourceVersionClean]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[ResourceVersionClean]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -15617,7 +20782,74 @@ end
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[SendLibraryFollowerEmail]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[Rubric.NodeTreeGet]    Script Date: 2/22/2015 10:28:07 AM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+-- =============================================
+-- Author:		Jerome Grimmer
+-- Create date: 2014-04-23
+-- Description:	Retrieve a rubric node and all of its descendant nodes
+-- =============================================
+CREATE PROCEDURE [dbo].[Rubric.NodeTreeGet]
+	@RootNodeId int,
+	@RootNodeDotNotation varchar(50),
+	@RootNodePurl varchar(100)
+AS
+BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+
+	IF @RootNodeId = 0 SET @RootNodeId = NULL
+	IF @RootNodeDotNotation = '' SET @RootNodeDotNotation = NULL
+	IF @RootNodePurl = '' SET @RootNodePurl = NULL
+
+	CREATE TABLE #workTable (Id int, ParentId int, Notation varchar(50), pUrl varchar(100), [Description] varchar(2000), Title varchar(500), Sequence int)
+	DECLARE @lastPassRows int, @currentPassRows int, @parentId int
+	SET @lastPassRows = 0
+
+	INSERT INTO #workTable (Id, ParentId, Notation, pUrl, [Description], Title, Sequence)
+	SELECT Id, ParentId, Notation, pUrl, [Description], ShortDescription AS Title, Sequence
+	FROM [Rubric.Node]
+	WHERE (Id = @RootNodeId OR @RootNodeId IS NULL) AND
+		(Notation = @RootNodeDotNotation OR @RootNodeDotNotation IS NULL) AND
+		(pUrl = @RootNodePurl OR @RootNodePurl IS NULL)
+	SELECT @currentPassRows = COUNT(*)
+	FROM #workTable
+	PRINT 'lastPassRows='+convert(varchar,@lastPassRows)+' currentPassRows='+convert(varchar,@currentPassRows)
+
+	WHILE @lastPassRows <> @currentPassRows BEGIN
+		DECLARE parentCursor CURSOR FOR
+		SELECT Id FROM #workTable
+		WHERE Id NOT IN (SELECT parentId FROM #workTable WHERE parentId IS NOT NULL)
+
+		OPEN parentCursor
+		FETCH NEXT FROM parentCursor INTO @parentId
+		WHILE @@FETCH_STATUS = 0 BEGIN
+			PRINT 'parentId='+convert(varchar,@parentId)
+			INSERT INTO #workTable (Id, ParentId, Notation, pUrl, [Description], Title, Sequence)
+			SELECT Id, ParentId, Notation, pUrl, [Description], ShortDescription AS Title, Sequence
+			FROM [Rubric.Node]
+			WHERE ParentId = @parentId
+
+			FETCH NEXT FROM parentCursor INTO @parentId
+		END
+
+		CLOSE parentCursor
+		DEALLOCATE parentCursor
+		SET @lastPassRows = @currentPassRows
+		SELECT @currentPassRows = COUNT(*)
+		FROM #workTable
+	END
+
+	SELECT *
+	FROM #workTable
+END
+
+GO
+/****** Object:  StoredProcedure [dbo].[SendLibraryFollowerEmail]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -15684,7 +20916,9 @@ BEGIN
 		INNER JOIN [ActiveLibrarySummary] als ON libsub.LibraryId = als.Id
 		INNER JOIN [Library.Section] libsec ON als.Id = libsec.LibraryId
 		INNER JOIN [Library.Resource] libres ON libsec.Id = libres.LibrarySectionId
-		WHERE als.LastUpdated >= @sysprocLastRun AND libres.Created >= @sysprocLastRun
+		INNER JOIN [Resource.Version] vers ON libres.ResourceVersionId = vers.Id
+		LEFT JOIN [Resource.Link] rlink ON libres.ResourceIntId = rlink.ResourceIntId
+		WHERE als.LastUpdated >= @sysprocLastRun AND libres.Created >= @sysprocLastRun AND rlink.IsDeleted <> 'True' AND vers.IsActive = 'True'
 		GROUP BY FullName, Email, als.Id, als.Title, libsec.Id, libsec.Title, ResourceVersionId, libres.Title, libres.Description
 		ORDER BY UserId, als.Title, als.Id, libsec.Title, libsec.Id, libres.Title
 	OPEN dataCursor
@@ -15692,6 +20926,12 @@ BEGIN
 		@CollectionId, @CollectionTitle, @ResourceVersionId, @ResourceTitle, @ResourceDescription
 	
 	WHILE @@FETCH_STATUS = 0 BEGIN
+		PRINT '@FullName='+@FullName
+		PRINT '@Email='+@Email
+		PRINT '@UserId='+convert(varchar,@UserId)
+		PRINT '@LibraryTitle='+@LibraryTitle
+		PRINT '@CollectionTitle'+@CollectionTitle
+		PRINT ''
 		-- Do First Record special processing
 		IF @FirstTimeThru = 'True' BEGIN
 			SET @HtmlBody = @HtmlBodyTemplate
@@ -15722,6 +20962,7 @@ BEGIN
 					@body=@HtmlBody,
 					@body_format='HTML'
 			END ELSE BEGIN
+				PRINT 'Sending Email to '+@HoldEmail+': '+@HtmlBody
 				EXEC msdb.dbo.sp_send_dbmail
 					@profile_name='DoNotReply-ILSharedLearning',
 					@recipients=@HoldEmail,
@@ -15782,6 +21023,7 @@ BEGIN
 			@body=@HtmlBody,
 			@body_format='HTML'
 	END ELSE BEGIN
+		PRINT 'Sending Email to '+@HoldEmail+': '+@HtmlBody
 		EXEC msdb.dbo.sp_send_dbmail
 			@profile_name='DoNotReply-ILSharedLearning',
 			@recipients=@HoldEmail,
@@ -15803,7 +21045,7 @@ BEGIN
 END
 
 GO
-/****** Object:  StoredProcedure [dbo].[StandardBody.NodeGet]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[StandardBody.NodeGet]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -15848,7 +21090,7 @@ and (AltUrl = @AltUrl OR @AltUrl is null)
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[StandardBody.NodeGradeLevelInsert]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[StandardBody.NodeGradeLevelInsert]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -15877,7 +21119,7 @@ Values (
 select SCOPE_IDENTITY() as Id
 
 GO
-/****** Object:  StoredProcedure [dbo].[StandardBody.NodeInsert]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[StandardBody.NodeInsert]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -15923,7 +21165,7 @@ Values (
 select SCOPE_IDENTITY() as Id
 
 GO
-/****** Object:  StoredProcedure [dbo].[StandardBody.NodeSelect]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[StandardBody.NodeSelect]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -15953,7 +21195,7 @@ where ParentId= @ParentId
 Order by ParentId, NotationCode
 
 GO
-/****** Object:  StoredProcedure [dbo].[StandardBody.SubjectGet]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[StandardBody.SubjectGet]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -15988,7 +21230,7 @@ AND (Title = @Title OR @Title is null)
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[StandardBody.SubjectInsert]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[StandardBody.SubjectInsert]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -16026,7 +21268,7 @@ Values (
 select SCOPE_IDENTITY() as Id
 
 GO
-/****** Object:  StoredProcedure [dbo].[StandardBody.SubjectStandardConnectorInsert]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[StandardBody.SubjectStandardConnectorInsert]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -16052,7 +21294,7 @@ Values (
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[System.ProcessGet]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[System.ProcessGet]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -16082,7 +21324,7 @@ END
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[System.ProcessGetByCode]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[System.ProcessGetByCode]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -16112,7 +21354,7 @@ END
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[System.ProcessInsert]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[System.ProcessInsert]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -16150,7 +21392,7 @@ END
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[System.ProcessUpdate]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[System.ProcessUpdate]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -16184,7 +21426,7 @@ END
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[System.ProcessUpdateLastRun]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[System.ProcessUpdateLastRun]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -16215,7 +21457,149 @@ END
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[zzDatabaseReset]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  StoredProcedure [dbo].[SystemProxies_DeleteInActivate]    Script Date: 2/22/2015 10:28:07 AM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+/*
+select *   from [System.GenerateLoginId]
+WHERE (IsActive = 1) and ExpiryDate < getdate()
+
+[dbo].[SystemProxies_DeleteInActivate]
+
+*/
+
+-- =============================================
+-- Description:	Delete all inactive rows
+-- Modifications
+-- =============================================
+CREATE PROCEDURE [dbo].[SystemProxies_DeleteInActivate]
+AS
+BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+Delete [System.GenerateLoginId]
+WHERE (IsActive = 0) 
+END
+
+
+
+GO
+/****** Object:  StoredProcedure [dbo].[SystemProxies_InactivateExpired]    Script Date: 2/22/2015 10:28:07 AM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+/*
+select *   from [System.GenerateLoginId]
+WHERE (IsActive = 1) and ExpiryDate < getdate()
+
+[dbo].[SystemProxies_InactivateExpired]
+
+*/
+
+-- =============================================
+-- Description:	Set all rows to inactive where expiry date is in the past 
+-- Modifications
+-- =============================================
+CREATE PROCEDURE [dbo].[SystemProxies_InactivateExpired]
+AS
+BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+Update         [System.GenerateLoginId]
+set IsActive = 0
+WHERE (IsActive = 1) and ExpiryDate < getdate()
+END
+
+
+
+GO
+/****** Object:  StoredProcedure [dbo].[TestTempTableUse]    Script Date: 2/22/2015 10:28:07 AM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+/* 
+exec [TestTempTableUse] 'Patron'
+
+CREATE TABLE #workTable (
+		versionID int
+		)
+insert into #workTable (versionID) values( 1)
+insert into #workTable (versionID) values( 2)
+insert into #workTable (versionID) values( 3)
+insert into #workTable (versionID) values( 4)
+
+
+exec [TestTempTableUse] '#workTable'
+
+
+
+*/
+
+
+CREATE PROCEDURE [dbo].[TestTempTableUse]
+		@tablename varchar(50)
+		,@colname varchar(50)
+		,@categoryId int
+		--,@tablename varchar(50)
+
+
+As
+declare @sql varchar(2000)
+--set @sql = 'select * from ' + @tablename
+
+set @sql = 'UPDATE @tablename
+SET @colnameIDs = rs.relatedTags,
+	LastUpdated = GETDATE()
+FROM (SELECT ResourceIntId, left(RelatedList, LEN(RelatedList) - 1) AS relatedTags
+	FROM (SELECT ResourceIntId, (
+		SELECT convert(varchar,itbl.TagValueId)+'',''
+		FROM [Resource_TagSummary] itbl
+		WHERE itbl.CategoryId = @categoryId AND itbl.ResourceIntId = tbl.ResourceIntId 
+		for xml path('''')) RelatedList
+		FROM [Resource_TagSummary] tbl
+	WHERE tbl.CategoryId = @categoryId
+	GROUP BY ResourceIntId) otab) rs
+WHERE Resource_IndexV2.intID = rs.ResourceIntId AND
+	(Resource_IndexV2.@colnameIDs <> rs.relatedTags OR
+	(Resource_IndexV2.@colnameIDs IS NULL AND rs.relatedTags IS NOT NULL))
+
+-- titles
+UPDATE Resource_IndexV2
+SET @colnameList = rs.relatedTags,
+	LastUpdated = GETDATE()
+FROM (SELECT ResourceIntId, left(RelatedList, LEN(RelatedList) - 1) AS relatedTags
+	FROM (SELECT ResourceIntId, (
+		SELECT  itbl.TagTitle + '',''
+		FROM [Resource_TagSummary] itbl
+		WHERE itbl.CategoryId = @categoryId AND itbl.ResourceIntId = tbl.ResourceIntId 
+		for xml path('''')) RelatedList
+	FROM [Resource_TagSummary] tbl
+	WHERE tbl.CategoryId = @categoryId
+	GROUP BY ResourceIntId) otab) rs
+WHERE Resource_IndexV2.intID = rs.ResourceIntId AND
+	(Resource_IndexV2.@colnameList <> rs.relatedTags OR
+	(Resource_IndexV2.@colnameList IS NULL AND rs.relatedTags IS NOT NULL))
+
+	'
+	set @Sql = replace(@sql, '@tablename', @tablename)
+	set @Sql = replace(@sql, '@colname', @colname)
+	set @Sql = replace(@sql, '@categoryId', @categoryId)
+
+
+print (@sql)
+
+--exec (@sql)
+
+
+GO
+/****** Object:  StoredProcedure [dbo].[zzDatabaseReset]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -16251,7 +21635,7 @@ BEGIN
 END
 
 GO
-/****** Object:  UserDefinedFunction [dbo].[BuildSortTitle]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  UserDefinedFunction [dbo].[BuildSortTitle]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -16300,7 +21684,62 @@ END
 
 
 GO
-/****** Object:  UserDefinedFunction [dbo].[StripNonalphanumericCharacters]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  UserDefinedFunction [dbo].[Resource.GetImageUrl]    Script Date: 2/22/2015 10:28:07 AM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+/*
+
+select [dbo].[Resource.GetImageUrl]('http://owl.english.purdue.edu/workshops/pp/writewithppt.ppt',71278)
+
+*/
+-- =============================================
+-- Create date: 03/31/2014
+-- Description:	Determine image url for a resource, handling special files like pdfs, etc
+-- Modifications
+-- 14-06-18 mparsons - removed swf
+-- =============================================
+CREATE FUNCTION [dbo].[Resource.GetImageUrl]
+(
+	@ResourceUrl varchar(300), 
+	@ResourceIntId int
+)
+RETURNS varchar(300)
+AS
+BEGIN
+	
+DECLARE @ImageUrl varchar(300)
+	
+Declare @ResImgeUrl varchar(200)
+,@PdfImageUrl varchar(200),@PPTImageUrl varchar(200),@WordImageUrl varchar(200)
+,@XlxImageUrl  varchar(200)
+,@SwfImageUrl  varchar(200)
+
+--set @ResImgeUrl = '//ioer.ilsharedlearning.org/OERThumbs/thumb/@rvid-thumb.png'
+set @ResImgeUrl = '//ioer.ilsharedlearning.org/OERThumbs/large/@rid-large.png'
+set @PdfImageUrl = '//ioer.ilsharedlearning.org/images/icons/filethumbs/filethumb_pdf_200x150.png'
+set @PPTImageUrl = '//ioer.ilsharedlearning.org/images/icons/filethumbs/filethumb_pptx_200x150.png'
+set @WordImageUrl = '//ioer.ilsharedlearning.org/images/icons/filethumbs/filethumb_docx_200x150.png'
+set @XlxImageUrl = '//ioer.ilsharedlearning.org/images/icons/filethumbs/filethumb_xlsx_200x150.png'
+set @SwfImageUrl = '//ioer.ilsharedlearning.org/images/icons/filethumbs/filethumb_swf_200x200.png'
+--		when Right(rtrim(lower(@ResourceUrl)), 4) = '.swf' then @SwfImageUrl
+	Select @ImageUrl =
+		case 
+		when Right(rtrim(lower(@ResourceUrl)), 4) = '.pdf' then @PdfImageUrl
+		when charindex('.ppt',Right(rtrim(lower(@ResourceUrl)), 5)) > 0 then @PPTImageUrl
+		when charindex('.doc',Right(rtrim(lower(@ResourceUrl)), 5)) > 0 then @WordImageUrl
+		when charindex('.xls',Right(rtrim(lower(@ResourceUrl)), 5)) > 0 then @XlxImageUrl
+		else replace(@ResImgeUrl, '@rid', @ResourceIntId) end 
+
+	SET @ImageUrl = LTRIM(rtrim(@ImageUrl))
+	
+	RETURN @ImageUrl
+
+END
+
+GO
+/****** Object:  UserDefinedFunction [dbo].[StripNonalphanumericCharacters]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -16379,7 +21818,7 @@ END
 
 
 GO
-/****** Object:  UserDefinedFunction [dbo].[StripNonalphanumericCharactersDescription]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  UserDefinedFunction [dbo].[StripNonalphanumericCharactersDescription]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -16459,7 +21898,43 @@ END
 
 
 GO
-/****** Object:  Table [dbo].[ApplicationLog]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  Table [dbo].[_Dictionary]    Script Date: 2/22/2015 10:28:07 AM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[_Dictionary](
+	[tableName] [nvarchar](128) NOT NULL,
+	[col_id] [int] NOT NULL,
+	[colName] [nvarchar](128) NOT NULL,
+	[datatype] [nvarchar](30) NOT NULL,
+	[col_precScale] [nvarchar](50) NULL,
+	[col_null] [bit] NOT NULL,
+	[DefaultValue] [nvarchar](257) NULL,
+	[col_identity] [bit] NULL,
+	[col_desc] [nvarchar](250) NULL,
+	[entityType] [nvarchar](25) NULL,
+	[CreatedDate] [datetime] NOT NULL
+) ON [PRIMARY]
+
+GO
+/****** Object:  Table [dbo].[_DictTable]    Script Date: 2/22/2015 10:28:07 AM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[_DictTable](
+	[tablename] [nvarchar](128) NOT NULL,
+	[Description] [nvarchar](133) NOT NULL,
+	[IsActive] [int] NOT NULL,
+	[ReportGroup] [int] NOT NULL,
+	[ReportOrder] [int] NOT NULL,
+	[Synchronize] [int] NOT NULL,
+	[Created] [datetime] NOT NULL
+) ON [PRIMARY]
+
+GO
+/****** Object:  Table [dbo].[ApplicationLog]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -16482,7 +21957,7 @@ CREATE TABLE [dbo].[ApplicationLog](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[Audit.AccessibilityApi_Orphan]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  Table [dbo].[Audit.AccessibilityApi_Orphan]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -16506,7 +21981,7 @@ CREATE TABLE [dbo].[Audit.AccessibilityApi_Orphan](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[Audit.AccessibilityControl_Orphan]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  Table [dbo].[Audit.AccessibilityControl_Orphan]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -16530,7 +22005,7 @@ CREATE TABLE [dbo].[Audit.AccessibilityControl_Orphan](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[Audit.AccessibilityFeature_Orphan]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  Table [dbo].[Audit.AccessibilityFeature_Orphan]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -16554,7 +22029,7 @@ CREATE TABLE [dbo].[Audit.AccessibilityFeature_Orphan](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[Audit.AccessibilityHazard_Orphan]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  Table [dbo].[Audit.AccessibilityHazard_Orphan]    Script Date: 2/22/2015 10:28:07 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -16578,7 +22053,7 @@ CREATE TABLE [dbo].[Audit.AccessibilityHazard_Orphan](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[Audit.AssessmentType_Orphan]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  Table [dbo].[Audit.AssessmentType_Orphan]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -16603,7 +22078,7 @@ CREATE TABLE [dbo].[Audit.AssessmentType_Orphan](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[Audit.AudienceType_Orphan]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  Table [dbo].[Audit.AudienceType_Orphan]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -16628,7 +22103,7 @@ CREATE TABLE [dbo].[Audit.AudienceType_Orphan](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[Audit.EducationLevel_Orphan]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  Table [dbo].[Audit.EducationLevel_Orphan]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -16653,7 +22128,7 @@ CREATE TABLE [dbo].[Audit.EducationLevel_Orphan](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[Audit.EducationUse_Orphan]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  Table [dbo].[Audit.EducationUse_Orphan]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -16678,7 +22153,7 @@ CREATE TABLE [dbo].[Audit.EducationUse_Orphan](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[Audit.GradeLevel_Orphan]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  Table [dbo].[Audit.GradeLevel_Orphan]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -16702,7 +22177,7 @@ CREATE TABLE [dbo].[Audit.GradeLevel_Orphan](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[Audit.GroupType_Orphan]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  Table [dbo].[Audit.GroupType_Orphan]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -16727,7 +22202,7 @@ CREATE TABLE [dbo].[Audit.GroupType_Orphan](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[Audit.ItemType_Orphan]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  Table [dbo].[Audit.ItemType_Orphan]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -16752,7 +22227,7 @@ CREATE TABLE [dbo].[Audit.ItemType_Orphan](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[Audit.Language_Orphan]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  Table [dbo].[Audit.Language_Orphan]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -16777,7 +22252,7 @@ CREATE TABLE [dbo].[Audit.Language_Orphan](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[Audit.ResourceFormat_Orphan]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  Table [dbo].[Audit.ResourceFormat_Orphan]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -16802,7 +22277,7 @@ CREATE TABLE [dbo].[Audit.ResourceFormat_Orphan](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[Audit.ResourceStandard_Orphan]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  Table [dbo].[Audit.ResourceStandard_Orphan]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -16818,6 +22293,7 @@ CREATE TABLE [dbo].[Audit.ResourceStandard_Orphan](
 	[IsActive] [bit] NULL,
 	[Created] [datetime] NULL,
 	[LastRerunDate] [datetime] NULL,
+	[NotationCode] [varchar](200) NULL,
  CONSTRAINT [PK_Audit.ResourceStandard_Orphan] PRIMARY KEY CLUSTERED 
 (
 	[Id] ASC
@@ -16827,7 +22303,7 @@ CREATE TABLE [dbo].[Audit.ResourceStandard_Orphan](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[Audit.ResourceType_Orphan]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  Table [dbo].[Audit.ResourceType_Orphan]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -16852,7 +22328,7 @@ CREATE TABLE [dbo].[Audit.ResourceType_Orphan](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[AuditReport]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  Table [dbo].[AuditReport]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -16867,7 +22343,7 @@ CREATE TABLE [dbo].[AuditReport](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[AuditReport.Detail]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  Table [dbo].[AuditReport.Detail]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -16892,7 +22368,45 @@ CREATE TABLE [dbo].[AuditReport.Detail](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[BouncedEmails]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  Table [dbo].[Blacklist.Hosts]    Script Date: 2/22/2015 10:28:08 AM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+SET ANSI_PADDING ON
+GO
+CREATE TABLE [dbo].[Blacklist.Hosts](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[Hostname] [varchar](100) NULL,
+	[RecordSource] [varchar](50) NULL,
+	[Created] [datetime] NULL,
+	[CreatedById] [int] NULL,
+	[LastUpdated] [datetime] NULL,
+	[LastUpdatedId] [int] NULL,
+ CONSTRAINT [PK_Blacklist.Hosts] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+
+GO
+SET ANSI_PADDING OFF
+GO
+/****** Object:  Table [dbo].[Blacklist.StagingHosts]    Script Date: 2/22/2015 10:28:08 AM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+SET ANSI_PADDING ON
+GO
+CREATE TABLE [dbo].[Blacklist.StagingHosts](
+	[Line] [varchar](500) NULL
+) ON [PRIMARY]
+
+GO
+SET ANSI_PADDING OFF
+GO
+/****** Object:  Table [dbo].[BouncedEmails]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -16915,7 +22429,7 @@ CREATE TABLE [dbo].[BouncedEmails](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[CareerCluster]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  Table [dbo].[CareerCluster]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -16947,7 +22461,7 @@ CREATE TABLE [dbo].[CareerCluster](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[Codes.AccessibilityApi]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  Table [dbo].[Codes.AccessibilityApi]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -16961,6 +22475,7 @@ CREATE TABLE [dbo].[Codes.AccessibilityApi](
 	[IsActive] [bit] NULL,
 	[WarehouseTotal] [int] NULL,
 	[schemaValue] [varchar](50) NULL,
+	[SortOrder] [int] NULL,
  CONSTRAINT [PK_Codes.AccessibilityApi] PRIMARY KEY CLUSTERED 
 (
 	[Id] ASC
@@ -16970,7 +22485,7 @@ CREATE TABLE [dbo].[Codes.AccessibilityApi](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[Codes.AccessibilityControl]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  Table [dbo].[Codes.AccessibilityControl]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -16984,6 +22499,7 @@ CREATE TABLE [dbo].[Codes.AccessibilityControl](
 	[IsActive] [bit] NULL,
 	[WarehouseTotal] [int] NULL,
 	[schemaValue] [varchar](50) NULL,
+	[SortOrder] [int] NULL,
  CONSTRAINT [PK_Codes.AccessibilityControl] PRIMARY KEY CLUSTERED 
 (
 	[Id] ASC
@@ -16993,7 +22509,7 @@ CREATE TABLE [dbo].[Codes.AccessibilityControl](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[Codes.AccessibilityFeature]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  Table [dbo].[Codes.AccessibilityFeature]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -17001,12 +22517,13 @@ GO
 SET ANSI_PADDING ON
 GO
 CREATE TABLE [dbo].[Codes.AccessibilityFeature](
-	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[Id] [int] NOT NULL,
 	[Title] [varchar](50) NULL,
 	[Description] [varchar](512) NULL,
 	[IsActive] [bit] NULL,
 	[WarehouseTotal] [int] NULL,
 	[schemaValue] [varchar](50) NULL,
+	[SortOrder] [int] NULL,
  CONSTRAINT [PK_Codes.AccessibilityFeature] PRIMARY KEY CLUSTERED 
 (
 	[Id] ASC
@@ -17016,7 +22533,7 @@ CREATE TABLE [dbo].[Codes.AccessibilityFeature](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[Codes.AccessibilityHazard]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  Table [dbo].[Codes.AccessibilityHazard]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -17031,6 +22548,7 @@ CREATE TABLE [dbo].[Codes.AccessibilityHazard](
 	[WarehouseTotal] [int] NULL,
 	[AntonymId] [int] NULL,
 	[schemaValue] [varchar](50) NULL,
+	[SortOrder] [int] NULL,
  CONSTRAINT [PK_Codes.AccessibilityHazard] PRIMARY KEY CLUSTERED 
 (
 	[Id] ASC
@@ -17040,7 +22558,7 @@ CREATE TABLE [dbo].[Codes.AccessibilityHazard](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[Codes.AccessRights]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  Table [dbo].[Codes.AccessRights]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -17063,7 +22581,7 @@ CREATE TABLE [dbo].[Codes.AccessRights](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[Codes.AlignmentDegree]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  Table [dbo].[Codes.AlignmentDegree]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -17085,7 +22603,7 @@ CREATE TABLE [dbo].[Codes.AlignmentDegree](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[Codes.AlignmentType]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  Table [dbo].[Codes.AlignmentType]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -17108,7 +22626,7 @@ CREATE TABLE [dbo].[Codes.AlignmentType](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[Codes.AssessmentType]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  Table [dbo].[Codes.AssessmentType]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -17131,7 +22649,7 @@ CREATE TABLE [dbo].[Codes.AssessmentType](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[Codes.AudienceType]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  Table [dbo].[Codes.AudienceType]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -17156,7 +22674,53 @@ CREATE TABLE [dbo].[Codes.AudienceType](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[Codes.EducationalUse]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  Table [dbo].[Codes.CareerPlanning]    Script Date: 2/22/2015 10:28:08 AM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+SET ANSI_PADDING ON
+GO
+CREATE TABLE [dbo].[Codes.CareerPlanning](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[Title] [varchar](50) NULL,
+	[Description] [varchar](512) NULL,
+	[IsActive] [bit] NULL,
+	[WarehouseTotal] [int] NULL,
+	[schemaValue] [varchar](50) NULL,
+ CONSTRAINT [PK_Codes.CareerPlanning] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+
+GO
+SET ANSI_PADDING OFF
+GO
+/****** Object:  Table [dbo].[Codes.Disability]    Script Date: 2/22/2015 10:28:08 AM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+SET ANSI_PADDING ON
+GO
+CREATE TABLE [dbo].[Codes.Disability](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[Title] [varchar](50) NULL,
+	[Description] [varchar](512) NULL,
+	[IsActive] [bit] NULL,
+	[WarehouseTotal] [int] NULL,
+	[schemaValue] [varchar](50) NULL,
+ CONSTRAINT [PK_Codes.Disability] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+
+GO
+SET ANSI_PADDING OFF
+GO
+/****** Object:  Table [dbo].[Codes.EducationalUse]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -17179,7 +22743,7 @@ CREATE TABLE [dbo].[Codes.EducationalUse](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[Codes.EducationalUseCategory]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  Table [dbo].[Codes.EducationalUseCategory]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -17201,7 +22765,30 @@ CREATE TABLE [dbo].[Codes.EducationalUseCategory](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[Codes.GradeLevel]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  Table [dbo].[Codes.EmployerProgram]    Script Date: 2/22/2015 10:28:08 AM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+SET ANSI_PADDING ON
+GO
+CREATE TABLE [dbo].[Codes.EmployerProgram](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[Title] [varchar](50) NULL,
+	[Description] [varchar](512) NULL,
+	[IsActive] [bit] NULL,
+	[WarehouseTotal] [int] NULL,
+	[schemaValue] [varchar](50) NULL,
+ CONSTRAINT [PK_Codes.EmployerProgram] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+
+GO
+SET ANSI_PADDING OFF
+GO
+/****** Object:  Table [dbo].[Codes.GradeLevel]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -17236,7 +22823,7 @@ CREATE TABLE [dbo].[Codes.GradeLevel](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[Codes.GroupType]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  Table [dbo].[Codes.GroupType]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -17258,7 +22845,7 @@ CREATE TABLE [dbo].[Codes.GroupType](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[Codes.InteractivityType]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  Table [dbo].[Codes.InteractivityType]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -17280,7 +22867,7 @@ CREATE TABLE [dbo].[Codes.InteractivityType](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[Codes.ItemType]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  Table [dbo].[Codes.ItemType]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -17303,7 +22890,30 @@ CREATE TABLE [dbo].[Codes.ItemType](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[Codes.Language]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  Table [dbo].[Codes.JobPreparation]    Script Date: 2/22/2015 10:28:08 AM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+SET ANSI_PADDING ON
+GO
+CREATE TABLE [dbo].[Codes.JobPreparation](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[Title] [varchar](50) NULL,
+	[Description] [varchar](512) NULL,
+	[IsActive] [bit] NULL,
+	[WarehouseTotal] [int] NULL,
+	[schemaValue] [varchar](50) NULL,
+ CONSTRAINT [PK_Codes.JobSearch] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+
+GO
+SET ANSI_PADDING OFF
+GO
+/****** Object:  Table [dbo].[Codes.Language]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -17325,7 +22935,7 @@ CREATE TABLE [dbo].[Codes.Language](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[Codes.LibraryMemberType]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  Table [dbo].[Codes.LibraryMemberType]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -17345,7 +22955,7 @@ CREATE TABLE [dbo].[Codes.LibraryMemberType](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[Codes.PathwaysEducationLevel]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  Table [dbo].[Codes.PathwaysEducationLevel]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -17371,7 +22981,7 @@ CREATE TABLE [dbo].[Codes.PathwaysEducationLevel](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[Codes.RatingType]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  Table [dbo].[Codes.RatingType]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -17394,7 +23004,7 @@ CREATE TABLE [dbo].[Codes.RatingType](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[Codes.ResourceFormat]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  Table [dbo].[Codes.ResourceFormat]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -17418,7 +23028,7 @@ CREATE TABLE [dbo].[Codes.ResourceFormat](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[Codes.ResourceType]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  Table [dbo].[Codes.ResourceType]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -17444,7 +23054,7 @@ CREATE TABLE [dbo].[Codes.ResourceType](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[Codes.ResourceTypeCategory]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  Table [dbo].[Codes.ResourceTypeCategory]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -17466,7 +23076,7 @@ CREATE TABLE [dbo].[Codes.ResourceTypeCategory](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[Codes.ResPropertyType]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  Table [dbo].[Codes.ResPropertyType]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -17485,7 +23095,7 @@ CREATE TABLE [dbo].[Codes.ResPropertyType](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[Codes.SecretQuestion]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  Table [dbo].[Codes.SecretQuestion]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -17504,7 +23114,7 @@ CREATE TABLE [dbo].[Codes.SecretQuestion](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[Codes.Site]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  Table [dbo].[Codes.Site]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -17513,8 +23123,13 @@ SET ANSI_PADDING ON
 GO
 CREATE TABLE [dbo].[Codes.Site](
 	[Id] [int] NOT NULL,
-	[Title] [varchar](50) NULL,
+	[Title] [varchar](50) NOT NULL,
 	[Description] [varchar](500) NULL,
+	[IsActive] [bit] NOT NULL,
+	[SchemaTag] [varchar](100) NULL,
+	[HasStandardsBrowser] [bit] NULL,
+	[CssThemes] [varchar](200) NULL,
+	[ApiRoot] [varchar](100) NULL,
  CONSTRAINT [PK_Codes.Site] PRIMARY KEY CLUSTERED 
 (
 	[Id] ASC
@@ -17524,16 +23139,20 @@ CREATE TABLE [dbo].[Codes.Site](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[Codes.SiteTagCategory]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  Table [dbo].[Codes.SiteTagCategory]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+SET ANSI_PADDING ON
+GO
 CREATE TABLE [dbo].[Codes.SiteTagCategory](
-	[Id] [int] NOT NULL,
-	[SiteId] [int] NULL,
-	[CategoryId] [int] NULL,
-	[IsActive] [bit] NULL,
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[SiteId] [int] NOT NULL,
+	[CategoryId] [int] NOT NULL,
+	[SortOrder] [int] NOT NULL,
+	[IsActive] [bit] NOT NULL,
+	[Title] [varchar](100) NOT NULL,
  CONSTRAINT [PK_Codes.SiteTag] PRIMARY KEY CLUSTERED 
 (
 	[Id] ASC
@@ -17541,7 +23160,9 @@ CREATE TABLE [dbo].[Codes.SiteTagCategory](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[Codes.Subject]    Script Date: 3/9/2014 10:15:35 PM ******/
+SET ANSI_PADDING OFF
+GO
+/****** Object:  Table [dbo].[Codes.Subject]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -17563,7 +23184,7 @@ CREATE TABLE [dbo].[Codes.Subject](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[Codes.TagCategory]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  Table [dbo].[Codes.TagCategory]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -17572,10 +23193,10 @@ SET ANSI_PADDING ON
 GO
 CREATE TABLE [dbo].[Codes.TagCategory](
 	[Id] [int] NOT NULL,
-	[Title] [varchar](50) NULL,
+	[Title] [varchar](50) NOT NULL,
 	[Description] [varchar](500) NULL,
-	[SortOrder] [int] NULL,
-	[IsActive] [bit] NULL,
+	[SortOrder] [int] NOT NULL,
+	[IsActive] [bit] NOT NULL,
 	[SchemaTag] [varchar](100) NULL,
  CONSTRAINT [PK_Codes.TagCategory] PRIMARY KEY CLUSTERED 
 (
@@ -17586,7 +23207,7 @@ CREATE TABLE [dbo].[Codes.TagCategory](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[Codes.TagValue]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  Table [dbo].[Codes.TagValue]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -17597,23 +23218,45 @@ CREATE TABLE [dbo].[Codes.TagValue](
 	[Id] [int] IDENTITY(1,1) NOT NULL,
 	[CategoryId] [int] NOT NULL,
 	[CodeId] [int] NOT NULL,
-	[Title] [varchar](50) NULL,
+	[Title] [varchar](50) NOT NULL,
 	[Description] [varchar](500) NULL,
 	[SortOrder] [int] NULL,
 	[IsActive] [bit] NULL,
 	[SchemaTag] [varchar](100) NULL,
 	[WarehouseTotal] [int] NULL,
+	[AliasValues] [varchar](100) NULL,
  CONSTRAINT [PK_Codes.TagValue] PRIMARY KEY CLUSTERED 
 (
-	[CategoryId] ASC,
-	[CodeId] ASC
+	[Id] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[Codes.TextType]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  Table [dbo].[Codes.TagValueKeyword]    Script Date: 2/22/2015 10:28:08 AM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+SET ANSI_PADDING ON
+GO
+CREATE TABLE [dbo].[Codes.TagValueKeyword](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[TagValueId] [int] NOT NULL,
+	[Keyword] [varchar](50) NOT NULL,
+	[IsActive] [bit] NOT NULL,
+	[Created] [datetime] NULL,
+ CONSTRAINT [PK_Codes.TagValueKeyword] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+
+GO
+SET ANSI_PADDING OFF
+GO
+/****** Object:  Table [dbo].[Codes.TextType]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -17633,7 +23276,99 @@ CREATE TABLE [dbo].[Codes.TextType](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[CodeTable]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  Table [dbo].[Codes.VeteransService]    Script Date: 2/22/2015 10:28:08 AM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+SET ANSI_PADDING ON
+GO
+CREATE TABLE [dbo].[Codes.VeteransService](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[Title] [varchar](50) NULL,
+	[Description] [varchar](512) NULL,
+	[IsActive] [bit] NULL,
+	[WarehouseTotal] [int] NULL,
+	[schemaValue] [varchar](50) NULL,
+ CONSTRAINT [PK_Codes.VeteransService] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+
+GO
+SET ANSI_PADDING OFF
+GO
+/****** Object:  Table [dbo].[Codes.WorkforcePartnerService]    Script Date: 2/22/2015 10:28:08 AM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+SET ANSI_PADDING ON
+GO
+CREATE TABLE [dbo].[Codes.WorkforcePartnerService](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[Title] [varchar](50) NULL,
+	[Description] [varchar](512) NULL,
+	[IsActive] [bit] NULL,
+	[WarehouseTotal] [int] NULL,
+	[schemaValue] [varchar](50) NULL,
+ CONSTRAINT [PK_Codes.WorkforcePartnerService] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+
+GO
+SET ANSI_PADDING OFF
+GO
+/****** Object:  Table [dbo].[Codes.WorkplaceSkills]    Script Date: 2/22/2015 10:28:08 AM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+SET ANSI_PADDING ON
+GO
+CREATE TABLE [dbo].[Codes.WorkplaceSkills](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[Title] [varchar](50) NULL,
+	[Description] [varchar](512) NULL,
+	[IsActive] [bit] NULL,
+	[WarehouseTotal] [int] NULL,
+	[schemaValue] [varchar](50) NULL,
+ CONSTRAINT [PK_Codes.WorkplaceSkills] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+
+GO
+SET ANSI_PADDING OFF
+GO
+/****** Object:  Table [dbo].[Codes.WorkSupportService]    Script Date: 2/22/2015 10:28:08 AM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+SET ANSI_PADDING ON
+GO
+CREATE TABLE [dbo].[Codes.WorkSupportService](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[Title] [varchar](50) NULL,
+	[Description] [varchar](512) NULL,
+	[IsActive] [bit] NULL,
+	[WarehouseTotal] [int] NULL,
+	[schemaValue] [varchar](50) NULL,
+ CONSTRAINT [PK_Codes.WorkSupportService] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+
+GO
+SET ANSI_PADDING OFF
+GO
+/****** Object:  Table [dbo].[CodeTable]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -17661,7 +23396,7 @@ CREATE TABLE [dbo].[CodeTable](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[ConditionOfUse]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  Table [dbo].[ConditionOfUse]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -17689,7 +23424,7 @@ CREATE TABLE [dbo].[ConditionOfUse](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[EmailNotice]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  Table [dbo].[EmailNotice]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -17724,7 +23459,7 @@ CREATE TABLE [dbo].[EmailNotice](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[Evaluation]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  Table [dbo].[Evaluation]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -17738,6 +23473,9 @@ CREATE TABLE [dbo].[Evaluation](
 	[Url] [varchar](200) NULL,
 	[Description] [varchar](max) NULL,
 	[WarehouseTotal] [int] NULL,
+	[RequiresCertification] [bit] NULL,
+	[PrivilegeCode] [varchar](50) NULL,
+	[IsActive] [bit] NULL,
  CONSTRAINT [PK_Evaluation] PRIMARY KEY CLUSTERED 
 (
 	[Id] ASC
@@ -17747,7 +23485,7 @@ CREATE TABLE [dbo].[Evaluation](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[Evaluation.Dimension]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  Table [dbo].[Evaluation.Dimension]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -17755,11 +23493,14 @@ GO
 SET ANSI_PADDING ON
 GO
 CREATE TABLE [dbo].[Evaluation.Dimension](
-	[Id] [int] IDENTITY(1,1) NOT NULL,
-	[Title] [varchar](75) NULL,
+	[Id] [int] NOT NULL,
+	[EvaluationId] [int] NOT NULL,
+	[DimensionId] [int] NOT NULL,
+	[Title] [varchar](75) NOT NULL,
 	[ShortName] [varchar](25) NULL,
 	[Url] [varchar](200) NULL,
 	[Description] [varchar](max) NULL,
+	[IsActive] [bit] NOT NULL,
 	[WarehouseTotal] [int] NULL,
  CONSTRAINT [PK_Evaluation.Dimension] PRIMARY KEY CLUSTERED 
 (
@@ -17770,7 +23511,7 @@ CREATE TABLE [dbo].[Evaluation.Dimension](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[Evaluation.DimensionCriteria]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  Table [dbo].[Evaluation.DimensionCriteria]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -17779,11 +23520,10 @@ SET ANSI_PADDING ON
 GO
 CREATE TABLE [dbo].[Evaluation.DimensionCriteria](
 	[Id] [int] IDENTITY(1,1) NOT NULL,
-	[Title] [varchar](75) NULL,
-	[ShortName] [varchar](25) NULL,
-	[Url] [varchar](200) NULL,
-	[Description] [varchar](max) NULL,
-	[WarehouseTotal] [int] NULL,
+	[DimensionId] [int] NOT NULL,
+	[Title] [varchar](75) NOT NULL,
+	[Description] [varchar](max) NOT NULL,
+	[Sequence] [int] NULL,
  CONSTRAINT [PK_Evaluation.DimensionCriteria] PRIMARY KEY CLUSTERED 
 (
 	[Id] ASC
@@ -17793,30 +23533,54 @@ CREATE TABLE [dbo].[Evaluation.DimensionCriteria](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[Evaluation.Subject]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  Table [dbo].[EvaluationTool]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_PADDING ON
 GO
-CREATE TABLE [dbo].[Evaluation.Subject](
+CREATE TABLE [dbo].[EvaluationTool](
 	[Id] [int] IDENTITY(1,1) NOT NULL,
-	[Title] [varchar](75) NULL,
-	[ShortName] [varchar](25) NULL,
-	[Url] [varchar](200) NULL,
-	[Description] [varchar](500) NULL,
-	[WarehouseTotal] [int] NULL,
- CONSTRAINT [PK_Evaluation.Subject] PRIMARY KEY CLUSTERED 
+	[Title] [varchar](100) NULL,
+	[Description] [varchar](max) NULL,
+	[Created] [datetime] NULL,
+ CONSTRAINT [PK_EvaluationTool] PRIMARY KEY CLUSTERED 
 (
 	[Id] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[GradeToAgeRange]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  Table [dbo].[EvaluationTool.Section]    Script Date: 2/22/2015 10:28:08 AM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+SET ANSI_PADDING ON
+GO
+CREATE TABLE [dbo].[EvaluationTool.Section](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[EvalToolId] [int] NULL,
+	[Title] [varchar](500) NULL,
+	[Description] [varchar](max) NULL,
+	[Notation] [varchar](50) NULL,
+	[SchemaUrl] [varchar](100) NULL,
+	[AltUrl] [varchar](300) NULL,
+	[Sequence] [int] NULL,
+	[Created] [datetime] NULL,
+ CONSTRAINT [PK_EvaluationTool.Section] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+
+GO
+SET ANSI_PADDING OFF
+GO
+/****** Object:  Table [dbo].[GradeToAgeRange]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -17837,7 +23601,7 @@ CREATE TABLE [dbo].[GradeToAgeRange](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[Map.AccessibilityApi]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  Table [dbo].[Map.AccessibilityApi]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -17862,7 +23626,7 @@ CREATE TABLE [dbo].[Map.AccessibilityApi](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[Map.AccessibilityControl]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  Table [dbo].[Map.AccessibilityControl]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -17887,7 +23651,7 @@ CREATE TABLE [dbo].[Map.AccessibilityControl](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[Map.AccessibilityFeature]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  Table [dbo].[Map.AccessibilityFeature]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -17912,7 +23676,7 @@ CREATE TABLE [dbo].[Map.AccessibilityFeature](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[Map.AccessibilityHazard]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  Table [dbo].[Map.AccessibilityHazard]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -17937,7 +23701,7 @@ CREATE TABLE [dbo].[Map.AccessibilityHazard](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[Map.AgeRangeGradeLevel]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  Table [dbo].[Map.AgeRangeGradeLevel]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -17961,7 +23725,7 @@ CREATE TABLE [dbo].[Map.AgeRangeGradeLevel](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[Map.AlignmentType]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  Table [dbo].[Map.AlignmentType]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -17982,7 +23746,7 @@ CREATE TABLE [dbo].[Map.AlignmentType](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[Map.AssessmentType]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  Table [dbo].[Map.AssessmentType]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -18003,7 +23767,7 @@ CREATE TABLE [dbo].[Map.AssessmentType](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[Map.AudienceType]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  Table [dbo].[Map.AudienceType]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -18034,7 +23798,7 @@ CREATE TABLE [dbo].[Map.AudienceType](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[Map.CareerCluster]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  Table [dbo].[Map.CareerCluster]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -18060,7 +23824,7 @@ CREATE TABLE [dbo].[Map.CareerCluster](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[Map.CleanseUrl]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  Table [dbo].[Map.CleanseUrl]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -18084,7 +23848,7 @@ CREATE TABLE [dbo].[Map.CleanseUrl](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[Map.Cluster]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  Table [dbo].[Map.Cluster]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -18105,7 +23869,7 @@ CREATE TABLE [dbo].[Map.Cluster](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[Map.EducationLevel]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  Table [dbo].[Map.EducationLevel]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -18136,7 +23900,7 @@ CREATE TABLE [dbo].[Map.EducationLevel](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[Map.EducationUse]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  Table [dbo].[Map.EducationUse]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -18157,7 +23921,7 @@ CREATE TABLE [dbo].[Map.EducationUse](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[Map.GradeLevel]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  Table [dbo].[Map.GradeLevel]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -18179,7 +23943,7 @@ CREATE TABLE [dbo].[Map.GradeLevel](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[Map.GroupType]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  Table [dbo].[Map.GroupType]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -18200,7 +23964,7 @@ CREATE TABLE [dbo].[Map.GroupType](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[Map.InteractivityType]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  Table [dbo].[Map.InteractivityType]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -18231,7 +23995,7 @@ CREATE TABLE [dbo].[Map.InteractivityType](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[Map.ItemType]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  Table [dbo].[Map.ItemType]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -18252,7 +24016,7 @@ CREATE TABLE [dbo].[Map.ItemType](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[Map.K12Subject]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  Table [dbo].[Map.K12Subject]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -18277,7 +24041,7 @@ CREATE TABLE [dbo].[Map.K12Subject](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[Map.Language]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  Table [dbo].[Map.Language]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -18298,7 +24062,7 @@ CREATE TABLE [dbo].[Map.Language](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[Map.PathwayRules]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  Table [dbo].[Map.PathwayRules]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -18327,7 +24091,7 @@ CREATE TABLE [dbo].[Map.PathwayRules](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[Map.ResourceFormat]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  Table [dbo].[Map.ResourceFormat]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -18349,7 +24113,7 @@ CREATE TABLE [dbo].[Map.ResourceFormat](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[Map.ResourceType]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  Table [dbo].[Map.ResourceType]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -18371,7 +24135,7 @@ CREATE TABLE [dbo].[Map.ResourceType](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[Map.Rules]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  Table [dbo].[Map.Rules]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -18402,7 +24166,7 @@ CREATE TABLE [dbo].[Map.Rules](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[Patron]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  Table [dbo].[Patron]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -18421,6 +24185,7 @@ CREATE TABLE [dbo].[Patron](
 	[LastUpdated] [datetime] NULL,
 	[LastUpdatedById] [int] NULL,
 	[RowId] [uniqueidentifier] NOT NULL,
+	[IsleIdentifier] [varchar](100) NULL,
  CONSTRAINT [PK_Patron] PRIMARY KEY CLUSTERED 
 (
 	[Id] ASC
@@ -18430,7 +24195,7 @@ CREATE TABLE [dbo].[Patron](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[Patron.ExternalAccount]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  Table [dbo].[Patron.ExternalAccount]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -18454,7 +24219,7 @@ CREATE TABLE [dbo].[Patron.ExternalAccount](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[Patron.Following]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  Table [dbo].[Patron.Following]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -18471,7 +24236,7 @@ CREATE TABLE [dbo].[Patron.Following](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[Patron.Note]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  Table [dbo].[Patron.Note]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -18498,7 +24263,7 @@ CREATE TABLE [dbo].[Patron.Note](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[Patron.Profile]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  Table [dbo].[Patron.Profile]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -18527,7 +24292,7 @@ CREATE TABLE [dbo].[Patron.Profile](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[Patron.SearchFilter]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  Table [dbo].[Patron.SearchFilter]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -18550,7 +24315,26 @@ CREATE TABLE [dbo].[Patron.SearchFilter](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[Publish.Pending]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  Table [dbo].[Patron.Tag]    Script Date: 2/22/2015 10:28:08 AM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Patron.Tag](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[PatronId] [int] NOT NULL,
+	[CategoryId] [int] NOT NULL,
+	[TagValueId] [int] NOT NULL,
+	[Created] [datetime] NULL,
+	[CreatedById] [int] NULL,
+ CONSTRAINT [PK_Patron.Tag] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+
+GO
+/****** Object:  Table [dbo].[Publish.Pending]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -18577,7 +24361,7 @@ CREATE TABLE [dbo].[Publish.Pending](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[PublisherSummary]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  Table [dbo].[PublisherSummary]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -18599,7 +24383,7 @@ CREATE TABLE [dbo].[PublisherSummary](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[PurgeFromElasticSearch]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  Table [dbo].[PurgeFromElasticSearch]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -18610,7 +24394,7 @@ CREATE TABLE [dbo].[PurgeFromElasticSearch](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[Resource]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  Table [dbo].[Resource]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -18619,7 +24403,7 @@ SET ANSI_PADDING ON
 GO
 CREATE TABLE [dbo].[Resource](
 	[RowId] [uniqueidentifier] NOT NULL,
-	[ResourceUrl] [varchar](500) NOT NULL,
+	[ResourceUrl] [varchar](600) NOT NULL,
 	[ViewCount] [int] NULL,
 	[FavoriteCount] [int] NULL,
 	[Created] [datetime] NULL,
@@ -18629,23 +24413,25 @@ CREATE TABLE [dbo].[Resource](
 	[Id] [int] IDENTITY(1,1) NOT NULL,
  CONSTRAINT [PK_Resource] PRIMARY KEY CLUSTERED 
 (
-	[RowId] ASC
+	[Id] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[Resource.AccessibilityApi]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  Table [dbo].[Resource.AccessibilityApi]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
+GO
+SET ANSI_PADDING ON
 GO
 CREATE TABLE [dbo].[Resource.AccessibilityApi](
 	[Id] [int] IDENTITY(1,1) NOT NULL,
 	[ResourceIntId] [int] NULL,
 	[AccessibilityApiId] [int] NULL,
-	[OriginalValue] [int] NULL,
+	[OriginalValue] [varchar](100) NULL,
 	[CreatedById] [int] NULL,
  CONSTRAINT [PK_Resource.AccessibilityApi] PRIMARY KEY CLUSTERED 
 (
@@ -18654,16 +24440,20 @@ CREATE TABLE [dbo].[Resource.AccessibilityApi](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[Resource.AccessibilityControl]    Script Date: 3/9/2014 10:15:35 PM ******/
+SET ANSI_PADDING OFF
+GO
+/****** Object:  Table [dbo].[Resource.AccessibilityControl]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
+GO
+SET ANSI_PADDING ON
 GO
 CREATE TABLE [dbo].[Resource.AccessibilityControl](
 	[Id] [int] IDENTITY(1,1) NOT NULL,
 	[ResourceIntId] [int] NULL,
 	[AccessibilityControlId] [int] NULL,
-	[OriginalValue] [int] NULL,
+	[OriginalValue] [varchar](100) NULL,
 	[CreatedById] [int] NULL,
  CONSTRAINT [PK_Resource.AccessibilityControl] PRIMARY KEY CLUSTERED 
 (
@@ -18672,16 +24462,20 @@ CREATE TABLE [dbo].[Resource.AccessibilityControl](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[Resource.AccessibilityFeature]    Script Date: 3/9/2014 10:15:35 PM ******/
+SET ANSI_PADDING OFF
+GO
+/****** Object:  Table [dbo].[Resource.AccessibilityFeature]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
+GO
+SET ANSI_PADDING ON
 GO
 CREATE TABLE [dbo].[Resource.AccessibilityFeature](
 	[Id] [int] IDENTITY(1,1) NOT NULL,
 	[ResourceIntId] [int] NULL,
 	[AccessibilityFeatureId] [int] NULL,
-	[OriginalValue] [int] NULL,
+	[OriginalValue] [varchar](100) NULL,
 	[CreatedById] [int] NULL,
  CONSTRAINT [PK_Resource.AccessibilityFeature] PRIMARY KEY CLUSTERED 
 (
@@ -18690,16 +24484,20 @@ CREATE TABLE [dbo].[Resource.AccessibilityFeature](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[Resource.AccessibilityHazard]    Script Date: 3/9/2014 10:15:35 PM ******/
+SET ANSI_PADDING OFF
+GO
+/****** Object:  Table [dbo].[Resource.AccessibilityHazard]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
+GO
+SET ANSI_PADDING ON
 GO
 CREATE TABLE [dbo].[Resource.AccessibilityHazard](
 	[Id] [int] IDENTITY(1,1) NOT NULL,
 	[ResourceIntId] [int] NULL,
 	[AccessibilityHazardId] [int] NULL,
-	[OriginalValue] [int] NULL,
+	[OriginalValue] [varchar](100) NULL,
 	[CreatedById] [int] NULL,
  CONSTRAINT [PK_Resource.AccessibilityHazard] PRIMARY KEY CLUSTERED 
 (
@@ -18708,7 +24506,9 @@ CREATE TABLE [dbo].[Resource.AccessibilityHazard](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[Resource.AgeRange]    Script Date: 3/9/2014 10:15:35 PM ******/
+SET ANSI_PADDING OFF
+GO
+/****** Object:  Table [dbo].[Resource.AgeRange]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -18733,7 +24533,7 @@ CREATE TABLE [dbo].[Resource.AgeRange](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[Resource.AssessmentType]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  Table [dbo].[Resource.AssessmentType]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -18751,7 +24551,7 @@ CREATE TABLE [dbo].[Resource.AssessmentType](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[Resource.Cluster]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  Table [dbo].[Resource.Cluster]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -18769,7 +24569,7 @@ CREATE TABLE [dbo].[Resource.Cluster](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[Resource.Comment]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  Table [dbo].[Resource.Comment]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -18797,7 +24597,7 @@ CREATE TABLE [dbo].[Resource.Comment](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[Resource.DetailView]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  Table [dbo].[Resource.DetailView]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -18814,7 +24614,7 @@ CREATE TABLE [dbo].[Resource.DetailView](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[Resource.EducationLevel]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  Table [dbo].[Resource.EducationLevel]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -18839,7 +24639,7 @@ CREATE TABLE [dbo].[Resource.EducationLevel](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[Resource.EducationUse]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  Table [dbo].[Resource.EducationUse]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -18863,7 +24663,7 @@ CREATE TABLE [dbo].[Resource.EducationUse](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[Resource.Evaluation]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  Table [dbo].[Resource.Evaluation]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -18872,7 +24672,10 @@ SET ANSI_PADDING ON
 GO
 CREATE TABLE [dbo].[Resource.Evaluation](
 	[Id] [int] IDENTITY(1,1) NOT NULL,
-	[ResourceIntId] [int] NULL,
+	[ResourceIntId] [int] NOT NULL,
+	[EvaluationId] [int] NOT NULL,
+	[Score] [int] NOT NULL,
+	[UserHasCertification] [bit] NOT NULL,
 	[CreatedById] [int] NULL,
 	[Created] [datetime] NULL,
 	[StandardId] [int] NULL,
@@ -18890,7 +24693,26 @@ CREATE TABLE [dbo].[Resource.Evaluation](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[Resource.EvaluationSummary]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  Table [dbo].[Resource.EvaluationSection]    Script Date: 2/22/2015 10:28:08 AM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Resource.EvaluationSection](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[ResourceEvalId] [int] NOT NULL,
+	[EvalDimensionId] [int] NULL,
+	[Score] [int] NOT NULL,
+	[CreatedById] [int] NULL,
+	[Created] [datetime] NOT NULL,
+ CONSTRAINT [PK_Resource.EvaluationSection] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+
+GO
+/****** Object:  Table [dbo].[Resource.EvaluationSummary]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -18918,7 +24740,7 @@ CREATE TABLE [dbo].[Resource.EvaluationSummary](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[Resource.Format]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  Table [dbo].[Resource.Format]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -18942,7 +24764,7 @@ CREATE TABLE [dbo].[Resource.Format](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[Resource.GradeLevel]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  Table [dbo].[Resource.GradeLevel]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -18966,7 +24788,7 @@ CREATE TABLE [dbo].[Resource.GradeLevel](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[Resource.GroupType]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  Table [dbo].[Resource.GroupType]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -18985,7 +24807,7 @@ CREATE TABLE [dbo].[Resource.GroupType](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[Resource.IntendedAudience]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  Table [dbo].[Resource.IntendedAudience]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -19009,7 +24831,7 @@ CREATE TABLE [dbo].[Resource.IntendedAudience](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[Resource.ItemType]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  Table [dbo].[Resource.ItemType]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -19029,7 +24851,7 @@ CREATE TABLE [dbo].[Resource.ItemType](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[Resource.Keyword]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  Table [dbo].[Resource.Keyword]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -19051,7 +24873,7 @@ CREATE TABLE [dbo].[Resource.Keyword](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[Resource.Language]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  Table [dbo].[Resource.Language]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -19074,7 +24896,30 @@ CREATE TABLE [dbo].[Resource.Language](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[Resource.Like]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  Table [dbo].[Resource.LearningMapReference]    Script Date: 2/22/2015 10:28:08 AM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+SET ANSI_PADDING ON
+GO
+CREATE TABLE [dbo].[Resource.LearningMapReference](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[ResourceIntId] [int] NOT NULL,
+	[Subject] [varchar](50) NOT NULL,
+	[GradeLevels] [varchar](50) NULL,
+	[Created] [datetime] NULL,
+	[CreatedById] [int] NULL,
+ CONSTRAINT [PK_Resource.LearningMapReference] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+
+GO
+SET ANSI_PADDING OFF
+GO
+/****** Object:  Table [dbo].[Resource.Like]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -19093,7 +24938,7 @@ CREATE TABLE [dbo].[Resource.Like](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[Resource.LikeSummary]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  Table [dbo].[Resource.LikeSummary]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -19112,7 +24957,7 @@ CREATE TABLE [dbo].[Resource.LikeSummary](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[Resource.LinkCheck]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  Table [dbo].[Resource.LinkCheck]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -19131,7 +24976,7 @@ CREATE TABLE [dbo].[Resource.LinkCheck](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[Resource.PublishedBy]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  Table [dbo].[Resource.PublishedBy]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -19147,7 +24992,7 @@ CREATE TABLE [dbo].[Resource.PublishedBy](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[Resource.RatingSummary]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  Table [dbo].[Resource.RatingSummary]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -19168,7 +25013,7 @@ CREATE TABLE [dbo].[Resource.RatingSummary](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[Resource.Recommendation]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  Table [dbo].[Resource.Recommendation]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -19192,7 +25037,7 @@ CREATE TABLE [dbo].[Resource.Recommendation](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[Resource.RelatedUrl]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  Table [dbo].[Resource.RelatedUrl]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -19216,7 +25061,7 @@ CREATE TABLE [dbo].[Resource.RelatedUrl](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[Resource.ResourceType]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  Table [dbo].[Resource.ResourceType]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -19240,7 +25085,44 @@ CREATE TABLE [dbo].[Resource.ResourceType](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[Resource.Standard]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  Table [dbo].[Resource.SearchText]    Script Date: 2/22/2015 10:28:08 AM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+SET ANSI_PADDING ON
+GO
+CREATE TABLE [dbo].[Resource.SearchText](
+	[ResourceIntId] [int] NOT NULL,
+	[SearchText] [varchar](max) NOT NULL,
+ CONSTRAINT [PK_Resource.SearchText] PRIMARY KEY CLUSTERED 
+(
+	[ResourceIntId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+
+GO
+SET ANSI_PADDING OFF
+GO
+/****** Object:  Table [dbo].[Resource.Site]    Script Date: 2/22/2015 10:28:08 AM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Resource.Site](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[ResourceIntId] [int] NOT NULL,
+	[SiteId] [int] NOT NULL,
+	[Created] [datetime] NULL,
+	[CreatedById] [int] NULL,
+ CONSTRAINT [PK_Resource.Site] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+
+GO
+/****** Object:  Table [dbo].[Resource.Standard]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -19266,7 +25148,25 @@ CREATE TABLE [dbo].[Resource.Standard](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[Resource.Subject]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  Table [dbo].[Resource.StandardEvaluation]    Script Date: 2/22/2015 10:28:08 AM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Resource.StandardEvaluation](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[ResourceStandardId] [int] NOT NULL,
+	[Score] [int] NULL,
+	[CreatedById] [int] NULL,
+	[Created] [datetime] NULL,
+ CONSTRAINT [PK_Resource.StandardEvaluation] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+
+GO
+/****** Object:  Table [dbo].[Resource.Subject]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -19279,6 +25179,7 @@ CREATE TABLE [dbo].[Resource.Subject](
 	[Subject] [varchar](100) NULL,
 	[Created] [datetime] NULL,
 	[CreatedById] [int] NULL,
+	[CodeId] [int] NULL,
  CONSTRAINT [PK_Resource_Subject] PRIMARY KEY CLUSTERED 
 (
 	[Id] ASC
@@ -19288,7 +25189,7 @@ CREATE TABLE [dbo].[Resource.Subject](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[Resource.Tag]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  Table [dbo].[Resource.Tag]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -19298,7 +25199,6 @@ GO
 CREATE TABLE [dbo].[Resource.Tag](
 	[Id] [int] IDENTITY(1,1) NOT NULL,
 	[ResourceIntId] [int] NOT NULL,
-	[CategoryId] [int] NOT NULL,
 	[TagValueId] [int] NOT NULL,
 	[Created] [datetime] NULL,
 	[CreatedById] [int] NULL,
@@ -19312,7 +25212,7 @@ CREATE TABLE [dbo].[Resource.Tag](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[Resource.Text]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  Table [dbo].[Resource.Text]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -19335,7 +25235,7 @@ CREATE TABLE [dbo].[Resource.Text](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[Resource.Version]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  Table [dbo].[Resource.Version]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -19351,7 +25251,7 @@ CREATE TABLE [dbo].[Resource.Version](
 	[Publisher] [varchar](200) NULL,
 	[Creator] [varchar](200) NULL,
 	[Rights] [varchar](700) NULL,
-	[AccessRights] [varchar](100) NULL,
+	[AccessRights] [varchar](105) NULL,
 	[Modified] [datetime] NULL,
 	[Submitter] [varchar](100) NULL,
 	[Imported] [datetime] NULL,
@@ -19375,7 +25275,7 @@ CREATE TABLE [dbo].[Resource.Version](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[Resource.VersionWeight]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  Table [dbo].[Resource.VersionWeight]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -19390,7 +25290,7 @@ CREATE TABLE [dbo].[Resource.VersionWeight](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[Resource.View]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  Table [dbo].[Resource.View]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -19407,7 +25307,7 @@ CREATE TABLE [dbo].[Resource.View](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[Resource_Index]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  Table [dbo].[Resource_Index]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -19474,6 +25374,39 @@ CREATE TABLE [dbo].[Resource_Index](
 	[likeCount] [int] NULL,
 	[dislikeCount] [int] NULL,
 	[submitter] [varchar](100) NULL,
+	[accessibilityApiIDs] [nvarchar](max) NULL,
+	[accessibilityApis] [nvarchar](max) NULL,
+	[accessibilityControlIDs] [nvarchar](max) NULL,
+	[accessibilityControls] [nvarchar](max) NULL,
+	[accessibilityFeatureIDs] [nvarchar](max) NULL,
+	[accessibilityFeatures] [nvarchar](max) NULL,
+	[accessibilityHazardIDs] [nvarchar](max) NULL,
+	[accessibilityHazards] [nvarchar](max) NULL,
+	[lrDocId] [varchar](100) NULL,
+	[usageRightsDescription] [varchar](100) NULL,
+	[careerPlannings] [nvarchar](max) NULL,
+	[careerPlanningIDs] [nvarchar](max) NULL,
+	[disabilityTopics] [nvarchar](max) NULL,
+	[disabilityTopicIDs] [nvarchar](max) NULL,
+	[jobPreparations] [nvarchar](max) NULL,
+	[jobPreparationIDs] [nvarchar](max) NULL,
+	[employerPrograms] [nvarchar](max) NULL,
+	[employerProgramIDs] [nvarchar](max) NULL,
+	[k12Subjects] [nvarchar](max) NULL,
+	[k12SubjectIDs] [nvarchar](max) NULL,
+	[veteransServices] [nvarchar](max) NULL,
+	[veteransServiceIDs] [nvarchar](max) NULL,
+	[workSupportServices] [nvarchar](max) NULL,
+	[workSupportServiceIDs] [nvarchar](max) NULL,
+	[wfePartners] [nvarchar](max) NULL,
+	[wfePartnerIDs] [nvarchar](max) NULL,
+	[workplaceSkills] [nvarchar](max) NULL,
+	[workPlaceSkillsIDs] [nvarchar](max) NULL,
+	[regions] [nvarchar](max) NULL,
+	[regionIDs] [nvarchar](max) NULL,
+	[targetSites] [nvarchar](max) NULL,
+	[targetSiteIDs] [nvarchar](max) NULL,
+	[sortTitle] [nvarchar](300) NULL,
  CONSTRAINT [PK_Resource_Index] PRIMARY KEY CLUSTERED 
 (
 	[versionID] ASC
@@ -19483,7 +25416,7 @@ CREATE TABLE [dbo].[Resource_Index](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[Resource_IndexEvaluation]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  Table [dbo].[Resource_IndexEvaluation]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -19503,7 +25436,200 @@ CREATE TABLE [dbo].[Resource_IndexEvaluation](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[Rubric.Heading]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  Table [dbo].[Resource_IndexV2]    Script Date: 2/22/2015 10:28:08 AM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+SET ANSI_PADDING ON
+GO
+CREATE TABLE [dbo].[Resource_IndexV2](
+	[versionID] [int] NOT NULL,
+	[intID] [int] NULL,
+	[title] [nvarchar](300) NOT NULL,
+	[description] [nvarchar](max) NULL,
+	[publisher] [varchar](200) NULL,
+	[created] [datetime] NULL,
+	[accessRights] [varchar](100) NULL,
+	[accessRightsID] [int] NULL,
+	[keywords] [nvarchar](max) NULL,
+	[subjects] [nvarchar](max) NULL,
+	[languageIDs] [nvarchar](max) NULL,
+	[languages] [nvarchar](max) NULL,
+	[clusterIDs] [nvarchar](max) NULL,
+	[clusters] [nvarchar](max) NULL,
+	[audienceIDs] [nvarchar](max) NULL,
+	[audiences] [nvarchar](max) NULL,
+	[gradeLevelIDs] [nvarchar](max) NULL,
+	[gradeLevels] [nvarchar](max) NULL,
+	[gradeLevelAliases] [nvarchar](max) NULL,
+	[resourceTypeIDs] [nvarchar](max) NULL,
+	[resourceTypes] [nvarchar](max) NULL,
+	[mediaTypeIDs] [nvarchar](max) NULL,
+	[mediaTypes] [nvarchar](max) NULL,
+	[groupTypeIDs] [nvarchar](max) NULL,
+	[groupTypes] [nvarchar](max) NULL,
+	[itemTypeIDs] [nvarchar](max) NULL,
+	[itemTypes] [nvarchar](max) NULL,
+	[standardIDs] [nvarchar](max) NULL,
+	[standardNotations] [nvarchar](max) NULL,
+	[alignmentTypeIDs] [nvarchar](max) NULL,
+	[alignmentTypes] [nvarchar](max) NULL,
+	[LastUpdated] [datetime] NULL,
+	[url] [varchar](500) NULL,
+	[libraryIDs] [varchar](max) NULL,
+	[collectionIDs] [varchar](max) NULL,
+	[IsDeleted] [bit] NULL,
+	[educationalUseIDs] [nvarchar](max) NULL,
+	[educationalUses] [nvarchar](max) NULL,
+	[usageRights] [varchar](300) NULL,
+	[usageRightsID] [int] NULL,
+	[usageRightsURL] [varchar](700) NULL,
+	[usageRightsIconURL] [varchar](300) NULL,
+	[usageRightsMiniIconURL] [varchar](300) NULL,
+	[likesSummary] [int] NULL,
+	[evaluationCount] [int] NULL,
+	[evaluationScore] [int] NULL,
+	[commentsCount] [int] NULL,
+	[viewsCount] [int] NULL,
+	[timeRequired] [varchar](50) NULL,
+	[isBasedOnUrl] [varchar](300) NULL,
+	[creator] [varchar](200) NULL,
+	[requirements] [varchar](200) NULL,
+	[assessmentTypeIDs] [nvarchar](max) NULL,
+	[assessmentTypes] [nvarchar](max) NULL,
+	[detailViews] [int] NULL,
+	[favorites] [int] NULL,
+	[likeCount] [int] NULL,
+	[dislikeCount] [int] NULL,
+	[submitter] [varchar](100) NULL,
+	[accessibilityApiIDs] [nvarchar](max) NULL,
+	[accessibilityApis] [nvarchar](max) NULL,
+	[accessibilityControlIDs] [nvarchar](max) NULL,
+	[accessibilityControls] [nvarchar](max) NULL,
+	[accessibilityFeatureIDs] [nvarchar](max) NULL,
+	[accessibilityFeatures] [nvarchar](max) NULL,
+	[accessibilityHazardIDs] [nvarchar](max) NULL,
+	[accessibilityHazards] [nvarchar](max) NULL,
+	[lrDocId] [varchar](100) NULL,
+	[usageRightsDescription] [varchar](100) NULL,
+	[training] [nvarchar](max) NULL,
+	[trainingIDs] [nvarchar](max) NULL,
+	[disabilityTopics] [nvarchar](max) NULL,
+	[disabilityTopicIDs] [nvarchar](max) NULL,
+	[jobs] [nvarchar](max) NULL,
+	[jobIDs] [nvarchar](max) NULL,
+	[networking] [nvarchar](max) NULL,
+	[networkingIDs] [nvarchar](max) NULL,
+	[k12Subjects] [nvarchar](max) NULL,
+	[k12SubjectIDs] [nvarchar](max) NULL,
+	[resources] [nvarchar](max) NULL,
+	[resourceIDs] [nvarchar](max) NULL,
+	[wioaWorks] [nvarchar](max) NULL,
+	[wioaWorksIDs] [nvarchar](max) NULL,
+	[wfePartners] [nvarchar](max) NULL,
+	[wfePartnerIDs] [nvarchar](max) NULL,
+	[explore] [nvarchar](max) NULL,
+	[exploreIDs] [nvarchar](max) NULL,
+	[regions] [nvarchar](max) NULL,
+	[regionIDs] [nvarchar](max) NULL,
+	[targetSites] [nvarchar](max) NULL,
+	[targetSiteIDs] [nvarchar](max) NULL,
+	[sortTitle] [nvarchar](300) NULL,
+	[qualify] [nvarchar](max) NULL,
+	[qualifyIDs] [nvarchar](max) NULL,
+	[layoffAssist] [nvarchar](max) NULL,
+	[layoffAssistIDs] [nvarchar](max) NULL,
+ CONSTRAINT [PK_Resource_IndexV2] PRIMARY KEY CLUSTERED 
+(
+	[versionID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+
+GO
+SET ANSI_PADDING OFF
+GO
+/****** Object:  Table [dbo].[Resource_IndexV2.Tags]    Script Date: 2/22/2015 10:28:08 AM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+SET ANSI_PADDING ON
+GO
+CREATE TABLE [dbo].[Resource_IndexV2.Tags](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[ResourceId] [int] NOT NULL,
+	[TagCategory] [varchar](50) NOT NULL,
+	[TagList] [varchar](max) NULL,
+	[TagIDs] [varchar](max) NULL,
+ CONSTRAINT [PK_Resource_IndexV2.Tags] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+
+GO
+SET ANSI_PADDING OFF
+GO
+/****** Object:  Table [dbo].[Resource_IndexV3Tags]    Script Date: 2/22/2015 10:28:08 AM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+SET ANSI_PADDING ON
+GO
+CREATE TABLE [dbo].[Resource_IndexV3Tags](
+	[ResourceIntId] [int] NULL,
+	[Titles] [varchar](max) NULL,
+	[IDs] [varchar](max) NULL,
+	[CategoryId] [int] NULL,
+	[CategoryTitle] [varchar](50) NULL,
+	[AliasValues] [varchar](max) NULL
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+
+GO
+SET ANSI_PADDING OFF
+GO
+/****** Object:  Table [dbo].[Resource_IndexV3Texts]    Script Date: 2/22/2015 10:28:08 AM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+SET ANSI_PADDING ON
+GO
+CREATE TABLE [dbo].[Resource_IndexV3Texts](
+	[ResourceIntId] [int] NULL,
+	[ResourceVersionId] [int] NULL,
+	[DocId] [varchar](max) NULL,
+	[Title] [varchar](max) NULL,
+	[UrlTitle] [varchar](max) NULL,
+	[Description] [varchar](max) NULL,
+	[Requirements] [varchar](max) NULL,
+	[Url] [varchar](max) NULL,
+	[ResourceCreated] [datetime] NULL,
+	[Creator] [varchar](max) NULL,
+	[Publisher] [varchar](max) NULL,
+	[Submitter] [varchar](max) NULL,
+	[RightsUrl] [varchar](max) NULL,
+	[Keywords] [varchar](max) NULL,
+	[LibraryIds] [varchar](max) NULL,
+	[CollectionIds] [varchar](max) NULL,
+	[StandardIds] [varchar](max) NULL,
+	[StandardNotations] [varchar](max) NULL,
+	[P_Favorites] [int] NULL,
+	[P_ResourceViews] [int] NULL,
+	[P_Likes] [int] NULL,
+	[P_Dislikes] [int] NULL,
+	[P_Rating] [float] NULL,
+	[P_Comments] [int] NULL,
+	[P_Evaluations] [int] NULL,
+	[P_EvaluationsScore] [float] NULL
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+
+GO
+SET ANSI_PADDING OFF
+GO
+/****** Object:  Table [dbo].[Rubric.Heading]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -19518,7 +25644,7 @@ CREATE TABLE [dbo].[Rubric.Heading](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[Rubric.Node]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  Table [dbo].[Rubric.Node]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -19544,7 +25670,7 @@ CREATE TABLE [dbo].[Rubric.Node](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[ServerDatabaseTables]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  Table [dbo].[ServerDatabaseTables]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -19557,7 +25683,7 @@ CREATE TABLE [dbo].[ServerDatabaseTables](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[Sort.SpecialCharacter]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  Table [dbo].[Sort.SpecialCharacter]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -19576,7 +25702,7 @@ CREATE TABLE [dbo].[Sort.SpecialCharacter](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[Standard.SubjectStandardConnector]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  Table [dbo].[Standard.SubjectStandardConnector]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -19592,7 +25718,7 @@ CREATE TABLE [dbo].[Standard.SubjectStandardConnector](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[StandardBody]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  Table [dbo].[StandardBody]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -19615,7 +25741,7 @@ CREATE TABLE [dbo].[StandardBody](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[StandardBody.Node]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  Table [dbo].[StandardBody.Node]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -19623,7 +25749,7 @@ GO
 SET ANSI_PADDING ON
 GO
 CREATE TABLE [dbo].[StandardBody.Node](
-	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[Id] [int] NOT NULL,
 	[ParentId] [int] NULL,
 	[LevelType] [varchar](50) NULL,
 	[NotationCode] [varchar](50) NULL,
@@ -19642,7 +25768,7 @@ CREATE TABLE [dbo].[StandardBody.Node](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[StandardBody.NodeGradeLevel]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  Table [dbo].[StandardBody.NodeGradeLevel]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -19663,7 +25789,7 @@ CREATE TABLE [dbo].[StandardBody.NodeGradeLevel](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[StandardBody.Subject]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  Table [dbo].[StandardBody.Subject]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -19688,7 +25814,32 @@ CREATE TABLE [dbo].[StandardBody.Subject](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[System.Process]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  Table [dbo].[System.GenerateLoginId]    Script Date: 2/22/2015 10:28:08 AM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+SET ANSI_PADDING ON
+GO
+CREATE TABLE [dbo].[System.GenerateLoginId](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[ProxyId] [uniqueidentifier] NOT NULL,
+	[UserId] [int] NOT NULL,
+	[ProxyType] [varchar](50) NULL,
+	[IsActive] [bit] NOT NULL,
+	[Created] [datetime] NOT NULL,
+	[ExpiryDate] [datetime] NOT NULL,
+	[AccessDate] [datetime] NULL,
+ CONSTRAINT [PK_System.GenerateLoginId] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+
+GO
+SET ANSI_PADDING OFF
+GO
+/****** Object:  Table [dbo].[System.Process]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -19716,7 +25867,184 @@ CREATE TABLE [dbo].[System.Process](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  View [dbo].[Resource.EvaluationsList]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  View [dbo].[Resource.Version_Summary]    Script Date: 2/22/2015 10:28:08 AM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+/*
+-- images
+-- 46 sec, for 19000 using all 
+--title, res, desc, pub: 43 s, 8540 rows
+--title, desc: 47 s, 7109 rows
+--title, res, desc: 29 s, 8535 rows
+--res: 1 s, 1541 rows
+-- added index on title and pub
+--title, pub: 3 s, 721 rows
+--title, res, pub: 16 s, 2166 rows
+--title, res: 3 s, 2152 rows
+
+SELECT [ResourceUrl]
+      ,[ResourceIntId]
+      ,[ResourceVersionId]
+
+      ,[Title]
+      ,[Description]
+      ,[Publisher]
+      --,[Creator]
+      --,[Rights]
+      --,[AccessRights]
+      --,[TypicalLearningTime]
+      ,[Modified]
+      --,[Submitter]
+
+  FROM [dbo].[Resource.Version_Summary]
+  where 
+ -- MegaSearchField like '%image%'
+  --or 
+  title like  '%www.freesound.org%'
+  --OR ResourceUrl like  '%www.freesound.org%'
+  --OR Description like  '%oercommons%'
+  OR Publisher like  '%www.freesound.org%'
+  --127
+  OR Subjects like  '%image%'
+  OR Keywords like  '%image%' 
+  order by 1
+GO
+
+--683
+SELECT 
+[ResourceIntId]
+      ,[Title]
+      ,[Description]
+  FROM [dbo].[Resource.Version]
+  where ([ResourceIntId] = 170347 ) 
+  title like  '%image%'
+  OR Description like  '%image%'
+  OR Publisher like  '%image%'
+  --7136
+  order by 2
+
+  SELECT 
+[ResourceIntId]
+      ,[Title]
+      ,[Description]
+  FROM [dbo].[Resource.Version_Summary]
+  where ([ResourceIntId] = 170347 ) 
+*/
+/*
+Resource.Version_Summary - summary of key resource tables. 
+        Should only be used by a search. Not for returning to code
+        WARNING - changing view may require recreation of the Resource_Version_Summary_ClusteredIndex.sql (or at least doing a rebuild!!!!
+-- 13-01-31 mparsons - added join for new AccessRightsId
+-- 13-03-11 mparsons - changed to join on ResourceIntId
+-- 14-01-21 mparsons - added all fields necessary for RV.Fill        
+*/
+CREATE VIEW [dbo].[Resource.Version_Summary] 
+--WITH SCHEMABINDING 
+AS
+
+SELECT 
+--top 1000
+      lr.ResourceUrl
+      , lr.Id 
+      , lr.Id As ResourceIntId
+      ,'' As [ResourceId]
+     -- ,base.RowId as ResourceVersionId
+      ,base.Id as ResourceVersionIntId
+      ,base.[Title]
+      ,base.[Description]
+      ,base.[Publisher]
+      ,base.[Creator]
+      ,base.[Rights]
+      ,lr.ViewCount
+      ,lr.FavoriteCount
+	  ,base.DocId
+      --,base.[AccessRights]
+      ,base.AccessRightsId ,codes.title As AccessRights
+      ,base.InteractivityTypeId, base.InteractivityType
+      ,base.[TypicalLearningTime]
+      ,base.[Modified]
+	  ,base.Created
+	  ,base.[Imported]
+      ,base.[Submitter]
+	  ,base.[Schema], base.Requirements
+      ,base.SortTitle
+	  ,rpb.PublishedById
+--    SELECT count(*)      
+  FROM [dbo].[Resource.Version] base
+  Inner JOIN dbo.[Resource] lr ON base.ResourceIntId = lr.Id
+  Left Join dbo.[Codes.AccessRights] codes on base.AccessRightsId = codes.Id
+  left Join dbo.[resource.PublishedBy] rpb on base.ResourceIntId = rpb.ResourceIntId
+  where 
+      base.[IsActive]= 1 
+  AND lr.[IsActive]= 1 
+  
+
+GO
+/****** Object:  View [dbo].[Patron_ResourceSummary]    Script Date: 2/22/2015 10:28:08 AM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+/*
+
+SELECT [UserId],FirstName, LastName
+      ,[FullName]      ,[SortName]
+      ,[Email]
+      ,[IsUserActive]
+      ,[JobTitle]
+      ,[ImageUrl]
+      ,[OrganizationId]
+      ,[Organization]
+      ,[Created]
+      ,[LastUpdated]
+      ,[Published]
+      ,[ResourceUrl]
+      ,[ResourceTitle]
+      ,[Description]
+      ,[ResourceId]
+  FROM [dbo].[Patron_ResourceSummary]
+GO
+
+
+
+*/
+CREATE VIEW [dbo].[Patron_ResourceSummary]
+AS
+SELECT     
+	base.Id As UserId, 
+	base.FirstName, 
+	base.LastName, 
+	base.FirstName + ' ' + base.LastName AS FullName, 
+	base.LastName + ', ' + base.FirstName AS SortName, 
+	base.Email, 
+	base.IsActive As IsUserActive,
+	prof.JobTitle, 
+	prof.ImageUrl, 
+	prof.OrganizationId,
+	case when isnull(prof.OrganizationId,0) > 0 then
+		org.Name
+	else '' end As Organization,
+
+	base.Created,
+	case when isnull(base.LastUpdated, base.Created) > isnull(prof.LastUpdated, prof.Created) then base.LastUpdated
+	else isnull(prof.LastUpdated, prof.Created) end as LastUpdated
+	,rpb.Created as Published
+	,res.ResourceUrl, res.Title as ResourceTitle, res.Description
+	,res.Id As ResourceId
+
+FROM  dbo.Patron base 
+Inner JOIN dbo.[Patron.Profile] prof ON base.Id = prof.UserId
+Left Join Gateway.dbo.Organization org on prof.OrganizationId = org.id
+Inner Join [Resource.PublishedBy] rpb on base.Id = rpb.PublishedById
+Inner Join [Resource.Version_Summary] res on rpb.ResourceIntId = res.Id
+--where base.IsActive = 1
+
+
+GO
+/****** Object:  View [dbo].[Resource.EvaluationsList]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -19734,7 +26062,7 @@ CREATE VIEW [dbo].[Resource.EvaluationsList] AS
 
 
 GO
-/****** Object:  View [dbo].[Resource.EvaluationsCount]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  View [dbo].[Resource.EvaluationsCount]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -19751,7 +26079,126 @@ CREATE VIEW [dbo].[Resource.EvaluationsCount] AS
 
 
 GO
-/****** Object:  View [dbo].[StandardBodyNode_Summary]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  View [dbo].[Codes.TagCategoryValue_summary]    Script Date: 2/22/2015 10:28:08 AM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+/*
+
+
+SELECT [CategoryId]
+      ,[Category]
+      ,[TagValueId]
+      ,[TagRelativeId]
+      ,[Title]
+	  ,Description
+      ,[WarehouseTotal]
+  FROM [dbo].[Codes.TagCategoryValue_summary]
+GO
+
+
+
+
+*/
+CREATE VIEW [dbo].[Codes.TagCategoryValue_summary]
+AS
+SELECT        TOP (100) PERCENT 
+dbo.[Codes.TagCategory].Id AS CategoryId, 
+dbo.[Codes.TagCategory].Title AS Category, 
+dbo.[Codes.TagValue].Id AS TagValueId, 
+dbo.[Codes.TagValue].CodeId As TagRelativeId, 
+--add alias
+dbo.[Codes.TagValue].CodeId As CodeId, 
+dbo.[Codes.TagValue].Title, 
+dbo.[Codes.TagValue].Description, 
+dbo.[Codes.TagValue].WarehouseTotal
+FROM dbo.[Codes.TagValue] 
+	INNER JOIN dbo.[Codes.TagCategory] ON dbo.[Codes.TagValue].CategoryId = dbo.[Codes.TagCategory].Id
+WHERE        
+	(dbo.[Codes.TagCategory].IsActive = 1) 
+	AND (dbo.[Codes.TagValue].IsActive = 1)
+
+ORDER BY dbo.[Codes.TagCategory].SortOrder
+
+
+GO
+/****** Object:  View [dbo].[Codes.ResourceFormatTag]    Script Date: 2/22/2015 10:28:08 AM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+/*
+
+
+SELECT [Id]
+      
+      ,[CodeId]
+      ,[Title]
+	  ,Description
+      ,[WarehouseTotal]
+	  ,[Category]
+  FROM [dbo].[Codes.ResourceFormatTag]
+  order by Title
+  
+
+
+*/
+CREATE VIEW [dbo].[Codes.ResourceFormatTag]
+AS
+SELECT      
+	TagValueId As Id, 
+	[TagRelativeId] As CodeId, 
+	Title, 
+	Description, 
+	WarehouseTotal
+	,Category
+
+FROM dbo.[Codes.TagCategoryValue_Summary] 
+	
+WHERE CategoryId =18
+
+
+
+GO
+/****** Object:  View [dbo].[Codes.ResourceTypeTag]    Script Date: 2/22/2015 10:28:08 AM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+/*
+
+
+SELECT [Id]
+      
+      ,[CodeId]
+      ,[Title]
+	  ,Description
+      ,[WarehouseTotal]
+	  ,[Category]
+  FROM [dbo].[Codes.ResourceTypeTag]
+  order by Title
+
+
+*/
+CREATE VIEW [dbo].[Codes.ResourceTypeTag]
+AS
+SELECT      
+	TagValueId As Id, 
+	[TagRelativeId] As CodeId, 
+	Title, 
+	Description, 
+	WarehouseTotal
+	,Category
+
+FROM dbo.[Codes.TagCategoryValue_Summary] 
+	
+WHERE CategoryId =19
+
+
+
+GO
+/****** Object:  View [dbo].[StandardBodyNode_Summary]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -19795,69 +26242,76 @@ LEFT OUTER JOIN dbo.[StandardBody.Node] AS ComponentNode ON StandardNode.Id = Co
 
 
 GO
-/****** Object:  View [dbo].[StandardDomainGradeLevels]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  View [dbo].[Resource.StandardSummary]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-
 /*
 
+
 */
-CREATE VIEW [dbo].[StandardDomainGradeLevels]
+CREATE VIEW [dbo].[Resource.StandardSummary]
 AS
-SELECT top 100 percent
-  SubjectId, [Subject],     
-  sbn.DomainId, sbn.Domain, 
-  sbn.ClusterId, sbn.Cluster,
-  sbn.StandardId,  
-  --sbn.StandardLevel, 
-  --sbn.StandardCode, 
-  sbn.Standard, 
-  --sbn.StandardUrl,
-  case when sbn.ComponentId is null then
-    ngls.GradeLevelId 
-  else 
-    nglc.GradeLevelId end As StandardGradeLevelId,
-  
-  case when sbn.ComponentId is null then
-    cgls.Description 
-  else     
-    cglc.Description end  AS StandardGradeLevel,
-  sbn.ComponentId, 
-  sbn.Component,
-  nglc.GradeLevelId As ComponentGradeLevelId, 
-  cglc.Description AS ComponentGradeLevel
+SELECT       
+	dbo.Resource.Id AS ResourceId, 
+	dbo.Resource.ResourceUrl, 
+	dbo.[Resource.Version].Id AS ResourceVersionId, 
+	dbo.[Resource.Version].Title, 
+	dbo.[Resource.Standard].StandardId, 
+	dbo.[Resource.Standard].Id, 
+	dbo.StandardBodyNode_Summary.Domain, 
+	dbo.StandardBodyNode_Summary.Cluster, 
+	dbo.StandardBodyNode_Summary.StandardLevel, 
+	dbo.StandardBodyNode_Summary.Standard, 
+	dbo.StandardBodyNode_Summary.ComponentLevel, 
+	dbo.StandardBodyNode_Summary.Component
 
-FROM dbo.StandardBodyNode_Summary sbn
-left JOIN dbo.[StandardBody.NodeGradeLevel] ngls ON sbn.StandardId = ngls.ParentId 
-left JOIN dbo.[Codes.GradeLevel] cgls ON ngls.GradeLevelId = cgls.Id
-
-left JOIN dbo.[StandardBody.NodeGradeLevel] nglc ON sbn.ComponentId = nglc.ParentId 
-left JOIN dbo.[Codes.GradeLevel] cglc ON nglc.GradeLevelId = cglc.Id
-
-
---where StandardId = 7
-order by sbn.DomainId, sbn.ClusterId, sbn.StandardId 
-
---UNION
---SELECT     
---  SubjectId, [Subject], 
---  sbn.DomainId, sbn.Domain, 
---  sbn.ClusterId, sbn.Cluster,
---  sbn.ComponentId, sbn.Component,
---  ngls.GradeLevelId, 
---  cgls.Description AS GradeLevel
-
---FROM dbo.StandardBodyNode_Summary sbn
---INNER JOIN dbo.[StandardBody.NodeGradeLevel] ngls ON sbn.ComponentId = ngls.ParentId 
---INNER JOIN dbo.[Codes.GradeLevel] cgls ON ngls.GradeLevelId = cgls.Id
---where StandardId = 7
-
+FROM            dbo.Resource 
+INNER JOIN dbo.[Resource.Version] ON dbo.Resource.Id = dbo.[Resource.Version].ResourceIntId 
+INNER JOIN dbo.[Resource.Standard] ON dbo.Resource.Id = dbo.[Resource.Standard].ResourceIntId 
+INNER JOIN dbo.StandardBodyNode_Summary ON dbo.[Resource.Standard].Id = dbo.StandardBodyNode_Summary.StandardId
 
 
 GO
-/****** Object:  View [dbo].[ActiveLibrarySummary]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  UserDefinedFunction [dbo].[SplitString]    Script Date: 2/22/2015 10:28:08 AM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+/*
+
+
+SELECT * FROM [dbo].[SplitString] ('Youth, Disability, Advocacy' , ',' )
+GO
+
+
+
+*/
+CREATE FUNCTION [dbo].[SplitString]
+(
+    @String NVARCHAR(4000),
+    @Delimiter NCHAR(1)
+)
+RETURNS TABLE 
+AS
+RETURN 
+(
+    WITH Split(stpos,endpos) 
+    AS(
+        SELECT 0 AS stpos, CHARINDEX(@Delimiter,@String) AS endpos
+        UNION ALL
+        SELECT endpos+1, CHARINDEX(@Delimiter,@String,endpos+1)
+            FROM Split
+            WHERE endpos > 0
+    )
+    SELECT 'Id' = ROW_NUMBER() OVER (ORDER BY (SELECT 1)),
+        'Data' = SUBSTRING(@String,stpos,COALESCE(NULLIF(endpos,0),LEN(@String)+1)-stpos)
+    FROM Split
+)
+
+GO
+/****** Object:  View [dbo].[ActiveLibrarySummary]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -19872,7 +26326,7 @@ CREATE VIEW [dbo].[ActiveLibrarySummary] AS
 	GROUP BY lib.Id, lib.Title, lib.[Description], LibraryTypeId, IsDiscoverable, lib.IsPublic
 
 GO
-/****** Object:  View [dbo].[Codes.CareerCluster]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  View [dbo].[Codes.CareerCluster]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -19895,7 +26349,109 @@ SELECT [Id]
   Where [IsIlPathway]= 1 and IsActive= 1
 
 GO
-/****** Object:  View [dbo].[IntendedAudienceCounts]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  View [dbo].[Codes.SiteTagCategory_Summary]    Script Date: 2/22/2015 10:28:08 AM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+/*
+
+
+SELECT Id
+,[SiteId]
+
+      ,[CategoryId]
+	  ,SchemaTag
+      ,[Title]
+      ,[Description]
+      ,[Site_SortOrder]
+      ,[TagCategory_SortOrder]
+  FROM [dbo].[Codes.SiteTagCategory_Summary]
+where SiteId= 1
+
+
+
+
+
+*/
+CREATE VIEW [dbo].[Codes.SiteTagCategory_Summary]
+AS
+SELECT        TOP (100) PERCENT 
+	dbo.[Codes.SiteTagCategory].Id, 
+	dbo.[Codes.SiteTagCategory].SiteId, 
+	dbo.[Codes.SiteTagCategory].CategoryId, 
+	dbo.[Codes.TagCategory].Title, 
+	dbo.[Codes.TagCategory].Description, 
+	dbo.[Codes.TagCategory].SchemaTag, 
+	dbo.[Codes.SiteTagCategory].SortOrder AS Site_SortOrder, 
+	dbo.[Codes.TagCategory].SortOrder AS TagCategory_SortOrder
+FROM dbo.[Codes.SiteTagCategory] 
+INNER JOIN dbo.[Codes.TagCategory] ON dbo.[Codes.SiteTagCategory].CategoryId = dbo.[Codes.TagCategory].Id
+WHERE        
+	(dbo.[Codes.SiteTagCategory].IsActive = 1) 
+AND (dbo.[Codes.TagCategory].IsActive = 1)
+and categoryid <> 27
+ORDER BY dbo.[Codes.SiteTagCategory].SiteId, 
+		Site_SortOrder, 
+		TagCategory_SortOrder, 
+		dbo.[Codes.TagCategory].Title
+
+
+GO
+/****** Object:  View [dbo].[Gateway.OrgSummary]    Script Date: 2/22/2015 10:28:08 AM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+/*
+SELECT [id]
+      ,[Name]
+      ,[OrgTypeId]
+      ,[OrgType]
+      ,[parentId]
+
+      ,base.[IsActive]
+      ,[MainPhone],[MainExtension],[Fax],[TTY]
+      ,[WebSite],[Email]
+      ,[LogoUrl]
+      ,[Address],[Address2],[City],[State],[Zipcode]
+      ,base.[Created]      ,base.[CreatedById]
+      ,[LastUpdated]      ,[LastUpdatedById]
+  FROM [IsleContent].[dbo].[Gateway.OrgSummary]
+GO
+
+
+
+*/
+
+/*
+[Gateway.OrgSummary] - select org summary . 
+    
+*/
+Create VIEW [dbo].[Gateway.OrgSummary] AS
+
+SELECT [id]
+      ,[Name]
+      ,[OrgTypeId]
+      ,[OrgType]
+      ,[parentId],[ParentOrganization]
+      ,[IsActive]
+      ,[MainPhone],[MainExtension],[Fax],[TTY]
+      ,[WebSite],[Email],[LogoUrl]
+      ,[Address],[Address2],[City],[State],[Zipcode]
+      ,[Created],[CreatedById]
+      ,[LastUpdated],[LastUpdatedById]
+
+  FROM [Gateway].[dbo].[Organization_Summary]
+
+
+
+
+GO
+/****** Object:  View [dbo].[IntendedAudienceCounts]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -19930,7 +26486,7 @@ group by case
 
 
 GO
-/****** Object:  View [dbo].[Library.Resource]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  View [dbo].[Library.Resource]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -19945,7 +26501,7 @@ CREATE VIEW [dbo].[Library.Resource] AS
 
 
 GO
-/****** Object:  View [dbo].[Library.Section]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  View [dbo].[Library.Section]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -19955,7 +26511,7 @@ CREATE VIEW [dbo].[Library.Section] AS
 		AreContentsReadOnly, ImageUrl, Created, CreatedById, LastUpdated, LastUpdatedById
 	FROM IsleContent.dbo.[Library.Section]
 GO
-/****** Object:  View [dbo].[Library.Subscription]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  View [dbo].[Library.Subscription]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -19964,7 +26520,7 @@ CREATE VIEW [dbo].[Library.Subscription] AS
 	SELECT Id, LibraryId, UserId, SubscriptionTypeId, PrivilegeId, Created, LastUpdated
 	FROM IsleContent.dbo.[Library.Subscription]
 GO
-/****** Object:  View [dbo].[Patron_Summary]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  View [dbo].[Patron_Summary]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -19975,12 +26531,14 @@ SELECT [Id]
       ,[FirstName]
       ,[LastName]
       ,[FullName], SortName
+	  ,ImageUrl, UserProfileUrl
       ,[Email]
+	  ,HasProfile
       ,[JobTitle]
       ,[RoleProfile]
       ,[OrganizationId], created, LastUpdated
 
-  FROM [LearningRegistryCache_Dev_20121005].[dbo].[Patron_Summary]
+  FROM [Isle_IOER].[dbo].[Patron_Summary]
 GO
 
 
@@ -19988,26 +26546,29 @@ GO
 CREATE VIEW [dbo].[Patron_Summary]
 AS
 SELECT     
-base.Id, 
-base.UserName, 
-base.FirstName, 
-base.LastName, 
-base.FirstName + ' ' + base.LastName AS FullName, 
-base.LastName + ', ' + base.FirstName AS SortName, 
-base.Email, 
-prof.JobTitle, 
-prof.RoleProfile, 
-prof.ImageUrl, 
-prof.OrganizationId,
-case when isnull(prof.OrganizationId,0) > 0 then
-	org.Name
-else '' end As Organization,
+	base.Id, 
+	base.UserName, 
+	base.FirstName, base.LastName, 
+	base.FirstName + ' ' + base.LastName AS FullName, 
+	base.LastName + ', ' + base.FirstName AS SortName, 
+	base.Email, 
+	base.IsActive,
+	case when isnull(prof.UserId,0) > 0 then 1
+	else 0 end As HasProfile,
+	prof.JobTitle, 
+	prof.RoleProfile, 
+	prof.ImageUrl, 
+	'/Profile/' + convert(varchar, base.[Id]) + '/' + replace(base.FirstName + '_' + base.LastName, '''' , '') As UserProfileUrl,
+	prof.OrganizationId,
+	case when isnull(prof.OrganizationId,0) > 0 then
+		org.Name
+	else '' end As Organization,
 
-prof.PublishingRoleId, codes.Title As PublishingRole,
-base.Created,
-case when isnull(base.LastUpdated, base.Created) > isnull(prof.LastUpdated, prof.Created) then base.LastUpdated
-else isnull(prof.LastUpdated, prof.Created) end as LastUpdated,
-base.RowId as UserRowId
+	prof.PublishingRoleId, codes.Title As PublishingRole,
+	base.Created,
+	case when isnull(base.LastUpdated, base.Created) > isnull(prof.LastUpdated, prof.Created) then base.LastUpdated
+	else isnull(prof.LastUpdated, prof.Created) end as LastUpdated,
+	base.RowId as UserRowId
 FROM  dbo.Patron base 
 LEFT JOIN dbo.[Patron.Profile] prof ON base.Id = prof.UserId
 Left Join [Codes.AudienceType] codes on prof.PublishingRoleId = codes.Id
@@ -20015,7 +26576,7 @@ Left Join Gateway.dbo.Organization org on prof.OrganizationId = org.id
 
 
 GO
-/****** Object:  View [dbo].[PrivateResource]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  View [dbo].[PrivateResource]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -20027,7 +26588,7 @@ FROM         dbo.[Resource.Version]
 WHERE     (DocId IS NULL)
 
 GO
-/****** Object:  View [dbo].[Resource.EducationLevelsList_Delete]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  View [dbo].[Resource.EducationLevelsList_Delete]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -20072,7 +26633,7 @@ CROSS APPLY (
 
 
 GO
-/****** Object:  View [dbo].[Resource.EducationLevelsSummary_Delete]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  View [dbo].[Resource.EducationLevelsSummary_Delete]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -20102,7 +26663,127 @@ SELECT [RowId]
 
 
 GO
-/****** Object:  View [dbo].[Resource.GradeLevelList]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  View [dbo].[Resource.EvalDimensionsSummary]    Script Date: 2/22/2015 10:28:08 AM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+/*
+
+USE [Isle_IOER]
+GO
+
+SELECT [ResourceIntId]
+      ,[EvalDimensionId]
+      ,[DimensionTitle]
+      ,[HasCertificationTotal]
+      ,[HasCertificationTotalScore]
+      ,[HasNOTCertificationTotal]
+      ,[HasNOTCertificationTotalScore]
+      ,[TotalEvaluations]
+  FROM [dbo].[Resource.EvalDimensionsSummary]
+
+where resourceintId = 449873 and EvaluationId = 1
+
+order by ResourceIntId
+
+
+
+*/
+
+CREATE VIEW [dbo].[Resource.EvalDimensionsSummary] AS
+
+SELECT 
+      re.ResourceIntId,
+	  re.EvaluationId,
+	  base.EvalDimensionId
+      , edim.Title As DimensionTitle
+	  --,re.UserHasCertification 
+	  --,sum(base.Score) As TotalScore
+	  --,sum(base.Score)/count(*) As AverageScorePercent
+	  --,count(*) as TotalEvals
+	  ,SUM(CASE WHEN re.UserHasCertification = 1 THEN 1 ELSE 0 END) AS [HasCertificationTotal]
+	  ,SUM(CASE WHEN re.UserHasCertification = 1 THEN base.Score ELSE 0 END) AS [HasCertificationTotalScore]
+	  ,SUM(CASE WHEN re.UserHasCertification = 0 THEN 1 ELSE 0 END) AS [HasNOTCertificationTotal]
+	  ,SUM(CASE WHEN re.UserHasCertification = 0 THEN base.Score ELSE 0 END) AS [HasNOTCertificationTotalScore]
+	  ,SUM(1) AS TotalEvaluations
+	  
+  FROM [dbo].[Resource.EvaluationSection] base
+  inner join [Resource.Evaluation] re on base.ResourceEvalId = re.Id
+  INNER JOIN dbo.[Evaluation.Dimension] edim  ON base.EvalDimensionId = edim.Id
+
+ group by 
+	re.ResourceIntId,
+	re.EvaluationId,
+	base.EvalDimensionId
+	,edim.Title
+	--,re.UserHasCertification
+ --order by   
+	--re.ResourceIntId
+	--,base.EvalDimensionId
+	
+
+
+
+
+GO
+/****** Object:  View [dbo].[Resource.EvaluationsSummary]    Script Date: 2/22/2015 10:28:08 AM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+/*
+USE [Isle_IOER]
+GO
+
+SELECT [ResourceIntId]
+      ,[EvaluationId]
+      ,[EvaluationTitle]
+      ,[RequiresCertification]
+      ,[PrivilegeCode]
+      ,[HasCertificationTotal]
+      ,[HasCertificationTotalScore]
+      ,[HasNotCertificationTotal]
+      ,[HasNOTCertificationTotalScore]
+      ,[TotalEvaluations]
+  FROM [dbo].[Resource.EvaluationsSummary]
+
+where resourceIntId = 450310
+
+
+*/
+
+CREATE VIEW [dbo].[Resource.EvaluationsSummary] AS
+
+SELECT        
+	base.ResourceIntId, 
+	base.EvaluationId, 
+	dbo.Evaluation.Title AS EvaluationTitle, 
+	isnull(dbo.Evaluation.RequiresCertification, 0) As RequiresCertification,
+	isnull(dbo.Evaluation.PrivilegeCode,'') As PrivilegeCode,
+	--base.UserHasCertification,
+	 SUM(CASE WHEN base.UserHasCertification = 1 THEN 1 ELSE 0 END) AS [HasCertificationTotal],
+	 SUM(CASE WHEN base.UserHasCertification = 1 THEN base.Score ELSE 0 END) AS [HasCertificationTotalScore],
+	 SUM(CASE WHEN base.UserHasCertification = 0 THEN 1 ELSE 0 END) AS [HasNOTCertificationTotal],
+	 SUM(CASE WHEN base.UserHasCertification = 0 THEN base.Score ELSE 0 END) AS [HasNOTCertificationTotalScore],
+	 SUM(1) AS TotalEvaluations
+	--sum(base.Score)/count(*) As AverageScorePercent
+	--,count(*) As TotalEvals
+FROM dbo.[Resource.Evaluation] base
+INNER JOIN dbo.Evaluation  ON base.EvaluationId = dbo.Evaluation.Id
+
+group by base.ResourceIntId, 
+	base.EvaluationId, 
+	dbo.Evaluation.Title,
+	dbo.Evaluation.RequiresCertification,
+	isnull(dbo.Evaluation.PrivilegeCode,'') 
+	--,base.UserHasCertification
+
+
+GO
+/****** Object:  View [dbo].[Resource.GradeLevelList]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -20145,7 +26826,7 @@ CROSS APPLY (
 
 
 GO
-/****** Object:  View [dbo].[Resource.IntendedAudienceList]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  View [dbo].[Resource.IntendedAudienceList]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -20184,27 +26865,16 @@ CROSS APPLY (
 
 
 GO
-/****** Object:  View [dbo].[Resource.KeywordsCsvList]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  View [dbo].[Resource.KeywordsCsvList]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 /*
-SELECT top 200 ResourceId
+SELECT TOP 1000 [ResourceIntId]
       ,[Keywords]
-  FROM [dbo].[Resource.KeywordsCsvList]
-  where 
-  ResourceId= '0987D8FA-5E7D-4C28-8423-000064517B67'
-OR  
-  ResourceId= 'D15CA074-EEB2-4BC7-AAA9-0007771B3A77'
-  
+  FROM [Isle_IOER].[dbo].[Resource.KeywordsCsvList]
 
-
-SELECT top 200 ResourceId
-      ,[Keywords]
-  FROM [dbo].[Resource.KeywordsCsvList]
-  where len(Keywords) > 0
-  order by 1
   
 SELECT count(*)
   FROM [dbo].[Resource.KeywordsCsvList]
@@ -20228,10 +26898,11 @@ CROSS APPLY (
     FROM dbo.[Resource.Keyword] child   
     WHERE base.Id = child.ResourceIntId
     FOR XML Path('') ) D (Keywords)
+	where Keywords is not null
 
 
 GO
-/****** Object:  View [dbo].[Resource.LanguagesList]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  View [dbo].[Resource.LanguagesList]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -20281,7 +26952,7 @@ CROSS APPLY
 
 
 GO
-/****** Object:  View [dbo].[Resource.LikesSummary]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  View [dbo].[Resource.LikesSummary]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -20317,7 +26988,7 @@ AS
 
 
 GO
-/****** Object:  View [dbo].[Resource.Link]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  View [dbo].[Resource.Link]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -20328,7 +26999,7 @@ SELECT        ResourceIntId, LastCheckDate, HostName, IsDeleted, NbrDnsErrors, N
 FROM            LinkChecker.dbo.[Resource.Link]
 
 GO
-/****** Object:  View [dbo].[Resource.ResourceTypesList]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  View [dbo].[Resource.ResourceTypesList]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -20372,7 +27043,7 @@ CROSS APPLY (
 
 
 GO
-/****** Object:  View [dbo].[Resource.SearchableIndexView]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  View [dbo].[Resource.SearchableIndexView]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -20617,7 +27288,7 @@ LEFT JOIN (
 	GROUP BY ResourceIntId) otab) rst2 ON rv.ResourceIntId = rst2.ResourceIntId
 
 GO
-/****** Object:  View [dbo].[Resource.SearchableIndexView2]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  View [dbo].[Resource.SearchableIndexView2]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -20900,7 +27571,84 @@ LEFT JOIN (
 
 
 GO
-/****** Object:  View [dbo].[Resource.SubjectsCsvList]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  View [dbo].[Resource.StandardEvaluationList]    Script Date: 2/22/2015 10:28:08 AM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+/*
+USE [Isle_IOER]
+GO
+
+
+where resourceIntId = 450310
+
+
+*/
+
+Create VIEW [dbo].[Resource.StandardEvaluationList] AS
+
+SELECT    
+	base.Id    
+	, base.ResourceIntId
+	, base.StandardId
+	, reval.CreatedById
+	, reval.Created
+	, stan.NotationCode
+	, stan.Description
+    , reval.Score 
+
+FROM dbo.[Resource.Standard] AS base 
+INNER JOIN dbo.[Resource.StandardEvaluation] reval ON base.Id = reval.ResourceStandardId 
+INNER JOIN dbo.[StandardBody.Node] stan ON base.StandardId  = stan.Id
+
+	
+
+
+
+GO
+/****** Object:  View [dbo].[Resource.StandardEvaluationSummary]    Script Date: 2/22/2015 10:28:08 AM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+/*
+USE [Isle_IOER]
+GO
+
+
+where resourceIntId = 450310
+
+
+*/
+
+Create VIEW [dbo].[Resource.StandardEvaluationSummary] AS
+
+SELECT        
+	base.ResourceIntId
+	, base.StandardId
+	, stan.NotationCode
+	, stan.Description
+    --, reval.Score ,
+
+	,sum(reval.Score)/count(*) As AverageScorePercent
+	,count(*) As TotalEvals
+FROM dbo.[Resource.Standard] AS base 
+INNER JOIN dbo.[Resource.StandardEvaluation] reval ON base.Id = reval.ResourceStandardId 
+INNER JOIN dbo.[StandardBody.Node] stan ON base.StandardId  = stan.Id
+
+group by base.ResourceIntId
+	, base.StandardId
+	, stan.NotationCode
+	, stan.Description
+	
+
+
+GO
+/****** Object:  View [dbo].[Resource.SubjectsCsvList]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -20947,7 +27695,7 @@ CROSS APPLY (
 
 
 GO
-/****** Object:  View [dbo].[Resource.SubjectsList_RP]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  View [dbo].[Resource.SubjectsList_RP]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -20966,120 +27714,50 @@ ORDER BY dbo.[Resource.Property].ResourceId, Subject
 
 
 GO
-/****** Object:  View [dbo].[Resource.Version_Summary]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  View [dbo].[Resource.TagSubjectsCsvList]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+
 /*
--- images
--- 46 sec, for 19000 using all 
---title, res, desc, pub: 43 s, 8540 rows
---title, desc: 47 s, 7109 rows
---title, res, desc: 29 s, 8535 rows
---res: 1 s, 1541 rows
--- added index on title and pub
---title, pub: 3 s, 721 rows
---title, res, pub: 16 s, 2166 rows
---title, res: 3 s, 2152 rows
 
-SELECT [ResourceUrl]
-      ,[ResourceIntId]
-      ,[ResourceVersionId]
+SELECT top 1000 [ResourceIntId]
+      ,[Subjects]
+  FROM [dbo].[Resource.TagSubjectsCsvList]
+  where subjects like '%technology%'
 
-      ,[Title]
-      ,[Description]
-      ,[Publisher]
-      --,[Creator]
-      --,[Rights]
-      --,[AccessRights]
-      --,[TypicalLearningTime]
-      ,[Modified]
-      --,[Submitter]
 
-  FROM [dbo].[Resource.Version_Summary]
-  where 
- -- MegaSearchField like '%image%'
-  --or 
-  title like  '%www.freesound.org%'
-  --OR ResourceUrl like  '%www.freesound.org%'
-  --OR Description like  '%oercommons%'
-  OR Publisher like  '%www.freesound.org%'
-  --127
-  OR Subjects like  '%image%'
-  OR Keywords like  '%image%' 
-  order by 1
-GO
 
---683
-SELECT 
-[ResourceIntId]
-      ,[Title]
-      ,[Description]
-  FROM [dbo].[Resource.Version]
-  where ([ResourceIntId] = 170347 ) 
-  title like  '%image%'
-  OR Description like  '%image%'
-  OR Publisher like  '%image%'
-  --7136
-  order by 2
-
-  SELECT 
-[ResourceIntId]
-      ,[Title]
-      ,[Description]
-  FROM [dbo].[Resource.Version_Summary]
-  where ([ResourceIntId] = 170347 ) 
-*/
-/*
-Resource.Version_Summary - summary of key resource tables. 
-        Should only be used by a search. Not for returning to code
-        WARNING - changing view may require recreation of the Resource_Version_Summary_ClusteredIndex.sql (or at least doing a rebuild!!!!
--- 13-01-31 mparsons - added join for new AccessRightsId
--- 13-03-11 mparsons - changed to join on ResourceIntId
--- 14-01-21 mparsons - added all fields necessary for RV.Fill        
-*/
-CREATE VIEW [dbo].[Resource.Version_Summary] 
---WITH SCHEMABINDING 
-AS
-
-SELECT 
-      lr.ResourceUrl
-      , lr.Id 
-      , lr.Id As ResourceIntId
-      ,'' As [ResourceId]
-     -- ,base.RowId as ResourceVersionId
-      ,base.Id as ResourceVersionIntId
-      ,base.[Title]
-      ,base.[Description]
-      ,base.[Publisher]
-      ,base.[Creator]
-      ,base.[Rights]
-      ,lr.ViewCount
-      ,lr.FavoriteCount
-	  ,base.DocId
-      --,base.[AccessRights]
-      ,base.AccessRightsId ,codes.title As AccessRights
-      ,base.InteractivityTypeId, base.InteractivityType
-      ,base.[TypicalLearningTime]
-      ,base.[Modified]
-	  ,base.Created
-	  ,base.[Imported]
-      ,base.[Submitter]
-	  ,base.[Schema], base.Requirements
-      ,base.SortTitle
-
---    SELECT count(*)      
-  FROM [dbo].[Resource.Version] base
-  Inner JOIN dbo.[Resource] lr ON base.ResourceIntId = lr.Id
-  Left Join dbo.[Codes.AccessRights] codes on base.AccessRightsId = codes.Id
-  where 
-      base.[IsActive]= 1 
-  AND lr.[IsActive]= 1 
   
+SELECT count(*)
+  FROM [dbo].[Resource.TagSubjectsCsvList]
+
+*/
+CREATE VIEW [dbo].[Resource.TagSubjectsCsvList]
+AS
+SELECT   
+base.[Id] As ResourceIntId,
+    CASE
+          WHEN Subjects IS NULL THEN ''
+          WHEN len(Subjects) = 0 THEN ''
+          ELSE left(Subjects,len(Subjects)-1)
+    END AS Subjects
+
+FROM [dbo].[Resource] base
+
+CROSS APPLY (
+    SELECT tv.Title + ', '
+   -- ,rsub.ResourceId
+    FROM dbo.[Resource.Tag] rsub  inner join [Codes.TagValue] tv on rsub.TagValueId = tv.Id 
+    WHERE base.Id = rsub.ResourceIntId and tv.CategoryId = 29
+    FOR XML Path('') 
+	) D (Subjects)
+	where Subjects is not null
+
 
 GO
-/****** Object:  View [dbo].[Resource.VersionRelevance]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  View [dbo].[Resource.VersionRelevance]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -21210,7 +27888,51 @@ LEFT JOIN (
 
 
 GO
-/****** Object:  View [dbo].[StandardList]    Script Date: 3/9/2014 10:15:35 PM ******/
+/****** Object:  View [dbo].[Resource_TagSummary]    Script Date: 2/22/2015 10:28:08 AM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+/*
+
+SELECT [ResourceTagId]
+      ,[ResourceIntId]
+      ,[TagValueId]
+      ,[CodeId]
+      ,[TagTitle]
+      ,[CategoryId]
+      ,[CategoryTitle]
+      ,[created]
+  FROM [dbo].[Resource_TagSummary]
+  --where CategoryId= 2
+  order by created desc
+GO
+
+
+
+*/
+CREATE VIEW [dbo].[Resource_TagSummary]
+AS
+SELECT        
+	dbo.[Resource.Tag].Id AS ResourceTagId, 
+	dbo.[Resource.Tag].ResourceIntId, 
+	dbo.[Resource.Tag].TagValueId, 
+	dbo.[Codes.TagValue].CodeId, 
+    dbo.[Codes.TagValue].Title AS TagTitle, 
+	dbo.[Codes.TagValue].CategoryId, 
+	dbo.[Codes.TagValue].AliasValues,
+	dbo.[Codes.TagCategory].Title AS CategoryTitle,
+	dbo.[Resource.Tag].created,
+	dbo.[Resource.Tag].CreatedById
+FROM dbo.[Resource.Tag] 
+	INNER JOIN dbo.[Codes.TagValue] ON dbo.[Resource.Tag].TagValueId = dbo.[Codes.TagValue].Id 
+	INNER JOIN dbo.[Codes.TagCategory] ON dbo.[Codes.TagValue].CategoryId = dbo.[Codes.TagCategory].Id
+
+
+
+GO
+/****** Object:  View [dbo].[StandardList]    Script Date: 2/22/2015 10:28:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -21244,404 +27966,6 @@ LEFT JOIN (SELECT parentId, left(GradeLevel, LEN(GradeLevel) - 1) AS GradeLevels
 	FROM [StandardBody.NodeGradeLevel] tbl
 	INNER JOIN [StandardBody.Node] node ON tbl.parentId = node.Id
 	GROUP BY tbl.parentId, node.parentId) otab) pglt ON base.Id = pglt.parentId*/
-GO
-/****** Object:  Index [IX_Resource.Cluster]    Script Date: 3/9/2014 10:15:35 PM ******/
-CREATE CLUSTERED INDEX [IX_Resource.Cluster] ON [dbo].[Resource.Cluster]
-(
-	[ResourceIntId] ASC,
-	[ClusterId] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-GO
-/****** Object:  Index [IX_Resource.EducationLevel_ResourceId]    Script Date: 3/9/2014 10:15:35 PM ******/
-CREATE CLUSTERED INDEX [IX_Resource.EducationLevel_ResourceId] ON [dbo].[Resource.EducationLevel]
-(
-	[ResourceId] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-GO
-/****** Object:  Index [IX_Resource.ResourceId_Type]    Script Date: 3/9/2014 10:15:35 PM ******/
-CREATE CLUSTERED INDEX [IX_Resource.ResourceId_Type] ON [dbo].[Resource.ResourceType]
-(
-	[ResourceIntId] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-GO
-/****** Object:  Index [IX_AudienceType_Orphan_ResourceId]    Script Date: 3/9/2014 10:15:35 PM ******/
-CREATE NONCLUSTERED INDEX [IX_AudienceType_Orphan_ResourceId] ON [dbo].[Audit.AudienceType_Orphan]
-(
-	[ResourceId] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-GO
-/****** Object:  Index [IX_AuditEducationLevel_Orphan_ResourceId]    Script Date: 3/9/2014 10:15:35 PM ******/
-CREATE NONCLUSTERED INDEX [IX_AuditEducationLevel_Orphan_ResourceId] ON [dbo].[Audit.EducationLevel_Orphan]
-(
-	[ResourceId] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-GO
-/****** Object:  Index [IX_AuditGradeLevel_Orphan_ResourceIntId]    Script Date: 3/9/2014 10:15:35 PM ******/
-CREATE NONCLUSTERED INDEX [IX_AuditGradeLevel_Orphan_ResourceIntId] ON [dbo].[Audit.GradeLevel_Orphan]
-(
-	[ResourceIntId] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-GO
-/****** Object:  Index [IX_AuditLanguage_Orphan_ResourceId]    Script Date: 3/9/2014 10:15:35 PM ******/
-CREATE NONCLUSTERED INDEX [IX_AuditLanguage_Orphan_ResourceId] ON [dbo].[Audit.Language_Orphan]
-(
-	[ResourceId] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-GO
-/****** Object:  Index [IX_AuditResourceFormat_Orphan_ResourceId]    Script Date: 3/9/2014 10:15:35 PM ******/
-CREATE NONCLUSTERED INDEX [IX_AuditResourceFormat_Orphan_ResourceId] ON [dbo].[Audit.ResourceFormat_Orphan]
-(
-	[ResourceId] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-GO
-/****** Object:  Index [IX_AuditResourceType_Orphan_ResourceId]    Script Date: 3/9/2014 10:15:35 PM ******/
-CREATE NONCLUSTERED INDEX [IX_AuditResourceType_Orphan_ResourceId] ON [dbo].[Audit.ResourceType_Orphan]
-(
-	[ResourceId] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-GO
-SET ANSI_PADDING ON
-
-GO
-/****** Object:  Index [IX_Codes.TagValue]    Script Date: 3/9/2014 10:15:35 PM ******/
-CREATE NONCLUSTERED INDEX [IX_Codes.TagValue] ON [dbo].[Codes.TagValue]
-(
-	[CategoryId] ASC,
-	[Title] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-GO
-SET ANSI_PADDING ON
-
-GO
-/****** Object:  Index [IX_Patron_Email]    Script Date: 3/9/2014 10:15:35 PM ******/
-CREATE UNIQUE NONCLUSTERED INDEX [IX_Patron_Email] ON [dbo].[Patron]
-(
-	[Email] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-GO
-/****** Object:  Index [IX_Patron_RowId]    Script Date: 3/9/2014 10:15:35 PM ******/
-CREATE UNIQUE NONCLUSTERED INDEX [IX_Patron_RowId] ON [dbo].[Patron]
-(
-	[RowId] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-GO
-SET ANSI_PADDING ON
-
-GO
-/****** Object:  Index [IX_Patron_Username]    Script Date: 3/9/2014 10:15:35 PM ******/
-CREATE UNIQUE NONCLUSTERED INDEX [IX_Patron_Username] ON [dbo].[Patron]
-(
-	[UserName] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-GO
-/****** Object:  Index [IX_Patron.Following_ByUserId]    Script Date: 3/9/2014 10:15:35 PM ******/
-CREATE NONCLUSTERED INDEX [IX_Patron.Following_ByUserId] ON [dbo].[Patron.Following]
-(
-	[FollowedByUserId] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-GO
-/****** Object:  Index [IX_Patron.Following_FollowingUserId]    Script Date: 3/9/2014 10:15:35 PM ******/
-CREATE NONCLUSTERED INDEX [IX_Patron.Following_FollowingUserId] ON [dbo].[Patron.Following]
-(
-	[FollowingUserId] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-GO
-/****** Object:  Index [IX_Patron.Note_UserId]    Script Date: 3/9/2014 10:15:35 PM ******/
-CREATE NONCLUSTERED INDEX [IX_Patron.Note_UserId] ON [dbo].[Patron.Note]
-(
-	[UserId] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-GO
-/****** Object:  Index [IX_PublisherSummary_ByTotal]    Script Date: 3/9/2014 10:15:35 PM ******/
-CREATE NONCLUSTERED INDEX [IX_PublisherSummary_ByTotal] ON [dbo].[PublisherSummary]
-(
-	[ResourceTotal] DESC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-GO
-SET ANSI_PADDING ON
-
-GO
-/****** Object:  Index [_dta_index_Resource_13_1125579048__K1_K20_K19_2]    Script Date: 3/9/2014 10:15:35 PM ******/
-CREATE NONCLUSTERED INDEX [_dta_index_Resource_13_1125579048__K1_K20_K19_2] ON [dbo].[Resource]
-(
-	[RowId] ASC,
-	[HasPathwayGradeLevel] ASC,
-	[IsActive] ASC
-)
-INCLUDE ( 	[ResourceUrl]) WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-GO
-/****** Object:  Index [IX_Resource_HasPathwayGradeLevel]    Script Date: 3/9/2014 10:15:35 PM ******/
-CREATE NONCLUSTERED INDEX [IX_Resource_HasPathwayGradeLevel] ON [dbo].[Resource]
-(
-	[HasPathwayGradeLevel] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-GO
-/****** Object:  Index [IX_Resource_Id]    Script Date: 3/9/2014 10:15:35 PM ******/
-CREATE UNIQUE NONCLUSTERED INDEX [IX_Resource_Id] ON [dbo].[Resource]
-(
-	[Id] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-GO
-SET ANSI_PADDING ON
-
-GO
-/****** Object:  Index [IX_Resource_ResourceUrl]    Script Date: 3/9/2014 10:15:35 PM ******/
-CREATE NONCLUSTERED INDEX [IX_Resource_ResourceUrl] ON [dbo].[Resource]
-(
-	[ResourceUrl] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-GO
-/****** Object:  Index [IX_ResourcePathwaysEducationLevelId]    Script Date: 3/9/2014 10:15:35 PM ******/
-CREATE NONCLUSTERED INDEX [IX_ResourcePathwaysEducationLevelId] ON [dbo].[Resource.EducationLevel]
-(
-	[PathwaysEducationLevelId] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-GO
-/****** Object:  Index [IX_Resource.EducationUse]    Script Date: 3/9/2014 10:15:35 PM ******/
-CREATE NONCLUSTERED INDEX [IX_Resource.EducationUse] ON [dbo].[Resource.EducationUse]
-(
-	[EducationUseId] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-GO
-/****** Object:  Index [IX_Resource.EducationUse_ResourceId]    Script Date: 3/9/2014 10:15:35 PM ******/
-CREATE NONCLUSTERED INDEX [IX_Resource.EducationUse_ResourceId] ON [dbo].[Resource.EducationUse]
-(
-	[ResourceId] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-GO
-/****** Object:  Index [IX_Resource.Evaluation]    Script Date: 3/9/2014 10:15:35 PM ******/
-CREATE NONCLUSTERED INDEX [IX_Resource.Evaluation] ON [dbo].[Resource.Evaluation]
-(
-	[ResourceIntId] ASC,
-	[CreatedById] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-GO
-/****** Object:  Index [IX_Resource.GradeLevel_GradeLevelId]    Script Date: 3/9/2014 10:15:35 PM ******/
-CREATE NONCLUSTERED INDEX [IX_Resource.GradeLevel_GradeLevelId] ON [dbo].[Resource.GradeLevel]
-(
-	[GradeLevelId] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-GO
-/****** Object:  Index [IX_Resource.GradeLevel_ResourceIntId]    Script Date: 3/9/2014 10:15:35 PM ******/
-CREATE NONCLUSTERED INDEX [IX_Resource.GradeLevel_ResourceIntId] ON [dbo].[Resource.GradeLevel]
-(
-	[ResourceIntId] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-GO
-/****** Object:  Index [IX_Resource.GroupType]    Script Date: 3/9/2014 10:15:35 PM ******/
-CREATE NONCLUSTERED INDEX [IX_Resource.GroupType] ON [dbo].[Resource.GroupType]
-(
-	[ResourceIntId] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-GO
-/****** Object:  Index [IX_Resource.GroupType_1]    Script Date: 3/9/2014 10:15:35 PM ******/
-CREATE NONCLUSTERED INDEX [IX_Resource.GroupType_1] ON [dbo].[Resource.GroupType]
-(
-	[GroupTypeId] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-GO
-/****** Object:  Index [IX_Resource.IntendedAudience]    Script Date: 3/9/2014 10:15:35 PM ******/
-CREATE NONCLUSTERED INDEX [IX_Resource.IntendedAudience] ON [dbo].[Resource.IntendedAudience]
-(
-	[AudienceId] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-GO
-/****** Object:  Index [IX_Resource.IntendedAudience_ResourceId]    Script Date: 3/9/2014 10:15:35 PM ******/
-CREATE NONCLUSTERED INDEX [IX_Resource.IntendedAudience_ResourceId] ON [dbo].[Resource.IntendedAudience]
-(
-	[ResourceIntId] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-GO
-SET ANSI_PADDING ON
-
-GO
-/****** Object:  Index [IX_Resource_Keyword_Keyword]    Script Date: 3/9/2014 10:15:35 PM ******/
-CREATE NONCLUSTERED INDEX [IX_Resource_Keyword_Keyword] ON [dbo].[Resource.Keyword]
-(
-	[Keyword] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-GO
-SET ANSI_PADDING ON
-
-GO
-/****** Object:  Index [IX_Resource_Keyword_ResourceIntId]    Script Date: 3/9/2014 10:15:35 PM ******/
-CREATE NONCLUSTERED INDEX [IX_Resource_Keyword_ResourceIntId] ON [dbo].[Resource.Keyword]
-(
-	[ResourceIntId] ASC,
-	[Keyword] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-GO
-/****** Object:  Index [IX_Resource.Language_ResourceId]    Script Date: 3/9/2014 10:15:35 PM ******/
-CREATE NONCLUSTERED INDEX [IX_Resource.Language_ResourceId] ON [dbo].[Resource.Language]
-(
-	[ResourceIntId] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-GO
-/****** Object:  Index [IX_Resource.LanguageId]    Script Date: 3/9/2014 10:15:35 PM ******/
-CREATE NONCLUSTERED INDEX [IX_Resource.LanguageId] ON [dbo].[Resource.Language]
-(
-	[LanguageId] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-GO
-/****** Object:  Index [IX_Resource.Like]    Script Date: 3/9/2014 10:15:35 PM ******/
-CREATE NONCLUSTERED INDEX [IX_Resource.Like] ON [dbo].[Resource.Like]
-(
-	[ResourceIntId] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-GO
-/****** Object:  Index [IX_Resource.Like_1]    Script Date: 3/9/2014 10:15:35 PM ******/
-CREATE NONCLUSTERED INDEX [IX_Resource.Like_1] ON [dbo].[Resource.Like]
-(
-	[CreatedById] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-GO
-/****** Object:  Index [IX_Resource.LikeSummary]    Script Date: 3/9/2014 10:15:35 PM ******/
-CREATE NONCLUSTERED INDEX [IX_Resource.LikeSummary] ON [dbo].[Resource.LikeSummary]
-(
-	[ResourceIntId] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-GO
-/****** Object:  Index [IX_Resource.Recommendation]    Script Date: 3/9/2014 10:15:35 PM ******/
-CREATE NONCLUSTERED INDEX [IX_Resource.Recommendation] ON [dbo].[Resource.Recommendation]
-(
-	[ResourceIntId] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-GO
-/****** Object:  Index [IX_Resource.Recommendation_1]    Script Date: 3/9/2014 10:15:35 PM ******/
-CREATE NONCLUSTERED INDEX [IX_Resource.Recommendation_1] ON [dbo].[Resource.Recommendation]
-(
-	[CreatedById] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-GO
-/****** Object:  Index [IX_Resource.RelatedUrl]    Script Date: 3/9/2014 10:15:35 PM ******/
-CREATE NONCLUSTERED INDEX [IX_Resource.RelatedUrl] ON [dbo].[Resource.RelatedUrl]
-(
-	[ResourceIntId] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-GO
-/****** Object:  Index [IX_Resource.ResourceType_Id]    Script Date: 3/9/2014 10:15:35 PM ******/
-CREATE NONCLUSTERED INDEX [IX_Resource.ResourceType_Id] ON [dbo].[Resource.ResourceType]
-(
-	[ResourceTypeId] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-GO
-/****** Object:  Index [IX_Resource.Standard]    Script Date: 3/9/2014 10:15:35 PM ******/
-CREATE NONCLUSTERED INDEX [IX_Resource.Standard] ON [dbo].[Resource.Standard]
-(
-	[ResourceIntId] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-GO
-/****** Object:  Index [IX_Resource.Standard_1]    Script Date: 3/9/2014 10:15:35 PM ******/
-CREATE NONCLUSTERED INDEX [IX_Resource.Standard_1] ON [dbo].[Resource.Standard]
-(
-	[StandardId] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-GO
-/****** Object:  Index [IX_Resource.Standard_2]    Script Date: 3/9/2014 10:15:35 PM ******/
-CREATE UNIQUE NONCLUSTERED INDEX [IX_Resource.Standard_2] ON [dbo].[Resource.Standard]
-(
-	[ResourceIntId] ASC,
-	[StandardId] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-GO
-/****** Object:  Index [IX_Resource.Subject_Resid]    Script Date: 3/9/2014 10:15:35 PM ******/
-CREATE NONCLUSTERED INDEX [IX_Resource.Subject_Resid] ON [dbo].[Resource.Subject]
-(
-	[ResourceIntId] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-GO
-SET ANSI_PADDING ON
-
-GO
-/****** Object:  Index [IX_Resource.Subject_Subject]    Script Date: 3/9/2014 10:15:35 PM ******/
-CREATE NONCLUSTERED INDEX [IX_Resource.Subject_Subject] ON [dbo].[Resource.Subject]
-(
-	[Subject] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-GO
-SET ANSI_PADDING ON
-
-GO
-/****** Object:  Index [_dta_index_Resource.Version2_13_26065662]    Script Date: 3/9/2014 10:15:35 PM ******/
-CREATE NONCLUSTERED INDEX [_dta_index_Resource.Version2_13_26065662] ON [dbo].[Resource.Version]
-(
-	[IsActive] ASC,
-	[ResourceIntId] ASC,
-	[Id] ASC
-)
-INCLUDE ( 	[Title],
-	[Description],
-	[Publisher],
-	[Creator],
-	[Rights],
-	[AccessRights],
-	[SortTitle]) WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-GO
-/****** Object:  Index [IX_Resource.Version2_AccessRights]    Script Date: 3/9/2014 10:15:35 PM ******/
-CREATE NONCLUSTERED INDEX [IX_Resource.Version2_AccessRights] ON [dbo].[Resource.Version]
-(
-	[AccessRightsId] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-GO
-/****** Object:  Index [IX_Resource.Version2_InteractivityTypeId]    Script Date: 3/9/2014 10:15:35 PM ******/
-CREATE NONCLUSTERED INDEX [IX_Resource.Version2_InteractivityTypeId] ON [dbo].[Resource.Version]
-(
-	[InteractivityTypeId] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-GO
-/****** Object:  Index [IX_Resource.Version2_IsActive]    Script Date: 3/9/2014 10:15:35 PM ******/
-CREATE NONCLUSTERED INDEX [IX_Resource.Version2_IsActive] ON [dbo].[Resource.Version]
-(
-	[IsActive] DESC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-GO
-/****** Object:  Index [IX_Resource.Version2_Modified]    Script Date: 3/9/2014 10:15:35 PM ******/
-CREATE NONCLUSTERED INDEX [IX_Resource.Version2_Modified] ON [dbo].[Resource.Version]
-(
-	[Modified] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-GO
-SET ANSI_PADDING ON
-
-GO
-/****** Object:  Index [IX_Resource.Version2_Publisher]    Script Date: 3/9/2014 10:15:35 PM ******/
-CREATE NONCLUSTERED INDEX [IX_Resource.Version2_Publisher] ON [dbo].[Resource.Version]
-(
-	[Publisher] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-GO
-/****** Object:  Index [IX_Resource.Version2_ResourceIntId]    Script Date: 3/9/2014 10:15:35 PM ******/
-CREATE NONCLUSTERED INDEX [IX_Resource.Version2_ResourceIntId] ON [dbo].[Resource.Version]
-(
-	[ResourceIntId] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-GO
-SET ANSI_PADDING ON
-
-GO
-/****** Object:  Index [IX_Resource.Version2_SortTitle]    Script Date: 3/9/2014 10:15:35 PM ******/
-CREATE NONCLUSTERED INDEX [IX_Resource.Version2_SortTitle] ON [dbo].[Resource.Version]
-(
-	[SortTitle] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-GO
-SET ANSI_PADDING ON
-
-GO
-/****** Object:  Index [IX_ResourceVersion_Title]    Script Date: 3/9/2014 10:15:35 PM ******/
-CREATE NONCLUSTERED INDEX [IX_ResourceVersion_Title] ON [dbo].[Resource.Version]
-(
-	[Title] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-GO
-SET ANSI_PADDING ON
-
-GO
-/****** Object:  Index [IX_SystemProcess_Code]    Script Date: 3/9/2014 10:15:35 PM ******/
-CREATE UNIQUE NONCLUSTERED INDEX [IX_SystemProcess_Code] ON [dbo].[System.Process]
-(
-	[Code] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 GO
 ALTER TABLE [dbo].[ApplicationLog] ADD  CONSTRAINT [DF_ApplicationLog_CreatedDate]  DEFAULT (getdate()) FOR [CreatedDate]
 GO
@@ -21733,6 +28057,10 @@ ALTER TABLE [dbo].[Audit.ResourceType_Orphan] ADD  CONSTRAINT [DF_Audit.Resource
 GO
 ALTER TABLE [dbo].[Audit.ResourceType_Orphan] ADD  CONSTRAINT [DF_Audit.ResourceType_Orphan_Created]  DEFAULT (getdate()) FOR [Created]
 GO
+ALTER TABLE [dbo].[Blacklist.Hosts] ADD  CONSTRAINT [DF_Blacklist.Hosts_Created]  DEFAULT (getdate()) FOR [Created]
+GO
+ALTER TABLE [dbo].[Blacklist.Hosts] ADD  CONSTRAINT [DF_Blacklist.Hosts_LastUpdated]  DEFAULT (getdate()) FOR [LastUpdated]
+GO
 ALTER TABLE [dbo].[CareerCluster] ADD  CONSTRAINT [DF_CareerCluster_IsHighGrowth]  DEFAULT ((0)) FOR [IsHighGrowth]
 GO
 ALTER TABLE [dbo].[CareerCluster] ADD  CONSTRAINT [DF_CareerCluster_IsActive]  DEFAULT ((1)) FOR [IsActive]
@@ -21741,11 +28069,19 @@ ALTER TABLE [dbo].[CareerCluster] ADD  CONSTRAINT [DF_CareerCluster_IsHighGrowth
 GO
 ALTER TABLE [dbo].[Codes.AccessibilityApi] ADD  CONSTRAINT [DF_Codes.AccessibilityApi_WarehouseTotal]  DEFAULT ((0)) FOR [WarehouseTotal]
 GO
+ALTER TABLE [dbo].[Codes.AccessibilityApi] ADD  CONSTRAINT [DF_Codes.AccessibilityApi_SortOrder]  DEFAULT ((20)) FOR [SortOrder]
+GO
 ALTER TABLE [dbo].[Codes.AccessibilityControl] ADD  CONSTRAINT [DF_Codes.AccessibilityControl_WarehouseTotal]  DEFAULT ((0)) FOR [WarehouseTotal]
+GO
+ALTER TABLE [dbo].[Codes.AccessibilityControl] ADD  CONSTRAINT [DF_Codes.AccessibilityControl_SortOrder]  DEFAULT ((20)) FOR [SortOrder]
 GO
 ALTER TABLE [dbo].[Codes.AccessibilityFeature] ADD  CONSTRAINT [DF_Codes.AccessibilityFeature_WarehouseTotal]  DEFAULT ((0)) FOR [WarehouseTotal]
 GO
+ALTER TABLE [dbo].[Codes.AccessibilityFeature] ADD  CONSTRAINT [DF_Codes.AccessibilityFeature_SortOrder]  DEFAULT ((20)) FOR [SortOrder]
+GO
 ALTER TABLE [dbo].[Codes.AccessibilityHazard] ADD  CONSTRAINT [DF_Codes.AccessibilityHazard_WarehouseTotal]  DEFAULT ((0)) FOR [WarehouseTotal]
+GO
+ALTER TABLE [dbo].[Codes.AccessibilityHazard] ADD  CONSTRAINT [DF_Codes.AccessibilityHazard_SortOrder]  DEFAULT ((20)) FOR [SortOrder]
 GO
 ALTER TABLE [dbo].[Codes.AlignmentDegree] ADD  CONSTRAINT [DF_Codes.AlignmentDegree_IsActive]  DEFAULT ((1)) FOR [IsActive]
 GO
@@ -21765,11 +28101,23 @@ ALTER TABLE [dbo].[Codes.AudienceType] ADD  CONSTRAINT [DF_Codes.AudienceType_Is
 GO
 ALTER TABLE [dbo].[Codes.AudienceType] ADD  CONSTRAINT [DF_Codes.AudienceType_WarehouseTotal]  DEFAULT ((1)) FOR [WarehouseTotal]
 GO
+ALTER TABLE [dbo].[Codes.CareerPlanning] ADD  CONSTRAINT [DF_Codes.CareerPlanning_IsActive]  DEFAULT ((1)) FOR [IsActive]
+GO
+ALTER TABLE [dbo].[Codes.CareerPlanning] ADD  CONSTRAINT [DF_Codes.CareerPlanning_WarehouseTotal]  DEFAULT ((0)) FOR [WarehouseTotal]
+GO
+ALTER TABLE [dbo].[Codes.Disability] ADD  CONSTRAINT [DF_Codes.Disability_IsActive]  DEFAULT ((1)) FOR [IsActive]
+GO
+ALTER TABLE [dbo].[Codes.Disability] ADD  CONSTRAINT [DF_Codes.Disability_WarehouseTotal]  DEFAULT ((0)) FOR [WarehouseTotal]
+GO
 ALTER TABLE [dbo].[Codes.EducationalUse] ADD  CONSTRAINT [DF_Codes.EducationalUse_SortOrder]  DEFAULT ((10)) FOR [SortOrder]
 GO
 ALTER TABLE [dbo].[Codes.EducationalUse] ADD  CONSTRAINT [DF_Codes.EducationalUse_IsActive]  DEFAULT ((1)) FOR [IsActive]
 GO
 ALTER TABLE [dbo].[Codes.EducationalUseCategory] ADD  CONSTRAINT [DF_Codes.EducationalUseCategory_SortOrder]  DEFAULT ((10)) FOR [SortOrder]
+GO
+ALTER TABLE [dbo].[Codes.EmployerProgram] ADD  CONSTRAINT [DF_Codes.EmployerProgram_IsActive]  DEFAULT ((1)) FOR [IsActive]
+GO
+ALTER TABLE [dbo].[Codes.EmployerProgram] ADD  CONSTRAINT [DF_Codes.EmployerProgram_WarehouseTotal]  DEFAULT ((0)) FOR [WarehouseTotal]
 GO
 ALTER TABLE [dbo].[Codes.GradeLevel] ADD  CONSTRAINT [DF_Codes.GradeLevel_IsPathwaysLevel]  DEFAULT ((1)) FOR [IsPathwaysLevel]
 GO
@@ -21788,6 +28136,10 @@ GO
 ALTER TABLE [dbo].[Codes.ItemType] ADD  CONSTRAINT [DF_Codes.ItemType_WarehouseTotal]  DEFAULT ((0)) FOR [WarehouseTotal]
 GO
 ALTER TABLE [dbo].[Codes.ItemType] ADD  CONSTRAINT [DF_Codes.ItemType_SortOrder]  DEFAULT ((10)) FOR [SortOrder]
+GO
+ALTER TABLE [dbo].[Codes.JobPreparation] ADD  CONSTRAINT [DF_Codes.JobSearch_IsActive]  DEFAULT ((1)) FOR [IsActive]
+GO
+ALTER TABLE [dbo].[Codes.JobPreparation] ADD  CONSTRAINT [DF_Codes.JobSearch_WarehouseTotal]  DEFAULT ((0)) FOR [WarehouseTotal]
 GO
 ALTER TABLE [dbo].[Codes.Language] ADD  CONSTRAINT [DF_Codes.Language_IsPathwaysLanguage]  DEFAULT ((0)) FOR [IsPathwaysLanguage]
 GO
@@ -21817,15 +28169,45 @@ ALTER TABLE [dbo].[Codes.ResourceType] ADD  CONSTRAINT [DF_Codes.ResourceType_So
 GO
 ALTER TABLE [dbo].[Codes.ResourceTypeCategory] ADD  CONSTRAINT [DF_Codes.ResourceTypeCategory_SortOrder]  DEFAULT ((10)) FOR [SortOrder]
 GO
+ALTER TABLE [dbo].[Codes.Site] ADD  CONSTRAINT [DF_Codes.Site_IsActive]  DEFAULT ((1)) FOR [IsActive]
+GO
+ALTER TABLE [dbo].[Codes.SiteTagCategory] ADD  CONSTRAINT [DF_Codes.SiteTagCategory_SortOrder]  DEFAULT ((10)) FOR [SortOrder]
+GO
 ALTER TABLE [dbo].[Codes.SiteTagCategory] ADD  CONSTRAINT [DF_Codes.SiteTagCategory_IsActive]  DEFAULT ((1)) FOR [IsActive]
 GO
 ALTER TABLE [dbo].[Codes.Subject] ADD  CONSTRAINT [DF_Codes.Subject_IsActive]  DEFAULT ((1)) FOR [IsActive]
 GO
 ALTER TABLE [dbo].[Codes.TagCategory] ADD  CONSTRAINT [DF_Codes.TagCategory_SortOrder]  DEFAULT ((10)) FOR [SortOrder]
 GO
+ALTER TABLE [dbo].[Codes.TagCategory] ADD  CONSTRAINT [DF_Codes.TagCategory_IsActive]  DEFAULT ((1)) FOR [IsActive]
+GO
 ALTER TABLE [dbo].[Codes.TagValue] ADD  CONSTRAINT [DF_Codes.TagValue_SortOrder]  DEFAULT ((10)) FOR [SortOrder]
 GO
+ALTER TABLE [dbo].[Codes.TagValue] ADD  CONSTRAINT [DF_Codes.TagValue_IsActive]  DEFAULT ((1)) FOR [IsActive]
+GO
+ALTER TABLE [dbo].[Codes.TagValue] ADD  CONSTRAINT [DF_Codes.TagValue_WarehouseTotal]  DEFAULT ((0)) FOR [WarehouseTotal]
+GO
+ALTER TABLE [dbo].[Codes.TagValueKeyword] ADD  CONSTRAINT [DF_Codes.TagValueKeyword_IsActive]  DEFAULT ((1)) FOR [IsActive]
+GO
+ALTER TABLE [dbo].[Codes.TagValueKeyword] ADD  CONSTRAINT [DF_Codes.TagValueKeyword_Created]  DEFAULT (getdate()) FOR [Created]
+GO
 ALTER TABLE [dbo].[Codes.TextType] ADD  CONSTRAINT [DF_Codes.TextType_IsActive]  DEFAULT ((1)) FOR [IsActive]
+GO
+ALTER TABLE [dbo].[Codes.VeteransService] ADD  CONSTRAINT [DF_Codes.VeteransService_IsActive]  DEFAULT ((1)) FOR [IsActive]
+GO
+ALTER TABLE [dbo].[Codes.VeteransService] ADD  CONSTRAINT [DF_Codes.VeteransService_WarehouseTotal]  DEFAULT ((0)) FOR [WarehouseTotal]
+GO
+ALTER TABLE [dbo].[Codes.WorkforcePartnerService] ADD  CONSTRAINT [DF_Codes.WorkforcePartnerService_IsActive]  DEFAULT ((1)) FOR [IsActive]
+GO
+ALTER TABLE [dbo].[Codes.WorkforcePartnerService] ADD  CONSTRAINT [DF_Codes.WorkforcePartnerService_WarehouseTotal]  DEFAULT ((0)) FOR [WarehouseTotal]
+GO
+ALTER TABLE [dbo].[Codes.WorkplaceSkills] ADD  CONSTRAINT [DF_Codes.WorkplaceSkills_IsActive]  DEFAULT ((1)) FOR [IsActive]
+GO
+ALTER TABLE [dbo].[Codes.WorkplaceSkills] ADD  CONSTRAINT [DF_Codes.WorkplaceSkills_WarehouseTotal]  DEFAULT ((0)) FOR [WarehouseTotal]
+GO
+ALTER TABLE [dbo].[Codes.WorkSupportService] ADD  CONSTRAINT [DF_Codes.WorkSupportService_IsActive]  DEFAULT ((1)) FOR [IsActive]
+GO
+ALTER TABLE [dbo].[Codes.WorkSupportService] ADD  CONSTRAINT [DF_Codes.WorkSupportService_WarehouseTotal]  DEFAULT ((0)) FOR [WarehouseTotal]
 GO
 ALTER TABLE [dbo].[CodeTable] ADD  CONSTRAINT [DF_CodeTable_LanguageCode_1]  DEFAULT ('en') FOR [LanguageCode]
 GO
@@ -21848,6 +28230,16 @@ GO
 ALTER TABLE [dbo].[EmailNotice] ADD  CONSTRAINT [DF_EmailNotice_Created]  DEFAULT (getdate()) FOR [Created]
 GO
 ALTER TABLE [dbo].[EmailNotice] ADD  CONSTRAINT [DF_EmailNotice_LastUpdated]  DEFAULT (getdate()) FOR [LastUpdated]
+GO
+ALTER TABLE [dbo].[Evaluation] ADD  CONSTRAINT [DF_Evaluation_RequiresCertification]  DEFAULT ((0)) FOR [RequiresCertification]
+GO
+ALTER TABLE [dbo].[Evaluation.Dimension] ADD  CONSTRAINT [DF_Evaluation.Dimension_IsActive]  DEFAULT ((1)) FOR [IsActive]
+GO
+ALTER TABLE [dbo].[Evaluation.DimensionCriteria] ADD  CONSTRAINT [DF_Evaluation.DimensionCriteria_Sequence]  DEFAULT ((20)) FOR [Sequence]
+GO
+ALTER TABLE [dbo].[EvaluationTool] ADD  CONSTRAINT [DF_EvaluationTool_Created]  DEFAULT (getdate()) FOR [Created]
+GO
+ALTER TABLE [dbo].[EvaluationTool.Section] ADD  CONSTRAINT [DF_EvaluationTool.Section_Created]  DEFAULT (getdate()) FOR [Created]
 GO
 ALTER TABLE [dbo].[Map.AccessibilityApi] ADD  CONSTRAINT [DF_Map.AccessibilityApi_Created]  DEFAULT (getdate()) FOR [Created]
 GO
@@ -21933,6 +28325,8 @@ ALTER TABLE [dbo].[Patron.SearchFilter] ADD  CONSTRAINT [DF_Patron.SearchFilter_
 GO
 ALTER TABLE [dbo].[Patron.SearchFilter] ADD  CONSTRAINT [DF_Patron.SearchFilter_LastUpdated]  DEFAULT (getdate()) FOR [LastUpdated]
 GO
+ALTER TABLE [dbo].[Patron.Tag] ADD  CONSTRAINT [DF_Patron.Tag_Created]  DEFAULT (getdate()) FOR [Created]
+GO
 ALTER TABLE [dbo].[Publish.Pending] ADD  CONSTRAINT [DF_Publish.Pending_IsPublished]  DEFAULT ((0)) FOR [IsPublished]
 GO
 ALTER TABLE [dbo].[Publish.Pending] ADD  CONSTRAINT [DF_Publish.Pending_Created]  DEFAULT (getdate()) FOR [Created]
@@ -21961,6 +28355,12 @@ ALTER TABLE [dbo].[Resource.EducationLevel] ADD  CONSTRAINT [DF_Resource.Educati
 GO
 ALTER TABLE [dbo].[Resource.EducationUse] ADD  CONSTRAINT [DF_Resource.EducationUser_Created]  DEFAULT (getdate()) FOR [Created]
 GO
+ALTER TABLE [dbo].[Resource.Evaluation] ADD  CONSTRAINT [DF_Resource.Evaluation_UserHasCertification]  DEFAULT ((0)) FOR [UserHasCertification]
+GO
+ALTER TABLE [dbo].[Resource.Evaluation] ADD  CONSTRAINT [DF_Resource.Evaluation_Created]  DEFAULT (getdate()) FOR [Created]
+GO
+ALTER TABLE [dbo].[Resource.EvaluationSection] ADD  CONSTRAINT [DF_Resource.EvaluationSection_Created]  DEFAULT (getdate()) FOR [Created]
+GO
 ALTER TABLE [dbo].[Resource.EvaluationSummary] ADD  CONSTRAINT [DF_Table_1_AlignmentDegreeId]  DEFAULT ((2)) FOR [Dimension2Count]
 GO
 ALTER TABLE [dbo].[Resource.EvaluationSummary] ADD  CONSTRAINT [DF_Resource.EvaluationSummary_Created]  DEFAULT (getdate()) FOR [Created]
@@ -21980,6 +28380,8 @@ GO
 ALTER TABLE [dbo].[Resource.Keyword] ADD  CONSTRAINT [DF_Resource.Keyword_Created]  DEFAULT (getdate()) FOR [Created]
 GO
 ALTER TABLE [dbo].[Resource.Language] ADD  CONSTRAINT [DF_Resource.Language_Created]  DEFAULT (getdate()) FOR [Created]
+GO
+ALTER TABLE [dbo].[Resource.LearningMapReference] ADD  CONSTRAINT [DF_Resource.LearningMapReference_Created]  DEFAULT (getdate()) FOR [Created]
 GO
 ALTER TABLE [dbo].[Resource.LinkCheck] ADD  CONSTRAINT [DF_Resource.LinkCheck_LastCheckDate]  DEFAULT (((2000)-(1))-(1)) FOR [LastCheckDate]
 GO
@@ -22005,9 +28407,15 @@ ALTER TABLE [dbo].[Resource.ResourceType] ADD  CONSTRAINT [DF_Resource.ResourceT
 GO
 ALTER TABLE [dbo].[Resource.ResourceType] ADD  CONSTRAINT [DF_Resource.ResourceType_Created]  DEFAULT (getdate()) FOR [Created]
 GO
+ALTER TABLE [dbo].[Resource.Site] ADD  CONSTRAINT [DF_Resource.Site_Created]  DEFAULT (getdate()) FOR [Created]
+GO
 ALTER TABLE [dbo].[Resource.Standard] ADD  CONSTRAINT [DF_Resource.Standard_AlignmentDegreeId]  DEFAULT ((2)) FOR [AlignmentDegreeId]
 GO
 ALTER TABLE [dbo].[Resource.Standard] ADD  CONSTRAINT [DF_Resource.Standard_Created]  DEFAULT (getdate()) FOR [Created]
+GO
+ALTER TABLE [dbo].[Resource.StandardEvaluation] ADD  CONSTRAINT [DF_Resource.StandardEvaluation_Created]  DEFAULT (getdate()) FOR [Created]
+GO
+ALTER TABLE [dbo].[Resource.Subject] ADD  CONSTRAINT [DF_Resource.Subject_Created]  DEFAULT (getdate()) FOR [Created]
 GO
 ALTER TABLE [dbo].[Resource.Tag] ADD  CONSTRAINT [DF_Resource.Tag_Created]  DEFAULT (getdate()) FOR [Created]
 GO
@@ -22021,11 +28429,21 @@ ALTER TABLE [dbo].[Resource.Version] ADD  CONSTRAINT [DF_Resource.Version_RowId_
 GO
 ALTER TABLE [dbo].[Resource_Index] ADD  CONSTRAINT [DF_Resource_Index_IsDeleted]  DEFAULT ((0)) FOR [IsDeleted]
 GO
+ALTER TABLE [dbo].[Resource_IndexV2] ADD  CONSTRAINT [DF_Resource_IndexV2_IsDeleted]  DEFAULT ((0)) FOR [IsDeleted]
+GO
 ALTER TABLE [dbo].[Sort.SpecialCharacter] ADD  CONSTRAINT [DF_Sort.SpecialCharacter_IsReplaceDescription]  DEFAULT ((0)) FOR [IsReplaceDescription]
 GO
 ALTER TABLE [dbo].[Sort.SpecialCharacter] ADD  CONSTRAINT [DF_Sort.SpecialCharacter_IsDropDescription]  DEFAULT ((0)) FOR [IsDropDescription]
 GO
 ALTER TABLE [dbo].[StandardBody.Subject] ADD  CONSTRAINT [DF_StandardBody.Subject_Created]  DEFAULT (getdate()) FOR [Created]
+GO
+ALTER TABLE [dbo].[System.GenerateLoginId] ADD  CONSTRAINT [DF_System.GenerateLoginId_RowId]  DEFAULT (newid()) FOR [ProxyId]
+GO
+ALTER TABLE [dbo].[System.GenerateLoginId] ADD  CONSTRAINT [DF_System.GenerateLoginId_ProxyType]  DEFAULT ('Forgot Password') FOR [ProxyType]
+GO
+ALTER TABLE [dbo].[System.GenerateLoginId] ADD  CONSTRAINT [DF_System.GenerateLoginId_IsActive]  DEFAULT ((1)) FOR [IsActive]
+GO
+ALTER TABLE [dbo].[System.GenerateLoginId] ADD  CONSTRAINT [DF_System.GenerateLoginId_Created]  DEFAULT (getdate()) FOR [Created]
 GO
 ALTER TABLE [dbo].[System.Process] ADD  CONSTRAINT [DF_System.Process_Created]  DEFAULT (getdate()) FOR [Created]
 GO
@@ -22060,6 +28478,30 @@ ON UPDATE CASCADE
 ON DELETE CASCADE
 GO
 ALTER TABLE [dbo].[Codes.TagValue] CHECK CONSTRAINT [FK_Codes.TagValue_Codes.TagCategory]
+GO
+ALTER TABLE [dbo].[Codes.TagValueKeyword]  WITH CHECK ADD  CONSTRAINT [FK_Codes.TagValueKeyword_Codes.TagValue] FOREIGN KEY([TagValueId])
+REFERENCES [dbo].[Codes.TagValue] ([Id])
+ON UPDATE CASCADE
+ON DELETE CASCADE
+GO
+ALTER TABLE [dbo].[Codes.TagValueKeyword] CHECK CONSTRAINT [FK_Codes.TagValueKeyword_Codes.TagValue]
+GO
+ALTER TABLE [dbo].[Evaluation.Dimension]  WITH CHECK ADD  CONSTRAINT [FK_Evaluation.Dimension_Evaluation] FOREIGN KEY([EvaluationId])
+REFERENCES [dbo].[Evaluation] ([Id])
+GO
+ALTER TABLE [dbo].[Evaluation.Dimension] CHECK CONSTRAINT [FK_Evaluation.Dimension_Evaluation]
+GO
+ALTER TABLE [dbo].[Evaluation.DimensionCriteria]  WITH CHECK ADD  CONSTRAINT [FK_Evaluation.DimensionCriteria_Evaluation.Dimension] FOREIGN KEY([DimensionId])
+REFERENCES [dbo].[Evaluation.Dimension] ([Id])
+ON DELETE CASCADE
+GO
+ALTER TABLE [dbo].[Evaluation.DimensionCriteria] CHECK CONSTRAINT [FK_Evaluation.DimensionCriteria_Evaluation.Dimension]
+GO
+ALTER TABLE [dbo].[EvaluationTool.Section]  WITH CHECK ADD  CONSTRAINT [FK_EvaluationTool.Section_EvaluationTool] FOREIGN KEY([EvalToolId])
+REFERENCES [dbo].[EvaluationTool] ([Id])
+ON DELETE CASCADE
+GO
+ALTER TABLE [dbo].[EvaluationTool.Section] CHECK CONSTRAINT [FK_EvaluationTool.Section_EvaluationTool]
 GO
 ALTER TABLE [dbo].[Map.AccessibilityApi]  WITH CHECK ADD  CONSTRAINT [FK_Map.AccessibilityApi_Codes.AccessibilityApi] FOREIGN KEY([CodeId])
 REFERENCES [dbo].[Codes.AccessibilityApi] ([Id])
@@ -22098,6 +28540,16 @@ ON DELETE CASCADE
 GO
 ALTER TABLE [dbo].[Patron.ExternalAccount] CHECK CONSTRAINT [FK_Patron.ExternalAccount_Patron]
 GO
+ALTER TABLE [dbo].[Patron.Following]  WITH CHECK ADD  CONSTRAINT [FK_Patron.FollowedBy_Patron] FOREIGN KEY([FollowedByUserId])
+REFERENCES [dbo].[Patron] ([Id])
+GO
+ALTER TABLE [dbo].[Patron.Following] CHECK CONSTRAINT [FK_Patron.FollowedBy_Patron]
+GO
+ALTER TABLE [dbo].[Patron.Following]  WITH CHECK ADD  CONSTRAINT [FK_Patron.Following_Patron] FOREIGN KEY([FollowingUserId])
+REFERENCES [dbo].[Patron] ([Id])
+GO
+ALTER TABLE [dbo].[Patron.Following] CHECK CONSTRAINT [FK_Patron.Following_Patron]
+GO
 ALTER TABLE [dbo].[Patron.Note]  WITH CHECK ADD  CONSTRAINT [FK_Patron.Note_Patron] FOREIGN KEY([UserId])
 REFERENCES [dbo].[Patron] ([Id])
 GO
@@ -22115,25 +28567,25 @@ REFERENCES [dbo].[Patron] ([Id])
 GO
 ALTER TABLE [dbo].[Patron.SearchFilter] CHECK CONSTRAINT [FK_Patron.SearchFilter_Patron]
 GO
+ALTER TABLE [dbo].[Patron.Tag]  WITH CHECK ADD  CONSTRAINT [FK_Patron.Tag_Codes.TagCategory] FOREIGN KEY([CategoryId])
+REFERENCES [dbo].[Codes.TagCategory] ([Id])
+GO
+ALTER TABLE [dbo].[Patron.Tag] CHECK CONSTRAINT [FK_Patron.Tag_Codes.TagCategory]
+GO
+ALTER TABLE [dbo].[Patron.Tag]  WITH CHECK ADD  CONSTRAINT [FK_Patron.Tag_Patron] FOREIGN KEY([PatronId])
+REFERENCES [dbo].[Patron] ([Id])
+GO
+ALTER TABLE [dbo].[Patron.Tag] CHECK CONSTRAINT [FK_Patron.Tag_Patron]
+GO
 ALTER TABLE [dbo].[Resource.AccessibilityApi]  WITH CHECK ADD  CONSTRAINT [FK_Resource.AccessibilityApi_Codes.AccessibilityApi] FOREIGN KEY([AccessibilityApiId])
 REFERENCES [dbo].[Codes.AccessibilityApi] ([Id])
 GO
 ALTER TABLE [dbo].[Resource.AccessibilityApi] CHECK CONSTRAINT [FK_Resource.AccessibilityApi_Codes.AccessibilityApi]
 GO
-ALTER TABLE [dbo].[Resource.AccessibilityApi]  WITH CHECK ADD  CONSTRAINT [FK_Resource.AccessibilityApi_Resource] FOREIGN KEY([ResourceIntId])
-REFERENCES [dbo].[Resource] ([Id])
-GO
-ALTER TABLE [dbo].[Resource.AccessibilityApi] CHECK CONSTRAINT [FK_Resource.AccessibilityApi_Resource]
-GO
 ALTER TABLE [dbo].[Resource.AccessibilityControl]  WITH CHECK ADD  CONSTRAINT [FK_Resource.AccessibilityControl_Codes.AccessibilityControl] FOREIGN KEY([AccessibilityControlId])
 REFERENCES [dbo].[Codes.AccessibilityControl] ([Id])
 GO
 ALTER TABLE [dbo].[Resource.AccessibilityControl] CHECK CONSTRAINT [FK_Resource.AccessibilityControl_Codes.AccessibilityControl]
-GO
-ALTER TABLE [dbo].[Resource.AccessibilityControl]  WITH CHECK ADD  CONSTRAINT [FK_Resource.AccessibilityControl_Resource] FOREIGN KEY([ResourceIntId])
-REFERENCES [dbo].[Resource] ([Id])
-GO
-ALTER TABLE [dbo].[Resource.AccessibilityControl] CHECK CONSTRAINT [FK_Resource.AccessibilityControl_Resource]
 GO
 ALTER TABLE [dbo].[Resource.AccessibilityFeature]  WITH CHECK ADD  CONSTRAINT [FK_Resource.AccessibilityFeature_Codes.AccessibilityFeature] FOREIGN KEY([AccessibilityFeatureId])
 REFERENCES [dbo].[Codes.AccessibilityFeature] ([Id])
@@ -22167,12 +28619,6 @@ ON DELETE CASCADE
 GO
 ALTER TABLE [dbo].[Resource.AssessmentType] CHECK CONSTRAINT [FK_Resource.AssessmentType_Resource]
 GO
-ALTER TABLE [dbo].[Resource.Cluster]  WITH CHECK ADD  CONSTRAINT [FK_Resource.Cluster_Resource] FOREIGN KEY([ResourceIntId])
-REFERENCES [dbo].[Resource] ([Id])
-ON DELETE CASCADE
-GO
-ALTER TABLE [dbo].[Resource.Cluster] CHECK CONSTRAINT [FK_Resource.Cluster_Resource]
-GO
 ALTER TABLE [dbo].[Resource.Cluster]  WITH CHECK ADD  CONSTRAINT [FK_ResourceCluster_Cluster] FOREIGN KEY([ClusterId])
 REFERENCES [dbo].[CareerCluster] ([Id])
 ON UPDATE CASCADE
@@ -22197,12 +28643,6 @@ REFERENCES [dbo].[Codes.PathwaysEducationLevel] ([Id])
 GO
 ALTER TABLE [dbo].[Resource.EducationLevel] CHECK CONSTRAINT [FK_Resource.EducationLevel_Codes.PathwaysEducationLevel]
 GO
-ALTER TABLE [dbo].[Resource.EducationLevel]  WITH CHECK ADD  CONSTRAINT [FK_Resource.EducationLevel_Resource] FOREIGN KEY([ResourceId])
-REFERENCES [dbo].[Resource] ([RowId])
-ON DELETE CASCADE
-GO
-ALTER TABLE [dbo].[Resource.EducationLevel] CHECK CONSTRAINT [FK_Resource.EducationLevel_Resource]
-GO
 ALTER TABLE [dbo].[Resource.EducationUse]  WITH CHECK ADD  CONSTRAINT [FK_Resource.EducationUse_Codes.EducationalUse] FOREIGN KEY([EducationUseId])
 REFERENCES [dbo].[Codes.EducationalUse] ([Id])
 GO
@@ -22215,10 +28655,26 @@ ON DELETE CASCADE
 GO
 ALTER TABLE [dbo].[Resource.EducationUse] CHECK CONSTRAINT [FK_Resource.EducationUse_Resource]
 GO
-ALTER TABLE [dbo].[Resource.Evaluation]  WITH CHECK ADD  CONSTRAINT [FK_Resource.Evaluation_Rubric.Node] FOREIGN KEY([RubricId])
-REFERENCES [dbo].[Rubric.Node] ([Id])
+ALTER TABLE [dbo].[Resource.Evaluation]  WITH CHECK ADD  CONSTRAINT [FK_Resource.Evaluation_Evaluation] FOREIGN KEY([EvaluationId])
+REFERENCES [dbo].[Evaluation] ([Id])
 GO
-ALTER TABLE [dbo].[Resource.Evaluation] CHECK CONSTRAINT [FK_Resource.Evaluation_Rubric.Node]
+ALTER TABLE [dbo].[Resource.Evaluation] CHECK CONSTRAINT [FK_Resource.Evaluation_Evaluation]
+GO
+ALTER TABLE [dbo].[Resource.Evaluation]  WITH CHECK ADD  CONSTRAINT [FK_Resource.Evaluation_Resource] FOREIGN KEY([ResourceIntId])
+REFERENCES [dbo].[Resource] ([Id])
+GO
+ALTER TABLE [dbo].[Resource.Evaluation] CHECK CONSTRAINT [FK_Resource.Evaluation_Resource]
+GO
+ALTER TABLE [dbo].[Resource.EvaluationSection]  WITH CHECK ADD  CONSTRAINT [FK_Resource.EvaluationSection_Resource.Evaluation1] FOREIGN KEY([ResourceEvalId])
+REFERENCES [dbo].[Resource.Evaluation] ([Id])
+ON DELETE CASCADE
+GO
+ALTER TABLE [dbo].[Resource.EvaluationSection] CHECK CONSTRAINT [FK_Resource.EvaluationSection_Resource.Evaluation1]
+GO
+ALTER TABLE [dbo].[Resource.EvaluationSection]  WITH CHECK ADD  CONSTRAINT [FK_Resource.EvaluationSection_Resource.EvaluationSection] FOREIGN KEY([EvalDimensionId])
+REFERENCES [dbo].[Evaluation.Dimension] ([Id])
+GO
+ALTER TABLE [dbo].[Resource.EvaluationSection] CHECK CONSTRAINT [FK_Resource.EvaluationSection_Resource.EvaluationSection]
 GO
 ALTER TABLE [dbo].[Resource.EvaluationSummary]  WITH CHECK ADD  CONSTRAINT [FK_Resource.EvaluationSummary_Resource] FOREIGN KEY([ResourceIntId])
 REFERENCES [dbo].[Resource] ([Id])
@@ -22268,13 +28724,6 @@ REFERENCES [dbo].[Codes.AudienceType] ([Id])
 GO
 ALTER TABLE [dbo].[Resource.IntendedAudience] CHECK CONSTRAINT [FK_IntendedAudience_CodesAudienceType]
 GO
-ALTER TABLE [dbo].[Resource.IntendedAudience]  WITH CHECK ADD  CONSTRAINT [FK_Resource.IntendedAudience_Resource] FOREIGN KEY([ResourceId])
-REFERENCES [dbo].[Resource] ([RowId])
-ON UPDATE CASCADE
-ON DELETE CASCADE
-GO
-ALTER TABLE [dbo].[Resource.IntendedAudience] CHECK CONSTRAINT [FK_Resource.IntendedAudience_Resource]
-GO
 ALTER TABLE [dbo].[Resource.ItemType]  WITH CHECK ADD  CONSTRAINT [FK_Resource.ItemType_Codes.ItemType] FOREIGN KEY([ItemTypeId])
 REFERENCES [dbo].[Codes.ItemType] ([Id])
 GO
@@ -22305,6 +28754,11 @@ ON DELETE CASCADE
 GO
 ALTER TABLE [dbo].[Resource.Language] CHECK CONSTRAINT [FK_Resource.Language_Resource]
 GO
+ALTER TABLE [dbo].[Resource.LearningMapReference]  WITH CHECK ADD  CONSTRAINT [FK_Resource.LearningMapReference_Resource] FOREIGN KEY([ResourceIntId])
+REFERENCES [dbo].[Resource] ([Id])
+GO
+ALTER TABLE [dbo].[Resource.LearningMapReference] CHECK CONSTRAINT [FK_Resource.LearningMapReference_Resource]
+GO
 ALTER TABLE [dbo].[Resource.Like]  WITH CHECK ADD  CONSTRAINT [FK_Resource.Like_Resource] FOREIGN KEY([ResourceIntId])
 REFERENCES [dbo].[Resource] ([Id])
 ON UPDATE CASCADE
@@ -22330,12 +28784,6 @@ ALTER TABLE [dbo].[Resource.RatingSummary]  WITH CHECK ADD  CONSTRAINT [FK_Resou
 REFERENCES [dbo].[Codes.RatingType] ([Id])
 GO
 ALTER TABLE [dbo].[Resource.RatingSummary] CHECK CONSTRAINT [FK_Resource.RatingSummary_Codes.RatingType]
-GO
-ALTER TABLE [dbo].[Resource.RatingSummary]  WITH CHECK ADD  CONSTRAINT [FK_Resource.RatingSummary_Resource] FOREIGN KEY([ResourceId])
-REFERENCES [dbo].[Resource] ([RowId])
-ON DELETE CASCADE
-GO
-ALTER TABLE [dbo].[Resource.RatingSummary] CHECK CONSTRAINT [FK_Resource.RatingSummary_Resource]
 GO
 ALTER TABLE [dbo].[Resource.Recommendation]  WITH CHECK ADD  CONSTRAINT [FK_Resource.Recommendation_Patron] FOREIGN KEY([CreatedById])
 REFERENCES [dbo].[Patron] ([Id])
@@ -22368,6 +28816,17 @@ ON DELETE CASCADE
 GO
 ALTER TABLE [dbo].[Resource.ResourceType] CHECK CONSTRAINT [FK_Resource.ResourceType_Resource]
 GO
+ALTER TABLE [dbo].[Resource.Site]  WITH CHECK ADD  CONSTRAINT [FK_Resource.Site_Codes.Site] FOREIGN KEY([SiteId])
+REFERENCES [dbo].[Codes.Site] ([Id])
+GO
+ALTER TABLE [dbo].[Resource.Site] CHECK CONSTRAINT [FK_Resource.Site_Codes.Site]
+GO
+ALTER TABLE [dbo].[Resource.Site]  WITH CHECK ADD  CONSTRAINT [FK_Resource.Site_Resource] FOREIGN KEY([ResourceIntId])
+REFERENCES [dbo].[Resource] ([Id])
+ON DELETE CASCADE
+GO
+ALTER TABLE [dbo].[Resource.Site] CHECK CONSTRAINT [FK_Resource.Site_Resource]
+GO
 ALTER TABLE [dbo].[Resource.Standard]  WITH CHECK ADD  CONSTRAINT [FK_Resource.Standard_Resource] FOREIGN KEY([ResourceIntId])
 REFERENCES [dbo].[Resource] ([Id])
 ON DELETE CASCADE
@@ -22380,19 +28839,30 @@ ON DELETE CASCADE
 GO
 ALTER TABLE [dbo].[Resource.Standard] CHECK CONSTRAINT [FK_Resource.Standard_StandardBody.Node]
 GO
+ALTER TABLE [dbo].[Resource.StandardEvaluation]  WITH CHECK ADD  CONSTRAINT [FK_Resource.StandardEvaluation_Resource.Standard] FOREIGN KEY([ResourceStandardId])
+REFERENCES [dbo].[Resource.Standard] ([Id])
+GO
+ALTER TABLE [dbo].[Resource.StandardEvaluation] CHECK CONSTRAINT [FK_Resource.StandardEvaluation_Resource.Standard]
+GO
+ALTER TABLE [dbo].[Resource.Subject]  WITH CHECK ADD  CONSTRAINT [FK_Resource.Subject_Codes.Subject] FOREIGN KEY([CodeId])
+REFERENCES [dbo].[Codes.Subject] ([Id])
+GO
+ALTER TABLE [dbo].[Resource.Subject] CHECK CONSTRAINT [FK_Resource.Subject_Codes.Subject]
+GO
 ALTER TABLE [dbo].[Resource.Subject]  WITH CHECK ADD  CONSTRAINT [FK_Resource_Subject_Resource] FOREIGN KEY([ResourceIntId])
 REFERENCES [dbo].[Resource] ([Id])
 ON DELETE CASCADE
 GO
 ALTER TABLE [dbo].[Resource.Subject] CHECK CONSTRAINT [FK_Resource_Subject_Resource]
 GO
-ALTER TABLE [dbo].[Resource.Tag]  WITH CHECK ADD  CONSTRAINT [FK_Resource.Tag_Codes.TagCategory] FOREIGN KEY([CategoryId])
-REFERENCES [dbo].[Codes.TagCategory] ([Id])
+ALTER TABLE [dbo].[Resource.Tag]  WITH CHECK ADD  CONSTRAINT [FK_Resource.Tag_Codes.TagValue] FOREIGN KEY([TagValueId])
+REFERENCES [dbo].[Codes.TagValue] ([Id])
 GO
-ALTER TABLE [dbo].[Resource.Tag] CHECK CONSTRAINT [FK_Resource.Tag_Codes.TagCategory]
+ALTER TABLE [dbo].[Resource.Tag] CHECK CONSTRAINT [FK_Resource.Tag_Codes.TagValue]
 GO
 ALTER TABLE [dbo].[Resource.Tag]  WITH CHECK ADD  CONSTRAINT [FK_Resource.Tag_Resource] FOREIGN KEY([ResourceIntId])
 REFERENCES [dbo].[Resource] ([Id])
+ON DELETE CASCADE
 GO
 ALTER TABLE [dbo].[Resource.Tag] CHECK CONSTRAINT [FK_Resource.Tag_Resource]
 GO
@@ -22413,6 +28883,12 @@ REFERENCES [dbo].[Resource] ([Id])
 ON DELETE CASCADE
 GO
 ALTER TABLE [dbo].[Resource.Version] CHECK CONSTRAINT [FK_Resource.Version2_Resource]
+GO
+ALTER TABLE [dbo].[Resource_IndexV2.Tags]  WITH CHECK ADD  CONSTRAINT [FK_Resource_IndexV2.Tags_Resource_IndexV2] FOREIGN KEY([ResourceId])
+REFERENCES [dbo].[Resource_IndexV2] ([intID])
+ON DELETE CASCADE
+GO
+ALTER TABLE [dbo].[Resource_IndexV2.Tags] CHECK CONSTRAINT [FK_Resource_IndexV2.Tags_Resource_IndexV2]
 GO
 ALTER TABLE [dbo].[Standard.SubjectStandardConnector]  WITH CHECK ADD  CONSTRAINT [FK_Standard.SubjectStandardConnector_StandardBody.Node] FOREIGN KEY([DomainNodeId])
 REFERENCES [dbo].[StandardBody.Node] ([Id])
