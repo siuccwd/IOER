@@ -2,7 +2,8 @@ IOER
 ====
 
 Illinois Open education resources
-This project is a C#, ASP.Net, Sql server 2012 based project. The project imports resources from the Learning Registry (see learningRegistry.org), and have tools to publish metadata to the LR. The open resources site can be found at http://ioer.ilsharedlearning.org. Key Features:
+This project is a C#, ASP.Net, Sql server 2012 based project. The project includes imports of resource data from, and tools to publish resource data to, the national Learning Registry http://learningregistry.org. Visit the IOER site to learn more http://ilsharedlearning.org.  Get more information about developer documentation http://ioer.ilsharedlearning.org/developers.
+Key Features:
 - ability to search for resources (using ElasticSearch based index)
 - search filters include a standards browser
 - Resources can be aligned to the Common Core, and Illinois state standards
@@ -13,4 +14,5 @@ This project is a C#, ASP.Net, Sql server 2012 based project. The project import
 - Create custom content, including curriculums (generally referred to as learning lists)
 
 This project currently just has the source. Nuget can be used to download the supporting packages.
-Also need to upload sample databases
+
+Sql scripts are included to create the databases. PlEASE contact us if would prefer a set of small starter databases.
