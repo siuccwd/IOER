@@ -1,18 +1,25 @@
 IOER
 ====
 
-Illinois Open education resources
-This project is a C#, ASP.Net, Sql server 2012 based project. The project includes imports of resource data from, and tools to publish resource data to, the national Learning Registry http://learningregistry.org. Visit the IOER site to learn more http://ilsharedlearning.org.  Get more information about developer documentation http://ioer.ilsharedlearning.org/developers.
+Illinois Open Educational Resources (IOER)
+
+The IOER (http://www.ilsharedlearning.org) is for sharing, creating, and curating learning resources. 
+
+This project was developed using Microsoft Visual Studio (2012+), C#, ASP.Net, and Sql server 2012. The community edition of Visual Studio (https://www.visualstudio.com/en-us/news/vs2013-community-vs.aspx) can be used effectively for development. The site includes learning resource metadata and paradata imported from the national Learning Registry (LR) (http://learningregistry.org) and tools to publish resource data to the LR. 
+
+Get more information about developer documentation http://ioer.ilsharedlearning.org/developers.
+
 Key Features:
-- ability to search for resources (using ElasticSearch based index)
-- search filters include a standards browser
-- Resources can be aligned to the Common Core, and Illinois state standards
-- Create libraries and collections to store resources
-- Follow libraries, resources, and people
-- Publish resources to the Learning registry
-- Provides widgets to allow hosting libraries, learning lists, etc on external web sites
-- Create custom content, including curriculums (generally referred to as learning lists)
 
-This project currently just has the source. Nuget can be used to download the supporting packages.
+  -  Consume from and publish to the LR.
+  -  Search for resources using ElasticSearch (https://www.elastic.co/)  (version 1.7.2) based index.
+  -  Search filters, including a learning standards browser (e.g. Common Core, NGSS) using Achievement Standards Network (ASN) http://www.achievementstandards.org/ 
+  -  Resources can be aligned to the Common Core, NGSS, Illinois K-12 standards, Illinois Adult Education Standards, and a variety of national standards.
+  -  Open Libraries with collections to share and curate resources.
+  -  Create Learning Lists for structuring resources ranging from small sets of learning activities to an entire curriculum.
+  -  Follow Libraries and Learning Lists.
+  -  Widgets (http://ioer.ilsharedlearning.org/widgets/) for seamless access to Libraries, Learning, search and more on external websites.
 
-Sql scripts are included to create the databases. PlEASE contact us if would prefer a set of small starter databases.
+This project currently has just the source, database scripts and most dependent packages. Nuget can be used to download the supporting packages.
+
+Sql scripts are included to create the databases. PLEASE contact us if you would prefer a set of small starter databases  (recommended). 
