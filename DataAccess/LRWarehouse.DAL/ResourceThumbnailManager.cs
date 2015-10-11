@@ -13,7 +13,7 @@ namespace LRWarehouse.DAL
   public class ResourceThumbnailManager
   {
     //The UNC Path to the thumbnail folder -- should add this to web.config
-    private const string thumbnailRootFolder = @"\\OERDATASTORE\OerThumbs\";
+    //private const string thumbnailRootFolder = @"\\OERDATASTORE\OerThumbs\";
 
     //Create a single thumbnail 
     public void CreateThumbnail( int resourceID, string url )
@@ -23,7 +23,10 @@ namespace LRWarehouse.DAL
     //Create a single thumbnail
     public void CreateThumbnail( int resourceID, string url, bool overwriteIfExists )
     {
-      if ( UtilityManager.GetAppKeyValue( "envType" ) != "prod" ) { return; }
+      if ( UtilityManager.GetAppKeyValue( "creatingThumbnails" ) != "yes" ) 
+	  { 
+		  return; 
+	  }
       CreateThumbnailIndirectly( resourceID, url, overwriteIfExists );
     }
 
@@ -34,33 +37,48 @@ namespace LRWarehouse.DAL
     public void CreateThumbnailIndirectly( string id, string url, bool overwriteIfExists )
     {
       var arguments = id + " \"" + url + "\" " + ( overwriteIfExists ? "true" : "false" );
+		//won't this be an issue with multiple calls?
+	  string thumbnailerLog = UtilityManager.GetAppKeyValue( "thumbnailerLog", "C:\\Thumbnail Generator 4\\lastrun.txt" );
+		string thumbnailerWorkingDirectory = UtilityManager.GetAppKeyValue( "thumbnailGeneratorV2Folder", "C:\\Thumbnail Generator 4" );
+	  string thumbnailGenerator = UtilityManager.GetAppKeyValue( "thumbnailGenerator", "C:\\Thumbnail Generator 4\\ThumbnailerV4User.exe" );
+		string asyncLog = "start, ";
 
       try
       {
-        File.WriteAllText( @"C:\Thumbnail Generator 4\lastrun.txt", "Running thumbnailer indirectly..." + System.Environment.NewLine );
+		  File.WriteAllText( thumbnailerLog, "Running thumbnailer indirectly..." + System.Environment.NewLine );
 
         ProcessStartInfo processInfo;
         Process process;
 
         if ( arguments.Length == 0 )
         {
-          processInfo = new ProcessStartInfo( @"C:\Thumbnail Generator 4\ThumbnailerV4User.exe" );
+          processInfo = new ProcessStartInfo( thumbnailGenerator );
         }
         else
         {
-          processInfo = new ProcessStartInfo( @"C:\Thumbnail Generator 4\ThumbnailerV4User.exe", arguments );
+          processInfo = new ProcessStartInfo( thumbnailGenerator, arguments );
         }
-        processInfo.WorkingDirectory = @"C:\Thumbnail Generator 4";
+        processInfo.WorkingDirectory = thumbnailerWorkingDirectory;
         processInfo.CreateNoWindow = false;
-        processInfo.UseShellExecute = true;
+        processInfo.UseShellExecute = false;
 
         process = Process.Start( processInfo );
-        process.WaitForExit( 20000 );
-        process.Close();
+        //process.WaitForExit( 20000 );
+        //process.Close();
+				asyncLog = asyncLog + "queuing user work item, ";
+				System.Threading.ThreadPool.QueueUserWorkItem( delegate 
+				{
+					asyncLog = asyncLog + "Async successful, ";
+					process.WaitForExit( 45000 );
+					process.Close();
+					asyncLog = asyncLog + "Async finished.";
+				} );
       }
       catch ( Exception ex )
       {
-        File.WriteAllText( @"C:\Thumbnail Generator 4\lastrun.txt", "Project Level Error: " + ex.Message.ToString() );
+        File.WriteAllText( thumbnailerLog, "Project Level Error: " + ex.Message.ToString() );
+				File.AppendAllText( thumbnailerLog, "Log: " + thumbnailerLog + "; Directory: " + thumbnailerWorkingDirectory + "; Generator: " + thumbnailGenerator + System.Environment.NewLine );
+				File.AppendAllText( thumbnailerLog, "Async: " + asyncLog + System.Environment.NewLine );
       }
     }
 

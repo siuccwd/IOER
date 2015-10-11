@@ -1,4 +1,4 @@
-﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="FaqMaintenance.ascx.cs" Inherits="ILPathways.Controls.FAQs.FaqMaintenance" %>
+﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="FaqMaintenance.ascx.cs" Inherits="IOER.Controls.FAQs.FaqMaintenance" %>
 <%@ Register
     Assembly="AjaxControlToolkit"
     Namespace="AjaxControlToolkit.HTMLEditor"

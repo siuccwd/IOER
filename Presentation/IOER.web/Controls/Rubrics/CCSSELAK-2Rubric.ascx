@@ -1,4 +1,4 @@
-﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="CCSSELAK-2Rubric.ascx.cs" Inherits="ILPathways.Controls.Rubrics.CCSSELAK_2Rubric" %>
+﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="CCSSELAK-2Rubric.ascx.cs" Inherits="IOER.Controls.Rubrics.CCSSELAK_2Rubric" %>
 
 <script type="text/javascript" src="/controls/rubrics/shared/ccss.js"></script>
 <script type="text/javascript">

@@ -1,4 +1,4 @@
-﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="GroupPrivileges.ascx.cs" Inherits="ILPathways.Controls.GroupsManagment.GroupPrivileges" %>
+﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="GroupPrivileges.ascx.cs" Inherits="IOER.Controls.GroupsManagment.GroupPrivileges" %>
 
 
 <asp:validationsummary id="vsErrorSummary" HeaderText="Errors on page" ValidationGroup="privilegesValGroup" forecolor="" CssClass="errorMessage" runat="server"></asp:validationsummary>
@@ -123,14 +123,14 @@
 
 <asp:Panel ID="hiddenPanel" runat="server" Visible="false">
 <asp:Literal ID="selectAvailableObjectsSql" runat="server" >
-SELECT  id, ObjectName, DisplayName FROM workNetObject
+SELECT  id, ObjectName, DisplayName FROM ApplicationObject
 where id not in 
-( SELECT [ObjectId] FROM WorkNetGroupPrivilege Where (GroupId	= {0}) )
+( SELECT [ObjectId] FROM [AppGroup.Privilege] Where (GroupId	= {0}) )
 Order by DisplayName
 </asp:Literal>
 
 
-<asp:Literal ID="formSecurityName" runat="server" Visible="false">ILPathways.Controls.GroupsManagment.GroupPrivileges</asp:Literal>
+<asp:Literal ID="formSecurityName" runat="server" Visible="false">IOER.Controls.GroupsManagment.GroupPrivileges</asp:Literal>
 
 
 </asp:Panel>	

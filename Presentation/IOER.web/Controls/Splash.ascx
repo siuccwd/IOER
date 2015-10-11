@@ -1,4 +1,4 @@
-﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="Splash.ascx.cs" Inherits="ILPathways.Controls.Splash" %>
+﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="Splash.ascx.cs" Inherits="IOER.Controls.Splash" %>
 <%@ Register TagPrefix="uc1" TagName="SplashMini" Src="/Controls/SplashMini.ascx" %>
 
 <style type="text/css">

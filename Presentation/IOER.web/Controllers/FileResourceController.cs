@@ -13,15 +13,15 @@ using System.Web.Security;
 
 using ILPathways.Business;
 using ThisLibrary = ILPathways.Business.Library;
-using ILPathways.classes;
+using IOER.classes;
 using ILPathways.DAL;
-using ILPathways.Library;
+using IOER.Library;
 using ILPathways.Utilities;
 using Isle.BizServices;
 
 using LRWarehouse.Business;
 
-namespace ILPathways.Controllers
+namespace IOER.Controllers
 {
     /// <summary>
     /// Class for handling file system related methods 

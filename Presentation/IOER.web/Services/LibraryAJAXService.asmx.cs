@@ -5,10 +5,12 @@ using System.Web;
 using System.Web.Services;
 
 using Isle.BizServices;
+using ILPathways.Business;
+using IB=ILPathways.Business;
 using LRWarehouse.Business;
-using GenericReturn = ILPathways.Services.UtilityService.GenericReturn;
+using GenericReturn = IOER.Services.UtilityService.GenericReturn;
 
-namespace ILPathways.Services
+namespace IOER.Services
 {
   /// <summary>
   /// Summary description for LibraryAJAXService
@@ -58,7 +60,7 @@ namespace ILPathways.Services
 
       /* This area handles the currently-displayed Library */
       //Ensure that the library is public or that the user has access to it
-      if ( libraryData.PublicAccessLevel <= Business.EObjectAccessLevel.ByRequestOnly && 
+      if ( libraryData.PublicAccessLevel <= EObjectAccessLevel.ByRequestOnly && 
         !svcLibrary.Library_DoesUserHaveContributeAccess(id, user.Id) )
       {
         valid = false;
@@ -94,7 +96,7 @@ namespace ILPathways.Services
     }
 
     #region Helper Methods
-    private LibraryDTO PopulateLibraryDTO( Business.Library input, Patron user, List<Business.LibrarySection> collections, bool includeComments )
+    private LibraryDTO PopulateLibraryDTO( IB.Library input, Patron user, List<LibrarySection> collections, bool includeComments )
     {
       var output = new LibraryDTO()
       {
@@ -129,7 +131,7 @@ namespace ILPathways.Services
       return output;
     }
 
-    private List<CommentDTO> PopulateCommentDTOs( List<Business.ObjectComment> input )
+    private List<CommentDTO> PopulateCommentDTOs( List<ObjectComment> input )
     {
       var output = new List<CommentDTO>();
       if ( input != null )

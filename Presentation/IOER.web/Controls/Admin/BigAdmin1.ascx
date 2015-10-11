@@ -1,4 +1,4 @@
-﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="BigAdmin1.ascx.cs" Inherits="ILPathways.Controls.Admin.BigAdmin1" %>
+﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="BigAdmin1.ascx.cs" Inherits="IOER.Controls.Admin.BigAdmin1" %>
 
 <!-- IOER scripts -->
 <script type="text/javascript" src="/scripts/widgets/postmessagereceiver.js"></script>
@@ -65,12 +65,12 @@
     }
     //Load users into the list
     function loadUsers(method, showCBX){
-      $(".memberList").html("<p class='grayMessage loadingImage'><img src='/images/wait.gif' /></p>");
+        $(".memberList").html("<p class='grayMessage loadingImage'><img alt='' src='/images/wait.gif' /></p>");
       doAjax("AdminService1",method, { type: manageType, manageID: manageID }, success_listUsers, null, showCBX);
     }
     //Load users into the list after updating
     function updateUsers(method, data, button, showCBX){
-      $(".memberList").prepend("<p class='grayMessage loadingImage'><img src='/images/wait.gif' /></p>");
+      $(".memberList").prepend("<p class='grayMessage loadingImage'><img alt='' src='/images/wait.gif' /></p>");
       doAjax("AdminService1", method, data, success_updateUsers, button, showCBX);
     }
     //Save changes to existing members

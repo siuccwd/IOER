@@ -17,16 +17,16 @@ using System.Web.UI.HtmlControls;
 
 using MyManager = ILPathways.DAL.AppItemManager;
 //using MyAppEmailManager = workNet.DAL.AnnouncementEmailManager;
-using ILPathways.classes;
-using ILPathways.Controllers;
-using ILPathways.Library;
+using IOER.classes;
+using IOER.Controllers;
+using IOER.Library;
 using ILPathways.Utilities;
 using ILPathways.Business;
 using LRWarehouse.DAL;
 
-namespace ILPathways.Controls.AppItems
+namespace IOER.Controls.AppItems
 {
-    public partial class NewsItemSearch : ILPathways.Library.BaseUserControl
+    public partial class NewsItemSearch : IOER.Library.BaseUserControl
     {
         const string thisClassName = "NewsItemSearch";
         MyManager myManager = new MyManager();
@@ -230,7 +230,7 @@ namespace ILPathways.Controls.AppItems
                 SetConsoleErrorMessage( "Error: a valid news code has not been provided." );
                 return;
             }
-            CurrentNewsTemplate = ILPathways.Controllers.NewsController.NewsTemlateGet( NewsItemTemplateCode );
+            CurrentNewsTemplate = IOER.Controllers.NewsController.NewsTemlateGet( NewsItemTemplateCode );
             if ( CurrentNewsTemplate == null || CurrentNewsTemplate.Id == 0 )
             {
                 //hide, no code found
@@ -388,7 +388,7 @@ namespace ILPathways.Controls.AppItems
                 }
                 else
                 {
-                    entity = ILPathways.Controllers.AppItemController.AppItemGet( recId );
+                    entity = IOER.Controllers.AppItemController.AppItemGet( recId );
                 }
 
                 if ( entity == null || entity.HasValidRowId() == false )
@@ -556,7 +556,7 @@ namespace ILPathways.Controls.AppItems
             else
             {
                 usedWSForSearch = true;
-                ds = ILPathways.Controllers.AppItemController.AppItemWebServiceNewsSearch( filter, sortTerm, selectedPageNbr, pager2.PageSize, ref pTotalRows );
+                ds = IOER.Controllers.AppItemController.AppItemWebServiceNewsSearch( filter, sortTerm, selectedPageNbr, pager2.PageSize, ref pTotalRows );
 
             }
 
@@ -614,7 +614,7 @@ namespace ILPathways.Controls.AppItems
 
             if ( txtSearch.Text.Trim().Length > 0 )
             {
-                string keyword = MyManager.HandleApostrophes( FormHelper.SanitizeUserInput( txtSearch.Text.Trim() ) );
+                string keyword = MyManager.HandleApostrophes( FormHelper.CleanText( txtSearch.Text.Trim() ) );
 
                 if ( keyword.IndexOf( "%" ) == -1 )
                     keyword = "%" + keyword + "%";

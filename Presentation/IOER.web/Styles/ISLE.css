@@ -39,6 +39,7 @@ html, body {
 }
 body {
   padding: 0 5px;
+  /*width: 90%; margin-right:auto;margin-left:auto;*/
 }
 body.sandbox {
   background-color: #F2DCA0;
@@ -86,13 +87,16 @@ input[type=text], input[type=password], select, textarea, input[type=url] {
 #SkipNavDiv a:active, #SkipNavDiv a:focus { position: relative; top: 0; color: #FFF; }
 
 /* Headers */
+
+
 .isleH1, .isleH2 {
+        text-align: center;
   background-color: #4F4E4F;
   color: #E6E6E6;
   padding: 2px 8px;
-  margin: 10px 2px 15px 2px;
+  margin: 10px 0 10px 0;
   border-radius: 5px;
-  box-shadow: 3px 3px 4px #AAA;
+  box-shadow: 0 3px 5px rgba(0,0,0,0.3);
   font-weight: bold;
 }
 .isleH1, .isleH1 a {
@@ -400,3 +404,13 @@ input[type=text], input[type=password], select, textarea, input[type=url] {
 /*.vlrgContent input, .vlrgContent .dropDownList, .vlrgContent textarea   { height: 55px; width: 85%;}
 .lrgContent input, .lrgContent .dropDownList, .lrgContent textarea   { height: 55px; width: 85%;}*/
 }
+
+/* AddThis fixes */
+.at4-icon.aticon-flipboard { background: url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2232%22%20height%3D%2232%22%20viewBox%3D%220%200%2032%2032%22%3E%3Cpath%20fill%3D%22%23FFF%22%20d%3D%22M12.81%2012.89h6.379v6.379h-6.379z%22%2F%3E%3Cpath%20fill%3D%22%23fff%22%20d%3D%22M6.44%206.52v19.121000000000002h6.37v-19.121000000000002z%22%2F%3E%3Cpath%20fill%3D%22%23FFF%22%20d%3D%22M19.189%206.52h-6.379v6.37h12.751v-6.37z%22%2F%3E%3C%2Fsvg%3E') !important; }
+.addthis-smartlayers .atss .at4-share-btn { background-color: #3572B8 !important; opacity: 0.3; transition: opacity 0.2s, background-color 0.2s; }
+.addthis-smartlayers:hover .atss .at4-share-btn, .addthis-smartlayers .atss .at4-share-btn:focus { opacity: 1; }
+.addthis-smartlayers:hover .atss .at4-share-btn:hover, .addthis-smartlayers .atss .at4-share-btn:focus { background-color: #FF6A00 !important; }
+.addthis-smartlayers .at4-icon { height: 1.5pc !important; }
+.addthis-smartlayers .atss a { width: 2.5pc; }
+.addthis-smartlayers .atss .at4-share-btn:first-of-type { border-radius: 5px 0 0 0; }
+.addthis-smartlayers .atss .at4-share-btn:last-of-type { border-radius: 0 0 0 5px; }

@@ -1,4 +1,4 @@
-﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="Stats1.ascx.cs" Inherits="ILPathways.Activity.Stats1" %>
+﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="Stats1.ascx.cs" Inherits="IOER.Activity.Stats1" %>
 
 <link rel="stylesheet" href="/styles/common2.css" type="text/css" />
 

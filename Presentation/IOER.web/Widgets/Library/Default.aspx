@@ -1,8 +1,8 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="Default.aspx.cs" Inherits="ILPathways.Widgets.Library.Default" %>
+﻿<%@ Page Title="Illinois Open Educational Resources - Library Widget" Language="C#" AutoEventWireup="true" CodeBehind="Default.aspx.cs" Inherits="IOER.Widgets.Library.Default" %>
 <%@ Register TagPrefix="uc1" TagName="WidgetLibrary1" Src="/Widgets/Library/Library1.ascx" %>
 
 <!DOCTYPE HTML>
-<html>
+<html lang="en">
 <head runat="server">
     <title>IOER Library</title>
 </head>

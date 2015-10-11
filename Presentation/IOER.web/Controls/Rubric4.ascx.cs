@@ -5,16 +5,16 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
-using ILPathways.Library;
+using IOER.Library;
 using LRWarehouse.Business;
 using LRWarehouse.DAL;
 
-namespace ILPathways.Controls
+namespace IOER.Controls
 {
   public partial class Rubric4 : BaseUserControl
   {
 
-    public Patron user = new Patron();
+    //public Patron user = new Patron();
     public ResourceEvaluationManager rManager = new ResourceEvaluationManager();
     public int resourceVersionID = 0;
 

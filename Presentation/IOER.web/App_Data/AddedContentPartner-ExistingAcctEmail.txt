@@ -1,0 +1,7 @@
+﻿<font face='Arial'>Dear {0},<br/><p>This is to notify you that <b>{1}</b> has granted access to the learning list: <em>{2}</em>, with a role of <i>{3}</i>. </p>   
+<p> You may use the following (one-time) link to login into IOER and navigate to the latter page.</p>
+<p><a href='{4}'>Edit {2}</a></p>
+
+<p>{5}</p>
+
+<div>Sincerely,</div><div>The ISLE OER Team</div></font>

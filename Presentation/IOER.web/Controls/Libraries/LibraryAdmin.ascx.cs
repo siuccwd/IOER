@@ -1,33 +1,31 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
-using GDAL = Isle.BizServices;
-using ILP = ILPathways.Business;
-using MyMgr = Isle.BizServices.LibraryBizService;
-using AccountMgr = Isle.BizServices.AccountServices;
-using OrgMgr = Isle.BizServices.OrganizationBizService;
-using ILPathways.Library;
 using ILPathways.Common;
 using ILPathways.Utilities;
+using IOER.Library;
+using IOER.Services;
+using AccountMgr = Isle.BizServices.AccountServices;
+using GDAL = Isle.BizServices;
 using IDBM = ILPathways.DAL.DatabaseManager;
+using ILP = ILPathways.Business;
+using MyMgr = Isle.BizServices.LibraryBizService;
+using OrgMgr = Isle.BizServices.OrganizationBizService;
 //using DBM = LRWarehouse.DAL.DatabaseManager;
-using AppUser = LRWarehouse.Business.Patron;
-using LRWarehouse.Business;
-using ILPathways.Services;
-using LibraryAdminPendingResourcesDTO = ILPathways.Services.LibraryService.LibraryAdminPendingResourcesDTO;
+using Patron = LRWarehouse.Business.Patron;
+using PatronProfile = LRWarehouse.Business.PatronProfile;
 
-namespace ILPathways.Controls.Libraries
+namespace IOER.Controls.Libraries
 {
     public partial class LibraryAdmin : BaseUserControl
     {
         MyMgr mgr = new MyMgr();
         AccountMgr acctMgr = new AccountMgr();
-
+        OrgMgr orgMgr = new OrgMgr();
         private string thisClassName = "LibraryAdmin";
         Services.UtilityService utilService = new Services.UtilityService();
 
@@ -98,13 +96,13 @@ namespace ILPathways.Controls.Libraries
             set { ViewState[ "OrgCodesList" ] = value; }
         }
         
-        public AppUser Invitee 
+        public Patron Invitee 
         {
             get
             {
                 if ( ViewState[ "Invitee" ] == null )
-                    ViewState[ "Invitee" ] = new AppUser();
-                return ViewState[ "Invitee" ] as AppUser; 
+                    ViewState[ "Invitee" ] = new Patron();
+                return ViewState[ "Invitee" ] as Patron; 
             }
             set { ViewState[ "Invitee" ] = value; }
         }
@@ -170,6 +168,7 @@ namespace ILPathways.Controls.Libraries
                 formContainer.Visible = false;
                 return;
             }
+			CurrentUser = GetAppUser();
 
             if ( !Page.IsPostBack )
             {
@@ -211,7 +210,7 @@ namespace ILPathways.Controls.Libraries
                 //==> actually first check for any admin libs
                 //this is prob to allow admin accss to all libs
                 this.FormPrivileges = GDAL.SecurityManager.GetGroupObjectPrivileges( this.WebUser, FormSecurityName );
-                if ( WebUser.UserName == "mparsons" )
+				if ( acctMgr.IsUserAdmin( CurrentUser ) )
                 {
                     FormPrivileges.SetAdminPrivileges();
                     sourceLibraryId.Visible = true;
@@ -261,6 +260,7 @@ namespace ILPathways.Controls.Libraries
         {
             // Check if a request was made for a specific search parms
             int id = this.GetRequestKeyValue( "id", 0 );
+			string action = this.GetRequestKeyValue( "action", "" );
 
             if ( id > 0 )
             {
@@ -271,7 +271,7 @@ namespace ILPathways.Controls.Libraries
 
                 if ( sourceLibrary.SelectedIndex > 0 )
                 {
-                    string action = this.GetRequestKeyValue( "action", "" );
+                    
                     if ( action == "handlePending" )
                     {
                         libMbrsLink_Click( new object(), new EventArgs() );
@@ -281,8 +281,23 @@ namespace ILPathways.Controls.Libraries
                     {
                         libApproveLink_Click( new object(), new EventArgs() );
                     }
+					else if ( action == "edit" )
+					{
+						editLibraryLink_Click( new object(), new EventArgs() );
+					}
+					else if ( action == "new" )
+					{
+						newLibraryLink_Click( new object(), new EventArgs() );
+					}
                 }
-            }
+			}
+			else
+			{
+				if ( action == "new" )
+				{
+					newLibraryLink_Click( new object(), new EventArgs() );
+				}
+			}
 
         }	// End 
         protected void SetListSelectionInt( string keyName )
@@ -579,6 +594,7 @@ namespace ILPathways.Controls.Libraries
             //mbrSearchPanel.Visible = false;
             membersPanel.Visible = true;
             pendingMembers.Visible = false;
+			mbrSearchPanel.Visible = false;
             membersGrid.AutoGenerateEditButton = false;
 
             int selectedPageNbr = 0;
@@ -676,7 +692,7 @@ namespace ILPathways.Controls.Libraries
         /// </summary>
         /// <param name="selectedPageNbr"></param>
         /// <param name="sortTerm"></param>
-        private void DoMembersSearch( int selectedPageNbr, string sortTerm, bool isMyMembershipsSearch )
+        private void DoMembersSearch( int selectedPageNbr, string sortTerm, bool bIsMyMembershipsSearch )
         {
             DataSet ds = null;
             if ( selectedPageNbr == 0 )
@@ -693,7 +709,7 @@ namespace ILPathways.Controls.Libraries
             int pTotalRows = 0;
 
             string filter = "";
-            if (isMyMembershipsSearch)
+            if (bIsMyMembershipsSearch)
                 filter = FormatMyMembershipsFilter();
             else
                 filter = FormatMembersFilter();
@@ -728,13 +744,17 @@ namespace ILPathways.Controls.Libraries
                 membersGrid.DataSource = list;
                 //membersGrid.PageIndex = selectedPageNbr;
                 membersGrid.DataBind();
-
+				
                  //if memberships context, show library
-                if ( pendingMembers.Visible == false )
-                {
-                    membersGrid.Columns[ 2 ].Visible = true;
-                } else
-                    membersGrid.Columns[ 2 ].Visible = false;
+                //if ( pendingMembers.Visible == false )
+				if (isMyMembershipsSearch.Text == "yes")
+				{
+				//	membersGrid.Columns[2].Visible = true;
+				}
+				else
+				{
+				//	membersGrid.Columns[2].Visible = false;
+				}
             }
         }
 
@@ -793,6 +813,18 @@ namespace ILPathways.Controls.Libraries
             {
                 //System.Data.DataRowView drv = ( DataRowView ) e.Row.DataItem;
                 ILP.LibraryMember drv = ( ILP.LibraryMember ) e.Row.DataItem;
+				if (isMyMembershipsSearch.Text == "no")
+				{
+					//Label library = (Label)DataBinder.Eval(e.Row.DataItem, "gridlblLibrary");
+					//library.Text = "";
+					//if (e.Row.Cells[3].Text == "True" )else
+						e.Row.Cells[3].Text = "";
+					
+						e.Row.Cells[4].Text = "";
+
+					drv.Library = "";
+				}
+
                 if ( ( e.Row.RowState & DataControlRowState.Edit ) == DataControlRowState.Edit )
                 {
                     FormatEditRow( drv, e );
@@ -1052,7 +1084,7 @@ namespace ILPathways.Controls.Libraries
                      {
                          // Refresh the data
                          membersGrid.EditIndex = -1;
-                         AppUser user = new AccountMgr().Get( lm.UserId );
+                         Patron user = new AccountMgr().Get( lm.UserId );
                          
                          bool updatedPendingMbr = false;
 
@@ -1107,7 +1139,7 @@ namespace ILPathways.Controls.Libraries
             }
         }
 
-        private void SendLibraryConfirmationEmail( ILP.LibraryMember lm, AppUser user )
+        private void SendLibraryConfirmationEmail( ILP.LibraryMember lm, Patron user )
         {
             string statusMessage = "";
             string bcc = UtilityManager.GetAppKeyValue( "appAdminEmail", "mparsons@siuccwd.com" );
@@ -1133,7 +1165,7 @@ namespace ILPathways.Controls.Libraries
             
         } //
 
-        private void HandleAddingLibMbrToOrg( ILP.LibraryMember lm, AppUser user, DropDownList orgMbrList )
+        private void HandleAddingLibMbrToOrg( ILP.LibraryMember lm, Patron user, DropDownList orgMbrList )
         {
             string statusMessage = "";
             try
@@ -1149,12 +1181,12 @@ namespace ILPathways.Controls.Libraries
                     {
                         mbr.OrgMemberTypeId = typeId;
                         mbr.LastUpdatedById = WebUser.Id;
-                        bool action = GDAL.OrganizationBizService.OrganizationMember_Update( mbr );
+                        bool action = orgMgr.OrganizationMember_Update(mbr);
                     }
                 }
                 else
                 {
-                    int omid = GDAL.OrganizationBizService.OrganizationMember_Create( CurrentLibrary.OrgId, user.Id, typeId, WebUser.Id, ref statusMessage );
+                    int omid = orgMgr.OrganizationMember_Create(CurrentLibrary.OrgId, user.Id, typeId, WebUser.Id, ref statusMessage);
                 }
             }
             catch ( Exception ex )
@@ -1296,7 +1328,7 @@ namespace ILPathways.Controls.Libraries
 
         protected void newInvitationLink_Click( object sender, EventArgs e )
         {
-            Invitee = new AppUser();
+            Invitee = new Patron();
             Invitation = new ILP.LibraryInvitation();
             invitePanelStart.Visible = true;
             txtEmail.Text = "";
@@ -1388,7 +1420,7 @@ namespace ILPathways.Controls.Libraries
                 else
                 {
                     //not found show next
-                    Invitee = new AppUser();
+                    Invitee = new Patron();
                     Invitee.Email = txtEmail.Text.Trim();
                     
                     invitePanel2.Visible = true;
@@ -1654,7 +1686,7 @@ namespace ILPathways.Controls.Libraries
         /// </summary>
         /// <param name="user"></param>
         /// <param name="invite"></param>
-        protected void CreateOrgMember( AppUser user, ILP.LibraryInvitation invite )
+        protected void CreateOrgMember( Patron user, ILP.LibraryInvitation invite )
         {
             string statusMessage = "";
             ILP.OrganizationMember om = new ILP.OrganizationMember();
@@ -1663,7 +1695,7 @@ namespace ILPathways.Controls.Libraries
             om.OrgMemberTypeId = invite.AddAsOrgMemberTypeId;
             om.CreatedById = invite.CreatedById;
             om.LastUpdatedById = invite.CreatedById;
-            int id = OrgMgr.OrganizationMember_Create( om, ref statusMessage );
+            int id = orgMgr.OrganizationMember_Create( om, ref statusMessage );
 
             //also create profile (default org), if not already have orgId
             //Hmm - may not want to arbitrariliy do this
@@ -1697,7 +1729,7 @@ namespace ILPathways.Controls.Libraries
                     role.CreatedById = WebUser.Id;
                     if ( orgMbrId > 0 )
                     {
-                        int id = OrgMgr.OrganizationMemberRole_Create( role, ref statusMessage );
+                        int id = orgMgr.OrganizationMemberRole_Create( role, ref statusMessage );
                     }
 
                 }

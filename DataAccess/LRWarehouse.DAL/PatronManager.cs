@@ -105,6 +105,7 @@ namespace LRWarehouse.DAL
                 {
                     dr.Read();
                     newId = int.Parse( dr[ 0 ].ToString() );
+                    entity.Id = newId;
                 }
                 dr.Close();
                 dr = null;
@@ -830,7 +831,26 @@ namespace LRWarehouse.DAL
         #endregion
 
         #region ====== Patron.ExternalAccount Methods ============================================
+        /// <summary>
+        /// Add an User record
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="externalLoginProvider"></param>
+        /// <param name="loginName"></param>
+        /// <param name="token"></param>
+        /// <param name="statusMessage"></param>
+        /// <returns></returns>
+        public int ExternalAccount_Create(int userId, string externalLoginProvider, string loginName, string token, ref string statusMessage)
+        {
+            int id = 0;
+            DataSet ds = CodeTableManager.SelectCodesExternalSite(externalLoginProvider, 0, ref statusMessage);
+            if (DoesDataSetHaveRows(ds))
+            {
+                id = GetRowColumn(ds.Tables[0].Rows[0], "Id", 0);
+            }
 
+            return ExternalAccount_Create(userId, id, loginName, token, ref statusMessage);
+        }
         /// <summary>
         /// Add an User record
         /// </summary>
@@ -867,10 +887,76 @@ namespace LRWarehouse.DAL
             {
                 LogError( ex, className + string.Format( ".ExternalAccount_Create() for UserId: {0} and SiteId: {1}", userId, externalSiteId ) );
                 statusMessage = className + "- Unsuccessful: ExternalAccount_Create(): " + ex.Message.ToString();
-
             }
 
             return newId;
+        }
+
+        public PatronExternalAccount ExternalAccount_Get(int id, int userId, int externalSiteId, string externalLoginProvider, string token, ref string statusMessage)
+        {
+            string connectionString = LRWarehouse();
+            statusMessage = "successful";
+            PatronExternalAccount retVal = null;
+            try
+            {
+                #region parameters
+                SqlParameter[] sqlParameters = new SqlParameter[5];
+                sqlParameters[0] = new SqlParameter("@Id", id);
+                sqlParameters[1] = new SqlParameter("@PatronId", userId);
+                sqlParameters[2] = new SqlParameter("@ExternalSiteId", externalSiteId);
+                sqlParameters[3] = new SqlParameter("@Token", token);
+                sqlParameters[4] = new SqlParameter("@ExternalLoginProvider", externalLoginProvider);
+                #endregion
+
+                SqlDataReader dr = SqlHelper.ExecuteReader(connectionString, CommandType.StoredProcedure, "[Patron.ExternalAccountGet]", sqlParameters);
+                if (dr.HasRows)
+                {
+                    retVal = ExternalAccountFill(dr);
+                }
+            }
+            catch (Exception ex)
+            {
+                LogError(ex, className + string.Format(".ExternalAccount_Get() for Id {0}, userId {1}, ExternalSiteId {2}, Token {3}, and LoginProvider {4}",
+                    id, userId, externalSiteId, token, externalLoginProvider));
+                statusMessage = className + "- Unsuccessful: ExternalAccount_Get(): " + ex.Message.ToString();
+            }
+
+            return retVal;
+        }
+
+        public PatronExternalAccount ExternalAccountFill(SqlDataReader dr)
+        {
+            dr.Read();
+            PatronExternalAccount retVal = new PatronExternalAccount
+            {
+                PatronId = GetRowColumn(dr, "PatronId", 0),
+                Id = GetRowColumn(dr, "Id", 0),
+                ExternalSiteId = GetRowColumn(dr, "ExternalSiteId", 0),
+                LoginId = GetRowColumn(dr, "LoginId", ""),
+                Password = GetRowColumn(dr, "Password", ""),
+                Token = GetRowColumn(dr, "Token", ""),
+                Created = GetRowColumn(dr, "Created", DateTime.Now)
+            };
+
+            dr.Close();
+            return retVal;
+        }
+
+        public PatronExternalAccount ExternalAccountFill(DataSet ds)
+        {
+            DataRow dr = ds.Tables[0].Rows[0];
+            PatronExternalAccount retVal = new PatronExternalAccount
+            {
+                PatronId = GetRowColumn(dr, "PatronId", 0),
+                Id = GetRowColumn(dr, "Id", 0),
+                ExternalSiteId = GetRowColumn(dr, "ExternalSiteId", 0),
+                LoginId = GetRowColumn(dr, "LoginId", ""),
+                Password = GetRowColumn(dr, "Password", ""),
+                Token = GetRowColumn(dr, "Token", ""),
+                Created = GetRowColumn(dr, "Created", DateTime.Now)
+            };
+
+            return retVal;
         }
 
         #endregion

@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ILPathways.Controls.SearchV5 {
+namespace IOER.Controls.SearchV5 {
     
     
     public partial class SearchV5 {

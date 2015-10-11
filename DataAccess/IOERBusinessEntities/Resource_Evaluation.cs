@@ -35,5 +35,6 @@ namespace IOERBusinessEntities
     
         public virtual ICollection<Resource_EvaluationSection> Resource_EvaluationSection { get; set; }
         public virtual Evaluation Evaluation { get; set; }
+        public virtual Resource Resource { get; set; }
     }
 }

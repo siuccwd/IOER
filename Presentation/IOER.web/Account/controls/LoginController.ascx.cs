@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Web;
 using System.Web.Security;
@@ -9,25 +10,39 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 
 using Isle.BizServices;
-using MyManager = Isle.BizServices.AccountServices; 
+using MyManager = Isle.BizServices.AccountServices;
 using CurrentUser = LRWarehouse.Business.Patron; //ILPathways.Business.AppUser;
 using ILPathways.Utilities;
-using ILPathways.Controllers;
+using IOER.Controllers;
 
 using LRWarehouse.DAL;
 using LRWarehouse.Business;
 using ILPathways.Business;
-using ILPathways.Library;
-using ILPathways.classes;
+using IOER.Library;
+using IOER.classes;
 
 
-namespace ILPathways.Account.controls
+namespace IOER.Account.controls
 {
     public partial class LoginController : BaseUserControl //System.Web.UI.UserControl
     {
         public string errorMessage = "";
+        public string ssoLoginUrl
+        {
+            get
+            {
+                string url = UtilityManager.GetAppKeyValue("ssoLoginUrl", "");
+                string nextUrl = FormHelper.GetRequestKeyValue("nextUrl", "");
+                if (nextUrl != null && nextUrl != string.Empty)
+                {
+                    url += "?nextUrl=" + nextUrl;
+                }
+                return url;
+            }
+        }
         MyManager myManager = new MyManager();
         CurrentUser currentUser = new CurrentUser();
+        OrganizationBizService orgMgr = new OrganizationBizService();
 
         public string lockedUserId = "initial";
         //
@@ -83,20 +98,34 @@ namespace ILPathways.Account.controls
             //Check for Redirect URL and Saving in a Session 
             string rURL = "";
             int post = HttpContext.Current.Request.QueryString.ToString().IndexOf("nextUrl");
-            //if ( FormHelper.GetRequestKeyValue( "nextUrl" ) != "" )
+
             if ( post > -1 )
             {
                 rURL = HttpContext.Current.Request.QueryString.ToString().Substring(post+8);
 
                 //need to handle getting all parms with the nextUrl
-                //rURL = FormHelper.GetRequestKeyValue( "nextUrl" );
-                //if ( rURL.ToLower().IndexOf( "?" ) > -1 )
-                //    rURL = rURL.Substring( 0, rURL.IndexOf( "?" ) );
 
                 if ( rURL.ToLower().IndexOf( "login.aspx" ) > -1 )
                     rURL = "/";
 
                 rURL = HttpUtility.UrlDecode( rURL );
+
+                //string nextUrl = FormHelper.GetRequestKeyValue("nextUrl2");
+                //if (nextUrl.Length > 0 && rURL.IndexOf("nextUrl2") == -1)
+                //{
+                //    if (rURL.IndexOf("?") == -1)
+                //        rURL += "?nextUrl=" + nextUrl;
+                //    else
+                //        rURL += "&nextUrl=" + nextUrl;
+                //}
+
+                //check if there are additional parameters, without a ?. If so, convert first one to a ?
+                if (rURL.IndexOf("?") == -1 && rURL.IndexOf("&") > -1)
+                {
+                    var regex = new Regex(Regex.Escape("&"));
+                    rURL = regex.Replace(rURL, "?", 1);
+                }
+
                 rURL = UtilityManager.FormatAbsoluteUrl( rURL, false );
                 Session[ "redirectURL" ] = rURL;
                 ReturnURL = rURL;
@@ -143,7 +172,7 @@ namespace ILPathways.Account.controls
                     isProxy = true;
                     if ( IsUserAuthenticated() )
                     {
-                        //if alrady auth, check if same user
+                        //if already auth, check if same user
                         bool isProxyValid = false;
                         int userId = new AccountServices().GetUserIdFromProxy( rowId, true, ref isProxyValid, ref statusMessage );
                         if ( userId == WebUser.Id )
@@ -265,15 +294,60 @@ namespace ILPathways.Account.controls
             }
             ActivityBizServices.UserRegistrationConfirmation( user );
             //do check whether can auto associate a user with an org based on email domain
-            OrganizationBizService.AssociateUserWithOrg( user );
+            orgMgr.AssociateUserWithOrg(user);
+
+			AutoAddToOrgChecks(user);
+	    }//
+
+
+		protected void AutoAddToOrgChecks(CurrentUser user)
+		{
+			try
+			{
+				//check for temp auto associations
+				if (autoAddToOrg.Text.Length > 0)
+				{
+					int orgId = 0;
+					//future could have multiples with semi-colon separated groups
+					string[] addOptions = autoAddToOrg.Text.Split(',');
+					if (addOptions.Length == 1)
+					{
+						//assume orgId
+						if (Int32.TryParse(addOptions[0], out orgId))
+						{
+							orgMgr.AssociateUserWithOrg(user, orgId);
+						}
+					}
+					else if (addOptions.Length == 2)
+					{
+						//assume date, orgId
+						DateTime activeDate = new DateTime(2015, 9, 1);
+						string date = addOptions[0];
+						if (DateTime.TryParse(date, out activeDate)) ;
+						if (Int32.TryParse(addOptions[1], out orgId))
+						{
+							if (activeDate.ToString("yyyy-mm-dd") == DateTime.Now.ToString("yyyy-mm-dd"))
+								orgMgr.AssociateUserWithOrg(user, orgId);
+						}
+					}
+					else
+					{
+						//ignore as not handled yet
+					}
+				}
+			}
+			catch (Exception ex)
+			{
+				//just ignonre for now
+			}
 	    }//
 
 
         protected void loginWorknetButton_Click( object sender, EventArgs e )
         {
             //Login via WorkNet and complete account details if necessary
-            UserController myUserController = new UserController();
-            CurrentUser wnUser = myUserController.LoginViaWorkNet( txtUserName.Text, txtPassword.Text );
+
+			CurrentUser wnUser = myManager.LoginViaWorkNet(txtUserName.Text, txtPassword.Text);
             if ( wnUser.IsValid )
             {
                 currentUser = myManager.GetByWorkNetId( wnUser.worknetId );
@@ -330,6 +404,12 @@ namespace ILPathways.Account.controls
             currentUser = myManager.Authorize( userName, UtilityManager.Encrypt( pw ), ref statusMessage );
             if ( currentUser.IsValid )
             {
+				//add proxy
+				currentUser.ProxyId = new AccountServices().Create_SessionProxyLoginId(currentUser.Id, ref statusMessage);
+
+				if (new AccountServices().IsUserAdmin(currentUser))
+					currentUser.TopAuthorization = 2;
+
                 SessionManager.SetUserToSession( Session, currentUser );
                 ActivityBizServices.UserAuthentication( currentUser );
 
@@ -339,7 +419,7 @@ namespace ILPathways.Account.controls
                 Session.Remove( lockedUserId + "_LastLoginLockDate" );
                 Session.Remove( lockedUserId + "_LoginAttempts" );
 
-                LoggingHelper.DoTrace( 2, "@@@@@@ Login successfull, redirecting to: " + ReturnURL );
+                LoggingHelper.DoTrace( 5, "@@@@@@ Login successfull, redirecting to: " + ReturnURL );
                 Response.Redirect( ReturnURL );
             }
             else

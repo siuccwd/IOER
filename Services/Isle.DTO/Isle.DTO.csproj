@@ -56,6 +56,7 @@
     <Compile Include="Common\ObjectMember.cs" />
     <Compile Include="Common\SiteParams.cs" />
     <Compile Include="Content\ContentNode.cs" />
+    <Compile Include="Content\ContentSearchResult.cs" />
     <Compile Include="Content\ContentTag.cs" />
     <Compile Include="Content\Content_TagSummary.cs" />
     <Compile Include="Content\Curriculum.cs" />
@@ -74,6 +75,7 @@
     <Compile Include="Resource\CodesTagValue.cs" />
     <Compile Include="Resource\CodesTagValueKeyword.cs" />
     <Compile Include="Resource\Resource.cs" />
+    <Compile Include="Resource\ResourceDelayedPublish.cs" />
     <Compile Include="Resource\ResourceDTO.cs" />
     <Compile Include="Resource\ResourceEvaluationDTO.cs" />
     <Compile Include="Resource\ResourceEvaluationSummaryDTO.cs" />
@@ -93,6 +95,10 @@
     <ProjectReference Include="..\..\Business\LRWarehouse.Business\LRWarehouse.Business.csproj">
       <Project>{e5d37489-c4fc-48c9-a714-5610610a27e4}</Project>
       <Name>LRWarehouse.Business</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Common\IllinoisPathways.Common\ILPathways.Common.csproj">
+      <Project>{cbb05737-7947-4ed9-8ed3-79d5c2a6597d}</Project>
+      <Name>ILPathways.Common</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup />

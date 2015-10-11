@@ -1,4 +1,4 @@
-﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="NewsItemSearch.ascx.cs" Inherits="ILPathways.Controls.AppItems.NewsItemSearch" %>
+﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="NewsItemSearch.ascx.cs" Inherits="IOER.Controls.AppItems.NewsItemSearch" %>
 <%@ Register TagName="Subscribe" TagPrefix="uc1" Src="~/News/Controls/AnnouncementSubscribe2.ascx" %>
 
 <style type="text/css">

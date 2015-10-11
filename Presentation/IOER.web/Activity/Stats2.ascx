@@ -1,4 +1,4 @@
-﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="Stats2.ascx.cs" Inherits="ILPathways.Activity.Stats2" %>
+﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="Stats2.ascx.cs" Inherits="IOER.Activity.Stats2" %>
 <%@ Register TagPrefix="uc1" TagName="ActivityRenderer" Src="/Activity/ActivityRenderer.ascx" %>
 
 <uc1:ActivityRenderer ID="activityRenderer" runat="server" />
@@ -18,6 +18,7 @@
     loadActivityTable();
     loadOrganizations();
     loadLibraries();
+    setupDatePickers();
   });
 
   function loadActivitySummary(){
@@ -82,6 +83,11 @@
       );
     }
   }
+
+  function submit() {
+  	$("form").removeAttr("onsubmit");
+  	$("form")[0].submit();
+  }
 </script>
 
 <style type="text/css">
@@ -115,8 +121,11 @@
 
 <div id="content">
 
-  <h1 class="isleH1">IOER Activity (Last <%=activityDaysAgo.Text %> Days)</h1>
+  <h1 class="isleH1">IOER Activity (<%=(activityRenderer.startDate.ToShortDateString() + " - " + activityRenderer.endDate.ToShortDateString()) %>)</h1>
 
+	<div class="grayBox" id="dateSelector">
+		Show activity from <input title="FromDate" type="text" class="date startDate" id="txtStartDate" runat="server" /> to <input  title="ToDate" type="text" class="date endDate" id="txtEndDate" runat="server" /> <input type="button" class="isleButton bgBlue" value="Show" onclick="submit();" />
+	</div>
   <h2 class="isleH2">Sitewide Summary Graphs</h2>
   <div id="siteActivitySummary"></div>
   <h2 class="isleH2">Sitewide Summary Table (Only Days With Activity)</h2>
@@ -135,13 +144,11 @@
   <script type="text/template" id="template_library">
     <div class="majorItem library grayBox" data-libraryID="{id}">
       <h3><a href="/Library/{id}">{title}</a></h3>
-      <h4>Library Information (Last <%=activityDaysAgo.Text %> Days):</h4>
+      <h4>Library Information (<%=(activityRenderer.startDate.ToShortDateString() + " - " + activityRenderer.endDate.ToShortDateString()) %>):</h4>
       <div class="libraryData">{libraryData}</div>
-      <h4>Collections (Last <%=activityDaysAgo.Text %> Days):</h4>
+      <h4>Collections (<%=(activityRenderer.startDate.ToShortDateString() + " - " + activityRenderer.endDate.ToShortDateString()) %>):</h4>
       <div class="collectionData">{collectionData}</div>
     </div>
   </script>
 
 </div>
-
-<asp:Literal ID="activityDaysAgo" runat="server" Visible="false">90</asp:Literal>

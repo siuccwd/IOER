@@ -1,4 +1,4 @@
-﻿<%@ Page Title="My IOER" Async="true"  Language="C#" MasterPageFile="~/Masters/Responsive.Master" AutoEventWireup="true" CodeBehind="Library.aspx.cs" Inherits="ILPathways.My.Library" %>
+﻿<%@ Page Title="My IOER Library" Async="true"  Language="C#" MasterPageFile="~/Masters/Responsive.Master" AutoEventWireup="true" CodeBehind="Library.aspx.cs" Inherits="IOER.My.Library" %>
 
 <%@ Register TagPrefix="uc1" TagName="librarySearch" Src="/LRW/controls/ESLibrary2.ascx" %>
 

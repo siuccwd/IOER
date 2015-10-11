@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ILPathways.Controls.FAQs {
+namespace IOER.Controls.FAQs {
     
     
     public partial class FaqList {
@@ -28,7 +28,7 @@ namespace ILPathways.Controls.FAQs {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ILPathways.Controls.FAQs.PostQuestion AskQuestion1;
+        protected global::IOER.Controls.FAQs.PostQuestion AskQuestion1;
         
         /// <summary>
         /// searchPanel control.

@@ -1,4 +1,18 @@
-﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="Community1.ascx.cs" Inherits="ILPathways.Controls.Community.Community1" %>
+﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="Community1.ascx.cs" Inherits="IOER.Controls.Community.Community1" %>
+
+
+<!-- for summernote-->
+<!-- include libraries BS3 -->
+<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.1/css/bootstrap.min.css" />
+<script type="text/javascript" src="//netdna.bootstrapcdn.com/bootstrap/3.0.1/js/bootstrap.min.js"></script>
+<link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css" />
+
+
+<link href="/Styles/font-awesome.min.css" rel="stylesheet" />
+
+<!-- include summernote -->
+<link href="/Scripts/summerNote/summernote.css" rel="stylesheet" />
+<script src="/Scripts/summerNote/summernote.min.js"></script>
 
 <script type="text/javascript">
   //From Server
@@ -17,8 +31,52 @@
     //Load the postings
     renderPostings(communityData.postings);
 
+  	//Detect links
+    detectLinks();
+
     //Replies
     setupReplyBoxes();
+
+    $(function () {
+        $('.summernote').summernote({
+            toolbar: [
+            ['style', ['bold', 'italic', 'underline', 'clear']],
+            ['para', ['ul', 'ol', 'paragraph']],
+            ['misc', ['undo', 'redo']],
+            ['insert', ['link']],
+            ],
+            maximumImageFileSize: 1242880 // size in bytes, null = no limit
+   
+        });
+
+        //            ['view', ['codeview']]
+        //['insert', ['link', 'picture']],
+        //onImageUpload: function(files, editor, welEditable) {
+        //    sendFile(files[0], editor, welEditable);
+        //}
+        //function sendFile(file, editor, welEditable) {
+        //    data = new FormData();
+        //    data.append("file", file);
+        //    $.ajax({
+        //        data: data,
+        //        type: "POST",
+        //        url: "Your URL POST (php)",
+        //        cache: false,
+        //        contentType: false,
+        //        processData: false,
+        //        success: function(url) {
+        //            editor.insertImage(welEditable, url);
+        //        }
+        //    });
+        //}
+        //                        ['table', ['table']],
+        //            ['color', ['color']],
+        //$('form').on('submit', function (e) {
+        //e.preventDefault();
+        //alert($('.summernote').code());
+        //});
+    })
+
   });
 
   function setupReplyBoxes() {
@@ -139,15 +197,26 @@
 <script>
   //Page functions
   function postMessage(id, button) {
-    var val = $(".postTextBox[data-id=" + id + "]").val();
+      var val = $(".postTextBox[data-id=" + id + "]").val();
+      val = $('.summernote').code();
     if (val.length > 0) {
-      doAjax("PostMessage", { userGUID: userGUID, communityID: communityData.id, parentID: id, text: val }, successPostMessage, $(button), id);
+        doAjax("PostMessage", { userGUID: userGUID, communityID: communityData.id, parentID: id, text: val }, successPostMessage, $(button), id);
+        $('.summernote').code("");
     }
     else {
       $("[data-replyStatusID=" + id + "]").html("You cannot post an empty message!");
     }
   }
-
+  function postReply(id, button) {
+      var val = $(".postTextBox[data-id=" + id + "]").val();
+      //val = $('.hasControls .summernote').code();
+      if (val.length > 0) {
+          doAjax("PostMessage", { userGUID: userGUID, communityID: communityData.id, parentID: id, text: val }, successPostMessage, $(button), id);
+      }
+      else {
+          $("[data-replyStatusID=" + id + "]").html("You cannot post an empty message!");
+      }
+  }
   function openReplyBox(id) {
     var box = $(".replyBox[data-postingID=" + id + "]");
     var template = $("#template_replyControls").html();
@@ -191,6 +260,19 @@
 
   function toggleFollowing() {
     doAjax("ToggleFollowing", { userGUID: userGUID, communityID: communityData.id }, successToggleFollowing, null);
+  }
+
+  function detectLinks() {
+  	var posts = $(".posting p:contains(http)"); //Get all posts that have a link
+  	posts.each(function() { //Find the links and linkify them
+  		var words = $(this).text().split(" ");
+  		for(var i in words){
+  			if(words[i].indexOf("http") == 0 && words[i].length > 12){
+  				words[i] = "<a href=\"" + words[i] + "\" target=\"_blank\">" + words[i] + "</a>";
+  			}
+  		}
+  		$(this).html(words.join(" ")); //Reassemble the text
+  	});
   }
 </script>
 <script>
@@ -284,24 +366,34 @@
 
 <link rel="stylesheet" type="text/css" href="/Styles/common2.css" />
 <style type="text/css">
+/* add back tags from Isle.css that are overridden by bootstrap */
+body {
+  padding: 0 5px;
+  /* width: 90%; margin-right:auto;margin-left:auto;*/
+}
+    
   #communityPostMaker, #communityHeader, #communityTitle, #communityDescription { transition: margin 0.8s, padding 0.8s; -webkit-transition: margin 0.8s, padding 0.8s; }
   #communityPostMaker { max-width: 600px; margin: 5px auto -50px auto;  }
   #postBox { width: 100%; resize: none; height: 4em; }
+  .note-editable { background-color: #fff; }
   #mainReplyBox { text-align: right; }
   #btnPostMessage { width: 75px; }
-  #headerContainer { margin: 0px -5px 50px -55px; padding-left: 50px; background-color: #4AA394; background: linear-gradient(#4AA394, #5AB3A4); background: -webkit-linear-gradient(#4AA394, #5AB3A4); }
-  #communityHeader { min-height: 160px; position: relative; margin: 0 auto; padding: 10px;  }
-  #communityHeader.login { margin-bottom: 10px; }
+  /*#headerContainer {margin: 0px -5px 50px -55px;padding-left: 50px;  }*/
+  #headerContainer { background-color: #4AA394; background: linear-gradient(#4AA394, #5AB3A4); background: -webkit-linear-gradient(#4AA394, #5AB3A4); }
+  #communityHeader { min-height: 160px; position: relative; margin: 0 auto 50px auto; padding: 10px;  }
+  #communityHeader.login { margin-bottom: 50px; }
   #communityTitle { margin: -5px -5px 10px -5px; box-shadow: none; text-align: center; padding: 3px 160px; }
   #communityDescription { font-size: 20px; text-align: center; padding: 5px 150px; color: #FFF; }
   #communityAvatar { width: 150px; height: 150px; position: absolute; top: 5px; left: 5px; border-radius: 5px; background: url('') center center #999; background-size: cover; border: 1px solid #333; transition: width 0.8s, left 0.8s, height 0.8s; -webkit-transition: width 0.8s, left 0.8s, height 0.8s; }
   #communityPostMaker h2 { color: #4AA394; font-size: 20px; margin-top: -10px; padding: 5px; }
     #communityPostingList, #communitiesList { display: inline-block; vertical-align: top; }
-    #communitiesList { width: 300px; margin: 0 50px 0 100px; min-height: 300px; }
+    #communitiesList { width: 300px; margin: 0 25px 0 25px; min-height: 300px; }
   .posting, .replies, .dateSeparator { margin: 5px auto; max-width: 600px; }
+  .posting img { margin: 5px auto; width: 90%; }
+
   .dateSeparator { text-align: center; padding: 2px 5px; max-width: 200px; margin-bottom: 30px; font-weight: bold; }
   .replies { margin-bottom: 20px; padding-left: 50px; }
-  .posting { position: relative; }
+  .posting { position: relative; word-wrap: break-word; }
   .posting p { padding-left: 55px; }
   .posting .date { position: absolute; top: 5px; right: 5px; color: #333; font-size: 12px; }
   .grayBox .name { font-weight: bold; color: #4AA394; margin: -5px -5px 10px -5px; border-bottom: 1px solid #4AA394; font-size: 20px; padding-left: 60px; }
@@ -312,7 +404,7 @@
   .replyBox { position: relative; text-align: right; color: #999; }
   .replyBox.hasControls { padding-right: 80px; }
   .replyButton { position: absolute; top: 0; right: 0; width: 75px; font-weight: normal; font-size: 16px; line-height: 16px;  }
-  .replyTextBox { width: 100%; height: 24px; }
+  .replyTextBox { width: 100%; height: 50px; }
   .replyStatus { padding: 2px 5px; text-align: right; font-style: italic; }
 
   .deleteLink { display: inline-block; background-color: #B03D25; color: #FFF; font-weight: bold; border-radius: 5px; height: 18px; width: 18px; line-height: 18px; font-size: 18px; text-align: center; opacity: 0.2; }
@@ -323,7 +415,8 @@
   .avatar { position: absolute; left: 5px; top: 5px; width: 50px; height: 50px; background: url('') no-repeat center center; background-size: cover; border-radius: 5px; border: 1px solid #4AA394; background-color: #EFEFEF; }
 
   #btnFollow { position: absolute; width: 90%; top: 135px; left: 5%; min-width: 80px; transition: left 0.8s, top 0.8s;  }
-
+  
+  
   @media screen and (max-width: 1044px) {
       #communitiesList { width: 400px;  min-height: 50px; }
   }
@@ -345,7 +438,7 @@
       <div class="grayBox" id="communityPostMaker">
         <div id="PostMakerContent" runat="server">
           <h2>Post to this Community</h2>
-          <textarea id="postBox" class="postTextBox" data-id="0"></textarea>
+          <textarea id="postBox" class="postTextBox summernote" data-id="0"></textarea>
           <div id="mainReplyBox"><span data-replyStatusID="0" class="replyStatus"></span> <input type="button" class="isleButton bgGreen" id="btnPostMessage" value="Post" onclick="postMessage(0, this)" /></div>
         </div>
         <p id="PostMakerLoginMessage" runat="server" class="middle">Please login to post to this Community!  </p>
@@ -375,7 +468,7 @@
     <div class="grayBox dateSeparator">Postings on {date}:</div>
   </div>
   <div id="template_replyControls">
-    <input type="text" data-id="{id}" class="replyTextBox postTextBox" /><input type="button" class="isleButton bgGreen replyButton" onclick="postMessage({id}, this);" value="Post" />
+    <textarea  data-id="{id}"  class="replyTextBox postTextBox" ></textarea><input type="button" class="isleButton bgGreen replyButton" onclick="postReply({id}, this);" value="Post" />
     <div data-replyStatusID="{id}" class="replyStatus"></div>
   </div>
   <div id="template_deleteLink">

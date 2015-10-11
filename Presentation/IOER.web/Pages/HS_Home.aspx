@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="HS_Home.aspx.cs" Inherits="ILPathways.Pages.HS_Home" %>
+﻿<%@ Page Title="Illinois Open Educational Resources - Health Science" Language="C#" AutoEventWireup="true" CodeBehind="HS_Home.aspx.cs" Inherits="ILPathways.Pages.HS_Home" %>
 
 <!DOCTYPE html>
 

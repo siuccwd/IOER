@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
+using ILPathways.Business;
 using LRWarehouse.Business;
-using ILPathways.Services;
+using IOER.Services;
 using Isle.BizServices;
 
-namespace ILPathways.Services.AdminService1Components
+namespace IOER.Services.AdminService1Components
 {
   public class Organization : IManageObject
   {
@@ -39,7 +40,7 @@ namespace ILPathways.Services.AdminService1Components
       var data = OrganizationBizService.OrganizationMember_GetAll( manageID, privilegeID );
       return GetUserDTOs( data );
     }
-    private List<UserDTO> GetUserDTOs( List<Business.OrganizationMember> data )
+    private List<UserDTO> GetUserDTOs( List<OrganizationMember> data )
     {
       var results = new List<UserDTO>();
       foreach ( var item in data )
@@ -96,7 +97,7 @@ namespace ILPathways.Services.AdminService1Components
       member.OrgMemberTypeId = privilegeID;
 
       //Save
-      if ( OrganizationBizService.OrganizationMember_Update( member ) )
+      if (service.OrganizationMember_Update(member))
       {
         result.valid = true;
       }
@@ -145,7 +146,7 @@ namespace ILPathways.Services.AdminService1Components
     public Valid Member_InviteExistingUser( int manageID, Patron user, Patron invitee, int privilegeID, string customMessage )
     {
       var status = "";
-      var success = OrganizationBizService.InviteExistingUser( manageID, user.Id, invitee.Id, privilegeID, customMessage, ref status );
+      var success = new OrganizationBizService().InviteExistingUser( manageID, user.Id, invitee.Id, privilegeID, new List<int>(), customMessage, ref status );
       var result = new Valid()
       {
         id = invitee.Id,
@@ -160,7 +161,7 @@ namespace ILPathways.Services.AdminService1Components
     public Valid Member_InviteNewUser( int manageID, Patron user, string validatedEmail, int privilegeID, string customMessage )
     {
       var status = "";
-      var success = OrganizationBizService.InviteNewUser( manageID, user.Id, validatedEmail, privilegeID, customMessage, ref status );
+			var success = new OrganizationBizService().InviteNewUser( manageID, user.Id, validatedEmail, privilegeID, new List<int>(), customMessage, ref status );
       var result = new Valid()
       {
         valid = success,

@@ -1,4 +1,4 @@
-﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="ListPanel.ascx.cs" Inherits="ILPathways.LRW.controls.ListPanel" %>
+﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="ListPanel.ascx.cs" Inherits="IOER.LRW.controls.ListPanel" %>
 
 <div class="listPanel">
 <h3 class="isleH3_Block" runat="server" visible="false" ID="header"><asp:Literal ID="title" runat="server" /></h3>

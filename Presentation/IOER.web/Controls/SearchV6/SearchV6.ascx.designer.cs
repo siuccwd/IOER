@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ILPathways.Controls.SearchV6 {
+namespace IOER.Controls.SearchV6 {
     
     
     public partial class SearchV6 {
@@ -22,12 +22,12 @@ namespace ILPathways.Controls.SearchV6 {
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl themesBox;
         
         /// <summary>
-        /// standardsBrowserSide control.
+        /// standardsBrowser control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ILPathways.Controls.StandardsBrowser7 standardsBrowserSide;
+        protected global::IOER.Controls.StandardsBrowser7 standardsBrowser;
     }
 }

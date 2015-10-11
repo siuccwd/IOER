@@ -5,7 +5,7 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
-namespace ILPathways.Communities
+namespace IOER.Communities
 {
     public partial class Community : System.Web.UI.Page
     {

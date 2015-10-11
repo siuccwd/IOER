@@ -4,7 +4,7 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2008/10/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram DiagramId="59337436a10c4aa9963055e03a1744a0" Name="FullDatabase" ZoomLevel="41">
+      <Diagram DiagramId="59337436a10c4aa9963055e03a1744a0" Name="FullDatabase" ZoomLevel="61">
         <EntityTypeShape EntityType="IsleContentModel.Codes_ContentPrivilege" Width="1.5" PointX="7.5" PointY="1.875" IsExpanded="false" FillColor="255, 224, 192" />
         <EntityTypeShape EntityType="IsleContentModel.Codes_ContentStatus" Width="1.5" PointX="0.5" PointY="1" IsExpanded="false" FillColor="255, 224, 192" />
         <EntityTypeShape EntityType="IsleContentModel.Codes_SubscriptionType" Width="2.25" PointX="22.125" PointY="0.5" IsExpanded="false" FillColor="255, 224, 192" />
@@ -73,11 +73,9 @@
         <EntityTypeShape EntityType="IsleContentModel.Community_PostingDocument" Width="2.625" PointX="19.5" PointY="22.75" FillColor="Fuchsia" />
         <AssociationConnector Association="IsleContentModel.FK_Community_PostingDocument_Document_Version" />
         <EntityTypeShape EntityType="IsleContentModel.Community_PostingSummary" Width="3" PointX="30" PointY="24.875" FillColor="Fuchsia" />
-        <EntityTypeShape EntityType="IsleContentModel.Codes_PostingType" Width="1.5" PointX="27.375" PointY="28.625" FillColor="255, 224, 192" />
         <AssociationConnector Association="IsleContentModel.FK_Community_Member_Codes_LibraryMemberType" />
         <EntityTypeShape EntityType="IsleContentModel.Community_Posting" Width="2.625" PointX="20.125" PointY="27.375" FillColor="Fuchsia" />
         <EntityTypeShape EntityType="IsleContentModel.Community_PostItem" Width="2.5" PointX="23.75" PointY="25.875" FillColor="Fuchsia" />
-        <AssociationConnector Association="IsleContentModel.FK_Community_Posting_Codes_PostingType" />
         <AssociationConnector Association="IsleContentModel.FK_Community_PostItem_Community" />
         <AssociationConnector Association="IsleContentModel.FK_Community_Posting_Community_Posting" />
         <AssociationConnector Association="IsleContentModel.FK_Community_PostingDocument_Community_Posting" />
@@ -126,6 +124,40 @@
         <EntityTypeShape EntityType="IsleContentModel.Curriculum_DistinctStandards" Width="2" PointX="23.875" PointY="35.25" />
         <EntityTypeShape EntityType="IsleContentModel.Community_MemberSummary" Width="3.5" PointX="33.875" PointY="24.5" IsExpanded="true" FillColor="Fuchsia" />
         <EntityTypeShape EntityType="IsleContentModel.Content_ChildResourceSummary" Width="3.375" PointX="4.25" PointY="36.625" />
+        <EntityTypeShape EntityType="IsleContentModel.Codes_PostingType" Width="2" PointX="24.25" PointY="29.125" FillColor="255, 224, 192" />
+        <AssociationConnector Association="IsleContentModel.FK_Community_Posting_Codes_PostingType" />
+        <EntityTypeShape EntityType="IsleContentModel.Organization" Width="2.5" PointX="28.375" PointY="31.25" FillColor="Teal" />
+        <EntityTypeShape EntityType="IsleContentModel.Organization_Member" Width="2.375" PointX="31.625" PointY="35" FillColor="Teal" />
+        <EntityTypeShape EntityType="IsleContentModel.Organization_MemberRole" Width="2.5" PointX="35.5" PointY="35.375" FillColor="Teal" />
+        <EntityTypeShape EntityType="IsleContentModel.OrganizationRequest" Width="2.5" PointX="32.5" PointY="30.875" FillColor="Teal" />
+        <AssociationConnector Association="IsleContentModel.FK_Organization_Member_Organization" />
+        <AssociationConnector Association="IsleContentModel.FK_Organization_Organization" />
+        <AssociationConnector Association="IsleContentModel.FK_OrganizationRequest_Organization" />
+        <AssociationConnector Association="IsleContentModel.FK_Organization_MemberRole_Organization_Member" />
+        <EntityTypeShape EntityType="IsleContentModel.Codes_ObjectMemberType" Width="1.5" PointX="14.75" PointY="8.75" />
+        <EntityTypeShape EntityType="IsleContentModel.Codes_OrgMemberRole" Width="3.25" PointX="39.625" PointY="33.75" FillColor="Teal" />
+        <EntityTypeShape EntityType="IsleContentModel.Codes_OrgMemberType" Width="2.625" PointX="29.75" PointY="39.625" FillColor="Teal" />
+        <EntityTypeShape EntityType="IsleContentModel.Codes_OrgType" Width="1.5" PointX="0.75" PointY="15.75" />
+        <EntityTypeShape EntityType="IsleContentModel.Codes_PublishingRole" Width="1.5" PointX="2.75" PointY="15.75" />
+        <AssociationConnector Association="IsleContentModel.FK_Organization_MemberRole_Codes_OrgMemberRole" />
+        <AssociationConnector Association="IsleContentModel.FK_Organization_Member_Codes_OrgMemberType" />
+        <EntityTypeShape EntityType="IsleContentModel.AppGroup" Width="1.5" PointX="31.625" PointY="42.625" />
+        <EntityTypeShape EntityType="IsleContentModel.AppGroup_Member" Width="1.5" PointX="33.875" PointY="39.25" />
+        <EntityTypeShape EntityType="IsleContentModel.AppGroup_OrgMember" Width="1.5" PointX="36.875" PointY="38.75" />
+        <EntityTypeShape EntityType="IsleContentModel.AppGroup_Privilege" Width="1.5" PointX="33.875" PointY="44" />
+        <EntityTypeShape EntityType="IsleContentModel.AppGroup_RelatedObject" Width="1.5" PointX="33.875" PointY="56.625" />
+        <EntityTypeShape EntityType="IsleContentModel.ApplicationObject" Width="1.5" PointX="31.625" PointY="48.25" />
+        <EntityTypeShape EntityType="IsleContentModel.Codes_GroupType" Width="1.5" PointX="5.375" PointY="4.75" />
+        <EntityTypeShape EntityType="IsleContentModel.Object_Member" Width="1.5" PointX="17" PointY="22.125" />
+        <AssociationConnector Association="IsleContentModel.FK_AppGroup_Member_AppGroup" />
+        <AssociationConnector Association="IsleContentModel.FK_AppGroup_OrgMember_AppGroup" />
+        <AssociationConnector Association="IsleContentModel.FK_AppGroup_Privilege_AppGroup" />
+        <AssociationConnector Association="IsleContentModel.FK_AppGroup_RelatedObject_AppGroup" />
+        <AssociationConnector Association="IsleContentModel.FK_AppGroup_Organization" />
+        <AssociationConnector Association="IsleContentModel.FK_AppGroup_Member_Organization" />
+        <AssociationConnector Association="IsleContentModel.FK_AppGroup_OrgMember_Organization" />
+        <AssociationConnector Association="IsleContentModel.FK_AppGroup_Privilege_ApplicationObject" />
+        <AssociationConnector Association="IsleContentModel.FK_Object_Member_Codes_ObjectMemberType" />
       </Diagram>
       <Diagram DiagramId="92561939190e4c4482ab87db473927d2" Name="LibrarySystem" ZoomLevel="46" >
         <EntityTypeShape EntityType="IsleContentModel.Library" Width="2.75" PointX="10.375" PointY="3" />
@@ -165,7 +197,8 @@
         <EntityTypeShape EntityType="IsleContentModel.Community" Width="2.125" PointX="1.625" PointY="0.5" />
         <EntityTypeShape EntityType="IsleContentModel.Community_Member" Width="2" PointX="5.25" PointY="0.5" />
         <AssociationConnector Association="IsleContentModel.FK_Community_Member_Community" />
-        <EntityTypeShape EntityType="IsleContentModel.Community_PostingDocument" Width="3" PointX="7.25" PointY="3.625" />
+        <EntityTypeShape EntityType="IsleContentModel.Community_PostingDocument" Width="3" PointX="8.25" PointY="2.125" />
+        <EntityTypeShape EntityType="IsleContentModel.Codes_PostingType" Width="1.5" PointX="6" PointY="3.75" />
         </Diagram>
       <Diagram DiagramId="76b22e05a2d04d51ac370cc513b99ed1" Name="ContentSystem" ZoomLevel="78" >
         <EntityTypeShape EntityType="IsleContentModel.Content" Width="2.375" PointX="9.75" PointY="0.75" />

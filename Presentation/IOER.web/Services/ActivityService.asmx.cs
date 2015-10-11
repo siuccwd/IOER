@@ -6,8 +6,9 @@ using System.Web.Services;
 
 using Isle.BizServices;
 using LRWarehouse.Business;
+using Patron = LRWarehouse.Business.Patron;
 
-namespace ILPathways.Services
+namespace IOER.Services
 {
   /// <summary>
   /// Summary description for ActivityService

@@ -5,7 +5,7 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
-namespace ILPathways.Content
+namespace IOER.Content
 {
     public partial class ResourcePage : System.Web.UI.Page
     {

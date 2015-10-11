@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ILPathways.Controls.Libraries {
+namespace IOER.Controls.Libraries {
     
     
     public partial class Library {
@@ -28,7 +28,7 @@ namespace ILPathways.Controls.Libraries {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ILPathways.Activity.ActivityRenderer activityRenderer;
+        protected global::IOER.Activity.ActivityRenderer activityRenderer;
         
         /// <summary>
         /// settingsTab control.

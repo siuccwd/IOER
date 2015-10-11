@@ -36,7 +36,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -57,6 +57,7 @@
     <Compile Include="CodesTagCategory.cs" />
     <Compile Include="CodesTagValue.cs" />
     <Compile Include="ConditionOfUse.cs" />
+    <Compile Include="EvaluationSummaryV2.cs" />
     <Compile Include="LearningRegistryJsonImport.cs" />
     <Compile Include="ParaData.cs" />
     <Compile Include="ParadataRating.cs" />
@@ -92,6 +93,7 @@
     <Compile Include="ResourceTag.cs" />
     <Compile Include="ResourceV2.cs" />
     <Compile Include="ResourceVersion.cs" />
+    <Compile Include="RubricV2.cs" />
     <Compile Include="Rule.cs" />
     <Compile Include="SerializableDictionary.cs" />
     <Compile Include="StandardItem.cs" />

@@ -1,4 +1,4 @@
-﻿<%@ Page Title="IOER Libraries Guide" Language="C#" MasterPageFile="~/Masters/Responsive.Master" AutoEventWireup="true" CodeBehind="Libraries.aspx.cs" Inherits="ILPathways.Help.Libraries" %>
+﻿<%@ Page Title="IOER Libraries Guide" Language="C#" MasterPageFile="~/Masters/Responsive.Master" AutoEventWireup="true" CodeBehind="Libraries.aspx.cs" Inherits="IOER.Help.Libraries" %>
 
 <asp:Content ID="Content2" ContentPlaceHolderID="BodyContent" runat="server">
   <link rel="Stylesheet" type="text/css" href="/Styles/common.css" />

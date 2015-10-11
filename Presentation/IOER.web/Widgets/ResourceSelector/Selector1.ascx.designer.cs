@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ILPathways.Widgets.ResourceSelector
+namespace IOER.Widgets.ResourceSelector
 {
 
 

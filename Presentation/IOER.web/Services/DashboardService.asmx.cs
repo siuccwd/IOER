@@ -8,12 +8,14 @@ using System.Web.Services;
 
 using LRWarehouse.Business;
 using LRWarehouse.DAL;
+using IB = ILPathways.Business;
 //using ILPathways.DAL;
 using MyLibraryManager = Isle.BizServices.LibraryBizService;
 using OrganizationManager = Isle.BizServices.OrganizationBizService;
 using Isle.BizServices;
+using Patron = LRWarehouse.Business.Patron;
 
-namespace ILPathways.Services
+namespace IOER.Services
 {
 
     /// <summary>
@@ -278,7 +280,7 @@ namespace ILPathways.Services
         {
             //Get User data via GUID
             Patron webUser = new LRWarehouse.DAL.PatronManager().GetByRowId( userGUID.ToString() );
-            Business.Organization organization = OrganizationManager.EFGet( webUser.OrgId );
+            IB.Organization organization = OrganizationManager.EFGet( webUser.OrgId );
 
             UserProfile profile = new UserProfile();
             profile.name = webUser.FullName();
@@ -291,7 +293,7 @@ namespace ILPathways.Services
         {
             //Get Library data via User's GUID
             Patron webUser = new LRWarehouse.DAL.PatronManager().GetByRowId( userGUID.ToString() );
-            Business.Library myLibrary = new MyLibraryManager().GetMyLibrary( webUser );
+			IB.Library myLibrary = new MyLibraryManager().GetMyLibrary(webUser);
 
             LibraryProfile profile = new LibraryProfile();
             profile.name = myLibrary.Title;
@@ -304,7 +306,7 @@ namespace ILPathways.Services
             List<CollectionItem> items = new List<CollectionItem>();
             //Get the collections for a user via User's GUID
             Patron webUser = new LRWarehouse.DAL.PatronManager().GetByRowId( userGUID.ToString() );
-            Business.Library myLibrary = new MyLibraryManager().GetMyLibrary( webUser );
+			IB.Library myLibrary = new MyLibraryManager().GetMyLibrary(webUser);
             DataSet ds = new MyLibraryManager().LibrarySectionsSelect( myLibrary.Id, 2 ); 
 
             if ( LRWarehouse.DAL.DatabaseManager.DoesDataSetHaveRows( ds ) )

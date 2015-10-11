@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ILPathways {
+namespace IOER {
     
     
     public partial class ResourceDetail {
@@ -19,7 +19,7 @@ namespace ILPathways {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ILPathways.LRW.controls.Detail6 LR_DetailPanel;
+        protected global::IOER.LRW.controls.Detail6 LR_DetailPanel;
         
         /// <summary>
         /// txtFormSecurityName control.

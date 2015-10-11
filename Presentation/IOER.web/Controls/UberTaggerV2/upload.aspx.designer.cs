@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ILPathways.Controls.UberTaggerV2 {
+namespace IOER.Controls.UberTaggerV2 {
     
     
     public partial class upload {

@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ILPathways.Pages {
+namespace IOER.Pages {
     
     
     public partial class GooruSearch {
@@ -19,7 +19,7 @@ namespace ILPathways.Pages {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ILPathways.Controls.StandardsBrowser7 browserControl;
+        protected global::IOER.Controls.StandardsBrowser7 browserControl;
         
         /// <summary>
         /// hiddenPanel control.

@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="IT_Home2.aspx.cs" Inherits="ILPathways.Pages.IT_Home2" %>
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="IT_Home2.aspx.cs" Inherits="IOER.Pages.IT_Home2" %>
 
 <!DOCTYPE html>
 

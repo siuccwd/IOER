@@ -40,7 +40,8 @@
   .downloadFilesLink { font-size: inherit; float: right; margin-right: 50px; }
   .downloadFilesLink img { height: 20px; width: 20px; vertical-align: middle; margin-top: -4px;  }
   .file.private p { padding: 50px 10px; }
-  
+	#tab_edit a { font-size: 20px; padding: 2px 5px; display: block; margin: 5px; text-align: center; }
+	#tab_edit a:hover, #tab_edit a:focus { text-decoration: none; }
 
   /* Overlay */
   #tools { 
@@ -120,7 +121,7 @@
   .standardsList input:hover, .standardsList input:focus, .btnOpenMap { cursor: pointer; text-decoration: underline; color: #4C98CC; }
   .standardsList li { display: inline-block; vertical-align: top; width: 48%; margin-right: -4px; }
   .standardText { display: none; padding-right: 10px; margin-bottom: 5px; }
-  #btnToggleAllStandards { float: right; display: inline-block; width: auto; margin-top: -1px; margin-left: 10px; }
+  #btnToggleAllStandards, #btnToggleStandardsSection { float: right; display: inline-block; width: auto; margin-top: -1px; margin-left: 10px; }
   #standardsLevelButtons { white-space: nowrap; text-align: center; }
   #standardsLevelButtons input { display: inline-block; vertical-align: top; width: 32.1%; }
   .standardsLevel { display: none; }
@@ -133,6 +134,12 @@
   #alignedStandards .stdMajor { background-color: #484; }
   #alignedStandards .stdSupporting { background-color: #48A; }
   #alignedStandards .stdAdditional { background-color: #CB2; }
+	#alignedStandards { overflow: hidden; position: relative; }
+	#alignedStandards.showingAll { height: auto; }
+	#alignedStandards.showingSample { height: 350px; }
+	#alignedStandards::after { transition: height 0.5s; height: 0; content: " "; display: block; position: absolute; bottom: 0; left: 0; width: 100%; background-image: linear-gradient(rgba(255,255,255,0),rgba(255,255,255,100)); }
+	#alignedStandards.showingSample::after { height: 200px; }
+	#alignedStandards.noresize::after { display: none; }
 
   /* Misc */
   .grayMessage { color: #555; font-style: italic; padding: 10px 5px; }

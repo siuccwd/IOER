@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ILPathways {
+namespace IOER {
     
     
     public partial class PortalSplash {
@@ -28,7 +28,7 @@ namespace ILPathways {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ILPathways.Includes.SystemMessageLine messageLine;
+        protected global::IOER.Includes.SystemMessageLine messageLine;
         
         /// <summary>
         /// MiniSplash control.
@@ -37,6 +37,6 @@ namespace ILPathways {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ILPathways.Controls.Splash2 MiniSplash;
+        protected global::IOER.Controls.Splash2 MiniSplash;
     }
 }

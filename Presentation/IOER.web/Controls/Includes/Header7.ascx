@@ -1,4 +1,4 @@
-﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="Header7.ascx.cs" Inherits="ILPathways.Controls.Includes.Header7" %>
+﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="Header7.ascx.cs" Inherits="IOER.Controls.Includes.Header7" %>
 
 <script type="text/javascript">
 
@@ -52,6 +52,8 @@
   .topNav { color: #000; white-space: nowrap; background: url('') no-repeat 5px 50%; display: inline-block; vertical-align: bottom; margin-right: -4px; border-right: 1px solid #CCC; position: relative; padding-left: 40px; height: 100%; transition: padding 0.5s, background-position 0.5s; -webkit-transition: padding 0.5s, background-position 0.5s; }
   .topNav:last-child { border: none; }
   .topNav h2, a.topNav { font-size: 18px; line-height: 50px; text-transform: uppercase; font-weight: bold; }
+  .topNav .menuSection { font-size: 18px; line-height: 50px; text-transform: uppercase; font-weight: bold; }
+
   #accountStuff { position: absolute; top: 5px; right: 5px; text-align: right; }
   #accountStuff * { display: inline; }
   .navLinks { box-shadow: 0 0 20px -1px #FF5707; white-space: normal; position: absolute; top: 99.5%; left: 0; width: 100%; background-color: #FFF; border-radius: 0 0 5px 5px; overflow: hidden; max-height: 0; transition: max-height 0.3s, opacity 0.3s; -webkit-transition: max-height 0.3s, opacity 0.3s; opacity: 0; }
@@ -83,6 +85,7 @@
   @media screen and (max-width: 850px) {
     #navbar .topNav { background-position: center center; padding: 0; }
     #navbar .topNav h2 { display: none; font-size: 0; }
+    #navbar .topNav .menuSection { display: none; font-size: 0; }
     .myIOERNavTitle {display: none;}
     #accountStuff .profileStuff span { display: block; }
     #accountStuff .adminNav { height: 25px; min-width: 150px; }
@@ -100,10 +103,12 @@
   .shareNav:hover, .shareNav:focus { background-image: url('/images/icons/icon_tag_bg.png'); }
   .infoNav:hover, .infoNav:focus { background-image: url('/images/icons/icon_help_bg.png'); }
   .myIOERNav:hover, .myIOERNav:focus { background-image: url('/images/icons/icon_myisle_bg.png'); }
+
+	.photoPrompt { display: inline-block; padding: 2px; font-weight: bold; border: 1px solid #CCC; border-color: inherit; border-radius: 5px; color: #FF6A00; box-shadow: 0 0 10px, 0 0 2px inset; }
 </style>
 
 <div id="header" class="no-ithing">
-  <a href="/" id="logo" title="Open Educational Resources"></a>
+  <a href="/" id="logo" title="Illinois Open Educational Resources"></a>
   <div id="headerContent">
     <a id="skipLink" href="#skipLinkTarget" onclick="skipNav();" title="Skip to Content">Skip to Content</a>
     <div id="accountStuff">
@@ -111,15 +116,16 @@
         <div id="altLogin"><a href="" id="loginLink2" runat="server" class="loginLink textLink">Login/Register</a></div>
       <div id="profileStuff" class="profileStuff" runat="server">
         <span>Logged in as </span>
-        <a href="/Account/Profile.aspx" id="profileLink" runat="server" class="textLink" title="My Profile"></a> | 
+        <a href="/Account/Profile.aspx" id="profileLink" runat="server" class="textLink" title="My Profile"></a> 
+				<span id="photoPrompt" runat="server" visible="false"><a href="/Account/Profile.aspx" class="photoPrompt" title="My Profile">Upload a profile photo!</a></span> | 
         <asp:LinkButton ID="logoutLink" runat="server" Text="Logout" OnClientClick="manualLogout(this.id);" OnClick="logoutButton_Click" CssClass="textLink" />
 
         <div class="topNav adminNav" tabindex="0" aria-haspopup="true" id="adminMenu" runat="server">
-          <h2>Admin</h2>
+          <div class="menuSection">Admin</div>
             <div class="navLinks">
                 <a href="/Admin/Groups/default.aspx" class="navLink">Groups Management</a>
                 <a href="/Libraries/Admin.aspx">Library Admin</a>
-                <a href="/Admin/Org/Organizations.aspx" class="navLink">Organizations Management</a>
+                <a href="/Organizations/Organizations.aspx" class="navLink">Organizations Management</a>
                 <a href="/Admin/Queries/QueryMgmt.aspx" class="navLink">Query Maintenance</a>
                 <a href="/Publishers.aspx">Publishers Search</a>
                 <a href="/Admin/mapping/MapCareerClusters.aspx">Map Career Clusters</a>
@@ -127,11 +133,11 @@
                 <a href="/Admin/mapping/MapResourceType.aspx">Map Resource Types</a>
                 <a href="/Admin/mapping/MapResourceFormat.aspx">Map Resource Format</a>
                 <a href="/Pages/MapResourceNSDL.aspx">Map Resource NSDL Schema</a>
-                <a href="/Repository/All" class="navLink">IOER Content Search</a>
+                <a href="/Content/Search" class="navLink">IOER Content Search</a>
                 <div id="mpMenu" runat="server" visible="false">
                     <a href="#" class="navLink">=============================================</a>
                     <a href="/My/Library" class="navLink">My Library and Collections</a>
-                    <a href="/My/Authored.aspx" class="navLink">Resources I Created</a>
+                    <a href="/My/Authored" class="navLink">Resources I Created</a>
                     <a href="/My/Favorites.aspx" class="navLink">Libraries I Follow</a>
                     <a href="/My/Timeline" class="navLink">My IOER Timeline</a>
                     <a href="/Admin/AdminStuff.aspx">Copy Collections prototype</a>
@@ -146,17 +152,19 @@
     <div id="navbar" class="<%=topNavCount %>">
 
       <div class="topNav searchNav" tabindex="0" aria-haspopup="true">
-        <h2>Search</h2>
+        <div class="menuSection">Search</div>
         <div class="navLinks">
-          <a href="/Search">ISLE Resources</a>
-          <a href="/Libraries/Search">ISLE Libraries</a>
+          <a href="/Search">Resources</a>
+          <a href="/Content/Search">Created Resources</a>
+          <a href="/Libraries/Search">Libraries</a>
+		  <a href="/LearningLists">Learning Lists</a>
           <a href="/gooruSearch">gooru Resources (beta)</a>
           <!--<a href="/Publishers.aspx">Publishers</a>-->
         </div>
       </div>
 
       <div class="topNav shareNav" tabindex="0" aria-haspopup="true">
-        <h2>Share</h2>
+        <div class="menuSection">Share</div>
         <div class="navLinks">
           <a href="/Contribute">Contribute Resources</a>
           <a href="/Community/1/ISLE_Community">Communities</a>
@@ -164,7 +172,7 @@
       </div>
 
       <div class="topNav infoNav" tabindex="0" aria-haspopup="true">
-        <h2>Info</h2>
+        <div class="menuSection">Info</div>
         <div class="navLinks">
           <a href="/IOER_Timeline">IOER Timeline</a>
           <a href="/activity/stats.aspx">IOER Activity &amp; Statistics</a>
@@ -172,27 +180,15 @@
           <!--<a href="/News/Default.aspx">IOER News</a>-->
         </div>
       </div>
-
-      <!--<div class="topNav myIOERNav" tabindex="0" aria-haspopup="true" id="myIOERMenu" runat="server">
-        <h2>My Dashboard</h2>
-        <div class="navLinks">
-          <a href="/My/Dashboard" class="navLink">My Dashboard</a>
-          <!--<a href="/My/Library" class="navLink">My Library and Collections</a>
-          <a href="/My/Authored.aspx" class="navLink">Resources I Created</a>
-          <a href="/My/Favorites.aspx" class="navLink">Libraries I Follow</a>
-          <a href="/My/Timeline" class="navLink">My IOER Timeline</a>
-          <a href="/Libraries/Admin.aspx" class="navLink" runat="server" id="libAdminLink" visible="false">Library Administration</a>-->
-        <!--</div>
-      </div>-->
-
+ 
       <a href="/My/Dashboard" class="topNav myIOERNav" tabindex="0" aria-haspopup="true" id="myIOERMenuLink" runat="server"><span class="myIOERNavTitle">My Dashboard</span></a>
 
 
     </div><!--/navbar-->
   </div><!--/headerContent-->
-  <a id="skipLinkTarget" href="#"></a>
+  <a id="skipLinkTarget" class="offScreen" href="#">Main Content</a>
   <div id="hiddenStuff" runat="server" visible="false">
-    <asp:Literal ID="txtAdminSecurityName" runat="server" Visible="false">ILPathways.Admin.QueryMgmt</asp:Literal>
+    <asp:Literal ID="txtAdminSecurityName" runat="server" Visible="false">Site.Admin</asp:Literal>
       <asp:Literal ID="skipRedirectCheck" runat="server" Visible="false">no</asp:Literal>
       <asp:Literal ID="doingSecureCheck" runat="server" Visible="false">no</asp:Literal>
       <asp:Literal ID="loginUrl1" runat="server" Visible="false">/Account/Login.aspx?nextUrl=</asp:Literal>

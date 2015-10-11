@@ -1,4 +1,4 @@
-﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="OrgGroupMembers.ascx.cs" Inherits="ILPathways.Controls.GroupsManagment.OrgGroupMembers" %>
+﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="OrgGroupMembers.ascx.cs" Inherits="IOER.Controls.GroupsManagment.OrgGroupMembers" %>
 
 <asp:validationsummary id="vsErrorSummary" HeaderText="Errors on page" ValidationGroup="mbrsValGroup" forecolor="" CssClass="errorMessage" runat="server"></asp:validationsummary>
 
@@ -94,7 +94,7 @@
 <asp:panel id="hiddenPanel" runat="server"  visible="false">	
 
 	
-<asp:Literal ID="formSecurityName" runat="server" Visible="false">ILPathways.Controls.GroupsManagment.GroupMembers</asp:Literal>
+<asp:Literal ID="formSecurityName" runat="server" Visible="false">IOER.Controls.GroupsManagment.GroupMembers</asp:Literal>
 
 
 </asp:Panel>	

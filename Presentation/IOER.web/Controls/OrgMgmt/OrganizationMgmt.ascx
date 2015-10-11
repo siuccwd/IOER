@@ -1,5 +1,7 @@
-﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="OrganizationMgmt.ascx.cs" Inherits="ILPathways.Controls.OrgMgmt.OrganizationMgmt" %>
+﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="OrganizationMgmt.ascx.cs" Inherits="IOER.Controls.OrgMgmt.OrganizationMgmt" %>
 
+  <script type="text/javascript" src="/Scripts/toolTip.js"></script>
+  <link rel="Stylesheet" type="text/css" href="/Styles/ToolTip.css" />
 <style type="text/css">
 .labelColumn { width: 25%; border-right: 5px solid #fff;}
 .dataColumn { width: 55%; }
@@ -80,11 +82,16 @@
   </div>
 <!-- --> 
   <div class="labelColumn " > 
+          <span style="text-align:center;" >
+                        <a class="toolTipLink" id="A1" title="Email Domain|Example: <strong>myDomain.com</strong><br>The Email domain can be used to automatically add people with the same domain as an organization member. Use carefully. Using illinois.gov, would result in all Illinois government users being added to this organization."><img
+			src="/images/icons/infoBubble.gif" alt="" /></a>
+                    </span>
     <asp:label id="Label2"  associatedcontrolid="txtEmailDomain" runat="server">Email Domain</asp:label> 
   </div>
   <div class="dataColumn"> 
     <asp:textbox  maxLength="50"  id="txtEmailDomain" runat="server"></asp:textbox>
   </div>
+
 <!-- --> 
   <div class="labelColumn " > 
     <asp:label id="Label3"  associatedcontrolid="txtWebsite" runat="server">Web Site</asp:label> 
@@ -192,9 +199,9 @@
 </div>
 
 <asp:Panel ID="hiddenStuff" runat="server" Visible="false">
-<asp:Literal ID="formSecurityName" runat="server" Visible="false">ILPathways.Admin</asp:Literal>
+<asp:Literal ID="formSecurityName" runat="server" Visible="false">Site.Admin</asp:Literal>
 <asp:Literal ID="currentOrgId" runat="server" Visible="false">0</asp:Literal>
-
+<asp:Label ID="addAdminFailedMsg" runat="server"><h2>Attempt to add admin user to new org failed.</h2><p>OrgId: {0}<br />UserId: {1}</p><p>{2}</p></asp:Label>
 </asp:Panel>
 
 

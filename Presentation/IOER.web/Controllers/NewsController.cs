@@ -6,9 +6,9 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
-using ILPathways.Library;
+using IOER.Library;
 using ILPathways.Utilities;
-using ILPathways.classes;
+using IOER.classes;
 using ILPathways.Business;
 
 //using workNet.BusObj.Entity;
@@ -16,10 +16,10 @@ using MyManager = ILPathways.DAL.WorkNetSyncManager;
 //using workNet.DAL;
 using BDM = LRWarehouse.DAL.BaseDataManager; 
 
-using wnNewsItem = ILPathways.NewsServiceReference;
-using subService = ILPathways.workNetSubscriptionReference;
+using wnNewsItem = IOER.NewsServiceReference;
+using subService = IOER.workNetSubscriptionReference;
 
-namespace ILPathways.Controllers
+namespace IOER.Controllers
 {
     public class NewsController
     {

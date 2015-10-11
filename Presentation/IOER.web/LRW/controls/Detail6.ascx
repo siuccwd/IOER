@@ -1,4 +1,4 @@
-﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="Detail6.ascx.cs" Inherits="ILPathways.LRW.controls.Detail6" %>
+﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="Detail6.ascx.cs" Inherits="IOER.LRW.controls.Detail6" %>
 <%@ Register TagPrefix="uc1" TagName="UsageRightsSelector" Src="/LRW/controls/ConditionsOfUseSelector.ascx" %>
 <%@ Register TagPrefix="uc1" TagName="StandardsBrowser" Src="/controls/StandardsBrowser7.ascx" %>
 
@@ -27,12 +27,12 @@
       <%=codeTables %>
       var SB7mode = "tag";
   </script>
-  <script type="text/javascript" language="javascript" src="/Scripts/detail6.js"></script>
+  <script type="text/javascript" language="javascript" src="/Scripts/detail6.js?v=6"></script>
   <%--<link rel="Stylesheet" href="/Styles/detail6.css" />--%>
 
   <style type="text/css">
     /* Big stuff */
-    html, body { min-height: 100%; width: 100%; margin: 0; padding: 0; }
+    html, body { min-height: 100%; width: 100%; margin: 0; }
     .content { font-size: 0; text-align: center; min-width: 300px; }
     .content * { box-sizing: border-box; -moz-box-sizing: border-box; margin: 0; padding: 0; }
     .column { display: inline-block; vertical-align: top; padding: 5px; min-width: 300px; text-align: left; }
@@ -83,9 +83,9 @@
     
     /* Tab Box stuff */
     #infoTabBox { clear: both; margin-top: 10px; }
-    .tabBox .tab { background-color: #EEE; min-height: 75px; border-radius: 5px; padding-bottom: 10px; }
+    .tabBox .tab { background-color: #EEE; min-height: 75px; border-radius: 5px; padding-bottom: 10px; margin-bottom: 10px; }
     .tabBox .tab[data-selected=false] { display: none; }
-    .tabBox .tab h2 { font-size: 20px; line-height: 25px; color: #FFF; padding: 0 5px; border-top-left-radius: 5px; border-top-right-radius: 5px; }
+    .tabBox .tab h2 { font-size: 20px; line-height: 25px; color: #FFF; padding: 0 5px; border-top-left-radius: 5px; border-top-right-radius: 5px; background-color: transparent; transition: background 0.2s; }
     .tabBox .tab ul, .tabBox .tab ol { margin-left: 25px; }
     p.center { text-align: center; padding: 10px; }
     
@@ -93,16 +93,16 @@
     .tabNavigator { margin-left: 5px; }
     .tabNavigator a { 
       display: inline-block; 
-      height: 65px; 
       min-width: 40px; 
       border-radius: 10px 10px 0 0;
       text-align: center; 
-      font-weight: bold; 
       color: #FFF; 
-      font-size: 30px; 
       box-shadow: inset 0px -20px 60px -20px #26A;
-      padding: 30px 3px 5px 3px;
+      padding: 0 5px;
     }
+  	.tabNavigator div { padding: 5px; }
+  	.tabNavigator .name { height: 25px; }
+  	.tabNavigator .value { padding: 0 5px 0 40px; font-weight: bold; height: 35px; font-size: 30px; line-height: 100%; }
     .tabNavigator a[data-selected=true] { box-shadow: none; }
     .tabNavigator a:hover, .tabNavigator a:focus { color: #FFF; box-shadow: none; }
     .tabNavigator a[data-id=comments] { background-image: url('/images/icons/icon_comments_bg.png'); }
@@ -239,8 +239,8 @@
     .evaluationBarContainer:hover .evaluationBarText, .evaluationBarContainer:focus .evaluationBarText { opacity: 1; cursor: default; }
     .evaluationBar.trained .evaluationBarFill { border-radius: 5px 5px 0 0; }
     .evaluationBar.untrained .evaluationBarFill { border-radius: 0 0 5px 5px; }
-    .evaluation[data-requiresCertification=true] .evaluationBar.untrained { display: none; }
-    .evaluation[data-requiresCertification=true] .evaluationBar.trained .evaluationBarFill { border-radius: 5px; }
+    .evaluation .evaluationBar.trained { display: none; }
+    .evaluation .evaluationBar.untrained .evaluationBarFill { border-radius: 5px; }
 
     #standardsRatings .evaluationBarFill { border-radius: 5px; }
     .ratedStandard h4 { margin-bottom: 5px; }
@@ -278,10 +278,16 @@
       #tags > div { display: inline-block; width: 48%; }
       
     }
+  	@media (max-width: 550px) {
+  		.tabNavigator a { display: block; width: 100%; border-radius: 5px; margin-bottom: 1px; }
+  		.tabNavigator a div { display: inline-block; vertical-align: top; width: 50%; }
+  		.tabNavigator a .name { padding-left: 40px; }
+  		.tabNavigator a .value { padding-left: 5px; }
+		}
     /* AddThis customizations */
     .content { transition: padding-left 1s; -webkit-transition: padding-left 1s; }
     @media screen and (min-width:980px) {
-      .content { padding-left: 50px; }
+      .content { padding-right: 35px; }
     }
   </style>
   <style type="text/css">
@@ -291,9 +297,9 @@
     .addedTextItem a { background-color: <%=css_red %>; }
     .resourceLikeThis a { color: <%=css_blue %>; }
     .resourceLikeThis a:hover, .resourcesLikeThis a:focus { color: <%=css_orange %>; }
-    .tabBox .tab h2 { background-color: <%=css_teal %>; }
-    .tabNavigator a { background: <%=css_lightblue %> no-repeat center 5px; }
-    .tabNavigator a[data-selected=true] { background-color: <%=css_teal %>; }
+    .tabBox .tab h2 { background-color: transparent; color: #000; border-top: 3px solid <%=css_teal %> }
+    .tabNavigator a { background: <%=css_lightblue %> no-repeat left 5px bottom 5px; }
+    .tabNavigator a[data-selected=true] { background-color: <%=css_purple %>; }
     .tabNavigator a:hover, .tabNavigator a:focus { background-color: <%=css_orange %>; }
     .opinionbar #likebar { background-color: <%=css_teal %>; }
     .opinionbar #dislikebar { background-color: <%=css_red %>; }
@@ -308,12 +314,12 @@
     input[type=button].btn.red { background-color: <%=css_red %>; }
     input[type=button].btn:hover, input[type=button].btn:focus { background-color: <%=css_orange %>; }
     .cbxl .edit a[data-preselected=false]:hover, .cbxl .edit a[data-preselected=false]:focus { background-color: <%=css_orange %>; }
-    .cbxl .edit a[data-selected=true] { background-color: <%=css_teal %>; }
+    .cbxl .edit a[data-selected=true] { background-color: <%=css_purple %>; }
     .error { padding: 50px 5px; text-align: center; }
   </style>
   
   <div id="error" class="error" runat="server" visible="false">
-    <p>Sorry, that is an invalid Resource.</p>
+    <p>Sorry, that is an invalid resource.</p>
 
       <asp:Button ID="btnReActivateResource" runat="server" Visible="false"  CssClass="defaultButton" Text="Reactivate Resource"  OnClick="btnReActivateResource_Click" OnClientClick="document.forms[0].onsubmit='';" />
       <br /><asp:Literal ID="litResourceId" runat="server" Visible="false">0</asp:Literal>
@@ -328,10 +334,10 @@
       <div id="lrDocLink"></div>
       <div id="clickthroughs"></div>
       <div id="thumbAndCritical">
-        <a id="thumbnail" href="#" target="_blank"><img src="/images/ThumbnailResizer.png" /></a>
+        <a id="thumbnail" href="#" title="resource" target="_blank"><img alt='' src="/images/ThumbnailResizer.png" /></a>
         <div id="criticalInfo">
-          <div id="usageRights"><img class="view" src="/images/icons/rightsreserved.png" /></div>
-          <div id="created" itemprop="dateCreated"><b>Created:</b> <span></span></div>
+          <div id="usageRights"><a id="usageRightsUrl" href="" target="ccPage"><img alt='' class="view" src="/images/icons/rightsreserved.png" /></a></div>
+          <div id="created" itemprop="dateCreated"><strong>Created:</strong> <span></span></div>
         </div>
       </div>
       <div id="description"><h2>Description</h2><p class="view admin author" itemprop="description"></p><span class="edit admin author"><textarea></textarea></span></div>
@@ -340,32 +346,34 @@
       <div id="requires"><h2>Technology and Equipment Requirements</h2><p class="view admin"></p><span class="edit admin"><input type="text" /></span></div>
       <div id="infoTabBox" class="tabBox">
        <div id="modifyThis">
-          <input type="button" value="Update This Data" runat="server" id="btnStartUpdateMode" class="update btn green view" onclick="switchToUpdateMode()" />
-          <input type="button" value="Save Changes" runat="server" id="btnFinishUpdate" class="finish btn green edit" onclick="saveUpdates()" />
-          <input type="button" value="Cancel Changes" runat="server" id="btnCancelChanges" class="cancel btn red edit" onclick="cancelChanges()" />
+          <input type="button" value="Update This Data" runat="server" id="btnUbertag" class="ubertag btn green" onclick="" />
+					<div id="oldButtons" runat="server" visible="false">
+						<input type="button" value="Update This Data" runat="server" id="btnStartUpdateMode" class="update btn green view" onclick="switchToUpdateMode()" />
+						<input type="button" value="Save Changes" runat="server" id="btnFinishUpdate" class="finish btn green edit" onclick="saveUpdates()" />
+						<input type="button" value="Cancel Changes" runat="server" id="btnCancelChanges" class="cancel btn red edit" onclick="cancelChanges()" />
+						<!--<input type="button" value="Send Resource to External Site" class="btn green" id="btnSendResource" onclick="sendResource()" />-->
+						<input type="button" value="Send Resource to External Site" class="btn green" id="btnMsgResource" onclick="sendResourceMsg()" />
+					</div>
           <input type="button" value="Deactivate Resource" runat="server" id="btnDeactivateResource" class="deactivate btn red" onclick="deactivate()" />
           <input type="button" value="Regenerate Thumbnail" runat="server" id="btnRegenerateThumbnail" class="regenerate btn green" onclick="regenerateThumbnail()" />
-          <input type="button" value="Ubertag This Data" runat="server" id="btnUbertag" class="ubertag btn green" onclick="" />
-          <!--<input type="button" value="Send Resource to External Site" class="btn green" id="btnSendResource" onclick="sendResource()" />-->
-          <input type="button" value="Send Resource to External Site" class="btn green" id="btnMsgResource" onclick="sendResourceMsg()" />
        </div>
         <div class="tabNavigator">
-          <a href="#" data-id="tags" title="Metadata Tags"></a>
-          <a href="#" data-id="alignedStandards" title="Aligned Standards"></a>
-          <a href="#" data-id="keyword" title="Keywords"></a>
-          <!--<a href="#" data-id="subject" title="Subjects"></a>-->
-          <a href="#" data-id="moreLikeThis" title="More Like This"></a>
+          <a href="#" data-id="tags" title="Metadata Tags"><div class="name">Tags</div><div class="value"></div></a>
+          <a href="#" data-id="alignedStandards" title="Aligned Standards"><div class="name">Standards</div><div class="value"></div></a>
+          <a href="#" data-id="keyword" title="Keywords"><div class="name">Keywords</div><div class="value"></div></a>
+          <a href="#" data-id="moreLikeThis" title="More Like This" ><div class="name">Similar</div><div class="value">...</div></a>
+					<a href="#" data-id="report" title="Report an Issue"><div class="name">Report</div><div class="value">...</div></a>
        </div>
        <div class="tab" id="tags">
           <h2>Tags</h2>
-          <div id="gradeLevel" class="cbxl"></div>
+          <div id="gradeLevel" class="cbxl" Itemprop="educationalAlignment"></div>
           <div id="careerCluster" class="cbxl"></div>
           <div id="endUser" class="cbxl" itemprop="endUser"></div>
           <div id="groupType" class="cbxl"></div>
           <div id="resourceType" class="cbxl" itemprop="learningResourceType"></div>
           <div id="mediaType" class="cbxl" itemprop="mediaType"></div>
           <div id="educationalUse" class="cbxl" itemprop="educationalUse"></div>
-          <div id="k12subject" class="cbxl"></div>
+          <div id="k12subject" class="cbxl" itemprop="about" ></div>
           <div id="pickUsageRights" class="edit">
             <h3>Usage Rights</h3>
             <uc1:UsageRightsSelector ID="usageRightsSelector" runat="server" />
@@ -397,6 +405,7 @@
             <div class="addedFreeText" data-id="keyword"></div>
           </div>
           <div class="view"></div>
+					<div id="hashtags" style="padding: 0; margin: 0; height: 0; width: 0; overflow: hidden;"></div>
         </div>
         <div class="tab" id="subject">
           <h2>Subjects</h2>
@@ -418,13 +427,32 @@
         </div>
         <div class="tab" id="moreLikeThis">
           <h2>More Like This</h2>
-          <div class="resourcesLikeThis"></div>
+          <div class="resourcesLikeThis" id="moreLikeThisResults"><p style="text-align:center; padding: 50px;"><img src="/images/icons/wait.gif" alt="Searching" /></p></div>
+        </div>
+				<div id="report" class="tab">
+          <h2>Report an Issue</h2>
+          <div class="reportProblemContainer" id="reportProblemContainer" runat="server">
+            <textarea id="txtReportProblem"></textarea>
+            <input type="button" value="Report a Problem" runat="server" id="btnReportProblem" class="report btn red" onclick="reportIssue()" />
+          </div>
+          <p></p>
         </div>
       </div>
     </div><!-- /left column -->
     <div class="right column">
-      <div class="tabBox">
-        <div id="likedislike" class="tab" data-selected="true">
+			<div class="tabBox">
+				<div class="tab external" id="library">
+					<h2>Library Info</h2>
+					<div id="badges" class="lightbox"></div>
+					<div id="myLibrary" class="lightbox">
+						<h3>Add this to my Library/Other Library:</h3>
+						<select id="myLibraries"></select>
+						<select id="myCollections"></select>
+						<input type="button" class="btn green" value="Add" onclick="addToCollection()" />
+							<div id="submissionMessage" ></div>
+					</div>
+				</div>
+        <div id="likedislike" class="tab external" data-selected="true">
           <h2>Community Opinion</h2>
           <div class="opinionbar">
             <div id="likebar"></div><div id="dislikebar"></div>
@@ -440,41 +468,22 @@
       </div>
       <div id="opinionTabBox" class="tabBox">
         <div class="tabNavigator">
-          <a href="#" data-id="comments" title="Comments"></a>
-          <a href="#" data-id="library" title="Library Info"></a>
-          <a href="#" data-id="standardsRatings" title="Standards Alignment Ratings"></a>
-          <a href="#" data-id="rubrics" title="Rubric Evaluations"></a>
-          <a href="#" data-id="report" title="Report an Issue">...</a>
+          <a href="#" data-id="comments" title="Comments"><div class="name">Comments</div><div class="value"></div></a>
+          <a href="#" data-id="standardsRatings" title="Standards Alignment Ratings"><div class="name">Ratings</div><div class="value"></div></a>
+          <a href="#" data-id="rubrics" title="Rubric Evaluations"><div class="name">Evaluations</div><div class="value"></div></a>
         </div>
         <div class="tab" id="comments">
           <h2>Comments</h2>
           <div class="edit"><textarea></textarea><input type="button" class="btn green" value="Submit" onclick="postComment()" /></div>
           <div class="view"></div>
         </div>
-        <div class="tab" id="library">
-          <h2>Library Info</h2>
-          <div id="badges" class="lightbox"></div>
-          <div id="myLibrary" class="lightbox">
-            <h3>Add this to my Library/Other Library:</h3>
-            <select id="myLibraries"></select>
-            <select id="myCollections"></select>
-            <input type="button" class="btn green" value="Add" onclick="addToCollection()" />
-              <div id="submissionMessage" ></div>
-          </div>
-        </div>
+        
         <div id="standardsRatings" class="tab"></div>
         <div id="rubrics" class="tab">
           <h2>Resource Evaluations</h2>
           <div id="rubricsData"></div>
         </div>
-        <div id="report" class="tab">
-          <h2>Report an Issue</h2>
-          <div class="reportProblemContainer" id="reportProblemContainer" runat="server">
-            <textarea id="txtReportProblem"></textarea>
-            <input type="button" value="Report a Problem" runat="server" id="btnReportProblem" class="report btn red" onclick="reportIssue()" />
-          </div>
-          <p></p>
-        </div>
+        
       </div>
     </div><!-- /right column -->
 
@@ -495,7 +504,7 @@
     </script>
 
     <script type="text/template" id="template_subjectkeyword">
-      <a target="_blank" class="blockLink" href='/Search.aspx?q="{text}"'>{text}</a>
+      <a target="_blank" class="blockLink" href='/Search.aspx?text="{text}"'>{text}</a>
     </script>
 
     <script type="text/template" id="template_suggestedsubject">
@@ -508,14 +517,14 @@
 
     <script type="text/template" id="template_paradataIcon">
       <div class="paradataIcon" title="{title}">
-        <img {img} />
+        <img alt=''  {img} />
         <div>{text}</div>
       </div>
     </script>
 
     <script type="text/template" id="template_badge">
       <div class="badge">
-        <a href="/Libraries/Library.aspx?id={id}" title="{title}" target="_blank"><img {img} /></a>
+        <a href="/Libraries/Library.aspx?id={id}" title="{title}" target="_blank"><img alt=''  {img} /></a>
       </div>
     </script>
 
@@ -543,7 +552,7 @@
         </div>
         <div class="myScore" data-standard="{standardID}">
           <select class="standardRatingDDL">
-            <option value="null" selected="selected">This Resource's alignment to this Standard is...</option>
+            <option value="null" selected="selected">This resource's alignment to this standard is...</option>
             <option value="1">Very Weak</option>
             <option value="2">Limited</option>
             <option value="3">Strong</option>
@@ -556,7 +565,7 @@
 
     <script type="text/template" id="template_listedStandard">
       <div class="listedStandard lightbox" data-standardid="{standardID}">
-        <h3>{alignment}: {title}</h3>
+        <h3>{alignment}: <a href="/search?text=standard:{title}" target="_blank">{title}</a></h3>
         <p>{description}</p>
       </div>
     </script>
@@ -564,7 +573,7 @@
     <script type="text/template" id="template_moreLikeThis">
       <div class="resourceLikeThis lightbox">
         <h3><a href="/Resource/{rid}/{urlTitle}" target="_blank">{title}</a></h3>
-        <a class="mltThumbnail" href="/Resource/{rid}/{urlTitle}" target="_blank"><img src="//ioer.ilsharedlearning.org/OERThumbs/large/{intID}-large.png" /></a>
+        <a class="mltThumbnail" href="/Resource/{rid}/{urlTitle}" target="_blank"><img alt='' src="//ioer.ilsharedlearning.org/OERThumbs/large/{intID}-large.png" /></a>
         <p>{description}</p>
       </div>
     </script>
@@ -572,7 +581,7 @@
     <script type="text/template" id="template_evaluation_rubric">
       <div class="evaluation rubric lightbox" data-requiresCertification="{requiresCert}">
         <h3>{title}</h3>
-        <p class="pleaseLogin">{evalText}</p>
+        <!--<p class="pleaseLogin">{evalText}</p>-->
         <h3>Overall Scores</h3>
         {overallRatings}
         <h3>Score Breakdown</h3>
@@ -628,7 +637,7 @@
     <script type="text/template" id="template_doRating">
       <div class="doRating">
         <select id="standardRating_{standardID}">
-          <option value="-1" selected="selected">This Resource's alignment to this Standard is...</option>
+          <option value="-1" selected="selected">This resource's alignment to this standard is...</option>
           <option value="0">Very Weak</option>
           <option value="34">Limited</option>
           <option value="67">Strong</option>
@@ -644,5 +653,5 @@
 <asp:Panel ID="Panel1" runat="server" Visible="false">
     <!-- set to blank to allow any one to update -->
   <asp:Literal ID="txtGeneralSecurity" runat="server" Visible="false"></asp:Literal>
-    <asp:Literal ID="txtFormSecurityName" runat="server" Visible="false">ILPathways.LRW.Pages.ResourceDetail</asp:Literal>
+    <asp:Literal ID="txtFormSecurityName" runat="server" Visible="false">IOER.Pages.ResourceDetail</asp:Literal>
 </asp:Panel>

@@ -5,12 +5,12 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
-using ILPathways.Library;
+using IOER.Library;
 using System.Web.Script.Serialization;
 using LRWarehouse.DAL;
 using System.Data;
 
-namespace ILPathways.LRW.controls
+namespace IOER.LRW.controls
 {
     public partial class ConditionsOfUseSelector : BaseUserControl
     {

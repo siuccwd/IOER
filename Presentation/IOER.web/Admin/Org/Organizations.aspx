@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Organzation Management" Language="C#" MasterPageFile="~/Masters/Responsive.Master" AutoEventWireup="true" CodeBehind="Organizations.aspx.cs" Inherits="ILPathways.Admin.Org.Organizations" %>
+﻿<%@ Page Title="Organzation Management" Language="C#" MasterPageFile="~/Masters/Responsive2.Master" AutoEventWireup="true" CodeBehind="Organizations.aspx.cs" Inherits="ILPathways.Admin.Org.Organizations" %>
 
 <%@ Register Src="~/Controls/OrgMgmt/OrganizationMgmt.ascx" TagPrefix="uc1" TagName="OrganizationMgmt" %>
 <%@ Register Src="~/Controls/OrgMgmt/Import.ascx" TagPrefix="uc1" TagName="Import" %>
@@ -19,7 +19,7 @@
 
 <asp:Content ID="Content2" ContentPlaceHolderID="BodyContent" runat="server">
   <script type="text/javascript">
-      $("form").removeAttr("onsubmit");
+      //$("form").removeAttr("onsubmit");
   </script>
 
  <ajaxToolkit:ToolkitScriptManager runat="Server" EnablePartialRendering="true" ID="ScriptManager1" />
@@ -29,6 +29,7 @@
 
     <div class="span11" style="padding-left: 50px;">
         <h2 style="text-align: center;font-size: 150%;"><asp:Literal ID="litOrgTitle" runat="server"></asp:Literal></h2>
+
 <ajaxToolkit:TabContainer ID="TabContainer1" runat="server" ActiveTabIndex="0">
 <ajaxToolkit:TabPanel runat="server" ID="tabSummary" HeaderText="Search">
 		<ContentTemplate>            
@@ -68,10 +69,8 @@
 		<!-- -->
 		<div  class="labelColumn">&nbsp;</div >
 		<div class="dataColumn">
-				<asp:button id="SearchButton" runat="server" text="Search" cssclass="defaultButton" onclick="SearchButton_Click" CausesValidation="false"></asp:button>&nbsp;&nbsp;&nbsp; 
-        				&nbsp;&nbsp;&nbsp;
-<%--            <asp:button id="Button1" runat="server" CssClass="defaultButton"  CommandName="New" 
-				OnCommand="FormButton_Click" Text="New Query" causesvalidation="false"></asp:button>--%>
+				<asp:button id="SearchButton" runat="server" text="Search" cssclass="defaultButton" onclick="SearchButton_Click" CausesValidation="false"></asp:button>
+
 		</div>
 		
 </div>
@@ -103,8 +102,9 @@
 		<columns>
 			<asp:TemplateField HeaderText="Select">
 				<ItemTemplate>
-				 <asp:LinkButton ID="selectButton" CommandArgument='<%# Eval("Id") %>' CommandName="SelectRow" CausesValidation="false" runat="server">
+				 <asp:LinkButton ID="selectButton" CommandArgument='<%# Eval("Id") %>' CommandName="SelectRow" CausesValidation="false" Visible="true" runat="server">
 					 Select</asp:LinkButton>
+                    <a style="display:none;" href="/MyOrganizations/?rid=<%#Eval("RowId")%>" class="title" >Select</a>
 				</ItemTemplate>
 			</asp:TemplateField>
 		    <asp:boundfield datafield="Name" headertext="Organization" sortexpression="Name"></asp:boundfield>	
@@ -114,7 +114,8 @@
 				<ItemTemplate>
 					<%# Eval( "AddressToString" )%>  
 				</ItemTemplate>
-			</asp:TemplateField>					
+			</asp:TemplateField>	
+            <asp:boundfield datafield="EmailDomain" headertext="Email Domain" sortexpression=""></asp:boundfield>					
 			<asp:boundfield datafield="MainPhoneFormatted" headertext="Main Phone" sortexpression=""></asp:boundfield>			
 			<asp:TemplateField HeaderText="Last Updated"  sortexpression="LastUpdated">
 				<ItemTemplate>
@@ -220,6 +221,12 @@
 
                                 </ItemTemplate>
                             </asp:TemplateField>
+
+                            <asp:TemplateField HeaderText="Profile">
+				                <ItemTemplate>
+				                 <a href="/Profile/<%#Eval("UserId")%>/<%# Eval("FirstName") %>&nbsp;<%# Eval("LastName") %>" target="profPage"  >Profile Page</a>
+				                </ItemTemplate>
+			                </asp:TemplateField>
                             <asp:TemplateField HeaderText="Org. Member Type"  >
                                 <EditItemTemplate>
                                     <asp:DropDownList ID="gridDdlOrgMbrType" Visible="false" runat="server"></asp:DropDownList>
@@ -266,7 +273,16 @@
                 <h3>Account:</h3>
     <div  class="labelColumn">Userid</div>
     <div  class="dataColumn"><asp:Label ID="lblUserId" runat="server" >0</asp:Label></div>
-    
+    <asp:Panel ID="profileLinkPanel" Visible="false" runat="server">
+        <div class="labelColumn"><asp:Label ID="Label9" AssociatedControlID="profileLink"  runat="server" >Dashboard</asp:Label></div>
+        <div class="dataColumn"><asp:HyperLink ID="profileLink" Text="Profile Page" Target="profPage" runat="server"></asp:HyperLink></div>
+        <div class="clearFloat"></div>
+       <%-- <div class="labelColumn"><asp:Label ID="Label10" AssociatedControlID="libraryLink"  runat="server" >Library</asp:Label></div>
+        <div class="dataColumn"><asp:HyperLink ID="libraryLink" Text="Personal Library" runat="server"></asp:HyperLink></div>
+        <div class="clearFloat"></div>--%>
+    </asp:Panel>
+
+                
                 <asp:Panel ID="existingMbrOptionPanel" Visible="false" runat="server">
                     <div style="display: none;"><asp:Label ID="lblAddMbrUserId" runat="server" >0</asp:Label></div>
                     <div class="labelTop">The entered user aleady has an account and is NOT associated with this organization.<br />If you just want to add this person to your organization, click the <strong>Add to Organization</strong> button below. Otherwise, change the entered information.</div>
@@ -330,7 +346,7 @@
             </asp:Panel>
 		</ContentTemplate>
 	</ajaxToolkit:TabPanel>
-    <ajaxToolkit:TabPanel ID="RequestsPanel"  HeaderText="Requests" runat="server"  >
+    <ajaxToolkit:TabPanel ID="RequestsPanel"  HeaderText="Requests" runat="server"  Visible="false" >
 		<ContentTemplate>
             <asp:Panel ID="Panel1" CssClass="memberPanel" Visible="true" runat="server">
             <p>Future use - to handle requests to join the current organization</p>
@@ -344,8 +360,11 @@
 </div>
 
 <asp:Panel ID="hiddenPanel" runat="server" Visible="false">
+    <asp:Literal ID="formSecurityName" runat="server" Visible="false">ILPathways.Admin.Org.Organizations</asp:Literal>
 <asp:Literal ID="currentOrgId" runat="server" Visible="false">0</asp:Literal>
 <asp:Literal ID="doingBccOnRegistration" runat="server" Visible="false">yes</asp:Literal>
+<asp:Literal ID="profileUrl" runat="server" Visible="false">/Profile/{0}/{1}</asp:Literal>
+<asp:Literal ID="libraryUrl" runat="server" Visible="false">/Library/{0}/{1}</asp:Literal>
 
 <asp:Label ID="userAddConfirmation" runat="server">The user account for {0} was created and an email was sent with a link to activate the account.</asp:Label>
 <asp:Label ID="noticeSubject" runat="server">{0} added you to an "Illinois Open Educational Resources" organization</asp:Label>
@@ -381,5 +400,8 @@ User Name (email): {0}
 </asp:Label>
 
     <asp:Literal ID="userExistsMessage" runat="server" >"Error: an account already exist for the entered email address.<br/>Do you want to just add this person to your organization using the entered member type and role(s)?: <br/>{0}, <br/>Registered: {1}.<p>Click the <strong>Add User to organization</strong> button below to add user to this organization.</p></asp:Literal>
+
+<!-- filter to only show orgs where user is an admin, or account admin-->
+<asp:Literal ID="orgAdminFilter" runat="server" >( base.Id in (SELECT  OrgId FROM [OrganizationMember.RoleIdCSV] where ([IsAdmin] = 1 or [IsAccountAdmin] = 1) AND  UserId = {0})) </asp:Literal>
 </asp:Panel>
 </asp:Content>

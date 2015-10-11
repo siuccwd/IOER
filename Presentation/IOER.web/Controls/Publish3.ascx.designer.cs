@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ILPathways.Controls {
+namespace IOER.Controls {
     
     
     public partial class Publish3 {
@@ -73,7 +73,7 @@ namespace ILPathways.Controls {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ILPathways.LRW.controls.ListPanel ddlLanguage;
+        protected global::IOER.LRW.controls.ListPanel ddlLanguage;
         
         /// <summary>
         /// ddlAccessRights control.
@@ -82,7 +82,7 @@ namespace ILPathways.Controls {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ILPathways.LRW.controls.ListPanel ddlAccessRights;
+        protected global::IOER.LRW.controls.ListPanel ddlAccessRights;
         
         /// <summary>
         /// usageRightsSelector control.
@@ -91,7 +91,7 @@ namespace ILPathways.Controls {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ILPathways.LRW.controls.ConditionsOfUseSelector usageRightsSelector;
+        protected global::IOER.LRW.controls.ConditionsOfUseSelector usageRightsSelector;
         
         /// <summary>
         /// txtCreator control.
@@ -127,7 +127,7 @@ namespace ILPathways.Controls {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ILPathways.Controls.StandardsBrowser7 standardsBrowser;
+        protected global::IOER.Controls.StandardsBrowser7 standardsBrowser;
         
         /// <summary>
         /// hdnStandards control.
@@ -145,7 +145,7 @@ namespace ILPathways.Controls {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ILPathways.LRW.controls.ListPanel cbxlResourceType;
+        protected global::IOER.LRW.controls.ListPanel cbxlResourceType;
         
         /// <summary>
         /// cbxlMediaType control.
@@ -154,7 +154,7 @@ namespace ILPathways.Controls {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ILPathways.LRW.controls.ListPanel cbxlMediaType;
+        protected global::IOER.LRW.controls.ListPanel cbxlMediaType;
         
         /// <summary>
         /// cbxlK12Subject control.
@@ -163,7 +163,7 @@ namespace ILPathways.Controls {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ILPathways.LRW.controls.ListPanel cbxlK12Subject;
+        protected global::IOER.LRW.controls.ListPanel cbxlK12Subject;
         
         /// <summary>
         /// cbxlEducationalUse control.
@@ -172,7 +172,7 @@ namespace ILPathways.Controls {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ILPathways.LRW.controls.ListPanel cbxlEducationalUse;
+        protected global::IOER.LRW.controls.ListPanel cbxlEducationalUse;
         
         /// <summary>
         /// cbxlCareerCluster control.
@@ -181,7 +181,7 @@ namespace ILPathways.Controls {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ILPathways.LRW.controls.ListPanel cbxlCareerCluster;
+        protected global::IOER.LRW.controls.ListPanel cbxlCareerCluster;
         
         /// <summary>
         /// cbxlGradeLevel control.
@@ -190,7 +190,7 @@ namespace ILPathways.Controls {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ILPathways.LRW.controls.ListPanel cbxlGradeLevel;
+        protected global::IOER.LRW.controls.ListPanel cbxlGradeLevel;
         
         /// <summary>
         /// cbxlEndUser control.
@@ -199,7 +199,7 @@ namespace ILPathways.Controls {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ILPathways.LRW.controls.ListPanel cbxlEndUser;
+        protected global::IOER.LRW.controls.ListPanel cbxlEndUser;
         
         /// <summary>
         /// cbxlGroupType control.
@@ -208,7 +208,7 @@ namespace ILPathways.Controls {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ILPathways.LRW.controls.ListPanel cbxlGroupType;
+        protected global::IOER.LRW.controls.ListPanel cbxlGroupType;
         
         /// <summary>
         /// worknet_qualify control.

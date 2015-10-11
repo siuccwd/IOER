@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ILPathways.Controls.AppItems {
+namespace IOER.Controls.AppItems {
     
     
     public partial class NewsItemSearch {
@@ -64,7 +64,7 @@ namespace ILPathways.Controls.AppItems {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ILPathways.Controls.AppItems.AnnouncementSubscribe2 NewsSubscribe;
+        protected global::IOER.Controls.AppItems.AnnouncementSubscribe2 NewsSubscribe;
         
         /// <summary>
         /// searchPanel control.

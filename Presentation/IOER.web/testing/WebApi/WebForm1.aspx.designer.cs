@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ILPathways.testing.WebApi
+namespace IOER.testing.WebApi
 {
 
 

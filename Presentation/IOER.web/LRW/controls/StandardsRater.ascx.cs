@@ -7,7 +7,7 @@ using System.Web.UI.WebControls;
 
 using System.Web.Script.Serialization;
 
-namespace ILPathways.LRW.controls
+namespace IOER.LRW.controls
 {
     public partial class StandardsRater : System.Web.UI.UserControl
     {

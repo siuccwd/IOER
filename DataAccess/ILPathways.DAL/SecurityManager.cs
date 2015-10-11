@@ -51,29 +51,29 @@ namespace ILPathways.DAL
         /// <param name="pId"></param>
         /// <param name="statusMessage"></param>
         /// <returns></returns>
-        public static bool AppGroupMemberDelete( int pId, ref string statusMessage )
-        {
-            string connectionString = GatewayConnection();
-            bool successful = false;
+		//public static bool AppGroupMemberDelete( int pId, ref string statusMessage )
+		//{
+		//	string connectionString = GatewayConnection();
+		//	bool successful = false;
 
-            SqlParameter[] sqlParameters = new SqlParameter[ 1 ];
-            sqlParameters[ 0 ] = new SqlParameter( "@id", SqlDbType.Int );
-            sqlParameters[ 0 ].Value = pId;
+		//	SqlParameter[] sqlParameters = new SqlParameter[ 1 ];
+		//	sqlParameters[ 0 ] = new SqlParameter( "@id", SqlDbType.Int );
+		//	sqlParameters[ 0 ].Value = pId;
 
-            try
-            {
-                SqlHelper.ExecuteNonQuery( connectionString, CommandType.StoredProcedure, "[AppGroup.MemberDelete]", sqlParameters );
-                successful = true;
-            }
-            catch ( Exception ex )
-            {
-                LogError( ex, className + ".Delete() " );
-                statusMessage = className + "- Unsuccessful: Delete(): " + ex.Message.ToString();
+		//	try
+		//	{
+		//		SqlHelper.ExecuteNonQuery( connectionString, CommandType.StoredProcedure, "[AppGroup.MemberDelete]", sqlParameters );
+		//		successful = true;
+		//	}
+		//	catch ( Exception ex )
+		//	{
+		//		LogError( ex, className + ".Delete() " );
+		//		statusMessage = className + "- Unsuccessful: Delete(): " + ex.Message.ToString();
 
-                successful = false;
-            }
-            return successful;
-        }//
+		//		successful = false;
+		//	}
+		//	return successful;
+		//}//
 
         /// <summary>
         /// Add an GroupMember record - first use the group code to lookup the groupId
@@ -85,7 +85,7 @@ namespace ILPathways.DAL
         public static int AppGroupMemberCreate( GroupMember entity, string groupCode, ref string statusMessage )
         {
 
-            AppGroup group = GatewayManager.AppGroupGetByCode( groupCode );
+			AppGroup group = GroupManager.GetByCode( groupCode );
             if ( group == null || group.Id == 0 )
             {
                 //??
@@ -111,77 +111,82 @@ namespace ILPathways.DAL
            
         }
 
+        #endregion
+
+        #region ApplicationGroupPrivilege
+
         /// <summary>
-        /// Add an WorkNetGroupPrivilege record
+        /// Select all object privileges for groupId
         /// </summary>
-        /// <param name="entity">WorkNetGroupPrivilege</param>
+        /// <param name="groupId"></param>
         /// <param name="statusMessage"></param>
         /// <returns></returns>
-        public static int ApplicationGroupPrivilegeCreate( ApplicationGroupPrivilege entity, ref string statusMessage )
+        public static DataSet ApplicationGroupPrivilege_Select( int groupId )
         {
             string connectionString = GatewayConnection();
-            int newId = 0;
 
             #region parameters
-            SqlParameter[] sqlParameters = new SqlParameter[ 11 ];
-            sqlParameters[ 0 ] = new SqlParameter( "@GroupId", SqlDbType.Int );
-            sqlParameters[ 0 ].Value = entity.GroupId;
-
-            sqlParameters[ 1 ] = new SqlParameter( "@ObjectId", SqlDbType.Int );
-            sqlParameters[ 1 ].Value = entity.ObjectId;
-
-            sqlParameters[ 2 ] = new SqlParameter( "@CreatePrivilege", SqlDbType.Int );
-            sqlParameters[ 2 ].Value = entity.CreatePrivilege;
-
-            sqlParameters[ 3 ] = new SqlParameter( "@ReadPrivilege", SqlDbType.Int );
-            sqlParameters[ 3 ].Value = entity.ReadPrivilege;
-
-            sqlParameters[ 4 ] = new SqlParameter( "@WritePrivilege", SqlDbType.Int );
-            sqlParameters[ 4 ].Value = entity.WritePrivilege;
-
-            sqlParameters[ 5 ] = new SqlParameter( "@DeletePrivilege", SqlDbType.Int );
-            sqlParameters[ 5 ].Value = entity.DeletePrivilege;
-
-            sqlParameters[ 6 ] = new SqlParameter( "@AppendPrivilege", SqlDbType.Int );
-            sqlParameters[ 6 ].Value = entity.AppendPrivilege;
-
-            sqlParameters[ 7 ] = new SqlParameter( "@AppendToPrivilege", SqlDbType.Int );
-            sqlParameters[ 7 ].Value = entity.AppendToPrivilege;
-
-            sqlParameters[ 8 ] = new SqlParameter( "@AssignPrivilege", SqlDbType.Int );
-            sqlParameters[ 8 ].Value = entity.AssignPrivilege;
-
-            sqlParameters[ 9 ] = new SqlParameter( "@ApprovePrivilege", SqlDbType.Int );
-            sqlParameters[ 9 ].Value = entity.ApprovePrivilege;
-
-            sqlParameters[ 10 ] = new SqlParameter( "@SharePrivilege", SqlDbType.Int );
-            sqlParameters[ 10 ].Value = entity.SharePrivilege;
+            SqlParameter[] sqlParameters = new SqlParameter[ 1 ];
+            sqlParameters[ 0 ] = new SqlParameter( "@GroupId", groupId);
 
             #endregion
-
-            try
+            using ( SqlConnection conn = new SqlConnection( ContentConnectionRO() ) )
             {
-                SqlDataReader dr = SqlHelper.ExecuteReader( connectionString, CommandType.StoredProcedure, "[AppGroup.PrivilegeInsert]", sqlParameters );
-                if ( dr.HasRows )
+                DataSet ds = new DataSet();
+                try
                 {
-                    dr.Read();
-                    newId = int.Parse( dr[ 0 ].ToString() );
+                    ds = SqlHelper.ExecuteDataset( conn, CommandType.StoredProcedure, "[AppGroup.PrivilegeSelect]", sqlParameters );
+
+                    if ( ds.HasErrors )
+                    {
+                        return null;
+                    }
+                    return ds;
                 }
-                dr.Close();
-                dr = null;
-                statusMessage = "successful";
+                catch ( Exception ex )
+                {
+                    LogError( ex, className + ".ApplicationGroupPrivilege_Select() " );
+                    return null;
 
+                }
             }
-            catch ( Exception ex )
+        } //
+
+        /// <summary>
+        /// Get application objects not currently in passed group
+        /// </summary>
+        /// <param name="groupId"></param>
+        /// <returns></returns>
+        public static DataSet ApplicationGroupPrivilege_SelectNotInGroup( int groupId )
+        {
+            string connectionString = GatewayConnection();
+
+            #region parameters
+            SqlParameter[] sqlParameters = new SqlParameter[ 1 ];
+            sqlParameters[ 0 ] = new SqlParameter( "@GroupId", groupId );
+
+            #endregion
+            using ( SqlConnection conn = new SqlConnection( ContentConnectionRO() ) )
             {
-                LogError( ex, className + ".Create() " );
-                statusMessage = className + "- Unsuccessful: Create(): " + ex.Message.ToString();
-                entity.Message = statusMessage;
-                entity.IsValid = false;
-            }
+                DataSet ds = new DataSet();
+                try
+                {
+                    ds = SqlHelper.ExecuteDataset( conn, CommandType.StoredProcedure, "[ApplicationObject.SelectNotInGroup]", sqlParameters );
 
-            return newId;
-        }
+                    if ( ds.HasErrors )
+                    {
+                        return null;
+                    }
+                    return ds;
+                }
+                catch ( Exception ex )
+                {
+                    LogError( ex, className + ".ApplicationGroupPrivilege_SelectNotInGroup() " );
+                    return null;
+
+                }
+            }
+        } //
 
         #endregion
 
@@ -215,7 +220,7 @@ namespace ILPathways.DAL
                 //probably need to check regardless - in case higher privileges thru org
                 if ( entity.RoleId == 0 || hasOrgs )
                 {
-                    DoTrace( 2, className + "GetUserGroupObjectPrivileges. HasOrgs: " + hasOrgs.ToString() );
+                    DoTrace( 7, className + "GetUserGroupObjectPrivileges. HasOrgs: " + hasOrgs.ToString() );
                    
                     bool mainOrgInList = false;
                     string orgList = "";
@@ -551,7 +556,7 @@ namespace ILPathways.DAL
         /// <returns></returns>
         public static ApplicationRolePrivilege GetGroupOrglistObjectPrivileges( SqlConnection sqlConnection, ApplicationRolePrivilege userPrivilege, string orgList, string objectName )
         {
-            DoTrace( 2, className + "GetGroupOrgObjectPrivileges. orgList: " + orgList.ToString() );
+            DoTrace( 6, className + "GetGroupOrgObjectPrivileges. orgList: " + orgList.ToString() );
 
             ApplicationRolePrivilege entity = new ApplicationRolePrivilege();
             if ( orgList.Trim().Length == 0 )

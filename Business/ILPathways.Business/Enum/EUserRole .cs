@@ -33,21 +33,21 @@ namespace ILPathways.Business
         /// <summary>
         /// Indicates a Lwia Coordinator.
         /// </summary>
-        LwiaCoordinator = 10,
+       // LwiaCoordinator = 10,
 
         /// <summary>
         /// Indicates a Lwia Manager.
         /// </summary>
-        LwiaManager = 11,
+      //  LwiaManager = 11,
 
         /// <summary>
         /// Indicates a Business Account Manager
         /// </summary>
-        BusinessAccountManager = 13,
+      //  BusinessAccountManager = 13,
         /// <summary>
         /// Indicates a Lwia Staff.
         /// </summary>
-        LwiaStaff = 15,
+     //   LwiaStaff = 15,
 
         /// <summary>
         /// Indicates an Organization Administrator/manager - can view/update all projects associated with organization.

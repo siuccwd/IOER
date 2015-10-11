@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ILPathways.Masters {
+namespace IOER.Masters {
     
     
     public partial class Plain {

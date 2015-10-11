@@ -5,12 +5,12 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
-using ILPathways.Library;
+using IOER.Library;
 using System.Web.Script.Serialization;
 using Isle.BizServices;
 using Isle.DTO;
 
-namespace ILPathways.Controls
+namespace IOER.Controls
 {
   public partial class Splash2 : BaseUserControl
   {
@@ -39,7 +39,7 @@ namespace ILPathways.Controls
 
     public void GetCommunityPosts()
     {
-      communityPosts = new ILPathways.Services.CommunityService().GetRecentPosts( 1, 5 );
+      communityPosts = new IOER.Services.CommunityService().GetRecentPosts( 1, 5 );
     }
 
 

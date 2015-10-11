@@ -1,11 +1,8 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Masters/Responsive.Master" AutoEventWireup="true" CodeBehind="Default.aspx.cs" Inherits="ILPathways.Organizations.Default" %>
+﻿<%@ Page Title="Illinois Open Educational Resources - Organizations" Language="C#" MasterPageFile="~/Masters/Responsive.Master" AutoEventWireup="true" CodeBehind="Default.aspx.cs" Inherits="IOER.Organizations.Default" %>
 
-<%@ Register Src="~/Controls/OrgMgmt/OrgSearch.ascx" TagPrefix="uc1" TagName="OrgSearch" %>
+<%@ Register Src="~/Organizations/controls/OrganizationManagement.ascx" TagPrefix="uc1" TagName="OrganizationManagement" %>
 
-
-<asp:Content ID="Content1" ContentPlaceHolderID="HeadContent" runat="server">
-</asp:Content>
+<asp:Content ID="Content1" ContentPlaceHolderID="HeadContent" runat="server"></asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="BodyContent" runat="server">
-
-    <uc1:OrgSearch runat="server" ID="OrgSearch" />
+    <uc1:OrganizationManagement runat="server" id="orgManager" />
 </asp:Content>

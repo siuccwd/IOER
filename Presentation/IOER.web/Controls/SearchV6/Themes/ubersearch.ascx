@@ -1,12 +1,12 @@
-﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="ubersearch.ascx.cs" Inherits="ILPathways.Controls.SearchV6.Themes.ubersearch" %>
+﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="ubersearch.ascx.cs" Inherits="IOER.Controls.SearchV6.Themes.ubersearch" %>
 
 <script type="text/javascript">
   var keywordSchemas = ["gradeLevel", "learningResourceType", "mediaType", "k12Subject"];
 </script>
 <style type="text/css">
   /* Search Header */
-  #btnToggleFilters { background-color: <%=MainColorHex %>; color: #FFF; }
-  #btnToggleFilters.expanded { background-color: #9984BD; }
+  #buttons input { background-color: <%=MainColorHex %>; color: #FFF; }
+  #buttons input.expanded { background-color: #9984BD; }
 
   /* Filters */
   #filters #categories input { background-color: rgba(<%=MainColor.R %>,<%=MainColor.G %>,<%=MainColor.B %>, 0.9); color: #FFF; }

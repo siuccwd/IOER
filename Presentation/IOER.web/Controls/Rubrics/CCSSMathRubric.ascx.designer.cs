@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ILPathways.Controls.Rubrics {
+namespace IOER.Controls.Rubrics {
     
     
     public partial class CCSSMathRubric {

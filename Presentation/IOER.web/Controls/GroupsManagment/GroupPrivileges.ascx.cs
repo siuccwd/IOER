@@ -6,27 +6,28 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
-using ILPathways.Library;
+using IOER.Library;
 using ILPathways.Utilities;
 //using ILPathways.DAL;
 using ILPathways.Business;
 using ILPathways.Common;
-using ILPathways.Controllers;
+using IOER.Controllers;
 using BDM = LRWarehouse.DAL.BaseDataManager;
 using MyManager = Isle.BizServices.SecurityManager;
 using UserManager = Isle.BizServices.AccountServices;
 using GroupManager = Isle.BizServices.GroupServices;
-using MyGroupController = ILPathways.Controllers.GroupsManagementController;
+//using MyGroupController = IOER.Controllers.MyManager;
 
-namespace ILPathways.Controls.GroupsManagment
+namespace IOER.Controls.GroupsManagment
 {
-    public partial class GroupPrivileges : GroupsManagementController
+    public partial class GroupPrivileges : BaseUserControl
     {
         /// <summary>
         /// Set constant for this control to be used in log messages, etc
         /// </summary>
         const string thisClassName = "GroupPrivileges";
         MyManager mgr = new MyManager();
+		GroupManager grpMgr = new GroupManager();
 
         #region Properties
         /// <summary>
@@ -46,7 +47,7 @@ namespace ILPathways.Controls.GroupsManagment
             get { return this._currentGroupSessionCode; }
             set { this._currentGroupSessionCode = value; }
         }
-        private string _currentGroupSessionCode = GroupsManagementController.CONTROLLER_CURRENT_GROUP;
+		private string _currentGroupSessionCode = GroupManager.CONTROLLER_CURRENT_GROUP;
 
         /// <summary>
         /// INTERNAL PROPERTY: CurrentRecord
@@ -84,7 +85,7 @@ namespace ILPathways.Controls.GroupsManagment
 
         protected void Page_Load( object sender, EventArgs e )
         {
-            this.InstanceGroupCode = CurrentGroupSessionCode;
+            //this.InstanceGroupCode = CurrentGroupSessionCode;
             //get current user
             CurrentUser = GetAppUser();
 
@@ -149,16 +150,16 @@ namespace ILPathways.Controls.GroupsManagment
 
             try
             {
-                if ( CurrentGroupExists() )
+				if ( grpMgr.CurrentGroupExists() )
                 {
-                    if ( CurrentGroup.Id > 0 )
+					if ( grpMgr.CurrentGroup.Id > 0 )
                     {
                         objectPrivilegesPanel.Visible = true;
-                        if ( CurrentGroup.Id.ToString() != txtGroupId.Text )
+						if ( grpMgr.CurrentGroup.Id.ToString() != txtGroupId.Text )
                         {
-                            txtGroupId.Text = CurrentGroup.Id.ToString();
-                            SetFormSelectList( CurrentGroup.Id );
-                            SetObjectsList( CurrentGroup.Id );
+							txtGroupId.Text = grpMgr.CurrentGroup.Id.ToString();
+							SetFormSelectList( grpMgr.CurrentGroup.Id );
+							SetObjectsList( grpMgr.CurrentGroup.Id );
                             ResetForm();
 
                         }
@@ -199,7 +200,7 @@ namespace ILPathways.Controls.GroupsManagment
 
             try
             {
-                //LastActiveAccordianPane = GroupsManagementController.CONTROLLER_PANE_PRIVILEGES;
+                //LastActiveAccordianPane = MyManager.CONTROLLER_PANE_PRIVILEGES;
                 int id = int.Parse( this.lstForm.SelectedValue );
 
                 this.Get( id );
@@ -306,7 +307,7 @@ namespace ILPathways.Controls.GroupsManagment
         public void FormButton_Click( Object sender, CommandEventArgs ex )
         {
             //TODO - these hard-coded indices assume all panes are visible. this refers to the 4th pane, but if an auth group,only 3 panes actually show!!
-           // LastActiveAccordianPane = GroupsManagementController.CONTROLLER_PANE_PRIVILEGES;
+           // LastActiveAccordianPane = MyManager.CONTROLLER_PANE_PRIVILEGES;
 
             switch ( ex.CommandName )
             {
@@ -536,8 +537,8 @@ namespace ILPathways.Controls.GroupsManagment
         {
             //reset form by populating with an empty business object
             ApplicationGroupPrivilege entity = new ApplicationGroupPrivilege();
-            if ( CurrentGroup != null && CurrentGroup.Id > 0 )
-                entity.GroupId = CurrentGroup.Id;
+			if ( grpMgr.CurrentGroup != null && grpMgr.CurrentGroup.Id > 0 )
+				entity.GroupId = grpMgr.CurrentGroup.Id;
 
             PopulateForm( entity );
 
@@ -584,16 +585,15 @@ namespace ILPathways.Controls.GroupsManagment
 
         private void SetObjectsList()
         {
-            SetObjectsList( CurrentGroup.Id );
+			SetObjectsList( grpMgr.CurrentGroup.Id );
 
         } //
 
         private void SetObjectsList( int groupId )
         {
             //string sql = string.Format( this.selectAvailableObjectsSql.Text, groupId );
-            //DataSet ds = DatabaseManager.DoQuery( sql );
-            ////DataSet ds = WorkNetObjectManager.Select();
-            //MyManager.PopulateList( ddlObject, ds, "Id", "DisplayName", "Select an Object" );
+            DataSet ds = MyManager.ApplicationGroupPrivilege_SelectNotInGroup( groupId );
+            BaseDataManager.PopulateList( ddlObject, ds, "Id", "DisplayName", "Select an Object" );
 
         } //
 
@@ -613,8 +613,8 @@ namespace ILPathways.Controls.GroupsManagment
         {
 
             //get current privileges using current group
-            //DataSet ds = MyManager.Select( groupId, 0 );
-            //MyManager.PopulateList( lstForm, ds, "Id", "DisplayName", "Select an Existing Object" );
+            DataSet ds = MyManager.ApplicationGroupPrivilege_Select( groupId );
+            BaseDataManager.PopulateList( lstForm, ds, "Id", "DisplayName", "Select an Existing Object" );
 
             //now set only to those not in current list
             //TBD

@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="Default.aspx.cs" Inherits="ILPathways.Widgets.FullSearch.Default" MasterPageFile="/Masters/Plain.Master" %>
+﻿<%@ Page Title="Illinois Open Educational Resources - Search Widget" Language="C#" AutoEventWireup="true" CodeBehind="Default.aspx.cs" Inherits="IOER.Widgets.FullSearch.Default" MasterPageFile="/Masters/Plain.Master" %>
 <%@ Register TagPrefix="uc1" TagName="Search" Src="/Controls/SearchV6/SearchV6.ascx" %>
 
 <asp:Content ContentPlaceHolderID="HeadContent" runat="server"></asp:Content>

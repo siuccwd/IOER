@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
+using ILPathways.Business;
 using LRWarehouse.Business;
-using ILPathways.Services;
+using IOER.Services;
 using Isle.BizServices;
 
-namespace ILPathways.Services.AdminService1Components
+namespace IOER.Services.AdminService1Components
 {
   public class Library : IManageObject
   {
@@ -38,7 +39,7 @@ namespace ILPathways.Services.AdminService1Components
       var data = service.LibraryMembers_GetAll( manageID, privilegeID );
       return GetUserDTOs( data );
     }
-    private List<UserDTO> GetUserDTOs( List<Business.LibraryMember> data )
+    private List<UserDTO> GetUserDTOs( List<LibraryMember> data )
     {
       var results = new List<UserDTO>();
       foreach ( var item in data )

@@ -12,7 +12,7 @@ using ILPathways.Utilities;
 using LRWarehouse.DAL;
 
 
-namespace ILPathways.Controllers
+namespace IOER.Controllers
 {
     public class LResourceDataHelper
     {

@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ILPathways.Widgets.FullSearch {
+namespace IOER.Widgets.FullSearch {
     
     
     public partial class Default {
@@ -19,6 +19,6 @@ namespace ILPathways.Widgets.FullSearch {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ILPathways.Controls.SearchV6.SearchV6 search;
+        protected global::IOER.Controls.SearchV6.SearchV6 search;
     }
 }

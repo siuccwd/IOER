@@ -57,11 +57,7 @@
     <Compile Include="ApplicationRole.cs" />
     <Compile Include="ApplicationRolePrivilege.cs" />
     <Compile Include="BaseBusinessDataEntity.cs" />
-    <Compile Include="Common\BaseBEO.cs" />
-    <Compile Include="Common\BaseNameBEO.cs" />
-    <Compile Include="Common\ExceptionLogBEO.cs" />
     <Compile Include="Communication\EmailNotice.cs" />
-    <Compile Include="Communication\EmailNoticeJob.cs" />
     <Compile Include="Communication\FormMessage.cs" />
     <Compile Include="Communication\GenericMessage.cs" />
     <Compile Include="Community.cs" />

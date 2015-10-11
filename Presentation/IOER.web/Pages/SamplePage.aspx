@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="SamplePage.aspx.cs" Inherits="ILPathways.Pages.SamplePage" %>
+﻿<%@ Page Title="Illinois Open Educational Resources - Sample Site Home Page" Language="C#" AutoEventWireup="true" CodeBehind="SamplePage.aspx.cs" Inherits="IOER.Pages.SamplePage" %>
 
 <!DOCTYPE html>
 

@@ -1,4 +1,4 @@
-﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="StandardsBrowser7.ascx.cs" Inherits="ILPathways.Controls.StandardsBrowser7" %>
+﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="StandardsBrowser7.ascx.cs" Inherits="IOER.Controls.StandardsBrowser7" %>
 
 
 <script type="text/javascript" src="/Scripts/standards/jsonMath-trimmed.js"></script>
@@ -9,21 +9,92 @@
 <script type="text/javascript" src="/Scripts/standards/jsonILPhysicalDevelopment.js"></script>
 <script type="text/javascript" src="/Scripts/standards/jsonILSocialScience.js"></script>
 <script type="text/javascript" src="/Scripts/standards/jsonILSocialEmotional.js"></script>
-<script type="text/javascript" src="/Scripts/standards/jsonILAdultEdReading.js"></script>
-<script type="text/javascript" src="/Scripts/standards/jsonILAdultEdWriting.js"></script>
-<script type="text/javascript" src="/Scripts/standards/jsonILAdultEdMath2.js"></script>
-<script type="text/javascript" src="/Scripts/standards/jsonILAdultEdELA.js"></script>
+<script type="text/javascript" src="/Scripts/standards/jsonILAdultEdMath.js"></script>
+<script type="text/javascript" src="/Scripts/standards/jsonILAdultEdELAReading.js"></script>
+<script type="text/javascript" src="/Scripts/standards/jsonILAdultEdELAWriting.js"></script>
+<script type="text/javascript" src="/Scripts/standards/jsonILAdultEdELASpeakingListening.js"></script>
 <script type="text/javascript" src="/Scripts/standards/jsonILForeignLanguage.js"></script>
 <script type="text/javascript" src="/Scripts/standards/jsonFinance_k12pfe.js"></script>
 <script type="text/javascript" src="/Scripts/standards/jsonFinance_vncse.js"></script>
 <script type="text/javascript" src="/Scripts/standards/jsonFinance_nsfl.js"></script>
+<script type="text/javascript" src="/Scripts/standards/jsonFramework21stCenturyLearning.js"></script>
+<script type="text/javascript" src="/Scripts/standards/jsonRICivics.js"></script>
+<script type="text/javascript" src="/Scripts/standards/jsonRIHistory.js"></script>
+
 <script type="text/javascript">
   var SB7mode = (typeof (SB7mode) == "undefined" ? "tbd" : SB7mode); //search, tag, browse, widget, dev
   var useSecureURL = (typeof (useSecureURL) == "undefined" ? false : useSecureURL);
   var curriculumMode = (typeof (curriculumMode) == "undefined" ? false : curriculumMode); //Determine whether or not to show/use the "major/supporting/additional" standards stuff
-  var inputBodies = { math: "jsonMath", ela: "jsonELA", ngss: "jsonNGSS", nhes: "jsonNHES", ilfinearts: "jsonILFineArts", ilphysicaldevelopment: "jsonILPhysicalDevelopment", ilsocialscience: "jsonILSocialScience", ilsocialemotional: "jsonILSocialEmotional", iladultedreading: "jsonILAdultEdReading", iladultedwriting: "jsonILAdultEdWriting", iladultedmath: "jsonILAdultEdMath", iladultedela: "jsonILAdultEdELA", ilforeignlanguage: "jsonILForeignLanguage", finance_k12pfe: "jsonFinance_k12pfe", finance_vncse: "jsonFinance_vncse", finance_nsfl: "jsonFinance_nsfl" };
-  var prefixes = { jsonMath: "CCSS.Math.Content.", jsonELA: "CCSS.ELA-Literacy.", jsonNHES: "NHES.", jsonNGSS: "NGSS-", jsonILFineArts: "IL.FA.", jsonILPhysicalDevelopment: "IL.PD.", jsonSocialScience: "IL.SS.", jsonILSocialEmotional: "IL.SED.", jsonILAdultEdReading: "IL.ABE.Reading.", jsonILAdultEdWriting: "IL.ABE.Writing.", jsonILAdultEdMath: "IL.ABE.Math.", jsonILAdultEdELA: "IL.ABE.ELA.", jsonILForeignLanguage: "IL.FL.", jsonFinance_k12pfe: "Finance.K12PFE.", jsonFinance_vncse: "Finance.VNCSE.", jsonFinance_nsfl: "Finance.NSFL" };
-  var bodies = { none: null, jsonMath: jsonMath, jsonELA: jsonELA, jsonNHES: jsonNHES, jsonNGSS: jsonNGSS, jsonILFineArts: jsonILFineArts, jsonILPhysicalDevelopment: jsonILPhysicalDevelopment, jsonILSocialScience: jsonILSocialScience, jsonILSocialEmotional: jsonILSocialEmotional, jsonILAdultEdReading: jsonILAdultEdReading, jsonILAdultEdWriting: jsonILAdultEdWriting, jsonILAdultEdMath: jsonILAdultEdMath, jsonILAdultEdELA: jsonILAdultEdELA, jsonILForeignLanguage: jsonILForeignLanguage, jsonFinance_k12pfe: jsonFinance_k12pfe, jsonFinance_vncse: jsonFinance_vncse, jsonFinance_nsfl: jsonFinance_nsfl };
+  var inputBodies = {
+  	math: "jsonMath",
+  	ela: "jsonELA",
+  	ngss: "jsonNGSS",
+  	nhes: "jsonNHES",
+  	ilfinearts: "jsonILFineArts",
+  	ilphysicaldevelopment: "jsonILPhysicalDevelopment",
+  	ilsocialscience: "jsonILSocialScience",
+  	ilsocialemotional: "jsonILSocialEmotional",
+  	//iladultedreading: "jsonILAdultEdReading",
+  	//iladultedwriting: "jsonILAdultEdWriting",
+  	iladultedmath: "jsonILAdultEdMath",
+  	iladultedelareading: "jsonILAdultEdELAReading",
+  	iladultedelawriting: "jsonILAdultEdELAWriting",
+  	iladultedelaspeakinglistening: "jsonILAdultEdELASpeakingListening",
+  	ilforeignlanguage: "jsonILForeignLanguage",
+  	finance_k12pfe: "jsonFinance_k12pfe",
+  	finance_vncse: "jsonFinance_vncse",
+  	finance_nsfl: "jsonFinance_nsfl",
+  	f21cl: "jsonF21CL",
+  	riCivics: "jsonRICivics",
+		riHistory: "jsonRIHistory"
+  };
+  var prefixes = {
+  	jsonMath: "CCSS.Math.Content.",
+  	jsonELA: "CCSS.ELA-Literacy.",
+  	jsonNHES: "NHES.",
+  	jsonNGSS: "NGSS-",
+  	jsonILFineArts: "IL.FA.",
+  	jsonILPhysicalDevelopment: "IL.PD.",
+  	jsonSocialScience: "IL.SS.",
+  	jsonILSocialEmotional: "IL.SED.",
+  	//jsonILAdultEdReading: "IL.ABE.Reading.",
+  	//jsonILAdultEdWriting: "IL.ABE.Writing.",
+  	jsonILAdultEdMath: "IL.ABE.Math.",
+  	jsonILAdultEdELAReading: "IL.ABE.ELA.",
+  	jsonILAdultEdELAWriting: "IL.ABE.ELA.",
+  	jsonILAdultEdELASpeakingListening: "IL.ABE.ELA.",
+  	jsonILForeignLanguage: "IL.FL.",
+  	jsonFinance_k12pfe: "Finance.K12PFE.",
+  	jsonFinance_vncse: "Finance.VNCSE.",
+  	jsonFinance_nsfl: "Finance.NSFL",
+  	jsonF21CL: "",
+  	jsonRICivics: "jsonRICivics",
+		jsonRIHistory: "jsonRIHistory"
+  };
+  var bodies = {
+  	none: null,
+  	jsonMath: jsonMath,
+  	jsonELA: jsonELA,
+  	jsonNHES: jsonNHES,
+  	jsonNGSS: jsonNGSS,
+  	jsonILFineArts: jsonILFineArts,
+  	jsonILPhysicalDevelopment: jsonILPhysicalDevelopment,
+  	jsonILSocialScience: jsonILSocialScience,
+  	jsonILSocialEmotional: jsonILSocialEmotional,
+  	//jsonILAdultEdReading: jsonILAdultEdReading,
+  	//jsonILAdultEdWriting: jsonILAdultEdWriting,
+  	jsonILAdultEdMath: jsonILAdultEdMath,
+  	jsonILAdultEdELAReading: jsonILAdultEdELAReading,
+  	jsonILAdultEdELAWriting: jsonILAdultEdELAWriting,
+  	jsonILAdultEdELASpeakingListening: jsonILAdultEdELASpeakingListening,
+  	jsonILForeignLanguage: jsonILForeignLanguage,
+  	jsonFinance_k12pfe: jsonFinance_k12pfe,
+  	jsonFinance_vncse: jsonFinance_vncse,
+  	jsonFinance_nsfl: jsonFinance_nsfl,
+  	jsonF21CL: jsonF21CL,
+  	jsonRICivics: jsonRICivics,
+		jsonRIHistory: jsonRIHistory
+  };
   var grades = [ "none", "K", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "Adult" ];
   var currentBody = [];
   var currentGrade = "none";
@@ -95,9 +166,9 @@
 
     //Debugging
     $(window).on("SB7search", function(event, selected, all){
-      console.log(event);
-      console.log(selected);
-      console.log(all);
+      //console.log(event);
+      //console.log(selected);
+      //console.log(all);
     });
 
     //Remove the curriculum stuff if not needed
@@ -107,10 +178,11 @@
 
   }); //End document.ready
 
+
   function determineSBPreselections() {
     var properties = window.location.search.toLowerCase().replace("?", "").split("&");
     //Determine preselected things
-    console.log(properties);
+    //console.log(properties);
     for (i in properties) {
       var item = properties[i].split("=");
       switch (item[0]) {
@@ -179,19 +251,26 @@
     currentBody = bodies[targetBody];
     currentGrade = targetGrade;
 
-    //Convenience
-    if (targetBody.toLowerCase().indexOf("adult") > -1 && targetGrade != "Adult") {
-      $("#SBddlGrade option").hide();
-      $("#SBddlGrade option[value=Adult]").prop("selected", true).show();
-      populateDomains();
-      return;
-    }
-    else if (targetBody.toLowerCase().indexOf("adult") == -1 && targetGrade == "Adult") {
-      $("#SBddlGrade option").show();
-      $("#SBddlGrade option[value=Adult]").hide();
-      $("#SBddlGrade option[value=none]").prop("selected", true);
-      populateDomains();
-      return;
+    targetBody = targetBody.toLowerCase();
+
+  	//Convenience
+		var gradeDDL = $("#SBddlGrade");
+    var options = gradeDDL.find("option");
+    var validGrades = $("#SBddlBody option:selected").attr("data-grade").split(",");
+    options.each(function () {
+    	var opt = $(this);
+    	opt.hide().removeClass("showing");
+    	for (var i in validGrades) {
+    		if (opt.hasClass(validGrades[i])) {
+    			opt.show().addClass("showing");
+    		}
+    	}
+    });
+
+		//Auto-select the first available choice
+    if (!gradeDDL.find("option:selected").hasClass("showing")) {
+    	gradeDDL.find("option.showing").first().prop("selected", true);
+    	gradeDDL.trigger("change");
     }
 
     renderDomains();
@@ -227,7 +306,7 @@
     }
 
     $(window).trigger("standard_added");
-
+    determineAllSelectedStandards();
     renderSelectedStandards();
   }
 
@@ -239,7 +318,7 @@
       }
     }
     selectedStandards = replacement;
-
+    determineAllSelectedStandards();
     renderSelectedStandards();
     $(window).trigger("standard_removed");
   }
@@ -256,20 +335,6 @@
       window.open( (useSecureURL ? "https://ioer.ilsharedlearning.org/secure/IsleSSO.aspx?nextUrl=" : "") + "http://ioer.ilsharedlearning.org/search.aspx?standardIDs=" + ids);
     }
     else {
-      allSelectedIDs = [];
-      for (i in selectedStandards) {
-        //Recurse through the tree to grab all child IDs
-        getChildIDs(selectedStandards[i]);
-      }
-      //Remove duplicates
-      var replacement = [];
-      for (i in allSelectedIDs) {
-        if(replacement.indexOf(allSelectedIDs[i]) == -1){
-          replacement.push(allSelectedIDs[i]);
-        }
-      }
-      allSelectedIDs = replacement;
-
       determineAllSelectedStandards();
 
       //Call the external search mechanism
@@ -279,6 +344,22 @@
   }
 
   function determineAllSelectedStandards() {
+  	allSelectedIDs = [];
+  	for (i in selectedStandards) {
+  		allSelectedIDs.push(selectedStandards[i].id);
+  		//Recurse through the tree to grab all child IDs
+  		getChildIDs(selectedStandards[i]);
+  	}
+  	//Remove duplicates
+  	var replacement = [];
+  	for (i in allSelectedIDs) {
+  		if (replacement.indexOf(allSelectedIDs[i]) == -1) {
+  			replacement.push(allSelectedIDs[i]);
+  		}
+  	}
+  	allSelectedIDs = replacement;
+
+
     allSelectedStandards = [].concat(selectedStandards);
     for (i in allSelectedIDs) {
       var item = getLayer(allSelectedIDs[i]);
@@ -326,7 +407,8 @@
   function getLayerItem(body, id, matchGrade) {
     for (i in body) {
       if (body[i].id == id) {
-        if (matchGrade) {
+      	if (matchGrade) {
+      		//console.log(body[i].grades + ", " + body[i].grades.indexOf(currentGrade) + ", " + currentGrade);
           return body[i].grades.indexOf(currentGrade) > -1 ? body[i] : null;
         }
         else {
@@ -502,11 +584,11 @@
           break;
         }
       }
-      console.log(codes[i]);
-      console.log(codeBody);
+      //console.log(codes[i]);
+      //console.log(codeBody);
       for (j in bodies[codeBody]) {
         if (bodies[codeBody][j].code == codes[i]) {
-          console.log("adding standard #" + bodies[codeBody][j].id);
+          //console.log("adding standard #" + bodies[codeBody][j].id);
           addSelectedStandard(bodies[codeBody][j].id);
           break;
         }
@@ -523,10 +605,10 @@
   #SB7 #SBleftColumn { width: 75%; padding-right: 5px; }
   #SB7 #SBrightColumn { width: 24.5%; }
 
-  #SB7 #SBddlBox { white-space: nowrap; margin-bottom: 5px; }
+  #SB7 #SBddlBox { white-space: nowrap; margin-bottom: 5px; text-align: center; }
   #SB7 .SBddl { width: 32.8%; display: inline-block; vertical-align: top; }
   #SB7 #SBtree { padding: 5px; max-height: 500px; overflow-x: hidden; overflow-y: scroll; border: 1px solid #CCC; border-radius: 5px; background-color: #DFDFDF; }
-  #SB7 #SBtree:empty { padding: 0; border: none; border-radius: none; }
+  #SB7 #SBtree:empty { padding: 0; border: none; border-radius: 0; }
   #SB7 #SBtree .treeItem { display: block; padding: 5px; border-radius: 5px; }
   #SB7 #SBtree .treeItem:focus, #SB7 #SBtree .treeItem:hover { background-color: #FF5707; color: #FFF; cursor: pointer; }
   #SB7 #SBtree .treeItem input { float: left; margin: 4px 5px;  }
@@ -572,47 +654,58 @@
     <select id="SBddlBody" class="SBddl">
       <option selected="selected" value="none">Select a Standard Body...</option>
       <optgroup label="K-12 Education">
-        <option value="jsonMath">Common Core Math Standards</option>
-        <option value="jsonELA">Common Core ELA/Literacy Standards</option>
-        <option value="jsonNGSS">Next Generation Science Standards</option>
-        <option value="jsonILFineArts">Illinois Fine Arts Standards</option>
-        <option value="jsonILPhysicalDevelopment">Illinois Physical Development and Health Standards</option>
-        <option value="jsonILSocialScience">Illinois Social Science Standards</option>
-        <option value="jsonILSocialEmotional">Illinois Social/Emotional Development Standards</option>
-        <option value="jsonILForeignLanguage">Illinois Foreign Language Standards</option>
+        <option value="jsonMath" data-grade="grade">Common Core Math Standards</option>
+        <option value="jsonELA" data-grade="grade">Common Core ELA/Literacy Standards</option>
+        <option value="jsonILFineArts" data-grade="grade">Illinois Fine Arts Standards</option>
+        <option value="jsonILForeignLanguage" data-grade="grade">Illinois Foreign Language Standards</option>
+        <option value="jsonILPhysicalDevelopment" data-grade="grade">Illinois Physical Development and Health Standards</option>
+        <option value="jsonILSocialScience" data-grade="grade">Illinois Social Science Standards</option>
+        <option value="jsonILSocialEmotional" data-grade="grade">Illinois Social/Emotional Development Standards</option>
+        <option value="jsonNGSS" data-grade="grade">Next Generation Science Standards</option>
+				<option value="jsonRICivics" data-grade="grade">Rhode Island GSEs for Civics &amp; Government</option>
+				<option value="jsonRIHistory" data-grade="grade">Rhode Island GSEs for Historical Perspectives/Rhode Island History</option>
       </optgroup>
       <optgroup label="Adult Education">
-        <option value="jsonILAdultEdReading">Illinois Adult Education (ABE/ASE) Reading Standards</option>
-        <option value="jsonILAdultEdWriting">Illinois Adult Education (ABE/ASE) Writing Standards</option>
-        <option value="jsonILAdultEdMath">Illinois Adult Education (ABE/ASE) Mathematics Standards</option>
-        <option value="jsonILAdultEdELA">Illinois Adult Education (ABE/ASE) English Language Arts Standards</option>
+        <option value="jsonILAdultEdELAReading" data-grade="adult,nrs">Illinois Adult Education (ABE/ASE) English Language Arts Standards for Reading</option>
+        <option value="jsonILAdultEdELAWriting" data-grade="adult,nrs">Illinois Adult Education (ABE/ASE) English Language Arts Standards for Writing</option>
+        <option value="jsonILAdultEdELASpeakingListening" data-grade="adult,nrs">Illinois Adult Education (ABE/ASE) English Language Arts Standards for Speaking and Listening</option>
+        <option value="jsonILAdultEdMath" data-grade="adult,nrs">Illinois Adult Education (ABE/ASE) Mathematics Standards</option>
+        <!--<option value="jsonILAdultEdReading">Illinois Adult Education (ABE/ASE) Reading Standards</option>
+        <option value="jsonILAdultEdWriting">Illinois Adult Education (ABE/ASE) Writing Standards</option>-->
       </optgroup>
       <optgroup label="National Standards">
-        <option value="jsonNHES">National Health Education Standards</option>
-        <option value="jsonFinance_k12pfe">National Standards in K-12 Personal Finance Education</option>
-        <option value="jsonFinance_vncse">Voluntary National Content Standards in Economics</option>
-        <option value="jsonFinance_nsfl">National Standards for Financial Literacy</option>
+				<option value="jsonF21CL" data-grade="grade">Framework for 21st Century Learning</option>
+        <option value="jsonNHES" data-grade="grade">National Health Education Standards</option>
+        <option value="jsonFinance_k12pfe" data-grade="grade">National Standards in K-12 Personal Finance Education</option>
+        <option value="jsonFinance_nsfl" data-grade="grade">National Standards for Financial Literacy</option>
+        <option value="jsonFinance_vncse" data-grade="grade">Voluntary National Content Standards in Economics</option>
       </optgroup>
     </select>
     <select id="SBddlGrade" class="SBddl">
-      <option selected="selected" value="none">Select a Grade Level...</option>
-      <option value="K">Kindergarten</option>
-      <option value="1">1st Grade</option>
-      <option value="2">2nd Grade</option>
-      <option value="3">3rd Grade</option>
-      <option value="4">4th Grade</option>
-      <option value="5">5th Grade</option>
-      <option value="6">6th Grade</option>
-      <option value="7">7th Grade</option>
-      <option value="8">8th Grade</option>
-      <option value="9">9th Grade</option>
-      <option value="10">10th Grade</option>
-      <option value="11">11th Grade</option>
-      <option value="12">12th Grade</option>
-      <option value="Adult">Adult Education</option>
+      <option selected="selected" class="select" value="none">Select an Education Level...</option>
+      <option value="K" class="grade">Kindergarten</option>
+      <option value="1" class="grade">1st Grade</option>
+      <option value="2" class="grade">2nd Grade</option>
+      <option value="3" class="grade">3rd Grade</option>
+      <option value="4" class="grade">4th Grade</option>
+      <option value="5" class="grade">5th Grade</option>
+      <option value="6" class="grade">6th Grade</option>
+      <option value="7" class="grade">7th Grade</option>
+      <option value="8" class="grade">8th Grade</option>
+      <option value="9" class="grade">9th Grade</option>
+      <option value="10" class="grade">10th Grade</option>
+      <option value="11" class="grade">11th Grade</option>
+      <option value="12" class="grade">12th Grade</option>
+      <option value="Adult" class="adult">General Adult Education</option>
+			<option value="NRS1" class="nrs">NRS 1 - Beginning Adult Basic Education Literacy</option>
+			<option value="NRS2" class="nrs">NRS 2 - Beginning Basic Education</option>
+			<option value="NRS3" class="nrs">NRS 3 - Low Intermediate Basic Education</option>
+			<option value="NRS4" class="nrs">NRS 4 - High Intermediate Basic Education</option>
+			<option value="NRS5" class="nrs">NRS 5 - Low Adult Secondary Education</option>
+			<option value="NRS6" class="nrs">NRS 6 - High Adult Secondary Education</option>
     </select>
     <select id="SBddlDomain" class="SBddl">
-      <option selected="selected" value="none">Select a Domain...</option>
+      <option selected="selected" value="none">Select a Content Area...</option>
     </select>
   </div>
   <div id="SBleftColumn">

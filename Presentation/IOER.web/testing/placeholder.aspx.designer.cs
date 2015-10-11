@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ILPathways.testing {
+namespace IOER.testing {
     
     
     public partial class placeholder {
@@ -19,6 +19,6 @@ namespace ILPathways.testing {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ILPathways.Controls.Admin.BigAdmin1 TestController;
+        protected global::IOER.Controls.Splash3 TestController;
     }
 }

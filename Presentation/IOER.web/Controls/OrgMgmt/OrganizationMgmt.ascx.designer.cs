@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ILPathways.Controls.OrgMgmt {
+namespace IOER.Controls.OrgMgmt {
     
     
     public partial class OrganizationMgmt {
@@ -470,5 +470,14 @@ namespace ILPathways.Controls.OrgMgmt {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Literal currentOrgId;
+        
+        /// <summary>
+        /// addAdminFailedMsg control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label addAdminFailedMsg;
     }
 }

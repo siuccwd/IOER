@@ -5,8 +5,8 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
-using ILPathways.Library;
-using ILPathways.Controllers;
+using IOER.Library;
+using IOER.Controllers;
 using ILPathways.Utilities;
 using GroupManager = Isle.BizServices.GroupServices;
 using MyManager = Isle.BizServices.ContentServices;
@@ -19,7 +19,7 @@ using Isle.BizServices;
 using LRWarehouse.Business;
 using ResManager = Isle.BizServices.ResourceBizService;
 
-namespace ILPathways.Controls.Content
+namespace IOER.Controls.Content
 {
     /// <summary>
     /// Handle display of a content item
@@ -31,14 +31,7 @@ namespace ILPathways.Controls.Content
         MyManager myManager = new MyManager();
 
         #region Properties
-        /// <summary>
-        /// Set value used when check form privileges
-        /// </summary>
-        public string FormSecurityName
-        {
-            get { return this.txtFormSecurityName.Text; }
-            set { this.txtFormSecurityName.Text = value; }
-        }
+
         public int CurrentRecordID
         {
             get { return int.Parse( this.txtCurrentContentId.Text ); }
@@ -47,6 +40,8 @@ namespace ILPathways.Controls.Content
         public string resourceTitle;
         public string resourceSummary;
         public string redirectTarget;
+		public bool showIframeContent = false;
+		public string iframeContentUrl = "";
 
         #endregion
 
@@ -61,6 +56,7 @@ namespace ILPathways.Controls.Content
             if ( !IsPostBack )
             {
                 this.InitializeForm();
+				CheckRecordRequest();
             }
         }//
 
@@ -88,14 +84,17 @@ namespace ILPathways.Controls.Content
                     this.WebUser = CurrentUser;
                 }
             }
+        }//
 
+		private void CheckRecordRequest()
+		{
             try
             {
                 string rid = this.GetRequestKeyValue( "rid", "" );
 
-                string _author = "";
-                string _org = "";
-                string request = Request.RawUrl;
+				//string _author = "";
+				//string _org = "";
+                //string request = Request.RawUrl;
 
                 if ( Page.RouteData.Values.ContainsKey( "RouteID" ) )
                 {
@@ -113,20 +112,20 @@ namespace ILPathways.Controls.Content
                         rid = _routeID;
                     }
                 }
-                if ( request.ToLower().IndexOf( "k12/home/" ) > -1 )
-                {
-                    if ( Page.RouteData.Values.ContainsKey( "OrgName" ) )
-                    {
-                        _org = Page.RouteData.Values[ "OrgName" ].ToString();
-                        //look up district
-                    }
+				//if ( request.ToLower().IndexOf( "k12/home/" ) > -1 )
+				//{
+				//	if ( Page.RouteData.Values.ContainsKey( "OrgName" ) )
+				//	{
+				//		_org = Page.RouteData.Values[ "OrgName" ].ToString();
+				//		//look up district
+				//	}
 
-                    if ( Page.RouteData.Values.ContainsKey( "Author" ) )
-                    {
-                        _author = Page.RouteData.Values[ "Author" ].ToString();
-                        //look up author, use district, determine if home page exists
-                    }
-                }
+				//	if ( Page.RouteData.Values.ContainsKey( "Author" ) )
+				//	{
+				//		_author = Page.RouteData.Values[ "Author" ].ToString();
+				//		//look up author, use district, determine if home page exists
+				//	}
+				//}
                 if ( rid.Trim().Length == 36 )
                 {
                     this.Get( rid );
@@ -143,6 +142,9 @@ namespace ILPathways.Controls.Content
                 if ( CurrentRecordID == 0 )
                     SetConsoleErrorMessage( "Invalid page request" );
             }
+			catch ( System.Threading.ThreadAbortException tex )
+			{
+			}
             catch
             {
                 SetConsoleErrorMessage( "Invalid ID specified" );
@@ -188,9 +190,18 @@ namespace ILPathways.Controls.Content
                 }
                 else
                 {
+					string stay = this.GetRequestKeyValue("stay", "no");
+					if (entity.IsHierarchyType
+						&& redirecting50ToLearningList.Text.Equals("yes")
+						&& stay == "no")
+					{
+						Response.Redirect(string.Format("/LearningList/{0}/{1}", entity.Id, ResourceBizService.FormatFriendlyTitle(entity.Title)), true);
+					}
                     PopulateForm( entity );
                 }
-
+			}
+			catch (System.Threading.ThreadAbortException tex)
+			{
             }
             catch ( System.Exception ex )
             {
@@ -216,6 +227,13 @@ namespace ILPathways.Controls.Content
                 }
                 else
                 {
+					string stay = this.GetRequestKeyValue("stay", "no");
+					if (entity.IsHierarchyType
+						&& redirecting50ToLearningList.Text.Equals("yes")
+						&& stay == "no")
+					{
+						Response.Redirect(string.Format("/LearningList/{0}/{1}", entity.Id, ResourceBizService.FormatFriendlyTitle(entity.Title)), true);
+					}
                     PopulateForm( entity );
                 }
 
@@ -255,6 +273,7 @@ namespace ILPathways.Controls.Content
                 //    entity = myManager.Get( topId );
                 //}
             }
+            new ActivityBizServices().ContentHit(entity, CurrentUser);
 
             CurrentRecordID = entity.Id;
             resourceTitle = entity.Title;
@@ -263,7 +282,8 @@ namespace ILPathways.Controls.Content
 
             resourceSummary = entity.Summary;
             lblAuthor.Text = entity.Author;
-
+			hlAuthor.Text = entity.Author;
+			hlAuthor.NavigateUrl = string.Format( profLink.Text, entity.CreatedById, ResourceVersion.UrlFriendlyTitle( entity.Author));
 
             // check privileges to determine if current user/guest can view
             if ( CanView( entity ) == false )
@@ -512,6 +532,8 @@ namespace ILPathways.Controls.Content
                     if ( entity.PrivilegeTypeId == ContentItem.PUBLIC_PRIVILEGE || isOwner )
                     {
                         pageContent.Text += "<p>" + string.Format( docLinkTemplate.Text, fileUrl, entity.RelatedDocument.Title ) + "</p>";
+												showIframeContent = true;
+												iframeContentUrl = fileUrl;
                     }
                     else if ( IsUserAuthenticated() == false )
                     {
@@ -529,6 +551,8 @@ namespace ILPathways.Controls.Content
                     {
                         //same org, ok for now
                         pageContent.Text += "<p>" + string.Format( docLinkTemplate.Text, fileUrl, entity.RelatedDocument.Title ) + "</p>";
+												showIframeContent = true;
+												iframeContentUrl = fileUrl;
                     }
 
 
@@ -603,48 +627,7 @@ namespace ILPathways.Controls.Content
 
             }
         }//
-        //private string ValidateDocumentOnServer( ContentItem parentEntity, DocumentVersion doc )
-        //{
-        //    string fileUrl = "";
-        //    string documentFolder = "";
-
-        //    try
-        //    {
-        //        //should use filePath and fileName from doc
-        //        if ( doc.FileLocation().Length > 0 )
-        //        {
-        //            documentFolder = doc.FilePath;
-        //        }
-        //        else
-        //        {
-
-        //            //string documentFolder = FileResourceController.DetermineDocumentPath( parentEntity );
-        //            FileResourceController.PathParts parts = FileResourceController.DetermineDocumentPathUsingParentItem( parentEntity );
-        //            documentFolder = parts.filePath;
-        //        }
-        //        string message = FileSystemHelper.HandleDocumentCaching( documentFolder, doc, true );
-        //        if ( message == "" )
-        //        {
-        //            //blank returned message means ok
-        //            fileUrl = FileResourceController.DetermineDocumentUrl( parentEntity, doc.FileName );
-
-        //        }
-        //        else
-        //        {
-        //            //error, should return a message
-        //            this.SetConsoleErrorMessage( message );
-        //        }
-        //    }
-        //    catch ( Exception ex )
-        //    {
-        //        LoggingHelper.LogError( ex, thisClassName + ".ValidateDocumentOnServer() - Unexpected error encountered while retrieving document" );
-
-        //        this.SetConsoleErrorMessage( "Unexpected error encountered - Close this form and try again. (System Admin has been notified)<br/>" + ex.ToString() );
-        //    }
-
-        //    return fileUrl;
-        //}//
-
+        
         private void PopulateReferences( ContentItem entity )
         {
             List<ContentReference> list = myManager.ContentReferencesSelectList( entity.Id );
@@ -728,7 +711,7 @@ namespace ILPathways.Controls.Content
             {
                 string statusMessage = string.Empty;
                 AppUser user = GetAppUser();
-                if ( ContentController.RequestApproval( CurrentRecordID, user, ref statusMessage ) == true )
+				if (myManager.RequestApproval(CurrentRecordID, user, ref statusMessage) == true)
                 {
                     SetConsoleSuccessMessage( "An email was sent requesting a review of your resource." );
                     //refresh
@@ -787,7 +770,7 @@ namespace ILPathways.Controls.Content
             string statusMessage = string.Empty;
             AppUser user = GetAppUser();
 
-            if ( ContentController.HandleDeclinedAction( CurrentRecordID, txtReason.Text, user, ref statusMessage ) == true )
+			if (myManager.HandleDeclinedAction(CurrentRecordID, txtReason.Text, user, ref statusMessage) == true)
             {
                 SetConsoleSuccessMessage( "A notification of this action was sent to the author of this resource." );
                 //refresh
@@ -922,7 +905,7 @@ namespace ILPathways.Controls.Content
              * 
              */
 
-            return ContentController.IsUserOrgApprover( entity, CurrentUser.Id );
+			return  ContentServices.IsUserOrgApprover(entity, CurrentUser.Id);
             //string statusMessage = "";
             //if ( entity.OrgId > 0 )
             //{

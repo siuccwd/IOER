@@ -12,6 +12,7 @@ namespace Isle.DTO
         {
             FirstName = "";
             LastName = "";
+						Roles = new List<ILPathways.Common.CodeItem>();
         }
 
         public int Id { get; set; }
@@ -43,6 +44,8 @@ namespace Isle.DTO
 
         public DateTime Created { get; set; }
         public DateTime LastUpdated { get; set; }
+				public string CreatedText { get { return Created.ToShortDateString(); } }
+				public string LastUpdatedText { get { return LastUpdated.ToShortDateString(); } }
 
         public string FirstName { get; set; }
         public string LastName { get; set; }
@@ -64,6 +67,6 @@ namespace Isle.DTO
 
         public string MemberHomeUrl { get; set; }
         public string MemberImageUrl { get; set; }
-
+				public List<ILPathways.Common.CodeItem> Roles { get; set; }
     }
 }

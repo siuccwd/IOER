@@ -7,7 +7,7 @@ using System.Web.UI.WebControls;
 
 using System.Web.Script.Serialization;
 
-namespace ILPathways.Admin
+namespace IOER.Admin
 {
     public partial class widgetTestingReceiver : System.Web.UI.Page
     {

@@ -1,4 +1,21 @@
-﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="ActivityRenderer.ascx.cs" Inherits="ILPathways.Activity.ActivityRenderer" %>
+﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="ActivityRenderer.ascx.cs" Inherits="IOER.Activity.ActivityRenderer" %>
+
+<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+<script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+
+<%-- 
+	To setup activity rendering on a new page, you will need:
+	- An instance of this ActivityRenderer control
+	- A call to the GetDateRange() method in the ActivityRenderer instance
+	- A javascript call to the setupDatePickers() method in this control
+	- The following HTML (contains the inputs and elements that are referenced in the two above methods, as well as by the CSS in this control):
+
+		<div id="dateSelector">
+			Show activity from <input type="text" class="date startDate" id="txtStartDate" runat="server" /> to <input type="text" class="date endDate" id="txtEndDate" runat="server" /> <input type="button" class="isleButton bgBlue" value="Show" onclick="submit();" />
+		</div>
+
+
+	--%>
 
 <script type="text/javascript">
   //Parent page will need to supply JSON to translate activity data to display-friendly data, eg
@@ -9,13 +26,13 @@
     for (i in activityCount.Activities) {
       var current = activityCount.Activities[i];
       //Skip it if it has no items
-      if (current.length == 0) { return "<p class=\"noActivity\">No recent activity.</p>"; }
+      if (current.length == 0) { return "<p class=\"noActivity\">No activity.</p>"; }
       //Get activity data
       var title = legend[i];
       if (title == null) { continue; }
       var activityData = "";
       if (getSum(current) == 0) {
-        activityData += "<p class=\"noActivity\">No recent activity.</p>";
+        activityData += "<p class=\"noActivity\">No activity.</p>";
       }
       else {
         switch (templateName) {
@@ -34,7 +51,11 @@
         .replace(/{title}/g, title).replace(/{activityData}/g, activityData).replace(/{timespan}/g, legend.timespan.replace(/{count}/g, current.length));
     }
 
-    return template.replace(/{id}/g, activityCount.Id).replace(/{title}/g, activityCount.Title).replace(/{type}/g, templateName).replace(/{data}/g, dataHTML);
+    return template
+			.replace(/{id}/g, activityCount.Id)
+			.replace(/{title}/g, (activityCount.Title == null ? "" : activityCount.Title))
+			.replace(/{type}/g, templateName)
+			.replace(/{data}/g, dataHTML);
   }
 
   function getActivityTable(name, title, activityList, legend) {
@@ -77,7 +98,7 @@
     //Construct the bars
     var bars = "";
     for (var j = 0; j < current.length; j++) {
-      bars += "<div class=\"activityBarZone\" style=\"width:" + (barWidth * 100) + "%;\" data-index=\"" + j + "\"><div tabindex=\"0\" class=\"activityBar\" style=\"height: " + ((current[j] / barMax) * 100) + "%\" title=\"" + current[j] + " " + title + " on " + dates[j] + " (" + (j + 1) + " " + legend.timescale + " ago)" + "\"></div></div>";
+      bars += "<div class=\"activityBarZone\" style=\"width:" + (barWidth * 100) + "%;\" data-index=\"" + j + "\"><div tabindex=\"0\" class=\"activityBar\" style=\"height: " + ((current[j] / barMax) * 100) + "%\" title=\"" + current[j] + " " + title + " on " + dates[j] + "\"></div></div>";
       }
     return bars;
   }
@@ -99,6 +120,21 @@
     }
     return sum;
   }
+
+	//Setup date pickers located in external code
+  function setupDatePickers() {
+  	$(".startDate").datepicker({
+  		minDate: "01/01/2014", maxDate: "+0D", onClose: function (selectedDate) {
+  			$(".endDate").datepicker("option", "minDate", selectedDate)
+  		}
+  	});
+  	$(".endDate").datepicker({
+  		minDate: "01/01/2014", maxDate: "+0D", onClose: function (selectedDate) {
+  			$(".startDate").datepicker("option", "maxDate", selectedDate)
+  		}
+  	});
+  }
+
 </script>
 
 <style type="text/css">
@@ -116,6 +152,9 @@
   .activity.totals { display: inline-block; vertical-align: top; width: 32%; margin: 5px 0.5%; }
   .activity.totals .timespan, .activity.totals .title, .activity.totals .activityData { display: inline; padding: 0 2px; }
   .activity.totals .activityTitle { font-weight: bold; }
+
+	#dateSelector { text-align: center; }
+	#dateSelector input { display: inline; width: 100px; text-align: center; }
 
 </style>
 

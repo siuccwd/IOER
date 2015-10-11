@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ILPathways.Controls.Curriculum {
+namespace IOER.Controls.Curriculum {
     
     
     public partial class Curriculum1 {
@@ -19,7 +19,7 @@ namespace ILPathways.Controls.Curriculum {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ILPathways.Controls.SocialBox.SocialBox1 SocialBox;
+        protected global::IOER.Controls.SocialBox.SocialBox1 SocialBox;
         
         /// <summary>
         /// shareBox control.

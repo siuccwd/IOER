@@ -20,5 +20,7 @@ namespace IOERBusinessEntities
         public Nullable<System.DateTime> Created { get; set; }
         public Nullable<int> CreatedById { get; set; }
         public Nullable<System.Guid> ResourceId { get; set; }
+    
+        public virtual Resource Resource { get; set; }
     }
 }

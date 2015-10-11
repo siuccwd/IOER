@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ILPathways.Controls.Community {
+namespace IOER.Controls.Community {
     
     
     public partial class Community1 {

@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Query Management" Language="C#" MasterPageFile="~/Masters/Responsive.Master" AutoEventWireup="true" CodeBehind="QueryMgmt.aspx.cs" Inherits="ILPathways.Admin.QueryMgmt" %>
+﻿<%@ Page Title="Illinois Open Educational Resources - Query Management" Language="C#" MasterPageFile="~/Masters/Responsive.Master" AutoEventWireup="true" CodeBehind="QueryMgmt.aspx.cs" Inherits="IOER.Admin.QueryMgmt" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="HeadContent" runat="server">
     <link href="../Styles/common.css" rel="stylesheet" />
 </asp:Content>
@@ -54,6 +54,15 @@
   }
 //-->
 </script>
+
+<style type="text/css">
+
+#ctl00_BodyContent_TabContainer1_header .ajax__tab_tab, #BodyContent_TabContainer1_header .ajax__tab_tab  {
+    height: 25px;     padding: 2px 12px;
+}
+
+  }
+</style>
  <ajaxToolkit:ToolkitScriptManager runat="Server" EnablePartialRendering="true" ID="ScriptManager1" />
 <div class="container-fluid" style="background-color: whitesmoke;">
     <h1 class="isleH1">Query Administration</h1>
@@ -155,7 +164,7 @@
 			<asp:boundfield datafield="Category" headertext="Category" sortexpression="Category"></asp:boundfield>	
 			<asp:TemplateField HeaderText="Title/Code"  sortexpression="Title">
 				<ItemTemplate>
-					<%# Eval( "Title" )%><br /><%# Eval( "QueryCode" )%>
+					<%# Eval( "Title" )%><br /><%--<%# Eval( "QueryCode" )%>--%>
 				</ItemTemplate>
 			</asp:TemplateField>					
 			<asp:boundfield datafield="LastUpdatedBy" headertext="Last Updated By" sortexpression="LastUpdatedBy"></asp:boundfield>			
@@ -322,6 +331,7 @@
 
 <asp:Panel ID="hiddenPanel" runat="server" Visible="false">
 <!-- control variables -->
+      <asp:Literal ID="txtFormSecurityName" runat="server" Visible="false">Site.Admin.QueryMgmt</asp:Literal>
 <asp:Literal ID="openingDetailInNewWindow" runat="server" Visible="false">yes</asp:Literal>
 <asp:Literal ID="defaultCategory" runat="server" Visible="false"></asp:Literal>
 </asp:Panel>

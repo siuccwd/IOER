@@ -1,4 +1,4 @@
-﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="Search.ascx.cs" Inherits="ILPathways.Controls._Templates.Search" %>
+﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="Search.ascx.cs" Inherits="IOER.Controls._Templates.Search" %>
 
 
 <asp:Panel ID="searchPanel" runat="server">

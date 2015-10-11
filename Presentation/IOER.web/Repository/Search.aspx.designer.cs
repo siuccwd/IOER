@@ -7,19 +7,10 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ILPathways.Content {
+namespace IOER.Content {
     
     
     public partial class Search {
-        
-        /// <summary>
-        /// searchPanel control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel searchPanel;
         
         /// <summary>
         /// search1 control.
@@ -28,6 +19,6 @@ namespace ILPathways.Content {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ILPathways.Controls.Content.ContentSearch search1;
+        protected global::IOER.Controls.Content.ContentSearch2 search1;
     }
 }

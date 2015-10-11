@@ -1,7 +1,7 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="Default.aspx.cs" Inherits="ILPathways.Widgets.Collection.Default" %>
+﻿<%@ Page Title="Illinois Open Educational Resources - Collections Widget" Language="C#" AutoEventWireup="true" CodeBehind="Default.aspx.cs" Inherits="IOER.Widgets.Collection.Default" %>
 
 <!DOCTYPE HTML>
-<html>
+<html lang="en">
 <head id="Head1" runat="server">
     <title>IOER Collection</title>
         <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js" type="text/javascript"></script>
@@ -135,8 +135,8 @@
   <div id="template_resource">
     <a class="resource textLink" href="{link}" target="_blank" title="{title}">
       <div class="thumbnailBox">
-        <img class="resizer" src="/images/ThumbnailResizer.png" />
-        <img class="thumbnail" {thumbsrc} onerror="this.src='/images/icons/filethumbs/filethumb_unavailable_400x300.png';" />
+        <img alt="" class="resizer" src="/images/ThumbnailResizer.png" />
+        <img alt="" class="thumbnail" {thumbsrc} onerror="this.src='/images/icons/filethumbs/filethumb_unavailable_400x300.png';" />
         <div class="message"></div>
       </div>
       <div class="title">{title}</div>
@@ -144,7 +144,7 @@
   </div>
   <div id="template_listCollection">
     <a href="{link}" target="_blank" title="{title}" class="listCol">
-      <img class="collectionThumb" {thumbsrc} />
+      <img alt="" class="collectionThumb" {thumbsrc} />
       <div class="title">{title}</div>
     </a>
   </div>

@@ -26,7 +26,7 @@ namespace ILPathways.Business
         public string PostingType { get; set; }
 
         public int RelatedPostingId { get; set; }
-        public string PostingStatus { get; set; }
+		public bool IsApproved { get; set; }
 
         #region Related data
         public string UserFullName { get; set; }

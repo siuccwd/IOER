@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Illinois Open Education Resources Search News" Language="C#" MasterPageFile="~/Masters/Responsive.Master" AutoEventWireup="true" CodeBehind="Default.aspx.cs" Inherits="ILPathways.LRW.News.Default" %>
+﻿<%@ Page Title="Illinois Open Education Resources Search News" Language="C#" MasterPageFile="~/Masters/Responsive.Master" AutoEventWireup="true" CodeBehind="Default.aspx.cs" Inherits="IOER.LRW.News.Default" %>
 <%@ Register TagPrefix="uc2" TagName="News" Src="~/Controls/AppItems/NewsItemSearch.ascx" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="HeadContent" runat="server"></asp:Content>

@@ -1,4 +1,4 @@
-﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="LibrariesSearch.ascx.cs" Inherits="ILPathways.Controls.Libraries.LibrariesSearch" %>
+﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="LibrariesSearch.ascx.cs" Inherits="IOER.Controls.Libraries.LibrariesSearch" %>
 
 
 <script type="text/javascript">
@@ -32,7 +32,7 @@
   .tip { font-style: italic; color: #555; margin-bottom: 1px; }
   #searchParameters { font-size: 0; padding: 5px 0; max-width: 800px; }
   #searchType { font-size: 0; }
-  #searchType label { display: inline-block; vertical-align: top; width: 50%; font-size: 16px; }
+  #searchType label { display: inline-block; vertical-align: top;  font-size: 16px; }
   #searchType, #ddlSortingOptions { display: inline-block; vertical-align: top; width: 50%; }
 
   /* Search Results stuff */
@@ -52,6 +52,16 @@
   .result .collections .collection p { padding-left: 5px; width: calc(100% - 100px); margin: 0; vertical-align: middle; white-space: normal; }
 
   .result .collectionsTitle { font-style: italic; padding-left: 10px; color: #555; }
+  
+ .fieldgroup{
+    display: inline-block;
+}
+  /* fieldset copy */
+fieldset  {
+  border: 0px #fff solid;
+}
+
+
 
   /* Fancy tricks */
   #widthMode { width: 100%; }
@@ -59,7 +69,7 @@
   #filtersBox.hidden { max-height: 68px; }
 
   @media screen and (min-width: 980px){
-    #content { padding-left: 50px; }
+    #contentXXX { padding-left: 50px; }
   }
   @media screen and (max-width: 950px){
     #searchType { display: block; width: 100%; }
@@ -108,13 +118,24 @@
 
       <!-- Contains search bar, buttons, etc -->
       <div id="searchBox">
-        <input type="text" id="txtSearch" class="txtSearch" placeholder="Search for Libraries..." />
+        <input type="text" id="txtSearch" title="Search" class="txtSearch" placeholder="Search for Libraries..." />
         <div id="searchParameters">
           <div id="searchType">
-            <label for="searchForLibraries"><input type="radio" name="searchType" id="searchForLibraries" checked="checked" value="libraries" /> Search for Libraries</label>
-            <label for="searchForCollections"><input type="radio" name="searchType" id="searchForCollections" value="collections" /> Search for Collections</label>
+              <fieldset >
+                  <legend class="offScreen">Search Type</legend>
+                  <div class="fieldgroup">
+                      <label for="searchForLibraries">
+                          <input type="radio" name="searchType" id="searchForLibraries" checked="checked" value="libraries" />
+                          Search for Libraries</label>
+                  </div>
+                  <div class="fieldgroup">
+                      <label for="searchForCollections">
+                          <input type="radio" name="searchType" id="searchForCollections" value="collections" />
+                          Search for Collections</label>
+                  </div>
+              </fieldset>
           </div>
-          <select id="ddlSortingOptions">
+          <select id="ddlSortingOptions" title="Sorting Options">
             <option value="">No special Sorting</option>
             <option value="title|asc">Title A-Z</option>
             <option value="title|desc">Title Z-A</option>
@@ -159,7 +180,7 @@
     <div id="template_searchResult">
       <div class="result" data-libraryID="{libraryID}">
         <a class="fixedThumb" style="background-image:url('{iconURL}');" href="{libraryURL}"></a>
-        <a class="stretchyThumb" href="{libraryURL}"><img src="{iconURL}" /></a>
+        <a class="stretchyThumb" href="{libraryURL}"><img alt='Library icon'  src="{iconURL}" /></a>
         <div class="data">
           <h2><a href="{libraryURL}">{title}</a></h2>
             <div class="orgTitle"><br />Organization: {orgTitle}</div>

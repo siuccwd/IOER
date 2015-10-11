@@ -5,9 +5,9 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
-namespace ILPathways.Pages
+namespace IOER.Pages
 {
-    public partial class PublishResource : ILPathways.Library.BaseAppPage
+    public partial class PublishResource : IOER.Library.BaseAppPage
     {
         protected void Page_Load( object sender, EventArgs e )
         {

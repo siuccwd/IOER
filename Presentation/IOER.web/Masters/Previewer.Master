@@ -1,9 +1,9 @@
-﻿<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="Previewer.master.cs" Inherits="ILPathways.Masters.Previewer" %>
-<%@ Register TagName="Header" TagPrefix="uc1" Src="/Controls/Includes/Header7.ascx" %>
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="Previewer.master.cs" Inherits="IOER.Masters.Previewer" %>
+<%@ Register TagName="Header" TagPrefix="uc1" Src="/Controls/Includes/Header8.ascx" %>
 
 <!DOCTYPE html>
 
-<html>
+<html lang="en">
   <head>
     <title></title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />

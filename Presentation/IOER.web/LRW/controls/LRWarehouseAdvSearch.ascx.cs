@@ -7,16 +7,16 @@ using System.Web.Security;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
-using ILPathways.Library;
+using IOER.Library;
 using ILPathways.Utilities;
-using ILPathways.classes;
+using IOER.classes;
 
 using LRWarehouse.Business;
 using MyManager = LRWarehouse.DAL.LRManager;
 
 using LRWarehouse.DAL;
 
-namespace ILPathways.LRW.controls
+namespace IOER.LRW.controls
 {
     public partial class LRWarehouseAdvSearch : BaseUserControl
     {

@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ILPathways.Controls.Includes {
+namespace IOER.Controls.Includes {
     
     
     public partial class Header6 {

@@ -13,7 +13,7 @@ using Obout.Ajax.UI.HTMLEditor;
 using System.Collections.ObjectModel;
 using System.Globalization;
 
-namespace ILPathways.Content
+namespace IOER.Content
 {
     public partial class OBOUT : System.Web.UI.Page
     {

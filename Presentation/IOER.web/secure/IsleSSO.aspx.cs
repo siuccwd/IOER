@@ -7,18 +7,18 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 
 using ILPathways.Utilities;
-using ILPathways.classes;
+using IOER.classes;
 using ILPathways.Business;
 using LRWarehouse.Business;
-using ILPathways.Controllers;
+using IOER.Controllers;
 using LDAL = LRWarehouse.DAL;
 using MyManager = Isle.BizServices.AccountServices;
 using CurrentUser = LRWarehouse.Business.Patron;
 
 
-namespace ILPathways.secure
+namespace IOER.secure
 {
-    public partial class IsleSSO : ILPathways.Library.BaseAppPage
+    public partial class IsleSSO : IOER.Library.BaseAppPage
     {
         protected void Page_Load(object sender, EventArgs e)
         {

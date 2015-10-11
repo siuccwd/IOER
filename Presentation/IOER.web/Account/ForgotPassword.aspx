@@ -1,4 +1,4 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Masters/Responsive.Master" AutoEventWireup="true" CodeBehind="ForgotPassword.aspx.cs" Inherits="ILPathways.Account.ForgotPassword" %>
+﻿<%@ Page Title="Illinois Open Educational Resources - Forgot Password" Language="C#" MasterPageFile="~/Masters/Responsive.Master" AutoEventWireup="true" CodeBehind="ForgotPassword.aspx.cs" Inherits="IOER.Account.ForgotPassword" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="HeadContent" runat="server">
     <link href="/Styles/Isle_large.css" type="text/css" rel="stylesheet" />
 </asp:Content>

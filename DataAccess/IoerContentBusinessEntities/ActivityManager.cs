@@ -24,17 +24,7 @@ namespace IoerContentBusinessEntities
                 {
                     foreach ( Library_SectionResourceSummary item in items )
                     {
-                        //if ( resourceBox.total == 0 )
-                        //    resourceBox.total = ( int ) item.LibraryResourceCount;
-
-                        //entity = new DashboardResourceDTO();
-                        //entity.id = item.ResourceIntId;
-                        //entity.title = item.Title;
-                        //entity.containerTitle = item.LibrarySection;
-                        //entity.DateAdded = item.DateAddedToCollection;
-                        //entity.url = string.Format( "/Resource/{0}/{1}", item.ResourceIntId, UtilityManager.UrlFriendlyTitle( item.Title ) );
-
-                        //list.Add( entity );
+                        
 
                     }
                 }

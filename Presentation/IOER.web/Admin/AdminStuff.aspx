@@ -1,4 +1,4 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Masters/Responsive2.Master" AutoEventWireup="true" CodeBehind="AdminStuff.aspx.cs" Inherits="ILPathways.Admin.AdminStuff" %>
+﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Masters/Responsive2.Master" AutoEventWireup="true" CodeBehind="AdminStuff.aspx.cs" Inherits="IOER.Admin.AdminStuff" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="HeadContent" runat="server">
     <link href="../Styles/common.css" rel="stylesheet" />
@@ -85,7 +85,7 @@
 </asp:Panel>
 
 <asp:Panel ID="Panel1" runat="server" Visible="false">
-<asp:Literal ID="formSecurityName" runat="server" Visible="false">ILPathways.Admin.QueryMgmt</asp:Literal>
+<asp:Literal ID="formSecurityName" runat="server" Visible="false">Site.Admin.QueryMgmt</asp:Literal>
 </asp:Panel>	
 
 </asp:Content>

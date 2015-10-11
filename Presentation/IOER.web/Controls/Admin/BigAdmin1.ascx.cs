@@ -5,12 +5,12 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
-using ILPathways.Library;
-using ILPathways.Services;
+using IOER.Library;
+using IOER.Services;
 using LRWarehouse.Business;
 using Isle.BizServices;
 
-namespace ILPathways.Controls.Admin
+namespace IOER.Controls.Admin
 {
   public partial class BigAdmin1 : BaseUserControl
   {
@@ -22,7 +22,7 @@ namespace ILPathways.Controls.Admin
     public ManagementList ActiveList { get; set; }
     public ManagementObject ActiveObject { get; set; }
     public ManagementObject ActiveOrganization { get; set; }
-    public Patron user { get; set; }
+    //public Patron user { get; set; }
     public string manage { get; set; }
     public int manageID { get; set; }
     public bool isOrganizationMode { get; set; }
@@ -58,7 +58,7 @@ namespace ILPathways.Controls.Admin
     {
       if ( IsUserAuthenticated() )
       {
-        user = ( Patron ) WebUser;
+        //user = ( Patron ) WebUser;
       }
       else
       {
@@ -133,9 +133,9 @@ namespace ILPathways.Controls.Admin
     public void LoadManagementData()
     {
       //Load organizations
-      if ( user.OrgMemberships.Count() > 0 )
+      if ( WebUser.OrgMemberships.Count() > 0 )
       {
-        foreach ( var item in user.OrgMemberships.OrderBy( m => m.Organization ) )
+		  foreach ( var item in WebUser.OrgMemberships.OrderBy( m => m.Organization ) )
         {
           //If not acting on behalf of an organzation OR if we are acting on behalf of the organization that matches the item...
           if ( !isOrganizationMode || ( isOrganizationMode && item.OrgId == organizationModeID ) )
@@ -165,7 +165,7 @@ namespace ILPathways.Controls.Admin
       }
 
       //Load libraries
-      var libs = new LibraryBizService().Library_SelectListWithEditAccess( user.Id );
+	  var libs = new LibraryBizService().Library_SelectListWithEditAccess( WebUser.Id );
       if ( libs.Count() > 0 )
       {
         foreach ( var item in libs.OrderBy( m => m.Title ) )
@@ -217,7 +217,7 @@ namespace ILPathways.Controls.Admin
       }
 
       //Load learning lists
-      var learns = new CurriculumServices().Learninglists_SelectUserEditableLists( user.Id );
+	  var learns = new CurriculumServices().Learninglists_SelectUserEditableLists( WebUser.Id );
       if ( learns.Count() > 0 )
       {
         foreach ( var item in learns.OrderBy( m => m.Title ) )
@@ -247,7 +247,7 @@ namespace ILPathways.Controls.Admin
     {
       try
       {
-        var data = new AdminService1().ListPrivileges( ActiveList.objectType ).data as List<ILPathways.Services.AdminService1Components.Privilege>;
+        var data = new AdminService1().ListPrivileges( ActiveList.objectType ).data as List<IOER.Services.AdminService1Components.Privilege>;
         foreach ( var item in data )
         {
           ddlPrivilege.Items.Add( new ListItem()

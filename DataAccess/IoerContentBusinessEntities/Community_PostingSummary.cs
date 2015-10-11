@@ -29,5 +29,6 @@ namespace IoerContentBusinessEntities
         public string PostingStatus { get; set; }
         public Nullable<int> ChildPostings { get; set; }
         public Nullable<int> OrgId { get; set; }
+        public bool IsApproved { get; set; }
     }
 }

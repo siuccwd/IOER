@@ -6,10 +6,10 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 
 using IPU = ILPathways.Utilities;
-using ILPathways.classes;
-using ILPathways.Services;
+using IOER.classes;
+using IOER.Services;
 
-namespace ILPathways.Masters
+namespace IOER.Masters
 {
     public partial class Pathway : System.Web.UI.MasterPage
     {

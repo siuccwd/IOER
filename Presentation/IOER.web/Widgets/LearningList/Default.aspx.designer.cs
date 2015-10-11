@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ILPathways.Widgets.LearningList {
+namespace IOER.Widgets.LearningList {
     
     
     public partial class Default {
@@ -28,6 +28,6 @@ namespace ILPathways.Widgets.LearningList {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ILPathways.Controls.Curriculum.CurriculumView1 CurriculumControl;
+        protected global::IOER.Controls.Curriculum.CurriculumView1 CurriculumControl;
     }
 }

@@ -1,4 +1,4 @@
-﻿<%@ Control Language="C#" AutoEventWireup="True" CodeBehind="QuickContribute.ascx.cs" Inherits="ILPathways.Controls.QuickContribute" %>
+﻿<%@ Control Language="C#" AutoEventWireup="True" CodeBehind="QuickContribute.ascx.cs" Inherits="IOER.Controls.QuickContribute" %>
 <%@ Register TagPrefix="uc1" TagName="CBXL" Src="/LRW/Controls/ListPanel.ascx" %>
 <%@ Register TagPrefix="uc1" TagName="Rights" Src="/LRW/Controls/ConditionsOfUseSelector.ascx" %>
 <%@ Register TagPrefix="uc1" TagName="Standards" Src="/Controls/StandardsBrowser7.ascx" %>
@@ -604,7 +604,7 @@
         addStandardsToHiddenField();
         $("form").removeAttr("onsubmit");
         $(".btnFinish").hide();
-        $("#processing").show();
+        $("#processing, #wait").show();
         $("form").submit();
       }
       else {
@@ -763,7 +763,7 @@
     #step1 input { transition: opacity 0.5s; -webkit-transition: opacity 0.5s; }
     #step1 input[disabled=disabled] { opacity: 0.5; }
     #step3 select { margin-bottom: 10px; }
-    #processing { display: none; font-size: 20px; font-weight: bold; text-align: center; padding: 10px; }
+    #processing, #wait { display: none; font-size: 20px; font-weight: bold; text-align: center; padding: 10px; }
     .step input.btnFinish[disabled=disabled] { height: 0; margin: 0; padding: 0; opacity: 0; cursor: initial; }
     #preButtonMessage { text-align: center; font-weight: bold; font-size: 20px; }
 
@@ -899,6 +899,7 @@
     <div class="step" id="step5">
       <h2>5. Finish!</h2>
       <input type="button" class="btnFinish" value="I'm Finished. Submit my Resource!" onclick="validatePage();" />
+			<p id="wait"><img src="/images/wait.gif" /></p>
       <p id="processing">Processing, Please wait...</p>
       <p id="preButtonMessage">One or more fields above is not yet complete!</p>
     </div>

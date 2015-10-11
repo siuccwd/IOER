@@ -63,7 +63,7 @@ namespace Isle.BizServices
                 //if resource exists, need to set inactive
                 if ( entity.HasResourceId() )
                 {
-                    ResourceBizService.Resource_SetInactive( entity.ResourceIntId, ref statusMessage );
+                    new ResourceBizService().Resource_SetInactive( entity.ResourceIntId, ref statusMessage );
                 }
             }
             return isValid;
@@ -113,7 +113,7 @@ namespace Isle.BizServices
                                 //if resource exists, need to set inactive
                                 if ( efom.ResourceIntId != null && efom.ResourceIntId > 0 )
                                 {
-                                    Isle.BizServices.ResourceBizService.Resource_SetInactive( ( int ) efom.ResourceIntId, ref statusMessage );
+                                    new ResourceBizService().Resource_SetInactive( ( int ) efom.ResourceIntId, ref statusMessage );
                                 }
                             }
                             statusMessage = string.Format( "Also removed all child items ({0})", eflist.Count );
@@ -140,11 +140,25 @@ namespace Isle.BizServices
         public int Create( ContentItem entity, ref string statusMessage )
 		{
             //return myMgr.Create( entity, ref statusMessage );
-            return Create_ef( entity, ref statusMessage );
+            int contentId = Create_ef( entity, ref statusMessage );
+
+            //until a better process is designed, always add creator of a learning list as an admin partner
+            if (contentId > 0 && entity.TypeId == ContentItem.CURRICULUM_CONTENT_ID)
+            {
+                Content_AddCreatorPartner(contentId, entity.CreatedById, ref statusMessage);
+            }
+            return contentId;
 		}
         public int Create_ef( ContentItem entity, ref string statusMessage )
         {
-            return myEfManager.ContentAdd( entity, ref statusMessage );
+            int contentId = myEfManager.ContentAdd(entity, ref statusMessage);
+
+            //until a better process is designed, always add creator of a learning list as an admin partner
+            if (contentId > 0 && entity.TypeId == ContentItem.CURRICULUM_CONTENT_ID)
+            {
+                Content_AddCreatorPartner(contentId, entity.CreatedById, ref statusMessage);
+            }
+            return contentId;
         }
 		/// <summary>
 		/// Update an Content record
@@ -153,6 +167,11 @@ namespace Isle.BizServices
 		/// <returns></returns>
         public string Update( ContentItem entity )
 		{
+			return Update( entity, true );
+		}//
+
+				public string Update( ContentItem entity, bool updateResourceVersion )
+				{
             string result = "";
             //if ( 1 == 1 )
             //result = myMgr.ContentUpdate( entity );
@@ -161,15 +180,15 @@ namespace Isle.BizServices
                 if ( myEfManager.ContentUpdate( entity ) )
                     result = "successful";
             //}
-            if ( entity.HasResourceId() )
+            if ( entity.HasResourceId() && updateResourceVersion )
             {
                 //may want to check on sync of RV content!
                 //should only do if published status?
-                ResourceBizService.ResourceVersion_SyncContentItemChanges( entity.Title, entity.Summary, entity.ResourceIntId );
+                new ResourceBizService().ResourceVersion_SyncContentItemChanges( entity.Title, entity.Summary, entity.ResourceIntId );
             }
             return result;
 
-		}//
+				}
 
         /// <summary>
         /// Update ContentItem with related ResourceVersionId
@@ -245,7 +264,255 @@ namespace Isle.BizServices
 
         }//
 		#endregion
+		#region === content approval ===
+		/// <summary>
+		/// Handle request to approve a content record
+		/// </summary>
+		/// <param name="resource"></param>
+		/// <param name="contentId"></param>
+		/// <param name="author"></param>
+		/// /// <param name="hasApproval">return true if approval was required</param>
+		/// <param name="statusMessage"></param>
+		/// <returns>true if ok, false if errors</returns>
+		public bool HandleContentApproval(Resource resource, int contentId, ThisUser author, ref bool hasApproval, ref string statusMessage)
+		{
+			// - get record, check if on behalf is org
+			//     if not, set to published?
+			// - 
+			bool isValid = true;
+			hasApproval = false;
+			ContentItem entity = Get(contentId);
+			if (entity == null || entity.Id == 0)
+			{
+				//invalid, return, log error?
+				statusMessage = "Invalid request, record was not found.";
+				return false;
+			}
 
+			//entity.ResourceVersionId = resource.Version.Id;
+			entity.ResourceIntId = resource.Id;
+			entity.UseRightsUrl = resource.Version.Rights;
+
+			if (entity.IsOrgContent() == false)
+			{
+				entity.StatusId = ContentItem.PUBLISHED_STATUS;
+				//entity.IsPublished = true;
+				Update(entity);
+
+				//TODO - anything else??
+				return true;
+			}
+			hasApproval = true;
+			//get approvers for org
+			SubmitApprovalRequest(entity);
+
+			//update status
+			entity.StatusId = ContentItem.SUBMITTED_STATUS;
+			Update(entity);
+			//set resource to inactive
+			new ResourceBizService().Resource_SetInactive(resource.Id, ref statusMessage);
+
+			//add record to audit table
+			string msg = string.Format("Request by {0} for approval of resource id: {1}", author.FullName(), entity.Id);
+
+			ContentHistory_Create(contentId, "Approval Request - new", msg, author.Id, ref statusMessage);
+
+			return isValid;
+		}
+
+		/// <summary>
+		/// Request approval for a content item
+		/// - resource tagging, and LR publishing (or caching) would have already occured
+		/// - typically used where a previous submission was denied or author has made updates to an previously approved content item
+		/// </summary>
+		/// <param name="contentId"></param>
+		/// <param name="author"></param>
+		/// <param name="statusMessage"></param>
+		/// <returns></returns>
+		public bool RequestApproval(int contentId, ThisUser author, ref string statusMessage)
+		{
+			//TODO  - should resource be set inactive
+
+			bool isValid = true;
+
+			try
+			{
+				ContentItem entity = Get(contentId);
+				if (entity == null || entity.Id == 0)
+				{
+					//invalid, return, log error?
+					statusMessage = "Invalid request, record was not found.";
+					return false;
+				}
+				//get approvers for org
+				SubmitApprovalRequest(entity);
+
+				//update status
+				entity.StatusId = ContentItem.SUBMITTED_STATUS;
+				Update(entity);
+				//set resource to inactive
+				new ResourceBizService().Resource_SetInactive(entity.ResourceIntId, ref statusMessage);
+
+				//add record to audit table
+				string msg = string.Format("Request by {0} for approval of resource id: {1}", author.FullName(), entity.Id);
+
+				ContentHistory_Create(entity.Id, "Approval Request - existing", msg, author.Id, ref statusMessage);
+			}
+			catch (Exception ex)
+			{
+				LoggingHelper.LogError(ex, thisClassName + string.Format(".RequestApproval(contentId: {0}, author: {1})", contentId, author.FullName()));
+				isValid = false;
+				statusMessage = ex.Message;
+			}
+			return isValid;
+		}
+
+
+		public static void SubmitApprovalRequest(ContentItem entity)
+		{
+			//get administrators for org, and parent
+			//format and send emails
+			string statusMessage = "";
+			AcctManager mgr = new AcctManager();
+			ThisUser author = mgr.Get(entity.CreatedById);
+			string note = "";
+			string toEmail = "";
+			string bccEmail = "";
+			//if valid
+			Organization org = OrganizationBizService.GetOrganization(author, ref statusMessage);
+			if (org != null && org.Id > 0)
+			{
+				//get list of administrators
+				List<GroupMember> list = GroupManager.OrgApproversSelect(org.Id);
+				if (list != null && list.Count > 0)
+				{
+					foreach (GroupMember item in list)
+					{
+						if (item.UserEmail.Length > 5)
+							toEmail += item.UserEmail + ",";
+					}
+				}
+				else
+				{
+					//if no approvers, send to info
+					toEmail = UtilityManager.GetAppKeyValue("contactUsMailTo", "DoNotReply@ilsharedlearning.org");
+					note = "<br/>NOTE: no organization approvers were found for this organization: " + org.Name;
+				}
+				string friendlyTitle = ResourceBizService.FormatFriendlyTitle(entity.Title);
+				string url = UtilityManager.FormatAbsoluteUrl(string.Format("/Content/{0}/{1}", entity.Id.ToString(), friendlyTitle), true);
+				string urlTitle = string.Format("<a href='{0}'>{1}</a>", url, entity.Title);
+				if (System.DateTime.Now < new System.DateTime(2013, 7, 1))
+					bccEmail = UtilityManager.GetAppKeyValue("appAdminEmail", "info@illinoisworknet.com");
+
+				string subject = string.Format("Isle request to approve an education resource from: {0}", author.FullName());
+				string body = string.Format("<p>{0} from {1} is requesting approval on an education resource.</p>", author.FullName(), org.Name);
+
+				//could include the override parm in the link, and just go to the display?
+				//or, approver will need to see all content, even private?
+
+
+				body += "<br/>url:&nbsp;" + urlTitle;
+				body += "<br/><br/>From: " + author.EmailSignature();
+				string from = author.Email;
+				EmailManager.SendEmail(toEmail, from, subject, body, author.Email, bccEmail);
+			}
+		}
+		/// <summary>
+		/// Handle action of content denied
+		/// </summary>
+		/// <param name="contentId"></param>
+		/// <param name="reason"></param>
+		/// <param name="approver"></param>
+		/// <param name="statusMessage"></param>
+		public bool HandleDeclinedAction(int contentId, string reason, ThisUser approver, ref string statusMessage)
+		{
+			ContentItem entity = new MyManager().Get(contentId);
+			if (entity != null && entity.Id > 0)
+				return HandleDeclinedAction(entity, reason, approver, ref statusMessage);
+			else
+			{
+				//TBD
+				return false;
+			}
+		}
+
+		/// <summary>
+		/// Handle action of content denied
+		/// </summary>
+		/// <param name="entity"></param>
+		/// <param name="reason"></param>
+		/// <param name="approver"></param>
+		/// <param name="statusMessage"></param>
+		public bool HandleDeclinedAction(ContentItem entity, string reason, ThisUser approver, ref string statusMessage)
+		{
+			bool isValid = true;
+
+			statusMessage = string.Empty;
+			entity.StatusId = ContentItem.REVISIONS_REQUIRED_STATUS;
+			//not actually used yet
+			entity.ApprovedById = 0;
+			entity.Approved = entity.DefaultDate;
+			Update(entity);
+
+			//set resource to inactive
+			new ResourceBizService().Resource_SetInactive(entity.ResourceIntId, ref statusMessage);
+
+			//add record to audit table
+			string msg = string.Format("Resource: {0}, author: {1}, was declined by {2}", entity.Title, entity.Author, approver.FullName());
+
+			ContentHistory_Create(entity.Id, "Approval Request Denied", msg, approver.Id, ref statusMessage);
+
+			//send email
+			AcctManager amgr = new AcctManager();
+			ThisUser author = amgr.Get(entity.CreatedById);
+
+			string friendlyTitle = ResourceBizService.FormatFriendlyTitle(entity.Title);
+			string url = UtilityManager.FormatAbsoluteUrl(string.Format("/Content/{0}/{1}", entity.Id.ToString(), friendlyTitle), true);
+			string urlTitle = string.Format("<a href='{0}'>{1}</a>", url, entity.Title);
+			string toEmail = author.Email;
+			string bccEmail = UtilityManager.GetAppKeyValue("systemAdminEmail", "info@illinoisworknet.com");
+
+			string subject = "Isle: Require updates in order to approve education resource";
+
+			string body = string.Format("<p>{0} has reviewed your education resource. The resource has not been approved. Please refer to the following for reasons/instructions.<br/>{1}</p>", approver.FullName());
+			body += "<br/>url:&nbsp;" + urlTitle;
+			body += "<br/>From: " + approver.EmailSignature();
+			string from = approver.Email;
+			EmailManager.SendEmail(toEmail, from, subject, body, approver.Email, bccEmail);
+
+
+			return isValid;
+		}
+
+		public static bool IsUserOrgApprover(ContentItem entity, int checkUserId)
+		{
+			return IsUserOrgApprover(entity.OrgId, entity.CreatedById, checkUserId);
+		}
+
+
+		public static bool IsUserOrgApprover(int contentOrgId, int contentCreatedById, int checkUserId)
+		{
+			string statusMessage = "";
+			if (contentOrgId > 0)
+			{
+				if (GroupManager.IsUserAnOrgApprover(contentOrgId, checkUserId))
+					return true;
+				else
+					return false;
+			}
+			AcctManager mgr = new AcctManager();
+			ThisUser author = mgr.Get(contentCreatedById);
+			//if valid
+			Organization org = OrganizationBizService.GetOrganization(author, ref statusMessage);
+			if (org != null && org.Id > 0)
+			{
+				if (GroupManager.IsUserAnOrgApprover(org.Id, checkUserId))
+					return true;
+			}
+			return false;
+
+		}
+		#endregion
 		#region ====== Retrieval Methods ===============================================
 		/// <summary>
 		/// Get Content record
@@ -266,7 +533,29 @@ namespace Isle.BizServices
             return entity;
 
 		}//
+		public void GetContentStandards( ContentItem entity )
+		{
 
+			if ( entity != null && entity.Id > 0 )
+			{
+				entity.ContentStandards = EFManager.Fill_ContentStandards( entity.Id );
+				
+			}
+
+		}//
+		public ContentItem GetContentTags( ContentItem entity )
+		{
+
+
+			if ( entity != null && entity.Id > 0 )
+			{
+				entity.ContentStandards = EFManager.Fill_ContentStandards( entity.Id );
+				
+			}
+
+			return entity;
+
+		}//
         public ContentItem GetByRowId( string pRowId )
         {
             if ( pRowId.Length == 36 && pRowId.Substring(0,4) != "0000")
@@ -282,6 +571,7 @@ namespace Isle.BizServices
         /// <summary>
         /// Get Content record using resourceId
         /// The implied context is for use on the detail page or to support the resource
+		/// TODO - should we arbitrarily check and include a Content.Partner object???
         /// </summary>
         /// <param name="pContentId"></param>
         /// <param name="user"></param>
@@ -317,7 +607,8 @@ namespace Isle.BizServices
                         //for docs, should link to parent node!
                         if ( FormatCurriculumMessage( entity, extraMessage ) == false )
                         {
-                            string message = " <div id='compDescription'>This resource has a related page:<div style='margin-left:20px;'><br/><a href='{0}'>{1}</a></div></div>";
+							//HACK WARNING - using standAloneContent to indicate not part of curriculum, so detail page can show actual file url
+                            string message = " <div id='compDescription' class='standAloneContent'>This resource has a related page:<div style='margin-left:20px;'><br/><a href='{0}'>{1}</a></div></div>";
                             //
                             string content = string.Format( message, FormatContentFriendlyUrl( entity ), entity.Title );
                             content += extraMessage;
@@ -325,15 +616,16 @@ namespace Isle.BizServices
                             entity.Message = string.Format( "<div class='isleBox'><h2 class='isleBox_H2'>Resource Note</h2>{0}</div>", content );
                         }
 
-                       
-                    }
+					}
+					
                     else if (entity.TypeId == ContentItem.CURRICULUM_CONTENT_ID)
                     {
                         //could get all standards, but would take a lot of time - unless cached
                         string content = "<div id='compDescription'>Note: Only standards directly aligned to the curriculum are displayed here. The curriculum resource page will display all standards that have been aligned to any of the curriculum components.</div>";
                         entity.Message = string.Format( "<div class='isleBox'><h2 class='isleBox_H2'>Curriculum Information</h2>{0}</div>", content );
                     }
-                    else if (entity.IsHierarchyType)
+					else if (entity.IsHierarchyType 
+						|| entity.TypeId == ContentItem.EXTERNAL_URL_CONTENT_ID)
                     {
                         FormatCurriculumMessage( entity, extraMessage );
                     }
@@ -402,6 +694,9 @@ namespace Isle.BizServices
             return myMgr.SelectOrgTemplates( orgId );
         }
 
+		#endregion
+
+		#region === content search ====
 		/// <summary>
 		/// Search for Content related data using passed parameters
 		/// - uses custom paging
@@ -413,10 +708,12 @@ namespace Isle.BizServices
 		/// <param name="pMaximumRows"></param>
 		/// <param name="pTotalRows"></param>
 		/// <returns></returns>
-        public DataSet Search( string pFilter, string pOrderBy, int pStartPageIndex, int pMaximumRows, ref int pTotalRows )
+
+
+		public DataSet SearchOLD( string pFilter, string pOrderBy, int pStartPageIndex, int pMaximumRows, ref int pTotalRows )
 		{
-            //TODO - create a List<> version
-            return myMgr.Search( pFilter, pOrderBy, pStartPageIndex, pMaximumRows, ref pTotalRows );
+			//TODO - create a List<> version
+			return myMgr.Search( pFilter, pOrderBy, pStartPageIndex, pMaximumRows, ref pTotalRows );
 		}
         #endregion
 
@@ -458,9 +755,9 @@ namespace Isle.BizServices
             {
                 if ( pContentId > 0 )
                 {
-                    LoggingHelper.DoTrace( 5, string.Format("###### GetCurriculumOutline started for ", pContentId) );
+                    LoggingHelper.DoTrace( 6, string.Format("###### GetCurriculumOutline started for ", pContentId) );
                     entity = EFManager.Content_GetHierarchyOutline( pContentId, publishedOnly, allowCaching );
-                    LoggingHelper.DoTrace( 5, string.Format( "###### GetCurriculumOutline end for ", pContentId ) );
+                    LoggingHelper.DoTrace( 6, string.Format( "###### GetCurriculumOutline end for ", pContentId ) );
                 }
             }
             catch ( Exception ex )
@@ -1085,8 +1382,9 @@ namespace Isle.BizServices
                 user = new ThisUser();
 
             //hmmm, assuming doc has been sync'd already
-            if ( entity.DocumentUrl  != null && entity.DocumentUrl.Length > 10 )
+            if ( entity.DocumentUrl  != null && entity.DocumentUrl.Length > 5 )
             {
+				//need org member checks
                 bool isOwner = ( user.Id > 0 && user.Id == entity.CreatedById );
 
                 if ( entity.PrivilegeTypeId == ContentItem.PUBLIC_PRIVILEGE || isOwner )
@@ -1142,6 +1440,7 @@ namespace Isle.BizServices
             else
             {
                 statusMessage = "Sorry issue encountered locating the related document.";
+				DoTrace(4, string.Format("@@@@ CanViewDocument - issue encountered locating the related document. ContentId: {0}, type: {1}, rId: {2}", entity.Id, entity.TypeId, entity.ResourceIntId));
             }
 
             entity.CanViewDocument = canViewDoc;
@@ -1199,13 +1498,93 @@ namespace Isle.BizServices
         {
             return new EFManager().ContentPartner_Add( entity, ref statusMessage );
         }
-        public bool ContentPartner_Update( ContentPartner entity )
+        /// <summary>
+        /// the creator of an applicable content item will be the administrator by default
+        /// </summary>
+        /// <param name="contentId"></param>
+        /// <param name="createdbyId"></param>
+        /// <param name="statusMessage"></param>
+        /// <returns></returns>
+        public int Content_AddCreatorPartner(int contentId, int createdbyId, ref string statusMessage)
         {
+            ContentPartner entity = new ContentPartner();
+            int newId = 0;
+
+            entity.ContentId = contentId;
+            entity.UserId = createdbyId;
+            entity.PartnerTypeId = LibraryMember.LIBRARY_MEMBER_TYPE_ID_ADMIN;
+            entity.CreatedById = entity.LastUpdatedById = createdbyId;
+            entity.Created = entity.LastUpdated = DateTime.Now;
+
+            newId = ContentPartner_Add(entity, ref statusMessage);
+
+            return newId;
+        }
+
+        /// <summary>
+        /// Update a content partner
+        /// </summary>
+        /// <param name="contentId"></param>
+        /// <param name="userId"></param>
+        /// <param name="partnerTypeId"></param>
+        /// <param name="updatedById"></param>
+        /// <param name="status"></param>
+        /// <returns></returns>
+        public bool ContentPartner_Update(int contentId, int userId, int partnerTypeId, int updatedById, ref string status)
+        {
+
+            ContentPartner entity = ContentServices.ContentPartner_Get(contentId, userId);
+            if (entity == null || entity.Id == 0)
+            {
+                status = "Content partner was not found.";
+                return false;
+            }
+
+            entity.PartnerTypeId = partnerTypeId;
+            entity.LastUpdatedById = updatedById;
+
+            return new EFManager().ContentPartner_Update(entity);
+        }
+
+        /// <summary>
+        /// /// Update a content partner NOTE: MSUT HAVE AN ID
+        /// </summary>
+        /// <param name="entity"></param>
+        /// <returns></returns>
+        public bool ContentPartner_Update( ContentPartner entity, ref string status )
+        {
+            if (entity.Id == 0)
+            {
+                status = "Error: The ContentPartner object must have an Id";
+                return false;
+            }
             return new EFManager().ContentPartner_Update( entity );
         }
+
+        public bool ContentPartner_Delete(int contentId, int userId, ref string statusMessage)
+        {
+            ContentPartner entity = ContentPartner_Get(contentId, userId);
+            if (entity != null && entity.Id > 0)
+                return new EFManager().ContentPartner_Delete(entity.Id, ref statusMessage);
+            else
+            {
+                statusMessage = "The requested partner record was not found.";
+                return false;
+            }
+        }
+
         public bool ContentPartner_Delete( int id, ref string statusMessage )
         {
             return new EFManager().ContentPartner_Delete( id, ref statusMessage );
+        }
+
+        public static bool IsContentPartner(int contentId, int userId)
+        {
+            ContentPartner entity = ContentPartner_Get(contentId, userId);
+            if (entity != null && entity.Id > 0)
+                return true;
+            else
+                return false;
         }
 
         public static ContentPartner ContentPartner_Get( int contentId, int userId )
@@ -1222,24 +1601,66 @@ namespace Isle.BizServices
                 return EFManager.Content_GetContentPartner( contentId, user.Id );
         }
 
+        /// <summary>
+        /// get all partners for content
+        /// </summary>
+        /// <param name="contentId"></param>
+        /// <returns></returns>
+        public static List<ContentPartner> ContentPartner_GetAll(int contentId)
+        {
+
+            return EFManager.Content_GetContentPartners(contentId);
+        }
+        public static List<ContentPartner> ContentPartner_GetAll(int contentId, int minimumType)
+        {
+
+            return EFManager.Content_GetContentPartners(contentId, minimumType);
+        }
         public static List<CodeItem> GetCodes_ContentPartnerType()
         {
+            return GetCodes_ContentPartnerType(10);
+        }
+        public static List<CodeItem> GetCodes_ContentPartnerType(int topTypeId)
+        {
             CodeItem ci = new CodeItem();
+            //skip zero - pending
             List<EFDAL.Codes_ContentPartnerType> eflist = new EFDAL.IsleContentEntities().Codes_ContentPartnerType
-                            .OrderBy( s => s.Id )
+                            .Where(s => s.Id > 0 && s.Id <= topTypeId)
+                            .OrderBy(s => s.Id)
                             .ToList();
             List<CodeItem> list = new List<CodeItem>();
-            if ( eflist.Count > 0 )
+            if (eflist.Count > 0)
             {
-                foreach ( EFDAL.Codes_ContentPartnerType item in eflist )
+                foreach (EFDAL.Codes_ContentPartnerType item in eflist)
                 {
                     ci = new CodeItem();
                     ci.Id = item.Id;
                     ci.Title = item.Title;
-                    list.Add( ci );
+                    list.Add(ci);
                 }
             }
             return list;
+        }
+
+        public static CodeItem GetCode_ContentPartnerType(int typeId)
+        {
+            CodeItem ci = new CodeItem();
+            List<EFDAL.Codes_ContentPartnerType> eflist = new EFDAL.IsleContentEntities().Codes_ContentPartnerType
+                            .Where(s => s.Id == typeId)
+                            .OrderBy(s => s.Id)
+                            .ToList();
+            
+            if (eflist.Count > 0)
+            {
+                foreach (EFDAL.Codes_ContentPartnerType item in eflist)
+                {
+                    ci = new CodeItem();
+                    ci.Id = item.Id;
+                    ci.Title = item.Title;
+                    break;
+                }
+            }
+            return ci;
         }
         #endregion
 

@@ -8,14 +8,15 @@ using System.Web.UI.WebControls;
 using System.Web.Script.Serialization;
 
 using Isle.BizServices;
-using ILPathways.Library;
+using IOER.Library;
 using ILPathways.Business;
 using ILPathways.Common;
 using Item = ILPathways.Business.DataItem;
 using ILPathways.Utilities;
 using DataBaseHelper = LRWarehouse.DAL.BaseDataManager;
+using ThisUser = LRWarehouse.Business.Patron;
 
-namespace ILPathways.LRW.controls
+namespace IOER.LRW.controls
 {
     /// <summary>
     /// Library home
@@ -40,20 +41,21 @@ namespace ILPathways.LRW.controls
         protected void Page_Load( object sender, EventArgs e )
         {
           //Prevent duplicate page loads - still not sure what causes this or how to fix it
-          if ( Request.Url == Request.UrlReferrer && !Page.IsPostBack ) { return; }
+          //if ( Request.Url == Request.UrlReferrer && !Page.IsPostBack ) { return; }
 
-            if ( !Page.IsPostBack )
-            {
-              var serializer = new JavaScriptSerializer();
+            var serializer = new JavaScriptSerializer();
               libInfoString = serializer.Serialize( GetLibrary() );
-              activityJSON = serializer.Serialize( 
-                new ActivityBizServices().ActivityTotals_Library( 
-                  libraryID, 
-                  DateTime.Now.AddDays(-1 * int.Parse(activityDaysAgo.Text)), 
-                  DateTime.Now 
-                ).FirstOrDefault() ?? new Isle.DTO.HierarchyActivityRecord() 
-              );
-            }
+
+						//Activity
+						activityRenderer.GetDateRange( ref txtStartDate, ref txtEndDate );
+						
+						activityJSON = serializer.Serialize(
+							new ActivityBizServices().ActivityTotals_Library(
+								libraryID,
+								activityRenderer.startDate,
+								activityRenderer.endDate
+							).FirstOrDefault() ?? new Isle.DTO.HierarchyActivityRecord()
+						);
         }
 
         /// <summary>
@@ -151,7 +153,7 @@ namespace ILPathways.LRW.controls
                 return null;
             }
 
-            var user = ( LRWarehouse.Business.Patron )WebUser;
+            var user = ( ThisUser )WebUser;
             //It's probably better to replace the next line with one that gets the user's current Library ID (and use that in the GetAllLibraryData method), but that ID seems to always be 0)
             var library = new Isle.BizServices.LibraryBizService().GetMyLibrary( user );
             if ( !library.IsValid || library.Id == 0 ) //User doesn't have a library yet
@@ -228,7 +230,7 @@ namespace ILPathways.LRW.controls
           ddlOrganizationAccessLevels.Items.Clear();
 
           var list = LibraryBizService.GetCodes_LibraryAccessLevel();
-          foreach ( Common.CodeItem item in list )
+          foreach ( CodeItem item in list )
           {
             var insert = new ListItem()
             {
@@ -318,7 +320,7 @@ namespace ILPathways.LRW.controls
 
               //Add avatars
               var avatarSystem = new My.Avatar();
-              avatarSystem.UpdateAvatar( fileNewImage, library, new Business.LibrarySection() ); //Create the avatar for library
+              avatarSystem.UpdateAvatar( fileNewImage, library, new LibrarySection() ); //Create the avatar for library
               avatarSystem.UpdateAvatar( fileNewImage, library, defaultCollection ); //Use the same avatar for the default collection
               SetConsoleSuccessMessage( completionMessage.Text );
 
@@ -337,8 +339,8 @@ namespace ILPathways.LRW.controls
 
         public string ValidateText( string text, int minimum, string name, ref bool valid, ref string status )
         {
-          text = Utilities.FormHelper.SanitizeUserInput( text );
-          if ( Utilities.BadWordChecker.CheckForBadWords( text ) )
+          text = FormHelper.CleanText( text );
+          if ( BadWordChecker.CheckForBadWords( text ) )
           {
             valid = false;
             status = status + " Inappropriate Language found.";

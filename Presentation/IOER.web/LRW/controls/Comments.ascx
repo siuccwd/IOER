@@ -1,4 +1,4 @@
-﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="Comments.ascx.cs" Inherits="ILPathways.LRW.controls.Comments" %>
+﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="Comments.ascx.cs" Inherits="IOER.LRW.controls.Comments" %>
 
 <script type="text/javascript">
   $(document).ready(function () {

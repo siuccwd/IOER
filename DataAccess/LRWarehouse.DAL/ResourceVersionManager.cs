@@ -28,7 +28,7 @@ namespace LRWarehouse.DAL
         const string DELETE_PROC = "[Resource.VersionDelete]";
         const string INSERT_PROC = "[Resource.VersionInsert]";
         const string UPDATE_PROC = "[Resource.VersionUpdate]";
-        const string UPDATEByRowid_PROC = "[Resource.VersionUpdateByRowId]";
+		//const string UPDATEByRowid_PROC = "[Resource.VersionUpdateByRowId]";
 
         const string SEARCH_PROC = "[Resource_Search]";
         const string SEARCH_FT_PROC = "[Resource_Search_FT]";
@@ -61,6 +61,7 @@ namespace LRWarehouse.DAL
                 sqlParameters[ 0 ] = new SqlParameter( "@RowId", SqlDbType.UniqueIdentifier );
                 sqlParameters[ 0 ].Value = new Guid( pRowId );
 
+                DoTrace(2, "ResourceVersionManager.Deleting " + pRowId);
                 SqlHelper.ExecuteNonQuery( connectionString, CommandType.StoredProcedure, DELETE_PROC, sqlParameters );
                 successful = true;
             }
@@ -152,6 +153,7 @@ namespace LRWarehouse.DAL
 
         /// <summary>
         /// Update an ResourceVersion record
+		/// 15-10-08 mparsons - removed InteractivityTypeId and add accessRights, creator, and publisher
         /// </summary>
         /// <param name="entity"></param>
         /// <returns></returns>
@@ -165,7 +167,7 @@ namespace LRWarehouse.DAL
                 {
 
                     #region parameters
-                    SqlParameter[] sqlParameters = new SqlParameter[ 9 ];
+                    SqlParameter[] sqlParameters = new SqlParameter[ 10 ];
                     sqlParameters[ 0 ] = new SqlParameter( "@Id", entity.Id );
 
                     sqlParameters[ 1 ] = new SqlParameter( "@Title", entity.Title );
@@ -175,11 +177,13 @@ namespace LRWarehouse.DAL
 
                     sqlParameters[ 5 ] = new SqlParameter( "@TypicalLearningTime", entity.TypicalLearningTime );
                     sqlParameters[ 6 ] = new SqlParameter( "@Schema", entity.Schema );
-                    //? how to publish an update to interactivity type
-                    sqlParameters[ 7 ] = new SqlParameter( "@InteractivityTypeId", entity.InteractivityTypeId );
 
-                    sqlParameters[ 8 ] = new SqlParameter( "@Requirements", entity.Requirements );
+                    sqlParameters[ 7 ] = new SqlParameter( "@Requirements", entity.Requirements );
+					sqlParameters[ 8 ] = new SqlParameter( "@Creator", entity.Creator );
+					sqlParameters[ 9 ] = new SqlParameter( "@Publisher", entity.Publisher );
 
+					//? how to publish an update to interactivity type
+					//sqlParameters[ 7 ] = new SqlParameter( "@InteractivityTypeId", entity.InteractivityTypeId );
                     #endregion
 
                     SqlHelper.ExecuteNonQuery( conn, UPDATE_PROC, sqlParameters );
@@ -202,45 +206,45 @@ namespace LRWarehouse.DAL
         /// </summary>
         /// <param name="entity"></param>
         /// <returns></returns>
-        private string UpdateByRowId( MyEntity entity )
-        {
-            string message = "successful";
-            string connectionString = LRWarehouse();
+		//private string UpdateByRowId( MyEntity entity )
+		//{
+		//	string message = "successful";
+		//	string connectionString = LRWarehouse();
 
-            try
-            {
+		//	try
+		//	{
 
-                #region parameters
-                SqlParameter[] sqlParameters = new SqlParameter[ 10 ];
-                sqlParameters[ 0 ] = new SqlParameter( "@RowId", SqlDbType.UniqueIdentifier );
-                sqlParameters[ 0 ].Value = entity.RowId;
-                sqlParameters[ 1 ] = new SqlParameter( "@Title", entity.Title );
-                sqlParameters[ 2 ] = new SqlParameter( "@Description", entity.Description );
-                sqlParameters[ 3 ] = new SqlParameter( "@Rights", entity.Rights );
-                sqlParameters[ 4 ] = new SqlParameter( "@AccessRights", entity.AccessRights );
-                sqlParameters[ 5 ] = new SqlParameter( "@AccessRightsId", entity.AccessRightsId );
+		//		#region parameters
+		//		SqlParameter[] sqlParameters = new SqlParameter[ 10 ];
+		//		sqlParameters[ 0 ] = new SqlParameter( "@RowId", SqlDbType.UniqueIdentifier );
+		//		sqlParameters[ 0 ].Value = entity.RowId;
+		//		sqlParameters[ 1 ] = new SqlParameter( "@Title", entity.Title );
+		//		sqlParameters[ 2 ] = new SqlParameter( "@Description", entity.Description );
+		//		sqlParameters[ 3 ] = new SqlParameter( "@Rights", entity.Rights );
+		//		sqlParameters[ 4 ] = new SqlParameter( "@AccessRights", entity.AccessRights );
+		//		sqlParameters[ 5 ] = new SqlParameter( "@AccessRightsId", entity.AccessRightsId );
 
-                sqlParameters[ 6 ] = new SqlParameter( "@TypicalLearningTime", entity.TypicalLearningTime );
-                sqlParameters[ 7 ] = new SqlParameter( "@Schema", entity.Schema );
-                //? how to publish an update to interactivity type
-                sqlParameters[ 8 ] = new SqlParameter( "@InteractivityTypeId", entity.InteractivityTypeId );
-                sqlParameters[ 9 ] = new SqlParameter( "@Modified", entity.Modified );
+		//		sqlParameters[ 6 ] = new SqlParameter( "@TypicalLearningTime", entity.TypicalLearningTime );
+		//		sqlParameters[ 7 ] = new SqlParameter( "@Schema", entity.Schema );
+		//		//? how to publish an update to interactivity type
+		//		sqlParameters[ 8 ] = new SqlParameter( "@InteractivityTypeId", entity.InteractivityTypeId );
+		//		sqlParameters[ 9 ] = new SqlParameter( "@Modified", entity.Modified );
 
-                #endregion
+		//		#endregion
 
-                SqlHelper.ExecuteNonQuery( connectionString, UPDATEByRowid_PROC, sqlParameters );
-                message = "successful";
+		//		SqlHelper.ExecuteNonQuery( connectionString, UPDATEByRowid_PROC, sqlParameters );
+		//		message = "successful";
 
-            }
-            catch ( Exception ex )
-            {
-                LogError( ex, thisClassName + string.Format( ".Update() for RowId: {0} and Title: {1}", entity.RowId.ToString(), entity.Title ) );
-                throw ex;
-            }
+		//	}
+		//	catch ( Exception ex )
+		//	{
+		//		LogError( ex, thisClassName + string.Format( ".Update() for RowId: {0} and Title: {1}", entity.RowId.ToString(), entity.Title ) );
+		//		throw ex;
+		//	}
 
-            return message;
+		//	return message;
 
-        }//
+		//}//
 
         public string Update_LrDocId( MyEntity entity )
         {

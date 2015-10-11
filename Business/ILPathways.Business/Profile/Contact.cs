@@ -943,30 +943,41 @@ namespace ILPathways.Business
 		/// Returns full name of user
 		/// </summary>
 		/// <returns></returns>
-		public string FullName()
-		{
-			return this.FirstName + " " + this.LastName;
-		}
+        public string FullName()
+        {
+            if (string.IsNullOrWhiteSpace(FirstName))
+                return "Incomplete - Update Profile";
+            else
+                return this.FirstName + " " + this.LastName;
+        }
 
-		/// <summary>
-		/// Returns user name as LastName, FirstName
-		/// </summary>
-		/// <returns></returns>
-		public string SortName()
-		{
-			return this.LastName + ", " + this.FirstName;
-		}//
+        /// <summary>
+        /// Returns user name as LastName, FirstName
+        /// </summary>
+        /// <returns></returns>
+        public string SortName()
+        {
+            if (string.IsNullOrWhiteSpace(FirstName))
+                return "Incomplete - Update Profile";
+            else
+                return this.LastName + ", " + this.FirstName;
+        }//
 
-		/// <summary>
-		/// Returns Short Name of user - first initial of first name plus last name.
-		/// </summary>
-		/// <returns></returns>
-		public string ShortName()
-		{
-			string shortName = this.FirstName.Substring( 0, 1 ) + this.LastName;
-			shortName = shortName.Replace( " ", "" );
-			return shortName;
-		}//
+        /// <summary>
+        /// Returns Short Name of user - first initial of first name plus last name.
+        /// </summary>
+        /// <returns></returns>
+        public string ShortName()
+        {
+            if (string.IsNullOrWhiteSpace(FirstName))
+                return "Incomplete - Update Profile";
+            else
+            {
+                string shortName = this.FirstName.Substring(0, 1) + this.LastName;
+                shortName = shortName.Replace(" ", "");
+                return shortName;
+            }
+        }//
 
 
 		/// <summary>

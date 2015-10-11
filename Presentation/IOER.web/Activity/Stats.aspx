@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="Stats.aspx.cs" Inherits="ILPathways.Activity.Stats"  MasterPageFile="/Masters/Responsive.Master" %>
+﻿<%@ Page Title="Illinois Open Educational Resources - Site Statistics" Language="C#" AutoEventWireup="true" CodeBehind="Stats.aspx.cs" Inherits="IOER.Activity.Stats"  MasterPageFile="/Masters/Responsive.Master" %>
 <%@ Register TagPrefix="uc1" TagName="Stats" Src="/Activity/Stats2.ascx" %>
 
 <asp:Content ContentPlaceHolderID="BodyContent" runat="server">

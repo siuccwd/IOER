@@ -1,4 +1,4 @@
-﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="TagList.ascx.cs" Inherits="ILPathways.LRW.controls.TagList" %>
+﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="TagList.ascx.cs" Inherits="IOER.LRW.controls.TagList" %>
 
 <!-- data from server -->
 <asp:Literal ID="inputScript" runat="server" />

@@ -1,1 +1,1 @@
-﻿<%@ Application Codebehind="Global.asax.cs" Inherits="IllinoisPathways.Global" Language="C#" %>
+﻿<%@ Application Codebehind="Global.asax.cs" Inherits="IOER.Global" Language="C#" %>

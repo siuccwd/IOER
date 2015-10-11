@@ -1,13 +1,5 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Data;
-using SD = System.Drawing;
-using System.Drawing.Imaging;
-using System.Drawing.Drawing2D;
-using System.IO;
-using System.Linq;
-using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
@@ -15,15 +7,14 @@ using EmailHelper = ILPathways.Utilities.EmailManager;
 
 using ILPathways.Business;
 using ILPathways.Common;
-using ILPathways.Library;
+using IOER.Library;
 using ILPathways.Utilities;
-using GDAL = Isle.BizServices;
 
 using MyManager = Isle.BizServices.OrganizationBizService;
 using SecurityManager = Isle.BizServices.GroupServices;
 using BDM = LRWarehouse.DAL.BaseDataManager;
 
-namespace ILPathways.Controls.OrgMgmt
+namespace IOER.Controls.OrgMgmt
 {
     /// <summary>
     /// manage organizations
@@ -75,7 +66,7 @@ namespace ILPathways.Controls.OrgMgmt
                 SetConsoleErrorMessage( "Error: you must be authenticated to view the organization management page." );
                 Response.Redirect( "/", true );
             }
-            WebUser = GetAppUser();
+			CurrentUser = GetAppUser();
 
             if ( Page.IsPostBack == false )
             {
@@ -474,19 +465,21 @@ namespace ILPathways.Controls.OrgMgmt
                 }
 
                 /* assign form fields 			 */
-                entity.Name = FormHelper.SanitizeUserInput( this.txtName.Text );
-                entity.Address1 = FormHelper.SanitizeUserInput( this.txtAddress1.Text );
-                entity.Address2 = FormHelper.SanitizeUserInput( this.txtAddress2.Text );
-                entity.City = FormHelper.SanitizeUserInput( this.txtCity.Text );
-                entity.ZipCode = FormHelper.SanitizeUserInput( this.txtZipcode.Text );
-                entity.ZipCode4 = FormHelper.SanitizeUserInput( this.txtZipcodePlus4.Text );
-                entity.EmailDomain = FormHelper.SanitizeUserInput( txtEmailDomain.Text );
+                entity.Name = FormHelper.CleanText( this.txtName.Text );
+                entity.Address1 = FormHelper.CleanText( this.txtAddress1.Text );
+                entity.Address2 = FormHelper.CleanText( this.txtAddress2.Text );
+                entity.City = FormHelper.CleanText( this.txtCity.Text );
+                entity.ZipCode = FormHelper.CleanText( this.txtZipcode.Text );
+                entity.ZipCode4 = FormHelper.CleanText( this.txtZipcodePlus4.Text );
+                entity.EmailDomain = FormHelper.CleanText( txtEmailDomain.Text );
                 if ( entity.EmailDomain.StartsWith( "@" ) )
                     entity.EmailDomain = entity.EmailDomain.Substring( 1 );
 
                 entity.WebSite = txtWebsite.Text;
-                entity.MainPhone = FormHelper.SanitizeUserInput( this.txtMainPhone.Text );
-                entity.MainExtension = FormHelper.SanitizeUserInput( this.txtMainExtension.Text );
+                entity.MainPhone = FormHelper.CleanText( this.txtMainPhone.Text );
+                entity.MainExtension = FormHelper.CleanText( this.txtMainExtension.Text );
+                entity.Fax = FormHelper.CleanText(this.txtFax.Text);
+                
                 entity.State = this.ddlState.SelectedValue;
 
                 entity.OrgTypeId = Int32.Parse( this.ddlOrgTypeId.SelectedValue );
@@ -504,14 +497,19 @@ namespace ILPathways.Controls.OrgMgmt
                 int entityId = 0;
                 if ( entity.Id == 0 )
                 {
-                    entityId = MyManager.Organization_Create( entity, ref statusMessage );
+                    entityId = myManager.Organization_Create( entity, ref statusMessage );
                     if ( entityId > 0 )
                     {
                         this.txtId.Text = entityId.ToString();
                         entity.Id = entityId;
+                        LastOrgId = entityId;
+                        //add user as admin member, with appropriate roles
+                        if (AddAdminUser(entityId))
+                            this.SetConsoleSuccessMessage( "Successfully created the organization.<br/>As well you have been added as the administrator." );
+                        else 
+                            this.SetConsoleSuccessMessage( "Successfully created the organization" );
 
-                        PopulateForm( entity );
-                        this.SetConsoleSuccessMessage( "Successfully created the organization" );
+                        PopulateForm(entity);
                     }
                     else
                     {
@@ -520,10 +518,11 @@ namespace ILPathways.Controls.OrgMgmt
                 }
                 else
                 {
-                    if ( MyManager.Organization_Update( entity ))
+                    if (myManager.Organization_Update(entity))
                     {
                         actionMsg = "Update was successful for: " + entity.Name;
                         this.SetConsoleSuccessMessage( actionMsg );
+                        LastOrgId = entity.Id;
                         PopulateForm( entity );
                     }
                     else
@@ -537,7 +536,51 @@ namespace ILPathways.Controls.OrgMgmt
                 this.SetConsoleErrorMessage( "Unexpected error encountered - Close this form and try again. (System Admin has been notified)<br/>" + ex.ToString() );
             }
         }
-     
+
+        private bool AddAdminUser(int orgId)
+        {
+            string statusMessage = "";
+            bool isValid = true;
+            int mbrId = myManager.OrganizationMember_Create( orgId, WebUser.Id, 4, WebUser.Id, ref statusMessage);
+            if (mbrId > 0)
+            {
+                //add roles
+                List<OrganizationMemberRole> roles = new List<OrganizationMemberRole>();
+                OrganizationMemberRole role = new OrganizationMemberRole();
+                role.OrgMemberId = mbrId;
+                role.RoleId = 1;
+                role.CreatedById = WebUser.Id;
+                roles.Add(role);
+
+                role = new OrganizationMemberRole();
+                role.OrgMemberId = mbrId;
+                role.RoleId = 2;
+                role.CreatedById = WebUser.Id;
+                roles.Add(role);
+
+                role = new OrganizationMemberRole();
+                role.OrgMemberId = mbrId;
+                role.RoleId = 3;
+                role.CreatedById = WebUser.Id;
+                roles.Add(role);
+
+                role = new OrganizationMemberRole();
+                role.OrgMemberId = mbrId;
+                role.RoleId = 4;
+                role.CreatedById = WebUser.Id;
+                roles.Add(role);
+
+                myManager.OrganizationMemberRoles_Create(roles, ref statusMessage);
+            }
+            else
+            {
+                isValid = false;
+                string message = string.Format(addAdminFailedMsg.Text, orgId, WebUser.Id, statusMessage);
+                EmailHelper.NotifyAdmin("OrganizationMgmt.AddAdminUser - failed", message);
+            }
+
+            return isValid;
+        }
         /// <summary>
         /// Delete a record
         /// </summary>
@@ -550,7 +593,7 @@ namespace ILPathways.Controls.OrgMgmt
                 string statusMessage = "";
                 id = int.Parse( this.txtId.Text );
 
-                if ( MyManager.Organization_Delete( id, ref statusMessage ) )
+                if ( myManager.Organization_Delete( id, ref statusMessage ) )
                 {
                     this.SetConsoleSuccessMessage( "Delete of record was successful" );
                     this.ResetForm();

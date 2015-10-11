@@ -5,7 +5,7 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
-namespace ILPathways.Controls.Community
+namespace IOER.Controls.Community
 {
     public partial class Home : System.Web.UI.UserControl
     {

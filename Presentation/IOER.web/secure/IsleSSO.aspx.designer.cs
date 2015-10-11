@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ILPathways.secure {
+namespace IOER.secure {
     
     
     public partial class IsleSSO {
@@ -28,6 +28,6 @@ namespace ILPathways.secure {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ILPathways.secure.controls.IsleSSO loginControl;
+        protected global::IOER.secure.controls.IsleSSO loginControl;
     }
 }

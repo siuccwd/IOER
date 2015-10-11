@@ -6,14 +6,14 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
-using ILPathways.Library;
+using IOER.Library;
 using ILPathways.Utilities;
-using ILPathways.classes;
+using IOER.classes;
 using ILPathways.Business;
 
-using wnEmailItem = ILPathways.EmailNoticeServiceReference;
+using wnEmailItem = IOER.EmailNoticeServiceReference;
 
-namespace ILPathways.Controllers
+namespace IOER.Controllers
 {
     public class EmailController
     {

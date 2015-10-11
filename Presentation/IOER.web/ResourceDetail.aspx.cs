@@ -8,9 +8,9 @@ using System.Web.Security;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
-using ILPathways.Library;
+using IOER.Library;
 
-namespace ILPathways
+namespace IOER
 {
     public partial class ResourceDetail : BaseAppPage
     {

@@ -1,313 +1,15 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<edmx:Edmx Version="2.0" xmlns:edmx="http://schemas.microsoft.com/ado/2008/10/edmx">
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
   <!-- EF Runtime content -->
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-    <Schema Namespace="ResourceModel.Store" Alias="Self" Provider="System.Data.SqlClient" ProviderManifestToken="2008" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/02/edm/ssdl">
-        <EntityContainer Name="ResourceModelStoreContainer">
-          <EntitySet Name="Codes_AudienceType" EntityType="ResourceModel.Store.Codes_AudienceType" store:Type="Tables" Schema="dbo" Table="Codes.AudienceType" />
-          <EntitySet Name="Codes_GradeLevel" EntityType="ResourceModel.Store.Codes_GradeLevel" store:Type="Tables" Schema="dbo" Table="Codes.GradeLevel" />
-          <EntitySet Name="Codes_Site" EntityType="ResourceModel.Store.Codes_Site" store:Type="Tables" Schema="dbo" Table="Codes.Site" />
-          <EntitySet Name="Codes_SiteTagCategory" EntityType="ResourceModel.Store.Codes_SiteTagCategory" store:Type="Tables" Schema="dbo" Table="Codes.SiteTagCategory" />
-          <EntitySet Name="Codes_Subject" EntityType="ResourceModel.Store.Codes_Subject" store:Type="Tables" Schema="dbo" Table="Codes.Subject" />
-          <EntitySet Name="Codes_TagCategory" EntityType="ResourceModel.Store.Codes_TagCategory" store:Type="Tables" Schema="dbo" Table="Codes.TagCategory" />
-          <EntitySet Name="Codes_TagValue" EntityType="ResourceModel.Store.Codes_TagValue" store:Type="Tables" Schema="dbo" Table="Codes.TagValue" />
-          <EntitySet Name="Codes_TagValueKeyword" EntityType="ResourceModel.Store.Codes_TagValueKeyword" store:Type="Tables" Schema="dbo" Table="Codes.TagValueKeyword" />
-          <EntitySet Name="Codes_TextType" EntityType="ResourceModel.Store.Codes_TextType" store:Type="Tables" Schema="dbo" Table="Codes.TextType" />
-          <EntitySet Name="ConditionOfUse" EntityType="ResourceModel.Store.ConditionOfUse" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="EmailNotice" EntityType="ResourceModel.Store.EmailNotice" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="Evaluation" EntityType="ResourceModel.Store.Evaluation" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="Evaluation_Dimension" EntityType="ResourceModel.Store.Evaluation_Dimension" store:Type="Tables" Schema="dbo" Table="Evaluation.Dimension" />
-          <EntitySet Name="Patron" EntityType="ResourceModel.Store.Patron" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="Patron_Following" EntityType="ResourceModel.Store.Patron_Following" store:Type="Tables" Schema="dbo" Table="Patron.Following" />
-          <EntitySet Name="Patron_Profile" EntityType="ResourceModel.Store.Patron_Profile" store:Type="Tables" Schema="dbo" Table="Patron.Profile" />
-          <EntitySet Name="Publish_Pending" EntityType="ResourceModel.Store.Publish_Pending" store:Type="Tables" Schema="dbo" Table="Publish.Pending" />
-          <EntitySet Name="Resource" EntityType="ResourceModel.Store.Resource" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="Resource_AssessmentType" EntityType="ResourceModel.Store.Resource_AssessmentType" store:Type="Tables" Schema="dbo" Table="Resource.AssessmentType" />
-          <EntitySet Name="Resource_Cluster" EntityType="ResourceModel.Store.Resource_Cluster" store:Type="Tables" Schema="dbo" Table="Resource.Cluster" />
-          <EntitySet Name="Resource_EducationUse" EntityType="ResourceModel.Store.Resource_EducationUse" store:Type="Tables" Schema="dbo" Table="Resource.EducationUse" />
-          <EntitySet Name="Resource_Evaluation" EntityType="ResourceModel.Store.Resource_Evaluation" store:Type="Tables" Schema="dbo" Table="Resource.Evaluation" />
-          <EntitySet Name="Resource_EvaluationSection" EntityType="ResourceModel.Store.Resource_EvaluationSection" store:Type="Tables" Schema="dbo" Table="Resource.EvaluationSection" />
-          <EntitySet Name="Resource_Format" EntityType="ResourceModel.Store.Resource_Format" store:Type="Tables" Schema="dbo" Table="Resource.Format" />
-          <EntitySet Name="Resource_GradeLevel" EntityType="ResourceModel.Store.Resource_GradeLevel" store:Type="Tables" Schema="dbo" Table="Resource.GradeLevel" />
-          <EntitySet Name="Resource_GroupType" EntityType="ResourceModel.Store.Resource_GroupType" store:Type="Tables" Schema="dbo" Table="Resource.GroupType" />
-          <EntitySet Name="Resource_IntendedAudience" EntityType="ResourceModel.Store.Resource_IntendedAudience" store:Type="Tables" Schema="dbo" Table="Resource.IntendedAudience" />
-          <EntitySet Name="Resource_ItemType" EntityType="ResourceModel.Store.Resource_ItemType" store:Type="Tables" Schema="dbo" Table="Resource.ItemType" />
-          <EntitySet Name="Resource_Keyword" EntityType="ResourceModel.Store.Resource_Keyword" store:Type="Tables" Schema="dbo" Table="Resource.Keyword" />
-          <EntitySet Name="Resource_Language" EntityType="ResourceModel.Store.Resource_Language" store:Type="Tables" Schema="dbo" Table="Resource.Language" />
-          <EntitySet Name="Resource_Like" EntityType="ResourceModel.Store.Resource_Like" store:Type="Tables" Schema="dbo" Table="Resource.Like" />
-          <EntitySet Name="Resource_LikeSummary" EntityType="ResourceModel.Store.Resource_LikeSummary" store:Type="Tables" Schema="dbo" Table="Resource.LikeSummary" />
-          <EntitySet Name="Resource_PublishedBy" EntityType="ResourceModel.Store.Resource_PublishedBy" store:Type="Tables" Schema="dbo" Table="Resource.PublishedBy" />
-          <EntitySet Name="Resource_ResourceType" EntityType="ResourceModel.Store.Resource_ResourceType" store:Type="Tables" Schema="dbo" Table="Resource.ResourceType" />
-          <EntitySet Name="Resource_Standard" EntityType="ResourceModel.Store.Resource_Standard" store:Type="Tables" Schema="dbo" Table="Resource.Standard" />
-          <EntitySet Name="Resource_StandardEvaluation" EntityType="ResourceModel.Store.Resource_StandardEvaluation" store:Type="Tables" Schema="dbo" Table="Resource.StandardEvaluation" />
-          <EntitySet Name="Resource_Subject" EntityType="ResourceModel.Store.Resource_Subject" store:Type="Tables" Schema="dbo" Table="Resource.Subject" />
-          <EntitySet Name="Resource_Tag" EntityType="ResourceModel.Store.Resource_Tag" store:Type="Tables" Schema="dbo" Table="Resource.Tag" />
-          <EntitySet Name="Resource_Text" EntityType="ResourceModel.Store.Resource_Text" store:Type="Tables" Schema="dbo" Table="Resource.Text" />
-          <EntitySet Name="Resource_Version" EntityType="ResourceModel.Store.Resource_Version" store:Type="Tables" Schema="dbo" Table="Resource.Version" />
-          <EntitySet Name="Resource_View" EntityType="ResourceModel.Store.Resource_View" store:Type="Tables" Schema="dbo" Table="Resource.View" />
-          <EntitySet Name="Standard_SubjectStandardConnector" EntityType="ResourceModel.Store.Standard_SubjectStandardConnector" store:Type="Tables" Schema="dbo" Table="Standard.SubjectStandardConnector" />
-          <EntitySet Name="StandardBody" EntityType="ResourceModel.Store.StandardBody" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="StandardBody_Node" EntityType="ResourceModel.Store.StandardBody_Node" store:Type="Tables" Schema="dbo" Table="StandardBody.Node" />
-          <EntitySet Name="StandardBody_NodeGradeLevel" EntityType="ResourceModel.Store.StandardBody_NodeGradeLevel" store:Type="Tables" Schema="dbo" Table="StandardBody.NodeGradeLevel" />
-          <EntitySet Name="StandardBody_Subject" EntityType="ResourceModel.Store.StandardBody_Subject" store:Type="Tables" Schema="dbo" Table="StandardBody.Subject" />
-          <EntitySet Name="System_GenerateLoginId" EntityType="ResourceModel.Store.System_GenerateLoginId" store:Type="Tables" Schema="dbo" Table="System.GenerateLoginId" />
-          <EntitySet Name="Codes_CareerCluster" EntityType="ResourceModel.Store.Codes_CareerCluster" store:Type="Views" store:Schema="dbo" store:Name="Codes.CareerCluster">
-            <DefiningQuery>SELECT 
-      [Codes_CareerCluster].[Id] AS [Id], 
-      [Codes_CareerCluster].[Title] AS [Title], 
-      [Codes_CareerCluster].[IsActive] AS [IsActive], 
-      [Codes_CareerCluster].[WarehouseTotal] AS [WarehouseTotal]
-      FROM [dbo].[Codes.CareerCluster] AS [Codes_CareerCluster]</DefiningQuery>
-          </EntitySet>
-          <EntitySet Name="Codes_SiteTagCategory_Summary" EntityType="ResourceModel.Store.Codes_SiteTagCategory_Summary" store:Type="Views" store:Schema="dbo" store:Name="Codes.SiteTagCategory_Summary">
-            <DefiningQuery>SELECT 
-      [Codes_SiteTagCategory_Summary].[Id] AS [Id], 
-      [Codes_SiteTagCategory_Summary].[SiteId] AS [SiteId], 
-      [Codes_SiteTagCategory_Summary].[CategoryId] AS [CategoryId], 
-      [Codes_SiteTagCategory_Summary].[Title] AS [Title], 
-      [Codes_SiteTagCategory_Summary].[Description] AS [Description], 
-      [Codes_SiteTagCategory_Summary].[SchemaTag] AS [SchemaTag], 
-      [Codes_SiteTagCategory_Summary].[Site_SortOrder] AS [Site_SortOrder], 
-      [Codes_SiteTagCategory_Summary].[TagCategory_SortOrder] AS [TagCategory_SortOrder]
-      FROM [dbo].[Codes.SiteTagCategory_Summary] AS [Codes_SiteTagCategory_Summary]</DefiningQuery>
-          </EntitySet>
-          <EntitySet Name="Codes_TagCategoryValue_summary" EntityType="ResourceModel.Store.Codes_TagCategoryValue_summary" store:Type="Views" store:Schema="dbo" store:Name="Codes.TagCategoryValue_summary">
-            <DefiningQuery>SELECT 
-      [Codes_TagCategoryValue_summary].[CategoryId] AS [CategoryId], 
-      [Codes_TagCategoryValue_summary].[Category] AS [Category], 
-      [Codes_TagCategoryValue_summary].[TagValueId] AS [TagValueId], 
-      [Codes_TagCategoryValue_summary].[TagRelativeId] AS [TagRelativeId], 
-      [Codes_TagCategoryValue_summary].[CodeId] AS [CodeId], 
-      [Codes_TagCategoryValue_summary].[Title] AS [Title], 
-      [Codes_TagCategoryValue_summary].[Description] AS [Description], 
-      [Codes_TagCategoryValue_summary].[WarehouseTotal] AS [WarehouseTotal]
-      FROM [dbo].[Codes.TagCategoryValue_summary] AS [Codes_TagCategoryValue_summary]</DefiningQuery>
-          </EntitySet>
-          <EntitySet Name="Patron_ResourceSummary" EntityType="ResourceModel.Store.Patron_ResourceSummary" store:Type="Views" store:Schema="dbo" store:Name="Patron_ResourceSummary">
-            <DefiningQuery>SELECT 
-      [Patron_ResourceSummary].[UserId] AS [UserId], 
-      [Patron_ResourceSummary].[FirstName] AS [FirstName], 
-      [Patron_ResourceSummary].[LastName] AS [LastName], 
-      [Patron_ResourceSummary].[FullName] AS [FullName], 
-      [Patron_ResourceSummary].[SortName] AS [SortName], 
-      [Patron_ResourceSummary].[Email] AS [Email], 
-      [Patron_ResourceSummary].[IsUserActive] AS [IsUserActive], 
-      [Patron_ResourceSummary].[JobTitle] AS [JobTitle], 
-      [Patron_ResourceSummary].[ImageUrl] AS [ImageUrl], 
-      [Patron_ResourceSummary].[OrganizationId] AS [OrganizationId], 
-      [Patron_ResourceSummary].[Organization] AS [Organization], 
-      [Patron_ResourceSummary].[Created] AS [Created], 
-      [Patron_ResourceSummary].[LastUpdated] AS [LastUpdated], 
-      [Patron_ResourceSummary].[Published] AS [Published], 
-      [Patron_ResourceSummary].[ResourceUrl] AS [ResourceUrl], 
-      [Patron_ResourceSummary].[ResourceTitle] AS [ResourceTitle], 
-      [Patron_ResourceSummary].[Description] AS [Description], 
-      [Patron_ResourceSummary].[ResourceId] AS [ResourceId]
-      FROM [dbo].[Patron_ResourceSummary] AS [Patron_ResourceSummary]</DefiningQuery>
-          </EntitySet>
-          <EntitySet Name="Patron_Summary" EntityType="ResourceModel.Store.Patron_Summary" store:Type="Views" store:Schema="dbo" store:Name="Patron_Summary">
-            <DefiningQuery>SELECT 
-      [Patron_Summary].[Id] AS [Id], 
-      [Patron_Summary].[UserName] AS [UserName], 
-      [Patron_Summary].[FirstName] AS [FirstName], 
-      [Patron_Summary].[LastName] AS [LastName], 
-      [Patron_Summary].[FullName] AS [FullName], 
-      [Patron_Summary].[SortName] AS [SortName], 
-      [Patron_Summary].[Email] AS [Email], 
-      [Patron_Summary].[IsActive] AS [IsActive], 
-      [Patron_Summary].[HasProfile] AS [HasProfile], 
-      [Patron_Summary].[JobTitle] AS [JobTitle], 
-      [Patron_Summary].[RoleProfile] AS [RoleProfile], 
-      [Patron_Summary].[ImageUrl] AS [ImageUrl], 
-      [Patron_Summary].[UserProfileUrl] AS [UserProfileUrl], 
-      [Patron_Summary].[OrganizationId] AS [OrganizationId], 
-      [Patron_Summary].[Organization] AS [Organization], 
-      [Patron_Summary].[PublishingRoleId] AS [PublishingRoleId], 
-      [Patron_Summary].[PublishingRole] AS [PublishingRole], 
-      [Patron_Summary].[Created] AS [Created], 
-      [Patron_Summary].[LastUpdated] AS [LastUpdated], 
-      [Patron_Summary].[UserRowId] AS [UserRowId]
-      FROM [dbo].[Patron_Summary] AS [Patron_Summary]</DefiningQuery>
-          </EntitySet>
-          <EntitySet Name="Resource_EvalDimensionsSummary" EntityType="ResourceModel.Store.Resource_EvalDimensionsSummary" store:Type="Views" store:Schema="dbo" store:Name="Resource.EvalDimensionsSummary">
-            <DefiningQuery>SELECT 
-      [Resource_EvalDimensionsSummary].[ResourceIntId] AS [ResourceIntId], 
-      [Resource_EvalDimensionsSummary].[EvaluationId] AS [EvaluationId], 
-      [Resource_EvalDimensionsSummary].[EvalDimensionId] AS [EvalDimensionId], 
-      [Resource_EvalDimensionsSummary].[DimensionTitle] AS [DimensionTitle], 
-      [Resource_EvalDimensionsSummary].[HasCertificationTotal] AS [HasCertificationTotal], 
-      [Resource_EvalDimensionsSummary].[HasCertificationTotalScore] AS [HasCertificationTotalScore], 
-      [Resource_EvalDimensionsSummary].[HasNOTCertificationTotal] AS [HasNOTCertificationTotal], 
-      [Resource_EvalDimensionsSummary].[HasNOTCertificationTotalScore] AS [HasNOTCertificationTotalScore], 
-      [Resource_EvalDimensionsSummary].[TotalEvaluations] AS [TotalEvaluations]
-      FROM [dbo].[Resource.EvalDimensionsSummary] AS [Resource_EvalDimensionsSummary]</DefiningQuery>
-          </EntitySet>
-          <EntitySet Name="Resource_EvaluationsSummary" EntityType="ResourceModel.Store.Resource_EvaluationsSummary" store:Type="Views" store:Schema="dbo" store:Name="Resource.EvaluationsSummary">
-            <DefiningQuery>SELECT 
-      [Resource_EvaluationsSummary].[ResourceIntId] AS [ResourceIntId], 
-      [Resource_EvaluationsSummary].[EvaluationId] AS [EvaluationId], 
-      [Resource_EvaluationsSummary].[EvaluationTitle] AS [EvaluationTitle], 
-      [Resource_EvaluationsSummary].[RequiresCertification] AS [RequiresCertification], 
-      [Resource_EvaluationsSummary].[PrivilegeCode] AS [PrivilegeCode], 
-      [Resource_EvaluationsSummary].[HasCertificationTotal] AS [HasCertificationTotal], 
-      [Resource_EvaluationsSummary].[HasCertificationTotalScore] AS [HasCertificationTotalScore], 
-      [Resource_EvaluationsSummary].[HasNOTCertificationTotal] AS [HasNOTCertificationTotal], 
-      [Resource_EvaluationsSummary].[HasNOTCertificationTotalScore] AS [HasNOTCertificationTotalScore], 
-      [Resource_EvaluationsSummary].[TotalEvaluations] AS [TotalEvaluations]
-      FROM [dbo].[Resource.EvaluationsSummary] AS [Resource_EvaluationsSummary]</DefiningQuery>
-          </EntitySet>
-          <EntitySet Name="Resource_StandardEvaluationList" EntityType="ResourceModel.Store.Resource_StandardEvaluationList" store:Type="Views" store:Schema="dbo" store:Name="Resource.StandardEvaluationList">
-            <DefiningQuery>SELECT 
-      [Resource_StandardEvaluationList].[Id] AS [Id], 
-      [Resource_StandardEvaluationList].[ResourceIntId] AS [ResourceIntId], 
-      [Resource_StandardEvaluationList].[StandardId] AS [StandardId], 
-      [Resource_StandardEvaluationList].[CreatedById] AS [CreatedById], 
-      [Resource_StandardEvaluationList].[Created] AS [Created], 
-      [Resource_StandardEvaluationList].[NotationCode] AS [NotationCode], 
-      [Resource_StandardEvaluationList].[Description] AS [Description], 
-      [Resource_StandardEvaluationList].[Score] AS [Score]
-      FROM [dbo].[Resource.StandardEvaluationList] AS [Resource_StandardEvaluationList]</DefiningQuery>
-          </EntitySet>
-          <EntitySet Name="Resource_StandardEvaluationSummary" EntityType="ResourceModel.Store.Resource_StandardEvaluationSummary" store:Type="Views" store:Schema="dbo" store:Name="Resource.StandardEvaluationSummary">
-            <DefiningQuery>SELECT 
-      [Resource_StandardEvaluationSummary].[ResourceIntId] AS [ResourceIntId], 
-      [Resource_StandardEvaluationSummary].[StandardId] AS [StandardId], 
-      [Resource_StandardEvaluationSummary].[NotationCode] AS [NotationCode], 
-      [Resource_StandardEvaluationSummary].[Description] AS [Description], 
-      [Resource_StandardEvaluationSummary].[AverageScorePercent] AS [AverageScorePercent], 
-      [Resource_StandardEvaluationSummary].[TotalEvals] AS [TotalEvals]
-      FROM [dbo].[Resource.StandardEvaluationSummary] AS [Resource_StandardEvaluationSummary]</DefiningQuery>
-          </EntitySet>
-          <EntitySet Name="Resource_Version_Summary" EntityType="ResourceModel.Store.Resource_Version_Summary" store:Type="Views" store:Schema="dbo" store:Name="Resource.Version_Summary">
-            <DefiningQuery>SELECT 
-      [Resource_Version_Summary].[ResourceUrl] AS [ResourceUrl], 
-      [Resource_Version_Summary].[Id] AS [Id], 
-      [Resource_Version_Summary].[ResourceIntId] AS [ResourceIntId], 
-      [Resource_Version_Summary].[ResourceId] AS [ResourceId], 
-      [Resource_Version_Summary].[ResourceVersionIntId] AS [ResourceVersionIntId], 
-      [Resource_Version_Summary].[Title] AS [Title], 
-      [Resource_Version_Summary].[Description] AS [Description], 
-      [Resource_Version_Summary].[Publisher] AS [Publisher], 
-      [Resource_Version_Summary].[Creator] AS [Creator], 
-      [Resource_Version_Summary].[Rights] AS [Rights], 
-      [Resource_Version_Summary].[ViewCount] AS [ViewCount], 
-      [Resource_Version_Summary].[FavoriteCount] AS [FavoriteCount], 
-      [Resource_Version_Summary].[DocId] AS [DocId], 
-      [Resource_Version_Summary].[AccessRightsId] AS [AccessRightsId], 
-      [Resource_Version_Summary].[AccessRights] AS [AccessRights], 
-      [Resource_Version_Summary].[InteractivityTypeId] AS [InteractivityTypeId], 
-      [Resource_Version_Summary].[InteractivityType] AS [InteractivityType], 
-      [Resource_Version_Summary].[TypicalLearningTime] AS [TypicalLearningTime], 
-      [Resource_Version_Summary].[Modified] AS [Modified], 
-      [Resource_Version_Summary].[Created] AS [Created], 
-      [Resource_Version_Summary].[Imported] AS [Imported], 
-      [Resource_Version_Summary].[Submitter] AS [Submitter], 
-      [Resource_Version_Summary].[Schema] AS [Schema], 
-      [Resource_Version_Summary].[Requirements] AS [Requirements], 
-      [Resource_Version_Summary].[SortTitle] AS [SortTitle], 
-      [Resource_Version_Summary].[PublishedById] AS [PublishedById]
-      FROM [dbo].[Resource.Version_Summary] AS [Resource_Version_Summary]</DefiningQuery>
-          </EntitySet>
-          <AssociationSet Name="FK_Codes_SiteTagCategory_Codes_Site" Association="ResourceModel.Store.FK_Codes_SiteTagCategory_Codes_Site">
-            <End Role="Codes_Site" EntitySet="Codes_Site" />
-            <End Role="Codes_SiteTagCategory" EntitySet="Codes_SiteTagCategory" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Codes_SiteTagCategory_Codes_TagCategory" Association="ResourceModel.Store.FK_Codes_SiteTagCategory_Codes_TagCategory">
-            <End Role="Codes_TagCategory" EntitySet="Codes_TagCategory" />
-            <End Role="Codes_SiteTagCategory" EntitySet="Codes_SiteTagCategory" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Codes_TagValue_Codes_TagCategory" Association="ResourceModel.Store.FK_Codes_TagValue_Codes_TagCategory">
-            <End Role="Codes_TagCategory" EntitySet="Codes_TagCategory" />
-            <End Role="Codes_TagValue" EntitySet="Codes_TagValue" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Codes_TagValueKeyword_Codes_TagValue" Association="ResourceModel.Store.FK_Codes_TagValueKeyword_Codes_TagValue">
-            <End Role="Codes_TagValue" EntitySet="Codes_TagValue" />
-            <End Role="Codes_TagValueKeyword" EntitySet="Codes_TagValueKeyword" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Evaluation_Dimension_Evaluation" Association="ResourceModel.Store.FK_Evaluation_Dimension_Evaluation">
-            <End Role="Evaluation" EntitySet="Evaluation" />
-            <End Role="Evaluation_Dimension" EntitySet="Evaluation_Dimension" />
-          </AssociationSet>
-          <AssociationSet Name="FK_IntendedAudience_CodesAudienceType" Association="ResourceModel.Store.FK_IntendedAudience_CodesAudienceType">
-            <End Role="Codes_AudienceType" EntitySet="Codes_AudienceType" />
-            <End Role="Resource_IntendedAudience" EntitySet="Resource_IntendedAudience" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Patron_FollowedBy_Patron" Association="ResourceModel.Store.FK_Patron_FollowedBy_Patron">
-            <End Role="Patron" EntitySet="Patron" />
-            <End Role="Patron_Following" EntitySet="Patron_Following" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Patron_Following_Patron" Association="ResourceModel.Store.FK_Patron_Following_Patron">
-            <End Role="Patron" EntitySet="Patron" />
-            <End Role="Patron_Following" EntitySet="Patron_Following" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Patron_Profile_Patron" Association="ResourceModel.Store.FK_Patron_Profile_Patron">
-            <End Role="Patron" EntitySet="Patron" />
-            <End Role="Patron_Profile" EntitySet="Patron_Profile" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Resource_Evaluation_Evaluation" Association="ResourceModel.Store.FK_Resource_Evaluation_Evaluation">
-            <End Role="Evaluation" EntitySet="Evaluation" />
-            <End Role="Resource_Evaluation" EntitySet="Resource_Evaluation" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Resource_EvaluationSection_Resource_Evaluation1" Association="ResourceModel.Store.FK_Resource_EvaluationSection_Resource_Evaluation1">
-            <End Role="Resource_Evaluation" EntitySet="Resource_Evaluation" />
-            <End Role="Resource_EvaluationSection" EntitySet="Resource_EvaluationSection" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Resource_EvaluationSection_Resource_EvaluationSection" Association="ResourceModel.Store.FK_Resource_EvaluationSection_Resource_EvaluationSection">
-            <End Role="Evaluation_Dimension" EntitySet="Evaluation_Dimension" />
-            <End Role="Resource_EvaluationSection" EntitySet="Resource_EvaluationSection" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Resource_GradeLevel_Codes_GradeLevel" Association="ResourceModel.Store.FK_Resource_GradeLevel_Codes_GradeLevel">
-            <End Role="Codes_GradeLevel" EntitySet="Codes_GradeLevel" />
-            <End Role="Resource_GradeLevel" EntitySet="Resource_GradeLevel" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Resource_Standard_StandardBody_Node" Association="ResourceModel.Store.FK_Resource_Standard_StandardBody_Node">
-            <End Role="StandardBody_Node" EntitySet="StandardBody_Node" />
-            <End Role="Resource_Standard" EntitySet="Resource_Standard" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Resource_StandardEvaluation_Resource_Standard" Association="ResourceModel.Store.FK_Resource_StandardEvaluation_Resource_Standard">
-            <End Role="Resource_Standard" EntitySet="Resource_Standard" />
-            <End Role="Resource_StandardEvaluation" EntitySet="Resource_StandardEvaluation" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Resource_Subject_Codes_Subject" Association="ResourceModel.Store.FK_Resource_Subject_Codes_Subject">
-            <End Role="Codes_Subject" EntitySet="Codes_Subject" />
-            <End Role="Resource_Subject" EntitySet="Resource_Subject" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Resource_Tag_Codes_TagValue" Association="ResourceModel.Store.FK_Resource_Tag_Codes_TagValue">
-            <End Role="Codes_TagValue" EntitySet="Codes_TagValue" />
-            <End Role="Resource_Tag" EntitySet="Resource_Tag" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Resource_Text_Codes_TextType" Association="ResourceModel.Store.FK_Resource_Text_Codes_TextType">
-            <End Role="Codes_TextType" EntitySet="Codes_TextType" />
-            <End Role="Resource_Text" EntitySet="Resource_Text" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Standard_SubjectStandardConnector_StandardBody_Node" Association="ResourceModel.Store.FK_Standard_SubjectStandardConnector_StandardBody_Node">
-            <End Role="StandardBody_Node" EntitySet="StandardBody_Node" />
-            <End Role="Standard_SubjectStandardConnector" EntitySet="Standard_SubjectStandardConnector" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Standard_SubjectStandardConnector_StandardBody_Subject" Association="ResourceModel.Store.FK_Standard_SubjectStandardConnector_StandardBody_Subject">
-            <End Role="StandardBody_Subject" EntitySet="StandardBody_Subject" />
-            <End Role="Standard_SubjectStandardConnector" EntitySet="Standard_SubjectStandardConnector" />
-          </AssociationSet>
-          <AssociationSet Name="FK_StandardBody_NodeGradeLevel_StandardBody_Node" Association="ResourceModel.Store.FK_StandardBody_NodeGradeLevel_StandardBody_Node">
-            <End Role="StandardBody_Node" EntitySet="StandardBody_Node" />
-            <End Role="StandardBody_NodeGradeLevel" EntitySet="StandardBody_NodeGradeLevel" />
-          </AssociationSet>
-          <AssociationSet Name="FK_StandardBody_NodeGradeLevel_StandardBody_NodeGradeLevel" Association="ResourceModel.Store.FK_StandardBody_NodeGradeLevel_StandardBody_NodeGradeLevel">
-            <End Role="StandardBody_NodeGradeLevel" EntitySet="StandardBody_NodeGradeLevel" />
-            <End Role="StandardBody_NodeGradeLevel1" EntitySet="StandardBody_NodeGradeLevel" />
-          </AssociationSet>
-          <AssociationSet Name="FK_StandardBody_Subject_StandardBody" Association="ResourceModel.Store.FK_StandardBody_Subject_StandardBody">
-            <End Role="StandardBody" EntitySet="StandardBody" />
-            <End Role="StandardBody_Subject" EntitySet="StandardBody_Subject" />
-          </AssociationSet>
-        </EntityContainer>
+    <Schema Namespace="ResourceModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2008" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="Codes_AudienceType">
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Title" Type="varchar" MaxLength="50" />
           <Property Name="NsdtTitle" Type="varchar" MaxLength="50" />
           <Property Name="Description" Type="varchar" MaxLength="255" />
@@ -320,7 +22,7 @@
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Title" Type="varchar" MaxLength="50" />
           <Property Name="AliasValues" Type="varchar" MaxLength="100" />
           <Property Name="NsdlTitle" Type="varchar" MaxLength="50" />
@@ -344,7 +46,7 @@
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="int" Nullable="false" />
-          <Property Name="Title" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="Title" Type="varchar" MaxLength="50" Nullable="false" />
           <Property Name="Description" Type="varchar" MaxLength="500" />
           <Property Name="IsActive" Type="bit" Nullable="false" />
           <Property Name="SchemaTag" Type="varchar" MaxLength="100" />
@@ -356,12 +58,12 @@
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="SiteId" Type="int" Nullable="false" />
           <Property Name="CategoryId" Type="int" Nullable="false" />
           <Property Name="SortOrder" Type="int" Nullable="false" />
           <Property Name="IsActive" Type="bit" Nullable="false" />
-          <Property Name="Title" Type="varchar" Nullable="false" MaxLength="100" />
+          <Property Name="Title" Type="varchar" MaxLength="100" Nullable="false" />
         </EntityType>
         <EntityType Name="Codes_Subject">
           <Key>
@@ -378,7 +80,7 @@
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="int" Nullable="false" />
-          <Property Name="Title" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="Title" Type="varchar" MaxLength="50" Nullable="false" />
           <Property Name="Description" Type="varchar" MaxLength="500" />
           <Property Name="SortOrder" Type="int" Nullable="false" />
           <Property Name="IsActive" Type="bit" Nullable="false" />
@@ -388,24 +90,25 @@
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="CategoryId" Type="int" Nullable="false" />
           <Property Name="CodeId" Type="int" Nullable="false" />
-          <Property Name="Title" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="Title" Type="varchar" MaxLength="50" Nullable="false" />
           <Property Name="Description" Type="varchar" MaxLength="500" />
           <Property Name="SortOrder" Type="int" />
           <Property Name="IsActive" Type="bit" />
           <Property Name="SchemaTag" Type="varchar" MaxLength="100" />
           <Property Name="WarehouseTotal" Type="int" />
           <Property Name="AliasValues" Type="varchar" MaxLength="100" />
+          <Property Name="Created" Type="datetime" />
         </EntityType>
         <EntityType Name="Codes_TagValueKeyword">
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="TagValueId" Type="int" Nullable="false" />
-          <Property Name="Keyword" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="Keyword" Type="varchar" MaxLength="50" Nullable="false" />
           <Property Name="IsActive" Type="bit" Nullable="false" />
           <Property Name="Created" Type="datetime" />
         </EntityType>
@@ -414,7 +117,7 @@
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="int" Nullable="false" />
-          <Property Name="Title" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="Title" Type="varchar" MaxLength="50" Nullable="false" />
           <Property Name="IsActive" Type="bit" />
         </EntityType>
         <EntityType Name="ConditionOfUse">
@@ -432,12 +135,14 @@
           <Property Name="ConditionOfUseCategory" Type="int" />
           <Property Name="WarehouseTotal" Type="int" />
           <Property Name="MiniIconUrl" Type="varchar" MaxLength="200" />
+          <Property Name="IsCustom" Type="bit" Nullable="false" />
+          <Property Name="IsUnknown" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="EmailNotice">
           <Key>
             <PropertyRef Name="id" />
           </Key>
-          <Property Name="id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Title" Type="varchar" MaxLength="75" />
           <Property Name="Category" Type="varchar" MaxLength="50" />
           <Property Name="NoticeCode" Type="varchar" MaxLength="50" />
@@ -460,7 +165,7 @@
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Title" Type="varchar" MaxLength="75" />
           <Property Name="ShortName" Type="varchar" MaxLength="25" />
           <Property Name="Url" Type="varchar" MaxLength="200" />
@@ -477,19 +182,20 @@
           <Property Name="Id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
           <Property Name="EvaluationId" Type="int" Nullable="false" />
           <Property Name="DimensionId" Type="int" Nullable="false" />
-          <Property Name="Title" Type="varchar" Nullable="false" MaxLength="75" />
+          <Property Name="Title" Type="varchar" MaxLength="75" Nullable="false" />
           <Property Name="ShortName" Type="varchar" MaxLength="25" />
           <Property Name="Url" Type="varchar" MaxLength="200" />
           <Property Name="Description" Type="varchar(max)" />
           <Property Name="IsActive" Type="bit" Nullable="false" />
           <Property Name="WarehouseTotal" Type="int" />
+          <Property Name="NotationCode" Type="varchar" MaxLength="50" />
         </EntityType>
         <EntityType Name="Patron">
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
-          <Property Name="UserName" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="UserName" Type="varchar" MaxLength="50" Nullable="false" />
           <Property Name="Password" Type="varchar" MaxLength="50" />
           <Property Name="FirstName" Type="varchar" MaxLength="50" />
           <Property Name="LastName" Type="varchar" MaxLength="50" />
@@ -500,12 +206,13 @@
           <Property Name="LastUpdatedById" Type="int" />
           <Property Name="RowId" Type="uniqueidentifier" Nullable="false" />
           <Property Name="IsleIdentifier" Type="varchar" MaxLength="100" />
+          <Property Name="AuthenticationProvider" Type="varchar" MaxLength="50" />
         </EntityType>
         <EntityType Name="Patron_Following">
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="FollowingUserId" Type="int" Nullable="false" />
           <Property Name="FollowedByUserId" Type="int" Nullable="false" />
           <Property Name="Created" Type="datetime" />
@@ -531,11 +238,11 @@
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="ResourceIntId" Type="int" />
           <Property Name="ResourceVersionIntId" Type="int" />
           <Property Name="DocId" Type="varchar" MaxLength="500" />
-          <Property Name="Reason" Type="varchar" Nullable="false" MaxLength="100" />
+          <Property Name="Reason" Type="varchar" MaxLength="100" Nullable="false" />
           <Property Name="IsPublished" Type="bit" />
           <Property Name="Created" Type="datetime" Nullable="false" />
           <Property Name="CreatedById" Type="int" Nullable="false" />
@@ -547,20 +254,20 @@
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="RowId" Type="uniqueidentifier" Nullable="false" />
-          <Property Name="ResourceUrl" Type="varchar" Nullable="false" MaxLength="600" />
+          <Property Name="ResourceUrl" Type="varchar" MaxLength="600" Nullable="false" />
           <Property Name="ViewCount" Type="int" />
           <Property Name="FavoriteCount" Type="int" />
           <Property Name="Created" Type="datetime" />
           <Property Name="LastUpdated" Type="datetime" />
           <Property Name="IsActive" Type="bit" />
           <Property Name="HasPathwayGradeLevel" Type="bit" />
-          <Property Name="Id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
         </EntityType>
         <EntityType Name="Resource_AssessmentType">
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="ResourceIntId" Type="int" Nullable="false" />
           <Property Name="AssessmentTypeId" Type="int" Nullable="false" />
           <Property Name="Created" Type="datetime" />
@@ -570,17 +277,33 @@
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="ClusterId" Type="int" Nullable="false" />
           <Property Name="CreatedById" Type="int" />
           <Property Name="Created" Type="datetime" />
           <Property Name="ResourceIntId" Type="int" Nullable="false" />
         </EntityType>
+        <EntityType Name="Resource_DelayedPublish">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ParentContentId" Type="int" Nullable="false" />
+          <Property Name="ContentId" Type="int" Nullable="false" />
+          <Property Name="ContentTypeId" Type="int" Nullable="false" />
+          <Property Name="StatusId" Type="int" Nullable="false" />
+          <Property Name="ResourceIntId" Type="int" Nullable="false" />
+          <Property Name="ResourceVersionIntId" Type="int" Nullable="false" />
+          <Property Name="Created" Type="datetime" Nullable="false" />
+          <Property Name="CreatedById" Type="int" Nullable="false" />
+          <Property Name="DocId" Type="varchar" MaxLength="500" />
+          <Property Name="PublishedDate" Type="datetime" />
+        </EntityType>
         <EntityType Name="Resource_EducationUse">
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="ResourceIntId" Type="int" />
           <Property Name="EducationUseId" Type="int" />
           <Property Name="OriginalType" Type="varchar" MaxLength="100" />
@@ -592,7 +315,7 @@
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="ResourceIntId" Type="int" Nullable="false" />
           <Property Name="EvaluationId" Type="int" Nullable="false" />
           <Property Name="Score" Type="int" Nullable="false" />
@@ -610,7 +333,7 @@
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="ResourceEvalId" Type="int" Nullable="false" />
           <Property Name="EvalDimensionId" Type="int" />
           <Property Name="Score" Type="int" Nullable="false" />
@@ -633,7 +356,7 @@
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="ResourceIntId" Type="int" />
           <Property Name="GradeLevelId" Type="int" />
           <Property Name="OriginalLevel" Type="varchar" MaxLength="100" />
@@ -645,7 +368,7 @@
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="ResourceIntId" Type="int" />
           <Property Name="GroupTypeId" Type="int" Nullable="false" />
           <Property Name="Created" Type="datetime" />
@@ -668,7 +391,7 @@
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="ResourceIntId" Type="int" Nullable="false" />
           <Property Name="ItemTypeId" Type="int" Nullable="false" />
           <Property Name="Created" Type="datetime" />
@@ -680,7 +403,7 @@
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="ResourceIntId" Type="int" />
           <Property Name="Keyword" Type="varchar" MaxLength="200" />
           <Property Name="CreatedById" Type="int" />
@@ -701,7 +424,7 @@
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="ResourceIntId" Type="int" />
           <Property Name="IsLike" Type="bit" />
           <Property Name="Created" Type="datetime" />
@@ -711,7 +434,7 @@
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="ResourceIntId" Type="int" />
           <Property Name="LikeCount" Type="int" />
           <Property Name="DislikeCount" Type="int" />
@@ -743,7 +466,7 @@
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="ResourceIntId" Type="int" Nullable="false" />
           <Property Name="StandardId" Type="int" Nullable="false" />
           <Property Name="StandardUrl" Type="varchar" MaxLength="200" />
@@ -757,7 +480,7 @@
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="ResourceStandardId" Type="int" Nullable="false" />
           <Property Name="Score" Type="int" />
           <Property Name="CreatedById" Type="int" />
@@ -767,7 +490,7 @@
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="ResourceIntId" Type="int" />
           <Property Name="Subject" Type="varchar" MaxLength="100" />
           <Property Name="Created" Type="datetime" />
@@ -778,7 +501,7 @@
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="ResourceIntId" Type="int" Nullable="false" />
           <Property Name="TagValueId" Type="int" Nullable="false" />
           <Property Name="Created" Type="datetime" />
@@ -792,7 +515,7 @@
           <Property Name="Id" Type="int" Nullable="false" />
           <Property Name="ResourceIntId" Type="int" Nullable="false" />
           <Property Name="TypeId" Type="int" Nullable="false" />
-          <Property Name="Text" Type="varchar" Nullable="false" MaxLength="200" />
+          <Property Name="Text" Type="varchar" MaxLength="200" Nullable="false" />
           <Property Name="Created" Type="datetime" />
           <Property Name="CreatedById" Type="int" />
         </EntityType>
@@ -800,9 +523,9 @@
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="ResourceIntId" Type="int" />
-          <Property Name="Title" Type="nvarchar" Nullable="false" MaxLength="300" />
+          <Property Name="Title" Type="nvarchar" MaxLength="300" Nullable="false" />
           <Property Name="Description" Type="nvarchar(max)" />
           <Property Name="DocId" Type="varchar" MaxLength="500" />
           <Property Name="Publisher" Type="varchar" MaxLength="200" />
@@ -828,7 +551,7 @@
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="ResourceIntId" Type="int" />
           <Property Name="Created" Type="datetime" />
           <Property Name="CreatedById" Type="int" />
@@ -871,7 +594,7 @@
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="ParentId" Type="int" Nullable="false" />
           <Property Name="GradeLevel" Type="varchar" MaxLength="25" />
           <Property Name="GradeLevelId" Type="int" />
@@ -880,9 +603,9 @@
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="StandardBodyId" Type="int" Nullable="false" />
-          <Property Name="Title" Type="varchar" Nullable="false" MaxLength="200" />
+          <Property Name="Title" Type="varchar" MaxLength="200" Nullable="false" />
           <Property Name="ShortTitle" Type="varchar" MaxLength="50" />
           <Property Name="Description" Type="varchar(max)" />
           <Property Name="Url" Type="varchar" MaxLength="200" />
@@ -893,7 +616,7 @@
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="ProxyId" Type="uniqueidentifier" Nullable="false" />
           <Property Name="UserId" Type="int" Nullable="false" />
           <Property Name="ProxyType" Type="varchar" MaxLength="50" />
@@ -903,8 +626,7 @@
           <Property Name="AccessDate" Type="datetime" />
         </EntityType>
         <!--Errors Found During Generation:
-      warning 6002: The table/view 'Isle_IOER.dbo.Codes.CareerCluster' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.
-      -->
+warning 6002: The table/view 'Isle_IOER.dbo.Codes.CareerCluster' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="Codes_CareerCluster">
           <Key>
             <PropertyRef Name="Id" />
@@ -915,8 +637,7 @@
           <Property Name="WarehouseTotal" Type="int" />
         </EntityType>
         <!--Errors Found During Generation:
-      warning 6002: The table/view 'Isle_IOER.dbo.Codes.SiteTagCategory_Summary' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.
-      -->
+warning 6002: The table/view 'Isle_IOER.dbo.Codes.SiteTagCategory_Summary' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="Codes_SiteTagCategory_Summary">
           <Key>
             <PropertyRef Name="Id" />
@@ -929,15 +650,14 @@
           <Property Name="Id" Type="int" Nullable="false" />
           <Property Name="SiteId" Type="int" Nullable="false" />
           <Property Name="CategoryId" Type="int" Nullable="false" />
-          <Property Name="Title" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="Title" Type="varchar" MaxLength="50" Nullable="false" />
           <Property Name="Description" Type="varchar" MaxLength="500" />
           <Property Name="SchemaTag" Type="varchar" MaxLength="100" />
           <Property Name="Site_SortOrder" Type="int" Nullable="false" />
           <Property Name="TagCategory_SortOrder" Type="int" Nullable="false" />
         </EntityType>
         <!--Errors Found During Generation:
-      warning 6002: The table/view 'Isle_IOER.dbo.Codes.TagCategoryValue_summary' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.
-      -->
+warning 6002: The table/view 'Isle_IOER.dbo.Codes.TagCategoryValue_summary' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="Codes_TagCategoryValue_summary">
           <Key>
             <PropertyRef Name="CategoryId" />
@@ -948,17 +668,16 @@
             <PropertyRef Name="Title" />
           </Key>
           <Property Name="CategoryId" Type="int" Nullable="false" />
-          <Property Name="Category" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="Category" Type="varchar" MaxLength="50" Nullable="false" />
           <Property Name="TagValueId" Type="int" Nullable="false" />
           <Property Name="TagRelativeId" Type="int" Nullable="false" />
           <Property Name="CodeId" Type="int" Nullable="false" />
-          <Property Name="Title" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="Title" Type="varchar" MaxLength="50" Nullable="false" />
           <Property Name="Description" Type="varchar" MaxLength="500" />
           <Property Name="WarehouseTotal" Type="int" />
         </EntityType>
         <!--Errors Found During Generation:
-      warning 6002: The table/view 'Isle_IOER.dbo.Patron_ResourceSummary' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.
-      -->
+warning 6002: The table/view 'Isle_IOER.dbo.Patron_ResourceSummary' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="Patron_ResourceSummary">
           <Key>
             <PropertyRef Name="UserId" />
@@ -980,14 +699,13 @@
           <Property Name="Created" Type="datetime" />
           <Property Name="LastUpdated" Type="datetime" />
           <Property Name="Published" Type="datetime" />
-          <Property Name="ResourceUrl" Type="varchar" Nullable="false" MaxLength="600" />
-          <Property Name="ResourceTitle" Type="nvarchar" Nullable="false" MaxLength="300" />
+          <Property Name="ResourceUrl" Type="varchar" MaxLength="600" Nullable="false" />
+          <Property Name="ResourceTitle" Type="nvarchar" MaxLength="300" Nullable="false" />
           <Property Name="Description" Type="nvarchar(max)" />
           <Property Name="ResourceId" Type="int" Nullable="false" />
         </EntityType>
         <!--Errors Found During Generation:
-      warning 6002: The table/view 'Isle_IOER.dbo.Patron_Summary' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.
-      -->
+warning 6002: The table/view 'Isle_IOER.dbo.Patron_Summary' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="Patron_Summary">
           <Key>
             <PropertyRef Name="Id" />
@@ -996,7 +714,7 @@
             <PropertyRef Name="UserRowId" />
           </Key>
           <Property Name="Id" Type="int" Nullable="false" />
-          <Property Name="UserName" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="UserName" Type="varchar" MaxLength="50" Nullable="false" />
           <Property Name="FirstName" Type="varchar" MaxLength="50" />
           <Property Name="LastName" Type="varchar" MaxLength="50" />
           <Property Name="FullName" Type="varchar" MaxLength="101" />
@@ -1007,7 +725,7 @@
           <Property Name="JobTitle" Type="varchar" MaxLength="100" />
           <Property Name="RoleProfile" Type="varchar" MaxLength="500" />
           <Property Name="ImageUrl" Type="varchar" MaxLength="200" />
-          <Property Name="UserProfileUrl" Type="varchar" />
+          <Property Name="UserProfileUrl" Type="varchar" MaxLength="8000" />
           <Property Name="OrganizationId" Type="int" />
           <Property Name="Organization" Type="varchar" MaxLength="100" />
           <Property Name="PublishingRoleId" Type="int" />
@@ -1017,8 +735,7 @@
           <Property Name="UserRowId" Type="uniqueidentifier" Nullable="false" />
         </EntityType>
         <!--Errors Found During Generation:
-      warning 6002: The table/view 'Isle_IOER.dbo.Resource.EvalDimensionsSummary' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.
-      -->
+warning 6002: The table/view 'Isle_IOER.dbo.Resource.EvalDimensionsSummary' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="Resource_EvalDimensionsSummary">
           <Key>
             <PropertyRef Name="ResourceIntId" />
@@ -1028,7 +745,7 @@
           <Property Name="ResourceIntId" Type="int" Nullable="false" />
           <Property Name="EvaluationId" Type="int" Nullable="false" />
           <Property Name="EvalDimensionId" Type="int" />
-          <Property Name="DimensionTitle" Type="varchar" Nullable="false" MaxLength="75" />
+          <Property Name="DimensionTitle" Type="varchar" MaxLength="75" Nullable="false" />
           <Property Name="HasCertificationTotal" Type="int" />
           <Property Name="HasCertificationTotalScore" Type="int" />
           <Property Name="HasNOTCertificationTotal" Type="int" />
@@ -1036,8 +753,7 @@
           <Property Name="TotalEvaluations" Type="int" />
         </EntityType>
         <!--Errors Found During Generation:
-      warning 6002: The table/view 'Isle_IOER.dbo.Resource.EvaluationsSummary' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.
-      -->
+warning 6002: The table/view 'Isle_IOER.dbo.Resource.EvaluationsSummary' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="Resource_EvaluationsSummary">
           <Key>
             <PropertyRef Name="ResourceIntId" />
@@ -1049,7 +765,7 @@
           <Property Name="EvaluationId" Type="int" Nullable="false" />
           <Property Name="EvaluationTitle" Type="varchar" MaxLength="75" />
           <Property Name="RequiresCertification" Type="bit" Nullable="false" />
-          <Property Name="PrivilegeCode" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="PrivilegeCode" Type="varchar" MaxLength="50" Nullable="false" />
           <Property Name="HasCertificationTotal" Type="int" />
           <Property Name="HasCertificationTotalScore" Type="int" />
           <Property Name="HasNOTCertificationTotal" Type="int" />
@@ -1057,8 +773,7 @@
           <Property Name="TotalEvaluations" Type="int" />
         </EntityType>
         <!--Errors Found During Generation:
-      warning 6002: The table/view 'Isle_IOER.dbo.Resource.StandardEvaluationList' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.
-      -->
+warning 6002: The table/view 'Isle_IOER.dbo.Resource.StandardEvaluationList' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="Resource_StandardEvaluationList">
           <Key>
             <PropertyRef Name="Id" />
@@ -1075,8 +790,7 @@
           <Property Name="Score" Type="int" />
         </EntityType>
         <!--Errors Found During Generation:
-      warning 6002: The table/view 'Isle_IOER.dbo.Resource.StandardEvaluationSummary' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.
-      -->
+warning 6002: The table/view 'Isle_IOER.dbo.Resource.StandardEvaluationSummary' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="Resource_StandardEvaluationSummary">
           <Key>
             <PropertyRef Name="ResourceIntId" />
@@ -1090,23 +804,25 @@
           <Property Name="TotalEvals" Type="int" />
         </EntityType>
         <!--Errors Found During Generation:
-      warning 6002: The table/view 'Isle_IOER.dbo.Resource.Version_Summary' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.
-      -->
+warning 6002: The table/view 'Isle_IOER.dbo.Resource.Version_Summary' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="Resource_Version_Summary">
           <Key>
             <PropertyRef Name="ResourceUrl" />
+            <PropertyRef Name="URL" />
             <PropertyRef Name="Id" />
             <PropertyRef Name="ResourceIntId" />
             <PropertyRef Name="ResourceId" />
             <PropertyRef Name="ResourceVersionIntId" />
             <PropertyRef Name="Title" />
           </Key>
-          <Property Name="ResourceUrl" Type="varchar" Nullable="false" MaxLength="500" />
+          <Property Name="ResourceUrl" Type="varchar" MaxLength="600" Nullable="false" />
+          <Property Name="URL" Type="varchar" MaxLength="1231" Nullable="false" />
           <Property Name="Id" Type="int" Nullable="false" />
           <Property Name="ResourceIntId" Type="int" Nullable="false" />
-          <Property Name="ResourceId" Type="varchar" Nullable="false" MaxLength="1" />
+          <Property Name="DetailPage" Type="nvarchar" MaxLength="4000" />
+          <Property Name="ResourceId" Type="varchar" MaxLength="1" Nullable="false" />
           <Property Name="ResourceVersionIntId" Type="int" Nullable="false" />
-          <Property Name="Title" Type="nvarchar" Nullable="false" MaxLength="300" />
+          <Property Name="Title" Type="nvarchar" MaxLength="300" Nullable="false" />
           <Property Name="Description" Type="nvarchar(max)" />
           <Property Name="Publisher" Type="varchar" MaxLength="200" />
           <Property Name="Creator" Type="varchar" MaxLength="200" />
@@ -1129,10 +845,10 @@
           <Property Name="PublishedById" Type="int" />
         </EntityType>
         <Association Name="FK_Codes_SiteTagCategory_Codes_Site">
-          <End Role="Codes_Site" Type="ResourceModel.Store.Codes_Site" Multiplicity="1">
+          <End Role="Codes_Site" Type="Self.Codes_Site" Multiplicity="1">
             <OnDelete Action="Cascade" />
           </End>
-          <End Role="Codes_SiteTagCategory" Type="ResourceModel.Store.Codes_SiteTagCategory" Multiplicity="*" />
+          <End Role="Codes_SiteTagCategory" Type="Self.Codes_SiteTagCategory" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Codes_Site">
               <PropertyRef Name="Id" />
@@ -1143,8 +859,8 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_Codes_SiteTagCategory_Codes_TagCategory">
-          <End Role="Codes_TagCategory" Type="ResourceModel.Store.Codes_TagCategory" Multiplicity="1" />
-          <End Role="Codes_SiteTagCategory" Type="ResourceModel.Store.Codes_SiteTagCategory" Multiplicity="*" />
+          <End Role="Codes_TagCategory" Type="Self.Codes_TagCategory" Multiplicity="1" />
+          <End Role="Codes_SiteTagCategory" Type="Self.Codes_SiteTagCategory" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Codes_TagCategory">
               <PropertyRef Name="Id" />
@@ -1155,10 +871,10 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_Codes_TagValue_Codes_TagCategory">
-          <End Role="Codes_TagCategory" Type="ResourceModel.Store.Codes_TagCategory" Multiplicity="1">
+          <End Role="Codes_TagCategory" Type="Self.Codes_TagCategory" Multiplicity="1">
             <OnDelete Action="Cascade" />
           </End>
-          <End Role="Codes_TagValue" Type="ResourceModel.Store.Codes_TagValue" Multiplicity="*" />
+          <End Role="Codes_TagValue" Type="Self.Codes_TagValue" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Codes_TagCategory">
               <PropertyRef Name="Id" />
@@ -1169,10 +885,10 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_Codes_TagValueKeyword_Codes_TagValue">
-          <End Role="Codes_TagValue" Type="ResourceModel.Store.Codes_TagValue" Multiplicity="1">
+          <End Role="Codes_TagValue" Type="Self.Codes_TagValue" Multiplicity="1">
             <OnDelete Action="Cascade" />
           </End>
-          <End Role="Codes_TagValueKeyword" Type="ResourceModel.Store.Codes_TagValueKeyword" Multiplicity="*" />
+          <End Role="Codes_TagValueKeyword" Type="Self.Codes_TagValueKeyword" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Codes_TagValue">
               <PropertyRef Name="Id" />
@@ -1183,8 +899,8 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_Evaluation_Dimension_Evaluation">
-          <End Role="Evaluation" Type="ResourceModel.Store.Evaluation" Multiplicity="1" />
-          <End Role="Evaluation_Dimension" Type="ResourceModel.Store.Evaluation_Dimension" Multiplicity="*" />
+          <End Role="Evaluation" Type="Self.Evaluation" Multiplicity="1" />
+          <End Role="Evaluation_Dimension" Type="Self.Evaluation_Dimension" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Evaluation">
               <PropertyRef Name="Id" />
@@ -1195,8 +911,8 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_IntendedAudience_CodesAudienceType">
-          <End Role="Codes_AudienceType" Type="ResourceModel.Store.Codes_AudienceType" Multiplicity="0..1" />
-          <End Role="Resource_IntendedAudience" Type="ResourceModel.Store.Resource_IntendedAudience" Multiplicity="*" />
+          <End Role="Codes_AudienceType" Type="Self.Codes_AudienceType" Multiplicity="0..1" />
+          <End Role="Resource_IntendedAudience" Type="Self.Resource_IntendedAudience" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Codes_AudienceType">
               <PropertyRef Name="Id" />
@@ -1207,8 +923,8 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_Patron_FollowedBy_Patron">
-          <End Role="Patron" Type="ResourceModel.Store.Patron" Multiplicity="1" />
-          <End Role="Patron_Following" Type="ResourceModel.Store.Patron_Following" Multiplicity="*" />
+          <End Role="Patron" Type="Self.Patron" Multiplicity="1" />
+          <End Role="Patron_Following" Type="Self.Patron_Following" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Patron">
               <PropertyRef Name="Id" />
@@ -1219,8 +935,8 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_Patron_Following_Patron">
-          <End Role="Patron" Type="ResourceModel.Store.Patron" Multiplicity="1" />
-          <End Role="Patron_Following" Type="ResourceModel.Store.Patron_Following" Multiplicity="*" />
+          <End Role="Patron" Type="Self.Patron" Multiplicity="1" />
+          <End Role="Patron_Following" Type="Self.Patron_Following" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Patron">
               <PropertyRef Name="Id" />
@@ -1231,10 +947,10 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_Patron_Profile_Patron">
-          <End Role="Patron" Type="ResourceModel.Store.Patron" Multiplicity="1">
+          <End Role="Patron" Type="Self.Patron" Multiplicity="1">
             <OnDelete Action="Cascade" />
           </End>
-          <End Role="Patron_Profile" Type="ResourceModel.Store.Patron_Profile" Multiplicity="0..1" />
+          <End Role="Patron_Profile" Type="Self.Patron_Profile" Multiplicity="0..1" />
           <ReferentialConstraint>
             <Principal Role="Patron">
               <PropertyRef Name="Id" />
@@ -1244,9 +960,37 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_Resource_AssessmentType_Resource">
+          <End Role="Resource" Type="Self.Resource" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Resource_AssessmentType" Type="Self.Resource_AssessmentType" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Resource">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Resource_AssessmentType">
+              <PropertyRef Name="ResourceIntId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Resource_EducationUse_Resource">
+          <End Role="Resource" Type="Self.Resource" Multiplicity="0..1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Resource_EducationUse" Type="Self.Resource_EducationUse" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Resource">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Resource_EducationUse">
+              <PropertyRef Name="ResourceIntId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_Resource_Evaluation_Evaluation">
-          <End Role="Evaluation" Type="ResourceModel.Store.Evaluation" Multiplicity="1" />
-          <End Role="Resource_Evaluation" Type="ResourceModel.Store.Resource_Evaluation" Multiplicity="*" />
+          <End Role="Evaluation" Type="Self.Evaluation" Multiplicity="1" />
+          <End Role="Resource_Evaluation" Type="Self.Resource_Evaluation" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Evaluation">
               <PropertyRef Name="Id" />
@@ -1256,11 +1000,23 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_Resource_Evaluation_Resource">
+          <End Role="Resource" Type="Self.Resource" Multiplicity="1" />
+          <End Role="Resource_Evaluation" Type="Self.Resource_Evaluation" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Resource">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Resource_Evaluation">
+              <PropertyRef Name="ResourceIntId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_Resource_EvaluationSection_Resource_Evaluation1">
-          <End Role="Resource_Evaluation" Type="ResourceModel.Store.Resource_Evaluation" Multiplicity="1">
+          <End Role="Resource_Evaluation" Type="Self.Resource_Evaluation" Multiplicity="1">
             <OnDelete Action="Cascade" />
           </End>
-          <End Role="Resource_EvaluationSection" Type="ResourceModel.Store.Resource_EvaluationSection" Multiplicity="*" />
+          <End Role="Resource_EvaluationSection" Type="Self.Resource_EvaluationSection" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Resource_Evaluation">
               <PropertyRef Name="Id" />
@@ -1271,8 +1027,8 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_Resource_EvaluationSection_Resource_EvaluationSection">
-          <End Role="Evaluation_Dimension" Type="ResourceModel.Store.Evaluation_Dimension" Multiplicity="0..1" />
-          <End Role="Resource_EvaluationSection" Type="ResourceModel.Store.Resource_EvaluationSection" Multiplicity="*" />
+          <End Role="Evaluation_Dimension" Type="Self.Evaluation_Dimension" Multiplicity="0..1" />
+          <End Role="Resource_EvaluationSection" Type="Self.Resource_EvaluationSection" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Evaluation_Dimension">
               <PropertyRef Name="Id" />
@@ -1283,8 +1039,8 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_Resource_GradeLevel_Codes_GradeLevel">
-          <End Role="Codes_GradeLevel" Type="ResourceModel.Store.Codes_GradeLevel" Multiplicity="0..1" />
-          <End Role="Resource_GradeLevel" Type="ResourceModel.Store.Resource_GradeLevel" Multiplicity="*" />
+          <End Role="Codes_GradeLevel" Type="Self.Codes_GradeLevel" Multiplicity="0..1" />
+          <End Role="Resource_GradeLevel" Type="Self.Resource_GradeLevel" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Codes_GradeLevel">
               <PropertyRef Name="Id" />
@@ -1294,11 +1050,81 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_Resource_Standard_StandardBody_Node">
-          <End Role="StandardBody_Node" Type="ResourceModel.Store.StandardBody_Node" Multiplicity="1">
+        <Association Name="FK_Resource_GroupType_Resource">
+          <End Role="Resource" Type="Self.Resource" Multiplicity="0..1">
             <OnDelete Action="Cascade" />
           </End>
-          <End Role="Resource_Standard" Type="ResourceModel.Store.Resource_Standard" Multiplicity="*" />
+          <End Role="Resource_GroupType" Type="Self.Resource_GroupType" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Resource">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Resource_GroupType">
+              <PropertyRef Name="ResourceIntId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Resource_Like_Resource">
+          <End Role="Resource" Type="Self.Resource" Multiplicity="0..1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Resource_Like" Type="Self.Resource_Like" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Resource">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Resource_Like">
+              <PropertyRef Name="ResourceIntId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Resource_LikeSummary_Resource">
+          <End Role="Resource" Type="Self.Resource" Multiplicity="0..1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Resource_LikeSummary" Type="Self.Resource_LikeSummary" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Resource">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Resource_LikeSummary">
+              <PropertyRef Name="ResourceIntId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Resource_PublishedBy_Resource">
+          <End Role="Resource" Type="Self.Resource" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Resource_PublishedBy" Type="Self.Resource_PublishedBy" Multiplicity="0..1" />
+          <ReferentialConstraint>
+            <Principal Role="Resource">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Resource_PublishedBy">
+              <PropertyRef Name="ResourceIntId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Resource_Standard_Resource">
+          <End Role="Resource" Type="Self.Resource" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Resource_Standard" Type="Self.Resource_Standard" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Resource">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Resource_Standard">
+              <PropertyRef Name="ResourceIntId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Resource_Standard_StandardBody_Node">
+          <End Role="StandardBody_Node" Type="Self.StandardBody_Node" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Resource_Standard" Type="Self.Resource_Standard" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="StandardBody_Node">
               <PropertyRef Name="Id" />
@@ -1309,8 +1135,8 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_Resource_StandardEvaluation_Resource_Standard">
-          <End Role="Resource_Standard" Type="ResourceModel.Store.Resource_Standard" Multiplicity="1" />
-          <End Role="Resource_StandardEvaluation" Type="ResourceModel.Store.Resource_StandardEvaluation" Multiplicity="*" />
+          <End Role="Resource_Standard" Type="Self.Resource_Standard" Multiplicity="1" />
+          <End Role="Resource_StandardEvaluation" Type="Self.Resource_StandardEvaluation" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Resource_Standard">
               <PropertyRef Name="Id" />
@@ -1321,8 +1147,8 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_Resource_Subject_Codes_Subject">
-          <End Role="Codes_Subject" Type="ResourceModel.Store.Codes_Subject" Multiplicity="0..1" />
-          <End Role="Resource_Subject" Type="ResourceModel.Store.Resource_Subject" Multiplicity="*" />
+          <End Role="Codes_Subject" Type="Self.Codes_Subject" Multiplicity="0..1" />
+          <End Role="Resource_Subject" Type="Self.Resource_Subject" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Codes_Subject">
               <PropertyRef Name="Id" />
@@ -1333,8 +1159,8 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_Resource_Tag_Codes_TagValue">
-          <End Role="Codes_TagValue" Type="ResourceModel.Store.Codes_TagValue" Multiplicity="1" />
-          <End Role="Resource_Tag" Type="ResourceModel.Store.Resource_Tag" Multiplicity="*" />
+          <End Role="Codes_TagValue" Type="Self.Codes_TagValue" Multiplicity="1" />
+          <End Role="Resource_Tag" Type="Self.Resource_Tag" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Codes_TagValue">
               <PropertyRef Name="Id" />
@@ -1345,8 +1171,8 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_Resource_Text_Codes_TextType">
-          <End Role="Codes_TextType" Type="ResourceModel.Store.Codes_TextType" Multiplicity="1" />
-          <End Role="Resource_Text" Type="ResourceModel.Store.Resource_Text" Multiplicity="*" />
+          <End Role="Codes_TextType" Type="Self.Codes_TextType" Multiplicity="1" />
+          <End Role="Resource_Text" Type="Self.Resource_Text" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Codes_TextType">
               <PropertyRef Name="Id" />
@@ -1357,10 +1183,10 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_Standard_SubjectStandardConnector_StandardBody_Node">
-          <End Role="StandardBody_Node" Type="ResourceModel.Store.StandardBody_Node" Multiplicity="1">
+          <End Role="StandardBody_Node" Type="Self.StandardBody_Node" Multiplicity="1">
             <OnDelete Action="Cascade" />
           </End>
-          <End Role="Standard_SubjectStandardConnector" Type="ResourceModel.Store.Standard_SubjectStandardConnector" Multiplicity="*" />
+          <End Role="Standard_SubjectStandardConnector" Type="Self.Standard_SubjectStandardConnector" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="StandardBody_Node">
               <PropertyRef Name="Id" />
@@ -1371,8 +1197,8 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_Standard_SubjectStandardConnector_StandardBody_Subject">
-          <End Role="StandardBody_Subject" Type="ResourceModel.Store.StandardBody_Subject" Multiplicity="1" />
-          <End Role="Standard_SubjectStandardConnector" Type="ResourceModel.Store.Standard_SubjectStandardConnector" Multiplicity="*" />
+          <End Role="StandardBody_Subject" Type="Self.StandardBody_Subject" Multiplicity="1" />
+          <End Role="Standard_SubjectStandardConnector" Type="Self.Standard_SubjectStandardConnector" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="StandardBody_Subject">
               <PropertyRef Name="Id" />
@@ -1383,10 +1209,10 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_StandardBody_NodeGradeLevel_StandardBody_Node">
-          <End Role="StandardBody_Node" Type="ResourceModel.Store.StandardBody_Node" Multiplicity="1">
+          <End Role="StandardBody_Node" Type="Self.StandardBody_Node" Multiplicity="1">
             <OnDelete Action="Cascade" />
           </End>
-          <End Role="StandardBody_NodeGradeLevel" Type="ResourceModel.Store.StandardBody_NodeGradeLevel" Multiplicity="*" />
+          <End Role="StandardBody_NodeGradeLevel" Type="Self.StandardBody_NodeGradeLevel" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="StandardBody_Node">
               <PropertyRef Name="Id" />
@@ -1397,8 +1223,8 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_StandardBody_NodeGradeLevel_StandardBody_NodeGradeLevel">
-          <End Role="StandardBody_NodeGradeLevel" Type="ResourceModel.Store.StandardBody_NodeGradeLevel" Multiplicity="1" />
-          <End Role="StandardBody_NodeGradeLevel1" Type="ResourceModel.Store.StandardBody_NodeGradeLevel" Multiplicity="0..1" />
+          <End Role="StandardBody_NodeGradeLevel" Type="Self.StandardBody_NodeGradeLevel" Multiplicity="1" />
+          <End Role="StandardBody_NodeGradeLevel1" Type="Self.StandardBody_NodeGradeLevel" Multiplicity="0..1" />
           <ReferentialConstraint>
             <Principal Role="StandardBody_NodeGradeLevel">
               <PropertyRef Name="Id" />
@@ -1409,8 +1235,8 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_StandardBody_Subject_StandardBody">
-          <End Role="StandardBody" Type="ResourceModel.Store.StandardBody" Multiplicity="1" />
-          <End Role="StandardBody_Subject" Type="ResourceModel.Store.StandardBody_Subject" Multiplicity="*" />
+          <End Role="StandardBody" Type="Self.StandardBody" Multiplicity="1" />
+          <End Role="StandardBody_Subject" Type="Self.StandardBody_Subject" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="StandardBody">
               <PropertyRef Name="Id" />
@@ -1420,11 +1246,344 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityContainer Name="ResourceModelStoreContainer">
+          <EntitySet Name="Codes_AudienceType" EntityType="Self.Codes_AudienceType" Schema="dbo" Table="Codes.AudienceType" store:Type="Tables" />
+          <EntitySet Name="Codes_GradeLevel" EntityType="Self.Codes_GradeLevel" Schema="dbo" Table="Codes.GradeLevel" store:Type="Tables" />
+          <EntitySet Name="Codes_Site" EntityType="Self.Codes_Site" Schema="dbo" Table="Codes.Site" store:Type="Tables" />
+          <EntitySet Name="Codes_SiteTagCategory" EntityType="Self.Codes_SiteTagCategory" Schema="dbo" Table="Codes.SiteTagCategory" store:Type="Tables" />
+          <EntitySet Name="Codes_Subject" EntityType="Self.Codes_Subject" Schema="dbo" Table="Codes.Subject" store:Type="Tables" />
+          <EntitySet Name="Codes_TagCategory" EntityType="Self.Codes_TagCategory" Schema="dbo" Table="Codes.TagCategory" store:Type="Tables" />
+          <EntitySet Name="Codes_TagValue" EntityType="Self.Codes_TagValue" Schema="dbo" Table="Codes.TagValue" store:Type="Tables" />
+          <EntitySet Name="Codes_TagValueKeyword" EntityType="Self.Codes_TagValueKeyword" Schema="dbo" Table="Codes.TagValueKeyword" store:Type="Tables" />
+          <EntitySet Name="Codes_TextType" EntityType="Self.Codes_TextType" Schema="dbo" Table="Codes.TextType" store:Type="Tables" />
+          <EntitySet Name="ConditionOfUse" EntityType="Self.ConditionOfUse" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="EmailNotice" EntityType="Self.EmailNotice" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Evaluation" EntityType="Self.Evaluation" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Evaluation_Dimension" EntityType="Self.Evaluation_Dimension" Schema="dbo" Table="Evaluation.Dimension" store:Type="Tables" />
+          <EntitySet Name="Patron" EntityType="Self.Patron" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Patron_Following" EntityType="Self.Patron_Following" Schema="dbo" Table="Patron.Following" store:Type="Tables" />
+          <EntitySet Name="Patron_Profile" EntityType="Self.Patron_Profile" Schema="dbo" Table="Patron.Profile" store:Type="Tables" />
+          <EntitySet Name="Publish_Pending" EntityType="Self.Publish_Pending" Schema="dbo" Table="Publish.Pending" store:Type="Tables" />
+          <EntitySet Name="Resource" EntityType="Self.Resource" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Resource_AssessmentType" EntityType="Self.Resource_AssessmentType" Schema="dbo" Table="Resource.AssessmentType" store:Type="Tables" />
+          <EntitySet Name="Resource_Cluster" EntityType="Self.Resource_Cluster" Schema="dbo" Table="Resource.Cluster" store:Type="Tables" />
+          <EntitySet Name="Resource_DelayedPublish" EntityType="Self.Resource_DelayedPublish" Schema="dbo" Table="Resource.DelayedPublish" store:Type="Tables" />
+          <EntitySet Name="Resource_EducationUse" EntityType="Self.Resource_EducationUse" Schema="dbo" Table="Resource.EducationUse" store:Type="Tables" />
+          <EntitySet Name="Resource_Evaluation" EntityType="Self.Resource_Evaluation" Schema="dbo" Table="Resource.Evaluation" store:Type="Tables" />
+          <EntitySet Name="Resource_EvaluationSection" EntityType="Self.Resource_EvaluationSection" Schema="dbo" Table="Resource.EvaluationSection" store:Type="Tables" />
+          <EntitySet Name="Resource_Format" EntityType="Self.Resource_Format" Schema="dbo" Table="Resource.Format" store:Type="Tables" />
+          <EntitySet Name="Resource_GradeLevel" EntityType="Self.Resource_GradeLevel" Schema="dbo" Table="Resource.GradeLevel" store:Type="Tables" />
+          <EntitySet Name="Resource_GroupType" EntityType="Self.Resource_GroupType" Schema="dbo" Table="Resource.GroupType" store:Type="Tables" />
+          <EntitySet Name="Resource_IntendedAudience" EntityType="Self.Resource_IntendedAudience" Schema="dbo" Table="Resource.IntendedAudience" store:Type="Tables" />
+          <EntitySet Name="Resource_ItemType" EntityType="Self.Resource_ItemType" Schema="dbo" Table="Resource.ItemType" store:Type="Tables" />
+          <EntitySet Name="Resource_Keyword" EntityType="Self.Resource_Keyword" Schema="dbo" Table="Resource.Keyword" store:Type="Tables" />
+          <EntitySet Name="Resource_Language" EntityType="Self.Resource_Language" Schema="dbo" Table="Resource.Language" store:Type="Tables" />
+          <EntitySet Name="Resource_Like" EntityType="Self.Resource_Like" Schema="dbo" Table="Resource.Like" store:Type="Tables" />
+          <EntitySet Name="Resource_LikeSummary" EntityType="Self.Resource_LikeSummary" Schema="dbo" Table="Resource.LikeSummary" store:Type="Tables" />
+          <EntitySet Name="Resource_PublishedBy" EntityType="Self.Resource_PublishedBy" Schema="dbo" Table="Resource.PublishedBy" store:Type="Tables" />
+          <EntitySet Name="Resource_ResourceType" EntityType="Self.Resource_ResourceType" Schema="dbo" Table="Resource.ResourceType" store:Type="Tables" />
+          <EntitySet Name="Resource_Standard" EntityType="Self.Resource_Standard" Schema="dbo" Table="Resource.Standard" store:Type="Tables" />
+          <EntitySet Name="Resource_StandardEvaluation" EntityType="Self.Resource_StandardEvaluation" Schema="dbo" Table="Resource.StandardEvaluation" store:Type="Tables" />
+          <EntitySet Name="Resource_Subject" EntityType="Self.Resource_Subject" Schema="dbo" Table="Resource.Subject" store:Type="Tables" />
+          <EntitySet Name="Resource_Tag" EntityType="Self.Resource_Tag" Schema="dbo" Table="Resource.Tag" store:Type="Tables" />
+          <EntitySet Name="Resource_Text" EntityType="Self.Resource_Text" Schema="dbo" Table="Resource.Text" store:Type="Tables" />
+          <EntitySet Name="Resource_Version" EntityType="Self.Resource_Version" Schema="dbo" Table="Resource.Version" store:Type="Tables" />
+          <EntitySet Name="Resource_View" EntityType="Self.Resource_View" Schema="dbo" Table="Resource.View" store:Type="Tables" />
+          <EntitySet Name="Standard_SubjectStandardConnector" EntityType="Self.Standard_SubjectStandardConnector" Schema="dbo" Table="Standard.SubjectStandardConnector" store:Type="Tables" />
+          <EntitySet Name="StandardBody" EntityType="Self.StandardBody" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="StandardBody_Node" EntityType="Self.StandardBody_Node" Schema="dbo" Table="StandardBody.Node" store:Type="Tables" />
+          <EntitySet Name="StandardBody_NodeGradeLevel" EntityType="Self.StandardBody_NodeGradeLevel" Schema="dbo" Table="StandardBody.NodeGradeLevel" store:Type="Tables" />
+          <EntitySet Name="StandardBody_Subject" EntityType="Self.StandardBody_Subject" Schema="dbo" Table="StandardBody.Subject" store:Type="Tables" />
+          <EntitySet Name="System_GenerateLoginId" EntityType="Self.System_GenerateLoginId" Schema="dbo" Table="System.GenerateLoginId" store:Type="Tables" />
+          <EntitySet Name="Codes_CareerCluster" EntityType="Self.Codes_CareerCluster" store:Type="Views" store:Schema="dbo" store:Name="Codes.CareerCluster">
+            <DefiningQuery>SELECT 
+    [Codes_CareerCluster].[Id] AS [Id], 
+    [Codes_CareerCluster].[Title] AS [Title], 
+    [Codes_CareerCluster].[IsActive] AS [IsActive], 
+    [Codes_CareerCluster].[WarehouseTotal] AS [WarehouseTotal]
+    FROM [dbo].[Codes.CareerCluster] AS [Codes_CareerCluster]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="Codes_SiteTagCategory_Summary" EntityType="Self.Codes_SiteTagCategory_Summary" store:Type="Views" store:Schema="dbo" store:Name="Codes.SiteTagCategory_Summary">
+            <DefiningQuery>SELECT 
+    [Codes_SiteTagCategory_Summary].[Id] AS [Id], 
+    [Codes_SiteTagCategory_Summary].[SiteId] AS [SiteId], 
+    [Codes_SiteTagCategory_Summary].[CategoryId] AS [CategoryId], 
+    [Codes_SiteTagCategory_Summary].[Title] AS [Title], 
+    [Codes_SiteTagCategory_Summary].[Description] AS [Description], 
+    [Codes_SiteTagCategory_Summary].[SchemaTag] AS [SchemaTag], 
+    [Codes_SiteTagCategory_Summary].[Site_SortOrder] AS [Site_SortOrder], 
+    [Codes_SiteTagCategory_Summary].[TagCategory_SortOrder] AS [TagCategory_SortOrder]
+    FROM [dbo].[Codes.SiteTagCategory_Summary] AS [Codes_SiteTagCategory_Summary]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="Codes_TagCategoryValue_summary" EntityType="Self.Codes_TagCategoryValue_summary" store:Type="Views" store:Schema="dbo" store:Name="Codes.TagCategoryValue_summary">
+            <DefiningQuery>SELECT 
+    [Codes_TagCategoryValue_summary].[CategoryId] AS [CategoryId], 
+    [Codes_TagCategoryValue_summary].[Category] AS [Category], 
+    [Codes_TagCategoryValue_summary].[TagValueId] AS [TagValueId], 
+    [Codes_TagCategoryValue_summary].[TagRelativeId] AS [TagRelativeId], 
+    [Codes_TagCategoryValue_summary].[CodeId] AS [CodeId], 
+    [Codes_TagCategoryValue_summary].[Title] AS [Title], 
+    [Codes_TagCategoryValue_summary].[Description] AS [Description], 
+    [Codes_TagCategoryValue_summary].[WarehouseTotal] AS [WarehouseTotal]
+    FROM [dbo].[Codes.TagCategoryValue_summary] AS [Codes_TagCategoryValue_summary]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="Patron_ResourceSummary" EntityType="Self.Patron_ResourceSummary" store:Type="Views" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [Patron_ResourceSummary].[UserId] AS [UserId], 
+    [Patron_ResourceSummary].[FirstName] AS [FirstName], 
+    [Patron_ResourceSummary].[LastName] AS [LastName], 
+    [Patron_ResourceSummary].[FullName] AS [FullName], 
+    [Patron_ResourceSummary].[SortName] AS [SortName], 
+    [Patron_ResourceSummary].[Email] AS [Email], 
+    [Patron_ResourceSummary].[IsUserActive] AS [IsUserActive], 
+    [Patron_ResourceSummary].[JobTitle] AS [JobTitle], 
+    [Patron_ResourceSummary].[ImageUrl] AS [ImageUrl], 
+    [Patron_ResourceSummary].[OrganizationId] AS [OrganizationId], 
+    [Patron_ResourceSummary].[Organization] AS [Organization], 
+    [Patron_ResourceSummary].[Created] AS [Created], 
+    [Patron_ResourceSummary].[LastUpdated] AS [LastUpdated], 
+    [Patron_ResourceSummary].[Published] AS [Published], 
+    [Patron_ResourceSummary].[ResourceUrl] AS [ResourceUrl], 
+    [Patron_ResourceSummary].[ResourceTitle] AS [ResourceTitle], 
+    [Patron_ResourceSummary].[Description] AS [Description], 
+    [Patron_ResourceSummary].[ResourceId] AS [ResourceId]
+    FROM [dbo].[Patron_ResourceSummary] AS [Patron_ResourceSummary]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="Patron_Summary" EntityType="Self.Patron_Summary" store:Type="Views" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [Patron_Summary].[Id] AS [Id], 
+    [Patron_Summary].[UserName] AS [UserName], 
+    [Patron_Summary].[FirstName] AS [FirstName], 
+    [Patron_Summary].[LastName] AS [LastName], 
+    [Patron_Summary].[FullName] AS [FullName], 
+    [Patron_Summary].[SortName] AS [SortName], 
+    [Patron_Summary].[Email] AS [Email], 
+    [Patron_Summary].[IsActive] AS [IsActive], 
+    [Patron_Summary].[HasProfile] AS [HasProfile], 
+    [Patron_Summary].[JobTitle] AS [JobTitle], 
+    [Patron_Summary].[RoleProfile] AS [RoleProfile], 
+    [Patron_Summary].[ImageUrl] AS [ImageUrl], 
+    [Patron_Summary].[UserProfileUrl] AS [UserProfileUrl], 
+    [Patron_Summary].[OrganizationId] AS [OrganizationId], 
+    [Patron_Summary].[Organization] AS [Organization], 
+    [Patron_Summary].[PublishingRoleId] AS [PublishingRoleId], 
+    [Patron_Summary].[PublishingRole] AS [PublishingRole], 
+    [Patron_Summary].[Created] AS [Created], 
+    [Patron_Summary].[LastUpdated] AS [LastUpdated], 
+    [Patron_Summary].[UserRowId] AS [UserRowId]
+    FROM [dbo].[Patron_Summary] AS [Patron_Summary]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="Resource_EvalDimensionsSummary" EntityType="Self.Resource_EvalDimensionsSummary" store:Type="Views" store:Schema="dbo" store:Name="Resource.EvalDimensionsSummary">
+            <DefiningQuery>SELECT 
+    [Resource_EvalDimensionsSummary].[ResourceIntId] AS [ResourceIntId], 
+    [Resource_EvalDimensionsSummary].[EvaluationId] AS [EvaluationId], 
+    [Resource_EvalDimensionsSummary].[EvalDimensionId] AS [EvalDimensionId], 
+    [Resource_EvalDimensionsSummary].[DimensionTitle] AS [DimensionTitle], 
+    [Resource_EvalDimensionsSummary].[HasCertificationTotal] AS [HasCertificationTotal], 
+    [Resource_EvalDimensionsSummary].[HasCertificationTotalScore] AS [HasCertificationTotalScore], 
+    [Resource_EvalDimensionsSummary].[HasNOTCertificationTotal] AS [HasNOTCertificationTotal], 
+    [Resource_EvalDimensionsSummary].[HasNOTCertificationTotalScore] AS [HasNOTCertificationTotalScore], 
+    [Resource_EvalDimensionsSummary].[TotalEvaluations] AS [TotalEvaluations]
+    FROM [dbo].[Resource.EvalDimensionsSummary] AS [Resource_EvalDimensionsSummary]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="Resource_EvaluationsSummary" EntityType="Self.Resource_EvaluationsSummary" store:Type="Views" store:Schema="dbo" store:Name="Resource.EvaluationsSummary">
+            <DefiningQuery>SELECT 
+    [Resource_EvaluationsSummary].[ResourceIntId] AS [ResourceIntId], 
+    [Resource_EvaluationsSummary].[EvaluationId] AS [EvaluationId], 
+    [Resource_EvaluationsSummary].[EvaluationTitle] AS [EvaluationTitle], 
+    [Resource_EvaluationsSummary].[RequiresCertification] AS [RequiresCertification], 
+    [Resource_EvaluationsSummary].[PrivilegeCode] AS [PrivilegeCode], 
+    [Resource_EvaluationsSummary].[HasCertificationTotal] AS [HasCertificationTotal], 
+    [Resource_EvaluationsSummary].[HasCertificationTotalScore] AS [HasCertificationTotalScore], 
+    [Resource_EvaluationsSummary].[HasNOTCertificationTotal] AS [HasNOTCertificationTotal], 
+    [Resource_EvaluationsSummary].[HasNOTCertificationTotalScore] AS [HasNOTCertificationTotalScore], 
+    [Resource_EvaluationsSummary].[TotalEvaluations] AS [TotalEvaluations]
+    FROM [dbo].[Resource.EvaluationsSummary] AS [Resource_EvaluationsSummary]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="Resource_StandardEvaluationList" EntityType="Self.Resource_StandardEvaluationList" store:Type="Views" store:Schema="dbo" store:Name="Resource.StandardEvaluationList">
+            <DefiningQuery>SELECT 
+    [Resource_StandardEvaluationList].[Id] AS [Id], 
+    [Resource_StandardEvaluationList].[ResourceIntId] AS [ResourceIntId], 
+    [Resource_StandardEvaluationList].[StandardId] AS [StandardId], 
+    [Resource_StandardEvaluationList].[CreatedById] AS [CreatedById], 
+    [Resource_StandardEvaluationList].[Created] AS [Created], 
+    [Resource_StandardEvaluationList].[NotationCode] AS [NotationCode], 
+    [Resource_StandardEvaluationList].[Description] AS [Description], 
+    [Resource_StandardEvaluationList].[Score] AS [Score]
+    FROM [dbo].[Resource.StandardEvaluationList] AS [Resource_StandardEvaluationList]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="Resource_StandardEvaluationSummary" EntityType="Self.Resource_StandardEvaluationSummary" store:Type="Views" store:Schema="dbo" store:Name="Resource.StandardEvaluationSummary">
+            <DefiningQuery>SELECT 
+    [Resource_StandardEvaluationSummary].[ResourceIntId] AS [ResourceIntId], 
+    [Resource_StandardEvaluationSummary].[StandardId] AS [StandardId], 
+    [Resource_StandardEvaluationSummary].[NotationCode] AS [NotationCode], 
+    [Resource_StandardEvaluationSummary].[Description] AS [Description], 
+    [Resource_StandardEvaluationSummary].[AverageScorePercent] AS [AverageScorePercent], 
+    [Resource_StandardEvaluationSummary].[TotalEvals] AS [TotalEvals]
+    FROM [dbo].[Resource.StandardEvaluationSummary] AS [Resource_StandardEvaluationSummary]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="Resource_Version_Summary" EntityType="Self.Resource_Version_Summary" store:Type="Views" store:Schema="dbo" store:Name="Resource.Version_Summary">
+            <DefiningQuery>SELECT 
+    [Resource_Version_Summary].[ResourceUrl] AS [ResourceUrl], 
+    [Resource_Version_Summary].[URL] AS [URL], 
+    [Resource_Version_Summary].[Id] AS [Id], 
+    [Resource_Version_Summary].[ResourceIntId] AS [ResourceIntId], 
+    [Resource_Version_Summary].[DetailPage] AS [DetailPage], 
+    [Resource_Version_Summary].[ResourceId] AS [ResourceId], 
+    [Resource_Version_Summary].[ResourceVersionIntId] AS [ResourceVersionIntId], 
+    [Resource_Version_Summary].[Title] AS [Title], 
+    [Resource_Version_Summary].[Description] AS [Description], 
+    [Resource_Version_Summary].[Publisher] AS [Publisher], 
+    [Resource_Version_Summary].[Creator] AS [Creator], 
+    [Resource_Version_Summary].[Rights] AS [Rights], 
+    [Resource_Version_Summary].[ViewCount] AS [ViewCount], 
+    [Resource_Version_Summary].[FavoriteCount] AS [FavoriteCount], 
+    [Resource_Version_Summary].[DocId] AS [DocId], 
+    [Resource_Version_Summary].[AccessRightsId] AS [AccessRightsId], 
+    [Resource_Version_Summary].[AccessRights] AS [AccessRights], 
+    [Resource_Version_Summary].[InteractivityTypeId] AS [InteractivityTypeId], 
+    [Resource_Version_Summary].[InteractivityType] AS [InteractivityType], 
+    [Resource_Version_Summary].[TypicalLearningTime] AS [TypicalLearningTime], 
+    [Resource_Version_Summary].[Modified] AS [Modified], 
+    [Resource_Version_Summary].[Created] AS [Created], 
+    [Resource_Version_Summary].[Imported] AS [Imported], 
+    [Resource_Version_Summary].[Submitter] AS [Submitter], 
+    [Resource_Version_Summary].[Schema] AS [Schema], 
+    [Resource_Version_Summary].[Requirements] AS [Requirements], 
+    [Resource_Version_Summary].[SortTitle] AS [SortTitle], 
+    [Resource_Version_Summary].[PublishedById] AS [PublishedById]
+    FROM [dbo].[Resource.Version_Summary] AS [Resource_Version_Summary]</DefiningQuery>
+          </EntitySet>
+          <AssociationSet Name="FK_Codes_SiteTagCategory_Codes_Site" Association="Self.FK_Codes_SiteTagCategory_Codes_Site">
+            <End Role="Codes_Site" EntitySet="Codes_Site" />
+            <End Role="Codes_SiteTagCategory" EntitySet="Codes_SiteTagCategory" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Codes_SiteTagCategory_Codes_TagCategory" Association="Self.FK_Codes_SiteTagCategory_Codes_TagCategory">
+            <End Role="Codes_TagCategory" EntitySet="Codes_TagCategory" />
+            <End Role="Codes_SiteTagCategory" EntitySet="Codes_SiteTagCategory" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Codes_TagValue_Codes_TagCategory" Association="Self.FK_Codes_TagValue_Codes_TagCategory">
+            <End Role="Codes_TagCategory" EntitySet="Codes_TagCategory" />
+            <End Role="Codes_TagValue" EntitySet="Codes_TagValue" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Codes_TagValueKeyword_Codes_TagValue" Association="Self.FK_Codes_TagValueKeyword_Codes_TagValue">
+            <End Role="Codes_TagValue" EntitySet="Codes_TagValue" />
+            <End Role="Codes_TagValueKeyword" EntitySet="Codes_TagValueKeyword" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Evaluation_Dimension_Evaluation" Association="Self.FK_Evaluation_Dimension_Evaluation">
+            <End Role="Evaluation" EntitySet="Evaluation" />
+            <End Role="Evaluation_Dimension" EntitySet="Evaluation_Dimension" />
+          </AssociationSet>
+          <AssociationSet Name="FK_IntendedAudience_CodesAudienceType" Association="Self.FK_IntendedAudience_CodesAudienceType">
+            <End Role="Codes_AudienceType" EntitySet="Codes_AudienceType" />
+            <End Role="Resource_IntendedAudience" EntitySet="Resource_IntendedAudience" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Patron_FollowedBy_Patron" Association="Self.FK_Patron_FollowedBy_Patron">
+            <End Role="Patron" EntitySet="Patron" />
+            <End Role="Patron_Following" EntitySet="Patron_Following" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Patron_Following_Patron" Association="Self.FK_Patron_Following_Patron">
+            <End Role="Patron" EntitySet="Patron" />
+            <End Role="Patron_Following" EntitySet="Patron_Following" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Patron_Profile_Patron" Association="Self.FK_Patron_Profile_Patron">
+            <End Role="Patron" EntitySet="Patron" />
+            <End Role="Patron_Profile" EntitySet="Patron_Profile" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Resource_AssessmentType_Resource" Association="Self.FK_Resource_AssessmentType_Resource">
+            <End Role="Resource" EntitySet="Resource" />
+            <End Role="Resource_AssessmentType" EntitySet="Resource_AssessmentType" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Resource_EducationUse_Resource" Association="Self.FK_Resource_EducationUse_Resource">
+            <End Role="Resource" EntitySet="Resource" />
+            <End Role="Resource_EducationUse" EntitySet="Resource_EducationUse" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Resource_Evaluation_Evaluation" Association="Self.FK_Resource_Evaluation_Evaluation">
+            <End Role="Evaluation" EntitySet="Evaluation" />
+            <End Role="Resource_Evaluation" EntitySet="Resource_Evaluation" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Resource_Evaluation_Resource" Association="Self.FK_Resource_Evaluation_Resource">
+            <End Role="Resource" EntitySet="Resource" />
+            <End Role="Resource_Evaluation" EntitySet="Resource_Evaluation" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Resource_EvaluationSection_Resource_Evaluation1" Association="Self.FK_Resource_EvaluationSection_Resource_Evaluation1">
+            <End Role="Resource_Evaluation" EntitySet="Resource_Evaluation" />
+            <End Role="Resource_EvaluationSection" EntitySet="Resource_EvaluationSection" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Resource_EvaluationSection_Resource_EvaluationSection" Association="Self.FK_Resource_EvaluationSection_Resource_EvaluationSection">
+            <End Role="Evaluation_Dimension" EntitySet="Evaluation_Dimension" />
+            <End Role="Resource_EvaluationSection" EntitySet="Resource_EvaluationSection" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Resource_GradeLevel_Codes_GradeLevel" Association="Self.FK_Resource_GradeLevel_Codes_GradeLevel">
+            <End Role="Codes_GradeLevel" EntitySet="Codes_GradeLevel" />
+            <End Role="Resource_GradeLevel" EntitySet="Resource_GradeLevel" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Resource_GroupType_Resource" Association="Self.FK_Resource_GroupType_Resource">
+            <End Role="Resource" EntitySet="Resource" />
+            <End Role="Resource_GroupType" EntitySet="Resource_GroupType" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Resource_Like_Resource" Association="Self.FK_Resource_Like_Resource">
+            <End Role="Resource" EntitySet="Resource" />
+            <End Role="Resource_Like" EntitySet="Resource_Like" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Resource_LikeSummary_Resource" Association="Self.FK_Resource_LikeSummary_Resource">
+            <End Role="Resource" EntitySet="Resource" />
+            <End Role="Resource_LikeSummary" EntitySet="Resource_LikeSummary" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Resource_PublishedBy_Resource" Association="Self.FK_Resource_PublishedBy_Resource">
+            <End Role="Resource" EntitySet="Resource" />
+            <End Role="Resource_PublishedBy" EntitySet="Resource_PublishedBy" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Resource_Standard_Resource" Association="Self.FK_Resource_Standard_Resource">
+            <End Role="Resource" EntitySet="Resource" />
+            <End Role="Resource_Standard" EntitySet="Resource_Standard" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Resource_Standard_StandardBody_Node" Association="Self.FK_Resource_Standard_StandardBody_Node">
+            <End Role="StandardBody_Node" EntitySet="StandardBody_Node" />
+            <End Role="Resource_Standard" EntitySet="Resource_Standard" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Resource_StandardEvaluation_Resource_Standard" Association="Self.FK_Resource_StandardEvaluation_Resource_Standard">
+            <End Role="Resource_Standard" EntitySet="Resource_Standard" />
+            <End Role="Resource_StandardEvaluation" EntitySet="Resource_StandardEvaluation" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Resource_Subject_Codes_Subject" Association="Self.FK_Resource_Subject_Codes_Subject">
+            <End Role="Codes_Subject" EntitySet="Codes_Subject" />
+            <End Role="Resource_Subject" EntitySet="Resource_Subject" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Resource_Tag_Codes_TagValue" Association="Self.FK_Resource_Tag_Codes_TagValue">
+            <End Role="Codes_TagValue" EntitySet="Codes_TagValue" />
+            <End Role="Resource_Tag" EntitySet="Resource_Tag" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Resource_Text_Codes_TextType" Association="Self.FK_Resource_Text_Codes_TextType">
+            <End Role="Codes_TextType" EntitySet="Codes_TextType" />
+            <End Role="Resource_Text" EntitySet="Resource_Text" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Standard_SubjectStandardConnector_StandardBody_Node" Association="Self.FK_Standard_SubjectStandardConnector_StandardBody_Node">
+            <End Role="StandardBody_Node" EntitySet="StandardBody_Node" />
+            <End Role="Standard_SubjectStandardConnector" EntitySet="Standard_SubjectStandardConnector" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Standard_SubjectStandardConnector_StandardBody_Subject" Association="Self.FK_Standard_SubjectStandardConnector_StandardBody_Subject">
+            <End Role="StandardBody_Subject" EntitySet="StandardBody_Subject" />
+            <End Role="Standard_SubjectStandardConnector" EntitySet="Standard_SubjectStandardConnector" />
+          </AssociationSet>
+          <AssociationSet Name="FK_StandardBody_NodeGradeLevel_StandardBody_Node" Association="Self.FK_StandardBody_NodeGradeLevel_StandardBody_Node">
+            <End Role="StandardBody_Node" EntitySet="StandardBody_Node" />
+            <End Role="StandardBody_NodeGradeLevel" EntitySet="StandardBody_NodeGradeLevel" />
+          </AssociationSet>
+          <AssociationSet Name="FK_StandardBody_NodeGradeLevel_StandardBody_NodeGradeLevel" Association="Self.FK_StandardBody_NodeGradeLevel_StandardBody_NodeGradeLevel">
+            <End Role="StandardBody_NodeGradeLevel" EntitySet="StandardBody_NodeGradeLevel" />
+            <End Role="StandardBody_NodeGradeLevel1" EntitySet="StandardBody_NodeGradeLevel" />
+          </AssociationSet>
+          <AssociationSet Name="FK_StandardBody_Subject_StandardBody" Association="Self.FK_StandardBody_Subject_StandardBody">
+            <End Role="StandardBody" EntitySet="StandardBody" />
+            <End Role="StandardBody_Subject" EntitySet="StandardBody_Subject" />
+          </AssociationSet>
+        </EntityContainer>
       </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
-      <Schema Namespace="ResourceModel" Alias="Self" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns="http://schemas.microsoft.com/ado/2008/09/edm">
-        <EntityContainer Name="ResourceEntities" annotation:LazyLoadingEnabled="true">
+      <Schema Namespace="ResourceModel" Alias="Self" xmlns="http://schemas.microsoft.com/ado/2009/11/edm" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation">
+        <EntityContainer Name="ResourceEntities" annotation:LazyLoadingEnabled="true" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation">
           <EntitySet Name="EmailNotices" EntityType="ResourceModel.EmailNotice" />
           <EntitySet Name="Patrons" EntityType="ResourceModel.Patron" />
           <EntitySet Name="Patron_Profile" EntityType="ResourceModel.Patron_Profile" />
@@ -1609,12 +1768,37 @@
           <EntitySet Name="Resource_Like" EntityType="ResourceModel.Resource_Like" />
           <EntitySet Name="Resource_LikeSummary" EntityType="ResourceModel.Resource_LikeSummary" />
           <EntitySet Name="Resource_View" EntityType="ResourceModel.Resource_View" />
+          <EntitySet Name="Resource_DelayedPublish" EntityType="ResourceModel.Resource_DelayedPublish" />
+          <AssociationSet Name="FK_Resource_AssessmentType_Resource" Association="ResourceModel.FK_Resource_AssessmentType_Resource">
+            <End Role="Resource" EntitySet="Resources" />
+            <End Role="Resource_AssessmentType" EntitySet="Resource_AssessmentType" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Resource_EducationUse_Resource" Association="ResourceModel.FK_Resource_EducationUse_Resource">
+            <End Role="Resource" EntitySet="Resources" />
+            <End Role="Resource_EducationUse" EntitySet="Resource_EducationUse" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Resource_Evaluation_Resource" Association="ResourceModel.FK_Resource_Evaluation_Resource">
+            <End Role="Resource" EntitySet="Resources" />
+            <End Role="Resource_Evaluation" EntitySet="Resource_Evaluation" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Resource_GroupType_Resource" Association="ResourceModel.FK_Resource_GroupType_Resource">
+            <End Role="Resource" EntitySet="Resources" />
+            <End Role="Resource_GroupType" EntitySet="Resource_GroupType" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Resource_Like_Resource" Association="ResourceModel.FK_Resource_Like_Resource">
+            <End Role="Resource" EntitySet="Resources" />
+            <End Role="Resource_Like" EntitySet="Resource_Like" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Resource_LikeSummary_Resource" Association="ResourceModel.FK_Resource_LikeSummary_Resource">
+            <End Role="Resource" EntitySet="Resources" />
+            <End Role="Resource_LikeSummary" EntitySet="Resource_LikeSummary" />
+          </AssociationSet>
           </EntityContainer>
         <EntityType Name="EmailNotice">
           <Key>
             <PropertyRef Name="id" />
           </Key>
-          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <Property Name="Title" Type="String" MaxLength="75" Unicode="false" FixedLength="false" />
           <Property Name="Category" Type="String" MaxLength="50" Unicode="false" FixedLength="false" />
           <Property Name="NoticeCode" Type="String" MaxLength="50" Unicode="false" FixedLength="false" />
@@ -1637,7 +1821,7 @@
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <Property Name="UserName" Type="String" Nullable="false" MaxLength="50" Unicode="false" FixedLength="false" />
           <Property Name="Password" Type="String" MaxLength="50" Unicode="false" FixedLength="false" />
           <Property Name="FirstName" Type="String" MaxLength="50" Unicode="false" FixedLength="false" />
@@ -1652,6 +1836,7 @@
           <Property Type="String" Name="IsleIdentifier" MaxLength="100" FixedLength="false" Unicode="false" />
           <NavigationProperty Name="Patron_Following" Relationship="ResourceModel.FK_Patron_FollowedBy_Patron" FromRole="Patron" ToRole="Patron_Following" />
           <NavigationProperty Name="Patron_Following1" Relationship="ResourceModel.FK_Patron_Following_Patron" FromRole="Patron" ToRole="Patron_Following" />
+          <Property Name="AuthenticationProvider" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="Patron_Profile">
           <Key>
@@ -1709,7 +1894,7 @@
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <Property Type="String" Name="Summary" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Type="String" Name="Title" MaxLength="100" FixedLength="false" Unicode="false" />
           <Property Type="String" Name="Description" MaxLength="800" FixedLength="false" Unicode="false" />
@@ -1720,6 +1905,8 @@
           <Property Type="Int32" Name="ConditionOfUseCategory" />
           <Property Type="Int32" Name="WarehouseTotal" />
           <Property Type="String" Name="MiniIconUrl" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Name="IsCustom" Type="Boolean" Nullable="false" />
+          <Property Name="IsUnknown" Type="Boolean" Nullable="false" />
         </EntityType>
         <EntityType Name="Resource_Text">
           <Key>
@@ -1751,8 +1938,9 @@
             <PropertyRef Name="ResourceId" />
             <PropertyRef Name="ResourceVersionIntId" />
             <PropertyRef Name="Title" />
+            <PropertyRef Name="URL" />
           </Key>
-          <Property Type="String" Name="ResourceUrl" Nullable="false" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="ResourceUrl" Nullable="false" MaxLength="600" FixedLength="false" Unicode="false" />
           <Property Type="Int32" Name="Id" Nullable="false" />
           <Property Type="Int32" Name="ResourceIntId" Nullable="false" />
           <Property Type="String" Name="ResourceId" Nullable="false" MaxLength="1" FixedLength="false" Unicode="false" />
@@ -1778,6 +1966,8 @@
           <Property Type="String" Name="Requirements" MaxLength="200" FixedLength="false" Unicode="false" />
           <Property Type="String" Name="SortTitle" MaxLength="300" FixedLength="false" Unicode="true" />
           <Property Type="Int32" Name="PublishedById" />
+          <Property Name="URL" Type="String" Nullable="false" MaxLength="1231" FixedLength="false" Unicode="false" />
+          <Property Name="DetailPage" Type="String" MaxLength="4000" FixedLength="false" Unicode="true" />
         </EntityType>
         <Association Name="FK_Resource_Text_Codes_TextType">
           <End Type="ResourceModel.Codes_TextType" Role="Codes_TextType" Multiplicity="1" />
@@ -1803,7 +1993,7 @@
           <Property Type="DateTime" Name="LastUpdated" Precision="3" />
           <Property Type="Boolean" Name="IsActive" />
           <Property Type="Boolean" Name="HasPathwayGradeLevel" />
-          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <NavigationProperty Name="Resource_Version" Relationship="ResourceModel.Resource_ResourceVersion" FromRole="Resource" ToRole="Resource_Version" />
           <NavigationProperty Name="Resource_Cluster" Relationship="ResourceModel.ResourceResource_Cluster" FromRole="Resource" ToRole="Resource_Cluster" />
           <NavigationProperty Name="Resource_GradeLevel" Relationship="ResourceModel.Resource_Resource_GradeLevel" FromRole="Resource" ToRole="Resource_GradeLevel" />
@@ -1813,12 +2003,18 @@
           <NavigationProperty Name="Resource_PublishedBy" Relationship="ResourceModel.ResourceResource_PublishedBy" FromRole="Resource" ToRole="Resource_PublishedBy" />
           <NavigationProperty Name="Resource_Tag" Relationship="ResourceModel.ResourceResource_Tag" FromRole="Resource" ToRole="Resource_Tag" />
           <NavigationProperty Name="Resource_Standard" Relationship="ResourceModel.ResourceResource_Standard" FromRole="Resource" ToRole="Resource_Standard" />
+          <NavigationProperty Name="Resource_AssessmentType" Relationship="ResourceModel.FK_Resource_AssessmentType_Resource" FromRole="Resource" ToRole="Resource_AssessmentType" />
+          <NavigationProperty Name="Resource_EducationUse" Relationship="ResourceModel.FK_Resource_EducationUse_Resource" FromRole="Resource" ToRole="Resource_EducationUse" />
+          <NavigationProperty Name="Resource_Evaluation" Relationship="ResourceModel.FK_Resource_Evaluation_Resource" FromRole="Resource" ToRole="Resource_Evaluation" />
+          <NavigationProperty Name="Resource_GroupType" Relationship="ResourceModel.FK_Resource_GroupType_Resource" FromRole="Resource" ToRole="Resource_GroupType" />
+          <NavigationProperty Name="Resource_Like" Relationship="ResourceModel.FK_Resource_Like_Resource" FromRole="Resource" ToRole="Resource_Like" />
+          <NavigationProperty Name="Resource_LikeSummary" Relationship="ResourceModel.FK_Resource_LikeSummary_Resource" FromRole="Resource" ToRole="Resource_LikeSummary" />
         </EntityType>
         <EntityType Name="System_GenerateLoginId">
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <Property Type="Guid" Name="ProxyId" Nullable="false" />
           <Property Type="Int32" Name="UserId" Nullable="false" />
           <Property Type="Boolean" Name="IsActive" Nullable="false" />
@@ -1845,7 +2041,7 @@
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <Property Type="Int32" Name="SiteId" Nullable="false" />
           <Property Type="Int32" Name="CategoryId" Nullable="false" />
           <Property Type="Int32" Name="SortOrder" Nullable="false" />
@@ -1897,7 +2093,7 @@
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <Property Type="Int32" Name="ClusterId" Nullable="false" />
           <Property Type="Int32" Name="CreatedById" />
           <Property Type="DateTime" Name="Created" Precision="3" />
@@ -1909,7 +2105,7 @@
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <Property Type="Int32" Name="ResourceIntId" />
           <Property Type="Int32" Name="GradeLevelId" />
           <Property Type="String" Name="OriginalLevel" MaxLength="100" FixedLength="false" Unicode="false" />
@@ -1923,7 +2119,7 @@
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <Property Type="Int32" Name="ResourceIntId" />
           <Property Type="String" Name="Keyword" MaxLength="200" FixedLength="false" Unicode="false" />
           <Property Type="Int32" Name="CreatedById" />
@@ -1934,7 +2130,7 @@
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <Property Type="Int32" Name="ResourceIntId" />
           <Property Type="String" Name="Subject" MaxLength="100" FixedLength="false" Unicode="false" />
           <Property Type="DateTime" Name="Created" Precision="3" />
@@ -1947,7 +2143,7 @@
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <Property Type="Int32" Name="ResourceIntId" />
           <Property Type="String" Name="Title" Nullable="false" MaxLength="300" FixedLength="false" Unicode="true" />
           <Property Type="String" Name="Description" MaxLength="Max" FixedLength="false" Unicode="true" />
@@ -1986,7 +2182,7 @@
         </Association>
         <Association Name="Resource_ResourceVersion">
           <End Type="ResourceModel.Resource" Role="Resource" Multiplicity="0..1" />
-          <End Type="ResourceModel.Resource_Version" Role="Resource_Version" Multiplicity="*" >
+          <End Type="ResourceModel.Resource_Version" Role="Resource_Version" Multiplicity="*">
           </End>
           <ReferentialConstraint>
             <Principal Role="Resource">
@@ -2061,7 +2257,7 @@
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <Property Type="String" Name="Title" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Type="String" Name="NsdtTitle" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Type="String" Name="Description" MaxLength="255" FixedLength="false" Unicode="false" />
@@ -2075,7 +2271,7 @@
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <Property Type="String" Name="Title" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Type="String" Name="AliasValues" MaxLength="100" FixedLength="false" Unicode="false" />
           <Property Type="String" Name="NsdlTitle" MaxLength="50" FixedLength="false" Unicode="false" />
@@ -2149,7 +2345,7 @@
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <Property Type="Int32" Name="ResourceIntId" />
           <Property Type="Int32" Name="ResourceVersionIntId" />
           <Property Type="String" Name="DocId" MaxLength="500" FixedLength="false" Unicode="false" />
@@ -2186,7 +2382,7 @@
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <Property Type="Int32" Name="ParentId" />
           <Property Type="String" Name="LevelType" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Type="String" Name="NotationCode" MaxLength="50" FixedLength="false" Unicode="false" />
@@ -2204,7 +2400,7 @@
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <Property Type="Int32" Name="ParentId" Nullable="false" />
           <Property Type="String" Name="GradeLevel" MaxLength="25" FixedLength="false" Unicode="false" />
           <Property Type="Int32" Name="GradeLevelId" />
@@ -2216,7 +2412,7 @@
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <Property Type="Int32" Name="StandardBodyId" Nullable="false" />
           <Property Type="String" Name="Title" Nullable="false" MaxLength="200" FixedLength="false" Unicode="false" />
           <Property Type="String" Name="ShortTitle" MaxLength="50" FixedLength="false" Unicode="false" />
@@ -2285,7 +2481,7 @@
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <Property Type="Int32" Name="ResourceIntId" Nullable="false" />
           <Property Type="Int32" Name="TagValueId" Nullable="false" />
           <Property Type="DateTime" Name="Created" Precision="3" />
@@ -2310,7 +2506,7 @@
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <Property Type="Int32" Name="CategoryId" Nullable="false" />
           <Property Type="Int32" Name="CodeId" Nullable="false" />
           <Property Type="String" Name="Title" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
@@ -2323,6 +2519,7 @@
           <NavigationProperty Name="Resource_Tag" Relationship="ResourceModel.FK_Resource_Tag_Codes_TagValue" FromRole="Codes_TagValue" ToRole="Resource_Tag" />
           <Property Type="String" Name="AliasValues" MaxLength="100" FixedLength="false" Unicode="false" />
           <NavigationProperty Name="Codes_TagValueKeyword" Relationship="ResourceModel.FK_Codes_TagValueKeyword_Codes_TagValue" FromRole="Codes_TagValue" ToRole="Codes_TagValueKeyword" />
+          <Property Name="Created" Type="DateTime" Precision="3" />
         </EntityType>
         <Association Name="FK_Codes_TagValue_Codes_TagCategory">
           <End Type="ResourceModel.Codes_TagCategory" Role="Codes_TagCategory" Multiplicity="1">
@@ -2354,7 +2551,7 @@
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <Property Type="Int32" Name="ResourceIntId" Nullable="false" />
           <Property Type="Int32" Name="StandardId" Nullable="false" />
           <Property Type="String" Name="StandardUrl" MaxLength="200" FixedLength="false" Unicode="false" />
@@ -2397,23 +2594,25 @@
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <Property Type="Int32" Name="ResourceIntId" Nullable="false" />
           <Property Type="Int32" Name="AssessmentTypeId" Nullable="false" />
           <Property Type="DateTime" Name="Created" Precision="3" />
           <Property Type="Int32" Name="CreatedById" />
+          <NavigationProperty Name="Resource" Relationship="ResourceModel.FK_Resource_AssessmentType_Resource" FromRole="Resource_AssessmentType" ToRole="Resource" />
         </EntityType>
         <EntityType Name="Resource_EducationUse">
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <Property Type="Int32" Name="ResourceIntId" />
           <Property Type="Int32" Name="EducationUseId" />
           <Property Type="String" Name="OriginalType" MaxLength="100" FixedLength="false" Unicode="false" />
           <Property Type="DateTime" Name="Created" Precision="3" />
           <Property Type="Int32" Name="CreatedById" />
           <Property Type="Guid" Name="ResourceId" />
+          <NavigationProperty Name="Resource" Relationship="ResourceModel.FK_Resource_EducationUse_Resource" FromRole="Resource_EducationUse" ToRole="Resource" />
         </EntityType>
         <EntityType Name="Resource_Format">
           <Key>
@@ -2431,18 +2630,19 @@
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <Property Type="Int32" Name="ResourceIntId" />
           <Property Type="Int32" Name="GroupTypeId" Nullable="false" />
           <Property Type="DateTime" Name="Created" Precision="3" />
           <Property Type="Int32" Name="CreatedById" />
           <Property Type="Guid" Name="ResourceId" />
+          <NavigationProperty Name="Resource" Relationship="ResourceModel.FK_Resource_GroupType_Resource" FromRole="Resource_GroupType" ToRole="Resource" />
         </EntityType>
         <EntityType Name="Resource_ItemType">
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <Property Type="Int32" Name="ResourceIntId" Nullable="false" />
           <Property Type="Int32" Name="ItemTypeId" Nullable="false" />
           <Property Type="DateTime" Name="Created" Precision="3" />
@@ -2477,7 +2677,7 @@
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <Property Type="Int32" Name="FollowingUserId" Nullable="false" />
           <Property Type="Int32" Name="FollowedByUserId" Nullable="false" />
           <Property Type="DateTime" Name="Created" Precision="3" />
@@ -2488,7 +2688,7 @@
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <Property Type="String" Name="Title" MaxLength="75" FixedLength="false" Unicode="false" />
           <Property Type="String" Name="ShortName" MaxLength="25" FixedLength="false" Unicode="false" />
           <Property Type="String" Name="Url" MaxLength="200" FixedLength="false" Unicode="false" />
@@ -2504,7 +2704,7 @@
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <Property Type="Int32" Name="EvaluationId" Nullable="false" />
           <Property Type="String" Name="Title" Nullable="false" MaxLength="75" FixedLength="false" Unicode="false" />
           <Property Type="String" Name="ShortName" MaxLength="25" FixedLength="false" Unicode="false" />
@@ -2515,6 +2715,7 @@
           <NavigationProperty Name="Resource_EvaluationSection" Relationship="ResourceModel.FK_Resource_EvaluationSection_Resource_EvaluationSection" FromRole="Evaluation_Dimension" ToRole="Resource_EvaluationSection" />
           <Property Type="Int32" Name="DimensionId" Nullable="false" />
           <Property Type="Boolean" Name="IsActive" Nullable="false" />
+          <Property Name="NotationCode" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
         </EntityType>
         <Association Name="FK_Evaluation_Dimension_Evaluation">
           <End Type="ResourceModel.Evaluation" Role="Evaluation" Multiplicity="1" />
@@ -2532,7 +2733,7 @@
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <Property Type="Int32" Name="TagValueId" Nullable="false" />
           <Property Type="String" Name="Keyword" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Type="Boolean" Name="IsActive" Nullable="false" />
@@ -2581,7 +2782,7 @@
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <Property Type="Int32" Name="ResourceIntId" Nullable="false" />
           <Property Type="Int32" Name="EvaluationId" Nullable="false" />
           <Property Type="Int32" Name="Score" Nullable="false" />
@@ -2596,6 +2797,7 @@
           <Property Type="Int32" Name="ScaleMax" />
           <Property Type="String" Name="CriteriaInfo" MaxLength="500" FixedLength="false" Unicode="false" />
           <NavigationProperty Name="Evaluation" Relationship="ResourceModel.FK_Resource_Evaluation_Evaluation" FromRole="Resource_Evaluation" ToRole="Evaluation" />
+          <NavigationProperty Name="Resource" Relationship="ResourceModel.FK_Resource_Evaluation_Resource" FromRole="Resource_Evaluation" ToRole="Resource" />
         </EntityType>
         <EntityType Name="Resource_EvaluationSection">
           <Key>
@@ -2640,7 +2842,7 @@
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <Property Type="Int32" Name="ResourceStandardId" Nullable="false" />
           <Property Type="Int32" Name="Score" />
           <Property Type="Int32" Name="CreatedById" />
@@ -2826,37 +3028,137 @@
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <Property Type="Int32" Name="ResourceIntId" />
           <Property Type="Boolean" Name="IsLike" />
           <Property Type="DateTime" Name="Created" Precision="3" />
           <Property Type="Int32" Name="CreatedById" />
+          <NavigationProperty Name="Resource" Relationship="ResourceModel.FK_Resource_Like_Resource" FromRole="Resource_Like" ToRole="Resource" />
         </EntityType>
         <EntityType Name="Resource_LikeSummary">
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <Property Type="Int32" Name="ResourceIntId" />
           <Property Type="Int32" Name="LikeCount" />
           <Property Type="Int32" Name="DislikeCount" />
           <Property Type="DateTime" Name="LastUpdated" Precision="3" />
           <Property Type="Guid" Name="ResourceId" />
+          <NavigationProperty Name="Resource" Relationship="ResourceModel.FK_Resource_LikeSummary_Resource" FromRole="Resource_LikeSummary" ToRole="Resource" />
         </EntityType>
         <EntityType Name="Resource_View">
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <Property Type="Int32" Name="ResourceIntId" />
           <Property Type="DateTime" Name="Created" Precision="3" />
           <Property Type="Int32" Name="CreatedById" />
         </EntityType>
+        <EntityType Name="Resource_DelayedPublish">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ParentContentId" Type="Int32" Nullable="false" />
+          <Property Name="ContentId" Type="Int32" Nullable="false" />
+          <Property Name="ContentTypeId" Type="Int32" Nullable="false" />
+          <Property Name="StatusId" Type="Int32" Nullable="false" />
+          <Property Name="ResourceIntId" Type="Int32" Nullable="false" />
+          <Property Name="ResourceVersionIntId" Type="Int32" Nullable="false" />
+          <Property Name="Created" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="CreatedById" Type="Int32" Nullable="false" />
+          <Property Name="DocId" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Name="PublishedDate" Type="DateTime" Precision="3" />
+        </EntityType>
+        <Association Name="FK_Resource_AssessmentType_Resource">
+          <End Type="ResourceModel.Resource" Role="Resource" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="ResourceModel.Resource_AssessmentType" Role="Resource_AssessmentType" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Resource">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Resource_AssessmentType">
+              <PropertyRef Name="ResourceIntId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Resource_EducationUse_Resource">
+          <End Type="ResourceModel.Resource" Role="Resource" Multiplicity="0..1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="ResourceModel.Resource_EducationUse" Role="Resource_EducationUse" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Resource">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Resource_EducationUse">
+              <PropertyRef Name="ResourceIntId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Resource_Evaluation_Resource">
+          <End Type="ResourceModel.Resource" Role="Resource" Multiplicity="1" />
+          <End Type="ResourceModel.Resource_Evaluation" Role="Resource_Evaluation" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Resource">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Resource_Evaluation">
+              <PropertyRef Name="ResourceIntId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Resource_GroupType_Resource">
+          <End Type="ResourceModel.Resource" Role="Resource" Multiplicity="0..1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="ResourceModel.Resource_GroupType" Role="Resource_GroupType" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Resource">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Resource_GroupType">
+              <PropertyRef Name="ResourceIntId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Resource_Like_Resource">
+          <End Type="ResourceModel.Resource" Role="Resource" Multiplicity="0..1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="ResourceModel.Resource_Like" Role="Resource_Like" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Resource">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Resource_Like">
+              <PropertyRef Name="ResourceIntId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Resource_LikeSummary_Resource">
+          <End Type="ResourceModel.Resource" Role="Resource" Multiplicity="0..1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="ResourceModel.Resource_LikeSummary" Role="Resource_LikeSummary" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Resource">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Resource_LikeSummary">
+              <PropertyRef Name="ResourceIntId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
     <edmx:Mappings>
-      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2008/09/mapping/cs">
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
         <EntityContainerMapping StorageEntityContainer="ResourceModelStoreContainer" CdmEntityContainer="ResourceEntities">
           <EntitySetMapping Name="EmailNotices">
             <EntityTypeMapping TypeName="ResourceModel.EmailNotice">
@@ -2885,6 +3187,7 @@
           <EntitySetMapping Name="Patrons">
             <EntityTypeMapping TypeName="ResourceModel.Patron">
               <MappingFragment StoreEntitySet="Patron">
+                <ScalarProperty Name="AuthenticationProvider" ColumnName="AuthenticationProvider" />
                 <ScalarProperty Name="IsleIdentifier" ColumnName="IsleIdentifier" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="UserName" ColumnName="UserName" />
@@ -2941,6 +3244,8 @@
           <EntitySetMapping Name="ConditionOfUses">
             <EntityTypeMapping TypeName="ResourceModel.ConditionOfUse">
               <MappingFragment StoreEntitySet="ConditionOfUse">
+                <ScalarProperty Name="IsUnknown" ColumnName="IsUnknown" />
+                <ScalarProperty Name="IsCustom" ColumnName="IsCustom" />
                 <ScalarProperty Name="MiniIconUrl" ColumnName="MiniIconUrl" />
                 <ScalarProperty Name="WarehouseTotal" ColumnName="WarehouseTotal" />
                 <ScalarProperty Name="ConditionOfUseCategory" ColumnName="ConditionOfUseCategory" />
@@ -2980,6 +3285,8 @@
           <EntitySetMapping Name="Resource_Version_Summary">
             <EntityTypeMapping TypeName="ResourceModel.Resource_Version_Summary">
               <MappingFragment StoreEntitySet="Resource_Version_Summary">
+                <ScalarProperty Name="DetailPage" ColumnName="DetailPage" />
+                <ScalarProperty Name="URL" ColumnName="URL" />
                 <ScalarProperty Name="PublishedById" ColumnName="PublishedById" />
                 <ScalarProperty Name="SortTitle" ColumnName="SortTitle" />
                 <ScalarProperty Name="Requirements" ColumnName="Requirements" />
@@ -3304,6 +3611,7 @@
           <EntitySetMapping Name="Codes_TagValue">
             <EntityTypeMapping TypeName="ResourceModel.Codes_TagValue">
               <MappingFragment StoreEntitySet="Codes_TagValue">
+                <ScalarProperty Name="Created" ColumnName="Created" />
                 <ScalarProperty Name="AliasValues" ColumnName="AliasValues" />
                 <ScalarProperty Name="WarehouseTotal" ColumnName="WarehouseTotal" />
                 <ScalarProperty Name="SchemaTag" ColumnName="SchemaTag" />
@@ -3447,6 +3755,7 @@
           <EntitySetMapping Name="Evaluation_Dimension">
             <EntityTypeMapping TypeName="ResourceModel.Evaluation_Dimension">
               <MappingFragment StoreEntitySet="Evaluation_Dimension">
+                <ScalarProperty Name="NotationCode" ColumnName="NotationCode" />
                 <ScalarProperty Name="IsActive" ColumnName="IsActive" />
                 <ScalarProperty Name="DimensionId" ColumnName="DimensionId" />
                 <ScalarProperty Name="WarehouseTotal" ColumnName="WarehouseTotal" />
@@ -3680,26 +3989,44 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <EntitySetMapping Name="Resource_DelayedPublish">
+            <EntityTypeMapping TypeName="ResourceModel.Resource_DelayedPublish">
+              <MappingFragment StoreEntitySet="Resource_DelayedPublish">
+                <ScalarProperty Name="PublishedDate" ColumnName="PublishedDate" />
+                <ScalarProperty Name="DocId" ColumnName="DocId" />
+                <ScalarProperty Name="CreatedById" ColumnName="CreatedById" />
+                <ScalarProperty Name="Created" ColumnName="Created" />
+                <ScalarProperty Name="ResourceVersionIntId" ColumnName="ResourceVersionIntId" />
+                <ScalarProperty Name="ResourceIntId" ColumnName="ResourceIntId" />
+                <ScalarProperty Name="StatusId" ColumnName="StatusId" />
+                <ScalarProperty Name="ContentTypeId" ColumnName="ContentTypeId" />
+                <ScalarProperty Name="ContentId" ColumnName="ContentId" />
+                <ScalarProperty Name="ParentContentId" ColumnName="ParentContentId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>
   </edmx:Runtime>
   <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
-  <Designer xmlns="http://schemas.microsoft.com/ado/2008/10/edmx">
-    <Connection>
-      <DesignerInfoPropertySet>
-        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
-      </DesignerInfoPropertySet>
-    </Connection>
-    <Options>
-      <DesignerInfoPropertySet>
-        <DesignerProperty Name="ValidateOnBuild" Value="true" />
-        <DesignerProperty Name="EnablePluralization" Value="True" />
-        <DesignerProperty Name="IncludeForeignKeysInModel" Value="True" />
-        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
-      </DesignerInfoPropertySet>
-    </Options>
+  <edmx:Designer>
+    <edmx:Connection>
+      <edmx:DesignerInfoPropertySet>
+        <edmx:DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </edmx:DesignerInfoPropertySet>
+    </edmx:Connection>
+    <edmx:Options>
+      <edmx:DesignerInfoPropertySet>
+        <edmx:DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <edmx:DesignerProperty Name="EnablePluralization" Value="True" />
+        <edmx:DesignerProperty Name="IncludeForeignKeysInModel" Value="True" />
+        <edmx:DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+        <edmx:DesignerProperty Name="UseLegacyProvider" Value="False" />
+      </edmx:DesignerInfoPropertySet>
+    </edmx:Options>
     <!-- Diagram content (shape and connector positions) -->
-    <Diagrams></Diagrams>
-  </Designer>
+    <edmx:Diagrams />
+  </edmx:Designer>
 </edmx:Edmx>

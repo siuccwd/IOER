@@ -25,7 +25,12 @@ namespace LRWarehouse.Business
         public string SchemaTag { get; set; }
         public int WarehouseTotal { get; set; }
 
+		public string AliasValues { get; set; }
+
+		public System.DateTime Created { get; set; }
+
         public List<string> Keywords { get; set; }
+		public virtual CodesTagCategory Codes_TagCategory { get; set; }
         public List<CodesTagValueKeyword> TagValueKeywords { get; set; }
     }
 }

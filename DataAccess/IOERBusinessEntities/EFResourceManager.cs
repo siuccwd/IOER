@@ -5,8 +5,12 @@ using System.Text;
 
 using AutoMapper;
 using LB = LRWarehouse.Business;
+using TagValue1 = LRWarehouse.Business.CodesTagValue;
+using TagValue = IOERBusinessEntities.Codes_TagValue;
+using ILPathways.Common;
 using ILPathways.Utilities;
 using Isle.DTO;
+using LRWarehouse.DAL;
 
 namespace IOERBusinessEntities
 {
@@ -99,9 +103,10 @@ namespace IOERBusinessEntities
 
         public void Resource_CreateTags( List<int> tags, int resourceID, int createdById )
         {
+			LoggingHelper.DoTrace(4, "+++++EFResourceManager.Resource_CreateTags. resourceID: " + resourceID.ToString());
           using ( var context = new ResourceContext() )
           {
-            if ( tags.Count() > 0 )
+            if ( tags!= null && tags.Count() > 0 )
             {
               ResourceTag_Create( context, new ResourceTransformDTO() { Id = resourceID, CreatedById = createdById, ResourceTagsIds = tags } );
             }
@@ -386,7 +391,7 @@ namespace IOERBusinessEntities
                             entity.title = item.Title;
                             entity.containerTitle = "Resources I Published";
                             entity.DateAdded = ( DateTime )item.Imported;
-                            entity.url = string.Format( "/Resource/{0}/{1}", item.ResourceIntId, UtilityManager.UrlFriendlyTitle( item.Title ) );
+                            entity.url = string.Format( "/Resource/{0}/{1}", item.ResourceIntId, LB.ResourceVersion.UrlFriendlyTitle( item.Title ) );
 
                             dashboard.myResources.resources.Add( entity );
                         }
@@ -698,35 +703,57 @@ namespace IOERBusinessEntities
         public int ResourceTag_Create( ResourceContext context, ResourceTransformDTO entity )
         {
             int createCount = 0;
-            
+			LoggingHelper.DoTrace( 4, string.Format( "_____EFResourceManager.ResourceTag_Create. entry rId: {0}", entity.Id ) );
+
             foreach ( int tagId in entity.ResourceTagsIds )
             {
-                Resource_Tag tag = new Resource_Tag();
-                tag.ResourceIntId = entity.Id;
-                tag.TagValueId = tagId;
-                tag.OriginalValue = "";
-                if (entity.CreatedById > 0)
-                    tag.CreatedById = entity.CreatedById;
-                tag.Created = System.DateTime.Now;
+				try
+				{
+					LoggingHelper.DoTrace( 4, "			ResourceTag_Create. tagId: " + tagId.ToString() );
+					//check if exists
+					Resource_Tag tag = new Resource_Tag();
 
-                context.Resource_Tag.Add( tag );
+					Resource_Tag efEntity = context.Resource_Tag
+						   .SingleOrDefault( s => s.ResourceIntId == entity.Id && s.TagValueId == tagId );
+					if ( efEntity != null && efEntity.Id > 0 )
+					{
+						//skip
+						LoggingHelper.DoTrace( 4, "		ResourceTag_Create. Skip existing tagId: " + tagId.ToString() );
+						continue;
+					}
 
-                // submit the change to database
-                int count = context.SaveChanges();
-                if ( count > 0 )
-                {
-                    SyncToLegacyCodeTable( context, tag );
-                    createCount++;
-                    //return tag.Id;
-                }
-                else
-                {
-                    //?no info on error
-                    LoggingHelper.LogError( thisClassName + ".ResourceTag_Create()", true );
-                }
+					tag.ResourceIntId = entity.Id;
+					tag.TagValueId = tagId;
+					tag.OriginalValue = "";
+					if ( entity.CreatedById > 0 )
+						tag.CreatedById = entity.CreatedById;
+					tag.Created = System.DateTime.Now;
+
+					context.Resource_Tag.Add( tag );
+
+					// submit the change to database
+					int count = context.SaveChanges();
+					if ( count > 0 )
+					{
+						SyncToLegacyCodeTable( context, tag );
+						createCount++;
+						//return tag.Id;
+					}
+					else
+					{
+						//?no info on error
+						LoggingHelper.LogError( thisClassName + ".ResourceTag_Create()", true );
+					}
+				}
+				catch ( Exception ex )
+				{
+					//catch here to allow continuing
+					string message = "";
+					LoggingHelper.LogError( ex, thisClassName + string.Format(".ResourceTag_Create(). rId: {0}, tagId: {1}", entity.ResourceId, tagId.ToString()), true );
+				}
 
             }
-            
+			LoggingHelper.DoTrace( 4, "_____EFResourceManager.ResourceTag_Create. exit " );
             return createCount;
         }
 
@@ -738,8 +765,12 @@ namespace IOERBusinessEntities
         /// <param name="tag"></param>
         public static void SyncToLegacyCodeTable( ResourceContext context, Resource_Tag tag ) 
         {
+			try { 
+            TagValue tv = EFCodesManager.Codes_TagValue_Get( context, tag.TagValueId );
+			//TagValue tv = CodeTableManager.CodesTagValue_Get( tag.TagValueId );
 
-            Codes_TagValue tv = EFCodesManager.Codes_TagValue_Get( context, tag.TagValueId );
+
+			LoggingHelper.DoTrace(6, "EFResourceManager.SyncToLegacyCodeTable. categoryId: " + tv.CategoryId.ToString());
             if ( tv.CategoryId == LB.CodesSiteTagCategory.AUDIENCE_TYPE_CATEGORY_Id )
             {
                 Resource_IntendedAudience_Create( context, tag, tv );
@@ -773,7 +804,12 @@ namespace IOERBusinessEntities
                 // special for site category:
                 // - the tag values are 255-278, the codes.site are 1-4
             }
-
+			}
+			catch ( Exception ex )
+			{
+				//catch here to allow continuing
+				LoggingHelper.DoTrace( 2, "@@@@@@ " +  thisClassName + string.Format( ".SyncToLegacyCodeTable(). rId: {0}, tagId: {1} ", tag.ResourceIntId, tag.TagValueId ) + ex.Message );
+			}
         }
 
         #endregion
@@ -809,7 +845,7 @@ namespace IOERBusinessEntities
                     else
                     {
                         //?no info on error
-                        LoggingHelper.LogError( thisClassName + ".ResourceTag_Create()", true );
+						LoggingHelper.LogError(thisClassName + ".Resource_Keyword_Create()", true);
                     }
                 }
             }
@@ -862,7 +898,7 @@ namespace IOERBusinessEntities
         #endregion
 
         #region === resource child tables
-        public static int Resource_IntendedAudience_Create( ResourceContext context, Resource_Tag tag, Codes_TagValue tv )
+        public static int Resource_IntendedAudience_Create( ResourceContext context, Resource_Tag tag, TagValue tv )
         {
             int id = 0;
             Resource_IntendedAudience e = new Resource_IntendedAudience();
@@ -898,7 +934,7 @@ namespace IOERBusinessEntities
         }
 
 
-        public static int ResourceCluster_Create( ResourceContext context, Resource_Tag tag, Codes_TagValue tv )
+        public static int ResourceCluster_Create( ResourceContext context, Resource_Tag tag, TagValue tv )
         {
             int id = 0;
             Resource_Cluster e = new Resource_Cluster();
@@ -932,7 +968,7 @@ namespace IOERBusinessEntities
             return id;
         }
 
-        public static int ResourceEdUse_Create( ResourceContext context, Resource_Tag tag, Codes_TagValue tv )
+        public static int ResourceEdUse_Create( ResourceContext context, Resource_Tag tag, TagValue tv )
         {
             int id = 0;
 
@@ -967,7 +1003,7 @@ namespace IOERBusinessEntities
             return id;
         }
 
-        public static int Resource_GradeLevel_Create( ResourceContext context, Resource_Tag tag, Codes_TagValue tv )
+        public static int Resource_GradeLevel_Create( ResourceContext context, Resource_Tag tag, TagValue tv )
         {
             int id = 0;
             Resource_GradeLevel e = new Resource_GradeLevel();
@@ -1001,7 +1037,7 @@ namespace IOERBusinessEntities
             return id;
         }
 
-        public static int Resource_GroupType_Create( ResourceContext context, Resource_Tag tag, Codes_TagValue tv )
+        public static int Resource_GroupType_Create( ResourceContext context, Resource_Tag tag, TagValue tv )
         {
             int id = 0;
 
@@ -1036,7 +1072,7 @@ namespace IOERBusinessEntities
             return id;
         }
 
-        public static int Resource_Language_Create( ResourceContext context, Resource_Tag tag, Codes_TagValue tv )
+        public static int Resource_Language_Create( ResourceContext context, Resource_Tag tag, TagValue tv )
         {
             int id = 0;
 
@@ -1072,7 +1108,7 @@ namespace IOERBusinessEntities
             return id;
         }
 
-        public static int Resource_Format_Create( ResourceContext context, Resource_Tag tag, Codes_TagValue tv )
+        public static int Resource_Format_Create( ResourceContext context, Resource_Tag tag, TagValue tv )
         {
             int id = 0;
             Resource_Format e = new Resource_Format();
@@ -1102,12 +1138,16 @@ namespace IOERBusinessEntities
             }
             catch ( Exception ex )
             {
-                LoggingHelper.LogError( ex, thisClassName + string.Format( ".Resource_Format_Create() Category: {0}, abs tagId: {1}", tv.Title, tag.TagValueId ) );
+				string message = "";
+				if (ex.InnerException != null && ex.InnerException.Message != null)
+					message = "<br/>InnerException: " + ex.InnerException.Message;
+
+				LoggingHelper.LogError(ex, thisClassName + string.Format(".Resource_Format_Create() Category: {0}, abs tagId: {1}", tv.Title, tag.TagValueId) + message);
             }
             return id;
         }
 
-        public static int Resource_Type_Create( ResourceContext context, Resource_Tag tag, Codes_TagValue tv )
+        public static int Resource_Type_Create( ResourceContext context, Resource_Tag tag, TagValue tv )
         {
             int id = 0;
             Resource_ResourceType e = new Resource_ResourceType();
@@ -1137,13 +1177,17 @@ namespace IOERBusinessEntities
             }
             catch ( Exception ex )
             {
-                LoggingHelper.LogError( ex, thisClassName + string.Format( ".Resource_Type_Create() Category: {0}, abs tagId: {1}", tv.Title, tag.TagValueId ) );
+				string message = "";
+				if (ex.InnerException != null && ex.InnerException.Message != null)
+					message = "<br/>InnerException: " + ex.InnerException.Message;
+
+				LoggingHelper.LogError(ex, thisClassName + string.Format(".Resource_Type_Create() Category: {0}, abs tagId: {1}", tv.Title, tag.TagValueId) + message);
             }
             return id;
         }
 
 
-        public static int ResourceSubject_Create( ResourceContext context, Resource_Tag tag, Codes_TagValue tv )
+        public static int ResourceSubject_Create( ResourceContext context, Resource_Tag tag, TagValue tv )
         {
             int id = 0;
             Resource_Subject e = new Resource_Subject();

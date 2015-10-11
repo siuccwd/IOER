@@ -1,4 +1,4 @@
-﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="ConditionsOfUseSelector.ascx.cs" Inherits="ILPathways.LRW.controls.ConditionsOfUseSelector" %>
+﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="ConditionsOfUseSelector.ascx.cs" Inherits="IOER.LRW.controls.ConditionsOfUseSelector" %>
 
 <!-- Conditions of Use Script -->
 <script type="text/javascript" >

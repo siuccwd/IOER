@@ -9,7 +9,7 @@ using System.IO;
 
 using ILPathways.Business;
 using ILPathways.Utilities;
-namespace ILPathways.AppCode.Classes
+namespace IOER.AppCode.Classes
 {
     /// <summary>
     /// ref: http://www.codeproject.com/Articles/16873/Sending-the-contents-of-a-webpage-with-images-as-a

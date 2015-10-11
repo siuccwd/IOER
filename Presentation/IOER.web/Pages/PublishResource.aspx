@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" MasterPageFile="~/Masters/Pathway.Master" AutoEventWireup="true" CodeBehind="PublishResource.aspx.cs" Inherits="ILPathways.Pages.PublishResource" %>
+﻿<%@ Page Title="Illinois Open Educational Resources - Publish Resource" Language="C#" MasterPageFile="~/Masters/Pathway.Master" AutoEventWireup="true" CodeBehind="PublishResource.aspx.cs" Inherits="IOER.Pages.PublishResource" %>
 <%@ Register TagPrefix="uc1" TagName="ResourcePublisher" Src="/Controls/ResourcePublisher.ascx" %>
 
 <asp:Content ID="BodyContent" runat="server" ContentPlaceHolderID="BodyContent">

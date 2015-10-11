@@ -1,4 +1,4 @@
-﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="UberTaggerV1.ascx.cs" Inherits="ILPathways.Controls.UberTaggerV1.UberTaggerV1" %>
+﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="UberTaggerV1.ascx.cs" Inherits="IOER.Controls.UberTaggerV1.UberTaggerV1" %>
 <%@ Register TagPrefix="uc1" TagName="StandardsBrowser" Src="/Controls/StandardsBrowser7.ascx" %>
 
 <link rel="stylesheet" type="text/css" href="/styles/common2.css" />
@@ -556,7 +556,7 @@
           <div id="standardRights">
             <select name="ddlUsageRights">
               <% foreach(var item in UsageRights) { %>
-              <option value="<%=item.Id %>" data-url="<%=item.Url %>" data-description="<%=item.Description %>" data-iscustom="<%=item.Url == "" ? "true" : "false" %>" data-icon="<%=item.IconUrl %>" <%=( LoadedResourceData.UsageRights.Id == item.Id ? "selected=\"selected\"" : "" ) %>><%=item.Title %></option>
+              <option value="<%=item.CodeId %>" data-url="<%=item.Url %>" data-description="<%=item.Description %>" data-iscustom="<%=item.Url == "" ? "true" : "false" %>" data-icon="<%=item.IconUrl %>" <%=( LoadedResourceData.UsageRights.CodeId == item.CodeId ? "selected=\"selected\"" : "" ) %>><%=item.Title %></option>
               <% } %>
             </select>
             <a id="usageRightsLink" href="#" target="_blank"></a>
@@ -628,7 +628,9 @@
     <div id="tags" class="columnContainer">
       <% var requiredCBXLs = new List<string>() { "mediaType", "learningResourceType" }; %>
       <% var selectedTags = LoadedResourceData.Fields.SelectMany( f => f.Tags ).Where( t => t.Selected ).Select( t => t.Id ).ToList(); %>
-      <% foreach(var item in Fields.Where(m => m.Schema != "accessRights" && m.Schema != "inLanguage")) {  %>
+      <% var skipTags = new List<string>() { "accessRights", "inLanguage", "usageRights" }; %>
+      <% foreach(var item in Fields) {  %>
+      <% if(skipTags.Contains(item.Schema)){ continue; } %>
       <div class="field" data-schema="<%=item.Schema %>" data-id="<%=item.Id %>" <%=(requiredCBXLs.Contains(item.Schema) ? "data-required=\"true\"" : "") %>>
         <h3><%=item.Title %></h3>
         <% foreach(var tag in item.Tags) { %>

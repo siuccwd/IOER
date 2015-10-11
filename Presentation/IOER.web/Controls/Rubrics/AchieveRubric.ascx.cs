@@ -6,7 +6,7 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using LRWarehouse.Business;
 
-namespace ILPathways.Controls.Rubrics
+namespace IOER.Controls.Rubrics
 {
   public partial class AchieveRubric : BaseRubricModule
   {

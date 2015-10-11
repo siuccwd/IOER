@@ -10,14 +10,14 @@ using System.Web.UI.HtmlControls;
 using EmailHelper = ILPathways.Utilities.EmailManager;
 
 using ILPathways.Business;
-using ILPathways.classes;
-using ILPathways.Library;
+using IOER.classes;
+using IOER.Library;
 using ILPathways.Utilities;
 
 using LRWarehouse.DAL;
 
 
-namespace ILPathways.Controllers 
+namespace IOER.Controllers 
 {
     public class SearchController : BaseUserControl
     {

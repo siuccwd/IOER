@@ -8,7 +8,7 @@ using System.Web.UI.WebControls;
 using LRWarehouse.DAL;
 using System.Data;
 
-namespace ILPathways.LRW.controls
+namespace IOER.LRW.controls
 {
     public partial class ListPanel : System.Web.UI.UserControl
     {

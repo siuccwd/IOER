@@ -6,10 +6,10 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 
 using System.Web.Script.Serialization;
-using ILPathways.Library;
+using IOER.Library;
 using Isle.BizServices;
 
-namespace ILPathways
+namespace IOER
 {
   public partial class SessionHints : BaseUserControl
   {

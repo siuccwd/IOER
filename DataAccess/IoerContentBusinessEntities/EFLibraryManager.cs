@@ -35,6 +35,14 @@ namespace IoerContentBusinessEntities
             return entity;
         }
 
+        public static string GetLibraryFriendlyUrl( ILP.Library entity )
+        {
+            if ( entity == null || entity.Id == 0 )
+                return "";
+            else
+                return string.Format( "/Library/{0}/{1}", entity.Id, UtilityManager.UrlFriendlyTitle( entity.Title ) );
+
+        }
         public static void Library_FillDashboard( DashboardDTO dashboard, int libraryId, int requestedByUserId )
         {
             
@@ -59,7 +67,7 @@ namespace IoerContentBusinessEntities
             using ( var context = new IsleContentContext() )
             {
                 dashboard.libraryId = entity.Id;
-                dashboard.libraryUrl = entity.FriendlyUrl;
+                dashboard.libraryUrl = GetLibraryFriendlyUrl(entity);
                 dashboard.libraryPublicAccessLevel = entity.PublicAccessLevelInt;
                 dashboard.libraryOrgAccessLevel = entity.OrgAccessLevelInt;
 
@@ -333,8 +341,38 @@ namespace IoerContentBusinessEntities
 
         #endregion
 
-        #region === Library Collection============
-        public static ILP.LibrarySection LibrarySection_Get( int collectionId )
+		#region === Library Utilities ============
+		/// <summary>
+		/// Set all libraries for org to be inactive
+		/// </summary>
+		/// <param name="orgId"></param>
+		/// <param name="updatedById"></param>
+		/// <returns></returns>
+		public bool Library_SetOrgLibsInactive( int orgId, int updatedById )
+		{
+			bool action = false;
+			using ( var context = new IsleContentContext() )
+			{
+				List<Library> list = context.Libraries
+					.Where( s => s.OrgId == orgId )
+					.ToList();
+				foreach ( Library item in list )
+				{
+					item.IsActive = false;
+					item.LastUpdated = System.DateTime.Now;
+					item.LastUpdatedById = updatedById;
+
+					context.SaveChanges();
+				}
+
+			}
+			return action;
+		}
+
+
+		#endregion
+		#region === Library Collection============
+		public static ILP.LibrarySection LibrarySection_Get( int collectionId )
         {
             ILP.LibrarySection entity = new ILP.LibrarySection();
             using ( var context = new IsleContentContext() )
@@ -1515,7 +1553,7 @@ namespace IoerContentBusinessEntities
             if ( user != null && user.UserId > 0 )
             {
                 entity.Id = user.UserId;
-                entity.Username = user.UserName;
+                entity.UserName = user.UserName;
                 entity.FirstName = user.FirstName;
                 entity.LastName = user.LastName;
                 entity.Email = user.Email;

@@ -9,7 +9,7 @@ using LRWarehouse.Business.ResourceV2;
 using System.Web.Script.Serialization;
 using System.Drawing;
 
-namespace ILPathways.Controls.SearchV6.Themes
+namespace IOER.Controls.SearchV6.Themes
 {
   public partial class wn_userguide : SearchTheme
   {

@@ -8,25 +8,27 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 
 using ILPathways.Business;
-using ILPathways.classes;
+using IOER.classes;
+using Isle.BizServices;
 using MyManager = Isle.BizServices.ContentServices;
 using AcctManager = Isle.BizServices.AccountServices;
 using GroupManager = Isle.BizServices.GroupServices;
 using OrgManager = Isle.BizServices.OrganizationBizService;
-using ILPLibrary = ILPathways.Library;
-using ILPathways.Controllers;
+using ILPLibrary = IOER.Library;
+using IOER.Controllers;
 using ILPathways.Utilities;
 using GDAL = Isle.BizServices;
 using LDAL = LRWarehouse.DAL;
 using BDM = LRWarehouse.DAL.BaseDataManager;
 
-namespace ILPathways.Controls.Content
+namespace IOER.Controls.Content
 {
     public partial class ContentSearch : ILPLibrary.BaseUserControl
     {
         const string thisClassName = "ContentSearch";
         string filterDesc = "";
         MyManager myManager = new MyManager();
+		ContentSearchServices mySearchManager = new ContentSearchServices();
 
         #region Properties
         /// <summary>
@@ -188,7 +190,10 @@ namespace ILPathways.Controls.Content
                 if ( showingContentTypeFilters.Text == "yes" )
                     contentTypePanel.Visible = true;
             }
-
+            if (IsUserAuthenticated())
+            {
+                CurrentUser = GetAppUser();
+            }
             //set grid defaults (variables are in base control)
             //set sort to blank to default to results from database
             GridViewSortExpression = "";
@@ -414,11 +419,15 @@ namespace ILPathways.Controls.Content
 
                 currentPageSize = formGrid.PageSize;
 
-                ds = myManager.Search( filter, sortTerm, selectedPageNbr, pager1.PageSize, ref pTotalRows );
+				ds = mySearchManager.Search( filter, sortTerm, selectedPageNbr, pager1.PageSize, ref pTotalRows );
 
                 pager1.ItemCount = pager2.ItemCount = pTotalRows;
                 LastTotalRows = pTotalRows;
 
+                if (selectedPageNbr == 1)
+                {
+                    ActivityBizServices.ContentSearchHit(filter, CurrentUser);
+                }
                 searchSummaryDesc.Text = filterDesc;
 
                 if ( LDAL.DatabaseManager.DoesDataSetHaveRows( ds ) == false )
@@ -585,7 +594,7 @@ namespace ILPathways.Controls.Content
 
         protected void FormatKeyword( TextBox textBox, string booleanOperator, ref string filter )
         {
-            string keyword = LDAL.DatabaseManager.HandleApostrophes( FormHelper.SanitizeUserInput( textBox.Text.Trim() ) );
+            string keyword = LDAL.DatabaseManager.HandleApostrophes( FormHelper.CleanText( textBox.Text.Trim() ) );
             string keywordFilter = "";
 
             if ( keyword.Length > 0 )
@@ -618,6 +627,11 @@ namespace ILPathways.Controls.Content
             }
         }	//
 
+        /// <summary>
+        /// user has to be authenticated or these options will not show
+        /// </summary>
+        /// <param name="booleanOperator"></param>
+        /// <param name="filter"></param>
         private void FormatOrgFilters( string booleanOperator, ref string filter )
         {
             //filter = "(base.PrivilegeTypeId = 1 AND base.IsActive = 1) ";
@@ -626,16 +640,19 @@ namespace ILPathways.Controls.Content
             string where = "";
             string selDesc = "";
             CurrentUser = GetAppUser();
-            //me
+            //me.
+            //however, need to consider where original creator no lonber has access (ex Scarlett created stuff for isbe)
+            //at very least, the search results need to only allow edits if creator still has access
             if ( listCreatedBy.SelectedIndex == 0 )
             {
+
                 where = string.Format( "(base.CreatedById = {0}) ", CurrentUser.Id );
                 selDesc = "Created By Me";
             }
             else if ( listCreatedBy.SelectedIndex == 1 )
             {
                 //my org
-                //TODO - need to used org mbrs now
+                //TODO - need to use org mbrs now
                 //and content.Partner
                 //not sure if should be limited to only published?
                 if ( CurrentUser.OrgId > 0 )
@@ -667,11 +684,15 @@ namespace ILPathways.Controls.Content
 
                     selDesc = "Created By my district";
                 }
-                else
-                {
-                    SetConsoleErrorMessage( "You are not associated with an organization/district, so this search option will not return results" );
-                    where = string.Format( "(base.OrgId = {0} OR auth.OrganizationId = {0}) ", -1 );
-                }
+            }
+            else if ( listCreatedBy.SelectedIndex == 3 )
+            {
+                //only content shared with me (probably need to use check boxes
+                //status can probably be anything
+                where += string.Format( string.Format( litSharedWithMeFilter.Text, CurrentUser.Id ) );
+
+                selDesc = "Content that has been shared with me";
+
             }
             else
             {
@@ -868,8 +889,11 @@ namespace ILPathways.Controls.Content
             if ( type.ToLower().Equals("document"))
                 return string.Format(template, "DocumentEditor", rowId);
 
-            else if ( type.ToLower().Equals( "LearningList" ) )
+            else if ( type.ToLower().Equals( "learninglist" ) )
                 return string.Format( "/My/LearningList/{0}/Edit", contentId );
+
+            else if (type.ToLower().Equals("learning list"))
+                return string.Format("/My/LearningList/{0}/Edit", contentId);
 
             else if ( type.ToLower().Equals( "curriculum" ) )
                 return string.Format( "/My/LearningList/{0}/Edit", contentId );

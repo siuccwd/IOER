@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ILPathways.Pages {
+namespace IOER.Pages {
     
     
     public partial class NationalInitiatives {

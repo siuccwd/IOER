@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ILPathways.Masters {
+namespace IOER.Masters {
     
     
     public partial class Previewer {
@@ -28,7 +28,7 @@ namespace ILPathways.Masters {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ILPathways.Controls.Includes.Header7 IOERHeader;
+        protected global::IOER.Controls.Includes.Header8 IOERHeader;
         
         /// <summary>
         /// BodyContent control.

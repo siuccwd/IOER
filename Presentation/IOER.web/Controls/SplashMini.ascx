@@ -1,4 +1,4 @@
-﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="SplashMini.ascx.cs" Inherits="ILPathways.Controls.SplashMini" %>
+﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="SplashMini.ascx.cs" Inherits="IOER.Controls.SplashMini" %>
 
 <%=scriptLink %>
 <script type="text/javascript">
@@ -90,7 +90,7 @@
 			<a target="_blank" href="/Help/Guide.aspx" >Guide</a>
 			<a target="_blank" href="/News/Default.aspx" >News</a>
       <a target="_blank" href="/IOER_Timeline/">IOER Timeline</a>
-			<img src="/images/icons/icon_resources_med.png" />
+			<img alt="" src="/images/icons/icon_resources_med.png" />
 		</div>
 		<div class="splashItem" id="my">
 			<h2>My IOER</h2>
@@ -100,7 +100,7 @@
 			<!--<a target="_blank" href="/My/Library" id="myLibraryLink" runat="server" >My Library</a>
 			<a target="_blank" href="/My/Favorites.aspx" id="myFollowedLink" runat="server" >Libraries I follow</a>
       <a target="_blank" href="/My/Timeline/" id="myNetworkLink" runat="server">My IOER Timeline</a>
-			<a target="_blank" href="/My/Authored.aspx" id="myCreatedLink" runat="server" >My Resources</a>-->
+			<a target="_blank" href="/My/Authored" id="myCreatedLink" runat="server" >My Resources</a>-->
 			<img src="/images/icons/icon_library_med.png" />
 		</div>
 		

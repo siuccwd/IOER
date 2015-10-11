@@ -1,11 +1,11 @@
-﻿<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="Pathway.master.cs" Inherits="ILPathways.Masters.Pathway" %>
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="Pathway.master.cs" Inherits="IOER.Masters.Pathway" %>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<%@ Register TagPrefix="uc1" TagName="hdr" Src="/Controls/Includes/Header7.ascx" %>
+<%@ Register TagPrefix="uc1" TagName="hdr" Src="/Controls/Includes/Header8.ascx" %>
 <%@ Register TagPrefix="uc1" TagName="systemMessageLine" Src="/Controls/Includes/SystemMessageLine.ascx" %>
-<%@ Register TagPrefix="cc1" TagName="footer" Src="/Controls/Includes/footer3.ascx" %>
+<%@ Register TagPrefix="cc1" TagName="footer" Src="/Controls/Includes/footer4.ascx" %>
 
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:fb="http://ogp.me/ns/fb#">
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:fb="http://ogp.me/ns/fb#">
 <head id="Head1" runat="server">
 <title></title>
 

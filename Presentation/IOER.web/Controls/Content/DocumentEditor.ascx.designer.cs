@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ILPathways.Controls.Content {
+namespace IOER.Controls.Content {
     
     
     public partial class DocumentEditor {
@@ -118,7 +118,7 @@ namespace ILPathways.Controls.Content {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ILPathways.LRW.controls.ConditionsOfUseSelector conditionsSelector;
+        protected global::IOER.LRW.controls.ConditionsOfUseSelector conditionsSelector;
         
         /// <summary>
         /// ddlPrivacyLevel control.

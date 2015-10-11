@@ -6,7 +6,7 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using ILPathways.Utilities;
 
-namespace ILPathways
+namespace IOER
 {
     public partial class SSLRedirect : System.Web.UI.Page
     {

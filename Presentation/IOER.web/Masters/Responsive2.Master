@@ -1,21 +1,26 @@
-﻿<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="Responsive2.master.cs" Inherits="ILPathways.Masters.Responsive2" %>
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="Responsive2.master.cs" Inherits="IOER.Masters.Responsive2" %>
 
-<%@ Register TagPrefix="uc1" TagName="HeaderControl" Src="/Controls/Includes/Header7.ascx" %>
-<%@ Register TagPrefix="uc1" TagName="Footer" Src="/Controls/Includes/footer3.ascx" %>
+<%@ Register TagPrefix="uc1" TagName="HeaderControl" Src="/Controls/Includes/Header8.ascx" %>
+<%@ Register TagPrefix="uc1" TagName="Footer" Src="/Controls/Includes/footer4.ascx" %>
 <%@ Register TagPrefix="uc1" TagName="systemMessageLine" Src="/Controls/Includes/SystemMessageLine.ascx" %>
 
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head id="Head1" runat="server">
     <title></title>
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="#IOER, Illinois Open Educational Resources, STEM, #STEM" />
+    <meta name="keywords" content="#OER, OER, open educational resources, #STEM, Science technology Engineering and math, freely accessible, STEM Learning Exchange" />
+
+    <link rel="icon" type="image/ico" href="/images/icons/ioer_favicon.ico" />
+
     <script type="text/javascript">
     //kludge for IE9
     if (window.console === undefined) {
         console = { log: function () { } };
     }
     </script>
-    <script src="/Scripts/jquery-1.10.2.min.js"></script>
+    <script src="/Scripts/jquery-2.1.1.min.js"></script>
     <link rel="Stylesheet" type="text/css" href="/Styles/ISLE.css" />
     <link href="/Styles/CustomControls.css" rel="stylesheet" type="text/css" />
 
@@ -34,7 +39,7 @@
             'theme': 'transparent',
             'share': {
                 'position': 'left',
-                'services': 'facebook,twitter,pinterest,delicious,email,print,more'
+                'services': 'twitter,facebook,google_plusone_share,pinterest,flipboard,linkedin,email,print,more'
             }
         });
     </script>
@@ -42,11 +47,20 @@
     <asp:ContentPlaceHolder ID="HeadContent" runat="server" />
 </head>
 <body>
-    <form runat="server" id="mainform" >
-      <uc1:HeaderControl ID="header" runat="server" />
-      <div id="systemMessageDiv" ><uc1:systemMessageLine id="systemMessageLine" runat="server" /></div>  
-      <asp:ContentPlaceHolder ID="BodyContent" runat="server" />
-      <uc1:Footer ID="pagefooter" runat="server" />
+    <form runat="server" id="mainform">
+    <%--    <div style="width: 80%; margin-left: auto; margin-right: auto;"> </div>--%>
+            <%--<a href="#mainContent" class="offScreen">Skip navigational links</a> <a name="mainContent"></a>--%>
+             <uc1:HeaderControl ID="header" runat="server" />
+           
+            <div id="systemMessageDiv">
+                <uc1:systemMessageLine ID="systemMessageLine" runat="server" />
+            </div>
+           
+            <asp:ContentPlaceHolder ID="BodyContent" runat="server" />
+            <div class="mainSiteFooter">
+                <uc1:Footer ID="pagefooter" runat="server" />
+            </div>
+       
     </form>
 </body>
 </html>

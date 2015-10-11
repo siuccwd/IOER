@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ILPathways.Pages {
+namespace IOER.Pages {
     
     
     public partial class Subscribe {
@@ -28,7 +28,7 @@ namespace ILPathways.Pages {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ILPathways.Controls.AppItems.AnnouncementSubscribe2 SubscribeMe;
+        protected global::IOER.Controls.AppItems.AnnouncementSubscribe2 SubscribeMe;
         
         /// <summary>
         /// customPageTitle control.

@@ -1,4 +1,4 @@
-﻿<%@ Page Title="" Language="C#" AutoEventWireup="true" CodeBehind="Publish.aspx.cs" Inherits="ILPathways.Publish" MasterPageFile="/Masters/Responsive.Master" %>
+﻿<%@ Page Title="Publish Open Educational Resources" Language="C#" AutoEventWireup="true" CodeBehind="Publish.aspx.cs" Inherits="IOER.Publish" MasterPageFile="/Masters/Responsive.Master" %>
 
 <%@ Register TagPrefix="uc1" TagName="Publisher" Src="/Controls/Publish3.ascx" %>
 

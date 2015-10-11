@@ -11,6 +11,7 @@ using System.Web.UI.WebControls;
 using System.Net.Mail;
 
 using ILPathways.Business;
+//using ILPathways.Common;
 
 namespace ILPathways.Utilities
 {
@@ -580,6 +581,29 @@ namespace ILPathways.Utilities
 
 			return body;
 		}//
+
+        /// <summary>
+        /// Get an email snippet
+        /// The email name is the file name under AppData   without the .txt extension.
+        /// The email name is also the key used for storing it in the cache.
+        /// </summary>
+        /// <param name="emailName"></param>
+        /// <returns></returns>
+        public static string GetEmailText(string emailName)
+        {
+
+            string body = HttpContext.Current.Cache[emailName] as string;
+
+            if (string.IsNullOrEmpty(body))
+            {
+                string file = System.Web.HttpContext.Current.Server.MapPath(string.Format("~/App_Data/{0}.txt",emailName));
+                body = File.ReadAllText(file);
+
+                HttpContext.Current.Cache[emailName] = body;
+            }
+
+            return body;
+        }
 
   }
 }

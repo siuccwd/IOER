@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ILPathways.Controls.SearchV6 {
+namespace IOER.Controls.SearchV6 {
     
     
     public partial class Index {
@@ -19,6 +19,6 @@ namespace ILPathways.Controls.SearchV6 {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ILPathways.Controls.SearchV6.SearchV6 SearchMain;
+        protected global::IOER.Controls.SearchV6.SearchV6 SearchMain;
     }
 }

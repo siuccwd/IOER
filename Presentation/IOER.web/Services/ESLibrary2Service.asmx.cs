@@ -5,7 +5,7 @@ using System.Web;
 using System.Web.Script.Serialization;
 using System.Web.Services;
 
-using ILPathways.Business;
+using IB = ILPathways.Business;
 using ILPathways.Utilities;
 using Isle.BizServices;
 using Isle.DTO;
@@ -15,8 +15,9 @@ using AccountManager = Isle.BizServices.AccountServices;
 using DataBaseHelper = LRWarehouse.DAL.BaseDataManager;
 using CodesService = Isle.BizServices.CodeTableBizService;
 using LibraryBizService = Isle.BizServices.LibraryBizService;
+using ThisUser = LRWarehouse.Business.Patron;
 
-namespace ILPathways.Services
+namespace IOER.Services
 {
     /// <summary>
     /// Summary description for ESLibrary2Service
@@ -47,17 +48,17 @@ namespace ILPathways.Services
         var user = GetUser( userGUID );            
         return GetAllLibraryData( user, libraryID );
       }
-      public LibraryData GetAllLibraryData( Patron user, int libraryID )
+      public LibraryData GetAllLibraryData( ThisUser user, int libraryID )
       {
         var library = libService.Get( libraryID );
         return GetAllLibraryData( user, library );
       }
-      public LibraryData GetAllLibraryData( string userGUID, Business.Library library )
+      public LibraryData GetAllLibraryData( string userGUID, IB.Library library )
       {
         var user = GetUser( userGUID );
         return GetAllLibraryData( user, library );
       }
-      public LibraryData GetAllLibraryData( Patron user, Business.Library library )
+      public LibraryData GetAllLibraryData( ThisUser user, IB.Library library )
       {
         var output = new LibraryData();
         output.library = GetLibrary( user, library );
@@ -94,16 +95,16 @@ namespace ILPathways.Services
         var user = GetUser( userGUID );
         return serializer.Serialize( GetLibrary( user, libraryID ) );
       }
-      public JSONLibrary GetLibrary( Patron user, int libraryID )
+      public JSONLibrary GetLibrary( ThisUser user, int libraryID )
       {
         var library = libService.Get( libraryID );
         return GetLibrary( user, library );
       }
-      public JSONLibrary GetLibrary( Patron user, Business.Library library )
+      public JSONLibrary GetLibrary( ThisUser user, IB.Library library )
       {
         return GetLibrary( user, library, true, true );
       }
-      public JSONLibrary GetLibrary( Patron user, Business.Library library, bool doSubscriptionCheck, bool getFilters )
+      public JSONLibrary GetLibrary( ThisUser user, IB.Library library, bool doSubscriptionCheck, bool getFilters )
       {
         var output = new JSONLibrary();
         //Also, I'm not sure if it's better to use currentLibraryId, or just compare CreatedById.
@@ -147,14 +148,14 @@ namespace ILPathways.Services
         var user = GetUser( userGUID );
         return serializer.Serialize( GetMyLibraries( user ) );
       }
-      public List<JSONLibrary> GetMyLibraries( Patron user )
+      public List<JSONLibrary> GetMyLibraries( ThisUser user )
       {
           var libraries = libService.Libraries_SelectListWithContributeAccess( user.Id );
 
           //var libraries = libService.Library_SelectListWithContributeAccess( user.Id );
         return GetMyLibraries( user, libraries );
       }
-      public List<JSONLibrary> GetMyLibraries( Patron user, List<ILPathways.Business.Library> libraries )
+      public List<JSONLibrary> GetMyLibraries( ThisUser user, List<ILPathways.Business.Library> libraries )
       {
         var output = new List<JSONLibrary>();
         foreach ( ILPathways.Business.Library library in libraries )
@@ -172,10 +173,10 @@ namespace ILPathways.Services
 
       public List<JSONLibrary> GetMyLibrariesWithContribute( int userId )
       {
-          Patron user = AccountServices.GetUser( userId );
+          ThisUser user = AccountServices.GetUser( userId );
           return GetMyLibrariesWithContribute( user ); ;
       }
-      public List<JSONLibrary> GetMyLibrariesWithContribute( Patron user )
+      public List<JSONLibrary> GetMyLibrariesWithContribute( ThisUser user )
       {
           List<LibrarySummaryDTO> libraries = libService.Library_SelectListWithContributeAccess( user.Id );
 
@@ -220,16 +221,16 @@ namespace ILPathways.Services
         var user = GetUser( userGUID );
         return serializer.Serialize( GetCollections( user, libraryID ) );
       }
-      public List<JSONCollection> GetCollections( Patron user, int libraryID )
+      public List<JSONCollection> GetCollections( ThisUser user, int libraryID )
       {
         var collections = libService.LibrarySectionsSelectList( libraryID, 1 ); //Get the list of public collections
         if ( user.Id > 0 )
         { //If the user is logged in, get the list of collections for which they have edit access
           var authorizedCollections = libService.LibrarySections_SelectListWithEditAccess( libraryID, user.Id );
-          foreach ( LibrarySection collection in authorizedCollections )
+          foreach ( IB.LibrarySection collection in authorizedCollections )
           {
             bool add = true;
-            foreach ( LibrarySection collection2 in collections )
+            foreach ( IB.LibrarySection collection2 in collections )
             {
               if ( collection.Id == collection2.Id ) //duplicate checking
               {
@@ -245,18 +246,18 @@ namespace ILPathways.Services
         }
         return GetCollections( user, collections );
       }
-      public List<JSONCollection> GetCollections( Patron user, List<LibrarySection> collections )
+	  public List<JSONCollection> GetCollections(ThisUser user, List<IB.LibrarySection> collections)
       {
         return GetCollections( user, collections, false );
       }
-      public List<JSONCollection> GetCollections( Patron user, List<LibrarySection> collections, bool includeLibraryTitle )
+	  public List<JSONCollection> GetCollections(ThisUser user, List<IB.LibrarySection> collections, bool includeLibraryTitle)
       {
         return GetCollections( user, collections, includeLibraryTitle, true, true );
       }
-      public List<JSONCollection> GetCollections( Patron user, List<LibrarySection> collections, bool includeLibraryTitle, bool doSubscriptionCheck, bool getFilters )
+	  public List<JSONCollection> GetCollections(ThisUser user, List<IB.LibrarySection> collections, bool includeLibraryTitle, bool doSubscriptionCheck, bool getFilters)
       {
         var output = new List<JSONCollection>();
-        foreach ( LibrarySection section in collections )
+		foreach (IB.LibrarySection section in collections)
         {
           var col = new JSONCollection();
           col.id = section.Id;
@@ -285,12 +286,12 @@ namespace ILPathways.Services
         var user = GetUser( userGUID );
         return serializer.Serialize( GetMyCollections( user, libraryID ) );
       }
-      public List<JSONCollection> GetMyCollections( Patron user, int libraryID )
+      public List<JSONCollection> GetMyCollections( ThisUser user, int libraryID )
       {
         var collections = libService.LibrarySections_SelectListWithEditAccess( libraryID, user.Id );
         return GetMyCollections( user, collections );
       }
-      public List<JSONCollection> GetMyCollections( Patron user, List<LibrarySection> collections )
+	  public List<JSONCollection> GetMyCollections(ThisUser user, List<IB.LibrarySection> collections)
       {
         return GetCollections( user, collections, false, false, false );
       }
@@ -341,7 +342,7 @@ namespace ILPathways.Services
 
       public List<int> GetFilters( int libraryID, int collectionID, string field )
       {
-        var results = new List<DataItem>();
+        var results = new List<IB.DataItem>();
         var output = new List<int>();
         if ( collectionID == 0 )
         {
@@ -352,7 +353,7 @@ namespace ILPathways.Services
             results = libService.AvailableFiltersForCollection( collectionID, field );
         }
 
-          foreach ( DataItem item in results )
+		foreach (IB.DataItem item in results)
         {
             output.Add( item.Id );
         }
@@ -658,7 +659,7 @@ namespace ILPathways.Services
         description = ValidateText( description, 5, ref status );
         if ( status != "okay" ) { return ""; }
 
-        var collection = new LibrarySection();
+        var collection = new IB.LibrarySection();
         collection.CreatedById = user.Id;
         collection.LibraryId = library.Id;
         collection.LibraryTitle = library.Title;
@@ -724,7 +725,7 @@ namespace ILPathways.Services
         if ( collectionID == 0 )
         {
           //Check for existing
-          ObjectLike like = libService.Library_GetLike( libraryID, user.Id );
+          IB.ObjectLike like = libService.Library_GetLike( libraryID, user.Id );
           if ( like == null || !like.HasLikeEntry )
           {
             libService.LibraryLikeCreate( libraryID, isLike, user.Id );
@@ -733,7 +734,7 @@ namespace ILPathways.Services
         }
         else
         {
-          ObjectLike like = libService.LibrarySection_GetLike( collectionID, user.Id );
+          IB.ObjectLike like = libService.LibrarySection_GetLike( collectionID, user.Id );
           if ( like == null || !like.HasLikeEntry )
           {
             libService.LibrarySectionLikeCreate( collectionID, isLike, user.Id );
@@ -806,9 +807,9 @@ namespace ILPathways.Services
       #region Helper Methods
 
       /* Get a User */
-      protected Patron GetUser( string userGUID )
+      protected ThisUser GetUser( string userGUID )
       {
-        return userGUID == "" ? new Patron() { IsValid = false, Id = 0 } : new AccountManager().GetByRowId( userGUID );
+        return userGUID == "" ? new ThisUser() { IsValid = false, Id = 0 } : new AccountManager().GetByRowId( userGUID );
       }
 
       protected string ValidateText( string text, int minimumLength, ref string status )
@@ -830,10 +831,10 @@ namespace ILPathways.Services
         return text;
       }
 
-      protected List<JSONComment> GetComments( ILPathways.Business.Library library, LibrarySection collection )
+	  protected List<JSONComment> GetComments(IB.Library library, IB.LibrarySection collection)
       {
         var output = new List<JSONComment>();
-        var comments = new List<ObjectComment>();
+		var comments = new List<IB.ObjectComment>();
         if ( collection == null )
         {
           //Get comments for a library
@@ -844,7 +845,7 @@ namespace ILPathways.Services
           //Get comments for a collection
           comments = libService.LibrarySectionComment_Select( collection.Id );
         }
-        foreach ( ObjectComment comment in comments )
+		foreach (IB.ObjectComment comment in comments)
         {
           var item = new JSONComment();
           item.date = comment.Created.ToShortDateString();
@@ -857,7 +858,7 @@ namespace ILPathways.Services
         return output;
       }
 
-      public JSONParadata GetParadata( Patron user, ILPathways.Business.Library library, LibrarySection collection, bool doSubscriptionCheck )
+	  public JSONParadata GetParadata(ThisUser user, IB.Library library, IB.LibrarySection collection, bool doSubscriptionCheck)
       {
         var output = new JSONParadata();
 
@@ -866,12 +867,12 @@ namespace ILPathways.Services
           //Likes and dislikes
           try
           {
-            var data = libService.Library_LikeSummary( library.Id ).First<DataItem>();
+			  var data = libService.Library_LikeSummary(library.Id).First<IB.DataItem>();
             output.likes = data.Int1;
             output.dislikes = data.Int2;
             if ( library.Id > 0 && user.Id > 0 )
             {
-                ObjectLike like = libService.Library_GetLike( library.Id, user.Id );
+				IB.ObjectLike like = libService.Library_GetLike(library.Id, user.Id);
                 if ( like != null && like.HasLikeEntry )
                 {
                     output.iLikeThis = like.IsLike;
@@ -895,12 +896,12 @@ namespace ILPathways.Services
           //Likes and dislikes
           try
           {
-            var data = libService.LibrarySection_LikeSummary( collection.Id ).First<DataItem>();
+			  var data = libService.LibrarySection_LikeSummary(collection.Id).First<IB.DataItem>();
             output.likes = data.Int1;
             output.dislikes = data.Int2;
             if ( collection.Id > 0 && user.Id > 0 )
             {
-                ObjectLike like = libService.LibrarySection_GetLike( collection.Id, user.Id );
+				IB.ObjectLike like = libService.LibrarySection_GetLike(collection.Id, user.Id);
                 if ( like != null && like.HasLikeEntry )
                 {
                     output.iLikeThis = like.IsLike;

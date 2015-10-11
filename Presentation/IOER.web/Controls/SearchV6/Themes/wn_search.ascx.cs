@@ -8,7 +8,7 @@ using System.Web.UI.WebControls;
 using Isle.BizServices;
 using System.Drawing;
 
-namespace ILPathways.Controls.SearchV6.Themes
+namespace IOER.Controls.SearchV6.Themes
 {
   public partial class wn_search : SearchTheme
   {
@@ -17,7 +17,7 @@ namespace ILPathways.Controls.SearchV6.Themes
     {
       //Fields = new ResourceV2Services().GetFieldAndTagCodeData();
       //Temporary
-      var fields = "accessRights,accessibilityControl,accessibilityFeature,accessibilityHazard,educationalRole,careerCluster,careerPlanning,disabilityTopic,employerProgram,jobPreparation,inLanguage,mediaType,learningResourceType,resources,wfePartner,wioaWorks,workplaceSkill,region,subject,layoffAssistance,ilPathway,workNetArea,guidanceScenario,wdqi,demandDrivenIT".Split( ',' ).ToList();
+			var fields = "accessRights,accessibilityControl,accessibilityFeature,accessibilityHazard,educationalRole,careerCluster,careerPlanning,disabilityTopic,employerProgram,jobPreparation,inLanguage,mediaType,learningResourceType,resources,wfePartner,wioaWorks,workplaceSkill,region,subject,layoffAssistance,qualify,ilPathway,workNetArea,guidanceScenario,wdqi,demandDrivenIT,nrsEducationalFunctioningLevel".Split( ',' ).ToList();
       SetFields( fields );
       SiteId = 3;
       UseResourceUrl = true;

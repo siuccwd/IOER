@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ILPathways.Communities {
+namespace IOER.Communities {
     
     
     public partial class Community {
@@ -19,6 +19,6 @@ namespace ILPathways.Communities {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ILPathways.Controls.Community.Community1 community;
+        protected global::IOER.Controls.Community.Community1 community;
     }
 }

@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ILPathways.Controls.OrgMgmt {
+namespace IOER.Controls.OrgMgmt {
     
     
     public partial class OrgSearch {

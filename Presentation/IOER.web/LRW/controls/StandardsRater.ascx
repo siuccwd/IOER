@@ -1,4 +1,4 @@
-﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="StandardsRater.ascx.cs" Inherits="ILPathways.LRW.controls.StandardsRater" %>
+﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="StandardsRater.ascx.cs" Inherits="IOER.LRW.controls.StandardsRater" %>
 
 <!-- Server Data -->
 <script type="text/javascript">

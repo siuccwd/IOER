@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="Query.aspx.cs" Inherits="ILPathways.Admin.Query" %>
+﻿<%@ Page Title="Illinois Open Educational Resources - Query" Language="C#" AutoEventWireup="true" CodeBehind="Query.aspx.cs" Inherits="IOER.Admin.Query" %>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -148,6 +148,7 @@ a, a:visited { color: #000;}
 			</asp:panel>
 			
 			<asp:literal ID="showingTitleToAll" runat="server" Visible="false">yes</asp:literal>
+          <asp:Literal ID="txtFormSecurityName" runat="server" Visible="false">Site.Admin.Query</asp:Literal>
         </div>
 
     </form>

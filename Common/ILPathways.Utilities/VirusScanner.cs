@@ -76,6 +76,36 @@ namespace ILPathways.Utilities
             }
         }
 
+				public void Scan( byte[] bytes, ref bool clean, ref string status )
+				{
+					if ( shouldScan )
+					{
+						var result = clam.SendAndScanFile( bytes );
+						switch ( result.Result )
+						{
+							case ClamScanResults.Clean:
+								clean = true;
+								status = "Scan passed";
+								break;
+							case ClamScanResults.VirusDetected:
+								clean = false;
+								status = "Virus detected: " + result.RawResult;
+								break;
+							case ClamScanResults.Error:
+							case ClamScanResults.Unknown:
+							default:
+								clean = false;
+								status = "Error occurred: " + result.RawResult;
+								break;
+						}
+					}
+					else
+					{
+						clean = true;
+						status = "No scan performed";
+					}
+				}
+
         public string Scan(string filePath)
         {
             if (shouldScan)

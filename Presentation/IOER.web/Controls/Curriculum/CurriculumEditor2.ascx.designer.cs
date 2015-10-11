@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ILPathways.Controls.Curriculum {
+namespace IOER.Controls.Curriculum {
     
     
     public partial class CurriculumEditor2 {
@@ -64,7 +64,7 @@ namespace ILPathways.Controls.Curriculum {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ILPathways.LRW.controls.ListPanel cbxlK12Subject;
+        protected global::IOER.LRW.controls.ListPanel cbxlK12Subject;
         
         /// <summary>
         /// cbxlGradeLevel control.
@@ -73,7 +73,7 @@ namespace ILPathways.Controls.Curriculum {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ILPathways.LRW.controls.ListPanel cbxlGradeLevel;
+        protected global::IOER.LRW.controls.ListPanel cbxlGradeLevel;
         
         /// <summary>
         /// lblHistory control.
@@ -83,6 +83,33 @@ namespace ILPathways.Controls.Curriculum {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblHistory;
+        
+        /// <summary>
+        /// lblStatus control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblStatus;
+        
+        /// <summary>
+        /// userManagerContainer control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl userManagerContainer;
+        
+        /// <summary>
+        /// userManager control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::IOER.Controls.ManageUsers userManager;
         
         /// <summary>
         /// txtAttachmentTitle control.
@@ -127,7 +154,7 @@ namespace ILPathways.Controls.Curriculum {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ILPathways.Controls.StandardsBrowser7 standardsBrowser;
+        protected global::IOER.Controls.StandardsBrowser7 standardsBrowser;
         
         /// <summary>
         /// curriculumStarter control.
@@ -155,6 +182,15 @@ namespace ILPathways.Controls.Curriculum {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.HtmlControls.HtmlTextArea txtStarterDescription;
+        
+        /// <summary>
+        /// addToOrg control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl addToOrg;
         
         /// <summary>
         /// ddlOrganization control.

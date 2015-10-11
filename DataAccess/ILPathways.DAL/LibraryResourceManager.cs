@@ -495,7 +495,7 @@ namespace ILPathways.DAL
             try
             {
                 int pTotalRows = 0;
-                string pFilter = string.Format( "(LibrarySectionId = {0} ) ", sectionId );
+				string pFilter = string.Format( "(lib.LibrarySectionId = {0} ) ", sectionId );
 
                 list = SearchList( pFilter, "", 1, 5000, ref pTotalRows );
 

@@ -6,14 +6,14 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
-using ILPathways.Library;
-using ILPathways.Services;
+using IOER.Library;
+using IOER.Services;
 using ILPathways.Utilities;
-//using ILPathways.DAL;
+using DAL = ILPathways.DAL;
 using Isle.BizServices;
 using LibMgr = Isle.BizServices.LibraryBizService;
 
-namespace ILPathways.Controls.Includes
+namespace IOER.Controls.Includes
 {
     public partial class Header6 : BaseUserControl
     {
@@ -112,7 +112,7 @@ namespace ILPathways.Controls.Includes
         {
             bool canView = false;
             //check if previously done
-            string auth = ILPathways.classes.SessionManager.Get( Session, CAN_VIEW_LIBRARYADMIN_MENU, "missing" );
+            string auth = IOER.classes.SessionManager.Get( Session, CAN_VIEW_LIBRARYADMIN_MENU, "missing" );
             if ( auth.Equals( "yes" ) )
             {
                 canView = true;
@@ -121,9 +121,9 @@ namespace ILPathways.Controls.Includes
             {
                 canView = new LibMgr().Library_CanUserAdministerLibraries( userId );
                 if (canView )
-                    ILPathways.classes.SessionManager.Set( Session, CAN_VIEW_LIBRARYADMIN_MENU, "yes" );
+                    IOER.classes.SessionManager.Set( Session, CAN_VIEW_LIBRARYADMIN_MENU, "yes" );
                 else
-                    ILPathways.classes.SessionManager.Set( Session, CAN_VIEW_LIBRARYADMIN_MENU, "no" );
+                    IOER.classes.SessionManager.Set( Session, CAN_VIEW_LIBRARYADMIN_MENU, "no" );
             }
 
 
@@ -150,7 +150,7 @@ namespace ILPathways.Controls.Includes
         protected void SetAdminMenu()
         {
             //check if previously done
-            string auth = ILPathways.classes.SessionManager.Get( Session, CAN_VIEW_ADMIN_MENU, "missing" );
+            string auth = IOER.classes.SessionManager.Get( Session, CAN_VIEW_ADMIN_MENU, "missing" );
             if ( auth.Equals( "yes" ) )
             {
                 adminMenu.Visible = true;
@@ -161,12 +161,12 @@ namespace ILPathways.Controls.Includes
                 if ( RecordPrivileges.CanCreate() )
                 {
                     adminMenu.Visible = true;
-                    ILPathways.classes.SessionManager.Set( Session, CAN_VIEW_ADMIN_MENU, "yes" );
+                    IOER.classes.SessionManager.Set( Session, CAN_VIEW_ADMIN_MENU, "yes" );
                 }
                 else
                 {
                     adminMenu.Visible = false;
-                    ILPathways.classes.SessionManager.Set( Session, CAN_VIEW_ADMIN_MENU, "no" );
+                    IOER.classes.SessionManager.Set( Session, CAN_VIEW_ADMIN_MENU, "no" );
                 }
             }
             if ( adminMenu.Visible == true )

@@ -7,18 +7,18 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 
 using ILPathways.Common;
-using ILPathways.Library;
+using IOER.Library;
 using ILPathways.Utilities;
-using ILPathways.Controllers;
+using IOER.Controllers;
 using ILPathways.Business;
 using Isle.BizServices;
-
+using Services = IOER.Services;
 using LRWarehouse.Business;
 using LRWarehouse.DAL;
 
 
 
-namespace ILPathways.Account.controls
+namespace IOER.Account.controls
 {
   public partial class UserProfile2 : BaseUserControl
   {
@@ -44,10 +44,21 @@ namespace ILPathways.Account.controls
     {
       //Force a refresh of the patron object from the database
       var user = new AccountServices().Get( WebUser.Id );
-      WebUser = ( Business.IWebUser ) user;
-
+      WebUser = ( IWebUser ) user;
+      string nextUrl = "";
         //always check/refesh org mbrs
       OrganizationBizService.FillUserOrgsMbrs( WebUser );
+
+      nextUrl = FormHelper.GetRequestKeyValue("nextUrl");
+      if (string.IsNullOrWhiteSpace(nextUrl))
+      {
+          nextUrl = FormHelper.GetRequestKeyValue("nextUrl2");
+      }
+      if (nextUrl.Length > 5)
+      {
+          messageDiv.Visible = true;
+          nextUrlLink.NavigateUrl = nextUrl;
+      }
 
       //Display some current info
       email1.Value = user.Email;

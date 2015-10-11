@@ -391,7 +391,7 @@ namespace Isle.BizServices
         /// </summary>
         /// <param name="resourceId"></param>
         /// <param name="statusMessage"></param>
-        public static void Resource_SetInactive( int resourceId, ref string statusMessage )
+        public void Resource_SetInactive( int resourceId, ref string statusMessage )
         {
             //need to get resource version, in order to get LR doc id
             ResourceVersion entity = new ResourceVersionManager().GetByResourceId( resourceId );
@@ -555,6 +555,8 @@ namespace Isle.BizServices
                     efEntity.ResourceIntId = evaluation.ResourceIntId;
                     efEntity.Created = System.DateTime.Now;
                     efEntity.EvaluationId = evaluation.EvaluationId;
+										efEntity.ScaleMin = 0;
+										efEntity.ScaleMax = 100;
 
                     //TODO - may need to calculate score??
                     efEntity.Score = evaluation.Score;
@@ -1032,7 +1034,7 @@ namespace Isle.BizServices
             }
             catch ( Exception ex )
             {
-                LoggingHelper.LogError( ex, thisClassName + ".GetEvaluationComponents()" );
+				LoggingHelper.LogError(ex, thisClassName + ".Evaluation_GetComponents()");
             }
 
             return dto;
@@ -1333,7 +1335,7 @@ namespace Isle.BizServices
           
           return rv;
         }
-        public static string ResourceVersion_SyncContentItemChanges( string title, string summary, int resourceId )
+        public string ResourceVersion_SyncContentItemChanges( string title, string summary, int resourceId )
         {
             string result = "";
             //ResourceVersion rv = new ResourceVersionManager().GetByResourceId( resourceId );
@@ -1420,7 +1422,6 @@ namespace Isle.BizServices
                 return "";
 
             string title = ResourceVersion.UrlFriendlyTitle( text );
-
 
             title = HttpUtility.HtmlEncode( title );
             return title;

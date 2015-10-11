@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ILPathways.LRW.controls {
+namespace IOER.LRW.controls {
     
     
     public partial class ListPanel {

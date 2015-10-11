@@ -11,7 +11,7 @@ using ILPathways.Utilities;
 using WBE = ILPathways.Business;
 //using wnDAL=workNet.DAL;
 
-namespace ILPathways.classes
+namespace IOER.classes
 {
     /// <summary>
     /// Summary description for SessionManager.

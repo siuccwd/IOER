@@ -5,7 +5,7 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
-namespace ILPathways.Controls.Includes
+namespace IOER.Controls.Includes
 {
     public partial class footer3 : System.Web.UI.UserControl
     {

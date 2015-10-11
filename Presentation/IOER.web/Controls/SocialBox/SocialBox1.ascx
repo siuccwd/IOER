@@ -1,4 +1,4 @@
-﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="SocialBox1.ascx.cs" Inherits="ILPathways.Controls.SocialBox.SocialBox1" %>
+﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="SocialBox1.ascx.cs" Inherits="IOER.Controls.SocialBox.SocialBox1" %>
 
 <div id="socialBoxContainer" runat="server">
   <script type="text/javascript">

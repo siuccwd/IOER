@@ -1,4 +1,4 @@
-﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="GroupsManager.ascx.cs" Inherits="ILPathways.Controls.GroupsManagment.GroupsManager" %>
+﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="GroupsManager.ascx.cs" Inherits="IOER.Controls.GroupsManagment.GroupsManager" %>
 
 
 <%@ Register TagPrefix="uc1" TagName="groupDetail" Src="GroupDetail.ascx" %>
@@ -139,7 +139,7 @@
   <asp:label ID="txtCurrentParentId" runat="server" Visible="false"></asp:label>
 
 <asp:Panel ID="Panel1" runat="server" Visible="false">
-<asp:Literal ID="formSecurityName" runat="server" Visible="false">ILPathways.Controls.GroupsManagment.GroupsManager</asp:Literal>
+<asp:Literal ID="formSecurityName" runat="server" Visible="false">IOER.Controls.GroupsManagment.GroupsManager</asp:Literal>
 <asp:Literal ID="defaultGroupType" runat="server">2</asp:Literal>
 <asp:Literal ID="preSelectIfOneGroup" runat="server">no</asp:Literal>
 <asp:Literal ID="txtGroupFilter" runat="server"></asp:Literal>

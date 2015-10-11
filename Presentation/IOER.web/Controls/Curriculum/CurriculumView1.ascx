@@ -1,8 +1,9 @@
-﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="CurriculumView1.ascx.cs" Inherits="ILPathways.Controls.Curriculum.CurriculumView1" %>
+﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="CurriculumView1.ascx.cs" Inherits="IOER.Controls.Curriculum.CurriculumView1" %>
 <%@ Register TagPrefix="uc1" TagName="ActivityRenderer" Src="/Activity/ActivityRenderer.ascx" %>
 
 <% if(curriculumContent.Visible) { %>
 <div id="curriculumContent" runat="server">
+  <uc1:ActivityRenderer id="activityRenderer" runat="server" />
 
   <script type="text/javascript">
     //From server
@@ -20,12 +21,26 @@
 
     //Detect IE
     var isIEBrowser = window.navigator.userAgent.indexOf("Trident") > -1;
+
+		function regenerateThumbnail(id, url){
+			doAjax("CurriculumService1", "RegenerateThumbnail", { nodeID: <%=currentNode.Id %>, contentID: id, contentURL: url }, successRegenerateThumbnail, null, null);
+		}
+  	function successRegenerateThumbnail(data){
+  		if(data.valid){
+  			alert("Regenerating...");
+  			console.log("Extra info", data.extra);
+  		}
+  		else {
+  			alert(data.status);
+  		}
+  	}
   </script>
   <script type="text/javascript" src="/scripts/jscommon.js"></script>
-  <script type="text/javascript" src="/Controls/Curriculum/curriculumview1.js"></script>
-  <link rel="stylesheet" href="/controls/curriculum/curriculumview1.css" type="text/css" />
-
-  <uc1:ActivityRenderer id="activityRenderer" runat="server" />
+  <script type="text/javascript" src="/Controls/Curriculum/curriculumview1.js?ver=3"></script>
+  <link rel="stylesheet" href="/controls/curriculum/curriculumview1.css?ver=2" type="text/css" />
+	<style type="text/css">
+	   .file .iconButton.thumbnail { top: 5px; left: 5px; background-image: url('/images/icons/icon_resources.png'); }
+	</style>
 
   <!-- The header -->
   <div id="curriculumHeader">
@@ -55,6 +70,7 @@
       <input type="button" class="isleButton bgBlue" value="Activity & Statistics" data-id="tab_activity" onclick="toggleTab('tab_activity')" />
       <input type="button" class="isleButton bgBlue" value="Embed Widget" data-id="tab_embed" onclick="toggleTab('tab_embed')" />
       <input type="button" class="isleButton bgBlue" value="Like & Comment" data-id="tab_community" onclick="toggleTab('tab_community')" />
+			<% if(canEdit) { %><input type="button" class="isleButton bgBlue" value="Edit Learning List" data-id="tab_edit" onclick="toggleTab('tab_edit')" /><% } %>
     </div>
     <div id="tabs">
       <!-- Help and Information -->
@@ -70,13 +86,13 @@
         </ul>
         <h2 class="mid">Understanding the Learning List Tool</h2>
         <h3>Learning List Map</h3>
-        <p>The Learning List Map gives you an overview of the entire Learning List and lets you jump directly to any node in it.</p>
+        <p>The Learning List Map gives you an overview of the entire Learning List and lets you jump directly to any layer in it.</p>
         <h3>Timeline &amp; Follow Updates</h3>
         <p>This section allows you to view and follow updates to this Learning List.</p>
         <h3>Embed Widget</h3>
         <p>The Learning List can be displayed as a widget on your site. For more information, click on the "Embed Widget" button above.</p>
         <h3>Like &amp; Comment</h3>
-        <p>Clicking on the "Like &amp; Comment" button above will allow you to like and comment on the node you are currently viewing.</p>
+        <p>Clicking on the "Like &amp; Comment" button above will allow you to like and comment on the layer you are currently viewing.</p>
       </div>
       <!-- Curriculum Map -->
       <div class="tab showing" id="tab_curriculumMap">
@@ -89,10 +105,10 @@
         <div class="columns">
           <% if(userGUID != "") { %>
           <select id="ddlTimelineSubscribe" class="column">
-            <option value="0" selected>Not Following this Learning List</option>
-            <option value="1">Follow this Learning List without Email Updates</option>
-            <option value="2">Follow this Learning List with Daily Email</option>
-            <option value="3">Follow this Learning List with Weekly Email</option>
+            <option value="0" selected="selected" <% %>>Not Following this Learning List</option>
+        		<option value="1">Follow in my Timeline</option>	
+						<option value="2">Follow with a daily email and in my Timeline</option>
+            <option value="3">Follow with a weekly email and in my Timeline</option>
           </select>
           <input type="button" class="isleButton bgBlue column" value="Save" id="btnFollow" onclick="updateFollowing(<%=curriculumNode.Id %>);" />
           <% } %>
@@ -115,7 +131,10 @@
       </div>
       <!-- Activity -->
       <div class="tab" id="tab_activity">
-        <h2 class="mid">Activity for this Learning List in the last <%=activityDaysAgo.Text %> days</h2>
+        <h2 class="mid">Activity for this Learning List (<%=(activityRenderer.startDate.ToShortDateString() + " - " + activityRenderer.endDate.ToShortDateString()) %>)</h2>
+				<div id="dateSelector">
+		Show activity from <input type="text" class="date startDate" id="txtStartDate" runat="server" /> to <input type="text" class="date endDate" id="txtEndDate" runat="server" /> <input type="button" class="isleButton bgBlue" value="Show" onclick="submit();" />
+	</div>
         <script type="text/javascript">
           var activityData = <%=activityJSON %>;
 
@@ -130,7 +149,7 @@
           #tab_activity .activity.totals { width: 48%; min-width: 300px; }
         </style>
         <div id="activityBlock"></div>
-        <h2 class="mid">Applicable activity directly below this Layer in the last <%=activityDaysAgo.Text %> days</h2>
+        <h2 class="mid">Applicable activity directly below this Layer (<%=(activityRenderer.startDate.ToShortDateString() + " - " + activityRenderer.endDate.ToShortDateString()) %>)</h2>
         <div id="activityChildrenBlock"></div>
       </div>
       <!-- Embed -->
@@ -139,7 +158,7 @@
         <p>To embed this <b>Learning List</b> as a widget in your page, copy this into your site's HTML:</p>
         <input type="text" id="widgetLink_curriculum" class="widgetLink" readonly="readonly" value="<iframe src='//ioer.ilsharedlearning.org/widgets/learninglist/?node=<%=curriculumNode.Id %>'></iframe>" />
         <% if(currentNode.Id != curriculumNode.Id) { %>
-        <p>To embed <b>this node</b> as a widget in your page, use this instead:</p>
+        <p>To embed <b>this layer</b> as a widget in your page, use this instead:</p>
         <input type="text" id="widgetLink_node" class="widgetLink" readonly="readonly" value="<iframe src='//ioer.ilsharedlearning.org/widgets/learninglist/?node=<%=currentNode.Id %>'></iframe>" />
         <% } %>
         <p>If your site uses <b><a href="http://jquery.com/" target="_blank">jQuery</a></b>, you can also add the following line to enable a more seamless self-resizing widget:</p>
@@ -151,7 +170,7 @@
         <h2 class="mid">Community Opinion</h2>
         <div id="communityColumns" class="columns">
           <div id="communityLeftColumn" class="column">
-            <h3>Comments on this Node</h3>
+            <h3>Comments on this Layer</h3>
             <% if(userGUID != "") { %>
             <textarea id="txtComment"></textarea>
             <input type="button" id="btnComment" class="isleButton bgBlue" onclick="comment();" value="Comment" />
@@ -161,7 +180,7 @@
             <% } %>
             <div id="commentsList">
               <% //Comments go here %>
-              <p class="grayMessage">No comments found for this Node</p>
+              <p class="grayMessage">No comments found for this Layer</p>
             </div>
           </div>
           <div id="communityRightColumn" class="column">
@@ -177,7 +196,7 @@
               </div>
               <% if( curriculumNode.Id != currentNode.Id) { %>
               <div class="likeBox columns" id="likeBox_node">
-                <span class="column" id="likeCount_node"><span><%=nodeLikes.LikeCount %></span> Node Likes</span>
+                <span class="column" id="likeCount_node"><span><%=nodeLikes.LikeCount %></span> Layer Likes</span>
                 <% if(nodeLikes.YouLikeThis){ %>
                   <span class="grayMessage">You like this.</span>
                 <% } else if(userGUID != "") { %>
@@ -189,7 +208,15 @@
           </div>
         </div>
       </div>
-    </div>
+			<% if(canEdit) { %>
+			<!-- Edit Node -->
+			<div class="tab" id="tab_edit">
+				<h2 class="mid">Edit Learning List</h2>
+				<a class="isleButton bgBlue" href="/my/learninglist/<%=currentNode.Id %>">Edit current Layer &rarr;</a>
+				<a class="isleButton bgBlue" href="/my/learninglist/<%=curriculumNode.Id %>">Edit this Learning List &rarr;</a>
+			</div>
+			<% } %>
+    </div><!--/tabs -->
   </div>
 
   <!-- Node information -->
@@ -198,60 +225,75 @@
       <h2 id="nodeTitle"><%=currentNode.Title %></h2>
       <div id="nodeDescription">
         <%=(string.IsNullOrWhiteSpace( currentNode.Description ) ? currentNode.Summary : currentNode.Description) %>
+				<% if(!string.IsNullOrEmpty(currentNode.Timeframe)) { %>
+				<p><b>Anticipated Timeframe:</b> <%=currentNode.Timeframe %></p>
+				<% } %>
       </div>
 
     <% if( allStandards.Count() > 0){ %>
-      <% if( true ) { //if usingContentStandards %>
-        <div id="alignedStandards">
-          <h3><input type="button" class="isleButton bgBlue" id="btnToggleAllStandards" onclick="toggleAllStandards();" value="Expand All" />Aligned Standards </h3>
-          <div id="standardsLevelButtons">
-            <input type="button" class="isleButton stdMajor" id="btnStandardsMajor" value="Major" onclick="showStandardsType('major');" />
-            <input type="button" class="isleButton stdSupporting" id="btnStandardsSupporting" value="Supporting" onclick="showStandardsType('supporting');" />
-            <input type="button" class="isleButton stdAdditional" id="btnStandardsAdditional" value="Additional" onclick="showStandardsType('additional');" />
-          </div>
-          <div class="standardsLevel grayBox showing" data-levelID="major">
-            <h4 class="header stdMajor">Major Standards</h4>
-            <ul class="standardsList">
-            <% foreach( var item in allStandards.Where(s => s.usageID == 1).ToList() ) { %>
-              <li><input type="button" value="<%=item.code %>" onclick="showStandard('major_<%=item.recordID %>');" /><div class="standardText" data-standardID="major_<%=item.recordID %>"><%=item.text %></div></li>
-            <% } %>
-            </ul>
-          </div>
-          <div class="standardsLevel grayBox" data-levelID="supporting">
-            <h4 class="header stdSupporting">Supporting Standards</h4>
-            <ul class="standardsList">
-            <% foreach ( var item in allStandards.Where( s => s.usageID == 2 ).ToList() )
-               { %>
-              <li><input type="button" value="<%=item.code %>" onclick="showStandard('supporting_<%=item.recordID %>');" /><div class="standardText" data-standardID="supporting_<%=item.recordID %>"><%=item.text %></div></li>
-            <% } %>
-            </ul>
-          </div>
-          <div class="standardsLevel grayBox" data-levelID="additional">
-            <h4 class="header stdAdditional">Additional Standards</h4>
-            <ul class="standardsList">
-            <% foreach ( var item in allStandards.Where( s => s.usageID == 3 ).ToList() )
-               { %>
-              <li><input type="button" value="<%=item.code %>" onclick="showStandard('additional_<%=item.recordID %>');" /><div class="standardText" data-standardID="additional_<%=item.recordID %>"><%=item.text %></div></li>
-            <% } %>
-            </ul>
-          </div>
-        </div>
-      <% } else { %>
-        <div id="alignedStandards">
-          <h3><input type="button" class="isleButton bgBlue" id="btnToggleAllStandards" onclick="toggleAllStandards();" value="Expand All" />Aligned Standards </h3>
-          <ul class="standardsList">
-          <% foreach( var item in allStandards ) { %>
-            <li><input type="button" value="<%=item.code %>" onclick="showStandard(<%=item.recordID %>);" /><div class="standardText" data-standardID="<%=item.standardID %>"><%=item.text %></div></li>
+			<% var majorStandards = allStandards.Where(s => s.usageID == 1).ToList(); %>
+			<% var supportingStandards = allStandards.Where( s => s.usageID == 2 ).ToList(); %>
+			<% var additionalStandards = allStandards.Where( s => s.usageID == 3 ).ToList(); %>
+			<% var collapsible = majorStandards.Count() > 20 || supportingStandards.Count() > 20 || additionalStandards.Count() > 20; %>
+        <div id="standardsSection">       
+          <% if( true ) { //if usingContentStandards %>
+            <div id="alignedStandards" class="<%=( collapsible ? "" : "noresize" ) %>">
+              <h3>
+								<% if(collapsible) { %>
+								<input type="button" class="isleButton bgBlue" id="btnToggleStandardsSection" onclick="toggleStandardsSection();" value="Show All" />
+								<% } %>
+								<input type="button" class="isleButton bgBlue" id="btnToggleAllStandards" onclick="	toggleAllStandards();" value="Expand Each" />
+								Aligned Standards 
+              </h3>
+              <div id="standardsLevelButtons">
+                <input type="button" class="isleButton stdMajor" id="btnStandardsMajor" value="Major" onclick="showStandardsType('major');" />
+                <input type="button" class="isleButton stdSupporting" id="btnStandardsSupporting" value="Supporting" onclick="showStandardsType('supporting');" />
+                <input type="button" class="isleButton stdAdditional" id="btnStandardsAdditional" value="Additional" onclick="showStandardsType('additional');" />
+              </div>
+              <div class="standardsLevel grayBox showing" data-levelID="major">
+                <h4 class="header stdMajor">Major Standards</h4>
+                <ul class="standardsList">
+                <% foreach( var item in majorStandards ) { %>
+                  <li><input type="button" value="<%=item.code %>" onclick="showStandard('major_<%=item.recordID %>');" /><div class="standardText" data-standardID="major_<%=item.recordID %>"><%=item.text %></div></li>
+                <% } %>
+                </ul>
+              </div>
+              <div class="standardsLevel grayBox" data-levelID="supporting">
+                <h4 class="header stdSupporting">Supporting Standards</h4>
+                <ul class="standardsList">
+                <% foreach ( var item in supportingStandards )
+                   { %>
+                  <li><input type="button" value="<%=item.code %>" onclick="showStandard('supporting_<%=item.recordID %>');" /><div class="standardText" data-standardID="supporting_<%=item.recordID %>"><%=item.text %></div></li>
+                <% } %>
+                </ul>
+              </div>
+              <div class="standardsLevel grayBox" data-levelID="additional">
+                <h4 class="header stdAdditional">Additional Standards</h4>
+                <ul class="standardsList">
+                <% foreach ( var item in additionalStandards )
+                   { %>
+                  <li><input type="button" value="<%=item.code %>" onclick="showStandard('additional_<%=item.recordID %>');" /><div class="standardText" data-standardID="additional_<%=item.recordID %>"><%=item.text %></div></li>
+                <% } %>
+                </ul>
+              </div>
+            </div>
+          <% } else { %>
+            <div id="alignedStandards">
+              <h3><input type="button" class="isleButton bgBlue" id="btnToggleAllStandards" onclick="toggleAllStandards();" value="Expand All" />Aligned Standards </h3>
+              <ul class="standardsList">
+              <% foreach( var item in allStandards ) { %>
+                <li><input type="button" value="<%=item.code %>" onclick="showStandard(<%=item.recordID %>);" /><div class="standardText" data-standardID="<%=item.standardID %>"><%=item.text %></div></li>
+              <% } %>
+              </ul>
+            </div>
           <% } %>
-          </ul>
-        </div>
-      <% } %>
+          </div>
     <% } %>
 
-
+		<% var isUserAdmin = IsUserAuthenticated() ? new int[] { 2, 22, 29, 303 }.Contains( WebUser.Id ) : false; //total hack - we need a global admin role + detection of some sort  %>
     <% if(currentNode.ChildItems.Count() > 0) { %>
       <div id="filesBox" class="<%=(currentNode.ChildItems.Count() >= 3 ? "centered" : "") %> <%=( hasFeaturedItem ? "scrolling" : "grid" ) %>">
-        <h3>Files <% if( currentNode.ChildItems.Where(m => m.CanViewDocument).Count() > 0 ) { %> <a href="/Repository/DownloadFiles.aspx?all=false&nid=<%=currentNode.Id %>" class="downloadFilesLink"><img src="/images/icons/download-orange.png" /> Download These Files</a><% } %></h3>
+        <h3>Files <% if( currentNode.ChildItems.Where(m => m.CanViewDocument).Count() > 0 ) { %> <a href="/Repository/DownloadFiles.aspx?all=false&nid=<%=currentNode.Id %>" class="downloadFilesLink"><img alt="" src="/images/icons/download-orange.png" /> Download These Files</a><% } %></h3>
         <% if( currentNode.ChildItems.Where( m => m.CanViewDocument == false ).Count() > 0 ) { %>
           <p class="grayMessage">Private documents below can only be accessed by authorized users. <a href="//ioer.ilsharedlearning.org/Account/Login.aspx?<%=( isWidget ? "hidechrome=1&" : "" ) %>nextUrl=<%=Request.Url.PathAndQuery %>">Login</a></p>
         <% } %>
@@ -259,7 +301,7 @@
           <% foreach( var item in currentNode.ChildItems.OrderBy( m => m.SortOrder ).ThenBy( m => m.Id ) ) { %>
             <% if(item.CanViewDocument){ %>
             <div class="file grayBox">
-              <a href="<%=item.DocumentUrl %>">
+              <a href="<%=item.DocumentUrl %>" target="_blank">
                 <% 
                   var thumbnailURL = item.ResourceThumbnailImageUrl;
                   var isArchive = item.DocumentUrl.Contains( ".zip" ) || item.DocumentUrl.Contains( ".rar" );
@@ -279,13 +321,16 @@
                     thumbnailURL = "/images/icons/icon_zip_400x300.png";
                   }
                 %>
-                <img src="/images/ThumbnailResizer.png" style="background-image:url('<%=thumbnailURL %>')" />
+                <img alt="" src="/images/ThumbnailResizer.png" style="background-image:url('<%=thumbnailURL %>')" />
                 <input type="button" class="iconButton preview" onclick="preview(<%=item.Id %>, <%=(isArchive ? "true" : "false") %>);" title="Preview" />
                 <div><%=item.Title %></div>
               </a>
               <% if(!string.IsNullOrWhiteSpace(item.ResourceFriendlyUrl)){ %>
               <a href="<%=item.ResourceFriendlyUrl %>" target="_blank" title="View Tags" class="iconButton tags"></a>
               <% } %>
+							<% if(isUserAdmin){ %>
+							<a href="#" title="Regenerate Thumbnail" class="iconButton thumbnail" onclick="regenerateThumbnail(<%=item.Id %>, '<%=item.DocumentUrl %>');"></a>
+							<% } %>
             </div>
             <% } else { %>
             <div class="file grayBox private">
@@ -316,7 +361,7 @@
               //Detect IE
               var isIEBrowser = Request.UserAgent.IndexOf( "Trident" ) > -1;
               //Default to google previewer
-              url = "http://docs.google.com/viewer?embedded=true&url=" + Uri.EscapeUriString( currentNode.AutoPreviewUrl.IndexOf( "http" ) == 0 ? currentNode.AutoPreviewUrl : "http:" + currentNode.AutoPreviewUrl );
+              url = "//docs.google.com/viewer?embedded=true&url=" + Uri.EscapeUriString( currentNode.AutoPreviewUrl.IndexOf( "http" ) == 0 ? currentNode.AutoPreviewUrl : "http:" + currentNode.AutoPreviewUrl );
               //If PDF and not IE, show directly
               if ( currentNode.AutoPreviewUrl.ToLower().IndexOf( ".pdf" ) > -1 && !isIEBrowser )
               {
@@ -328,7 +373,7 @@
               {
                 if ( currentNode.AutoPreviewUrl.ToLower().IndexOf( item ) > -1 )
                 {
-                  url = "http://view.officeapps.live.com/op/view.aspx?src=" + Uri.EscapeUriString( currentNode.AutoPreviewUrl.IndexOf( "http" ) == 0 ? currentNode.AutoPreviewUrl : "http:" + currentNode.AutoPreviewUrl );
+                  url = "//view.officeapps.live.com/op/view.aspx?src=" + Uri.EscapeUriString( currentNode.AutoPreviewUrl.IndexOf( "http" ) == 0 ? currentNode.AutoPreviewUrl : "http:" + currentNode.AutoPreviewUrl );
                 }
               }
             }
@@ -356,10 +401,10 @@
         <h3 class="header">Explore Content</h3>
         <% if(currentNode.Id != curriculumNode.Id){  %>
           <h3 class="mid">Download Files</h3>
-          <a href="/Repository/DownloadFiles.aspx?nid=<%=currentNode.Id %>" class="downloadFilesLink"><img src="/images/icons/download-orange.png" /> Download all Files in and below this layer</a>
+          <a href="/Repository/DownloadFiles.aspx?nid=<%=currentNode.Id %>" class="downloadFilesLink"><img alt="" src="/images/icons/download-orange.png" /> Download all Files in and below this layer</a>
         <% } %>
 
-        <% var children = new List<ILPathways.Services.CurriculumService.JSONNode>();  %>
+        <% var children = new List<IOER.Services.CurriculumService.JSONNode>();  %>
         <% var treeNode = GetFromTree( tree, currentNode.Id ); %>
         <% if( treeNode != null && treeNode.children.Count > 0)
                children = treeNode.children; %>
@@ -402,7 +447,7 @@
 
   <div id="previewerOverlay">
     <div id="previewer" class="grayBox">
-      <h2 class="header"><input type="button" value="x" class="closeButton" onclick="hidePreview();" /><span id="googlePreviewerLink" class="previewerLink">(Not working? Try the <input type="button" class="isleButton bgGreen" onclick="previewWithGoogle();" value="Google Previewer" />) </span><span id="officePreviewerLink" class="previewerLink">(Not working? Try the <input type="button" class="isleButton bgGreen" onclick="previewWithOffice();" value="MS Office Previewer" />) </span>Resource <span id="previewerTracker"></span>: <a href="#" id="previewerTitle"></a> <img src="/images/icons/download-orange.png" /> </h2>
+      <h2 class="header"><input type="button" value="x" class="closeButton" onclick="hidePreview();" /><span id="googlePreviewerLink" class="previewerLink">(Not working? Try the <input type="button" class="isleButton bgGreen" onclick="previewWithGoogle();" value="Google Previewer" />) </span><span id="officePreviewerLink" class="previewerLink">(Not working? Try the <input type="button" class="isleButton bgGreen" onclick="previewWithOffice();" value="MS Office Previewer" />) </span>Resource <span id="previewerTracker"></span>: <a href="#" id="previewerTitle" target="_blank"></a> <img alt="" src="/images/icons/download-orange.png" /> </h2>
       <iframe id="previewerFrame" src="" ></iframe>
       <input type="button" class="isleButton bgBlue" id="btnPreviewerPrevious" value="←" title="Previous Document" onclick="previewerPrevious();" />
       <input type="button" class="isleButton bgBlue" id="btnPreviewerNext" value="→" title="Next Document" onclick="previewerNext();" />
@@ -431,4 +476,3 @@
 </asp:Literal>
 <asp:Literal ID="urlPattern" runat="server" Visible="false">/learninglist/{nodeID}/{shortTitle}</asp:Literal>
 <asp:Literal ID="widgetUrlPattern" runat="server" Visible="false">/widgets/learninglist?node={nodeID}</asp:Literal>
-<asp:Literal ID="activityDaysAgo" runat="server" Visible="false">90</asp:Literal>

@@ -1,9 +1,9 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="Default.aspx.cs" Inherits="ILPathways.Widgets.LearningList.Default" %>
+﻿<%@ Page Title="Illinois Open Educational Resources - Learning List Widget" Language="C#" AutoEventWireup="true" CodeBehind="Default.aspx.cs" Inherits="IOER.Widgets.LearningList.Default" %>
 <%@ Register TagPrefix="uc1" TagName="Curriculum" Src="/Controls/Curriculum/CurriculumView1.ascx" %>
 
 <!DOCTYPE html>
 
-<html>
+<html lang="en">
   <head runat="server">
     <title>IOER Learning List Widget</title>
     <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js" type="text/javascript"></script>

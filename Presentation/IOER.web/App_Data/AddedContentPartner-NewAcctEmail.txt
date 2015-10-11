@@ -1,0 +1,9 @@
+﻿<font face='Arial'>Welcome,<br/><p>This is to notify you that <b>{0}</b> has granted access to the learning list: <em>{1}</em>, with a role of <i>{2}</i>.</p>
+<p>An initial account has been created for you. You may use the following (one-time) link to login into IOER and navigate to your user profile page.</p>
+<p><a href='{3}'>Complete your profile, and then view <b>{1}</b></a></p>
+<p> Please update your profile with your first and last name. You can also update a profile image, and provide additional information.</p><p> After saving your profile you will be directed to the learning list content page.</p>
+<p>If you are not redirected, <a href='{4}'>click here and go directly to the learning list</a></p>
+
+<p>{5}</p>
+
+<div>Sincerely,</div><div>The ISLE OER Team</div></font>

@@ -5,10 +5,10 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
-using ILPathways.Library;
+using IOER.Library;
 using ILPathways.Utilities;
 
-namespace ILPathways.My
+namespace IOER.My
 {
     public partial class Authored : BaseAppPage
     {

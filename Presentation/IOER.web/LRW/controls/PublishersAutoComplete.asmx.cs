@@ -10,7 +10,7 @@ using ILPathways.Utilities;
 using LogManager = ILPathways.Utilities.LoggingHelper;
 using LRWarehouse.DAL;
 
-namespace ILPathways.LRW.controls
+namespace IOER.LRW.controls
 {
     /// <summary>
     /// Summary description for PublishersAutoComplete

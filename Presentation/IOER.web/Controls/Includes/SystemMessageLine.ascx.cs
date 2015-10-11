@@ -6,12 +6,12 @@ using System.Threading;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
-using ILPathways.Library;
+using IOER.Library;
 using ILPathways.Utilities;
-using ILPathways.classes;
+using IOER.classes;
 using IPB = ILPathways.Business;
 
-namespace ILPathways.Includes
+namespace IOER.Includes
 {
 
     public partial class SystemMessageLine : BaseUserControl

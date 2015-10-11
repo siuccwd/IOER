@@ -1,61 +1,54 @@
-﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="footer3.ascx.cs" Inherits="ILPathways.Controls.Includes.footer3" %>
+﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="footer3.ascx.cs" Inherits="IOER.Controls.Includes.footer3" %>
 
 <style type="text/css">
   #FooterSection, #FooterSection * { box-sizing: border-box; -moz-box-sizing: border-box; }
-  #FooterDiv { background-color: #F5F5F5; padding: 5px; margin: 10px auto; text-align: center; border-radius: 5px; width: 100%; }
-  #FooterDiv ul, .footerItem ul { list-style-type: none; }
-  #CopyWriteDiv { font-size: 8px; text-align: center; color: #AAA; }
-  #FooterDiv h3, #FooterDiv a { color: #888; }
+	#FooterSection { padding: 0 10px; }
+  #FooterDiv { border: solid 1px #4F4E4F; margin: 10px auto; padding-bottom: 20px; text-align: center; width: 100%; border-radius: 5px; }
+  #FooterDiv ul, .footerItem ul { list-style-type: none; margin: 0; padding: 0; }
+  #CopyWriteDiv { font-size: 12px; text-align: center; color: #000; margin-bottom: 50px; }
+  #FooterDiv h3 { font-size: 20px; background-color: #4F4E4F; color:#FFF; }
+  #FooterDiv a { font-size: 16px; color:#000 }
   #FooterDiv a:hover, #FooterDiv a:focus { text-decoration: underline; }
-  #FooterDiv .footerItem { display: inline-block; vertical-align: top; width: 23%;  } 
-  #CopyWriteDiv .txtServer { display: none;  } 
+  #FooterDiv .footerItem { display: inline-block; vertical-align: top; width: 33.333%;  } 
+  #CopyWriteDiv .txtServer { display: none; } 
 
-  @media screen and (max-width: 500px) {
-    #FooterDiv .footerItem { display: block; width: 100%; margin: 10px 5px; } 
-    #CopyWriteDiv .txtServer { display: inline-block; margin: 5px 10px; } 
+  @media screen and (max-width: 600px) {
+		#FooterDiv { padding-bottom: 5px; }
+    #FooterDiv .footerItem { display: block; width: 100%; margin: 0 0 15px 0; } 
   }
 </style>
 <div id="FooterSection">
-	<div id="FooterDiv">
-    <div class="footerItem">
-      <h3>
-        Communication</h3>
-      <ul>
-        <li><a href="//ilsharedlearning.org/Pages/Contact-Us.aspx" target="isleSite">Contact Us & Media</a></li>
-        <!--<li><a href="http://oerevaluationteam.weebly.com/" target="_blank">ISBE Open Education Resource Team</a></li>-->
-        <li><a href="//ilsharedlearning.org/Pages/default.aspx" target="isleSite">Illinois Shared Learning Environment</a></li>
-        <li><a href="//ioer.ilsharedlearning.org/Pages/NationalInitiatives.aspx" target="isleSite">National Initiatives</a></li>
-				<!--<li><asp:HyperLink id="linkNewsSubscribe" navigateurl="/News/Subscribe.aspx" runat="server">Subscribe to IOER News</asp:HyperLink></li>-->
-      </ul>
+    <div id="FooterDiv">
+        <h2 class="offScreen">footer</h2>
+				<div class="footerItem">
+            <h3 style="margin-left:0;">Information</h3>
+            <ul>
+				<li><a href="/help/guide.aspx">User Guide</a></li>
+                <li><a href="/widgets">Configure IOER Widgets for your Site</a></li>
+				<li><a href="/ioer_timeline">Timeline</a></li>
+				<li><a href="/activity/stats.aspx">Activity &amp; Statistics</a></li>
+                <li><a href="/Pages/NationalInitiatives.aspx">National Initiatives</a></li>
+                <li><a href="//www2.illinoisworknet.com/Pages/Contact-Us.aspx" target="isleSite">Contact Us</a></li>
+            </ul>
+        </div><!--
+        --><div class="footerItem">
+            <h3>Policies</h3>
+            <ul>
+                <li><a href="/pages/privacypolicy.aspx">Privacy Policy</a></li>
+                <li><a href="/pages/termsofuse.aspx">Terms of Use</a></li>
+                <li><a href="/pages/Accessibility.aspx">Accessibility Statement</a></li>
+            </ul>
+        </div><!--
+        --><div class="footerItem">
+            <h3>Developers</h3>
+            <ul>
+                <li><a href="/developers/">Developer Documentation</a></li>
+            </ul>
+        </div>
     </div>
-    <div class="footerItem">
-			<h3>Website Policy</h3>
-      <ul>
-        <li><a href="//ilsharedlearning.org/Pages/ISLE-Privacy-Policy.aspx" target="isleSite">Privacy Policy</a></li>
-        <li><a href="//ilsharedlearning.org/Pages/ISLE-Terms-of-Use.aspx" target="isleSite">Terms of Use</a></li>
-      </ul>
-		</div>
-
-		<div class="footerItem">
-			<h3>Widgets</h3>
-			<ul>
-        <li><a href="/widgets">Configure IOER Widgets for your Site</a></li>
-        <!--<li><a href="/Pages/SamplePage.aspx">Widgets Sample Page</a></li>-->
-        
-			</ul>
-		</div>
-		<div class="footerItem">
-			<h3>Developers</h3>
-			<ul>
-                <li><a href="http://ilsharedlearning.org/DevDoc/SitePages/Home.aspx" target="_blank">Developer Documentation</a></li>
-        
-			</ul>
-		</div>
-	</div>
-	</div>
+</div>
 <div id="CopyWriteDiv">
-	
-	<p>Copyright &copy; 2012 - <%= thisYear %> Illinois Department of Commerce and Economic Opportunity</p>
+	<p>Copyright &copy; 2012 - <%= thisYear %> Illinois Department of Commerce and Economic Opportunity and Illinois State Board of Education</p>
 	<p><asp:label ID="eo_Statement" runat="server"></asp:label></p>	
     <p><asp:label ID="txtServer" CssClass="txtServer" runat="server"></asp:label></p>	
 </div>

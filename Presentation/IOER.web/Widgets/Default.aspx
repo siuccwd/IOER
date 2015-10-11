@@ -1,4 +1,4 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Masters/Responsive.Master" AutoEventWireup="true" CodeBehind="Default.aspx.cs" Inherits="ILPathways.Widgets.Default" %>
+﻿<%@ Page Title="Illinois Open Educational Resources - Widgets" Language="C#" MasterPageFile="~/Masters/Responsive.Master" AutoEventWireup="true" CodeBehind="Default.aspx.cs" Inherits="IOER.Widgets.Default" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="HeadContent" runat="server">
   <link rel="stylesheet" href="/styles/common2.css" type="text/css" />
   <link rel="stylesheet" href="/styles/tooltipv2.css" type="text/css" />
@@ -201,12 +201,20 @@
       #widgetsFrame { border: none; width: 100%; }
     </style>
     <script type="text/javascript">
+    	var receivedHeights = [];
+
       $(document).ready(function () {
         $(window).on("message", function (msg) {
           var message = $.parseJSON(msg.originalEvent.data);
           console.log(message.action);
           if (message.action == "resize") {
-            console.log(message.height);
+          	console.log(message.height);
+          	receivedHeights.push(message.height);
+						//Prevent spaz
+          	if (receivedHeights.length > 4) {
+          		receivedHeights.shift();
+          		if (receivedHeights[0] == receivedHeights[2] && receivedHeights[1] == receivedHeights[3]) { return; }
+          	}
             $("#widgetsFrame").attr("style", "height: " + message.height);
           }
         });

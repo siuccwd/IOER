@@ -10,7 +10,7 @@ using System.Web.SessionState;
 using ILPathways.Utilities;
 using Isle.BizServices;
 
-namespace IllinoisPathways
+namespace IOER
 {
     public class Global : System.Web.HttpApplication
     {
@@ -23,224 +23,313 @@ namespace IllinoisPathways
 
         }
 
-        void RegisterRoutes( RouteCollection routes )
-        {
-            //resources =======================================
-            // Register a route for detail page
-            routes.MapPageRoute(
-               "RV Record",      // Route name
-               "IOER/{RouteVID}/{*ItemTitle}",      // Route URL
-               "~/ResourceDetail.aspx" // Web page to handle route
-            );
-            //using resourceId
-            routes.MapPageRoute(
-               "Resource Record",      // Route name
-               "Resource/{RouteRID}/{*ItemTitle}",      // Route URL
-               "~/ResourceDetail.aspx" // Web page to handle route
-            );
-            routes.MapPageRoute(
-              "Detail Record2",      // Route name
-              "IOER2/{RouteVID}/{*ItemTitle}",      // Route URL
-              "~/ResourceDetail2.aspx" // Web page to handle route
-           );
+		void RegisterRoutes(RouteCollection routes)
+		{
+			//resources =======================================
+			// Register a route for detail page
+			routes.MapPageRoute(
+			   "RV Record",      // Route name
+			   "IOER/{RouteVID}/{*ItemTitle}",      // Route URL
+			   "~/ResourceDetail.aspx" // Web page to handle route
+			);
+			//using resourceId
+			routes.MapPageRoute(
+			   "Resource Record",      // Route name
+			   "Resource/{RouteRID}/{*ItemTitle}",      // Route URL
+			   "~/ResourceDetail.aspx" // Web page to handle route
+			);
+			routes.MapPageRoute(
+			  "Detail Record2",      // Route name
+			  "IOER2/{RouteVID}/{*ItemTitle}",      // Route URL
+			  "~/ResourceDetail2.aspx" // Web page to handle route
+		   );
 
-            //communites =======================================
-            routes.MapPageRoute(
-                 "Community Home",      // Route name
-                 "Community/{RouteID}/{*ItemTitle}",      // Route URL
-                 "~/Communities/Community.aspx" // Web page to handle route
-              );
+			//communites =======================================
+			routes.MapPageRoute(
+				 "Community Home",      // Route name
+				 "Community/{RouteID}/{*ItemTitle}",      // Route URL
+				 "~/Communities/Community.aspx" // Web page to handle route
+			  );
 
-            routes.MapPageRoute(
-                "Communities Home",
-                "Communities",     
-                "~/Communities/Default.aspx" 
-             );
- 
-            //search K12 content =========================================
-            routes.MapPageRoute(
-               "IOER Custom content",
-               "Repository/All",
-               "~/Repository/Search.aspx"
-            );
-            //search K12 content
-            routes.MapPageRoute(
-               "K12 Districts",
-               "K12/All",
-               "~/Repository/Search.aspx"
-            );
-            //search curriculum
-            routes.MapPageRoute(
-               "curriculum search",
-               "Curriculum",
-               "~/Repository/Search.aspx?t=curriculum"
-            );
-            //K12 author's pages
-            routes.MapPageRoute(
-             "K12 Author Search",      // Route name
-             "K12/Search/{OrgName}/{Author}",      // Route URL
-             "~/Repository/Search.aspx" // Web page to handle route
-            );
-            // The {*ItemTitle} instructs the route to match all content after the first slash, which is needed b/c some titles names contain a slash or other special characters
-            // See http://forums.asp.net/p/1417546/3131024.aspx for more information
+			routes.MapPageRoute(
+				"Communities Home",
+				"Communities",
+				"~/Communities/Default.aspx"
+			 );
 
-            routes.MapPageRoute(
-                "Content Record",      // Route name
-                "CONTENT/{RouteID}/{*ItemTitle}",      // Route URL
-                "~/Repository/ResourcePage.aspx" // Web page to handle route
-             );
-            routes.MapPageRoute(
-                "Curriculum Node",         //Route name
-                "Curriculum/{node}/{*title}",          //Route URL
-                "~/Controls/Curriculum/Default.aspx"         //Web page to handle route
-            );
-            //routes.MapPageRoute(
-            //    "Curriculum Node2",         //Route name
-            //    "Curriculum/{node}/{node2}/{*title}",          //Route URL
-            //    "~/Controls/Curriculum/Default.aspx"         //Web page to handle route
-            //);
-            routes.MapPageRoute( 
-                "Curriculum Editor",
-                "My/Curriculum/{node}/{*title}",
-                "~/My/Curriculum.aspx"
-            );
-            routes.MapPageRoute(
-                "Learning List Node",         //Route name
-                "LearningList/{node}/{*title}",          //Route URL
-                "~/Controls/Curriculum/Default.aspx"         //Web page to handle route
-            );
-            routes.MapPageRoute(
-                "Learning List Editor",
-                "My/LearningList/{node}/{*title}",
-                "~/My/Curriculum.aspx"
-            );
+			//search K12 content =========================================
+			routes.MapPageRoute(
+			   "IOER Custom content",
+			   "Content/Search",
+			   "~/Repository/Search.aspx"
+			);
+			//search K12 content
+			routes.MapPageRoute(
+			   "K12 Districts",
+			   "K12/All",
+			   "~/Repository/Search.aspx"
+			);
+			//search curriculum
+			routes.MapPageRoute(
+			   "curriculum search",
+			   "Curriculum",
+			   "~/Repository/Search.aspx?t=curriculum"
+			);
+			//K12 author's pages
+			routes.MapPageRoute(
+			 "My Authored Search",
+			 "My/Authored",
+			 "~/My/Authored2.aspx"
+			);
+			//K12 author's pages
+			routes.MapPageRoute(
+			 "My Authored SearchOLD",
+			 "My/AuthoredOLD",
+			 "~/My/Authored.aspx"
+			);
+			//K12 author's pages
+			routes.MapPageRoute(
+			 "K12 Author Search",      // Route name
+			 "K12/Search/{OrgName}/{Author}",      // Route URL
+			 "~/Repository/Search.aspx" // Web page to handle route
+			);
+			// The {*ItemTitle} instructs the route to match all content after the first slash, which is needed b/c some titles names contain a slash or other special characters
+			// See http://forums.asp.net/p/1417546/3131024.aspx for more information
+
+			routes.MapPageRoute(
+				"Content Record",      // Route name
+				"CONTENT/{RouteID}/{*ItemTitle}",      // Route URL
+				"~/Repository/ResourcePage.aspx" // Web page to handle route
+			 );
+			routes.MapPageRoute(
+				"Curriculum Node",         //Route name
+				"Curriculum/{node}/{*title}",          //Route URL
+				"~/Controls/Curriculum/Default.aspx"         //Web page to handle route
+			);
+			//routes.MapPageRoute(
+			//    "Curriculum Node2",         //Route name
+			//    "Curriculum/{node}/{node2}/{*title}",          //Route URL
+			//    "~/Controls/Curriculum/Default.aspx"         //Web page to handle route
+			//);
+			routes.MapPageRoute(
+				"Curriculum Editor",
+				"My/Curriculum/{node}/{*title}",
+				"~/My/Curriculum.aspx"
+			);
+			routes.MapPageRoute(
+				"Learning List Node",         //Route name
+				"LearningList/{node}/{*title}",          //Route URL
+				"~/Controls/Curriculum/Default.aspx"         //Web page to handle route
+			);
+			routes.MapPageRoute(
+				"Learning List Editor",
+				"My/LearningList/{node}/{*title}",
+				"~/My/Curriculum.aspx"
+			);
 
 
-            //K12 author's home page
-            routes.MapPageRoute(
-             "K12 Author Home",      // Route name
-             "K12/Home/{OrgName}/{Author}",      // Route URL
-             "~/Repository/ResourcePage.aspx" // Web page to handle route
-            );
-            //search K12 district content
-            routes.MapPageRoute(
-             "K12 District87",      // Route name
-             "K12/{*DistrictName}",      // Route URL
-             "~/Repository/Search.aspx" // Web page to handle route
-            );
+			//K12 author's home page
+			//routes.MapPageRoute(
+			// "K12 Author Home",      // Route name
+			// "K12/Home/{OrgName}/{Author}",      // Route URL
+			// "~/Repository/ResourcePage.aspx" // Web page to handle route
+			//);
+			//search K12 district content
+			//routes.MapPageRoute(
+			// "K12 District87",      // Route name
+			// "K12/{*DistrictName}",      // Route URL
+			// "~/Repository/Search.aspx" // Web page to handle route
+			//);
 
-            //library ===============================================
-            routes.MapPageRoute(
-             "My Library",      // Route name
-             "My/Library",      // Route URL
-             "~/Libraries/Library.aspx?id=mine"             // Web page to handle route
-            );
-            //library by name. Check org then personal
-            routes.MapPageRoute(
-             "Named Library",      // Route name
-             "Library_/{*LbraryTitle}",      // Route URL
-             "~/Libraries/Library.aspx"             // Web page to handle route
-            );
-            routes.MapPageRoute(
-                "Collection Home",
-                "Library/Collection/{libID}/{colID}/{*ItemTitle}",
-                "~/Libraries/Library.aspx"
-             );
+			//library ===============================================
+			routes.MapPageRoute(
+			 "My Library",      // Route name
+			 "My/Library",      // Route URL
+			 "~/Libraries/Library.aspx?id=mine"             // Web page to handle route
+			);
+			//library by name. Check org then personal
+			routes.MapPageRoute(
+			 "Named Library",      // Route name
+			 "Library_/{*LbraryTitle}",      // Route URL
+			 "~/Libraries/Library.aspx"             // Web page to handle route
+			);
+			routes.MapPageRoute(
+				"Collection Home",
+				"Library/Collection/{libID}/{colID}/{*ItemTitle}",
+				"~/Libraries/Library.aspx"
+			 );
 
-            routes.MapPageRoute(
-                "Library Home",      // Route name
-                "Library/{libID}/{*ItemTitle}",      // Route URL
-                "~/Libraries/Library.aspx" // Web page to handle route
-             );
-            routes.MapPageRoute(
-                 "LibrariesSearch",      // Route name
-                 "Libraries/Search",      // Route URL
-                 "~/Libraries/Default.aspx"
-            );
-            //Timeline =======================================
-            routes.MapPageRoute(
-             "My Timeline",      // Route name
-             "My/Timeline",      // Route URL
-             "~/Activity/Default.aspx?id=mine"             // Web page to handle route
-            );
-            //IOER Timeline
-            routes.MapPageRoute(
-             "IOER Timeline",      // Route name
-             "IOER_Timeline",      // Route URL
-             "~/Activity/Default.aspx"             // Web page to handle route
-            );
+			routes.MapPageRoute(
+				"Library Home",      // Route name
+				"Library/{libID}/{*ItemTitle}",      // Route URL
+				"~/Libraries/Library.aspx" // Web page to handle route
+			 );
+			routes.MapPageRoute(
+				 "LibrariesSearch",      // Route name
+				 "Libraries/Search",      // Route URL
+				 "~/Libraries/Default.aspx"
+			);
+			//Timeline =======================================
+			routes.MapPageRoute(
+			 "My Timeline",      // Route name
+			 "My/Timeline",      // Route URL
+			 "~/Activity/Default.aspx?id=mine"             // Web page to handle route
+			);
+			//IOER Timeline
+			routes.MapPageRoute(
+			 "IOER Timeline",      // Route name
+			 "IOER_Timeline",      // Route URL
+			 "~/Activity/Default.aspx"             // Web page to handle route
+			);
 
-            //people =======================================
-            routes.MapPageRoute(
-            "My Dashboard",      // Route name
-            "My/Dashboard",      // Route URL
-            "~/Pages/Dashboard.aspx?id=mine"    
-           );
-            routes.MapPageRoute(
-            "Profiles",      // Route name
-            "Profile/{userId}/{*ItemTitle}",      // Route URL
-            "~/Pages/Dashboard.aspx"    
-            );
+			//people =======================================
+			routes.MapPageRoute(
+			"My Dashboard",      // Route name
+			"My/Dashboard",      // Route URL
+			"~/Pages/Dashboard.aspx?id=mine"
+		   );
+			routes.MapPageRoute(
+			"Profiles",      // Route name
+			"Profile/{userId}/{*ItemTitle}",      // Route URL
+			"~/Pages/Dashboard.aspx"
+			);
 
-            //partners =======================================
-            routes.MapPageRoute(
-            "Organizations",      // Route name
-            "Organizations",      // Route URL
-            "~/Organizations/Default.aspx"
-            );
+			//Organizations =======================================
+			routes.MapPageRoute(
+			"MyOrganizationsOld",      // Route name
+			"MyOrganizationsOld",      // Route URL
+			"~/Organizations/Organizations.aspx"
+			);
+			routes.MapPageRoute(
+			"MyOrganizations",      // Route name
+			"MyOrganizations",      // Route URL
+			"~/Organizations/Default.aspx"
+			);
+			//routes.MapPageRoute(
+			//"Organizations",      // Route name
+			//"Organizations",      // Route URL
+			//"~/Organizations/Default.aspx"
+			//);
 
-            routes.MapPageRoute(
-             "Organization",      // Route name
-             "Organizations/{orgId}/{*ItemTitle}",      // Route URL
-             "~/Organizations/Organization.aspx"
-             );
+			routes.MapPageRoute(
+			 "Organization",      // Route name
+			 "Organizations/{orgId}/{*ItemTitle}",      // Route URL
+			 "~/Organizations/Default.aspx"
+			 );
 
-            routes.MapPageRoute(
-             "OrganizationTimeline",      // Route name
-             "Org/{orgId}/{*ItemTitle}",      // Route URL
-             "~/Activity/Default.aspx"            
-             );
-            routes.MapPageRoute(
-            "UnityPoint",      // Route name
-            "UnityPoint",      // Route URL
-            "~/Organizations/UnityPoint.aspx"
-           );
-            routes.MapPageRoute(
-             "Search",      // Route name
-             "Search",      // Route URL
-             "~/Search.aspx"
-            );
-            routes.MapPageRoute(
-             "Gooru",      // Route name
-             "gooruSearch",      // Route URL
-             "~/Pages/GooruSearch.aspx"
-            );
-            routes.MapPageRoute(
-             "GooruPlayer",      // Route name
-             "gooruResource",      // Route URL
-             "~/Pages/GooruPlayer.aspx"
-            );
-            //other =======================================
-            routes.MapPageRoute(
-            "ContactUs",
-            "ContactUs",
-            "~/Pages/ContactUs.aspx"
-            );
+			routes.MapPageRoute(
+			 "OrganizationTimeline",      // Route name
+			 "Org/{orgId}/{*ItemTitle}",      // Route URL
+			 "~/Activity/Default.aspx"
+			 );
+			routes.MapPageRoute(
+			"UnityPoint",      // Route name
+			"UnityPoint",      // Route URL
+			"~/Organizations/UnityPoint/Default.aspx"
+		   );
 
-          //Ubertagger
-            routes.MapPageRoute(
-              "UberTagger",
-              "ubertagger",
-              "~/ubertagger.aspx"
-            );
-        }
+			//search =======================================
+			routes.MapPageRoute(
+			 "Search",      // Route name
+			 "Search",      // Route URL
+			 "~/Search.aspx"
+			);
+			routes.MapPageRoute(
+			 "Gooru",      // Route name
+			 "gooruSearch",      // Route URL
+			 "~/Pages/GooruSearch.aspx"
+			);
+			routes.MapPageRoute(
+			 "GooruPlayer",      // Route name
+			 "gooruResource",      // Route URL
+			 "~/Pages/GooruPlayer.aspx"
+			);
+			//other =======================================
+			routes.MapPageRoute(
+			"ContactUs",
+			"ContactUs",
+			"~/Pages/ContactUs.aspx"
+			);
+
+			//Ubertagger
+			routes.MapPageRoute(
+			  "UberTagger",
+			  "ubertagger",
+			  "~/ubertagger.aspx"
+			);
+
+			//Developer documentation
+			routes.MapPageRoute(
+				"DevelopersPages",
+				"Developers/{page}",
+				"~/Pages/Developers/Default.aspx"
+			);
+			routes.MapPageRoute(
+				"DevelopersIndex",
+				"Developers",
+				"~/Pages/Developers/Default.aspx"
+			);
+
+			//User Guides
+			routes.MapPageRoute(
+				"UserGuide",
+				"Help/Guide/{*tab}",
+				"~/Help/Guide.aspx"
+			);
+
+			//Custom searches
+			routes.MapPageRoute(
+				"CustomSearch_LearningLists",
+				"LearningLists",
+				"~/CustomSearch.aspx",
+				false,
+				new RouteValueDictionary { { "title", "IOER Learning List Search" }, { "collectionIDs", UtilityManager.GetAppKeyValue( "learningListCollectionId", "693" ) }, { "theme", "ioer_library" } }
+			);
+
+			//Rubrics
+			routes.MapPageRoute(
+				"Rubrics",
+				"evaluate/{resourceID}/{*ItemTitle}",
+				"~/controls/rubricsv2/default.aspx"
+				);
+
+			//Ubertagger
+			routes.MapPageRoute(
+				"newbertagger",
+				"tagger",
+				"~/controls/ubertaggerv2/default.aspx"
+				);
+
+			routes.MapPageRoute(
+				"ErrorHandler",
+				"Error/{error}",
+				"~/ErrorPage.aspx"
+				);
+
+
+		} //
 
         void Application_End( object sender, EventArgs e )
         {
             //  Code that runs on application shutdown
 
         }
-
+		void Application_EndRequest(object sender, System.EventArgs e)
+		{
+			// If the user is not authorised to see this page or access this function, send them to the error page.
+			if (Response.StatusCode == 401)
+			{
+				Response.ClearContent();
+				ServiceHelper.SetConsoleErrorMessage("Error: You must be authenticated and authorized to use that feature.");
+				Response.Redirect("/Error/401", true); 
+			}
+			else if (Response.StatusCode == 404)
+			{
+				Response.ClearContent();
+				Response.Redirect("/Error/404", true);
+				//Response.Redirect("/PageNotFound.aspx", true); 
+			}
+		}
         void Application_Error( object sender, EventArgs e )
         {
             // Code that runs when an unhandled error occurs
@@ -269,7 +358,7 @@ namespace IllinoisPathways
                 if ( isBot == false )
                 {
 
-                    LoggingHelper.DoTrace( 2, string.Format( "Session_Start. referrer: {0}, agent: {1}, IP Address: ", lRefererPage, agent, ipAddress ) );
+                    LoggingHelper.DoTrace( 6, string.Format( "Session_Start. referrer: {0}, agent: {1}, IP Address: ", lRefererPage, agent, ipAddress ) );
 
                     string startMsg = "Session Started. SessionID: " + Session.SessionID;
                     //2015-04 mparsons - referrer is now stored separately, and often very large, so skip
@@ -293,7 +382,7 @@ namespace IllinoisPathways
                 }
                 else
                 {
-                    LoggingHelper.DoTrace(2, string.Format( "Session_Start. Skipping bot: referrer: {0}, agent: {1}", lRefererPage, agent ) );
+                    ServiceHelper.DoBotTrace(8, string.Format( "Session_Start. Skipping bot: referrer: {0}, agent: {1}", lRefererPage, agent ) );
                 }
             }
             catch ( Exception ex )

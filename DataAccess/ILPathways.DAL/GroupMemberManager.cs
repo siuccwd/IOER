@@ -234,15 +234,23 @@ namespace ILPathways.DAL
 		/// <param name="userId"></param>
 		/// <param name="groupCode"></param>
 		/// <returns></returns>
-		public static GroupMember GetByGroupCode( int userId, string groupCode )
+		public static GroupMember GetByGroupCode( string groupCode )
 		{
+			int userId = 0;
 			int pId = 0;
 			int groupId = 0;
 
 			return Get( pId, userId, groupId, groupCode );
 		
 		}//
+		public static GroupMember GetByGroupCode( int userId, string groupCode )
+		{
+			int pId = 0;
+			int groupId = 0;
 
+			return Get( pId, userId, groupId, groupCode );
+
+		}//
 		/// <summary>
 		/// Get GroupMember record by userId and group Id
 		/// </summary>

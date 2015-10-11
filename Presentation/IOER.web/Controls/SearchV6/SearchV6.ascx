@@ -1,4 +1,4 @@
-﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="SearchV6.ascx.cs" Inherits="ILPathways.Controls.SearchV6.SearchV6" %>
+﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="SearchV6.ascx.cs" Inherits="IOER.Controls.SearchV6.SearchV6" %>
 <%@ Register TagPrefix="uc1" TagName="Standards" Src="/Controls/StandardsBrowser7.ascx" %>
 
 <link rel="stylesheet" type="text/css" href="/styles/common2.css" />
@@ -21,7 +21,7 @@
   var pageSize = 20;
   var viewMode = "<%=ViewMode %>";
   var currentStartPage = 1;
-  var currentResults = {};
+  var currentResults = <%=InitialResultsJSON %>;
   var selectedTags = [];
   var currentQuery = {};
   var requests = [];
@@ -33,7 +33,13 @@
     "smarter balanced"
   ];
   var previousText = "";
-
+  var fileIcons = [
+    { match: [ ".zip", ".rar", ".tar", ".gz", ".7z" ], icon: "/images/icons/icon_zip_400x300.png" },
+    { match: [ ".avi", ".mp4", ".mpg", ".flv", ".3gp" ], icon: "/images/icons/icon_video_400x300.png" },
+    { match: [ ".ram", ".mp3", ".wma", ".ogg", ".wav" ], icon: "/images/icons/icon_audio_400x300.png"  },
+		{ match: [ ".jnlp", ".tga", ".tif", ".tiff", "view.d2l" ], icon: "/images/icons/icon_download_400x300.png" }
+  ];
+	var usageRightsData = <%=UsageRightsIconsJSON %>;
 
   /* Initialization */
   $(document).ready(function () {
@@ -53,11 +59,12 @@
     setupAutoSelectTags();
     //Log resource views if in widget mode
     setupViewLogging();
-    //Do automatic search
-    pipeline("updateFiltering");
-    pipeline("resetCountdown");
+  	//Do automatic search
+    setupAutoSearch();
     $("form").attr("onsubmit", "return false;");
     setupPreselectedSortOrder();
+  	//Setup accessibility items
+    setupAccessibility();
   });
 
   //Setup window resize events
@@ -70,15 +77,27 @@
 
   //Setup preselected sort order
   function setupPreselectedSortOrder() {
-    $("#ddlSortOrder option").each(function() {
-      if($(this).attr("value").toLowerCase() == preselectedSort.toLowerCase()){
-        console.log("true");
-        $(this).prop("selected", true);
-      }
-    });
-    setTimeout(function() {
-      $("#ddlSortOrder").trigger("change");
-    }, 805);
+    if(window.location.search.indexOf("text=") > -1){
+      sortMode = { field: "", order: "" };
+      return;
+    }
+    if(window.location.search.indexOf("sort") == -1){ 
+      setTimeout(function() {
+        var sortModeParts = $("#ddlSortOrder option:selected").attr("value").split("|");
+        sortMode = { field: sortModeParts[0], order: sortModeParts[1] };
+      }, 805);
+    }
+    else {
+      $("#ddlSortOrder option").each(function() {
+        if($(this).attr("value").toLowerCase() == preselectedSort.toLowerCase()){
+          console.log("true");
+          $(this).prop("selected", true);
+        }
+      });
+      setTimeout(function() {
+        $("#ddlSortOrder").trigger("change");
+      }, 805);
+    }
   }
 
   //Setup drop-down lists
@@ -117,15 +136,17 @@
 
   //Setup Filter interactivity
   function setupFilterClicking() {
-    $("html").not("#btnToggleFilters, #filters, #tags, #standardsBrowserFloat").on("click", function () {
-      $("#btnToggleFilters, #filters, #tags, #standardsBrowserFloat").removeClass("expanded").addClass("collapsed");
-      $(".btnCategory, .tagList").removeClass("selected");
+    $("html").not("#btnToggleFilters, #filters, #tags, #standardsBrowserBox, #btnToggleStandardsBrowser, #skipButtons, #btnToggleSearchTips, #searchTips").on("click", function () {
+    	$("#btnToggleFilters, #btnToggleStandardsBrowser, #filters, #tags, #standardsBrowserBox").removeClass("expanded").addClass("collapsed");
+    	$("#standardsBrowserBox, #searchTips").slideUp(250);
+    	$(".btnCategory, .tagList").removeClass("selected");
+    	$(".collapseButton, .collapsible").removeClass("expanded").addClass("collapsed");
     });
-    $("#btnToggleFilters, #filters, #tags, #standardsBrowserFloat").on("click", function (e) {
+    $("#btnToggleFilters, #filters, #tags, #standardsBrowserBox, #btnToggleStandardsBrowser, #skipButtons, #btnToggleSearchTips, #searchTips").on("click", function (e) {
       e.stopPropagation();
     });
     $("#btnToggleFilters, #filters, #tags").on("click", function() {
-      $("#standardsBrowserFloat").removeClass("expanded").addClass("collapsed");
+      $("#standardsBrowserBox, #searchTips").removeClass("expanded").addClass("collapsed").slideUp(250);
     });
     $("#tags input").on("change", function () {
       pipeline("updateFiltering");
@@ -140,11 +161,50 @@
     });
     $(window).on("SB7showResults", function() {
       $("#btnToggleFilters, #filters").removeClass("expanded").addClass("collapsed");
-      $("#standardsBrowserFloat").removeClass("expanded").addClass("collapsed");
+      $("#standardsBrowserBox").removeClass("expanded").addClass("collapsed").slideUp(250);
     });
     $(window).on("standard_added standard_removed", function() {
       pipeline("updateFiltering");
     });
+  }
+
+	//Setup accessibility things
+  function setupAccessibility(){
+		//Enable skipping to contents with home key - temp change to the escape key (27)
+  	$(window).on("keyup", function(e) {
+  		if(e.which == 27 || e.keyCode == 27){
+  			$("#skipButtons").show().focus();
+  			$(".collapsible, .collapseButton").removeClass("expanded").addClass("collapsed");
+  			$("#standardsBrowserBox, #searchTips").slideUp(250);
+  			$(".btnCategory, .tagList").removeClass("selected");
+  		}
+  	});
+  	//Show skipbuttons if user comes upon it while tabbing
+  	$("#skipLinkTarget, #skipButtons, h1").on("focus", function() {
+  		$("#skipButtons").show();
+  		$(".btnAccessibilityFilterHelper").show();
+  	});
+  	//Hide skipbuttons with alt-H
+  	$(window).on("keydown", function(e){
+  		if((e.which == 72 || e.keyCode == 72) && e.altKey){
+  			$("#skipButtons").hide();
+  		}
+  	});
+
+  }
+
+	//Handle auto search
+  function setupAutoSearch() {
+  	var location = window.location.href.toLowerCase();
+		//If there is no preexisting data or the page is not the main search or there is a user-entered query, do an auto-search
+  	//if(typeof(currentResults.hits) == "undefined" || location.indexOf("/search") == -1 || location.indexOf("text=") > -1){
+  	if(typeof(currentResults.hits) == "undefined"|| location.indexOf("text=") > -1) {
+  		pipeline("updateFiltering");
+  		pipeline("resetCountdown");
+  	}
+  	else {
+  		pipeline("loadResults");
+  	}
   }
 
   //Pipeline Engine
@@ -200,11 +260,10 @@
 
   //Pack Query
   function packQuery(isPagedSearch) {
+  	console.log("test");
     selectedStandardsIDs_search = [];
     if(usingStandards){
-      for(i in allSelectedStandards){
-        selectedStandardsIDs_search.push(allSelectedStandards[i].id);
-      }
+      selectedStandardsIDs_search = allSelectedIDs;
     }
     var queryText = getQueryText();
     currentQuery = {
@@ -222,18 +281,26 @@
 
   //Show results in standards browser
   function showStandardHits(){
-    $(window).trigger("resultsLoaded", currentResults.hits.hits.length);
+    $(window).trigger("resultsLoaded", currentResults.hits.total);
   }
 
-  function showHideStandardsBrowser() {
-    var box = $("#standardsBrowserFloat");
-    if(box.hasClass("expanded")){
-      box.removeClass("expanded").addClass("collapsed");
-    }
-    else {
-      box.removeClass("collapsed").addClass("expanded");
-    }
+  function toggleCollapsible(target, slide){
+  	var button = $(".collapseButton[data-collapsibleID=" + target + "]");
+  	var box = $(".collapsible[data-collapsibleID=" + target + "]");
+  	var collapsed = button.hasClass("collapsed");
+  	$(".collapseButton, .collapsible").removeClass("expanded").addClass("collapsed");
+  	$(".collapsible[data-slide=true]").slideUp(250);
+  	$(".tagList").removeClass("selected");
+  	if(collapsed){
+  		button.removeClass("collapsed").addClass("expanded");
+  		box.removeClass("collapsed").addClass("expanded");
+  		if(slide){
+  			box.slideDown(250);
+  		}
+  		box.focus();
+  	}
   }
+
 
   //Enable selecting tags via event
   function setupAutoSelectTags() {
@@ -278,6 +345,7 @@
     if (!keep) {
       button.addClass("selected");
       filter.addClass("selected");
+      filter.find("label").first().focus();
     }
     triggerResize(100);
   }
@@ -305,13 +373,17 @@
   }
 
   //Search for arbitrary text
-  function searchFor(text, wrapInQuotes) {
+  function searchFor(text, wrapInQuotes, prefix) {
+  	$("#txtSearch").val(text);
+
     if(wrapInQuotes){
       $("#txtSearch").val('"' + text + '"');
     }
-    else {
-      $("#txtSearch").val(text);
+
+    if(typeof(prefix) != "undefined" && prefix != null && prefix.length > 0){
+    	$("#txtSearch").val(prefix.replace(":", "") + ":" + $("#txtSearch").val());
     }
+
     pipeline("doSearch");
   }
 
@@ -383,6 +455,26 @@
     });
   }
   
+	//Accessibility skip functions
+  function skipToSearchBar() { $("#txtSearch").focus(); }
+  function skipToFilters() { $("#btnToggleFilters").focus(); }
+  function skipToStandards() { 
+  	if($("#btnToggleStandardsBrowser").hasClass("collapsed")){
+  		toggleCollapsible('standards', true);
+  	}
+  	$("#SBddlBody").focus(); 
+  }
+  function skipToStandardsSearch() {
+  	if($("#btnToggleStandardsBrowser").hasClass("collapsed")){
+  		toggleCollapsible('standards', true);
+  	}
+  	$("#SBbtnSearch").focus();
+  }
+  function skipToSearchOptions() { $("#ddlSortOrder").focus(); }
+  function skipToSearchResults() { $("#status").trigger("click").focus(); }
+  function skipToFilter(id){ $("#filters input[data-filterID=" + id + "]").focus(); }
+  function skipToSearchTips() { $("#btnToggleSearchTips").focus(); }
+  function hideSkipButtons() { $("#skipButtons").hide(); }
 </script>
 <script type="text/javascript">
   /* AJAX */
@@ -433,15 +525,19 @@
       setStatus("Found " + currentResults.hits.total + " Resources");
       for (i in results) {
         var current = results[i]._source;
-        var link = usingResourceUrl ? current.Url : "/Resource/" + current.ResourceId + "/" + ( current.UrlTitle == null ? "" : current.UrlTitle).replace(/&/g, "" );
+        if(current == null || current.ResourceId == 0){ continue; }
+        var link = usingResourceUrl ? current.Url : "/Resource/" + current.ResourceId + "/" + ( current.UrlTitle == null ? "" : current.UrlTitle).replace(/&/g, "" ) + getLibColIDs();
         //Get thumbnail
-        var thumbnailText = thumbnailTemplate.replace(/{resultURL}/g, link).replace(/{imageURL}/g, "//ioer.ilsharedlearning.org/OERThumbs/large/" + current.ResourceId + "-large.png")
+        //var thumbnailText = thumbnailTemplate.replace(/{resultURL}/g, link).replace(/{imageURL}/g, "//ioer.ilsharedlearning.org/OERThumbs/large/" + current.ResourceId + "-large.png");
+        var thumbnailText = thumbnailTemplate.replace(/{resultURL}/g, link).replace(/{imageURL}/g, getThumbnail(current)).replace(/{title}/g, current.Title);
         //Get keywords
         var keywords = getKeywords(current);
         //Get paradata
         var paradata = getParadata(current);
         //Get standards
         var standards = getStandards(current);
+      	//Get usage rights mini icon
+        var usageRightsIcon = getUsageRightsIcon(current);
         //Fill template
         box.append(
           template.replace(/{resourceID}/g, current.ResourceId)
@@ -455,6 +551,7 @@
             .replace(/{created}/g, current.ResourceCreated)
             .replace(/{creator}/g, getAuthor(current) )
             .replace(/{standards}/g, standards)
+						.replace(/{usageRightsIcon}/g, usageRightsIcon)
         );
 
       }
@@ -462,6 +559,16 @@
       $(window).trigger("resultsRendered");
       box.hide().fadeIn();
     }
+  }
+  function getThumbnail(current){
+    for(var i in fileIcons){
+      for(var j in fileIcons[i].match){
+        if(current.Url.toLowerCase().indexOf(fileIcons[i].match[j]) > -1){
+          return fileIcons[i].icon;
+        }
+      }
+    }
+    return "//ioer.ilsharedlearning.org/OERThumbs/large/" + current.ResourceId + "-large.png";
   }
   //Get a list of keyword-style metadata links
   function getKeywords(current) {
@@ -475,7 +582,7 @@
     }
     for (var i = 0; i < (list.length < 10 ? list.length : 10); i++) {
       if(list[i].toLowerCase() == "other"){ continue; }
-      result += "<a href=\"#\" onclick=\"searchFor('" + list[i] + "'); return false;\" title=\"" + list[i] + "\">" + list[i] + "</a>";
+      result += "<a href=\"#\" onclick=\"searchFor('" + list[i] + "', false); return false;\" title=\"Search for " + list[i] + "\">" + list[i] + "</a>";
     }
     return result;
   }
@@ -484,12 +591,13 @@
     var result = "";
     var data = current.Paradata;
     var paradataFormat = [
-      { img: "icon_comments", data: data.Comments, tip: "Comments", valid: data.Comments > 0 },
-      { img: "icon_likes", data: data.Likes, tip: "Likes", valid: data.Likes > 0 },
-      { img: "icon_dislikes", data: data.Dislikes, tip: "Dislikes", valid: data.Dislikes > 0 },
-      { img: "icon_ratings", data:  ((data.EvaluationsScore / 3) * 100).toString().split(".")[0] + "%", tip: "Rating", valid: data.Evaluations > 0 },
-      { img: "icon_library", data: current.LibraryIds.length, tip: "Favorites", valid: data.Favorites > 0 },
-      { img: "icon_click-throughs", data: data.ResourceViews, tip: "Number of users who visited this Resource",  valid: data.ResourceViews > 0 }
+      { img: "icon_comments", data: data.Comments, tip: "Comments: Number of comments this Resource has received", valid: data.Comments > 0 },
+      { img: "icon_likes", data: data.Likes, tip: "Likes: Number of people who like this Resource", valid: data.Likes > 0 },
+      { img: "icon_dislikes", data: data.Dislikes, tip: "Dislikes: Number of people who don't like this Resource", valid: data.Dislikes > 0 },
+      //{ img: "icon_ratings", data:  ((data.EvaluationsScore / 3) * 100).toString().split(".")[0] + "%", tip: "Rating: An overall evaluation score for this Resource", valid: data.Evaluations > 0 },
+      { img: "icon_ratings", data:  data.EvaluationsScore + "%", tip: "Rating: An overall evaluation score for this Resource", valid: data.Evaluations > 0 },
+      { img: "icon_library", data: current.LibraryIds.length, tip: "Favorites: Number of IOER Libraries this Resource has been added to", valid: data.Favorites > 0 },
+      { img: "icon_click-throughs", data: data.ResourceViews, tip: "Click-throughs: Number of times this Resource has been visited",  valid: data.ResourceViews > 0 }
     ];
     for (i in paradataFormat) {
       var item = paradataFormat[i];
@@ -499,12 +607,21 @@
     }
     return result;
   }
-  //Get a list of Standard links
+	//Get a list of Standard links
+	//May need to improve this later with "show all" functionality
   function getStandards(current) {
     var result = "";
     if (current.StandardNotations.length == 0) { return ""; }
+    var max = 25;
+    var count = 0;
     for (i in current.StandardNotations) {
-      result += "<a href=\"#\" onclick=\"searchFor('" + current.StandardNotations[i] + "'); return false;\" title=\"" + current.StandardNotations[i] + "\">" + current.StandardNotations[i] + "</a>";
+    	if(count <= max){ 
+    		result += "<a href=\"#\" onclick=\"searchFor('standard:" + current.StandardNotations[i] + "'); return false;\" title=\"" + current.StandardNotations[i] + "\">" + current.StandardNotations[i] + "</a>";
+    		count++;
+    	}
+    	else {
+    		break;
+    	}
     }
     return result;
   }
@@ -518,29 +635,51 @@
     link.href = current.Url;
     return link.hostname;
   }
+	//Get usage rights mini icon
+  function getUsageRightsIcon(current) {
+  	if(current.UsageRightsUrl == "" || current.UsageRightsUrl == null || current.UsageRightsUrl.toLowerCase() == "unknown"){
+  		return "<img class='rightsIcon' title='Usage Rights Unknown' alt='Usage Rights Unknown' src='/images/icons/rightsunknownmini.png' />";
+  	}
+  	for(var i in usageRightsData){
+  		if(current.UsageRightsUrl == usageRightsData[i].Url){
+  			return "<a class='rightsIcon' title='" + current.Title + "' href='" + current.UsageRightsUrl + "' target='_blank'><img alt='" + current.Title + "' src='" + usageRightsData[i].MiniIconUrl + "' /></a>";
+  		}
+  	}
+  	return "<a class='rightsIcon' title='Custom Usage Rights - Click for Details' href='" + current.UsageRightsUrl + "' target='_blank'><img alt='Custom Usage Rights - Click for Details' src='/images/icons/rightsreserved.png' /></a>";
+  }
+	//If in the context of a library and/or collection, append these to the URL
+  function getLibColIDs() {
+  	if(typeof(libraryData) == "object"){
+  		var libID = libraryData.library.id;
+  		var tempActive = getActive();
+  		var colID = tempActive.isLibrary ? 0 : tempActive.data.id;
+  		return "?libId=" + libID + "&colId=" + colID;
+  	}
+  	else {
+  		return "";
+  	}
+  }
 
   //Render Paginators
   function renderPaginators(){
-    var box = $("#paginatorTop");
+    var boxes = $(".paginator");
     var totalResults = currentResults.hits.total;
     if(totalResults == 0){
-      box.html("");
-      $("#paginatorBottom").html("");
+      boxes.html("");
       return;
     }
 
-    box.html("Page: ");
+    boxes.html("Page: ");
     
     var totalPages = Math.ceil(totalResults / pageSize);
     var skips = [1, 5, 10, 25, 50, 500, 1000, 2500, 5000, 10000, totalPages];
     for(var i = 1; i <= totalPages; i++){
       var page = i;
       if(page >= (currentStartPage - 2) && page <= (currentStartPage + 2) || skips.indexOf(i) > -1 || i == totalPages){
-        box.append("<input type=\"button\" value=\"" + page + "\" class=\"" + ((currentStartPage == page) ? "current" : "") + "\" onclick=\"jumpToPage(" + i + ");\" />");
+        boxes.append("<input type=\"button\" value=\"" + page + "\" class=\"" + ((currentStartPage == page) ? "current" : "") + "\" title=\"" + ((currentStartPage == page) ? "Currently on page " : "Jump to results page ") + page + "\" onclick=\"jumpToPage(" + i + ");\" />");
       }
     }
 
-    $("#paginatorBottom").html(box.html());
     triggerResize(100);
   }
 
@@ -574,6 +713,8 @@
     if (text == "") {
       text = "*";
     }
+  	//Fix broken URLs in quotes
+    text = text.replace(new RegExp("http://", "g"), "").replace(new RegExp("https://"), "g");
 
     return text;
   }
@@ -613,21 +754,26 @@
 
   /* Search Header */
   #searchHeader { position: relative; }
-  #queryBox { padding-left: 250px; }
-  #btnToggleFilters, #txtSearch { height: 40px; display: inline-block; font-size: 30px; vertical-align: top; }
-  #btnToggleFilters { width: 250px; border-radius: 5px 0 0 0; position: absolute; top: 0; left: 0; border: 0; transition: background-color 0.1s, color 0.1s; font-weight: bold; }
-  #btnToggleFilters:hover, #btnToggleFilters:focus { background-color: #FF6A00; color: #FFF; }
-  #txtSearch { width: 100%; border-radius: 0 5px 0 0; padding-left: 15px; background-image: linear-gradient(#EEE, #FFF 50%, #FFF 85%, #EFEFEF); }
+  #txtSearch { font-size: 26px; }
+  #buttons input { height: 35px; font-size: 22px; font-weight: bold; line-height: 30px; display: inline-block; vertical-align: top; width: 33.333%; transition: background-color 0.1s, color 0.1s; border-width: 1px; }
+  #buttons input:hover, #buttons input:focus { background-color: #FF6A00; color: #FFF; }
+	#buttons input:first-child { border-radius: 0 0 0 5px; }
+	#buttons input:last-child { border-radius: 0 0 5px 0; }
+  #txtSearch { width: 100%; border-radius: 5px 5px 0 0; padding-left: 6px; background-image: linear-gradient(#EEE, #FFF 50%, #FFF 85%, #EFEFEF); line-height: 30px; }
   #ddls { white-space: nowrap; }
-  #ddls select { width: 33.333%; font-size: 20px; height: 30px; cursor: pointer; }
-  #ddls #ddlSortOrder { border-radius: 0 0 0 5px; }
-  #ddls #ddlPageSize { border-radius: 0; }
-  #ddls #ddlViewMode { border-radius: 0 0 5px 0; }
+  #ddls select { width: 33.333%; font-size: 20px; height: 35px; cursor: pointer; border-radius: 0; }
+  #selectedTags { padding: 5px 0; }
   .selectedTag { margin: 2px 1px; border-radius: 5px; background-color: #EEE; padding: 2px 35px 2px 5px; height: 25px; display: inline-block; vertical-align: top; position: relative; max-width: 275px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .selectedTag input { display: inline-block; height: 100%; width: 25px; border-radius: 0 5px 5px 0; position: absolute; top: 0; right: 0; }
+	#btnToggleFilters, #btnToggleStandardsBrowser, #btnToggleSearchTips { background-image: url('/images/arrow-down-white.png'); background-position: right 5px center; background-repeat: no-repeat; background-size: auto 60%; }
+	#skipButtons { max-width: 800px; margin: 15px auto; }
+	#standardsBrowserBox, #searchTips { position: absolute; z-index: 95; width: 100%; display: none; }
+  #standardsBrowserBox #SB7, #searchTips { padding: 10px; background-color: rgba(240,240,240,0.95); border-radius: 0 0 5px 5px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
+	#searchTips h2 { font-size: 20px; }
+	#searchTips p a { display: inline-block; padding: 2px 5px; border: 1px solid #CCC; border-radius: 5px; }
 
   /* Filters */
-  #filters { border-radius: 0 0 5px 5px; position: absolute; top: 40px; left: 0; width: 250px; margin-bottom: 50px; height: 0; transform-origin: top center; -webkit-transform-origin: top center; transition: transform 0.3s, -webkit-transform 0.3s, -ms-transform 0.3s; display: block; z-index: 100; }
+  #filters { border-radius: 0 0 5px 5px; position: absolute; top: 105px; left: 0; width: 25%; margin-bottom: 50px; height: 0; transform-origin: top center; -webkit-transform-origin: top center; transition: transform 0.3s, -webkit-transform 0.3s, -ms-transform 0.3s; display: block; z-index: 100; box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
   #filters.expanded { height: auto; transform: scaleY(1); -webkit-transform: scaleY(1); -ms-transform: scaleY(1); }
   #filters.collapsed { transform: scaleY(0); -webkit-transform: scaleY(0); -ms-transform: scaleY(0); }
   #filters #categories, #tags { display: inline-block; vertical-align: top; }
@@ -635,16 +781,14 @@
   #filters #categories input { width: 100%; border-radius: 0; padding: 5px; text-align: right; white-space: normal; font-weight: bold; border-width: 1px; transition: background-color 0.1s, color 0.1s; }
   #filters #categories input:last-child { border-radius: 0 0 0 5px; }
   #filters #categories input:hover, #filters #categories input:focus { background-color: #FF6A00; }
-  #tags { position: absolute; top: 40px; left: 0; z-index: 150; width: 100%; }
-  #tags .tagList { margin-left: 250px; }
+  #tags { position: absolute; top: 105px; left: 25%; z-index: 150; width: 100%; }
   #tags .tagList h2 { padding: 6px 10px; border-radius: 0 5px 0 0; }
-  #tags .tagList .tagCBXL { padding: 5px; }
+  #tags .tagList .tagCBXL { padding: 5px; box-shadow: 0 1px 10px rgba(0,0,0,0.3); }
   #tags .tagList .tagCBXL label { display: block; padding: 3px 5px; border-radius: 5px; }
   #tags .tagList .tagCBXL label:hover, #tags .tagList .tagCBXL label:focus { cursor: pointer; background-color: #FDFDFD; }
   #tags .tagList { min-width: 275px; display: block; background-color: rgba(240,240,240,0.95); border-radius: 0 5px 5px 0; position: absolute; top: 0; margin-bottom: 50px; transform-origin: left center; -webkit-transform-origin: left center; transition: transform 0.2s, -webkit-transform 0.2s, -ms-transform 0.2s; transform: scaleX(0); -webkit-transform: scaleX(0); -ms-transform: scaleX(0); }
   #tags .tagList.selected { transform: scaleX(1); -webkit-transform: scaleX(1); -ms-transform: scaleX(1); }
-
-  #tags .tagList.standards { width: calc(100% - 250px); }
+  #tags .tagList.standards { width: calc(100% - 200px); }
   .selectedStandard { background-color: #F5F5F5; }
 
   /* Paginators */
@@ -660,7 +804,7 @@
   #searchResults[data-mode=list] { }
   #searchResults[data-mode=grid] { text-align: center; }
   #searchResults[data-mode=text] { }
-  .result.list { padding: 5px; border-radius: 5px; background-image: linear-gradient(#F5F5F5, #FFF); }
+  .result.list { padding: 5px; border-radius: 5px; background-image: linear-gradient(#F5F5F5, #FFF); position: relative; }
   .result.list .resultcontent { white-space: nowrap; }
   .result.list .descriptionBox, .result.list .keywords, .result.list .images, .result.list .images .thumbnailBox, .result.list .paradata div { display: inline-block; vertical-align: top; }
   .result.list .descriptionBox { width: calc(100% - 400px); }
@@ -677,12 +821,13 @@
   .result.list .expandCollapseBox { height: 25px; }
   .result.list .expandCollapseBox input { float: right; width: 100px; }
   .result.list .links a { display: inline-block; vertical-align: top; overflow: hidden; text-overflow: ellipsis; width: 30%; margin: 2px 1%; text-align: left; white-space: nowrap; }
-  .result.list .title { font-size: 20px; font-weight: bold; padding: 2px 5px 5px 2px; }
+	.result.list .links a.creator { width: 100%; display: block; }
+  .result.list .title { font-size: 20px; font-weight: bold; padding: 2px 90px 5px 2px; display: block; }
+	.result.list .rightsIcon { position: absolute; top: 10px; right: 5px; display: inline-block; border: none; }
 
   .result.grid { width: 250px; display: inline-block; vertical-align: top; margin: 15px 1%; box-shadow: 0 0 15px -1px #CCC; padding: 5px; border-radius: 5px; transition: box-shadow 0.2s; }
   .result.grid .thumbnailBox { position: relative; margin: -5px -5px 5px -5px; }
-  .result.grid .title { font-size: 18px; min-height: 4em; display: block; }
-  .result.grid .title { padding: 2px 5px; }
+  .result.grid .title { font-size: 18px; min-height: 4em; display: block; padding: 2px 5px; word-break: break-word; word-wrap: break-word; }
   .result.grid .paradata { min-height: 32px; position: absolute; top: 0; right: 0; background-image: linear-gradient(90deg, rgba(255,255,255,0) 10%, rgba(0,0,0,0.5)); height: 100%; border-radius: 0 5px 5px 0; overflow: hidden; }
   .result.grid:hover, .result.grid:focus { box-shadow: 0 0 20px -1px #FF6A00; }
   .result.grid .thumbnail { border-radius: 5px 5px 0 0; }
@@ -699,7 +844,7 @@
   .result .paradata div { color: #000; background: #EEE url('') left center no-repeat; text-align: right; padding: 0 5px; height: 25px; line-height: 25px; width: 60px; border-radius: 5px; margin: 1px; border: 1px solid #999; }
 
   /* Miscellaneous */
-  #status { padding: 2px; margin: 3px 0 0 0; text-align: center; transition: background 0.8s, padding 0.8s; border-radius: 5px; }
+  #status { padding: 10px; margin: 3px 0 0 0; text-align: center; transition: background 0.8s, padding 0.8s; border-radius: 5px; }
   #status.searching { background-color: rgba(0,255,0,0.6); }
   #status.error { padding: 50px; background-color: rgba(255,0,0,0.2); }
   #status.caution { padding: 15px; background-color: rgba(255,204,51,0.3); }
@@ -708,20 +853,20 @@
   div[data-filterid=searchTips] p { margin: 2px 5px; }
   div[data-filterid=searchTips] ul { margin-left: 25px; margin-bottom: 20px; }
   div[data-filterid=searchTips] ul li { margin-bottom: 2px; }
+	.btnAccessibilityFilterHelper { display: none; }
 
   /* Media Queries */
   @media (max-width: 850px) {
     .result.list .keywords { display: none; }
     .result.list .descriptionBox { width: calc(100% - 200px); padding-right: 10px; }
   }
-  @media (max-width: 800px) {
-    #queryBox { padding-left: 150px; }
-    #btnToggleFilters { width: 150px; }
-    #filters { width: 150px; }
-    #tags .tagList { min-width: 250px; margin-left: 150px; }
-    #tags .tagList.standards { width: calc(100% - 150px); }
-  }
-  @media (max-width: 550px) {
+	@media (max-width: 750px) {
+		#buttons input { width: 100%; }
+		#filters { top: 175px; width: 125px; }
+		#tags { top: 175px; left: 125px; }
+		#standardsBrowserBox { top: 206px; }
+	}
+  @media (max-width: 625px) {
     #queryBox { padding-left: 0; }
     #btnToggleFilters, #txtSearch { width: 100%; display: block; }
     #btnToggleFilters { position: static; border-radius: 0; }
@@ -729,11 +874,6 @@
     #ddls select { width: 100%; display: block; }
     #ddls #ddlSortOrder, #ddls #ddlPageSize { border-radius: 0; }
     #ddls #ddlViewMode { border-radius: 0 0 5px 5px; }
-    #filters { top: 80px; width: 125px; }
-    #tags { top: 80px; }
-    #tags .tagList { width: calc(100% - 150px); min-width: 150px; margin-left: 125px; }
-    #tags .tagList.standards { width: 100%; margin-left: 0; border-radius: 0 0 5px 5px; }
-    #tags .tagList.standards h2 { border-radius: 0; }
   }
   @media (max-width: 500px) {
     .result.list .descriptionBox { width: 70%; }
@@ -744,16 +884,62 @@
 
 <div class="theme">
   <div id="themeHeaderContent"></div>
+	<div id="skipButtons" class="grayBox" tabindex="0" style="display: none;">
+		<div id="hideSkipbuttons"><input type="button" class="isleButton bgBlue" id="btnHideSkipButtons" onclick="hideSkipButtons();" value="Hide this section (Alt + H)" /></div>
+		<p>Press the Escape key at any time to jump back to this menu. Use the items here to skip to major sections of this page.</p>
+		<p>Any time you change the text of the search text box or change your filter selection, the search results are automatically updated.</p>
+		<% if(UseStandards) { %><p>If you select one or more learning standards, you will need to press the Search button within the standards browser to perform a search.</p><% } %>
+		<input type="button" class="isleButton bgBlue" onclick="skipToSearchBar();" value="Skip to Search text box" />
+		<input type="button" class="isleButton bgBlue" onclick="skipToSearchOptions();" value="Skip to Search Options" />
+		<input type="button" class="isleButton bgBlue" onclick="skipToFilters();" value="Skip to Filters" />
+		<% if(UseStandards){  %>
+		<input type="button" class="isleButton bgBlue" onclick="skipToStandards();" value="Skip to Standards Browser" />
+		<input type="button" class="isleButton bgBlue" onclick="skipToStandardsSearch();" value="Skip to Standards Browser Search Button" />
+		<% } %>
+		<input type="button" class="isleButton bgBlue" onclick="skipToSearchTips();" value="Skip to Search Tips" />
+		<input type="button" class="isleButton bgBlue" onclick="skipToSearchResults();" value="Skip to Search Results" />
+	</div>
   <div id="searchHeader">
-    <!-- Filters and Text Search -->
-    <div id="queryBox">
-      <input type="text" id="txtSearch" class="txtSearch" placeholder="Start typing here to search..." value="<%=PreselectedText %>" /><!--
-      --><input type="button" id="btnToggleFilters" class="btnToggleFilters collapsed" value="Filters" onclick="toggleFilters()" />
-    </div>
+		<div id="queryBox">
+      <input type="text" id="txtSearch" class="txtSearch" placeholder="Start typing here to search..." value='<%=PreselectedText %>' />
+			<div id="ddls">
+				<select title="Sort Order" id="ddlSortOrder">
+					<option value="|" selected="selected">Most Relevant</option>
+					<option value="ResourceId|desc">Newest First</option>
+					<option value="ResourceId|asc">Oldest First</option>
+					<option value="Paradata.ResourceViews|desc">Most Visited</option>
+					<option value="Paradata.Likes|desc">Most Total Likes</option>
+					<option value="Paradata.Rating|desc">Most Net Likes vs Dislikes</option>
+					<option value="Paradata.Rating|asc">Most Net Dislikes vs Likes</option>
+					<option value="Paradata.Dislikes|desc">Most Total Dislikes</option>
+					<option value="Paradata.EvaluationsScore|desc">Best Net Evaluation Score</option>
+					<option value="Paradata.Evaluations|desc">Most Total Evaluations</option>
+					<option value="Paradata.Favorites|desc">In the Most Libraries</option>
+					<option value="Paradata.Comments|desc">Most Comments</option>
+				</select><!--
+				--><select title="Page Size" id="ddlPageSize">
+					<option value="20">Show 20 Items</option>
+					<option value="50">Show 50 Items</option>
+					<option value="100">Show 100 Items</option>
+				</select><!--
+				--><select title="Display Format" id="ddlViewMode">
+					<option value="list" <%=( ViewMode == "list" ? "selected=\"selected\"" : "" ) %>>List View</option>
+					<option value="grid" <%=( ViewMode == "grid" ? "selected=\"selected\"" : "" ) %>>Grid View</option>
+					<option value="text" <%=( ViewMode == "text" ? "selected=\"selected\"" : "" ) %>>Text-Only</option>
+				</select>
+			</div>
+		</div>
+		<div id="buttons">
+			<input type="button" id="btnToggleFilters" class="collapseButton collapsed" value="Filter by Tags" data-collapsibleID="filters" onclick="toggleCollapsible('filters', false)" /><!--
+				<% if(UseStandards){  %>
+      --><input type="button" id="btnToggleStandardsBrowser" class="collapseButton collapsed" data-collapsibleID="standards" onclick="toggleCollapsible('standards', true)" value="Filter by Standards" /><!--
+				<% } %>
+			--><input type="button" id="btnToggleSearchTips" class="collapseButton collapsed" data-collapsibleID="tips" onclick="toggleCollapsible('tips', true)" value="Search Tips" />
+		</div>
+
     <!-- Filters -->
-    <div id="filters" class="collapsed">
+    <div id="filters" data-collapsibleID="filters" data-slide="false" class="collapsible collapsed" tabindex="0">
       <div id="categories">
-        <input type="button" class="btnCategory" data-filterID="searchTips" value="Search Tips" onclick="toggleFilter(this)" />
       <% foreach(var item in Filters){ %>
         <input type="button" class="btnCategory" data-filterID="<%=item.Id %>" value="<%=item.Title %>" onclick="toggleFilter(this)" />
       <% } %>
@@ -761,107 +947,101 @@
       -->
     </div>
     <div id="tags">
-      <div class="tagList" data-filterID="searchTips">
-        <h2>Search Tips</h2>
-        <p>You can wrap phrases in double quotes ( " ) to search for whole phrases:</p>
-        <ul>
-          <li><a href="#" onclick="searchFor(this.innerHTML, false)">"3rd grade" literacy</a> <span>(Literacy Resources for Third-Graders)</span></li>
-          <li><a href="#" onclick="searchFor(this.innerHTML, false)">"pythagorean theorem"</a></li>
-          <li><a href="#" onclick="searchFor(this.innerHTML, false)">"dinosaur footprints"</a></li>
-        </ul>
-        <p>You can use + or - to require/exclude words or phrases:</p>
-        <ul>
-          <li><a href="#" onclick="searchFor(this.innerHTML, false)">+trees -forest</a> <span>(Finds Resources about trees, avoiding Resources about forests)</span></li>
-          <li><a href="#" onclick="searchFor(this.innerHTML, false)">formula -chemistry</a> <span>(Finds Non-Chemistry Resources about Formulas)</span></li>
-          <li><a href="#" onclick="searchFor(this.innerHTML, false)">formula +chemistry</a> <span>(Finds Only Chemistry Resources about Formulas)</span></li>
-          <li><a href="#" onclick="searchFor(this.innerHTML, false)">geometry +"isosceles triangle"</a> <span>(Finds Geometry Resources focusing on Isosceles Triangles)</span></li>
-        </ul>
-        <p>You can use | to look for one term/phrase or another:</p>
-        <ul>
-          <li><a href="#" onclick="searchFor(this.innerHTML, false)">math|english</a></li>
-          <li><a href="#" onclick="searchFor(this.innerHTML, false)">trees forest|math</a></li>
-          <li><a href="#" onclick="searchFor(this.innerHTML, false)">"civil rights"|"civil engineering"</a> <span>(Finds Civil Rights or Civil Engineering Resources)</span></li>
-        </ul>
-        <p>Put them together. Go nuts!</p>
-        <ul>
-          <li><a href="#" onclick="searchFor(this.innerHTML, false)">"grade 3" geometry -triangles</a> <span>(Finds Grade 3 Geometry Resources about things other than Triangles)</span></li>
-          <li><a href="#" onclick="searchFor(this.innerHTML, false)">"charles dickens" +"christmas carol" film|video</a> <span>(Finds film or video Resources about Charles Dickens' <u>A Christmas Carol</u>)</span></li>
-          <li><a href="#" onclick="searchFor(this.innerHTML, false)">history|biography +war -ww2 -"world war 2" -"world war II"</a> <span>(Finds History or Biography Resources about war, but not about World War 2)</span></li>
-          <li><a href="#" onclick="searchFor(this.innerHTML, false)">+free math "grade 3"|"third grade"|"3rd grade" game|activity -test -quiz application/software student</a> <span>(Finds Free Math Resources for Third Graders that are Games or Activities but not Tests or Quizzes, and is software meant for students.)</span></li>
-        </ul>
-      </div>
     <% foreach(var item in Filters){ %>
       <div class="tagList" data-filterID="<%=item.Id %>">
         <h2><%=item.Title %></h2>
         <div class="tagCBXL">
         <% foreach(var tag in item.Tags) { %>
-          <label><input type="checkbox" name="cbx_<%=tag.Id %>" data-id="<%=tag.Id %>" <%=(PreselectedTags.Contains(tag.Id) ? "checked=\"checked\"" : "") %> /> <%=tag.Title %></label>
+          <label><input type="checkbox" name="cbx_<%=tag.Id %>" data-id="<%=tag.Id %>" <%=(PreselectedTags.Contains(tag.Id) ? "checked=\"checked\"" : "") %> title="<%=tag.Title %>" /> <%=tag.Title %></label>
         <% } %>
+					<input type="button" class="isleButton bgBlue btnAccessibilityFilterHelper" value="Back to Filter List" onclick="skipToFilter(<%=item.Id %>);" />
         </div>
       </div>
     <% } %>
     </div>
     <!-- Drop-down lists -->
-    <div id="ddls">
-      <select id="ddlSortOrder">
-        <option value="|">Relevance</option>
-        <option value="ResourceId|desc" selected="selected">Newest First</option>
-        <option value="ResourceId|asc">Oldest First</option>
-        <option value="Paradata.ResourceViews|desc">Most Visited</option>
-        <option value="Paradata.Rating|desc">Best Rated</option>
-        <option value="Paradata.EvaluationsScore|asc">Worst Rated</option>
-        <option value="Paradata.Comments|desc">Most Commented</option>
-        <option value="Paradata.Favorites|desc">Most Favorited</option>
-      </select><!--
-      --><select id="ddlPageSize">
-        <option value="20">Show 20 Items</option>
-        <option value="50">Show 50 Items</option>
-        <option value="100">Show 100 Items</option>
-      </select><!--
-      --><select id="ddlViewMode">
-        <option value="list" <%=( ViewMode == "list" ? "selected=\"selected\"" : "" ) %>>List View</option>
-        <option value="grid" <%=( ViewMode == "grid" ? "selected=\"selected\"" : "" ) %>>Grid View</option>
-        <option value="text" <%=( ViewMode == "text" ? "selected=\"selected\"" : "" ) %>>Text-Only</option>
-      </select>
+    <% if(UseStandards){ %>
+    <div id="standardsBrowserBox" data-collapsibleID="standards" data-slide="true" class="collapsible collapsed" tabindex="0">
+      <uc1:Standards ID="standardsBrowser" runat="server" />
     </div>
+    <% } else { %>
+		<style type="text/css">
+			#buttons input { width: 50%; }
+			@media (max-width: 750px) {
+				#filters { top: 105px; }
+				#tags { top: 105px; }
+			}
+			@media (max-width: 625px) {
+				#filters { top: 175px; width: 125px; }
+				#tags { top: 175px; left: 125px; }
+			}
+		</style>
+		<% } %>
+		<div id="searchTips" data-collapsibleID="tips" data-slide="true" class="grayBox collapsible collapsed" tabindex="0">
+      <h2 class="header">Search Tips</h2>
+			<p>You can limit searches to specific fields by typing the field's name followed by : and entering the rest of your query. Separate fields with a comma to look in multiple fields.</p>
+			<p>Currently-supported fields include: 
+				<a href="#" onclick="searchFor(this.innerHTML, false);">resourceid:</a>
+				<a href="#" onclick="searchFor(this.innerHTML, false);">title:</a>
+				<a href="#" onclick="searchFor(this.innerHTML, false);">description:</a>
+				<a href="#" onclick="searchFor(this.innerHTML, false);">url:</a>
+				<a href="#" onclick="searchFor(this.innerHTML, false);">creator:</a>
+				<a href="#" onclick="searchFor(this.innerHTML, false);">publisher:</a>
+				<a href="#" onclick="searchFor(this.innerHTML, false);">submitter:</a>
+				<a href="#" onclick="searchFor(this.innerHTML, false);">keywords:</a>
+				<a href="#" onclick="searchFor(this.innerHTML, false);">standard:</a>
+			</p>
+			<ul>
+				<li><a href="#" onclick="searchFor(this.innerHTML, false);">creator:ioer</a></li>
+				<li><a href="#" onclick="searchFor(this.innerHTML, false);">creator,publisher:ioer</a></li>
+				<li><a href="#" onclick="searchFor(this.innerHTML, false);">standard,title:math</a></li>
+			</ul>
+      <p>You can wrap phrases in double quotes ( " ) to search for whole phrases:</p>
+      <ul>
+        <li><a href="#" onclick="searchFor(this.innerHTML, false)">"3rd grade" literacy</a> <span>(Literacy Resources for Third-Graders)</span></li>
+        <li><a href="#" onclick="searchFor(this.innerHTML, false)">"pythagorean theorem"</a></li>
+        <li><a href="#" onclick="searchFor(this.innerHTML, false)">"dinosaur footprints"</a></li>
+      </ul>
+      <p>You can use + or - to require/exclude words or phrases:</p>
+      <ul>
+        <li><a href="#" onclick="searchFor(this.innerHTML, false)">+trees -forest</a> <span>(Finds Resources about trees, avoiding Resources about forests)</span></li>
+        <li><a href="#" onclick="searchFor(this.innerHTML, false)">formula -chemistry</a> <span>(Finds Non-Chemistry Resources about Formulas)</span></li>
+        <li><a href="#" onclick="searchFor(this.innerHTML, false)">formula +chemistry</a> <span>(Finds Only Chemistry Resources about Formulas)</span></li>
+        <li><a href="#" onclick="searchFor(this.innerHTML, false)">geometry +"isosceles triangle"</a> <span>(Finds Geometry Resources focusing on Isosceles Triangles)</span></li>
+      </ul>
+      <p>You can use | to look for one term/phrase or another:</p>
+      <ul>
+        <li><a href="#" onclick="searchFor(this.innerHTML, false)">math|english</a></li>
+        <li><a href="#" onclick="searchFor(this.innerHTML, false)">trees forest|math</a></li>
+        <li><a href="#" onclick="searchFor(this.innerHTML, false)">"civil rights"|"civil engineering"</a> <span>(Finds Civil Rights or Civil Engineering Resources)</span></li>
+      </ul>
+      <p>Put them together. Go nuts!</p>
+      <ul>
+        <li><a href="#" onclick="searchFor(this.innerHTML, false)">"grade 3" geometry -triangles</a> <span>(Finds Grade 3 Geometry Resources about things other than Triangles)</span></li>
+        <li><a href="#" onclick="searchFor(this.innerHTML, false)">"charles dickens" +"christmas carol" film|video</a> <span>(Finds film or video Resources about Charles Dickens' <u>A Christmas Carol</u>)</span></li>
+        <li><a href="#" onclick="searchFor(this.innerHTML, false)">history|biography +war -ww2 -"world war 2" -"world war II"</a> <span>(Finds History or Biography Resources about war, but not about World War 2)</span></li>
+        <li><a href="#" onclick="searchFor(this.innerHTML, false)">+free math "grade 3"|"third grade"|"3rd grade" game|activity -test -quiz application/software student</a> <span>(Finds Free Math Resources for Third Graders that are Games or Activities but not Tests or Quizzes, and is software meant for students.)</span></li>
+      </ul>
+    </div>
+
     <!-- Selected tags -->
     <div id="selectedTags"></div>
   </div><!-- /searchHeader -->
-  <div id="status"></div>
-  <div id="paginatorTop" class="paginator top"></div>
+  <div id="status" tabindex="0"></div>
+  <div id="paginatorTop" class="paginator top" style="display:none;"></div>
   <div id="searchResults" data-mode="<%=ViewMode %>"></div><!-- /searchResults -->
   <div id="paginatorBottom" class="paginator bottom"></div>
 
-  <% if(UseStandards){ %>
-  <style type="text/css">
-    .theme { padding-right: 30px; }
-    #standardsBrowserFloat { position: absolute; top: 200px; height: 550px; right: 0; background-color: rgba(240,240,240,0.95); border-radius: 5px 0 0 5px; transition: width 0.5s; z-index: 1000; }
-    #standardsBrowserFloat.expanded { width: calc(100% - 100px); }
-    #standardsBrowserFloat.collapsed #SB7 { overflow: hidden; padding-left: 0; padding-right: 0; }
-    #standardsBrowserFloat.collapsed { width: 0; }
-    #standardsBrowserFloat #SB7 { height: 100%; transition: padding 0.5s; }
-    #standardsBrowserFloat #SB7 #SBleftColumn { height: calc(100% - 30px); }
-    #standardsBrowserFloat #SB7 #SBtree { max-height: 100%; overflow-x: hidden; }
-    #btnToggleStandardsSide { transform: rotate(-90deg); transform-origin: bottom left; -webkit-transform: rotate(-90deg); -webkit-transform-origin: bottom left; -ms-transform: rotate(-90deg); -ms-transform-origin: bottom left; position: absolute; height: 35px; width: 250px; left: 0; top: calc(50% + 85px); display: block; border: 1px solid #CCC; border-radius: 5px 5px 0 0; }
-    #standardsBrowserFloat.expanded #btnToggleStandardsSide { background-color: #9984BD; }
-    @media screen and (max-width: 600px) {
-      #standardsBrowserFloat #SB7 #SBleftColumn { height: calc(100% - 100px); }
-    }
-  </style>
-  <div id="standardsBrowserFloat" class="collapsed">
-    <input type="button" id="btnToggleStandardsSide" value="Standards Browser" class="isleButton bgBlue" onclick="showHideStandardsBrowser();" />
-    <uc1:Standards ID="standardsBrowserSide" runat="server" />
-  </div>
-  <% } %>
 </div>
 
 <div id="templates" style="display:none;">
   <script type="text/template" id="template_thumbnail">
-    <div class="thumbnail" style="background-image:url('{imageURL}');"><img src="/images/ThumbnailResizer.png" /></div>
+    <div class="thumbnail" style="background-image:url('{imageURL}');" title="Thumbnail: {title}"><img alt="" src="/images/ThumbnailResizer.png" /></div>
   </script>
   <script type="text/template" id="template_result_list">
     <div class="result list" data-resourceID="{resourceID}" data-versionID="{versionID}">
-      <a class="title resourceLink" href="{resultURL}" target="resultWindow">{title}</a>
+			{usageRightsIcon}
+      <a class="title resourceLink" href="{resultURL}" target="ioerDtl">{title}</a>
       <div class="modBox_before" data-resourceID="{resourceID}"></div>
       <div class="resultContent">
         <div class="descriptionBox">
@@ -870,25 +1050,25 @@
             <input type="button" onclick="toggleExpandCollapse({resourceID}, this);" value="More" />
           </div>
           <div class="links">
-            <a class="creator" href="#" onclick="searchFor('{creator}', true);">{creator}</a>
+            <a class="creator" href="#" onclick="searchFor('{creator}', true, 'creator');">{creator}</a>
             {standards}
           </div>
           <div class="modBox_middle"></div>
         </div><!--
      --><div class="keywords">{keywords}</div><!--
      --><div class="images">
-          <a href="{resultURL}" target="resultWindow" class="thumbnailBox resourceLink">
+          <a href="{resultURL}" target="ioerDtl" class="thumbnailBox resourceLink">
             {thumbnail}
-            <div class="paradata">{paradata}</div>
-            <div class="created">Created {created}</div>
           </a>
+          <div class="paradata">{paradata}</div>
+          <div class="created">Created {created}</div>
         </div>
       </div>
       <div class="modBox_after"></div>
     </div>
   </script>
   <script type="text/template" id="template_result_grid">
-    <a class="result grid resourceLink" data-resourceID="{resourceID}" href="{resultURL}" target="resultWindow">
+    <a class="result grid resourceLink" data-resourceID="{resourceID}" href="{resultURL}" target="ioerDtl">
       <div class="modBox_before"></div>
       <div class="thumbnailBox">
         {thumbnail}
@@ -901,7 +1081,7 @@
   <script type="text/template" id="template_result_text">
     <div class="result text" data-resourceID="{resourceID}">
       <div class="modBox_before"></div>
-      <a href="{resultURL}" target="resultWindow" class="resourceLink">{title}</a>
+      <a href="{resultURL}" target="ioerDtl" class="resourceLink">{title}</a>
       <div class="description">{description}</div>
       <div class="modBox_after"></div>
     </div>

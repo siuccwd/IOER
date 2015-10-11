@@ -8,14 +8,18 @@ using System.Web.UI.WebControls;
 using System.Web.Script.Serialization;
 
 using Isle.BizServices;
-using ILPathways.Library;
+using IOER.Library;
 using ILPathways.Business;
+using Services = IOER.Services;
+using ILPathways.Utilities;
+
 using ILPathways.Common;
 using Item = ILPathways.Business.DataItem;
-using ILPathways.Utilities;
+using ThisUser = LRWarehouse.Business.Patron;
 using DataBaseHelper = LRWarehouse.DAL.BaseDataManager;
+using IOER.Services;
 
-namespace ILPathways.Controls.Libraries
+namespace IOER.Controls.Libraries
 {
     public partial class Library : BaseUserControl
     {
@@ -58,7 +62,7 @@ namespace ILPathways.Controls.Libraries
         /// check for requested library or collection
         /// </summary>
         /// <returns></returns>
-        public Services.ESLibrary2Service.LibraryData GetLibrary()
+        public ESLibrary2Service.LibraryData GetLibrary()
         {
 
             //Attempt to get the user
@@ -108,7 +112,7 @@ namespace ILPathways.Controls.Libraries
             return colId.ToString();
         }
 
-        private Services.ESLibrary2Service.LibraryData GetMyLibrary()
+        private ESLibrary2Service.LibraryData GetMyLibrary()
         {
             if ( userGUID == "" ) //Not logged in
             {
@@ -116,7 +120,7 @@ namespace ILPathways.Controls.Libraries
                 return null;
             }
 
-            var user = ( LRWarehouse.Business.Patron ) WebUser;
+			var user = ( ThisUser ) WebUser;
             //It's probably better to replace the next line with one that gets the user's current Library ID (and use that in the GetAllLibraryData method), but that ID seems to always be 0)
             var library = new Isle.BizServices.LibraryBizService().GetMyLibrary( user );
             if ( !library.IsValid || library.Id == 0 ) //User doesn't have a library yet
@@ -134,7 +138,7 @@ namespace ILPathways.Controls.Libraries
                     return null;
                 }
             }
-            var data = new Services.ESLibrary2Service().GetAllLibraryData( user, library );
+            var data = new ESLibrary2Service().GetAllLibraryData( user, library );
             libraryID = library.Id;
             settingsPanel.Visible = data.isMyLibrary || data.hasEditAccess;
             settingsTab.Visible = data.isMyLibrary || data.hasEditAccess;
@@ -155,7 +159,7 @@ namespace ILPathways.Controls.Libraries
 
         } ///
 
-        private Services.ESLibrary2Service.LibraryData GetLibrary( int libId )
+        private ESLibrary2Service.LibraryData GetLibrary( int libId )
         {
             try
             {
@@ -182,7 +186,7 @@ namespace ILPathways.Controls.Libraries
                 libraryStuff.Visible = false;
                 //searchControl.Visible = false;
 
-                var errData = new Services.ESLibrary2Service.LibraryData();
+                var errData = new ESLibrary2Service.LibraryData();
                 return errData;
             }
         }
@@ -194,7 +198,7 @@ namespace ILPathways.Controls.Libraries
             ddlOrganizationAccessLevels.Items.Clear();
 
             var list = LibraryBizService.GetCodes_LibraryAccessLevel();
-            foreach ( Common.CodeItem item in list )
+            foreach ( CodeItem item in list )
             {
                 var insert = new ListItem()
                 {
@@ -285,7 +289,7 @@ namespace ILPathways.Controls.Libraries
 
                 //Add avatars
                 var avatarSystem = new My.Avatar();
-                avatarSystem.UpdateAvatar( fileNewImage, library, new Business.LibrarySection() ); //Create the avatar for library
+                avatarSystem.UpdateAvatar( fileNewImage, library, new LibrarySection() ); //Create the avatar for library
                 avatarSystem.UpdateAvatar( fileNewImage, library, defaultCollection ); //Use the same avatar for the default collection
                 SetConsoleSuccessMessage( completionMessage.Text );
 
@@ -304,8 +308,8 @@ namespace ILPathways.Controls.Libraries
 
         public string ValidateText( string text, int minimum, string name, ref bool valid, ref string status )
         {
-            text = Utilities.FormHelper.SanitizeUserInput( text );
-            if ( Utilities.BadWordChecker.CheckForBadWords( text ) )
+            text = FormHelper.CleanText( text );
+            if ( BadWordChecker.CheckForBadWords( text ) )
             {
                 valid = false;
                 status = status + " Inappropriate Language found.";

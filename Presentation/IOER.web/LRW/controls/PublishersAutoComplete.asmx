@@ -1,1 +1,1 @@
-﻿<%@ WebService Language="C#" CodeBehind="PublishersAutoComplete.asmx.cs" Class="ILPathways.LRW.controls.PublishersAutoComplete" %>
+﻿<%@ WebService Language="C#" CodeBehind="PublishersAutoComplete.asmx.cs" Class="IOER.LRW.controls.PublishersAutoComplete" %>

@@ -15,11 +15,46 @@ namespace Isle.BizServices
     public class CommunityServices : ServiceHelper
     {
         private static string thisClassName = "CommunityServices";
-     
+
+		EFDAL.EFCommunityManager myManager = new EFDAL.EFCommunityManager();
+
         public CommunityServices()
 		{ }//
 
         #region == Community ==
+		/// <summary>
+		/// Delete a community
+		/// </summary>
+		/// <param name="id"></param>
+		/// <param name="statusMessage"></param>
+		/// <returns></returns>
+		public bool Delete( int id, ref string statusMessage )
+		{
+			return myManager.CommunityDelete( id, ref statusMessage );
+		}
+
+		/// <summary>
+		/// Create a community
+		/// </summary>
+		/// <param name="entity"></param>
+		/// <param name="statusMessage"></param>
+		/// <returns></returns>
+		public int Create( Community entity, ref string statusMessage )
+		{
+			return myManager.CommunityAdd( entity, ref statusMessage );
+		}
+
+		/// <summary>
+		/// Update a community
+		/// </summary>
+		/// <param name="entity"></param>
+		/// <param name="message"></param>
+		/// <returns></returns>
+		public bool Update( Community entity, ref string message )
+		{
+			return myManager.CommunityUpdate( entity, ref message );
+		}
+
         /// <summary>
         /// Get a community
         /// Will return community including the most recent n posts (from web.config)
@@ -71,7 +106,6 @@ namespace Isle.BizServices
         {
             return EFDAL.EFCommunityManager.Community_GetAll( recentPosts );
         }
-        
         #endregion
 
 

@@ -14,12 +14,12 @@ using System.Web.UI.HtmlControls;
 //using MyManager = workNet.DAL.AppItemManager;
 //using MyAppEmailManager = workNet.DAL.AnnouncementEmailManager;
 using ILPathways.Business;
-using ILPathways.Controllers;
-using ILPathways.Library;
+using IOER.Controllers;
+using IOER.Library;
 using ILPathways.Utilities;
 using BDM = ILPathways.DAL.DatabaseManager;
 
-namespace ILPathways.Controls.AppItems
+namespace IOER.Controls.AppItems
 {
     public partial class WhatsNew : BaseUserControl
     {
@@ -215,7 +215,7 @@ namespace ILPathways.Controls.AppItems
             }
 
             //NewsEmailTemplate CurrentNewsTemplate = myEmailTemplateMgr.Get( NewsItemTemplateCode );
-            CurrentNewsTemplate = ILPathways.Controllers.NewsController.NewsTemlateGet( NewsItemTemplateCode );
+            CurrentNewsTemplate = IOER.Controllers.NewsController.NewsTemlateGet( NewsItemTemplateCode );
             if ( CurrentNewsTemplate == null || CurrentNewsTemplate.Id == 0 )
             {
                 //hide, no code found
@@ -263,7 +263,7 @@ namespace ILPathways.Controls.AppItems
 
             if ( UsingWebService == "yes" )
             {
-                ds = ILPathways.Controllers.AppItemController.AppItemWebServiceNewsSearch( CurrentNewsTemplate.Category, "", NbrItems );
+                ds = IOER.Controllers.AppItemController.AppItemWebServiceNewsSearch( CurrentNewsTemplate.Category, "", NbrItems );
             }
             else
             {

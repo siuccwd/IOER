@@ -337,6 +337,33 @@ namespace ILPathways.Admin.Org {
         protected global::System.Web.UI.WebControls.Label lblUserId;
         
         /// <summary>
+        /// profileLinkPanel control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel profileLinkPanel;
+        
+        /// <summary>
+        /// Label9 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label Label9;
+        
+        /// <summary>
+        /// profileLink control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.HyperLink profileLink;
+        
+        /// <summary>
         /// existingMbrOptionPanel control.
         /// </summary>
         /// <remarks>
@@ -562,6 +589,15 @@ namespace ILPathways.Admin.Org {
         protected global::System.Web.UI.WebControls.Panel hiddenPanel;
         
         /// <summary>
+        /// formSecurityName control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Literal formSecurityName;
+        
+        /// <summary>
         /// currentOrgId control.
         /// </summary>
         /// <remarks>
@@ -578,6 +614,24 @@ namespace ILPathways.Admin.Org {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Literal doingBccOnRegistration;
+        
+        /// <summary>
+        /// profileUrl control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Literal profileUrl;
+        
+        /// <summary>
+        /// libraryUrl control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Literal libraryUrl;
         
         /// <summary>
         /// userAddConfirmation control.
@@ -659,5 +713,14 @@ namespace ILPathways.Admin.Org {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Literal userExistsMessage;
+        
+        /// <summary>
+        /// orgAdminFilter control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Literal orgAdminFilter;
     }
 }

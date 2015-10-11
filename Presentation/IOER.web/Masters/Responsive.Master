@@ -1,14 +1,17 @@
-﻿<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="Responsive.master.cs" Inherits="ILPathways.Masters.Responsive" %>
-<%@ Register TagPrefix="uc1" TagName="HeaderControl" Src="/Controls/Includes/Header7.ascx" %>
-<%@ Register TagPrefix="uc1" TagName="Footer" Src="/Controls/Includes/footer3.ascx" %>
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="Responsive.master.cs" Inherits="IOER.Masters.Responsive" %>
+<%@ Register TagPrefix="uc1" TagName="HeaderControl" Src="/Controls/Includes/Header8.ascx" %>
+<%@ Register TagPrefix="uc1" TagName="Footer" Src="/Controls/Includes/footer4.ascx" %>
 <%@ Register TagPrefix="uc1" TagName="systemMessageLine" Src="/Controls/Includes/SystemMessageLine.ascx" %>
 <%@ Register TagPrefix="uc1" TagName="hints" Src="/Controls/Includes/SessionHints.ascx" %>
 
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head id="Head1" runat="server">
     <title></title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="#IOER, Illinois Open Educational Resources, STEM, #STEM" />
+    <meta name="keywords" content="#OER, OER, open educational resources, #STEM, Science technology Engineering and math, freely accessible, STEM Learning Exchange" />
+
     <link rel="icon" type="image/ico" href="/images/icons/ioer_favicon.ico" />
 
     <script type="text/javascript">
@@ -20,7 +23,7 @@
     <script src="/Scripts/jquery-2.1.1.min.js"></script>
     <link rel="Stylesheet" type="text/css" href="/Styles/ISLE.css" />
     <link href="/Styles/CustomControls.css" rel="stylesheet" type="text/css" />
-    <uc1:hints id="hints" runat="server" />
+<%--    <uc1:hints id="hints" runat="server" />--%>
 
       <asp:Literal ID="litHidingAddThis" Visible="false" runat="server">
          <style type="text/css">
@@ -30,38 +33,36 @@
       </style>
       </asp:Literal>
       <asp:PlaceHolder ID="hdrPlaceholder" runat="server" >
-    <% if ( !string.IsNullOrWhiteSpace( Request.Params[ "hidechrome" ] ) ) { %>
-    <style type="text/css">
-      .mainSiteHeader, .mainSiteFooter { display: none; }
-    </style>
-    <% } else { %>
-    <!-- AddThis Smart Layers BEGIN -->
-    <!-- Go to http://www.addthis.com/get/smart-layers to customize -->
-    <script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#pubid=xa-52d4024b5e30007a"></script>
-    <script type="text/javascript">
-      addthis.layers({
-        'theme': 'transparent',
-        'share': {
-          'position': 'left',
-          'services': 'facebook,twitter,pinterest,delicious,email,print,more'
-        }
-      });
-    </script>
-    <!-- AddThis Smart Layers END -->
-    <% } %>
-</asp:PlaceHolder>
+        <% if ( !string.IsNullOrWhiteSpace( Request.Params[ "hidechrome" ] ) ) { %>
+        <style type="text/css">
+          #mainSiteHeader, #mainSiteFooter { display: none; }
+        </style>
+        <% } else { %>
+        <!-- AddThis Smart Layers BEGIN -->
+        <!-- Go to http://www.addthis.com/get/smart-layers to customize -->
+        <script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#pubid=xa-52d4024b5e30007a"></script>
+        <script type="text/javascript">
+          addthis.layers({
+            'theme': 'transparent',
+            'share': {
+              'position': 'right',
+              'services': 'twitter,facebook,google_plusone_share,pinterest,flipboard,linkedin,email,print,more'
+            }
+          });
+        </script>
+        <!-- AddThis Smart Layers END -->
+        <% } %>
+    </asp:PlaceHolder>
     <asp:ContentPlaceHolder ID="HeadContent" runat="server" />
 </head>
 <body>
     <form runat="server" id="mainform" onsubmit="return false;">
-      <div class="mainSiteHeader">
-        <uc1:HeaderControl ID="header" runat="server" />
+      <uc1:HeaderControl ID="header" runat="server" />
+      <div id="systemMessageDiv">
+				<uc1:systemMessageLine ID="systemMessageLine" runat="server" />
       </div>
-      <div id="systemMessageDiv"><uc1:systemMessageLine id="systemMessageLine" runat="server" /></div>  
       <asp:ContentPlaceHolder ID="BodyContent" runat="server" />
-      <div class="mainSiteFooter">
-        <uc1:Footer ID="pagefooter" runat="server" />
-      </div>
+			<uc1:Footer ID="pagefooter" runat="server" />
     </form>
 </body>
 </html>

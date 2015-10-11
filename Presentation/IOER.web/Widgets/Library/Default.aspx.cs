@@ -5,7 +5,7 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
-namespace ILPathways.Widgets.Library
+namespace IOER.Widgets.Library
 {
   public partial class Default : System.Web.UI.Page
   {

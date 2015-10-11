@@ -9,7 +9,7 @@ using System.Web.Script.Serialization;
 using Isle.BizServices;
 using Isle.DTO;
 
-namespace ILPathways.Activity
+namespace IOER.Activity
 {
   public partial class Stats2 : System.Web.UI.UserControl
   {
@@ -25,21 +25,21 @@ namespace ILPathways.Activity
     protected void Page_Load( object sender, EventArgs e )
     {
       //Fetch data
-      var timeSpan = int.Parse( activityDaysAgo.Text );
-      var startDate = DateTime.Now.AddDays( -1 * timeSpan );
       var dates = new List<string>();
 
+			activityRenderer.GetDateRange( ref txtStartDate, ref txtEndDate );
+
       //Setup date range
-      for ( int i = 0 ; i < timeSpan ; i++ )
+			for ( int i = 0 ; i < activityRenderer.timeSpan ; i++ )
       {
-        var loopDate = startDate.AddDays( i );
+				var loopDate = activityRenderer.startDate.AddDays( i );
         dates.Add( loopDate.ToShortDateString() );
       }
-      dates.Reverse();
+      //dates.Reverse();
       datesJSON = serializer.Serialize( dates );
 
       //Accounts
-      var accountData = activityService.ActivityTotals_Accounts( startDate, DateTime.Now ).Select( m => m.Activity ).ToList();
+			var accountData = activityService.ActivityTotals_Accounts( activityRenderer.startDate, activityRenderer.endDate ).Select( m => m.Activity ).ToList();
       accountData.Reverse();
       accountDataJSON = serializer.Serialize( accountData );
       //Accounts data summary
@@ -94,7 +94,7 @@ namespace ILPathways.Activity
       organizationDataJSON = serializer.Serialize( organizationData );
 
       //Libraries
-      var libraryData = activityService.ActivityTotals_Library( 0, startDate, DateTime.Now );
+			var libraryData = activityService.ActivityTotals_Library( 0, activityRenderer.startDate, activityRenderer.endDate );
       libraryDataJSON = serializer.Serialize( libraryData );
     }
 

@@ -5,16 +5,16 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
-using ILPathways.Services;
+using IOER.Services;
 using Isle.BizServices;
 using ILPathways.Business;
 using ILPathways.Utilities;
 using Library = ILPathways.Business.Library;
 using Section = ILPathways.Business.LibrarySection;
-using Resource = ILPathways.Business.LibraryResource;
+using LResource = ILPathways.Business.LibraryResource;
 using DataBaseHelper = LRWarehouse.DAL.BaseDataManager;
 
-namespace ILPathways.Widgets.Library
+namespace IOER.Widgets.Library
 {
   public partial class Library1 : System.Web.UI.UserControl
   {
@@ -127,14 +127,15 @@ namespace ILPathways.Widgets.Library
 
         var output = new WidgetLibCol();
         output.title = lib.Title;
-        output.link = lib.FriendlyUrl;
+        output.link = LibraryBizService.GetLibraryFriendlyUrl( lib ); ;
         output.showHeader = showingHdr;
         output.showCollections = showingCollectionList;
 
         foreach ( Section section in allCols )
         {
           var item = new WidgetResource();
-          item.link = section.FriendlyUrl;
+		  item.link = string.Format( "/Library/Collection/{0}/{1}/{2}", lib.Id, section.Id, ResourceBizService.FormatFriendlyTitle( section.Title ));
+		  //section.FriendlyUrl;
           item.title = section.Title;
           item.thumbURL = section.AvatarURL;
           output.collections.Add( item );
@@ -153,7 +154,8 @@ namespace ILPathways.Widgets.Library
         {
           var col = new WidgetLibCol();
           col.title = section.Title;
-          col.link = section.FriendlyUrl;
+          //col.link = section.FriendlyUrl;
+		  col.link = string.Format( "/Library/Collection/{0}/{1}/{2}", lib.Id, section.Id, ResourceBizService.FormatFriendlyTitle( section.Title ) );
           if ( filter.Length > 0 )
           {
               // 
@@ -167,7 +169,7 @@ namespace ILPathways.Widgets.Library
           }
 
           int count = 1;
-          foreach ( Resource resource in resources )
+          foreach ( LResource resource in resources )
           {
               if ( count > resourceMax )
             {
@@ -208,7 +210,7 @@ namespace ILPathways.Widgets.Library
     protected string FormatKeyword( string text )
     {
         string template = "(lr.Title like '{0}'  OR lr.[Description] like '{0}')";
-        string keyword = DataBaseHelper.HandleApostrophes( FormHelper.SanitizeUserInput( text.Trim() ) );
+        string keyword = DataBaseHelper.HandleApostrophes( FormHelper.CleanText( text.Trim() ) );
         string keywordFilter = "";
 
         if ( keyword.Length > 0 )

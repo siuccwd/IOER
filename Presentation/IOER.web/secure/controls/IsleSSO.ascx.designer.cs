@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ILPathways.secure.controls {
+namespace IOER.secure.controls {
     
     
     public partial class IsleSSO {

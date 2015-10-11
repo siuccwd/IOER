@@ -1,4 +1,4 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Masters/Responsive.Master" AutoEventWireup="true" Async="true"  CodeBehind="GroupsMgmt.aspx.cs" Inherits="ILPathways.Admin.Groups.GroupsMgmt" %>
+﻿<%@ Page Title="Illinois Open Educational Resources - Groups Managment" Language="C#" MasterPageFile="~/Masters/Responsive.Master" AutoEventWireup="true" Async="true"  CodeBehind="GroupsMgmt.aspx.cs" Inherits="IOER.Admin.Groups.GroupsMgmt" %>
 <%@ Register TagPrefix="uc1" TagName="groupDetail" Src="~/Controls/GroupsManagment/GroupDetail.ascx" %>
 <%@ Register TagPrefix="uc1" TagName="GroupMembers" Src="~/Controls/GroupsManagment/GroupMembers.ascx" %>
 <%@ Register TagPrefix="uc1" TagName="privilegeDetail" Src="~/Controls/GroupsManagment/GroupPrivileges.ascx" %>
@@ -100,7 +100,7 @@
 	<asp:label ID="txtCurrentParentId" runat="server" Visible="false"></asp:label>
 
 <asp:Panel ID="hiddenPanel1" runat="server" Visible="false">
-<asp:Literal ID="formSecurityName" runat="server" Visible="false">ILPathways.Controls.GroupsManagment.GroupsManager</asp:Literal>
+<asp:Literal ID="formSecurityName" runat="server" Visible="false">IOER.Controls.GroupsManagment.GroupsManager</asp:Literal>
 <asp:Literal ID="defaultGroupType" runat="server">2</asp:Literal>
 <asp:Literal ID="preSelectIfOneGroup" runat="server">no</asp:Literal>
 <asp:Literal ID="txtGroupFilter" runat="server">GroupTypeId = 2</asp:Literal>

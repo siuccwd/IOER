@@ -1,4 +1,4 @@
-﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="Dashboard1.ascx.cs" Inherits="ILPathways.LRW.controls.Dashboard1" %>
+﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="Dashboard1.ascx.cs" Inherits="IOER.LRW.controls.Dashboard1" %>
 <%@ Register TagPrefix="uc1" TagName="HeaderControl" Src="/Controls/Includes/Header6.ascx" %>
 
 <form id="mainForm" runat="server">
@@ -821,8 +821,9 @@ html, body {
   <div id="template_followDDL">
     <select id="ddl_{id}" onchange="changeFollowing(this)" onclick="return false;">
       <option value="0">Unfollow</option>
-      <option value="1">Daily Email</option>
-      <option value="2">Weekly Email</option>
+                      <option value="1">Follow in my Timeline</option>
+                      <option value="2">Follow with a daily email and in my Timeline</option>
+                      <option value="3">Follow with a weekly email and in my Timeline</option>
     </select>
   </div>
 </div>

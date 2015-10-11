@@ -1,4 +1,4 @@
-﻿<%@ Page Title="IOER - Registration Step One" Language="C#" MasterPageFile="~/Masters/Responsive.Master" AutoEventWireup="true" CodeBehind="Success.aspx.cs" Inherits="ILPathways.Account.Success" %>
+﻿<%@ Page Title="IOER - Registration Step One" Language="C#" MasterPageFile="~/Masters/Responsive.Master" AutoEventWireup="true" CodeBehind="Success.aspx.cs" Inherits="IOER.Account.Success" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="HeadContent" runat="server">
     <link href="/Styles/Isle_large.css" type="text/css" rel="stylesheet" />

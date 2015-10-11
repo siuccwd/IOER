@@ -21,7 +21,7 @@ namespace IoerContentBusinessEntities
 
         #region Community =======================
 
-        public static int CommunityAdd( IB.Community entity )
+        public int CommunityAdd( IB.Community entity, ref string message )
         {
             Community com = new Community();
 
@@ -47,10 +47,17 @@ namespace IoerContentBusinessEntities
             catch ( Exception ex )
             {
                 LoggingHelper.LogError( ex, thisClassName + ".CommunityAdd()" );
+				message = ex.Message;
                 return 0;
             }
         }
-        public static bool CommunityUpdate( IB.Community entity )
+
+		/// <summary>
+		/// Update a community
+		/// </summary>
+		/// <param name="entity"></param>
+		/// <returns></returns>
+		public bool CommunityUpdate( IB.Community entity, ref string message )
         {
             bool isValid = false;
             try
@@ -61,7 +68,6 @@ namespace IoerContentBusinessEntities
                     com = Community_FromMap( entity );
                     com.LastUpdated = System.DateTime.Now;
 
-                    //com.LastUpdated = System.DateTime.Now;
                     ctx.SaveChanges();
 
                     isValid = true;
@@ -70,24 +76,36 @@ namespace IoerContentBusinessEntities
             catch ( Exception ex )
             {
                 LoggingHelper.LogError( ex, thisClassName + ".CommunityUpdate()" );
+				message = ex.Message;
                 return false;
             }
             return isValid;
         }
 
-        public static bool Community_Delete( int id )
+		/// <summary>
+		/// Delete a community
+		/// </summary>
+		/// <param name="id"></param>
+		/// <returns></returns>
+        public bool CommunityDelete( int id, ref string message )
         {
             bool isSuccessful = false;
+			try
+			{
+				Community item = ctx.Communities.SingleOrDefault( s => s.Id == id );
 
-            Community item = ctx.Communities.SingleOrDefault( s => s.Id == id );
-
-            if ( item != null && item.Id > 0 )
-            {
-                ctx.Communities.Remove( item );
-                ctx.SaveChanges();
-                isSuccessful = true;
-            }
-
+				if ( item != null && item.Id > 0 )
+				{
+					ctx.Communities.Remove( item );
+					ctx.SaveChanges();
+					isSuccessful = true;
+				}
+			}
+			catch ( Exception ex )
+			{
+				LoggingHelper.LogError( ex, thisClassName + ".Community_Delete()" );
+				message = ex.Message;
+			}
             return isSuccessful;
  }
 
@@ -173,6 +191,8 @@ namespace IoerContentBusinessEntities
 
             to.ImageUrl = fromEntity.ImageUrl;
             to.IsActive = fromEntity.IsActive;
+			to.IsModerated = fromEntity.IsModerated;
+
             to.Created = fromEntity.Created;
             to.CreatedById = fromEntity.CreatedById;
             to.LastUpdated = fromEntity.LastUpdated;
@@ -198,6 +218,8 @@ namespace IoerContentBusinessEntities
 
             to.ImageUrl = fromEntity.ImageUrl;
             to.IsActive = fromEntity.IsActive == null ? false : ( bool )fromEntity.IsActive;
+			to.IsModerated = fromEntity.IsModerated == null ? false : ( bool )fromEntity.IsModerated;
+
             to.Created = (System.DateTime) fromEntity.Created;
             to.CreatedById = ( int ) fromEntity.CreatedById;
             to.LastUpdated = ( System.DateTime ) fromEntity.LastUpdated;
@@ -215,7 +237,7 @@ namespace IoerContentBusinessEntities
             if ( communities != null && communities.Count > 0 )
             {
                 //create posting
-                int postId = PostingAdd( 0, message, pCreatedById, 0 );
+                int postId = PostingAdd( message, pCreatedById, 0 );
 
                 foreach ( int id in communities )
                 {
@@ -238,8 +260,21 @@ namespace IoerContentBusinessEntities
         {
             if ( communityId > 0 )
             {
+				DTO.ObjectMember mbr = new DTO.ObjectMember();
+				bool isApproved = true;
+
+				//get community and detemine if moderation needed
+				//if true, will add posting but not the postItem
+				IB.Community c = Community_Get( communityId );
+				if ( c.IsModerated )
+				{
+					//check user privileges
+					mbr = CommunityMember_Get( communityId, pCreatedById );
+					if (mbr == null || mbr.Id == 0 || mbr.MemberTypeId < 3)
+						isApproved = false;
+				}
                 //create posting
-                int postId = PostingAdd( 0, message, pCreatedById, relatedPostingId );
+				int postId = PostingAdd( message, pCreatedById, relatedPostingId, isApproved );
 
                 Community_PostItem_Add( communityId, postId, pCreatedById );
                 return postId;
@@ -442,7 +477,8 @@ namespace IoerContentBusinessEntities
 
                 to.PostingTypeId = fromEntity.PostingTypeId == null ? 1 : ( int ) fromEntity.PostingTypeId;
                 to.PostingType = fromEntity.PostingType == null ? "General" : fromEntity.PostingType;
-                to.PostingStatus = fromEntity.PostingStatus == null ? "Open" : fromEntity.PostingStatus;
+				to.IsApproved = fromEntity.IsApproved;
+                //to.PostingStatus = fromEntity.PostingStatus == null ? "Open" : fromEntity.PostingStatus;
 
                 to.UserImageUrl = fromEntity.UserImageUrl == null ? "" : fromEntity.UserImageUrl;
                 to.UserFullName = fromEntity.UserFullName == null ? "" : fromEntity.UserFullName;
@@ -540,7 +576,8 @@ namespace IoerContentBusinessEntities
             to.CreatedById = ( int ) fromEntity.CreatedById;
 
             to.PostingTypeId = fromEntity.Community_Posting.PostingTypeId == null ? 1 : (int) fromEntity.Community_Posting.PostingTypeId;
-            to.PostingStatus = fromEntity.Community_Posting.PostingStatus;
+			to.IsApproved = fromEntity.Community_Posting.IsApproved;
+            //to.PostingStatus = fromEntity.Community_Posting.PostingStatus;
 
             if ( fromEntity.Community_Posting.RelatedPostingId != null )
                 to.RelatedPostingId = ( int ) fromEntity.Community_Posting.RelatedPostingId;
@@ -568,7 +605,7 @@ namespace IoerContentBusinessEntities
             to.Community_Posting.CreatedById = ( int ) fromEntity.CreatedById;
 
             to.Community_Posting.PostingTypeId = fromEntity.PostingTypeId < 1 ? 1 : ( int ) fromEntity.PostingTypeId;
-            to.Community_Posting.PostingStatus = fromEntity.PostingStatus;
+			to.Community_Posting.IsApproved = fromEntity.IsApproved;
             return to;
         }
 
@@ -625,12 +662,16 @@ namespace IoerContentBusinessEntities
 
         #region Community Posting =======================
 
-        //private static int PostingAdd( int pCommunityId, string message, int pCreatedById )
-        //{
-        //    return PostingAdd( pCommunityId, message, pCreatedById, 0 );
-        //}
+		private static int PostingAdd( string message, int pCreatedById )
+		{
+			return PostingAdd( message, pCreatedById, 0, true );
+		}
 
-        private static int PostingAdd( int pCommunityId, string message, int pCreatedById, int relatedPostingId )
+		private static int PostingAdd( string message, int pCreatedById, int relatedPostingId )
+		{
+			return PostingAdd( message, pCreatedById, relatedPostingId, true );
+		}
+		private static int PostingAdd( string message, int pCreatedById, int relatedPostingId, bool isApproved )
         {
             Community_Posting msg = new Community_Posting();
 
@@ -638,7 +679,7 @@ namespace IoerContentBusinessEntities
             msg.Message = message;
             msg.Created = System.DateTime.Now;
             msg.CreatedById = pCreatedById;
-            msg.PostingStatus = "Open";
+			msg.IsApproved = isApproved;
             msg.PostingTypeId = 1;
 
             if ( relatedPostingId > 0 )
@@ -667,6 +708,13 @@ namespace IoerContentBusinessEntities
             }
         }
 
+		/// <summary>
+		/// Delete a posting
+		/// NOTE: if allowing post to multiple communities, then possible to delete from one and not another. Which would lead to asking user if wishes to delete from all
+		/// ==> for now, do the all of none
+		/// </summary>
+		/// <param name="postingId"></param>
+		/// <returns></returns>
         private static bool Community_Posting_Delete( int postingId )
         {
             bool isSuccessful = false;
@@ -823,7 +871,7 @@ namespace IoerContentBusinessEntities
             to.Message = fromEntity.Message;
             //to.CommunityId = fromEntity.CommunityId;
             to.PostingTypeId = fromEntity.PostingTypeId;
-            to.PostingStatus = fromEntity.PostingStatus;
+			to.IsApproved = fromEntity.IsApproved;
 
             to.Created = ( System.DateTime ) fromEntity.Created;
             to.CreatedById = fromEntity.CreatedById;
@@ -842,7 +890,7 @@ namespace IoerContentBusinessEntities
                 to.Message = fromEntity.Message;
 
                 to.PostingTypeId = fromEntity.PostingTypeId == null ? 1 : ( int ) fromEntity.PostingTypeId;
-                to.PostingStatus = fromEntity.PostingStatus == null ? "Open" : fromEntity.PostingStatus;
+				to.IsApproved = fromEntity.IsApproved;
 
                 //to.CommunityId = fromEntity.CommunityId;
 
@@ -919,6 +967,25 @@ namespace IoerContentBusinessEntities
             return isMember;
         }
 
+		public static DTO.ObjectMember CommunityMember_Get( int pCommunityId, int pUserId )
+		{
+			DTO.ObjectMember mbr = new DTO.ObjectMember();
+			Community_MemberSummary item = ctx.Community_MemberSummary
+							.SingleOrDefault( s => s.CommunityId == pCommunityId && s.UserId == pUserId );
+
+			if ( item != null && item.Id > 0 )
+			{
+				mbr = CommunityMember_ToMap( item );
+			}
+
+			return mbr;
+		}
+		/// <summary>
+		/// GEt all community members for the org
+		/// ??not sure of the value - if an org community, then all members are org members.
+		/// </summary>
+		/// <param name="orgId"></param>
+		/// <returns></returns>
         public static List<DTO.ObjectMember> CommunityMember_OrgGetAll( int orgId )
         {
             DTO.ObjectMember mbr = new DTO.ObjectMember();
@@ -941,29 +1008,45 @@ namespace IoerContentBusinessEntities
 
             return mbrs;
         }//
-        //public static List<DTO.ObjectMember> CommunityMember_GetPending( int orgId )
-        //{
-        //    OrganizationMember orgMbr = new OrganizationMember();
-        //    List<OrganizationMember> mbrs = new List<ILPathways.Business.OrganizationMember>();
-        //    using ( var context = new EFDAL.GatewayContext() )
-        //    {
 
-        //        List<EFDAL.Organization_MemberSummary> list = context.Organization_MemberSummary
-        //                .Where( s => s.OrgId == orgId && s.OrgMemberTypeId == 0 )
-        //                .ToList();
+		/// <summary>
+		/// Get list of members in pending status
+		/// </summary>
+		/// <param name="communityId"></param>
+		/// <returns></returns>
+		public static List<DTO.ObjectMember> CommunityMember_GetPending( int communityId )
+		{
+			DTO.ObjectMember mbr = new DTO.ObjectMember();
+			List<DTO.ObjectMember> mbrs = new List<DTO.ObjectMember>();
+			using ( var context = new IsleContentContext() )
+			{
 
-        //        if ( list != null && list.Count > 0 )
-        //        {
-        //            foreach ( EFDAL.Organization_MemberSummary efom in list )
-        //            {
-        //                orgMbr = OrganizationMember_ToMap( efom );
-        //                mbrs.Add( orgMbr );
-        //            }
-        //        }
-        //    }
+				List<Community_MemberSummary> list = context.Community_MemberSummary
+						.Where( s => s.CommunityId == communityId && s.MemberTypeId == 0 )
+						.ToList();
 
-        //    return mbrs;
-        //}//
+				if ( list != null && list.Count > 0 )
+				{
+					foreach ( Community_MemberSummary efom in list )
+					{
+						//mbr = new DTO.ObjectMember();
+						//mbr.Id = efom.Id;
+						//mbr.FirstName = efom.FirstName;
+						//mbr.LastName = efom.LastName;
+						//mbr.Email = efom.Email;
+						//mbr.OrgId = efom.UserOrgId;	//??
+						//mbr.Organization = efom.UserOrganization;	//??
+						//mbr.ObjectId = efom.CommunityId;
+						//mbr.UserId = efom.UserId;
+
+						mbr = CommunityMember_ToMap( efom );
+						mbrs.Add( mbr );
+					}
+				}
+			}
+
+			return mbrs;
+		}//
 
         public static DTO.ObjectMember CommunityMember_ToMap( Community_MemberSummary fromEntity )
         {

@@ -28,6 +28,7 @@ namespace IOERBusinessEntities
         public Nullable<int> WarehouseTotal { get; set; }
         public int DimensionId { get; set; }
         public bool IsActive { get; set; }
+        public string NotationCode { get; set; }
     
         public virtual Evaluation Evaluation { get; set; }
         public virtual ICollection<Resource_EvaluationSection> Resource_EvaluationSection { get; set; }

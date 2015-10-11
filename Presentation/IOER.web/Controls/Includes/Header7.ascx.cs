@@ -7,8 +7,8 @@ using System.Web.UI.WebControls;
 
 using System.Threading;
 
-using ILPathways.Library;
-using ILPathways.Services;
+using IOER.Library;
+using IOER.Services;
 using ILPathways.Utilities;
 //using ILPathways.DAL;
 using Isle.BizServices;
@@ -16,7 +16,7 @@ using LibMgr = Isle.BizServices.LibraryBizService;
 
 
 
-namespace ILPathways.Controls.Includes
+namespace IOER.Controls.Includes
 {
   public partial class Header7 : BaseUserControl
   {
@@ -33,8 +33,7 @@ namespace ILPathways.Controls.Includes
     }
 
     /// <summary>
-    /// This is a horrible hack that should have been handled in DNS, however we cannot do it right now without incurring
-    /// additional charges from our current DNS provider, Network Solutions.  This is intended to redirect ioer.*.*
+    /// This is a horrible hack that should have been handled in DNS, however we cannot do it right now without incurring additional charges from our current DNS provider, Network Solutions.  This is intended to redirect ioer.*.*
     /// (where the TLD is not "org") to ioer.ilsharedlearning.org.  Protocol (http vs. https) and port are preserved, as is the page the user is navigating to.
     /// </summary>
     private void CheckForRedirect()
@@ -113,13 +112,18 @@ namespace ILPathways.Controls.Includes
                 loginLink.Visible = false;
                 loginLink2.Visible = false;
                 profileStuff.Visible = true;
-                myIOERMenu.Visible = true;
+               // myIOERMenu.Visible = true;
                 myIOERMenuLink.Visible = true;
                 adminMenu.Visible = false;
                 profileLink.InnerHtml = WebUser.FullName();
+							//Nag user to upload a photo
+								if ( string.IsNullOrWhiteSpace( ( ( LRWarehouse.Business.Patron ) WebUser ).ImageUrl ) )
+								{
+									photoPrompt.Visible = true;
+								}
 
                 SetAdminMenu();
-                libAdminLink.Visible = CanUserAdminLibraries( WebUser.Id );
+               // libAdminLink.Visible = CanUserAdminLibraries( WebUser.Id );
             }
             else
             {
@@ -127,12 +131,13 @@ namespace ILPathways.Controls.Includes
                 loginLink.Visible = true;
                // loginLink2.Visible = true;
                 profileStuff.Visible = false;
-                myIOERMenu.Visible = false;
+               //myIOERMenu.Visible = false;
                 myIOERMenuLink.Visible = false;
                 adminMenu.Visible = false;
                 string nextUrl = "/";
                 if ( Request.Url.PathAndQuery.ToLower().IndexOf( "login.aspx" ) == -1
-                    && Request.Url.PathAndQuery.ToLower().IndexOf( "register.aspx" ) == -1 )
+                    && Request.Url.PathAndQuery.ToLower().IndexOf( "register.aspx" ) == -1
+					&& Request.Url.PathAndQuery.ToLower().IndexOf("/error") == -1)
                     nextUrl = Request.Url.PathAndQuery;
 
                 loginLink.HRef = loginUrl1.Text + nextUrl;
@@ -155,7 +160,7 @@ namespace ILPathways.Controls.Includes
     {
         //LoggingHelper.DoTrace( 2, "_______ Header7.SetAdminMenu" );
       //check if previously done
-      string auth = ILPathways.classes.SessionManager.Get( Session, CAN_VIEW_ADMIN_MENU, "missing" );
+      string auth = IOER.classes.SessionManager.Get( Session, CAN_VIEW_ADMIN_MENU, "missing" );
 
       try
       {
@@ -169,12 +174,12 @@ namespace ILPathways.Controls.Includes
               if ( RecordPrivileges.CanCreate() )
               {
                   adminMenu.Visible = true;
-                  ILPathways.classes.SessionManager.Set( Session, CAN_VIEW_ADMIN_MENU, "yes" );
+                  IOER.classes.SessionManager.Set( Session, CAN_VIEW_ADMIN_MENU, "yes" );
               }
               else
               {
                   adminMenu.Visible = false;
-                  ILPathways.classes.SessionManager.Set( Session, CAN_VIEW_ADMIN_MENU, "no" );
+                  IOER.classes.SessionManager.Set( Session, CAN_VIEW_ADMIN_MENU, "no" );
               }
           }
           if ( adminMenu.Visible == true )
@@ -200,7 +205,7 @@ namespace ILPathways.Controls.Includes
         //LoggingHelper.DoTrace( 2, "_______ Header7.CanUserAdminLibraries" );
       bool canView = false;
       //check if previously done
-      string auth = ILPathways.classes.SessionManager.Get( Session, CAN_VIEW_LIBRARYADMIN_MENU, "missing" );
+      string auth = IOER.classes.SessionManager.Get( Session, CAN_VIEW_LIBRARYADMIN_MENU, "missing" );
       if ( auth.Equals( "yes" ) )
       {
         canView = true;
@@ -209,9 +214,9 @@ namespace ILPathways.Controls.Includes
       {
         canView = new LibMgr().Library_CanUserAdministerLibraries( userId );
         if ( canView )
-          ILPathways.classes.SessionManager.Set( Session, CAN_VIEW_LIBRARYADMIN_MENU, "yes" );
+          IOER.classes.SessionManager.Set( Session, CAN_VIEW_LIBRARYADMIN_MENU, "yes" );
         else
-          ILPathways.classes.SessionManager.Set( Session, CAN_VIEW_LIBRARYADMIN_MENU, "no" );
+          IOER.classes.SessionManager.Set( Session, CAN_VIEW_LIBRARYADMIN_MENU, "no" );
       }
 
 

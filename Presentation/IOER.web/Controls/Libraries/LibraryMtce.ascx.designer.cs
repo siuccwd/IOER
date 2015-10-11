@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ILPathways.Controls.Libraries {
+namespace IOER.Controls.Libraries {
     
     
     public partial class LibraryMtce {

@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ILPathways.Account {
+namespace IOER.Account {
     
     
     public partial class Profile {
@@ -19,6 +19,6 @@ namespace ILPathways.Account {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ILPathways.Account.controls.UserProfile2 UserProfile2a;
+        protected global::IOER.Account.controls.UserProfile2 UserProfile2a;
     }
 }

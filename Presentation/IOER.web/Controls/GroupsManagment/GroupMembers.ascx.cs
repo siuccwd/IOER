@@ -6,26 +6,28 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
+using IOER.Library;
 using ILPathways.Business;
-using ILPathways.classes;
-using ILPathways.Controllers;
+using IOER.classes;
+using IOER.Controllers;
 using ILPathways.Utilities;
 using GDAL = Isle.BizServices;
 using MyManager = Isle.BizServices.GroupServices;
 using UserManager = Isle.BizServices.AccountServices;
-using GroupManager = Isle.BizServices.GroupServices;
-using MyGroupController = ILPathways.Controllers.GroupsManagementController;
+//using GroupManager = Isle.BizServices.GroupServices;
+//using MyGroupController = IOER.Controllers.MyManager;
 //using bizService = ILPathways.GatewayServiceReference;
 
 using Group = ILPathways.Business.AppGroup;
 using LDAL = LRWarehouse.DAL;
 using BDM = LRWarehouse.DAL.BaseDataManager; 
 
-namespace ILPathways.Controls.GroupsManagment
+namespace IOER.Controls.GroupsManagment
 {
-    public partial class GroupMembers : GroupsManagementController
+	public partial class GroupMembers : BaseUserControl
     {
         const string thisClassName = "Controls_GroupsManagement_GroupMembers";
+		MyManager grpMgr = new MyManager();
 
         #region Properties
         /// <summary>
@@ -45,7 +47,7 @@ namespace ILPathways.Controls.GroupsManagment
             get { return this._currentGroupSessionCode; }
             set { this._currentGroupSessionCode = value; }
         }
-        private string _currentGroupSessionCode = GroupsManagementController.CONTROLLER_CURRENT_GROUP;
+        private string _currentGroupSessionCode = MyManager.CONTROLLER_CURRENT_GROUP;
 
         /// <summary>
         /// Get/Set ThisContainerPaneIndex - this can be be set to a different value when added to an accordion control
@@ -55,7 +57,7 @@ namespace ILPathways.Controls.GroupsManagment
             get { return this._ThisContainerPaneIndex; }
             set { _ThisContainerPaneIndex = value; }
         }
-        private int _ThisContainerPaneIndex = GroupsManagementController.CONTROLLER_PANE_CUSTOMERS;
+        private int _ThisContainerPaneIndex = MyManager.CONTROLLER_PANE_CUSTOMERS;
 
         /// <summary>
         /// ParentGroupId
@@ -76,7 +78,7 @@ namespace ILPathways.Controls.GroupsManagment
 
         protected void Page_Load( object sender, EventArgs e )
         {
-            this.InstanceGroupCode = CurrentGroupSessionCode;
+           // this.InstanceGroupCode = CurrentGroupSessionCode;
             //get current user
             CurrentUser = GetAppUser();
 
@@ -135,7 +137,7 @@ namespace ILPathways.Controls.GroupsManagment
             int gid = this.GetRequestKeyValue( "gid", 0 );
             if ( gid > 0 )
             {
-                InstanceGroupCode = "CurrentGroupMbrGrp";
+				grpMgr.InstanceGroupCode = "CurrentGroupMbrGrp";
                 ParentGroupId = gid;
                 HandleGroupChange( gid );
                 DoSearch();
@@ -145,8 +147,8 @@ namespace ILPathways.Controls.GroupsManagment
                 string code = this.GetRequestKeyValue( "code", "" );
                 if ( code.Length > 0 )
                 {
-                    InstanceGroupCode = "CurrentGroupMbrGrp";
-                    Group grp = GroupManager.GetByCode( code );
+					grpMgr.InstanceGroupCode = "CurrentGroupMbrGrp";
+                    Group grp = MyManager.GetByCode( code );
                     if ( grp.Id > 0 )
                     {
                         ParentGroupId = grp.Id;
@@ -169,15 +171,15 @@ namespace ILPathways.Controls.GroupsManagment
 
             try
             {
-                if ( CurrentGroupExists() )
+				if ( grpMgr.CurrentGroupExists() )
                 {
-                    if ( CurrentGroup.Id > 0 )
+					if ( grpMgr.CurrentGroup.Id > 0 )
                     {
-                        if ( CurrentGroup.Id.ToString() != txtGroupId.Text )
+						if ( grpMgr.CurrentGroup.Id.ToString() != txtGroupId.Text )
                         {
                             //chg of group,do search
-                            this.txtGroupId.Text = CurrentGroup.Id.ToString();
-                            HandleGroupChange( CurrentGroup.Id );
+							this.txtGroupId.Text = grpMgr.CurrentGroup.Id.ToString();
+							HandleGroupChange( grpMgr.CurrentGroup.Id );
                             DoSearch();
                         }
                     }
@@ -212,7 +214,7 @@ namespace ILPathways.Controls.GroupsManagment
         /// <param name="e"></param>
         public void FormButton_Click( Object sender, CommandEventArgs e )
         {
-            LastActiveContainerIdx = ThisContainerPaneIndex;
+			grpMgr.LastActiveContainerIdx = ThisContainerPaneIndex;
 
             switch ( e.CommandName )
             {
@@ -239,11 +241,11 @@ namespace ILPathways.Controls.GroupsManagment
 
         private void HandleGroupChange( int id )
         {
-            if ( CurrentGroup != null && CurrentGroup.Id != id )
+			if ( grpMgr.CurrentGroup != null && grpMgr.CurrentGroup.Id != id )
             {
-                CurrentGroup = GroupManager.Get( id );
+				grpMgr.CurrentGroup = MyManager.Get( id );
             }
-            this.txtGroupId.Text = CurrentGroup.Id.ToString();
+			this.txtGroupId.Text = grpMgr.CurrentGroup.Id.ToString();
 
 
 
@@ -283,7 +285,7 @@ namespace ILPathways.Controls.GroupsManagment
         {
             string missingData = string.Empty;
 
-            int groupId = CurrentGroup.Id;
+			int groupId = grpMgr.CurrentGroup.Id;
             if ( groupId < 1 )
             {
                 //message
@@ -336,7 +338,7 @@ namespace ILPathways.Controls.GroupsManagment
                 filter += MyManager.FormatSearchItem( filter, where, booleanOperator );
             }
 
-            formDataset = GroupManager.GroupMember_Search( filter, pOrderBy, selectedPageNbr, pagesize, ref pTotalRows );
+            formDataset = MyManager.GroupMember_Search( filter, pOrderBy, selectedPageNbr, pagesize, ref pTotalRows );
             pager1.ItemCount = pager2.ItemCount = pTotalRows;
             //LastTotalRows = pTotalRows;
 
@@ -380,7 +382,7 @@ namespace ILPathways.Controls.GroupsManagment
 
                 formGrid.DataBind();
 
-                if ( CurrentGroup != null && CurrentGroup.GroupCode == "ContentManagers" )
+				if ( grpMgr.CurrentGroup != null && grpMgr.CurrentGroup.GroupCode == "ContentManagers" )
                 {
                     formGrid.Columns[ 0 ].Visible = false;
                     formGrid.Columns[ formGrid.Columns.Count - 1 ].Visible = true;
@@ -399,7 +401,7 @@ namespace ILPathways.Controls.GroupsManagment
             int groupId = GetParentId();
             if ( groupId > 0 )
             {
-                GroupsManagementController.GroupUserSearchParameters searchParms = new GroupsManagementController.GroupUserSearchParameters();
+				MyManager.GroupUserSearchParameters searchParms = new MyManager.GroupUserSearchParameters();
                 searchParms.groupId = groupId.ToString();
                 searchParms.roleId = "1";
                 //only look for individual users
@@ -414,7 +416,7 @@ namespace ILPathways.Controls.GroupsManagment
                 string title = "Illinois workNet Person Search";
                 string navigateUrl = "/vos_portal/UserSearch.aspx?";
 
-                OpenSearchForm( searchParms, title, navigateUrl );
+                //OpenSearchForm( searchParms, title, navigateUrl );
 
             }
             else
@@ -433,9 +435,9 @@ namespace ILPathways.Controls.GroupsManagment
         /// <param name="type"></param>
         /// <param name="title"></param>
         /// <param name="navigateUrl"></param>
-        protected void OpenSearchForm( GroupsManagementController.GroupUserSearchParameters searchParms, string title, string navigateUrl )
+		protected void OpenSearchForm( MyManager.GroupUserSearchParameters searchParms, string title, string navigateUrl )
         {
-            Session[ GroupsManagementController.GROUPS_SESSIONVAR_USERSEARCH_PARMS ] = searchParms;
+			Session[ MyManager.GROUPS_SESSIONVAR_USERSEARCH_PARMS ] = searchParms;
 
             string hostName = Request.Url.Host.ToString();
             BrowserWindow win = new BrowserWindow( hostName + navigateUrl, 800, 600, true );
@@ -475,7 +477,7 @@ namespace ILPathways.Controls.GroupsManagment
         protected void formGrid_RowCommand( object sender, GridViewCommandEventArgs e )
         {
 
-            LastActiveContainerIdx = ThisContainerPaneIndex;
+            grpMgr.LastActiveContainerIdx = ThisContainerPaneIndex;
 
             if ( e.CommandName == "DeleteRow" )
             {
@@ -486,7 +488,7 @@ namespace ILPathways.Controls.GroupsManagment
                     string statusMessage = "";
 
                     // Delete the record 
-                    if ( GroupManager.GroupMember_Delete( ID, ref statusMessage ) )
+                    if ( MyManager.GroupMember_Delete( ID, ref statusMessage ) )
                     {
                         //successfull
                         SetConsoleSuccessMessage( "Successfully removed member from this group!" );
@@ -510,7 +512,7 @@ namespace ILPathways.Controls.GroupsManagment
                     // get the ID of the clicked row
                     int id = Convert.ToInt32( e.CommandArgument );
 
-                    LastSelectedGroupMemberId = id;
+					grpMgr.LastSelectedGroupMemberId = id;
                 }
                 catch ( Exception ex )
                 {
@@ -526,7 +528,7 @@ namespace ILPathways.Controls.GroupsManagment
         /// <param name="e"></param>
         protected void formGrid_Sorting( object sender, GridViewSortEventArgs e )
         {
-            LastActiveContainerIdx = ThisContainerPaneIndex;
+            grpMgr.LastActiveContainerIdx = ThisContainerPaneIndex;
 
             string newSortExpression = e.SortExpression;
             string sortTerm = "";
@@ -563,7 +565,7 @@ namespace ILPathways.Controls.GroupsManagment
         ///</summary>
         public void formGrid_PageIndexChanging( object sender, GridViewPageEventArgs e )
         {
-            LastActiveContainerIdx = ThisContainerPaneIndex;
+			grpMgr.LastActiveContainerIdx = ThisContainerPaneIndex;
 
             formGrid.PageIndex = e.NewPageIndex;
             //get current sort term
@@ -585,9 +587,9 @@ namespace ILPathways.Controls.GroupsManagment
 
             try
             {
-                if ( CurrentGroupExists() )
+                if ( grpMgr.CurrentGroupExists() )
                 {
-                    groupId = CurrentGroup.Id;
+					groupId = grpMgr.CurrentGroup.Id;
                 }
 
             }

@@ -12,12 +12,12 @@ using System.Web.UI;
 using Microsoft.ApplicationBlocks.Data;
 
 using ILPathways.Business;
-using ILPathways.Library;
+using IOER.Library;
 using ILPathways.Utilities;
-using ILPathways.classes;
+using IOER.classes;
 using DAL=ILPathways.DAL;
 
-namespace ILPathways.classes
+namespace IOER.classes
 {
     public class ApplicationManager
     {

@@ -7,10 +7,28 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ILPathways.Account.controls {
+namespace IOER.Account.controls {
     
     
     public partial class UserProfile2 {
+        
+        /// <summary>
+        /// messageDiv control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl messageDiv;
+        
+        /// <summary>
+        /// nextUrlLink control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.HyperLink nextUrlLink;
         
         /// <summary>
         /// email1 control.

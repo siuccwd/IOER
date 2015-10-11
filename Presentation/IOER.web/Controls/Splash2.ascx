@@ -1,4 +1,4 @@
-﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="Splash2.ascx.cs" Inherits="ILPathways.Controls.Splash2" %>
+﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="Splash2.ascx.cs" Inherits="IOER.Controls.Splash2" %>
 <%@ Register TagPrefix="uc1" TagName="SplashMini" Src="/Controls/SplashMini.ascx" %>
 
 <script type="text/javascript">
@@ -385,7 +385,7 @@
   </div>  
   <div class="tealBox" style="display: none;">
     <div class="contentBox">
-      <h1>Open Educational Resources</h1>
+      <h1>Illinois Open Educational Resources</h1>
       <p class="bigText white">IOER provides you with one-click access to open, standards-aligned educational content. Use our tools to find, remix, and comment on resources for your personalized IOER learning library.</p>
       <div id="links">
         <uc1:SplashMini runat="server" ID="splashMini" useNewWindow="false" Visible="false" />

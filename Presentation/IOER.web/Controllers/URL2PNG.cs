@@ -6,7 +6,7 @@ using System.Web;
 using System.Text;
 using System.Security.Cryptography;
 
-namespace ILPathways.Controllers
+namespace IOER.Controllers
 {
     public static class URL2PNG
     {

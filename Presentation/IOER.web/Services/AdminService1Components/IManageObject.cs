@@ -4,8 +4,9 @@ using System.Linq;
 using System.Web;
 
 using LRWarehouse.Business;
+using Patron = LRWarehouse.Business.Patron;
 
-namespace ILPathways.Services.AdminService1Components
+namespace IOER.Services.AdminService1Components
 {
   public interface IManageObject
   {
@@ -94,7 +95,7 @@ namespace ILPathways.Services.AdminService1Components
       //Create an instance of the target class
       try
       {
-        var path = "ILPathways.Services.AdminService1Components." + service.className;
+        var path = "IOER.Services.AdminService1Components." + service.className;
 
         return ( IManageObject ) Activator.CreateInstance( null, path ).Unwrap();
       }

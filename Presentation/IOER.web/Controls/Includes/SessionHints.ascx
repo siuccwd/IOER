@@ -1,4 +1,4 @@
-﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="SessionHints.ascx.cs" Inherits="ILPathways.SessionHints" %>
+﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="SessionHints.ascx.cs" Inherits="IOER.SessionHints" %>
 
 <script type="text/javascript">
   var hints = <%=hintsJSON %>;

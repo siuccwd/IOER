@@ -1,4 +1,4 @@
-﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="LibraryAdmin.ascx.cs" Inherits="ILPathways.Controls.Libraries.LibraryAdmin" %>
+﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="LibraryAdmin.ascx.cs" Inherits="IOER.Controls.Libraries.LibraryAdmin" %>
 <%@ Register Src="~/Controls/Libraries/LibraryMtce.ascx" TagPrefix="uc1" TagName="LibraryMtce" %>
 
 <%@ Register
@@ -266,7 +266,7 @@ margin-top: 15px; }
                     <br />
                     <div class="labelColumn">&nbsp;</div>
                     <div class="dataColumn">
-                        <asp:Button ID="searchLink" runat="server" Text="Search" OnClick="searchLink_Click"></asp:Button>
+                        <asp:Button ID="searchLink" runat="server" Text="Search"  CssClass="defaultButton" OnClick ="searchLink_Click"></asp:Button>
                     </div>
 
                 </asp:Panel>
@@ -306,7 +306,13 @@ margin-top: 15px; }
                                     <asp:LinkButton ID="deleteRowButton" CommandArgument='<%# Eval("Id") %>' CommandName="DeleteRow" CausesValidation="false" OnClientClick="return confirm('Are you certain that you want to remove this member?');" runat="server">Remove</asp:LinkButton>
                                 </ItemTemplate>
                             </asp:TemplateField>
-                            <asp:BoundField DataField="Library" HeaderText="Library" Visible="true"></asp:BoundField>
+                            <asp:BoundField DataField="Library" HeaderText="xxx" Visible="false"></asp:BoundField>
+                            <asp:TemplateField HeaderText="" SortExpression="Library">
+                                <ItemTemplate>
+                                    <asp:Label ID="gridlblLibrary" runat="server" Text='<%# Bind("Library") %>'></asp:Label>
+                                </ItemTemplate>
+                            </asp:TemplateField>
+
                             <asp:TemplateField HeaderText="Member/Organization" SortExpression="SortName">
                                 <EditItemTemplate>
                                     <asp:Label ID="gridlblMemberName" runat="server" Text='<%# Bind("MemberName") %>'></asp:Label>
@@ -694,7 +700,7 @@ margin-top: 15px; }
 
 <asp:Panel ID="hiddenPanel" runat="server" Visible="false">
 <!-- control variables -->
-<asp:Literal ID="formSecurityName" runat="server" Visible="false">ILPathways.Admin</asp:Literal>
+<asp:Literal ID="formSecurityName" runat="server" Visible="false">Site.Admin</asp:Literal>
 <asp:Literal ID="doingBccOnRegistration" runat="server">yes</asp:Literal>
 <asp:Literal ID="ccApproverWithMbrConfirm" runat="server">yes</asp:Literal>
 <asp:Literal ID="txtCurrentLibraryId" runat="server">0</asp:Literal>

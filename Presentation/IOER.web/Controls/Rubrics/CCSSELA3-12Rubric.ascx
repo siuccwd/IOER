@@ -1,4 +1,4 @@
-﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="CCSSELA3-12Rubric.ascx.cs" Inherits="ILPathways.Controls.Rubrics.CCSSELA3_12Rubric" %>
+﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="CCSSELA3-12Rubric.ascx.cs" Inherits="IOER.Controls.Rubrics.CCSSELA3_12Rubric" %>
 
 <script type="text/javascript" src="/controls/rubrics/shared/ccss.js"></script>
 <script type="text/javascript">

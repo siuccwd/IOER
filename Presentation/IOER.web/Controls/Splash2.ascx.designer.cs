@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ILPathways.Controls {
+namespace IOER.Controls {
     
     
     public partial class Splash2 {
@@ -19,6 +19,6 @@ namespace ILPathways.Controls {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ILPathways.Controls.SplashMini splashMini;
+        protected global::IOER.Controls.SplashMini splashMini;
     }
 }

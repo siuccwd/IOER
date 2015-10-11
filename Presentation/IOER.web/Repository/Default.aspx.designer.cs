@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ILPathways.Content {
+namespace IOER.Content {
     
     
     public partial class Default {

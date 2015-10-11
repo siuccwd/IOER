@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ILPathways.Activity {
+namespace IOER.Activity {
     
     
     public partial class Stats {
@@ -19,6 +19,6 @@ namespace ILPathways.Activity {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ILPathways.Activity.Stats2 StatsList;
+        protected global::IOER.Activity.Stats2 StatsList;
     }
 }

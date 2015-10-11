@@ -103,5 +103,11 @@ namespace LRWarehouse.Business
                 this.createdBy = value;
             }
         }
+
+			public string CreatedString {
+				get { 
+					return this.Created.ToShortDateString(); 
+				}
+			}
     }
 }

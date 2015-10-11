@@ -24,6 +24,12 @@ namespace IOERBusinessEntities
             this.Resource_IntendedAudience = new HashSet<Resource_IntendedAudience>();
             this.Resource_Tag = new HashSet<Resource_Tag>();
             this.Resource_Standard = new HashSet<Resource_Standard>();
+            this.Resource_AssessmentType = new HashSet<Resource_AssessmentType>();
+            this.Resource_EducationUse = new HashSet<Resource_EducationUse>();
+            this.Resource_Evaluation = new HashSet<Resource_Evaluation>();
+            this.Resource_GroupType = new HashSet<Resource_GroupType>();
+            this.Resource_Like = new HashSet<Resource_Like>();
+            this.Resource_LikeSummary = new HashSet<Resource_LikeSummary>();
         }
     
         public System.Guid RowId { get; set; }
@@ -45,5 +51,11 @@ namespace IOERBusinessEntities
         public virtual Resource_PublishedBy Resource_PublishedBy { get; set; }
         public virtual ICollection<Resource_Tag> Resource_Tag { get; set; }
         public virtual ICollection<Resource_Standard> Resource_Standard { get; set; }
+        public virtual ICollection<Resource_AssessmentType> Resource_AssessmentType { get; set; }
+        public virtual ICollection<Resource_EducationUse> Resource_EducationUse { get; set; }
+        public virtual ICollection<Resource_Evaluation> Resource_Evaluation { get; set; }
+        public virtual ICollection<Resource_GroupType> Resource_GroupType { get; set; }
+        public virtual ICollection<Resource_Like> Resource_Like { get; set; }
+        public virtual ICollection<Resource_LikeSummary> Resource_LikeSummary { get; set; }
     }
 }

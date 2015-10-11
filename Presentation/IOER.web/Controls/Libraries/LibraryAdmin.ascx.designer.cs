@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ILPathways.Controls.Libraries {
+namespace IOER.Controls.Libraries {
     
     
     public partial class LibraryAdmin {
@@ -262,7 +262,7 @@ namespace ILPathways.Controls.Libraries {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ILPathways.Controls.Libraries.LibraryMtce LibraryMtce1;
+        protected global::IOER.Controls.Libraries.LibraryMtce LibraryMtce1;
         
         /// <summary>
         /// collectionPanel control.

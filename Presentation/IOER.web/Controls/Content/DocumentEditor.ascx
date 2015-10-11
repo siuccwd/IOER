@@ -1,4 +1,4 @@
-﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="DocumentEditor.ascx.cs" Inherits="ILPathways.Controls.Content.DocumentEditor" %>
+﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="DocumentEditor.ascx.cs" Inherits="IOER.Controls.Content.DocumentEditor" %>
 
 <%@ Register TagPrefix="uc1" TagName="ConditionsOfUseSelector" Src="/LRW/controls/ConditionsOfUseSelector.ascx" %>
 
@@ -357,7 +357,7 @@ function updateTextLengths(jqTextBox, jqTracker) {
 
 <div id="Stage1Items" runat="server">
     <div id="statusDiv" style="display: inline-block; width: 100px;" >
-    <a href="/My/Authored.aspx">Back to Search</a>
+    <a href="/My/Authored">Back to Search</a>
 </div>
 <div class="tabBox selected" id="tab_basicInfo">
   <h2 class="isleH2">Basic Content Information</h2>
@@ -470,7 +470,7 @@ function updateTextLengths(jqTextBox, jqTracker) {
 
 
 <asp:Panel ID="hiddenStuff" runat="server" Visible="false">
-  <asp:Literal ID="txtFormSecurityName" runat="server" Visible="false">ILPathways.LRW.controls.Authoring</asp:Literal>
+  <asp:Literal ID="txtFormSecurityName" runat="server" Visible="false">IOER.controls.Authoring</asp:Literal>
   <asp:Literal ID="ltlTabGetter" runat="server" Visible="false">tabID</asp:Literal>
   <asp:Literal ID="ltlBasicTabName" runat="server" Visible="false">basicInfo</asp:Literal>
 

@@ -10,19 +10,19 @@ using System.Web.SessionState;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
-using ILPathways.Library;
+using IOER.Library;
 using ILPathways.Utilities;
 using EmailHelper = ILPathways.Utilities.EmailManager;
 using MyManager = ILPathways.DAL.SqlQueryManager;
 using MyDataManager = LRWarehouse.DAL.DatabaseManager;
-using ILPathways.classes;
+using IOER.classes;
 //using ILPathways.DAL;
 using Isle.BizServices;
 using ILPathways.Business;
 using LRWarehouse.Business;
 using LRWarehouse.DAL;
 
-namespace ILPathways.Admin
+namespace IOER.Admin
 {
     public partial class Query : BaseAppPage
     {
@@ -31,7 +31,6 @@ namespace ILPathways.Admin
         public string queryDescText;
 
         const string formName = "ILPathways.Admin.Query";
-        const string formSecurityName = "ILPathways.Admin.Query";
 
         /// <summary>
         /// INTERNAL PROPERTY: CurrentGroup
@@ -99,7 +98,7 @@ namespace ILPathways.Admin
         private void InitializeForm()
         {
             //formSecurityName
-            this.FormPrivileges = SecurityManager.GetGroupObjectPrivileges( WebUser, formSecurityName );
+			this.FormPrivileges = SecurityManager.GetGroupObjectPrivileges(WebUser, txtFormSecurityName.Text);
 
             if ( FormPrivileges.HasStateUpdate() )
             {
@@ -626,12 +625,15 @@ namespace ILPathways.Admin
         {
             int pOwnerid = 0;
             DataSet ds = MyManager.Select( "", category, isPublicFilter, pOwnerid );
-            MyManager.AddEntryToTable( ds.Tables[ 0 ], 0, "Select a query", "id", "Title" );
+			if ( BaseDataManager.DoesDataSetHaveRows( ds ) )
+			{
+				MyManager.AddEntryToTable( ds.Tables[ 0 ], 0, "Select a query", "id", "Title" );
 
-            lstForm.DataSource = ds;
-            lstForm.DataValueField = "id";
-            this.lstForm.DataTextField = "Title";
-            lstForm.DataBind();
+				lstForm.DataSource = ds;
+				lstForm.DataValueField = "id";
+				this.lstForm.DataTextField = "Title";
+				lstForm.DataBind();
+			}
 
         } //
 

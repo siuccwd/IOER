@@ -81,5 +81,6 @@ namespace IOERBusinessEntities
         public DbSet<Resource_Like> Resource_Like { get; set; }
         public DbSet<Resource_LikeSummary> Resource_LikeSummary { get; set; }
         public DbSet<Resource_View> Resource_View { get; set; }
+        public DbSet<Resource_DelayedPublish> Resource_DelayedPublish { get; set; }
     }
 }

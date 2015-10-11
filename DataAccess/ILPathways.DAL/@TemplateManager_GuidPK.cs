@@ -7,7 +7,7 @@ using System.Web;
 using System.Web.Security;
 using System.Web.SessionState;
 using Microsoft.ApplicationBlocks.Data;
-using MyEntity = ILPathways.Business.AppItem;
+using MyEntity = ILPathways.Business.DataItem;
 
 /*
  * USE this template for tables where the PK is a uniqueidentifier

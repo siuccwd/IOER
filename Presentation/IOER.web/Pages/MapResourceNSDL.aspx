@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" MasterPageFile="/Masters/Pathway.Master" AutoEventWireup="true"  CodeBehind="MapResourceNSDL.aspx.cs" Inherits="ILPathways.Pages.MapResourceNSDL" %>
+﻿<%@ Page Title="Illinois Open Educational Resources - Map NSDL Resources" Language="C#" MasterPageFile="/Masters/Pathway.Master" AutoEventWireup="true"  CodeBehind="MapResourceNSDL.aspx.cs" Inherits="IOER.Pages.MapResourceNSDL" %>
 
 <asp:Content ID="Content2" ContentPlaceHolderID="BodyContent" runat="server">
 

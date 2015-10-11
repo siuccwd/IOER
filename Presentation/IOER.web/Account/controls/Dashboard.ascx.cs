@@ -8,10 +8,10 @@ using System.Web.UI.WebControls;
 using Isle.DTO;
 using Isle.BizServices;
 using LibMgr = Isle.BizServices.LibraryBizService;
-using ILPathways.Library;
+using IOER.Library;
 using ILPathways.Utilities;
 
-namespace ILPathways.Account.controls
+namespace IOER.Account.controls
 {
   public partial class Dashboard : BaseUserControl
   {
@@ -26,6 +26,13 @@ namespace ILPathways.Account.controls
 
     protected void Page_Load( object sender, EventArgs e )
     {
+      //Check for login
+      if ( !IsUserAuthenticated() )
+      {
+        Response.Redirect( "/Account/Login.aspx?nextUrl=" + Request.Url.PathAndQuery );
+        return;
+      }
+
         if ( !Page.IsPostBack )
         {
             //Temporary
@@ -59,6 +66,10 @@ namespace ILPathways.Account.controls
             AccountServices.FillDashboard( dashboard, GetAppUser() );
 
             libAdminLink.Visible = CanUserAdminLibraries( WebUser.Id );
+
+            orgAdminLink.Visible = OrganizationBizService.IsAnyOrgAdministrator(WebUser.Id);
+
+
             seeAllMyFollowedLink.Visible = true;
             seeAllMyOrgLibrariesLink.Visible = true;
             //this.quickLinks.Visible = true;
@@ -113,7 +124,7 @@ namespace ILPathways.Account.controls
     {
         bool canView = false;
         //check if previously done
-        string auth = ILPathways.classes.SessionManager.Get( Session, CAN_VIEW_LIBRARYADMIN_MENU, "missing" );
+        string auth = IOER.classes.SessionManager.Get( Session, CAN_VIEW_LIBRARYADMIN_MENU, "missing" );
         if ( auth.Equals( "yes" ) )
         {
             canView = true;
@@ -122,9 +133,9 @@ namespace ILPathways.Account.controls
         {
             canView = new LibMgr().Library_CanUserAdministerLibraries( userId );
             if ( canView )
-                ILPathways.classes.SessionManager.Set( Session, CAN_VIEW_LIBRARYADMIN_MENU, "yes" );
+                IOER.classes.SessionManager.Set( Session, CAN_VIEW_LIBRARYADMIN_MENU, "yes" );
             else
-                ILPathways.classes.SessionManager.Set( Session, CAN_VIEW_LIBRARYADMIN_MENU, "no" );
+                IOER.classes.SessionManager.Set( Session, CAN_VIEW_LIBRARYADMIN_MENU, "no" );
         }
 
 

@@ -5,7 +5,7 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
-namespace ILPathways.Pages
+namespace IOER.Pages
 {
   public partial class Dashboard : System.Web.UI.Page
   {

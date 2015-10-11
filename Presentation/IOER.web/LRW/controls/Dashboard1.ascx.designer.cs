@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ILPathways.LRW.controls {
+namespace IOER.LRW.controls {
     
     
     public partial class Dashboard1 {
@@ -28,7 +28,7 @@ namespace ILPathways.LRW.controls {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ILPathways.Controls.Includes.Header6 Header;
+        protected global::IOER.Controls.Includes.Header6 Header;
         
         /// <summary>
         /// dashboardContent control.

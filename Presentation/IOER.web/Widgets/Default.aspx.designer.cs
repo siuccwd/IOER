@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ILPathways.Widgets
+namespace IOER.Widgets
 {
 
 

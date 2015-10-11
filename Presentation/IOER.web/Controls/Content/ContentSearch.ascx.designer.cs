@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ILPathways.Controls.Content {
+namespace IOER.Controls.Content {
     
     
     public partial class ContentSearch {
@@ -101,6 +101,15 @@ namespace ILPathways.Controls.Content {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.RadioButtonList listCreatedBy;
+        
+        /// <summary>
+        /// cbxListCreatedBy control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.CheckBoxList cbxListCreatedBy;
         
         /// <summary>
         /// contentTypePanel control.
@@ -362,6 +371,15 @@ namespace ILPathways.Controls.Content {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Literal txtPublicFilter;
+        
+        /// <summary>
+        /// litSharedWithMeFilter control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Literal litSharedWithMeFilter;
         
         /// <summary>
         /// showingContentTypeFilters control.

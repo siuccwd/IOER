@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ILPathways.Controls.Account {
+namespace IOER.Controls.Account {
     
     
     public partial class AccountSearch {

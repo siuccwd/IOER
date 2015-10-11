@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ILPathways.testing {
+namespace IOER.testing {
     
     
     public partial class Plain {
@@ -19,6 +19,6 @@ namespace ILPathways.testing {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ILPathways.Controls.Curriculum.CurriculumView1 test;
+        protected global::IOER.Controls.Curriculum.CurriculumView1 test;
     }
 }

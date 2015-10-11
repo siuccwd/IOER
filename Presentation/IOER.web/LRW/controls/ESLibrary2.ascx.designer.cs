@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ILPathways.LRW.controls {
+namespace IOER.LRW.controls {
     
     
     public partial class ESLibrary2 {
@@ -28,7 +28,7 @@ namespace ILPathways.LRW.controls {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ILPathways.Activity.ActivityRenderer activityRenderer;
+        protected global::IOER.Activity.ActivityRenderer activityRenderer;
         
         /// <summary>
         /// settingsTab control.
@@ -103,13 +103,31 @@ namespace ILPathways.LRW.controls {
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl joinLibraryPanel;
         
         /// <summary>
+        /// txtStartDate control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlInputText txtStartDate;
+        
+        /// <summary>
+        /// txtEndDate control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlInputText txtEndDate;
+        
+        /// <summary>
         /// searchControl control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ILPathways.Controls.SearchV6.SearchV6 searchControl;
+        protected global::IOER.Controls.SearchV6.SearchV6 searchControl;
         
         /// <summary>
         /// error control.
@@ -209,14 +227,5 @@ namespace ILPathways.LRW.controls {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Literal libraryCreateMsg;
-        
-        /// <summary>
-        /// activityDaysAgo control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Literal activityDaysAgo;
     }
 }

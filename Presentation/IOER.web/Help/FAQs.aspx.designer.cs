@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ILPathways.Help {
+namespace IOER.Help {
     
     
     public partial class FAQs {
@@ -28,6 +28,6 @@ namespace ILPathways.Help {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ILPathways.Controls.FAQs.FaqList FaqList1;
+        protected global::IOER.Controls.FAQs.FaqList FaqList1;
     }
 }

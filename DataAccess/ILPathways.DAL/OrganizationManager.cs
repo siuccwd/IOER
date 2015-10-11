@@ -72,8 +72,9 @@ namespace ILPathways.DAL
 				sqlParameters[ 13 ] = new SqlParameter( "@City", org.City );
 				sqlParameters[ 14 ] = new SqlParameter( "@State", org.State );
 				sqlParameters[ 15 ] = new SqlParameter( "@Zipcode", org.Zipcode );
+				sqlParameters[ 16 ] = new SqlParameter( "@ZipCode4", org.ZipCode4 );
 
-                sqlParameters[ 16 ] = new SqlParameter( "@CreatedById", org.CreatedById );
+                sqlParameters[ 17 ] = new SqlParameter( "@CreatedById", org.CreatedById );
 
 				#endregion
 
@@ -112,7 +113,7 @@ namespace ILPathways.DAL
 			try
 			{
 				#region parameters
-                SqlParameter[] sqlParameters = new SqlParameter[ 16 ];
+                SqlParameter[] sqlParameters = new SqlParameter[ 17 ];
 				sqlParameters[ 0 ] = new SqlParameter( "@id", org.Id );
                 sqlParameters[ 1 ] = new SqlParameter( "@Name", org.Name );
 
@@ -129,8 +130,8 @@ namespace ILPathways.DAL
                 sqlParameters[ 12 ] = new SqlParameter( "@City", org.City );
                 sqlParameters[ 13 ] = new SqlParameter( "@State", org.State );
                 sqlParameters[ 14 ] = new SqlParameter( "@Zipcode", org.Zipcode );
-
-                sqlParameters[ 15 ] = new SqlParameter( "@LastUpdatedById", org.LastUpdatedById );
+				sqlParameters[ 15 ] = new SqlParameter( "@ZipCode4", org.ZipCode4 );
+                sqlParameters[ 16 ] = new SqlParameter( "@LastUpdatedById", org.LastUpdatedById );
 
 				#endregion
 

@@ -2,15 +2,16 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using System.Web.Script.Serialization;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
-using LRWarehouse.Business.ResourceV2;
-using ILPathways.Library;
+using IOER.Library;
+using ILPathways.Utilities;
 using Isle.BizServices;
-using System.Web.Script.Serialization;
+using LRWarehouse.Business.ResourceV2;
 
-namespace ILPathways.Controls.UberTaggerV1
+namespace IOER.Controls.UberTaggerV1
 {
   public partial class UberTaggerV1 : BaseUserControl
   {
@@ -59,7 +60,7 @@ namespace ILPathways.Controls.UberTaggerV1
         { "title", false },
         { "description", false }
       };
-      var permissions = SecurityManager.GetGroupObjectPrivileges( WebUser, "ILPathways.LRW.Pages.ResourceDetail" );
+      var permissions = SecurityManager.GetGroupObjectPrivileges( WebUser, "IOER.Pages.ResourceDetail" );
       if ( permissions.CreatePrivilege > ( int ) ILPathways.Business.EPrivilegeDepth.State )
       {
         CanUpdate[ "title" ] = true;
@@ -71,7 +72,7 @@ namespace ILPathways.Controls.UberTaggerV1
     private void InitAlwaysLast()
     {
       //Show or hide the testing mode checkbox
-      lblTestingMode.Visible = ( ILPathways.classes.SessionManager.Get( Session, "CAN_VIEW_ADMIN_MENU", "missing" ) == "yes" );
+      lblTestingMode.Visible = ( IOER.classes.SessionManager.Get( Session, "CAN_VIEW_ADMIN_MENU", "missing" ) == "yes" );
 
       //Get Field code table data
       Fields = resourceV2Services.GetFieldAndTagCodeData();
@@ -123,8 +124,8 @@ namespace ILPathways.Controls.UberTaggerV1
         //Auto-assign values if new
         LoadedResourceData.Fields.Where( m => m.Schema == "inLanguage" ).FirstOrDefault().Tags.First().Selected = true;
         LoadedResourceData.Fields.Where( m => m.Schema == "accessRights" ).FirstOrDefault().Tags.First().Selected = true;
-        LoadedResourceData.UsageRights.Id = 3;
-        LoadedResourceData.UsageRights.Url = resourceV2Services.GetUsageRightsList().Where( m => m.Id == 3 ).FirstOrDefault().Url;
+        LoadedResourceData.UsageRights.CodeId = 3;
+        LoadedResourceData.UsageRights.Url = resourceV2Services.GetUsageRightsList().Where( m => m.CodeId == 3 ).FirstOrDefault().Url;
         CanUpdate[ "title" ] = true;
         CanUpdate[ "description" ] = true;
       }
@@ -162,7 +163,8 @@ namespace ILPathways.Controls.UberTaggerV1
       //Determine publish or update
       var resourceID = int.Parse( hdnResourceID.Value );
       bool updateMode = resourceID > 0;
-
+	  string defaultPublisher = UtilityManager.GetAppKeyValue( "defaultPublisher", "Illinois Shared Learning Environment" );
+	  string defaultSubmitter = UtilityManager.GetAppKeyValue( "defaultSubmitter", "ISLE OER on Behalf of " );
       //Get data holders
       var form = Request.Form;
       var keys = Request.Form.AllKeys;
@@ -201,7 +203,7 @@ namespace ILPathways.Controls.UberTaggerV1
 
       //Get drop-down list data
       //Usage Rights
-      resource.UsageRights.Id = int.Parse( form[ "ddlUsageRights" ] );
+      resource.UsageRights.CodeId = int.Parse( form[ "ddlUsageRights" ] );
       //Language
       var languageID = int.Parse( form[ "ddlLanguage" ] );
       resource.Fields.Where( m => m.Schema == "inLanguage" ).FirstOrDefault().Tags.Where( t => t.Id == languageID ).FirstOrDefault().Selected = true;
@@ -270,7 +272,7 @@ namespace ILPathways.Controls.UberTaggerV1
       {
         if ( resource.Url.IndexOf( "ilsharedlearning" ) > -1 )
         {
-          resource.Publisher = "ISLE OER";
+			resource.Publisher = defaultPublisher;
         }
         else
         {
@@ -283,7 +285,7 @@ namespace ILPathways.Controls.UberTaggerV1
       }
 
       //Submitter
-      resource.Submitter = "ISLE OER on Behalf of " + WebUser.FullName();
+	  resource.Submitter = defaultSubmitter + WebUser.FullName();
 
       //Requirements
       resource.Requirements = ValidateText( util, form[ "txtRequirements" ], 0, "Technical/Equipment Requirements", ref errors );

@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ILPathways.LRW.News {
+namespace IOER.LRW.News {
     
     
     public partial class Default {
@@ -28,7 +28,7 @@ namespace ILPathways.LRW.News {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ILPathways.Controls.AppItems.NewsItemSearch News1;
+        protected global::IOER.Controls.AppItems.NewsItemSearch News1;
         
         /// <summary>
         /// customPageTitle control.

@@ -1,4 +1,4 @@
-﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="Curriculum1.ascx.cs" Inherits="ILPathways.Controls.Curriculum.Curriculum1" %>
+﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="Curriculum1.ascx.cs" Inherits="IOER.Controls.Curriculum.Curriculum1" %>
 <%@ Register TagPrefix="uc1" TagName="SocialBoxControl" Src="/Controls/SocialBox/SocialBox1.ascx" %>
 
 <link rel="stylesheet" type="text/css" href="/Styles/common2.css" />
@@ -428,13 +428,13 @@ h2.close {
     <div id="nodeChildStandards"></div>
     <div id="nodeDownload">
       <a id="downloadUrl" href="/Repository/Download.aspx?nid=2220" target="_blank">
-        <img src="/images/icons/download-orange.png" /> 
+        <img alt='' src="/images/icons/download-orange.png" /> 
         Download This Resource's related documents
       </a> 
     </div>
           <div id="nodeDownload2" style="display:none;">
       <a id="downloadUrl2" href="/Repository/DownloadFiles.aspx?all=false&nid=2220" target="_blank">
-        <img src="/images/icons/download-orange.png" /> 
+        <img alt='' src="/images/icons/download-orange.png" /> 
         Download This Resource's related documents (current section only)
       </a> 
     </div>

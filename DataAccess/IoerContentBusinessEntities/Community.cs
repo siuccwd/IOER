@@ -33,6 +33,7 @@ namespace IoerContentBusinessEntities
         public Nullable<int> OrgId { get; set; }
         public int PublicAccessLevel { get; set; }
         public int OrgAccessLevel { get; set; }
+        public Nullable<bool> IsModerated { get; set; }
     
         public virtual ICollection<Community_Member> Community_Member { get; set; }
         public virtual ICollection<Community_PostItem> Community_PostItem { get; set; }

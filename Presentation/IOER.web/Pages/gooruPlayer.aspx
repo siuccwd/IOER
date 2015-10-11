@@ -1,4 +1,4 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Masters/Responsive.Master" AutoEventWireup="true" CodeBehind="gooruPlayer.aspx.cs" Inherits="ILPathways.Pages.gooruPlayer" %>
+﻿<%@ Page Title="Illinois Open Educational Resources Gooru Resource" Language="C#" MasterPageFile="~/Masters/Responsive.Master" AutoEventWireup="true" CodeBehind="gooruPlayer.aspx.cs" Inherits="IOER.Pages.gooruPlayer" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="HeadContent" runat="server">
 <style>
@@ -20,11 +20,11 @@
     <div id="container">
         <!--<h1 class="isleH1" style="font-size:228%" ><asp:literal ID="viewTitle" runat="server">gooru Resource</asp:literal></h1>-->
         <div id="publish">
-            <a class='contributeLink' href = '/Contribute/?mode=tag&gooruID=<%=gooruID %>' target='gooruRes'>Tag this Resource</a>
+            <a class='contributeLink' href = '/tagger?theme=ioer&mode=tag&gooruID=<%=gooruID %>' target='gooruRes'>Tag this Resource</a>
         </div>
 		<div id="playerFrameContainer">
 			<iframe frameborder="0" id="playerFrame" class="playerFrame" runat="server"
-				src="http://www.goorulearning.org/p/r/?id=78fa02fc-9e5f-4253-b58d-c46e392eb83c&api_key=960a9175-eaa7-453f-ba03-ecd07e1f1afc"></iframe>
+				src="//www.goorulearning.org/p/r/?id=78fa02fc-9e5f-4253-b58d-c46e392eb83c&api_key=960a9175-eaa7-453f-ba03-ecd07e1f1afc"></iframe>
 		</div>
         <asp:Panel ID="messagePanel" runat="server" Visible="false">
             <h2>Missing/Invalid Identifier</h2>
@@ -44,10 +44,10 @@
         -->
 
 
-    <asp:Literal ID="playerUrl" runat="server" Visible="false">http://www.goorulearning.org/p/{1}/?api_key=960a9175-eaa7-453f-ba03-ecd07e1f1afc&id={0}</asp:Literal>
-    <asp:Literal ID="collectionPlayerUrl1" runat="server" Visible="false">http://www.goorulearning.org/embed/collection.htm?api_key=960a9175-eaa7-453f-ba03-ecd07e1f1afc&id={0}</asp:Literal>
-    <asp:Literal ID="collectionPlayerUrl" runat="server" Visible="false">http://www.goorulearning.org/p/c/?api_key=960a9175-eaa7-453f-ba03-ecd07e1f1afc&id={0}</asp:Literal>
-    <asp:Literal ID="collectionPlayerUrlConcept" runat="server" Visible="false">http://concept.goorulearning.org/embed/collection.htm?api_key=960a9175-eaa7-453f-ba03-ecd07e1f1afc&id={0}</asp:Literal>
+    <asp:Literal ID="playerUrl" runat="server" Visible="false">//www.goorulearning.org/p/{1}/?api_key=960a9175-eaa7-453f-ba03-ecd07e1f1afc&id={0}</asp:Literal>
+    <asp:Literal ID="collectionPlayerUrl1" runat="server" Visible="false">//www.goorulearning.org/embed/collection.htm?api_key=960a9175-eaa7-453f-ba03-ecd07e1f1afc&id={0}</asp:Literal>
+    <asp:Literal ID="collectionPlayerUrl" runat="server" Visible="false">//www.goorulearning.org/p/c/?api_key=960a9175-eaa7-453f-ba03-ecd07e1f1afc&id={0}</asp:Literal>
+    <asp:Literal ID="collectionPlayerUrlConcept" runat="server" Visible="false">//concept.goorulearning.org/embed/collection.htm?api_key=960a9175-eaa7-453f-ba03-ecd07e1f1afc&id={0}</asp:Literal>
 
 </asp:Panel>
 </asp:Content>

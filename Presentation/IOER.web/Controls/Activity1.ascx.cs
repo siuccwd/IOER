@@ -9,11 +9,11 @@ using System.Web.UI.WebControls;
 using ILPathways.Business;
 using ILP = ILPathways.Business;
 using ILPathways.Common;
-using ILPathways.Library;
+using IOER.Library;
 using ILPathways.Utilities;
 using Isle.BizServices;
 
-namespace ILPathways.Controls
+namespace IOER.Controls
 {
   public partial class Activity1 : BaseUserControl
   {
@@ -39,7 +39,15 @@ namespace ILPathways.Controls
       GetEvents();
 
       //Serialize the EventList
-      ranges = "var ranges = " + new JavaScriptSerializer().Serialize( eventRanges ) + ";";
+	  var serializer = new JavaScriptSerializer();
+
+	  // For simplicity just use Int32's max value.
+	  // You could always read the value from the config section mentioned above.
+	  serializer.MaxJsonLength = Int32.MaxValue;
+	  var result = serializer.Serialize( eventRanges );
+
+	  ranges = "var ranges = " + result + ";";
+	  //ranges = "var ranges = " + new JavaScriptSerializer().Serialize( eventRanges ) + ";";
     }
 
     public void InitPage()
@@ -118,7 +126,7 @@ namespace ILPathways.Controls
       var currentRange = new EventList() { startDate = currentDay.ToShortDateString() };
       if ( activities != null && activities.Count > 0 )
       {
-        foreach ( Business.ObjectActivity activity in activities )
+        foreach ( ObjectActivity activity in activities )
         {
           if ( activity.ObjectText.IndexOf( "testdata: " ) > -1 ) //Skip test resources
           {

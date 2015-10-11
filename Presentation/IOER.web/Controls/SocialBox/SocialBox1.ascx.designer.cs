@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ILPathways.Controls.SocialBox {
+namespace IOER.Controls.SocialBox {
     
     
     public partial class SocialBox1 {

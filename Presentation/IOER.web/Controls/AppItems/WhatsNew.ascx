@@ -1,4 +1,4 @@
-﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="WhatsNew.ascx.cs" Inherits="ILPathways.Controls.AppItems.WhatsNew" %>
+﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="WhatsNew.ascx.cs" Inherits="IOER.Controls.AppItems.WhatsNew" %>
 
 <asp:Panel ID="detailPanel" runat="server" Visible="true">
 	<div id="WhatsNewHeading" >

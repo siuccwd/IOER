@@ -44,9 +44,10 @@ function setupFilters() {
   var list = $("#filterLists");
   //For each filter in the list
   for (i in filters) {
-    //Append the header
+      //Append the header
+     // list.append($("<fieldset>"));
     list.append($("<h2>" + filters[i].header + "</h2>").addClass("mid"));
-    list.append($("<p>" + filters[i].tip + "</h2>").addClass("tip"));
+    list.append($("<p>" + filters[i].tip + "</p>").addClass("tip"));
     //Generate the list
     for (j in filters[i].items) {
       var current = filters[i].items[j];
@@ -69,6 +70,7 @@ function setupFilters() {
         list.find("input").last().prop("checked", true);
       }
     }
+   // list.append($("</fieldset>"));
   }
 
   //On click of a filter...

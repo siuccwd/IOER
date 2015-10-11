@@ -5,7 +5,7 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
-namespace ILPathways.Activity
+namespace IOER.Activity
 {
   public partial class Stats : System.Web.UI.Page
   {

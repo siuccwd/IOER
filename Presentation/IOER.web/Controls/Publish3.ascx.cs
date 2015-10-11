@@ -5,14 +5,15 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
-using ILPathways.Library;
+using IOER.Library;
+using ILPathways.Business;
 using ILPathways.Utilities;
 using Isle.BizServices;
 using LRWarehouse.Business;
-using ILPathways.Services;
+using IOER.Services;
 using System.Web.Script.Serialization;
 
-namespace ILPathways.Controls
+namespace IOER.Controls
 {
   public partial class Publish3 : BaseUserControl
   {
@@ -88,55 +89,79 @@ namespace ILPathways.Controls
       }
     }
 
-    void PrefillAuthoredResourceInfo()
-    {
-      //Check to see if the session has any data to fill
-      var authoredResourceID = GetSessionItem( "authoredResourceID", 0 );
-      var authoredResourceURL = GetSessionItem( "authoredResourceURL", "" );
-      if ( authoredResourceID == 0 || authoredResourceURL == "" )
-      {
-        return;
-      }
+	void PrefillAuthoredResourceInfo()
+	{
+		//Check to see if the session has any data to fill
+		var authoredResourceID = GetSessionItem("authoredResourceID", 0);
+		if (authoredResourceID == 0)
+			authoredResourceID = FormHelper.GetRequestKeyValue("contentId", 0);
+		var authoredResourceURL = GetSessionItem("authoredResourceURL", "");
+		if (authoredResourceID == 0 )
+		{
+			return;
+		}
+		//|| authoredResourceURL == ""
+		//If so, load the item
+		var contentManager = new ContentServices();
+		var contentItem = contentManager.Get(authoredResourceID);
+		if (authoredResourceURL == "")
+		{
+			//determine url
+			if (contentItem.TypeId == 50)
+			{
+				string llUrl = UtilityManager.GetAppKeyValue("learningListUrl");
+				if (llUrl.Length > 10)
+					authoredResourceURL = string.Format(llUrl, contentItem.Id, ResourceBizService.FormatFriendlyTitle(contentItem.Title));
+			}
+			else if (contentItem.TypeId == 10)
+			{
+				string llUrl = UtilityManager.GetAppKeyValue("contentUrl");
+				if (llUrl.Length > 10)
+					authoredResourceURL = string.Format(llUrl, contentItem.Id, ResourceBizService.FormatFriendlyTitle(contentItem.Title));
+			}
+			else
+			{
+				//not sure
+			}
+		}
+		AuthoredResourceID = authoredResourceID;
+		createdContentItemId.Text = authoredResourceID.ToString();
 
-      //If so, load the item
-      var contentManager = new ContentServices();
-      var contentItem = contentManager.Get( authoredResourceID );
-      AuthoredResourceID = authoredResourceID;
-      createdContentItemId.Text = authoredResourceID.ToString();
+		//Pre-populate fields
+		//Creator
+		txtCreator.Value = contentItem.HasOrg() ? contentItem.ContentOrg.Name : WebUser.FullName();
+		//Publisher
+		txtPublisher.Value = ILPathways.Utilities.UtilityManager.GetAppKeyValue("defaultPublisher", "Illinois Shared Learning Environment");
 
-      //Pre-populate fields
-      //Creator
-      txtCreator.Value = contentItem.HasOrg() ? contentItem.ContentOrg.Name : WebUser.FullName();
-      //Publisher
-      txtPublisher.Value = ILPathways.Utilities.UtilityManager.GetAppKeyValue( "defaultPublisher", "Illinois Shared Learning Environment" );
+		if (contentItem.IsValid)
+		{
+			txtURL.Value = authoredResourceURL;
+			txtTitle.Value = contentItem.Title;
+			txtDescription.Value = contentItem.Summary;
+			usageRightsSelector.selectedValue = contentItem.ConditionsOfUseId.ToString();
+			usageRightsSelector.conditionsURL = contentItem.ConditionsOfUseUrl;
 
-      if ( contentItem.IsValid )
-      {
-        txtURL.Value = authoredResourceURL;
-        txtTitle.Value = contentItem.Title;
-        txtDescription.Value = contentItem.Summary;
-        usageRightsSelector.selectedValue = contentItem.ConditionsOfUseId.ToString();
-        usageRightsSelector.conditionsURL = contentItem.ConditionsOfUseUrl;
+			if (contentItem.PrivilegeTypeId != ContentItem.PUBLIC_PRIVILEGE)
+			{
+				LRPublishAction = "no";
+			}
+			if (contentItem.IsOrgContent())
+			{
+				RequiresApproval = "yes"; //If it requires approval, we can't publish it yet
+				if (contentItem.PrivilegeTypeId == ContentItem.PUBLIC_PRIVILEGE)
+				{
+					LRPublishAction = "save";
+				}
+			}
 
-        if ( contentItem.PrivilegeTypeId != Business.ContentItem.PUBLIC_PRIVILEGE )
-        {
-          LRPublishAction = "no";
-        }
-        if ( contentItem.IsOrgContent() )
-        {
-          RequiresApproval = "yes"; //If it requires approval, we can't publish it yet
-          if ( contentItem.PrivilegeTypeId == Business.ContentItem.PUBLIC_PRIVILEGE )
-          {
-            LRPublishAction = "save";
-          }
-        }
-      }
+			//TODO - add standards? or check later
+		}
 
-      //Remove the items from the session
-      Session.Remove( "authoredResourceID" );
-      Session.Remove( "authoredResourceURL" );
+		//Remove the items from the session
+		Session.Remove("authoredResourceID");
+		Session.Remove("authoredResourceURL");
 
-    }
+	}
 
     void LoadMyLibraries()
     {
@@ -444,7 +469,7 @@ namespace ILPathways.Controls
         {
           bool hasApproval = false;
           string statusMessage2 = "";
-          bool isValid = ILPathways.Controllers.ContentController.HandleContentApproval( resource, AuthoredResourceID, user, ref hasApproval, ref statusMessage2 );
+		  bool isValid = new ContentServices().HandleContentApproval(resource, AuthoredResourceID, user, ref hasApproval, ref statusMessage2);
           if ( hasApproval )
           {
             SetConsoleSuccessMessage("<p>NOTE: Approval is required, an email has been sent requesting a review of this resource.</p>");

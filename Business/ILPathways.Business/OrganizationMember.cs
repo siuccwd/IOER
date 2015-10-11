@@ -9,6 +9,7 @@ namespace ILPathways.Business
     public class OrganizationMember : BaseBusinessDataEntity
     {
 
+		public static int MEMBERTYPE_PENDING = 0;
         public static int MEMBERTYPE_ADMINISTRATION = 1;
         public static int MEMBERTYPE_EMPLOYEE = 2;
         public static int MEMBERTYPE_STUDENT = 3;
@@ -41,7 +42,8 @@ namespace ILPathways.Business
                     if ( OrgMemberTypeId == 1 ) _orgMemberType = "Administration";
                     else if ( OrgMemberTypeId == 2 ) _orgMemberType = "Employee";
                     else if ( OrgMemberTypeId == 3 ) _orgMemberType = "Student";
-                    else if ( OrgMemberTypeId == 4 ) _orgMemberType = "Contractor";
+                    else if ( OrgMemberTypeId == 4 ) _orgMemberType = "External";
+					else if ( OrgMemberTypeId == 0 ) _orgMemberType = "Pending";
                 }
                     
                 return _orgMemberType;
@@ -55,6 +57,7 @@ namespace ILPathways.Business
 
         public string FirstName { get; set; }
         public string LastName { get; set; }
+		public string Email { get; set; }
         public string ImageUrl { get; set; }
         public string UserProfileUrl { get; set; }
 

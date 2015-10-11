@@ -8,7 +8,7 @@ using System.Web.UI.WebControls;
 using System.Net;
 using System.IO;
 
-namespace ILPathways.Controls
+namespace IOER.Controls
 {
   public partial class ImportedSearch : System.Web.UI.UserControl
   {

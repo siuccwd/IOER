@@ -15,7 +15,7 @@ using Newtonsoft.Json;
 
 using ILPathways.Utilities;
 
-namespace ILPathways.Pages
+namespace IOER.Pages
 {
     public partial class GooruSearch : System.Web.UI.Page
     {
@@ -62,7 +62,7 @@ serRoleSetString":"ANONYMOUS","username":"Guest4678","usernameDisplay":"Guest467
         public string GetSessionToken()
         {
             string token = "";
-            string url = LRWarehouse.DAL.BaseDataManager.GetAppKeyValue( "gooruApiUrl" );  // "http://www.goorulearning.org/gooruapi/rest/v2/account/loginas/anonymous?apiKey=960a9175-eaa7-453f-ba03-ecd07e1f1afc";
+			string url = UtilityManager.GetAppKeyValue("gooruApiUrl");  // "http://www.goorulearning.org/gooruapi/rest/v2/account/loginas/anonymous?apiKey=960a9175-eaa7-453f-ba03-ecd07e1f1afc";
             if ( string.IsNullOrWhiteSpace( url ) )
             {
               url = gooruApiUrl.Text; //Couldn't use this as a second argument of the GetAppKeyValue method because it was throwing uninstantiated object reference errors

@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="Default.aspx.cs" Inherits="ILPathways.Feed.Default" MasterPageFile="/Masters/Responsive.Master" %>
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="Default.aspx.cs" Inherits="IOER.Feed.Default" MasterPageFile="/Masters/Responsive.Master" %>
 <%@ Register TagPrefix="uc1" TagName="Feed" Src="/Feed/Feed1.ascx" %>
 
 <asp:Content ContentPlaceHolderID="BodyContent" runat="server">

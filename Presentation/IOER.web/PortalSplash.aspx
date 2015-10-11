@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="PortalSplash.aspx.cs" Inherits="ILPathways.PortalSplash" %>
+﻿<%@ Page Language="C#" Title="Illinois Open Educational Resources" AutoEventWireup="true" CodeBehind="PortalSplash.aspx.cs" Inherits="IOER.PortalSplash" %>
 <%@ Register TagName="MiniSplash" TagPrefix="uc1" Src="/Controls/Splash2.ascx" %>
 <%@ Register TagName="Console" TagPrefix="uc1" Src="/Controls/Includes/SystemMessageLine.ascx" %>
 

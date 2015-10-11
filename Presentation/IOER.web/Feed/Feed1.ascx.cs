@@ -7,7 +7,7 @@ using System.Web.UI.WebControls;
 
 using System.Web.Script.Serialization;
 
-namespace ILPathways.Feed
+namespace IOER.Feed
 {
   public partial class Feed1 : System.Web.UI.UserControl
   {

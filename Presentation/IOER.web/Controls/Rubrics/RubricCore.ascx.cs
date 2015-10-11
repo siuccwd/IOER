@@ -5,12 +5,13 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
-using ILPathways.Library;
+using IOER.Library;
 using LRWarehouse.Business;
 using System.Web.Script.Serialization;
 using Isle.BizServices;
+using Patron = LRWarehouse.Business.Patron;
 
-namespace ILPathways.Controls.Rubrics
+namespace IOER.Controls.Rubrics
 {
   public partial class RubricCore : BaseUserControl
   {

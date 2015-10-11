@@ -5,7 +5,7 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
-namespace ILPathways.Widgets.PreviewerV1
+namespace IOER.Widgets.PreviewerV1
 {
   public partial class Index : System.Web.UI.Page
   {

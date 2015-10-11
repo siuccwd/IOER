@@ -28,6 +28,8 @@ namespace Isle.BizServices
 {
     public class CurriculumServices : ContentServices
     {
+
+        static string thisClassName = "CurriculumServices";
         #region == methods for groups of curriculum ==
 
         /// <summary>
@@ -122,32 +124,7 @@ namespace Isle.BizServices
         }
 
 
-        /// <summary>
-        /// Return collection of all learning lists to which the user has edit access 
-        /// </summary>
-        /// <param name="userId"></param>
-        /// <returns></returns>
-        public List<LearningListNode> Learninglists_SelectUserEditableLists( int userId )
-        {
-            return EFManager.SelectUserEditableLearningLists( userId );
 
-        }
-
-        /// <summary>
-        /// Return collection of all learning lists to which the user has at least read access 
-        /// </summary>
-        /// <param name="userId"></param>
-        /// <returns></returns>
-        public List<LearningListNode> Learninglists_SelectUserLists( int userId )
-        {
-            return EFManager.SelectUserLearningLists( userId );
-
-        }
-
-        public List<ObjectMember> Learninglist_AllUsers( int listId )
-        {
-            return EFManager.Learninglist_SelectUsers( listId );
-        }
 
         #endregion
 
@@ -289,6 +266,19 @@ namespace Isle.BizServices
             return GetCurriculumNode( request, user );
         }
 
+		/// <summary>
+		/// get a curriculum node, and any standards
+		/// </summary>
+		/// <param name="pNodeId"></param>
+		/// <returns></returns>
+		public ContentItem GetCurriculumNodeForPublish( int pNodeId )
+		{
+			ContentItem entity = Get( pNodeId );
+
+			GetContentStandards( entity );
+
+			return entity;
+		}
 
         /// <summary>
         /// Retrieve the curriculum id for the provided content item
@@ -328,7 +318,231 @@ namespace Isle.BizServices
 
         #endregion
 
-        #region Content partners
+        #region Content Partners/User Privileges
+        /// <summary>
+        /// Return collection of all learning lists to which the user has edit access 
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>
+        public List<LearningListNode> Learninglists_SelectUserEditableLists(int userId)
+        {
+            return EFManager.SelectUserEditableLearningLists(userId);
+
+        }
+
+        /// <summary>
+        /// Return collection of all learning lists to which the user has at least read access 
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>
+        public List<LearningListNode> Learninglists_SelectUserLists(int userId)
+        {
+            return EFManager.SelectUserLearningLists(userId);
+
+        }
+
+        public ObjectMember Learninglist_GetMyAccess(int listId, int userId)
+        {
+            ContentPartner entity = ContentPartner_Get(listId, userId);
+            ObjectMember om = new ObjectMember();
+            om.UserId = userId;
+            om.MemberTypeId = entity.PartnerTypeId;
+
+            //or get all (assuming manageable numbers), then check if a member
+            List<ObjectMember>  list = EFManager.Learninglist_SelectUsers(listId);
+            foreach (ObjectMember item in list)
+            {
+                if (item.UserId == userId)
+                    return item;
+            }
+
+
+            return om;
+
+        }
+
+        /// <summary>
+        /// get all partners for a list
+        /// </summary>
+        /// <param name="listId"></param>
+        /// <returns></returns>
+        public static List<ObjectMember> Learninglist_AllUsers(int listId)
+        {
+            return EFManager.Learninglist_SelectUsers(listId);
+        }
+
+        public int Content_AddNewPartner(int contentId, string email, int memberTypeId, int createdbyId, string message, ref string statusMessage)
+        {
+            ContentPartner entity = new ContentPartner();
+            int newId = 0;
+            ThisUser creator = new AcctManager().Get(createdbyId);
+            CodeItem ci = GetCode_ContentPartnerType(memberTypeId);
+
+            try
+            {
+                ContentItem item = Get(contentId);
+
+                ThisUser user = new AcctManager().GetByEmail(email.Trim());
+                if (user != null && user.Id > 0)
+                {
+                    //check if already a partner
+                    if (IsContentPartner(contentId, user.Id))
+                    {
+                        statusMessage = "User is already a member";
+                        return 0;
+                    }
+                    entity.ContentId = contentId;
+                    entity.UserId = user.Id;
+                    entity.PartnerTypeId = memberTypeId;
+                    entity.CreatedById = entity.LastUpdatedById = createdbyId;
+                    entity.Created = entity.LastUpdated = DateTime.Now;
+
+                    newId = ContentPartner_Add(entity, ref statusMessage);
+                    if (newId > 0)
+                        SendEmailForExistingPartner(user, contentId, creator, item, ci, message);
+                    else
+                    {
+                        //crap
+                    }
+                }
+                else
+                {
+                    //create a skeleton account
+                    user = new ThisUser();
+                    user.Email = email;
+                    user.UserName = email;
+                    string password = "ChangeMe_" + System.DateTime.Now.Millisecond.ToString();
+                    user.Password = UtilityManager.Encrypt(password);
+                    user.CreatedById = user.LastUpdatedById = createdbyId;
+                    user.Created = user.LastUpdated = DateTime.Now;
+                    user.IsActive = false;
+
+
+                    int userId = new AcctManager().Create(user, ref statusMessage);
+                    if (userId > 0)
+                    {
+                        user.Id = userId;
+
+                        entity.ContentId = contentId;
+                        entity.UserId = userId;
+                        entity.PartnerTypeId = memberTypeId;
+                        entity.CreatedById = entity.LastUpdatedById = createdbyId;
+                        entity.Created = entity.LastUpdated = DateTime.Now;
+
+                        newId = ContentPartner_Add(entity, ref statusMessage);
+                        if (newId > 0)
+                            SendEmailForNewPartner(user, contentId, creator, item, ci, message);
+                        else
+                        {
+                            //crap
+                        }
+
+                    }
+                    else
+                    {
+                        //add failed
+                        if (string.IsNullOrWhiteSpace(statusMessage))
+                        {
+                            statusMessage = "Error - unable to create an initial account for this user.";
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                LoggingHelper.LogError(ex, thisClassName + ".Content_AddNewPartner()");
+                statusMessage = "Error encountered adding partner";
+            }
+
+            return newId;
+        }
+
+        void SendEmailForExistingPartner(ThisUser user, int contentId, ThisUser creator, ContentItem item, CodeItem ci, string message)
+        {
+         
+            string statusMessage = "";
+            bool isSecure = false;
+            string toEmail = user.Email;
+            string bcc = UtilityManager.GetAppKeyValue("systemAdminEmail", "mparsons@siuccwd.com");
+
+            string fromEmail = UtilityManager.GetAppKeyValue("contactUsMailFrom", "mparsons@siuccwd.com");
+            string subject = "You have been granted access to IOER Content";
+            string email = EmailManager.GetEmailText("AddedContentPartner-ExistingAcctEmail");
+            string eMessage = "";
+            try
+            {
+                if (UtilityManager.GetAppKeyValue("SSLEnable", "0") == "1")
+                    isSecure = true;
+                string link = "/Account/Login.aspx?pg={0}&nextUrl=/My/LearningList/{1}";
+
+                //EmailNotice notice = EmailServices.EmailNotice_Get(noticeCode);
+                //if (notice == null || notice.Id == 0)
+                //{
+                    
+                //    notice.HtmlBody = "<font face='Arial'>Dear {0},<br/><p>This is to notify you that <b>{1}</b> has granted access to the learning list: <em>{2}</em>, with a role of <i>{3}</i>. </p>   <p> You may use the following (one-time) link to login into IOER and navigate to the latter page.</p><p><a href='{4}'>Edit {2}</a></p><div>Sincerely,</div><div>The ISLE OER Team</div></font>";
+
+                //}
+                string proxyId = new AccountServices().Create_3rdPartyAddProxyLoginId(user.Id, "AddedContentPartner-existing", ref statusMessage);
+                //action: provide confirm url to ???. 
+                string confirmUrl = string.Format(link, proxyId.ToString(), contentId);
+                confirmUrl = UtilityManager.FormatAbsoluteUrl(confirmUrl, isSecure);
+
+                //assign and substitute: 0-FirstName, 1-sender name, 2-list name, 3-role, 4-login link, 5-message
+                eMessage = string.Format(email, user.FirstName, creator.FullName(), item.Title, ci.Title, confirmUrl, message);
+
+                eMessage += message;
+
+
+                EmailManager.SendEmail(toEmail, fromEmail, subject, eMessage, "", bcc);
+            }
+            catch (Exception ex)
+            {
+                LoggingHelper.LogError(ex, thisClassName + ".SendEmailForExistingPartner()");
+            }
+
+        }
+
+        void SendEmailForNewPartner(ThisUser user, int contentId, ThisUser creator, ContentItem item, CodeItem ci, string message)
+        {
+            string noticeCode = "AddedContentPartner-new";
+            string statusMessage = "";
+            bool isSecure = false;
+            string toEmail = user.Email;
+            string bcc = UtilityManager.GetAppKeyValue("systemAdminEmail", "mparsons@siuccwd.com");
+
+            string fromEmail = UtilityManager.GetAppKeyValue("contactUsMailFrom", "mparsons@siuccwd.com");
+            string subject = "You have been granted access to IOER Content";
+            string email = EmailManager.GetEmailText("AddedContentPartner-NewAcctEmail");
+            string eMessage = "";
+            try
+            {
+                if (UtilityManager.GetAppKeyValue("SSLEnable", "0") == "1")
+                    isSecure = true;
+
+                string link = "/Account/Login.aspx?pg={0}&a=activate&nextUrl=/Account/Profile.aspx&nextUrl2=/My/LearningList/{1}";
+                string link2 = "/Account/Login.aspx?pg={0}&nextUrl=/My/LearningList/{1}";
+
+                string proxyId = new AccountServices().Create_3rdPartyAddProxyLoginId(user.Id, "AddedContentPartner-new", ref statusMessage);
+                string proxyId2 = new AccountServices().Create_3rdPartyAddProxyLoginId(user.Id, "AddedContentPartner-new2", ref statusMessage);
+                //action: provide confirm url to ???. 
+                string confirmUrl = string.Format(link, proxyId, contentId);
+                confirmUrl = UtilityManager.FormatAbsoluteUrl(confirmUrl, isSecure);
+
+                string llUrl = string.Format(link2, proxyId2, contentId);
+                llUrl = UtilityManager.FormatAbsoluteUrl(llUrl, isSecure);
+
+                //assign and substitute: 0-sender name, 1-list name, 2-role, 3-login link to profile, 4-login to LL, 5-message
+                eMessage = string.Format(email, creator.FullName(), item.Title, ci.Title, confirmUrl, llUrl, message);
+
+                eMessage += message;
+                EmailManager.SendEmail(toEmail, fromEmail, subject, eMessage, "", bcc);
+            }
+            catch (Exception ex)
+            {
+                LoggingHelper.LogError(ex, thisClassName + ".SendEmailForNewPartner()");
+            }
+        }
+
 
         #endregion
 

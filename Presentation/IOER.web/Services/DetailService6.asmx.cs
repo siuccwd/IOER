@@ -17,7 +17,7 @@ using Isle.DTO;
 using AccountManager = Isle.BizServices.AccountServices;
 using ResBiz = Isle.BizServices.ResourceBizService;
 
-namespace ILPathways.Services
+namespace IOER.Services
 {
     /// <summary>
     /// Summary description for DetailService6 
@@ -112,7 +112,20 @@ namespace ILPathways.Services
                         detail.IsPrivateDocument = true;
                         //message should have been imbedded already?
                         //detail.resourceNote += item.Message;
-                    }
+					}
+					else
+					{
+						//check for a condition where target url should be shown, and not link to the content page:
+						//document only item, no parent
+						//may also want to only do if public, as would expose doc url
+						if ( item.TypeId == ContentItem.DOCUMENT_CONTENT_ID
+							&& item.Message.IndexOf("standAloneContent") > -1
+							&& item.PrivilegeTypeId == 1
+							&& item.DocumentUrl != null && item.DocumentUrl.Length > 5)
+						{
+							detail.url = item.DocumentUrl;
+						}
+					}
                 }
             }
             catch ( Exception ex )
@@ -260,11 +273,12 @@ namespace ILPathways.Services
             libResource.CreatedById = user.Id;
             libResource.LibraryId = libraryID;
             //int test = libService.LibraryResourceCreate( libResource, user, ref status );
-            int test = libService.LibraryResourceCreate( libraryID, collection.Id, intID, user, ref status );
-            if ( test > -1 )
+            int newId = libService.LibraryResourceCreate( libraryID, collection.Id, intID, user, ref status );
+			if ( newId > -1 )
             {
 
               //Get the refreshed library info and return it
+				//15-10-08 - if adding to a private library, will not show in the list
               var output = GetLibColInfo( intID, user );
 
               //14-07-07 mp - check for a status indicating approval required
@@ -328,8 +342,56 @@ namespace ILPathways.Services
         public string FindMoreLikeThis( int intID, string text, string parameters, int minFieldMatches )
         {
             //return new ElasticSearchManager().FindMoreLikeThis( versionID, parameters.Split( ',' ), minFieldMatches, 12, 1 );
-            return new ElasticSearchManager().FindMoreLikeThis( intID, text, parameters.Split( ',' ) );
+            //return new ElasticSearchManager().FindMoreLikeThis( intID, text, parameters.Split( ',' ), minFieldMatches, 12 );
+					var query = new ElasticSearchService.JSONQueryV7()
+					{
+						text = text,
+						size = 10
+					};
+						return (string) new ElasticSearchService().DoSearchCollection7( query ).data;
         }
+
+				[WebMethod]
+				public string FindMoreLikeThis_MultiMatch( string text )
+				{
+					//Temporary check until ES is updated on test environment
+					var environment = UtilityManager.GetAppKeyValue( "envType", "prod" );
+
+					//Match with OR
+					object matchOr;
+					if ( environment != "dev" )
+					{
+						matchOr = new
+						{
+							query = text,
+							type = "cross_fields",
+							fields = new List<string>() { "Title", "Description", "Keywords", "Fields.Tags" },
+							@operator = "or"
+						};
+					}
+					else
+					{
+						matchOr = new
+						{
+							query = text,
+							fields = new List<string>() { "Title", "Description", "Keywords", "Fields.Tags" },
+							@operator = "or"
+						};
+					}
+					var queryOr = new
+					{
+						query = new
+						{
+							multi_match = matchOr
+						},
+						size = 21
+					};
+					var queryOrJSON = serializer.Serialize( queryOr );
+
+					var orResults = new ElasticSearchManager().Search( queryOrJSON );
+
+					return serializer.Serialize( UtilityService.DoReturn( orResults, true, "okay", queryOr ) );
+				}
 
         [WebMethod( EnableSession = true )]
         public string AddLike( string userGUID, int versionID )
@@ -389,7 +451,7 @@ namespace ILPathways.Services
             //duplicating for now:
             bool canEdit = ResBiz.CanUserEditResource( resourceIntID, user.Id );
             bool canUpdate = false;
-            var permissions = SecurityManager.GetGroupObjectPrivileges( user, "ILPathways.LRW.Pages.ResourceDetail" );
+            var permissions = SecurityManager.GetGroupObjectPrivileges( user, "IOER.Pages.ResourceDetail" );
 
             if ( permissions.CanUpdate() == false )
             {
@@ -520,7 +582,7 @@ namespace ILPathways.Services
         public string DeactivateResource( string userGUID, int versionID )
         {
             var user = GetUser( userGUID );
-            var permissions = SecurityManager.GetGroupObjectPrivileges( user, "ILPathways.LRW.Pages.ResourceDetail" );
+            var permissions = SecurityManager.GetGroupObjectPrivileges( user, "IOER.Pages.ResourceDetail" );
             if ( permissions.CreatePrivilege > ( int ) ILPathways.Business.EPrivilegeDepth.State )
             {
                 try 
@@ -589,6 +651,19 @@ namespace ILPathways.Services
 
         public jsonUsageRights GetUsageRights( string rights )
         {
+					var output = new jsonUsageRights();
+					var useRights = new ResourceV2Services().GetUsageRights( rights );
+
+					output.usageRightsText = useRights.Title;
+					output.usageRightsValue = useRights.CodeId;
+					output.usageRightsDescription = useRights.Description;
+					output.usageRightsURL = rights;
+					output.usageRightsIconURL = useRights.IconUrl;
+					output.usageRightsMiniIconURL = useRights.MiniIconUrl;
+
+					return output;
+
+					/*
             var output = new jsonUsageRights();
             //DataSet ds = CodeTableManager.ConditionsOfUse_Select(); //Not enough data
             DataSet ds = ResBiz.DoQuery( "IF( SELECT COUNT(*) FROM [ConditionOfUse] WHERE [Url] = '" + rights + "' ) = 0 SELECT * FROM [ConditionOfUse] WHERE [Url] IS NULL ELSE SELECT * FROM [ConditionOfUse] WHERE [Url] = '" + rights + "'" );
@@ -603,6 +678,7 @@ namespace ILPathways.Services
                 output.usageRightsMiniIconURL = Get( dr, "MiniIconUrl" );
             }
             return output;
+					*/
         }
 
         public string GetTimeRequired( string timeRequired )
@@ -724,16 +800,19 @@ namespace ILPathways.Services
             }
           }
 
-          //Get all of the Libraries this Resource appears in
+          //Get all of the public Libraries this Resource appears in. Also need to check for lib member
           var inLibraries = libService.GetAllLibrariesWithResource( resourceID );
           foreach ( ILPathways.Business.Library item in inLibraries )
           {
-            jsonDetailLibCol library = new jsonDetailLibCol();
-            library.title = item.Title;
-            library.id = item.Id;
-            library.avatarURL = (item.ImageUrl == "defaultUrl" ? "/images/ioer_med.png" : item.ImageUrl );
+			  if ( item.PublicAccessLevelInt >= 2 || item.CreatedById == user.Id )
+			  {
+				  jsonDetailLibCol library = new jsonDetailLibCol();
+				  library.title = item.Title;
+				  library.id = item.Id;
+				  library.avatarURL = ( item.ImageUrl == "defaultUrl" ? "/images/ioer_med.png" : item.ImageUrl );
 
-            output.libraries.Add( library );
+				  output.libraries.Add( library );
+			  }
           }
 
           return output;

@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ILPathways.Activity {
+namespace IOER.Activity {
     
     
     public partial class Stats2 {
@@ -19,15 +19,24 @@ namespace ILPathways.Activity {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ILPathways.Activity.ActivityRenderer activityRenderer;
+        protected global::IOER.Activity.ActivityRenderer activityRenderer;
         
         /// <summary>
-        /// activityDaysAgo control.
+        /// txtStartDate control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Literal activityDaysAgo;
+        protected global::System.Web.UI.HtmlControls.HtmlInputText txtStartDate;
+        
+        /// <summary>
+        /// txtEndDate control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlInputText txtEndDate;
     }
 }

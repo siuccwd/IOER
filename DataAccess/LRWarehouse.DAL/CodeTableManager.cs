@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using Microsoft.ApplicationBlocks.Data;
 
+using LRWarehouse.Business;
 using MyEntity = LRWarehouse.Business.ResourceChildItem;
 using MyEntityCollection = System.Collections.Generic.List<LRWarehouse.Business.ResourceChildItem>;
 using CodeGradeLevel = LRWarehouse.Business.CodeGradeLevel;
@@ -36,6 +37,29 @@ namespace LRWarehouse.DAL
             return SelectCodesWithValues( resourceTable, titleField, "Title", true );
         }
 
+        public static DataSet SelectCodesExternalSite(string externalSite, int id, ref string statusMessage)
+        {
+            statusMessage = "successful";
+            DataSet ds = null;
+            try
+            {
+                #region parameters
+                SqlParameter[] parms = new SqlParameter[2];
+                parms[0] = new SqlParameter("@Id", id);
+                parms[1] = new SqlParameter("@ExternalSite", externalSite);
+                #endregion
+
+                ds = SqlHelper.ExecuteDataset(LRWarehouseRO(), CommandType.StoredProcedure, "[Codes.ExternalSiteSelect]", parms);
+            }
+            catch (Exception ex)
+            {
+                LogError(ex, thisClassName + string.Format(".SelectCodesExternalSite() for ExternalSite: {0} and Id: {1}", externalSite, id));
+                statusMessage = thisClassName + "- Unsuccessful: ExternalAccount_Create(): " + ex.Message.ToString();
+            }
+
+            return ds;
+        }
+
         private static DataSet SelectCodesWithValues( string resourceTable, string titleField, string sortField, bool mustHaveValues )
         {
             if ( sortField == null || sortField.Trim().Length == 0 )
@@ -52,10 +76,97 @@ namespace LRWarehouse.DAL
             return ds;
         }
 
-        #endregion
+		#endregion
 
-        #region  [ConditionOfUse]
-        public static DataSet ConditionsOfUse_Select()
+		#region  [Codes_TagValue]
+		public static CodesTagValue CodesTagValue_Get( int pId )
+		{
+			string connectionString = GetReadOnlyConnection();
+			CodesTagValue entity = new CodesTagValue();
+			try
+			{
+				SqlParameter[] sqlParameters = new SqlParameter[ 1 ];
+				sqlParameters[ 0 ] = new SqlParameter( "@id", pId );
+
+				DataSet ds = SqlHelper.ExecuteDataset( connectionString, "[Codes.GradeLevelGet]", sqlParameters );
+
+				if ( DoesDataSetHaveRows( ds ) )
+				{
+					// it should return only one record.
+					DataRow dr = ds.Tables[0].Rows[0];
+					entity.Id = GetRowColumn(dr, "Id", 0);
+					entity.CodeId = GetRowColumn( dr, "CodeId", 0 );
+					entity.CategoryId = GetRowColumn( dr, "CategoryId", 0 );
+					entity.Title = GetRowColumn(dr, "Title", "");
+					entity.Description = GetRowColumn( dr, "Description", "" );
+					entity.SortOrder = GetRowColumn( dr, "SortOrder", 10 );
+					entity.IsActive = GetRowColumn( dr, "IsActive", false );
+					entity.SchemaTag = GetRowColumn( dr, "SchemaTag", "" );
+					entity.AliasValues = GetRowColumn( dr, "AliasValues", "" );
+					entity.Created = GetRowColumn( dr, "Created", System.DateTime.MinValue );
+
+					entity.Codes_TagCategory = CodesTagCategory_Get( entity.CategoryId );
+			
+				}
+				else
+				{
+					
+				}
+				return entity;
+
+			}
+			catch ( Exception ex )
+			{
+				LogError( ex, thisClassName + ".CodesTagValue_Get() " );
+				return entity;
+			}
+
+		}//
+
+
+		public static CodesTagCategory CodesTagCategory_Get( int pId )
+		{
+			string connectionString = GetReadOnlyConnection();
+			CodesTagCategory entity = new CodesTagCategory();
+			try
+			{
+				SqlParameter[] sqlParameters = new SqlParameter[ 1 ];
+				sqlParameters[ 0 ] = new SqlParameter( "@id", pId );
+
+				DataSet ds = SqlHelper.ExecuteDataset( connectionString, "[Codes.GradeLevelGet]", sqlParameters );
+
+				if ( DoesDataSetHaveRows( ds ) )
+				{
+					// it should return only one record.
+					DataRow dr = ds.Tables[ 0 ].Rows[ 0 ];
+					entity.Id = GetRowColumn( dr, "Id", 0 );
+					entity.Title = GetRowColumn( dr, "Title", "" );
+					entity.Description = GetRowColumn( dr, "Description", "" );
+					entity.SortOrder = GetRowColumn( dr, "SortOrder", 10 );
+					entity.IsActive = GetRowColumn( dr, "IsActive", false );
+					entity.SchemaTag = GetRowColumn( dr, "SchemaTag", "" );
+					//entity.Created = GetRowColumn( dr, "Created", System.DateTime.MinValue );
+
+				}
+				else
+				{
+
+				}
+				return entity;
+
+			}
+			catch ( Exception ex )
+			{
+				LogError( ex, thisClassName + ".CodesTagCategory_Get() " );
+				return entity;
+
+			}
+
+		}//
+		#endregion
+
+		#region  [ConditionOfUse]
+		public static DataSet ConditionsOfUse_Select()
         {
             string connectionString = GetReadOnlyConnection();
             DataSet ds = new DataSet();

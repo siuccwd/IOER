@@ -1,4 +1,4 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Masters/Responsive.Master" AutoEventWireup="true" CodeBehind="FAQs.aspx.cs" Inherits="ILPathways.Help.FAQs" %>
+﻿<%@ Page Title="Illinois Open Educational Resources - FAQs" Language="C#" MasterPageFile="~/Masters/Responsive.Master" AutoEventWireup="true" CodeBehind="FAQs.aspx.cs" Inherits="IOER.Help.FAQs" %>
 <%@ Register TagPrefix="uc1" TagName="FaqList" Src="/Controls/FAQs/FaqList.ascx" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="HeadContent" runat="server"></asp:Content>

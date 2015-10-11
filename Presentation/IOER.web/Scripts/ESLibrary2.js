@@ -17,6 +17,8 @@ $(document).ready(function () {
   if (typeof (parent.hasSelector) == "function") {
     $("<div style=\"text-align: center;\"><input type=\"button\" id=\"btnSendExternal\" onclick=\"sendResultsExternal()\" value=\"Send the Displayed Resources to External Site\" /></div>").insertAfter("#resultCount");
   }
+
+  setupDatePickers();
 });
 
 //Inserts the Library controls header into the search code
@@ -166,7 +168,7 @@ function renderShareFollow() {
       var item = libraryData.collections[i];
       if (item.currentPublicAccessLevel <= 3) {
         console.log("adding collection");
-        box.append("<label for=\"w" + item.id + "\"><input type=\"checkbox\" id=\"w" + item.id + "\" value=\"" + item.id + "\"> " + item.title + "</label>");
+        box.append("<label for=\"w" + item.id + "\"><input type=\"checkbox\" id=\"w" + item.id + "\" value=\"" + item.id + "\"> " + item.title + " <span class=\"shareID\">(ID: " + item.id + ")</span>" + "</label>");
       }
     }
     box.find("input").on("click", function () {
@@ -231,6 +233,7 @@ function renderSettings() {
   var active = getActive(); //Get the currently-selected object
   $("#txtTitle").val(active.data.title); //Change the Title box text to match the current object
   $("#txtDescription").val(active.data.description); //Ditto details box text
+  $("#libColID").html((active.isLibrary ? "Library" : "Collection") + " ID: " + active.data.id);
   $("#pnlSettings input[type=checkbox]").prop("checked", false); //Uncheck all of the checkboxes
   $(".ddlOrganizationAccessLevels option[value=" + active.data.currentOrganizationAccessLevel + "]").prop("selected", true);
   $(".ddlPublicAccessLevels option[value=" + active.data.currentPublicAccessLevel + "]").prop("selected", true).trigger("change");

@@ -1,4 +1,4 @@
-﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="LibraryMemberInvite.ascx.cs" Inherits="ILPathways.Controls.Libraries.LibraryMemberInvite" %>
+﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="LibraryMemberInvite.ascx.cs" Inherits="IOER.Controls.Libraries.LibraryMemberInvite" %>
 
 
 <style type="text/css">

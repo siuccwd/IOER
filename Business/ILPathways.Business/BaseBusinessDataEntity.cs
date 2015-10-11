@@ -617,35 +617,50 @@ namespace ILPathways.Business
 
         /// <summary>
         /// Format a title (such as for a library) to be url friendly
+        /// NOTE: there are other methods:
+        /// ILPathways.Utilities.UtilityManager.UrlFriendlyTitle()
+        /// ILPathways.Business.BaseBusinessDataEntity.UrlFriendlyTitle()
         /// </summary>
         /// <param name="title"></param>
         /// <returns></returns>
-        public static string UrlFriendlyTitle( string title )
-        {
-            string encodedTitle = title.Replace( " - ", "-" );
-            encodedTitle = encodedTitle.Replace( " ", "_" );
-            encodedTitle = encodedTitle.Replace( "'", "" );
-            encodedTitle = encodedTitle.Replace( "&", "_" );
-            encodedTitle = encodedTitle.Replace( "#", "" );
-            encodedTitle = encodedTitle.Replace( "$", "S" );
-            encodedTitle = encodedTitle.Replace( "%", "percent" );
-            encodedTitle = encodedTitle.Replace( "^", "" );
-            encodedTitle = encodedTitle.Replace( "*", "" );
-            encodedTitle = encodedTitle.Replace( "+", "_" );
-            encodedTitle = encodedTitle.Replace( "~", "_" );
-            encodedTitle = encodedTitle.Replace( "`", "_" );
-            encodedTitle = encodedTitle.Replace( ":", "" );
-            encodedTitle = encodedTitle.Replace( ";", "" );
-            encodedTitle = encodedTitle.Replace( "?", "" );
-            encodedTitle = encodedTitle.Replace( "\"", "_" );
-            encodedTitle = encodedTitle.Replace( "\\", "_" );
-            encodedTitle = encodedTitle.Replace( "<", "_" );
-            encodedTitle = encodedTitle.Replace( ">", "_" );
-            encodedTitle = encodedTitle.Replace( "__", "_" );
-            encodedTitle = encodedTitle.Replace( "__", "_" );
+        //private static string UrlFriendlyTitle( string title )
+        //{
+        //    if ( title == null || title.Trim().Length == 0 )
+        //        return "";
 
-            return encodedTitle;
-        } //
+        //    title = title.Trim();
+
+        //    string encodedTitle = title.Replace( " - ", "-" );
+        //    encodedTitle = encodedTitle.Replace( " ", "_" );
+
+        //    //for now allow embedded periods
+        //    //encodedTitle = encodedTitle.Replace( ".", "-" );
+
+        //    encodedTitle = encodedTitle.Replace( "'", "" );
+        //    encodedTitle = encodedTitle.Replace( "&", "-" );
+        //    encodedTitle = encodedTitle.Replace( "#", "" );
+        //    encodedTitle = encodedTitle.Replace( "$", "S" );
+        //    encodedTitle = encodedTitle.Replace( "%", "percent" );
+        //    encodedTitle = encodedTitle.Replace( "^", "" );
+        //    encodedTitle = encodedTitle.Replace( "*", "" );
+        //    encodedTitle = encodedTitle.Replace( "+", "_" );
+        //    encodedTitle = encodedTitle.Replace( "~", "_" );
+        //    encodedTitle = encodedTitle.Replace( "`", "_" );
+        //    encodedTitle = encodedTitle.Replace( ":", "" );
+        //    encodedTitle = encodedTitle.Replace( ";", "" );
+        //    encodedTitle = encodedTitle.Replace( "?", "" );
+        //    encodedTitle = encodedTitle.Replace( "\"", "_" );
+        //    encodedTitle = encodedTitle.Replace( "\\", "_" );
+        //    encodedTitle = encodedTitle.Replace( "<", "_" );
+        //    encodedTitle = encodedTitle.Replace( ">", "_" );
+        //    encodedTitle = encodedTitle.Replace( "__", "_" );
+        //    encodedTitle = encodedTitle.Replace( "__", "_" );
+
+        //    if ( encodedTitle.EndsWith( "." ) )
+        //        encodedTitle = encodedTitle.Substring( 0, encodedTitle.Length - 1 );
+
+        //    return encodedTitle;
+        //} //
 
 
 		/// <summary>

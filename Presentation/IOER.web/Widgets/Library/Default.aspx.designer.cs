@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ILPathways.Widgets.Library {
+namespace IOER.Widgets.Library {
     
     
     public partial class Default {
@@ -28,6 +28,6 @@ namespace ILPathways.Widgets.Library {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ILPathways.Widgets.Library.Library1 Library;
+        protected global::IOER.Widgets.Library.Library1 Library;
     }
 }

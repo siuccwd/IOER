@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ILPathways.Controls.PreviewerV1
+namespace IOER.Controls.PreviewerV1
 {
 
 

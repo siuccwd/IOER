@@ -1,4 +1,4 @@
-﻿<%@ Page Title="IOER Author search" Language="C#" MasterPageFile="~/Masters/Responsive2.Master" AutoEventWireup="true" CodeBehind="Authored.aspx.cs" Inherits="ILPathways.My.Authored" %>
+﻿<%@ Page Title="IOER Author search" Language="C#" MasterPageFile="~/Masters/Responsive2.Master" AutoEventWireup="true" CodeBehind="Authored.aspx.cs" Inherits="IOER.My.Authored" %>
 <%@ Register TagPrefix="uc1" TagName="search" Src="/Controls/Content/ContentSearch.ascx" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="HeadContent" runat="server">

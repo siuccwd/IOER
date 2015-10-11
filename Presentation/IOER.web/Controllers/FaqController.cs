@@ -11,14 +11,14 @@ using System.Web.UI.HtmlControls;
 using EmailHelper = ILPathways.Utilities.EmailManager;
 
 using ILPathways.Business;
-using ILPathways.classes;
+using IOER.classes;
 using ILPathways.DAL;
-using ILPathways.Library;
+using IOER.Library;
 using ILPathways.Utilities;
 
-using wsItem = ILPathways.FaqServiceReference;
+using wsItem = IOER.FaqServiceReference;
 
-namespace ILPathways.Controllers
+namespace IOER.Controllers
 {
     public class FaqController : BaseUserControl
     {

@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ILPathways.Widgets.ResourceSelector {
+namespace IOER.Widgets.ResourceSelector {
     
     
     public partial class Default {
@@ -28,6 +28,6 @@ namespace ILPathways.Widgets.ResourceSelector {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ILPathways.Widgets.ResourceSelector.Selector1 selector;
+        protected global::IOER.Widgets.ResourceSelector.Selector1 selector;
     }
 }

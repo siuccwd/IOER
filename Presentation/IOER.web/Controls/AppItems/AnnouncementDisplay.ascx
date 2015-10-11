@@ -1,4 +1,4 @@
-﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="AnnouncementDisplay.ascx.cs" Inherits="ILPathways.Controls.AppItems.AnnouncementDisplay" %>
+﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="AnnouncementDisplay.ascx.cs" Inherits="IOER.Controls.AppItems.AnnouncementDisplay" %>
 
 <asp:panel id="detailsPanel" runat="server" visible="false">
 <div class="section">

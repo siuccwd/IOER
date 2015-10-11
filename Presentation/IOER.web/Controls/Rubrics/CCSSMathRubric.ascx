@@ -1,4 +1,4 @@
-﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="CCSSMathRubric.ascx.cs" Inherits="ILPathways.Controls.Rubrics.CCSSMathRubric" %>
+﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="CCSSMathRubric.ascx.cs" Inherits="IOER.Controls.Rubrics.CCSSMathRubric" %>
 
 <script type="text/javascript" src="/controls/rubrics/shared/ccss.js"></script>
 <script type="text/javascript">

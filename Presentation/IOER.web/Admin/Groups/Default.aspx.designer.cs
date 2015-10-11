@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ILPathways.Admin.Groups {
+namespace IOER.Admin.Groups {
     
     
     public partial class Default {
@@ -19,6 +19,6 @@ namespace ILPathways.Admin.Groups {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ILPathways.Controls.GroupsManagment.GroupsManager groupMgr1;
+        protected global::IOER.Controls.GroupsManagment.GroupsManager groupMgr1;
     }
 }

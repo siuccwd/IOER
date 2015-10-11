@@ -19,5 +19,7 @@ namespace IOERBusinessEntities
         public Nullable<bool> IsLike { get; set; }
         public Nullable<System.DateTime> Created { get; set; }
         public Nullable<int> CreatedById { get; set; }
+    
+        public virtual Resource Resource { get; set; }
     }
 }

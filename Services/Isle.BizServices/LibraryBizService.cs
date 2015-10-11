@@ -122,6 +122,15 @@ namespace Isle.BizServices
         {
             return myMgr.Update( entity );
         }//
+
+        public static string GetLibraryFriendlyUrl( Library entity )
+        {
+            if ( entity == null || entity.Id == 0 )
+                return "";
+            else
+                return string.Format( "/Library/{0}/{1}", entity.Id, LBiz.ResourceVersion.UrlFriendlyTitle( entity.Title ) );
+
+        }
         #endregion
 
         #region ====== Library methods for dashboard ===============================================
@@ -574,6 +583,14 @@ namespace Isle.BizServices
             return LibrarySectionManager.DoesUserHaveContributeAccess( libraryId, sectionId, userId );
         }
 
+        public static string GetSectionFriendlyUrl( LibrarySection entity)
+        {
+            if ( entity == null || entity.Id == 0 )
+                return "";
+            else
+                return string.Format( "/Library/Collection/{0}/{1}/{2}", entity.LibraryId, entity.Id, LBiz.ResourceVersion.UrlFriendlyTitle( entity.Title ) );
+           
+        }
         #endregion
 
 

@@ -1,4 +1,4 @@
-﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="LoginController.ascx.cs" Inherits="ILPathways.Account.controls.LoginController" %>
+﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="LoginController.ascx.cs" Inherits="IOER.Account.controls.LoginController" %>
 
 <script type="text/javascript" language="javascript">
   $(document).ready(function () {
@@ -28,6 +28,7 @@
 <link rel="stylesheet" type="text/css" href="/Styles/common2.css" />
 <style type="text/css">
   .isleH1 { text-align: center; }
+	#content { padding-left: 15px; }
   #loginBox { margin: 50px auto; max-width: 500px; text-align: center; padding: 20px 10px 10px 10px; }
   #loginErrorMessage { background-color: #B03D25; color: #FFF; font-weight: bold; margin: 10px; max-width: 500px; }
   #loginBox label { width: 20%; text-align: right; }
@@ -48,6 +49,7 @@
     <label>Name/Email</label><asp:textbox runat="server" CssClass="textBox" id="txtUserName" name="userName" />
     <label>Password</label><asp:textbox runat="server" CssClass="textBox" TextMode="password" id="txtPassword" name="password" />
     <asp:Button CssClass="loginButton isleButton bgGreen" runat="server" ID="loginPathwaysButton" Text="Login" OnClientClick="validateLoginForm()" onclick="loginPathwaysButton_Click" />
+    <input id="googleLogin" type="button" class="loginButton isleButton bgGreen" onclick="window.location='<%=ssoLoginUrl%>'" value="Login with Google" />
     <input id="registerButton" type="button" class="loginButton isleButton bgGreen" onclick="window.location = '/Account/Register.aspx'" value="Register" />
     <a id="forgotPasswordLink" class="textLink" href="/Account/ForgotPassword.aspx">Forgot Password?</a>  
   </div>
@@ -61,4 +63,7 @@
     <asp:Literal ID="forcingNextUrlAsHttp" runat="server" Visible="false">yes</asp:Literal>
 <asp:Literal ID="autoCreateLibraryOnActivate" runat="server" Visible="false">yes</asp:Literal>
 <asp:Literal ID="libraryCreateMsg" runat="server" Visible="false">Your personal library was created. <br />To customize, <a href="/My/Library">navigate to My/Library</a>. Be sure to review the getting started guide for information on libraries</asp:Literal>
+
+<asp:Literal ID="autoAddToOrg" runat="server" Visible="false"></asp:Literal>
+    <asp:Literal ID="Literal1" runat="server" Visible="false">2015-09-30, 80</asp:Literal>
 </asp:Panel>

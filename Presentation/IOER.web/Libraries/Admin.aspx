@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Library Administration" Language="C#" MasterPageFile="~/Masters/Responsive2.Master" AutoEventWireup="true" CodeBehind="Admin.aspx.cs" Inherits="ILPathways.Libraries.Admin" %>
+﻿<%@ Page Title="Library Administration" Language="C#" MasterPageFile="~/Masters/Responsive2.Master" AutoEventWireup="true" CodeBehind="Admin.aspx.cs" Inherits="IOER.Libraries.Admin" %>
 
 <%@ Register Src="~/Controls/Libraries/LibraryAdmin.ascx" TagPrefix="uc1" TagName="LibraryAdmin" %>
 
@@ -12,7 +12,6 @@
 </style>
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="BodyContent" runat="server">
-    <div id="pageContainer" >
     <uc1:LibraryAdmin runat="server" id="LibraryAdmin1" />
-        </div>
+      
 </asp:Content>

@@ -1,1 +1,1 @@
-﻿<%@ WebService Language="C#" CodeBehind="AdminService1.asmx.cs" Class="ILPathways.Services.AdminService1" %>
+﻿<%@ WebService Language="C#" CodeBehind="AdminService1.asmx.cs" Class="IOER.Services.AdminService1" %>

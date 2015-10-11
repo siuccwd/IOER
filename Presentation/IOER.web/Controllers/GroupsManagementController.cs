@@ -12,15 +12,15 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 
 using EmailHelper = ILPathways.Utilities.EmailManager;
-using MyManager = ILPathways.DAL.GatewayManager;
+using MyManager = ILPathways.DAL.GroupManager;
 using ILPathways.Business;
-using ILPathways.classes;
+using IOER.classes;
 using ILPathways.DAL;
-using ILPathways.Library;
+using IOER.Library;
 using ILPathways.Utilities;
 //using bizService = ILPathways.GatewayServiceReference;
 
-namespace ILPathways.Controllers
+namespace IOER.Controllers
 {
     public class GroupsManagementController : BaseUserControl
     {
@@ -340,14 +340,14 @@ namespace ILPathways.Controllers
         /// <returns></returns>
         public bool SetCurrentGroup( int id, ref string statusMessage )
         {
-            CurrentGroup = new AppGroup();
+			CurrentGroup = new AppGroup();
             bool action = true;
 
             try
             {
                 //GroupManager manager = new GroupManager();
 
-                CurrentGroup = MyManager.AppGroupGet( id );
+                CurrentGroup = MyManager.Get( id );
 
             }
             catch ( Exception ex )
@@ -379,10 +379,10 @@ namespace ILPathways.Controllers
                 entity.LastUpdatedBy = WebUser.FullName();
                 entity.LastUpdatedById = WebUser.Id;
 
-                statusMessage = MyManager.AppGroupUpdate( entity );
+                statusMessage = MyManager.Update( entity );
 
                 //refresh group - not sure if necessary here as latter are the only changes
-                CurrentGroup = MyManager.AppGroupGet( entity.Id );
+                CurrentGroup = MyManager.Get( entity.Id );
             }
             catch ( Exception ex )
             {

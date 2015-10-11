@@ -12,18 +12,18 @@ using LRWarehouse.Business;
 using LRWarehouse.DAL;
 using IOERUser = LRWarehouse.Business.Patron;
 
-using ILPathways.Library;
+using IOER.Library;
 //using ILPathways.DAL;
 using Isle.BizServices;
-using ILPathways.classes;
-using ILPathways.Controllers;
+using IOER.classes;
+using IOER.Controllers;
 using ILPathways.Utilities;
 using ILPathways.Business;
 using Isle.BizServices;
 using System.Web.Script.Serialization;
 
 
-namespace ILPathways.LRW.controls
+namespace IOER.LRW.controls
 {
     public partial class PublishResource_Narrow2 : BaseUserControl
     {
@@ -90,7 +90,7 @@ namespace ILPathways.LRW.controls
                 postbackMode = "false";
             }
             //Regardless
-            if ( new ILPathways.Services.WebDALService().IsSandbox() )
+            if ( new IOER.Services.WebDALService().IsSandbox() )
             {
                 sandboxText = "true";
             }
@@ -351,7 +351,7 @@ namespace ILPathways.LRW.controls
 
                     bool hasApproval = false;
                     string statusMessage2 = "";
-                    bool isValid = ContentController.HandleContentApproval( resource, AuthoredResourceID, user, ref hasApproval, ref statusMessage2 );
+                    bool isValid = new ContentServices().HandleContentApproval( resource, AuthoredResourceID, user, ref hasApproval, ref statusMessage2 );
                     if ( hasApproval )
                     {
                         publishedMessage = "Successfully tagged your resource.";
@@ -386,11 +386,11 @@ namespace ILPathways.LRW.controls
             //Sanitize Form
             foreach ( TextBox box in this.Controls.OfType<TextBox>() )
             {
-                box.Text = FormHelper.SanitizeUserInput( box.Text );
+                box.Text = FormHelper.CleanText( box.Text );
             }
             foreach ( HiddenField hdn in this.Controls.OfType<HiddenField>() )
             {
-                hdn.Value = FormHelper.SanitizeUserInput( hdn.Value );
+                hdn.Value = FormHelper.CleanText( hdn.Value );
             }
 
             txtResourceURL.Value = txtResourceURL.Value.Trim();

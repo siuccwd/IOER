@@ -1,4 +1,4 @@
-﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="Feed1.ascx.cs" Inherits="ILPathways.Feed.Feed1" %>
+﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="Feed1.ascx.cs" Inherits="IOER.Feed.Feed1" %>
 
 <script type="text/javascript">
   <%=ranges %>
@@ -264,10 +264,10 @@
     <div id="template_resource">
       <h2><a href="{link}" target="_blank">{title}</a></h2>
       <div class="boxWithThumb">
-        <a href="{link}" target="_blank" class="thumb"><img src="{thumb}" /></a>
+        <a href="{link}" target="_blank" class="thumb" title="Resource Image"><img src="{thumb}" /></a>
         <p>{description}</p>
         <div class="shareLike">
-          <div class="share">Share: <input type="text" onclick="this.select()" readonly="readonly" value="{link}" /></div>
+          <div class="share">Share: <input title="share {title}" type="text" onclick="this.select()" readonly="readonly" value="{link}" /></div>
           <div class="likeBox">
             <input type="button" onclick="like('resource', {id}); return false;" value="+ Like" />
             <div class="likeBarContainer">
@@ -283,10 +283,10 @@
     <div id="template_collection">
       <h2><a href="{link}" target="_blank">{title}</a></h2>
       <div class="boxWithThumb">
-        <a href="{link}" target="_blank" class="thumb"><img src="{thumb}" /></a>
+        <a href="{link}" target="_blank" class="thumb" title="Resource Image"><img src="{thumb}" /></a>
         <p>{description}</p>
         <div class="shareLike">
-          <p class="share"><label>Share: </label><input type="text" onclick="this.select()" readonly="readonly" value="{link}" /></p>
+          <p class="share"><label>Share: </label><input title="share {title}" type="text" onclick="this.select()" readonly="readonly" value="{link}" /></p>
           <div class="likeBox">
             <input type="button" onclick="like('collection', {id}); return false;" value="+ Like" />
             <div class="likeBarContainer">

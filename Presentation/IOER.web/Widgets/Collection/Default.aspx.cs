@@ -6,16 +6,16 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Web.Services;
 
-using ILPathways.Services;
+using IOER.Services;
 using Isle.BizServices;
 using ILPathways.Business;
 using ILPathways.Utilities;
 using Library = ILPathways.Business.Library;
 using Section = ILPathways.Business.LibrarySection;
-using Resource = ILPathways.Business.LibraryResource;
+using LResource = ILPathways.Business.LibraryResource;
 using DataBaseHelper = LRWarehouse.DAL.BaseDataManager;
 
-namespace ILPathways.Widgets.Collection
+namespace IOER.Widgets.Collection
 {
     public partial class Default : System.Web.UI.Page
     {
@@ -213,14 +213,15 @@ namespace ILPathways.Widgets.Collection
 
                 var output = new WidgetLibCol();
                 output.title = lib.Title;
-                output.link = lib.FriendlyUrl;
+                output.link = LibraryBizService.GetLibraryFriendlyUrl( lib );
                 output.showHeader = showingHdr;
                 output.showCollections = showingCollectionList;
 
                 foreach ( Section section in allCols )
                 {
                     var item = new WidgetResource();
-                    item.link = section.FriendlyUrl;
+                    //item.link = section.FriendlyUrl;
+					item.link = string.Format( "/Library/Collection/{0}/{1}/{2}", lib.Id, section.Id, ResourceBizService.FormatFriendlyTitle( section.Title ) );
                     item.title = section.Title;
                     item.thumbURL = section.AvatarURL;
                     output.collections.Add( item );
@@ -239,7 +240,8 @@ namespace ILPathways.Widgets.Collection
                 {
                     var col = new WidgetLibCol();
                     col.title = section.Title;
-                    col.link = section.FriendlyUrl;
+                    //col.link = section.FriendlyUrl;
+					col.link = string.Format( "/Library/Collection/{0}/{1}/{2}", lib.Id, section.Id, ResourceBizService.FormatFriendlyTitle( section.Title ) );
                     if ( filter.Length > 0 )
                     {
                         // 
@@ -253,7 +255,7 @@ namespace ILPathways.Widgets.Collection
                     }
 
                     int count = 1;
-                    foreach ( Resource resource in resources )
+                    foreach ( LResource resource in resources )
                     {
                         if ( count > resourceMax )
                         {
@@ -362,7 +364,7 @@ namespace ILPathways.Widgets.Collection
 
                 var output = new WidgetLibCol();
                 output.title = lib.Title;
-                output.link = lib.FriendlyUrl;
+                output.link = LibraryBizService.GetLibraryFriendlyUrl( lib );
                 output.showHeader = showingHdr;
                 output.showCollections = showingCollectionList;
 
@@ -402,7 +404,7 @@ namespace ILPathways.Widgets.Collection
                     }
 
                     int count = 1;
-                    foreach ( Resource resource in resources )
+                    foreach ( LResource resource in resources )
                     {
                         if ( count > resourceMax )
                         {
@@ -448,7 +450,7 @@ namespace ILPathways.Widgets.Collection
         protected static string FormatKeyword( string text )
         {
             string template = "(lr.Title like '{0}'  OR lr.[Description] like '{0}')";
-            string keyword = DataBaseHelper.HandleApostrophes( FormHelper.SanitizeUserInput( text.Trim() ) );
+            string keyword = DataBaseHelper.HandleApostrophes( FormHelper.CleanText( text.Trim() ) );
             string keywordFilter = "";
 
             if ( keyword.Length > 0 )

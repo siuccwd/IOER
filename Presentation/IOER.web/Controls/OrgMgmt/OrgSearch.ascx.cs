@@ -7,11 +7,11 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 
 using ILPathways.Common;
-using ILPathways.Library;
-using ILPathways.Services;
+using IOER.Library;
+using IOER.Services;
 using Isle.BizServices;
 
-namespace ILPathways.Controls.OrgMgmt
+namespace IOER.Controls.OrgMgmt
 {
     /// <summary>
     /// Search for organizations

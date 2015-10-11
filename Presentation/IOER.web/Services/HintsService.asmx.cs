@@ -5,9 +5,9 @@ using System.Web;
 using System.Web.Services;
 
 using System.Web.Script.Serialization;
-using Hint = ILPathways.SessionHints.Hint;
+using Hint = IOER.SessionHints.Hint;
 
-namespace ILPathways.Services
+namespace IOER.Services
 {
   /// <summary>
   /// Summary description for HintsService

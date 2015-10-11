@@ -9,9 +9,9 @@ using ILPathways.Utilities;
 using LRWarehouse.Business;
 using LRWarehouse.DAL;
 
-namespace ILPathways.LRW.controls
+namespace IOER.LRW.controls
 {
-    public partial class Comments : ILPathways.Library.BaseUserControl
+    public partial class Comments : IOER.Library.BaseUserControl
     {
         public int currentResourceIntID;
         public System.Guid currentUserGUID;

@@ -1,4 +1,4 @@
-﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="Dashboard.ascx.cs" Inherits="ILPathways.Account.controls.Dashboard" %>
+﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="Dashboard.ascx.cs" Inherits="IOER.Account.controls.Dashboard" %>
 
 <div id="errorMessage" runat="server" visible="false">
   <p style="margin: 20px auto; display:block; text-align: center;">Please login to access your dashboard.</p>
@@ -126,7 +126,7 @@
 
       <div id="myProfile" class="grayBox">
         <h2 class="header"><%=dashboard.name %></h2>
-        <img src="<%=dashboard.avatarUrl %>" />
+        <img alt="" src="<%=dashboard.avatarUrl %>" />
         <%if( dashboard.organization != null) { %><p><%=dashboard.organization %></p><% } %>
         <p><%=dashboard.jobTitle %></p>
         <p><%=dashboard.description %></p>
@@ -138,10 +138,12 @@
       <div id="quickLinks" class="grayBox">
         <h2 class="header">My Stuff</h2>
         <a href="/My/Library">My Library/Collections</a>
-        <a href="/My/Authored.aspx">Resources I Created</a>
+        <a href="/My/Authored">Resources I Created</a>
         <a href="/My/Favorites.aspx">Libraries I Follow</a>
         <a href="/My/Timeline">My IOER Timeline</a>
+        <a href="/Organizations" runat="server" id="orgAdminLink" visible="false">Organization Administration</a>
         <a href="/Libraries/Admin.aspx" runat="server" id="libAdminLink" visible="false">Library Administration</a>
+
       </div>
       <% } %>
 
@@ -158,7 +160,7 @@
           <div class="resources">
               <%foreach ( var item in dashboard.library.resources ) {%>
                 <div class="resource" data-resourceID="<%=item.id %>">
-                    <a href="<%=item.url %>" ><img src="//ioer.ilsharedlearning.org/OERThumbs/large/<%=item.id %>-large.png" /></a>
+                    <a href="<%=item.url %>" ><img alt="" src="//ioer.ilsharedlearning.org/OERThumbs/large/<%=item.id %>-large.png" /></a>
                     <div class="createdDate"><%=item.DateAdded.ToShortDateString() %></div>
                   <div class="title"><a href="<%=item.url %>" ><%=item.title %></a></div>
                   <div class="extra"><%=item.containerTitle %></div>
@@ -181,7 +183,7 @@
         <div class="resources">
             <%foreach ( var item in dashboard.orgLibraries.resources ) {%>
               <div class="resource" data-resourceID="<%=item.id %>">
-                <a href="<%=item.url %>" ><img class="libImg" src="<%=item.imageUrl %>" /></a>
+                <a href="<%=item.url %>" ><img alt="" class="libImg" src="<%=item.imageUrl %>" /></a>
                   <div class="createdDate"><%=item.DateAdded.ToShortDateString() %></div>
                 <div class="title"><a href="<%=item.url %>" ><%=item.title %></a></div>
                 <div class="extra"><%=item.containerTitle %></div>
@@ -197,7 +199,7 @@
         <div class="resources">
             <%foreach ( var item in dashboard.myResources.resources ) {%>
               <div class="resource" data-resourceID="<%=item.id %>">
-                <a href="<%=item.url %>" ><img src="//ioer.ilsharedlearning.org/OERThumbs/large/<%=item.id %>-large.png" /></a>
+                <a href="<%=item.url %>" ><img alt="" src="//ioer.ilsharedlearning.org/OERThumbs/large/<%=item.id %>-large.png" /></a>
                 <div class="createdDate"><%=item.DateAdded.ToShortDateString() %></div>
                 <div class="title"><a href="<%=item.url %>" ><%=item.title %></a></div>
                 <div class="extra"><%=item.containerTitle %></div>
@@ -218,7 +220,7 @@
           <div class="resources">
               <%foreach ( var item in dashboard.followedLibraries.resources ) {%>
                 <div class="resource" data-resourceID="<%=item.id %>">
-                  <a href="<%=item.url %>" ><img class="libImg"  src="<%=item.imageUrl %>" /></a>
+                  <a href="<%=item.url %>" ><img alt="" class="libImg"  src="<%=item.imageUrl %>" /></a>
                     <div class="createdDate"><%=item.DateAdded.ToShortDateString() %></div>
                   <div class="title"><a href="<%=item.url %>" ><%=item.title %></a></div>
                   <div class="extra"><%=item.containerTitle %></div>

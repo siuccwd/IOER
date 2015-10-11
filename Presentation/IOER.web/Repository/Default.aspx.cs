@@ -5,10 +5,10 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
-using ILPathways.Library;
+using IOER.Library;
 using Isle.BizServices;
 
-namespace ILPathways.Content
+namespace IOER.Content
 {
     public partial class Default : BaseAppPage
     {

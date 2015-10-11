@@ -7,14 +7,14 @@ using System.Web.UI.WebControls;
 
 //using MyManager = ILPathways.DAL.AppItemManager;
 //using MyAppEmailManager = workNet.DAL.AnnouncementEmailManager;
-using ILPathways.Controllers;
-using ILPathways.Library;
+using IOER.Controllers;
+using IOER.Library;
 using ILPathways.Utilities;
 using ILPathways.Business;
 
-namespace ILPathways.Controls.AppItems
+namespace IOER.Controls.AppItems
 {
-    public partial class AnnouncementDisplay : ILPathways.Library.BaseUserControl
+    public partial class AnnouncementDisplay : IOER.Library.BaseUserControl
     {
         /// <summary>
         /// Display an announcement
@@ -158,7 +158,7 @@ namespace ILPathways.Controls.AppItems
             }
 
             //NewsEmailTemplate CurrentNewsTemplate = myEmailTemplateMgr.Get( NewsItemTemplateCode );
-            CurrentNewsTemplate = ILPathways.Controllers.NewsController.NewsTemlateGet( NewsItemTemplateCode );
+            CurrentNewsTemplate = IOER.Controllers.NewsController.NewsTemlateGet( NewsItemTemplateCode );
             if ( CurrentNewsTemplate == null || CurrentNewsTemplate.Id == 0 )
             {
                 //hide, no code found
@@ -211,7 +211,7 @@ namespace ILPathways.Controls.AppItems
                 }
                 else
                 {
-                    entity = ILPathways.Controllers.AppItemController.AppItemGet( recId );
+                    entity = IOER.Controllers.AppItemController.AppItemGet( recId );
                 }
 
                 if ( entity == null || entity.HasValidRowId() == false )

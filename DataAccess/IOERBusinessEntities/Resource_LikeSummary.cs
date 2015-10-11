@@ -20,5 +20,7 @@ namespace IOERBusinessEntities
         public Nullable<int> DislikeCount { get; set; }
         public Nullable<System.DateTime> LastUpdated { get; set; }
         public Nullable<System.Guid> ResourceId { get; set; }
+    
+        public virtual Resource Resource { get; set; }
     }
 }

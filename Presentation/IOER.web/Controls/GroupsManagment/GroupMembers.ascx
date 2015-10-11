@@ -1,4 +1,4 @@
-﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="GroupMembers.ascx.cs" Inherits="ILPathways.Controls.GroupsManagment.GroupMembers" %>
+﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="GroupMembers.ascx.cs" Inherits="IOER.Controls.GroupsManagment.GroupMembers" %>
 
 
 <asp:validationsummary id="vsErrorSummary" HeaderText="Errors on page" ValidationGroup="mbrsValGroup" forecolor="" CssClass="errorMessage" runat="server"></asp:validationsummary>
@@ -103,7 +103,7 @@
 	<asp:button id="btnAddIWDSMember" runat="server" CssClass="defaultButton" width="200px" CommandName="AddIWDSMember" 
 	OnCommand="FormButton_Click" Text="Import IWDS Customer"	CausesValidation="False" visible="false"></asp:button>
 	
-<asp:Literal ID="formSecurityName" runat="server" Visible="false">ILPathways.Controls.GroupsManagment.GroupMembers</asp:Literal>
+<asp:Literal ID="formSecurityName" runat="server" Visible="false">IOER.Controls.GroupsManagment.GroupMembers</asp:Literal>
 
 
 </asp:Panel>	

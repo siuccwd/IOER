@@ -1,4 +1,4 @@
-﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="IsleSSO.ascx.cs" Inherits="ILPathways.secure.controls.IsleSSO" %>
+﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="IsleSSO.ascx.cs" Inherits="IOER.secure.controls.IsleSSO" %>
 
         <table>
             <tr>

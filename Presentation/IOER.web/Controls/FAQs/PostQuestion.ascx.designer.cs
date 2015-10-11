@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ILPathways.Controls.FAQs {
+namespace IOER.Controls.FAQs {
     
     
     public partial class PostQuestion {

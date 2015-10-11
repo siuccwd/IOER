@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ILPathways.Widgets.Standards {
+namespace IOER.Widgets.Standards {
     
     
     public partial class Default {
@@ -19,6 +19,6 @@ namespace ILPathways.Widgets.Standards {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ILPathways.Controls.StandardsBrowser7 sBrowser;
+        protected global::IOER.Controls.StandardsBrowser7 sBrowser;
     }
 }

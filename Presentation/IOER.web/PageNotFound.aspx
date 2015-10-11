@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Illinois OER Search Page Not Found" Language="C#" MasterPageFile="~/Masters/Responsive.Master" AutoEventWireup="true" CodeBehind="PageNotFound.aspx.cs" Inherits="ILPathways.PageNotFound" %>
+﻿<%@ Page Title="Illinois OER Search Page Not Found" Language="C#" MasterPageFile="~/Masters/Responsive.Master" AutoEventWireup="true" CodeBehind="PageNotFound.aspx.cs" Inherits="IOER.PageNotFound" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="HeadContent" runat="server"></asp:Content>
 

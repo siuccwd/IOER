@@ -11,16 +11,16 @@ using AcctManager = Isle.BizServices.AccountServices;
 using OrgManager = Isle.BizServices.OrganizationBizService;
 using LRWarehouse.Business;
 using ILPathways.Business;
-using ILPathways.Services;
-using ILPathways.Library;
-using JSONNode = ILPathways.Services.CurriculumService.JSONNode;
-using CurriculumService = ILPathways.Services.CurriculumService;
+using IOER.Services;
+using IOER.Library;
+using JSONNode = IOER.Services.CurriculumService.JSONNode;
+using CurriculumService = IOER.Services.CurriculumService;
 using System.Web.Script.Serialization;
 using Isle.DTO;
 using System.Text.RegularExpressions;
-using StandardDTO = ILPathways.Services.CurriculumService1.StandardDTO;
+using StandardDTO = IOER.Services.CurriculumService1.StandardDTO;
 
-namespace ILPathways.Controls.Curriculum
+namespace IOER.Controls.Curriculum
 {
   public partial class CurriculumView1 : BaseUserControl
   {
@@ -65,8 +65,9 @@ namespace ILPathways.Controls.Curriculum
     public string commentsList { get; set; }
     public bool hasFeaturedItem { get; set; }
     public string activityJSON { get; set; }
+	public bool canEdit { get; set; }
 
-    protected void Page_Load( object sender, EventArgs e )
+	protected void Page_Load( object sender, EventArgs e )
     {
       var userID = 0;
       var status = "";
@@ -95,7 +96,7 @@ namespace ILPathways.Controls.Curriculum
         //check for caching option, defaults to true (only applicable for curriculum node)
         bool allowCaching = this.GetRequestKeyValue( "allowCaching", true );
         //Get the current node
-        currentNode = curriculumService.GetACurriculumNode( currentNodeID, ( Patron ) WebUser, allowCaching );
+		currentNode = curriculumService.GetACurriculumNode( currentNodeID, currentUser, allowCaching );
         if ( currentNode == null || currentNode.Id == 0 )
         {
             throw new ArgumentException( "Invalid Node ID. Please double check and try again." );
@@ -119,6 +120,8 @@ namespace ILPathways.Controls.Curriculum
         }
         //Get tree
         tree = new CurriculumService().GetTreeJSON( curriculumID, userGUID, allowCaching );
+
+				canEdit = new CurriculumService1().GetValidatedUser( curriculumID, curriculumNode.CreatedById ).write;
       }
       catch( Exception ex )
       {
@@ -130,6 +133,7 @@ namespace ILPathways.Controls.Curriculum
         }
         else
         {
+					LogError( ex, ex.Message );
           errorMessage.InnerHtml = "Error. Please double check the URL and try again.";
         }
         return;
@@ -160,18 +164,21 @@ namespace ILPathways.Controls.Curriculum
       nodeLikes = curriculumID == currentNodeID ? curriculumLikes : curriculumService.Content_GetLikeSummmary( currentNodeID, userID, ref status );
 
       //Get Comments
-      comments = new ILPathways.Services.CurriculumService1().GetComments( currentNodeID, true ).data;
+      comments = new IOER.Services.CurriculumService1().GetComments( currentNodeID, true ).data;
       commentsList = serializer.Serialize( comments );
 
       //Has featured item
       hasFeaturedItem = !string.IsNullOrWhiteSpace( currentNode.AutoPreviewUrl );
 
       //Get Activity
+			activityRenderer.GetDateRange( ref txtStartDate, ref txtEndDate );
+
+
       activityJSON = serializer.Serialize(
         new ActivityBizServices().ActivityTotals_LearningLists(
           currentNodeID,
-          DateTime.Now.AddDays( -1 * int.Parse( activityDaysAgo.Text ) ),
-          DateTime.Now
+					activityRenderer.startDate,
+					activityRenderer.endDate
         ).FirstOrDefault() ?? new Isle.DTO.HierarchyActivityRecord()
       );
     }

@@ -40,5 +40,7 @@ namespace IOERBusinessEntities
         public string Requirements { get; set; }
         public string SortTitle { get; set; }
         public Nullable<int> PublishedById { get; set; }
+        public string URL { get; set; }
+        public string DetailPage { get; set; }
     }
 }

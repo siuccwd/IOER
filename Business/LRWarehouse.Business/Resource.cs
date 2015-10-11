@@ -27,6 +27,13 @@ namespace LRWarehouse.Business
 			set { this._resourceUrl = value; }
 		}
         
+        private string _imageUrl = "";
+		public string ImageUrl
+		{
+			get { return this._imageUrl ; }
+			set { this._imageUrl = value; }
+		}
+
         //public bool IsActive { get; set; }
         public int PublishedForOrgId { get; set; }
 

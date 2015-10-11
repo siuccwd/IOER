@@ -10,9 +10,10 @@ using System.Web.Script.Serialization;
 using LRWarehouse.Business.ResourceV2;
 using Isle.BizServices;
 using System.Drawing;
+using System.Web.Routing;
 
 
-namespace ILPathways.Controls.SearchV6
+namespace IOER.Controls.SearchV6
 {
   public partial class SearchV6 : System.Web.UI.UserControl
   {
@@ -44,6 +45,8 @@ namespace ILPathways.Controls.SearchV6
     public string ViewMode { get; set; }
     public Color MainColor { get; set; }
     public string SortOrder { get; set; }
+		public string UsageRightsIconsJSON { get; set; }
+		public string InitialResultsJSON { get; set; }
 
     /* --- Methods --- */
     protected void Page_Load( object sender, EventArgs e )
@@ -64,7 +67,7 @@ namespace ILPathways.Controls.SearchV6
       //Get library and/or collection IDs as applicable. Supports multiple values for either.
       LibraryIds = ServiceHelper.CommaSeparatedListToIntegerList( Request.Params[ "libraryIDs" ] ?? "" );
       JSON_LibraryIds = serializer.Serialize( LibraryIds );
-      CollectionIds = ServiceHelper.CommaSeparatedListToIntegerList( Request.Params[ "collectionIDs" ] ?? "" );
+			CollectionIds = ServiceHelper.CommaSeparatedListToIntegerList( Request.Params[ "collectionIDs" ] ?? ( string ) Request.RequestContext.RouteData.Values[ "collectionIDs" ] ?? "" );
       JSON_CollectionIds = serializer.Serialize( CollectionIds );
 
       //Determine whether or not to use standards browser
@@ -77,10 +80,20 @@ namespace ILPathways.Controls.SearchV6
       ViewMode = ( Request.Params[ "viewMode" ] ?? "list" );
 
       //Preselected tags to use
-      PreselectedTags = ServiceHelper.CommaSeparatedListToIntegerList( Request.Params[ "tagIDs" ] ?? "" );
+			PreselectedTags = ServiceHelper.CommaSeparatedListToIntegerList( Request.Params[ "tagIDs" ] ?? ( string ) Request.RequestContext.RouteData.Values[ "tagIDs" ] ?? "" );
 
       //Determine preselected sort order
       SortOrder = ( Request.Params[ "sort" ] ?? "ResourceId|desc" );
+
+			//Get usage rights data
+			var rightsData = new ResourceV2Services().GetUsageRightsList();
+			var jsonRights = new List<HelperRights>();
+			foreach ( var item in rightsData.Where( m => !string.IsNullOrWhiteSpace( m.Url ) ).ToList() )
+			{
+				jsonRights.Add( new  HelperRights() { Url = item.Url, MiniIconUrl = item.MiniIconUrl, Title = item.Description } );
+			}
+			UsageRightsIconsJSON = serializer.Serialize( jsonRights );
+
     }
 
     //Get the available filters and tags for the set of selected libraries and collections, then compare them to the allowed fields for the current theme and merge as appropriate
@@ -103,7 +116,7 @@ namespace ILPathways.Controls.SearchV6
           }
         }
         //Set the fields
-        Filters = finalFields;
+        Filters = finalFields.OrderBy( m => m.SortOrder ).ToList();
       }
     }
 
@@ -118,7 +131,7 @@ namespace ILPathways.Controls.SearchV6
       themesBox.Controls.Add( control );
 
       //Get Filters
-      Filters = control.GetFields();
+      Filters = control.GetFields().OrderBy( m => m.SortOrder ).ToList();
 
       //Get Site ID
       SiteId = control.GetSiteId();
@@ -140,12 +153,21 @@ namespace ILPathways.Controls.SearchV6
         var targetColor = "#" + ( Request.Params[ "mainColor" ] ?? "" );
         control.SetMainColor( targetColor == "#" ? ColorTranslator.ToHtml( control.GetMainColor() ) : targetColor );
       }
-      catch { } 
-      
+      catch { }
+
+			//Default initial data
+			InitialResultsJSON = control.GetInitialSearchDataJSON();
+
     }
 
     /* --- Helper Methods --- */
     
-
+		/* --- Helper Classes --- */
+		public class HelperRights
+		{
+			public string Url { get; set; }
+			public string MiniIconUrl { get; set; }
+			public string Title { get; set; }
+		}
   }
 }

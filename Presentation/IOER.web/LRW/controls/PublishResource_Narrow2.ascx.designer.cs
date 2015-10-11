@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ILPathways.LRW.controls {
+namespace IOER.LRW.controls {
     
     
     public partial class PublishResource_Narrow2 {
@@ -19,7 +19,7 @@ namespace ILPathways.LRW.controls {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ILPathways.Controls.Includes.Header6 header;
+        protected global::IOER.Controls.Includes.Header6 header;
         
         /// <summary>
         /// loginContainer control.
@@ -37,7 +37,7 @@ namespace ILPathways.LRW.controls {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ILPathways.Account.controls.LoginController loginBox;
+        protected global::IOER.Account.controls.LoginController loginBox;
         
         /// <summary>
         /// txtResourceURL control.
@@ -55,7 +55,7 @@ namespace ILPathways.LRW.controls {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ILPathways.LRW.controls.ListPanel lpLanguage;
+        protected global::IOER.LRW.controls.ListPanel lpLanguage;
         
         /// <summary>
         /// txtCreator control.
@@ -100,7 +100,7 @@ namespace ILPathways.LRW.controls {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ILPathways.LRW.controls.ConditionsOfUseSelector conditionsSelector;
+        protected global::IOER.LRW.controls.ConditionsOfUseSelector conditionsSelector;
         
         /// <summary>
         /// lpAccessRights control.
@@ -109,7 +109,7 @@ namespace ILPathways.LRW.controls {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ILPathways.LRW.controls.ListPanel lpAccessRights;
+        protected global::IOER.LRW.controls.ListPanel lpAccessRights;
         
         /// <summary>
         /// lpEndUser control.
@@ -118,7 +118,7 @@ namespace ILPathways.LRW.controls {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ILPathways.LRW.controls.ListPanel lpEndUser;
+        protected global::IOER.LRW.controls.ListPanel lpEndUser;
         
         /// <summary>
         /// lpResourceType control.
@@ -127,7 +127,7 @@ namespace ILPathways.LRW.controls {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ILPathways.LRW.controls.ListPanel lpResourceType;
+        protected global::IOER.LRW.controls.ListPanel lpResourceType;
         
         /// <summary>
         /// lpItemType control.
@@ -136,7 +136,7 @@ namespace ILPathways.LRW.controls {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ILPathways.LRW.controls.ListPanel lpItemType;
+        protected global::IOER.LRW.controls.ListPanel lpItemType;
         
         /// <summary>
         /// rblAssessmentType control.
@@ -190,7 +190,7 @@ namespace ILPathways.LRW.controls {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ILPathways.LRW.controls.ListPanel lpAssessmentType;
+        protected global::IOER.LRW.controls.ListPanel lpAssessmentType;
         
         /// <summary>
         /// lpMediaType control.
@@ -199,7 +199,7 @@ namespace ILPathways.LRW.controls {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ILPathways.LRW.controls.ListPanel lpMediaType;
+        protected global::IOER.LRW.controls.ListPanel lpMediaType;
         
         /// <summary>
         /// lpEducationalUse control.
@@ -208,7 +208,7 @@ namespace ILPathways.LRW.controls {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ILPathways.LRW.controls.ListPanel lpEducationalUse;
+        protected global::IOER.LRW.controls.ListPanel lpEducationalUse;
         
         /// <summary>
         /// standardsBrowserNew control.
@@ -217,7 +217,7 @@ namespace ILPathways.LRW.controls {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ILPathways.LRW.controls.StandardsBrowser5 standardsBrowserNew;
+        protected global::IOER.LRW.controls.StandardsBrowser5 standardsBrowserNew;
         
         /// <summary>
         /// lpGradeLevels control.
@@ -226,7 +226,7 @@ namespace ILPathways.LRW.controls {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ILPathways.LRW.controls.ListPanel lpGradeLevels;
+        protected global::IOER.LRW.controls.ListPanel lpGradeLevels;
         
         /// <summary>
         /// lpCareerClusters control.
@@ -235,7 +235,7 @@ namespace ILPathways.LRW.controls {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ILPathways.LRW.controls.ListPanel lpCareerClusters;
+        protected global::IOER.LRW.controls.ListPanel lpCareerClusters;
         
         /// <summary>
         /// lpGroupType control.
@@ -244,7 +244,7 @@ namespace ILPathways.LRW.controls {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ILPathways.LRW.controls.ListPanel lpGroupType;
+        protected global::IOER.LRW.controls.ListPanel lpGroupType;
         
         /// <summary>
         /// txtDateCreated control.

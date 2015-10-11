@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ILPathways.Controls.OrgMgmt {
+namespace IOER.Controls.OrgMgmt {
     
     
     public partial class ContactMgmt {
@@ -289,7 +289,7 @@ namespace ILPathways.Controls.OrgMgmt {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ILPathways.Controls.OrgMgmt.Import memberImport;
+        protected global::IOER.Controls.OrgMgmt.Import memberImport;
         
         /// <summary>
         /// hiddenPanel control.

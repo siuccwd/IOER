@@ -1,6 +1,8 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="curriculae.aspx.cs" Inherits="ILPathways.Pages.curriculae" MasterPageFile="/Masters/Responsive.Master" %>
+﻿<%@ Page Title="Illinois Open Educational Resources Curricula" Language="C#" AutoEventWireup="true" CodeBehind="curriculae.aspx.cs" Inherits="IOER.Pages.curriculae" MasterPageFile="/Masters/Responsive.Master" %>
 
 <asp:Content ContentPlaceHolderID="HeadContent" runat="server">
+    <meta name="description" content="#ISBE, Learning Lists, Model Math" />
+
   <link rel="stylesheet" href="/Styles/common2.css" type="text/css" />
 </asp:Content>
 <asp:Content ContentPlaceHolderID="BodyContent" runat="server">

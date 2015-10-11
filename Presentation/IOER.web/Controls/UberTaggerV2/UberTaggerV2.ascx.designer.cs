@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ILPathways.Controls.UberTaggerV2 {
+namespace IOER.Controls.UberTaggerV2 {
     
     
     public partial class UberTaggerV2 {
@@ -49,12 +49,57 @@ namespace ILPathways.Controls.UberTaggerV2 {
         protected global::System.Web.UI.HtmlControls.HtmlInputButton btnRemoveFile;
         
         /// <summary>
+        /// hdnKeywords control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlInputHidden hdnKeywords;
+        
+        /// <summary>
         /// standardsBrowser control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ILPathways.Controls.StandardsBrowser7 standardsBrowser;
+        protected global::IOER.Controls.StandardsBrowser7 standardsBrowser;
+        
+        /// <summary>
+        /// hdnStandards control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlInputHidden hdnStandards;
+        
+        /// <summary>
+        /// createdContentItemId control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Literal createdContentItemId;
+        
+        /// <summary>
+        /// txtCreator control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Literal txtCreator;
+        
+        /// <summary>
+        /// txtPublisher control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Literal txtPublisher;
     }
 }

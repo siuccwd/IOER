@@ -4,13 +4,15 @@ using System.Linq;
 using System.Web;
 using System.Web.Services;
 
+
+using IB = ILPathways.Business;
 using LRWarehouse.Business;
 using Isle.BizServices;
 using Isle.DTO;
-
+using Patron = LRWarehouse.Business.Patron;
 using Node = ILPathways.Business.ContentItem;
 
-namespace ILPathways.Services
+namespace IOER.Services
 {
   /// <summary>
   /// Summary description for CurriculumService
@@ -126,7 +128,7 @@ namespace ILPathways.Services
       {
           if ( data.HasStandards && data.Standards != null )
           {
-              foreach ( Business.Content_StandardSummary standard in data.ContentStandards )
+			  foreach (IB.Content_StandardSummary standard in data.ContentStandards)
               {
                   output.standards.Add( new Standard() { code = standard.NotationCode, description = standard.Description } );
               }
@@ -140,7 +142,7 @@ namespace ILPathways.Services
       {
           if ( data.HasStandards && data.Standards != null )
           {
-              foreach ( Business.ContentResourceStandard standard in data.Standards )
+              foreach ( IB.ContentResourceStandard standard in data.Standards )
               {
                   output.standards.Add( new Standard() { code = standard.NotationCode, description = standard.Description } );
               }
@@ -178,14 +180,14 @@ namespace ILPathways.Services
         {
             if ( usingContentStandards )
             {
-                foreach ( Business.Content_StandardSummary standard in item.ContentStandards )
+                foreach ( IB.Content_StandardSummary standard in item.ContentStandards )
                 {
                     kid.standards.Add( new Standard() { code = standard.NotationCode, description = standard.Description } );
                 }
             }
             else
             {
-                foreach ( Business.ContentResourceStandard standard in item.Standards )
+                foreach ( IB.ContentResourceStandard standard in item.Standards )
                 {
                     kid.standards.Add( new Standard() { code = standard.NotationCode, description = standard.Description } );
                 }

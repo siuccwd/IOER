@@ -24,15 +24,15 @@ namespace IoerContentBusinessEntities
         public int Id { get; set; }
         public string Message { get; set; }
         public Nullable<int> PostingTypeId { get; set; }
-        public string PostingStatus { get; set; }
         public int CreatedById { get; set; }
         public Nullable<System.DateTime> Created { get; set; }
         public Nullable<int> RelatedPostingId { get; set; }
+        public bool IsApproved { get; set; }
     
-        public virtual Codes_PostingType Codes_PostingType { get; set; }
         public virtual ICollection<Community_Posting> Community_Posting1 { get; set; }
         public virtual Community_Posting Community_Posting2 { get; set; }
         public virtual ICollection<Community_PostingDocument> Community_PostingDocument { get; set; }
         public virtual ICollection<Community_PostItem> Community_PostItem { get; set; }
+        public virtual Codes_PostingType Codes_PostingType { get; set; }
     }
 }

@@ -1,1 +1,1 @@
-﻿<%@ WebService Language="C#" CodeBehind="ElasticSearchService.asmx.cs" Class="ILPathways.Services.ElasticSearchService" %>
+﻿<%@ WebService Language="C#" CodeBehind="ElasticSearchService.asmx.cs" Class="IOER.Services.ElasticSearchService" %>

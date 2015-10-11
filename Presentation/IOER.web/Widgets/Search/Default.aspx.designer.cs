@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ILPathways.Widgets.Search
+namespace IOER.Widgets.Search
 {
 
 

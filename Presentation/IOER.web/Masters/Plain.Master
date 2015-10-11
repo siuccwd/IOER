@@ -1,8 +1,8 @@
-﻿<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="Plain.master.cs" Inherits="ILPathways.Masters.Plain" %>
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="Plain.master.cs" Inherits="IOER.Masters.Plain" %>
 
 <!DOCTYPE html>
 
-<html>
+<html lang="en">
 <head runat="server">
   <title></title>
   <script type="text/javascript">

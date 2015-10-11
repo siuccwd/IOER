@@ -1,4 +1,4 @@
-﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="ImageHelper.ascx.cs" Inherits="ILPathways.LRW.controls.ImageHelper" %>
+﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="ImageHelper.ascx.cs" Inherits="IOER.LRW.controls.ImageHelper" %>
 
  <link href="/Styles/jquery.Jcrop.css" rel="stylesheet" type="text/css" />
 <%--<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.3/jquery.min.js"></script>--%>

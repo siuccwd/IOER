@@ -6,13 +6,14 @@ using System.Web.Services;
 using System.Web.Script.Serialization;
 
 using ILPathways.Utilities;
+using ILPathways.Business;
 using Isle.BizServices;
 using LRWarehouse.DAL;
 using Thumbnailer = LRWarehouse.DAL.ResourceThumbnailManager;
 using LRWarehouse.Business;
+using ThisUser = LRWarehouse.Business.Patron;
 
-
-namespace ILPathways.Services
+namespace IOER.Services
 {
   /// <summary>
   /// Summary description for UtilityService
@@ -44,87 +45,94 @@ namespace ILPathways.Services
         }
       );
     }
-    public string ValidateURL( string url, bool mustBeNew, ref bool isValid, ref string status )
-    {
-      //Do basic text validation without rewriting the URL
-      ValidateText( url, 12, "Resource URL", ref isValid, ref status );
-      if ( !isValid )
-      {
-        return url;
-      }
+	public string ValidateURL(string url, bool mustBeNew, ref bool isValid, ref string status)
+	{
+		//Do basic text validation without rewriting the URL
+		ValidateText(url, 12, "URL", ref isValid, ref status);
+		if (!isValid)
+		{
+			return url;
+		}
 
-      //Just to be sure
-      url = url.Replace( "<", "" ).Replace( ">", "" ); 
+		//Just to be sure
+		url = url.Replace("<", "").Replace(">", "");
 
-      //Check for existing URL, if we care
-      if ( mustBeNew )
-      {
-        var test = ResourceBizService.ResourceVersion_GetByUrl( url );
-        if ( test.Count > 0 )
-        {
-          var first = test.First<LRWarehouse.Business.ResourceVersion>();
-          status = "Resource already exists in IOER: <a href=\"/Resource/" + first.ResourceIntId + "/" + ResourceVersion.UrlFriendlyTitle( first.SortTitle ) + "\">Click Here</a>";
-          isValid = false;
-          return "";
-        }
-      }
+		//Check for existing URL, if we care
+		if (mustBeNew)
+		{
+			var test = ResourceBizService.ResourceVersion_GetByUrl(url);
+			if (test.Count > 0)
+			{
+				var first = test.First<LRWarehouse.Business.ResourceVersion>();
+				status = "Resource already exists in IOER: <a href=\"/Resource/" + first.ResourceIntId + "/" + ResourceVersion.UrlFriendlyTitle(first.SortTitle) + "\">Click Here</a>";
+				isValid = false;
+				return "";
+			}
+		}
 
-      //Check for basic URL formatting
-      try
-      {
-        var testURL = new Uri( url );
-        if ( 
-          (url.IndexOf( "http://" ) != 0 && url.IndexOf( "https://" ) != 0 ) ||
-          url.IndexOf(".") == -1
-        )
-        {
-          throw new Exception();
-        }
-        
-      }
-      catch ( Exception ex )
-      {
-        status = "Improperly formatted URL.";
-        isValid = false;
-        return "";
-      }
-      
-      //Check for blacklist
-      Uri uri = new Uri(url);
-      string blStatus = "successful";
-      BlacklistedHost bh = new BlacklistedHostManager().GetByHostname(uri.Host, ref blStatus);
-      if (bh != null)
-      {
-          status = "This page is suspected to be a phishing page, contain malware, or may otherwise be inappropriate.  "+
-              "Click to learn more about <a href='http://www.antiphishing.org/'>phishing</a> and <a href='http://www.stopbadware.org/'>malware</a>.";
-          isValid = false;
-          return "";
-      }
-      else
-      {
-          string reputation = UtilityManager.CheckUnsafeUrl(url);
-          if (reputation == "Blacklisted")
-          {
-              status = "This page is suspected to be a phishing page, contain malware, or may otherwise be inappropriate.  " +
-                  "Click to learn more about <a href='http://www.antiphishing.org/'>phishing</a> and <a href='http://www.stopbadware.org/'>malware</a>.  "+
-                  "Advisory provided by <a href='http://code.google.com/apis/safebrowsing/safebrowsing_faq.html#whyAdvisory'>Google</a>.";
-              isValid = false;
-              return "";
-          }
-      }
+		//Check for basic URL formatting
+		var currentEnvironment = ServiceHelper.GetAppKeyValue("envType", "prod");
+		try
+		{
+			var testURL = new Uri(url);
+			if (currentEnvironment != "dev") //localhost URLs don't have a .
+			{
+				if (
+					(url.IndexOf("http://") != 0 && url.IndexOf("https://") != 0) ||
+					url.IndexOf(".") == -1
+				)
+				{
+					throw new Exception();
+				}
+			}
+		}
+		catch (Exception ex)
+		{
+			status = "Improperly formatted URL.";
+			isValid = false;
+			return "";
+		}
 
-      //Set return values
-      isValid = true;
-      status = "okay";
-      return url;
-    }
+		if (currentEnvironment != "dev") //localhost is blacklisted and that got annoying
+		{
+			//Check for blacklist
+			Uri uri = new Uri(url);
+			string blStatus = "successful";
+			BlacklistedHost bh = new BlacklistedHostManager().GetByHostname(uri.Host, ref blStatus);
+			if (bh != null)
+			{
+				status = "This page is suspected to be a phishing page, contain malware, or may otherwise be inappropriate.  " +
+						"Learn more about <a href='http://www.antiphishing.org/'>phishing</a> and <a href='http://www.stopbadware.org/'>malware</a>.";
+				isValid = false;
+				return "";
+			}
+			else
+			{
+				string reputation = UtilityManager.CheckUnsafeUrl(url);
+				if (reputation == "Blacklisted")
+				{
+					status = "This page is suspected to be a phishing page, contain malware, or may otherwise be inappropriate.  " +
+							"Learn more about <a href='http://www.antiphishing.org/'>phishing</a> and <a href='http://www.stopbadware.org/'>malware</a>.  " +
+							"Advisory provided by <a href='http://code.google.com/apis/safebrowsing/safebrowsing_faq.html#whyAdvisory'>Google</a>.";
+					isValid = false;
+					return "";
+				}
+			}
+		}
+
+		//Set return values
+		isValid = true;
+		status = "okay";
+		return url;
+	}
 
     [WebMethod]
     public string ValidateText( string text, int minimumLength, string fieldTitle )
     {
       bool isValid = false;
       string status = "";
-      text = ValidateText( text, minimumLength, fieldTitle, ref isValid, ref status );
+      bool allowingHtmlPosts = false;
+      text = ValidateText( text, minimumLength, fieldTitle, allowingHtmlPosts, ref isValid, ref status );
       return serializer.Serialize(
         new
         {
@@ -134,9 +142,15 @@ namespace ILPathways.Services
         }
       );
     }
-    public string ValidateText( string text, int minimumLength, string fieldTitle, ref bool isValid, ref string status )
+    public string ValidateText(string text, int minimumLength, string fieldTitle, ref bool isValid, ref string status)
     {
-      text = FormHelper.SanitizeUserInput( text );
+        bool allowingHtmlPosts = false;
+        return ValidateText(text, minimumLength, fieldTitle, allowingHtmlPosts, ref isValid, ref status);
+    }
+
+    public string ValidateText( string text, int minimumLength, string fieldTitle, bool allowingHtmlPosts, ref bool isValid, ref string status )
+    {
+        text = FormHelper.CleanText(text, allowingHtmlPosts);
       text = text.Trim();
       if ( minimumLength > 0 && text.Length < minimumLength )
       {
@@ -280,8 +294,10 @@ namespace ILPathways.Services
       //Check for existing email
       var testUser = new PatronManager().GetByEmail( text );
       emailAlreadyExists = ( testUser.IsValid && testUser.Id > 0 );
-        if (emailAlreadyExists)
-            status = "Error: Email Address already exists in system.";
+			if ( emailAlreadyExists )
+			{
+				status = "Email Address already exists in system.";
+			}
       return text;
     }
 
@@ -390,7 +406,7 @@ namespace ILPathways.Services
     {
       text = text.Trim();
 
-      text = FormHelper.SanitizeUserInput( text );
+      text = FormHelper.CleanText( text );
       if ( text == "" )
       {
         status = "Invalid character(s) in " + fieldTitle + ".";
@@ -447,6 +463,7 @@ namespace ILPathways.Services
         return ResourceBizService.ResourceVersion_GetByResourceId( resourceId ).Id;
     }
 
+
     [WebMethod]
     public string GetThumbnail( int intID, string url )
     {
@@ -459,15 +476,22 @@ namespace ILPathways.Services
       try
       {
         var user = GetUserFromGUID( userGUID );
-        if ( user.IsValid )
-        {
-          if ( isUserAdmin( user ) )
-          {
-              new Thumbnailer().CreateThumbnail( intID, url, true );
-            return ImmediateReturn( true, true, "Regenerating, please wait", null );
-          }
-        }
-        return ImmediateReturn( false, false, "Invalid Access Rights", null );
+				if ( user.Id > 0 )
+				{
+					if ( isUserAdmin( user ) )
+					{
+						new Thumbnailer().CreateThumbnail( intID, url, true );
+						return ImmediateReturn( true, true, "Regenerating, please wait", null );
+					}
+					else
+					{
+						return ImmediateReturn( false, false, "You don't have permission to do that.", null );
+					}
+				}
+				else
+				{
+					return ImmediateReturn( false, false, "You must be logged in to do that.", null );
+				}
       }
       catch ( Exception ex )
       {
@@ -490,7 +514,7 @@ namespace ILPathways.Services
     public GenericReturn RefreshElasticSearchRecords( List<int> ids )
     {
       //Validate user
-      var user = ( Patron ) Session[ "user" ];
+      var user = ( ThisUser ) Session[ "user" ];
       if ( user == null || user.Id == 0 )
       {
         return DoReturn( "", false, "invalid user", null );
@@ -517,38 +541,117 @@ namespace ILPathways.Services
       return DoReturn( "", false, "invalid user", null );
     }
 
-    public Patron GetUserFromGUID( string userGUID )
-    {
-      Patron user = new PatronManager().GetByRowId( userGUID );
-      if ( user.Id == 0 || !user.IsValid )
-      {
-        user.IsValid = false;
-        user.Id = 0;
-      }
+	#region === user methods ===
+	/// <summary>
+	/// Determine if current user is a logged in (registered) user 
+	/// </summary>
+	/// <returns></returns>
+	public bool IsUserAuthenticated()
+	{
+		//bool isUserAuthenticated = false;
+		//try
+		//{
+		//	ThisUser appUser = GetUserFromSession();
+		//	if ( appUser == null || appUser.Id == 0 )
+		//	{
+		//		isUserAuthenticated = false;
+		//	}
+		//	else
+		//	{
+		//		isUserAuthenticated = true;
+		//	}
+		//}
+		//catch
+		//{
 
-      return user;
+		//}
+
+		//return isUserAuthenticated;
+		return AccountServices.IsUserAuthenticated();
+
+	} //
+
+	//Get user from session or return null
+	public ThisUser GetUser(bool returnNullInsteadOfNewIfNotFound)
+	{
+		try
+		{
+			var user = AccountServices.GetUserFromSession(Session);
+			//var user = (ThisUser)Session[Constants.USER_REGISTER];
+			if (user == null || user.Id == 0)
+			{
+				throw new UnauthorizedAccessException();
+			}
+			return user;
+		}
+		catch
+		{
+			return returnNullInsteadOfNewIfNotFound ? null : new ThisUser();
+		}
+	}
+	public ThisUser GetUserFromSession()
+	{
+		//ThisUser user = new ThisUser();
+		//try
+		//{ 		//Get the user
+		//	user = ( ThisUser ) Session[ Constants.USER_REGISTER ];
+
+		//	if ( user.Id == 0 || !user.IsValid )
+		//	{
+		//		user.IsValid = false;
+		//		user.Id = 0;
+		//	}
+		//}
+		//catch
+		//{
+		//	user = new ThisUser();
+		//	user.IsValid = false;
+		//}
+		//return user;
+		return AccountServices.GetUserFromSession(Session);
+	}
+	public ThisUser GetUserFromGUID( string userGUID )
+    {
+	  //ThisUser user = new PatronManager().GetByRowId( userGUID );
+	  //if ( user.Id == 0 || !user.IsValid )
+	  //{
+	  //  user.IsValid = false;
+	  //  user.Id = 0;
+	  //}
+	  return new AccountServices().GetByRowId(userGUID);
+      //return user;
     }
 
-    public bool isUserAdmin( Business.IWebUser user )
+    public bool isUserAdmin( IWebUser user )
     {
-      return isUserAdmin( ( Patron ) user );
+      return isUserAdmin( ( ThisUser ) user );
     }
-    public bool isUserAdmin( Patron user )
+	  /// <summary>
+	  /// this should be in account services!
+	  /// ==> actually, based on the check of a delete privilege, is this properly named?
+	  /// </summary>
+	  /// <param name="user"></param>
+	  /// <returns></returns>
+    public bool isUserAdmin( ThisUser user )
     {
-      return Isle.BizServices.SecurityManager.GetGroupObjectPrivileges( user, "ILPathways.Admin" ).DeletePrivilege > ( int )ILPathways.Business.EPrivilegeDepth.State;
+		string siteAdminObjectName = ServiceHelper.GetAppKeyValue("siteAdminObjectName");
+		//"Site.Admin"
+      return Isle.BizServices.SecurityManager.GetGroupObjectPrivileges( user, siteAdminObjectName ).DeletePrivilege > ( int )ILPathways.Business.EPrivilegeDepth.State;
     }
+	#endregion
 
-    public string ImmediateReturn( object data, bool isValid, string status, object extra )
+	public string ImmediateReturn( object data, bool isValid, string status, object extra )
     {
-      return serializer.Serialize(
-        new
-        {
-          data = data,
-          isValid = isValid,
-          status = status,
-          extra = extra
-        }
-      );
+		serializer.MaxJsonLength = Int32.MaxValue;
+		return serializer.Serialize(
+			new
+			{
+				data = data,
+				isValid = isValid,
+				status = status,
+				extra = extra
+			}
+		);
     }
 
     public static GenericReturn DoReturn( object data, bool valid, string status, object extra )
@@ -562,23 +665,7 @@ namespace ILPathways.Services
       };
     }
 
-    //Get user from session or return null
-    public Patron GetUser( bool returnNullInsteadOfNewIfNotFound )
-    {
-      try
-      {
-        var user = ( Patron ) Session[ Constants.USER_REGISTER ];
-        if ( user == null || user.Id == 0 )
-        {
-          throw new UnauthorizedAccessException();
-        }
-        return user;
-      }
-      catch
-      {
-        return returnNullInsteadOfNewIfNotFound ? null : new Patron();
-      }
-    }
+
     #endregion
 
     #region subclasses

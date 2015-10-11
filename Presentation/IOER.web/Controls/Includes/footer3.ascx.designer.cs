@@ -7,19 +7,10 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ILPathways.Controls.Includes {
+namespace IOER.Controls.Includes {
     
     
     public partial class footer3 {
-        
-        /// <summary>
-        /// linkNewsSubscribe control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.HyperLink linkNewsSubscribe;
         
         /// <summary>
         /// eo_Statement control.

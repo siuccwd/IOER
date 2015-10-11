@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="Default.aspx.cs" Inherits="ILPathways.Controls.SearchV6.Index" MasterPageFile="/Masters/Responsive.Master" %>
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="Default.aspx.cs" Inherits="IOER.Controls.SearchV6.Index" MasterPageFile="/Masters/Responsive.Master" %>
 <%@ Register TagPrefix="uc1" TagName="Search" Src="~/Controls/SearchV6/SearchV6.ascx" %>
 
 <asp:Content runat="server" ContentPlaceHolderID="HeadContent"></asp:Content>

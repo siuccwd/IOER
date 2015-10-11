@@ -1,4 +1,4 @@
-﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="OrgSearch.ascx.cs" Inherits="ILPathways.Controls.OrgMgmt.OrgSearch" %>
+﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="OrgSearch.ascx.cs" Inherits="IOER.Controls.OrgMgmt.OrgSearch" %>
 
 
 

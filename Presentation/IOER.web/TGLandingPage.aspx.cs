@@ -7,17 +7,17 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 
 using ILPathways.Utilities;
-using ILPathways.classes;
+using IOER.classes;
 using ILPathways.Business;
 using LRWarehouse.Business;
-using ILPathways.Controllers;
+using IOER.Controllers;
 using LDAL = LRWarehouse.DAL;
 using MyManager = Isle.BizServices.AccountServices;
 using CurrentUser = LRWarehouse.Business.Patron;
 
-namespace ILPathways
+namespace IOER
 {
-    public partial class TGLandingPage : ILPathways.Library.BaseAppPage
+    public partial class TGLandingPage : IOER.Library.BaseAppPage
     {
         string Subject
         {

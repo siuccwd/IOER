@@ -14,11 +14,12 @@ using System.Data;
 using LRWarehouse.Business;
 using LRWarehouse.DAL;
 using IPB = ILPathways.Business;
-using ILPathways.classes;
+using IOER.classes;
 using Isle.BizServices;
 using LRWarehouse.Business.ResourceV2;
- 
-namespace ILPathways.Services
+using Patron = LRWarehouse.Business.Patron;
+
+namespace IOER.Services
 {
     /// <summary>
     /// Summary description for ElasticSearchService
@@ -106,12 +107,6 @@ namespace ILPathways.Services
             }
 
             return list;
-        }
-
-        [WebMethod]
-        public Widget_Details FetchCodes()
-        {
-            return new ResourceService().Get_Details( 0 );
         }
 
         [WebMethod]
@@ -656,6 +651,12 @@ namespace ILPathways.Services
         [WebMethod( EnableSession = true )]
         public Services.UtilityService.GenericReturn DoSearchCollection7( JSONQueryV7 input )
         {
+					//Attempt to figure out which field the user is looking for, if any
+					//This needs to happen before : is stripped out
+					var updatedText = input.text;
+					var searchFields = GetSearchFields( ref updatedText );
+					input.text = updatedText;
+
           //Clean up text
           var specialCharacters = new List<string>() { "=", "&&", "||", "<", ">", "!", "(", ")", "{", "}", "[", "]", "^", "~", "?", "\\", "/", ":" }; //also " and * but those can be useful
           input.text = input.text.Trim();
@@ -671,8 +672,6 @@ namespace ILPathways.Services
           }
 
           //Setup the list of fields to do full-text searches on
-          //TODO: figure out how to make a text search for a tag return stuff with that tag
-          var searchFields = new List<string>() { "ResourceId^99", "LrDocId", "Title^5", "Title.English^10", "Title.Ngram", "Title.Raw^10", "Description", "Description.English", "Description.Ngram", "Description.Raw^2", "Url", "Url.Raw^5", "Creator^5", "Publisher^5", "Publisher.Ngram", "Publisher.English^3", "Publisher.Raw^2", "Submitter^2", "Keywords", "Keywords.English", "Keywords.Ngram", "Keywords.Raw^2", "GradeAliases", "StandardNotations", "StandardNotations.Ngram", "StandardNotations.Raw^2", "Fields.Tags^5", "Fields.Tags.Raw^10" };
           var listifiedText = input.text.Split(' ').Where(m => m.IndexOf("-") != 0).ToList();
           var positiveText = "";
           foreach ( var item in listifiedText ) { positiveText = positiveText + item + " "; }
@@ -741,7 +740,7 @@ namespace ILPathways.Services
           if( input.not.Count() > 0 )
           {
             query.@bool.must_not.Add(
-              new { query_string = new { query = input.not, use_dis_max = false, default_operator = "or", lenient = false, fields = new List<string>() { "Publisher", "Publisher.Ngram", "Publisher.English", "Publisher.Raw", "Submitter" } } }
+              new { query_string = new { query = input.not, use_dis_max = false, default_operator = "or", lenient = false, fields = new List<string>() { "Publisher", "Creator", "Submitter" } } }
             );
           }
 
@@ -769,6 +768,11 @@ namespace ILPathways.Services
             };
           }
 
+					if ( input.collectionIDs.Count() == 1 ) //skip cases where no collection is hit, or potential future case where multiple collections are searched for
+					{
+						ActivityBizServices.CollectionHit( input.collectionIDs.First(), SessionManager.GetUserFromSession( Session ), "Visit" );
+					}
+
           var queryJSON = serializer.Serialize( jsonQuery );
           var result = new ElasticSearchManager().Search( queryJSON, "mainSearchCollection", "resource" );
 
@@ -776,6 +780,60 @@ namespace ILPathways.Services
           //return Services.UtilityService.DoReturn( result, true, "", queryJSON );
           //return Services.UtilityService.DoReturn( result, true, "", null );
         }
+				public List<string> GetSearchFields( ref string query )
+				{
+					query = query.ToLower().Trim();
+
+					//All available fields, based on elasticsearch mapping
+					var allFields = new List<string>() { "ResourceId^99", "LrDocId", "Title^15", "Title.English^10", "Title.Ngram", "Title.Raw^10", "Description", "Description.English", "Description.Ngram", "Description.Raw^2", "Url", "Url.Raw^5", "Creator^5", "Publisher^5", "Publisher.Ngram", "Publisher.English^3", "Publisher.Raw^2", "Submitter^2", "Keywords", "Keywords.English", "Keywords.Ngram", "Keywords.Raw^2", "GradeAliases", "StandardNotations", "StandardNotations.Ngram", "StandardNotations.Raw^2", "Fields.Tags^5", "Fields.Tags.Raw^10", "Title.Synonym^5", "Description.Synonym^5", "Publisher.Synonym^2", "Keywords.Synonym^2" };
+					
+					//Determine which field the user is looking for, if any
+					//Skip checks if there is no target field
+					if ( query.IndexOf( ":" ) == -1 )
+					{
+						return allFields;
+					}
+
+					try
+					{
+						//Otherwise, attempt to determine the target fields
+						//Note - does not handle individual filters at this time
+						//First break the query up and extract the first item
+						var parts = query.Split( new string[] { ":" }, StringSplitOptions.RemoveEmptyEntries );
+						//Can search for multiple targets, ie "publisher,submitter,creator"
+						var targetFields = parts[ 0 ].Split( new string[] { "," }, StringSplitOptions.RemoveEmptyEntries );
+						//Now reassemble the query sans the first item
+						parts[ 0 ] = "";
+						query = string.Join( " ", parts );
+						//Continue on
+						var searchFields = new List<string>();
+						foreach ( var item in allFields )
+						{
+							foreach ( var target in targetFields )
+							{
+								if ( item.ToLower().IndexOf( target ) == 0 )
+								{
+									searchFields.Add( item );
+								}
+							}
+						}
+
+						//Return the result, or the whole list
+						if ( searchFields.Count() > 0 )
+						{
+							return searchFields;
+						}
+						else
+						{
+							return allFields;
+						}
+					}
+					catch
+					{
+						return allFields;
+					}
+
+				}
         public class JSONQueryV7
         {
           public JSONQueryV7()
@@ -785,6 +843,7 @@ namespace ILPathways.Services
             libraryIDs = new List<int>();
             collectionIDs = new List<int>();
             sort = new SortV7();
+            not = "";
           }
           public string text { get; set; }
           public List<FieldES> fields { get; set; }
@@ -797,6 +856,11 @@ namespace ILPathways.Services
           public string not { get; set; }
         }
         public class SortV7 {
+					public SortV7()
+					{
+						field = "";
+						order = "";
+					}
           public string field { get; set; }
           public string order { get; set; }
         }

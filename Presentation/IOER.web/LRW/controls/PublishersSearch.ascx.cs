@@ -12,16 +12,16 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Web.UI.HtmlControls;
 
-using ILPathways.Library;
+using IOER.Library;
 using ILPathways.Utilities;
 using LogManager = ILPathways.Utilities.LoggingHelper;
-using ILPathways.classes;
+using IOER.classes;
 using ILPathways.Business;
 //using ILPathways.DAL;
 using MyManager = LRWarehouse.DAL.LRManager;
 using LRWarehouse.DAL;
 
-namespace ILPathways.LRW.controls
+namespace IOER.LRW.controls
 {
     public partial class PublishersSearch : BaseUserControl
     {
@@ -281,7 +281,7 @@ namespace ILPathways.LRW.controls
 
             if ( this.txtKeyword.Text.Trim().Length > 0 )
             {
-                string keyword = MyManager.HandleApostrophes( FormHelper.SanitizeUserInput( txtKeyword.Text.Trim() ) );
+                string keyword = MyManager.HandleApostrophes( FormHelper.CleanText( txtKeyword.Text.Trim() ) );
                 //extract the resource count
                 int lastPos = keyword.LastIndexOf( ")" );
                 if ( lastPos > 5 )

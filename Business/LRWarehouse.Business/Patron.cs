@@ -585,7 +585,10 @@ namespace LRWarehouse.Business
         /// <returns></returns>
         public string FullName()
         {
-            return this.FirstName + " " + this.LastName;
+            if (string.IsNullOrWhiteSpace(FirstName))
+                return "Incomplete - Update Profile";
+            else    
+                return this.FirstName + " " + this.LastName;
         }
 
         /// <summary>
@@ -594,7 +597,10 @@ namespace LRWarehouse.Business
         /// <returns></returns>
         public string SortName()
         {
-            return this.LastName + ", " + this.FirstName;
+            if (string.IsNullOrWhiteSpace(FirstName))
+                return "Incomplete - Update Profile";
+            else   
+                return this.LastName + ", " + this.FirstName;
         }//
 
         /// <summary>
@@ -603,9 +609,14 @@ namespace LRWarehouse.Business
         /// <returns></returns>
         public string ShortName()
         {
-            string shortName = this.FirstName.Substring( 0, 1 ) + this.LastName;
-            shortName = shortName.Replace( " ", "" );
-            return shortName;
+            if (string.IsNullOrWhiteSpace(FirstName))
+                return "Incomplete - Update Profile";
+            else
+            {
+                string shortName = this.FirstName.Substring(0, 1) + this.LastName;
+                shortName = shortName.Replace(" ", "");
+                return shortName;
+            }
         }//
 
        // public List<Organization> Organizations { get; set; }
@@ -617,5 +628,17 @@ namespace LRWarehouse.Business
         public List<OrganizationMember> OrgMemberships{ get; set; }
         public DateTime LastOrgMbrCheckDate { get; set; }
         #endregion
+    }
+
+    public class PatronExternalAccount
+    {
+        public int PatronId { get; set; }
+        public int Id { get; set; }
+        public int ExternalSiteId { get; set; }
+        public string ExternalSiteName { get; set; }
+        public string LoginId { get; set; }
+        public string Password { get; set; }
+        public string Token { get; set; }
+        public DateTime Created { get; set; }
     }
 }

@@ -530,156 +530,196 @@ namespace Isle.BizServices
             );
         }
 
-      public static void PublishToDatabase( LRWarehouse.Business.ResourceV2.ResourceDTO input
-                      , int publishForOrgId
-                      , List<int> selectedTags
-                      , ref bool successful
-                      , ref string status
-                      , ref int versionID
-                      , ref int intID
-                      , ref string sortTitle )
-      {
-        string statusMessage = "";
-        ResourceManager resMgr = new ResourceManager();
+		public static void PublishToDatabase(LRWarehouse.Business.ResourceV2.ResourceDTO input
+						, int publishForOrgId
+						, List<int> selectedTags
+						, ref bool successful
+						, ref string status
+						, ref int versionID
+						, ref int intID
+						, ref string sortTitle)
+		{
+			string statusMessage = "";
+			ResourceManager resMgr = new ResourceManager();
 
-        try
-        {
-          //Resource
-          //Create new resource
-            //MP - why just the url. Doesn't handle published by without a userId???
-          if ( input.ResourceId == 0 )
-          {
-              intID = resMgr.CreateByUrl( input.Url, ref status );
-                input.ResourceId = intID;
-          }
-            //MP
-          if ( input.CreatedById > 0 )
-          {
-              resMgr.Create_ResourcePublishedBy( intID, input.CreatedById, publishForOrgId, ref statusMessage );
-          }
-          //Version
-          var accessRights = input.Fields.Where( m => m.Schema == "accessRights" ).FirstOrDefault().Tags.Where( t => t.Selected ).FirstOrDefault();
-          var versionManager = new ResourceVersionManager();
-          var version = new ResourceVersion()
-          {
-            Id = versionID,
-            LRDocId = input.LrDocId,
-            Title = input.Title,
-            Description = input.Description,
-            Publisher = input.Publisher,
-            Creator = input.Creator,
-            Rights = input.UsageRights.Url,
-            AccessRights = accessRights.Title,
-            Modified = DateTime.Now,
-            Submitter = input.Submitter,
-            Created = DateTime.Now, //Still not sure if this means "resource creation" or "table record creation" date. Going with the safer of the two
-            TypicalLearningTime = "", //No longer used
-            IsSkeletonFromParadata = false,
-            Schema = "LRMI",
-            AccessRightsId = accessRights.Id,
-            InteractivityTypeId = 0, //No longer used
-            ResourceIntId = intID,
-            Requirements = input.Requirements
-          };
-          if ( versionID == 0 )
-          {
-            versionID = versionManager.Create( version, ref status );
-          }
-          else
-          {
-            versionManager.UpdateById( version );
-          }
+			try
+			{
+				//Resource
+				//Create new resource
+				/*if ( input.ResourceId == 0 && input.CreatedById == 0 )
+				{
+					intID = resMgr.CreateByUrl( input.Url, ref status );
+					  input.ResourceId = intID;
+				}
+				else if ( input.CreatedById > 0 && input.ResourceId == 0 )
+				{
+					resMgr.Create_ResourcePublishedBy( intID, input.CreatedById, publishForOrgId, ref statusMessage );
+				}*/
+				if (input.ResourceId == 0)
+				{
+					var resource = new Resource()
+					{
+						ResourceUrl = input.Url,
+						CreatedById = input.CreatedById,
+					};
+					intID = resMgr.Create(resource, ref status);
+					if (intID == 0)
+					{
+						successful = false;
+						return;
+					}
+					else
+					{
+						input.ResourceId = intID;
+					}
+				}
+				//Version
 
-          //Keywords
-          var keywordManager = new ResourceKeywordManager();
-          foreach ( var item in input.Keywords )
-          {
-            keywordManager.Create( new ResourceChildItem()
-            {
-              ResourceIntId = intID,
-              OriginalValue = item,
-              CreatedById = input.CreatedById
-            }, ref status );
-          }
+				//Access Rights
+				var finalAccessRightsValue = "";
+				var finalAccessRightsId = 2;
+				var targetAccessRights = input.Fields.Where( m => m.Schema == "accessRights" ).FirstOrDefault().Tags.Where( t => t.Selected ).FirstOrDefault();
+				if ( targetAccessRights != null )
+				{
+					//Convert new access rights ID to old access rights ID for storage in version table
+					var accessRightsDBField = new ResourceV2Services().GetFieldAndTagCodeData().Where( m => m.Schema == "accessRights" ).FirstOrDefault();
+					if ( accessRightsDBField != null )
+					{
+						var matchedAccessRightsDB = accessRightsDBField.Tags.Where( m => m.Id == targetAccessRights.Id ).FirstOrDefault();
+						if ( matchedAccessRightsDB != null )
+						{
+							finalAccessRightsId = matchedAccessRightsDB.OldCodeId;
+							finalAccessRightsValue = matchedAccessRightsDB.Title;
+						}
+					}
+					//var accessRights = targetAccessRights.Tags.Where(t => t.Selected).FirstOrDefault() ?? targetAccessRights.Tags.First();
+				}
 
-          //Standards
-          var standardManager = new ResourceStandardManager();
-          foreach ( var item in input.Standards )
-          {
-            standardManager.Create( new ResourceStandard()
-            {
-              ResourceIntId = intID,
-              StandardId = item.StandardId,
-              AlignmentTypeCodeId = item.AlignmentTypeId,
-              AlignmentDegreeId = item.AlignmentDegreeId,
-              AlignmentTypeValue = item.AlignmentType,
-              AlignmentDegree = item.AlignmentDegree,
-              CreatedById = input.CreatedById,
-              AlignedById = input.CreatedById,
-              StandardDescription = item.Description,
-              StandardNotationCode = item.NotationCode
-            }, ref status );
-          }
+				var versionManager = new ResourceVersionManager();
+				var version = new ResourceVersion()
+				{
+					Id = versionID,
+					LRDocId = input.LrDocId,
+					Title = input.Title,
+					Description = input.Description,
+					Publisher = input.Publisher,
+					Creator = input.Creator,
+					Rights = input.UsageRights.Url,
+					AccessRights = finalAccessRightsValue,
+					Modified = DateTime.Now,
+					Submitter = input.Submitter,
+					Created = DateTime.Now, //Still not sure if this means "resource creation" or "table record creation" date. Going with the safer of the two
+					TypicalLearningTime = "", //No longer used
+					IsSkeletonFromParadata = false,
+					Schema = "LRMI",
+					AccessRightsId = finalAccessRightsId,
+					InteractivityTypeId = 0, //No longer used
+					ResourceIntId = intID,
+					Requirements = input.Requirements
+				};
+				if (versionID == 0)
+				{
+					versionID = versionManager.Create(version, ref status);
+				}
+				else
+				{
+					versionManager.UpdateById(version);
+				}
 
-          //Tags
-          //SelectMany condenses resulting lists into a single list--here it condenses the lists of selected tags into a single list
-          //from which the IDs are selected
-          //List<int> tags = input.Fields.SelectMany( t => t.Tags.Where( s => s.Selected ) ).ToList().Select( t => t.Id ).ToList();
-          //Actually, we just want to add the new tags, because EF doesn't do a duplicate check
-          try
-          {
-            new IOERBusinessEntities.EFResourceManager().Resource_CreateTags( selectedTags, input.ResourceId, input.CreatedById );
-          }
-          catch ( Exception ex )
-          {
-            throw new Exception( "Entity Framework Error: " + ex.Message + ";<br />InnerException: " + ex.InnerException.Message + ";<br />" + ex.InnerException.ToString() + ";" );
-          }
+				//Keywords
+				var keywordManager = new ResourceKeywordManager();
+				foreach (var item in input.Keywords)
+				{
+					keywordManager.Create(new ResourceChildItem()
+					{
+						ResourceIntId = intID,
+						OriginalValue = item,
+						CreatedById = input.CreatedById
+					}, ref status);
+				}
 
-          sortTitle = versionManager.Get( versionID ).SortTitle.Replace( " ", "_" );
-          successful = true;
-          status = "okay";
-        }
-        catch ( Exception ex )
-        {
-          successful = false;
-          status = ex.Message;
-        }
-      }
+				//Standards
+				var standardManager = new ResourceStandardManager();
+				foreach (var item in input.Standards)
+				{
+					standardManager.Create(new ResourceStandard()
+					{
+						ResourceIntId = intID,
+						StandardId = item.StandardId,
+						AlignmentTypeCodeId = item.AlignmentTypeId,
+						AlignmentDegreeId = item.AlignmentDegreeId,
+						AlignmentTypeValue = item.AlignmentType,
+						AlignmentDegree = item.AlignmentDegree,
+						CreatedById = input.CreatedById,
+						AlignedById = input.CreatedById,
+						StandardDescription = item.Description,
+						StandardNotationCode = item.NotationCode
+					}, ref status);
+				}
+
+				//Tags
+				//SelectMany condenses resulting lists into a single list--here it condenses the lists of selected tags into a single list
+				//from which the IDs are selected
+				//List<int> tags = input.Fields.SelectMany( t => t.Tags.Where( s => s.Selected ) ).ToList().Select( t => t.Id ).ToList();
+				//Actually, we just want to add the new tags, because EF doesn't do a duplicate check
+				try
+				{
+					if (selectedTags != null && selectedTags.Count > 0)
+						new IOERBusinessEntities.EFResourceManager().Resource_CreateTags(selectedTags, input.ResourceId, input.CreatedById);
+				}
+				catch (Exception ex)
+				{
+					//ServiceHelper.DoTrace(4, "********PublishingServices.PublishToDatabase. EXCEPTION ENCOUNTERED");
+					//skip throw, to allow continuing!!!
+					ServiceHelper.LogError(ex, "PublishingServices.PublishToDatabase. " + "Entity Framework Error: " + ex.Message + ";<br />InnerException: " + ex.InnerException.Message + ";<br />" + ex.InnerException.ToString() + ";");
+					//throw new Exception("Entity Framework Error: " + ex.Message + ";<br />InnerException: " + ex.InnerException.Message + ";<br />" + ex.InnerException.ToString() + ";");
+				}
+
+				sortTitle = versionManager.Get(versionID).SortTitle.Replace(" ", "_");
+				successful = true;
+				status = "okay";
+			}
+			catch (Exception ex)
+			{
+				successful = false;
+				status = ex.Message;
+			}
+		}
 
 
-        public static void PublishToDatabase( Resource input
-                        , int publishForOrgId
-                        , ref bool successful
-                        , ref string status
-                        , ref int versionID
-                        , ref int intID
-                        , ref string sortTitle )
-        {
-            try
-            {
-                string statusMessage = "";
-                ResourceDataManager dataManager = new ResourceDataManager();
-                ResourceManager resMgr = new ResourceManager();
-                input.PublishedForOrgId = publishForOrgId;
-                //Resource. Use method that just uses url. Published by will be handled here
-                //intID = resMgr.Create( input, ref status );
-                intID = resMgr.CreateByUrl( input.ResourceUrl, ref status );
-                input.Id = intID;
-                input.Version.ResourceIntId = intID;
+		public static void PublishToDatabase(Resource input
+						, int publishForOrgId
+						, ref bool successful
+						, ref string status
+						, ref int versionID
+						, ref int intID
+						, ref string sortTitle)
+		{
+			try
+			{
+				string statusMessage = "";
+				ResourceDataManager dataManager = new ResourceDataManager();
+				ResourceManager resMgr = new ResourceManager();
+				input.PublishedForOrgId = publishForOrgId;
+				//Resource. Use method that just uses url. Published by will be handled here
+				//intID = resMgr.Create( input, ref status );
+				intID = resMgr.CreateByUrl(input.ResourceUrl, ref status);
+				input.Id = intID;
+				input.Version.ResourceIntId = intID;
 
-                //published by. Probably better to do here, rather than burying it?
-                if ( input.CreatedById > 0 )
-                {
-                    resMgr.Create_ResourcePublishedBy( intID, input.CreatedById, publishForOrgId, ref statusMessage );
-                }
+				//published by. Probably better to do here, rather than burying it?
+				if (input.CreatedById > 0)
+				{
+					resMgr.Create_ResourcePublishedBy(intID, input.CreatedById, publishForOrgId, ref statusMessage);
+				}
 
-                //Version
-                var versionManager = new ResourceVersionManager();
-                versionID = versionManager.Create( input.Version, ref status );
-                input.Version.Id = versionID;
+				//Version
+				var versionManager = new ResourceVersionManager();
+				versionID = versionManager.Create(input.Version, ref status);
+				input.Version.Id = versionID;
 
-                //Tags
-                var tags = new Dictionary<List<ResourceChildItem>, string>
+				//Tags
+				var tags = new Dictionary<List<ResourceChildItem>, string>
                 {
                   { input.ClusterMap, "careerCluster" },
                   { input.EducationalUse, "educationalUse" },
@@ -693,38 +733,38 @@ namespace Isle.BizServices
                   { input.SubjectMap, "subject" },
                   { input.relatedURL, "originalVersionURL" }
                 };
-                foreach ( KeyValuePair<List<ResourceChildItem>, string> entry in tags )
-                {
-                    CreateMVFs( dataManager, entry.Key, findClass( entry.Value ), intID, input.CreatedById );
-                }
+				foreach (KeyValuePair<List<ResourceChildItem>, string> entry in tags)
+				{
+					CreateMVFs(dataManager, entry.Key, findClass(entry.Value), intID, input.CreatedById);
+				}
 
-                //Keywords
-                var keywordManager = new ResourceKeywordManager();
-                foreach ( ResourceChildItem word in input.Keyword )
-                {
-                    word.ResourceIntId = intID;
-                    keywordManager.Create( word, ref status );
-                }
+				//Keywords
+				var keywordManager = new ResourceKeywordManager();
+				foreach (ResourceChildItem word in input.Keyword)
+				{
+					word.ResourceIntId = intID;
+					keywordManager.Create(word, ref status);
+				}
 
-                //Standards
-                var standardManager = new ResourceStandardManager();
-                foreach ( ResourceStandard standard in input.Standard )
-                {
-                    standard.ResourceIntId = intID;
-                    standardManager.Create( standard, ref status );
-                }
+				//Standards
+				var standardManager = new ResourceStandardManager();
+				foreach (ResourceStandard standard in input.Standard)
+				{
+					standard.ResourceIntId = intID;
+					standardManager.Create(standard, ref status);
+				}
 
-                sortTitle = versionManager.Get( versionID ).SortTitle.Replace( " ", "_" );
-                successful = true;
-                status = "okay";
-            }
-            catch ( Exception ex )
-            {
-                successful = false;
-                status = ex.Message;
-                return;
-            }
-        }
+				sortTitle = versionManager.Get(versionID).SortTitle.Replace(" ", "_");
+				successful = true;
+				status = "okay";
+			}
+			catch (Exception ex)
+			{
+				successful = false;
+				status = ex.Message;
+				return;
+			}
+		}
 
     
 
@@ -826,6 +866,16 @@ namespace Isle.BizServices
 
         #endregion
 
+				public static void PublishToElasticSearchAsynchronously( int resourceId )
+				{
+					System.Threading.ThreadPool.QueueUserWorkItem( delegate
+					{
+						var successful = true;
+						var status = "okay";
+						PublishToElasticSearch( resourceId, ref successful, ref status );
+					} );
+				}
+
         public static void PublishToElasticSearch( int resourceId, ref bool successful, ref string status )
         {
             //Do create
@@ -843,7 +893,6 @@ namespace Isle.BizServices
                 status = ex.Message;
             }
         }
-
         public static void BuildSaveLRDocument( Resource input, 
                 ref bool successful, 
                 ref string status )

@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ILPathways.Pages {
+namespace IOER.Pages {
     
     
     public partial class Login {
@@ -19,6 +19,6 @@ namespace ILPathways.Pages {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ILPathways.Account.controls.LoginController LoginController;
+        protected global::IOER.Account.controls.LoginController LoginController;
     }
 }

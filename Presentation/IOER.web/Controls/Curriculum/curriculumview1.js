@@ -3,6 +3,7 @@
 var currentPreviewID = 0;
 //Indicates whether or not all standards are currently expanded
 var showingAllStandards = false;
+var showingStandardsSection = true;
 var prevNodeID = 0;
 var nextNodeID = 0;
 
@@ -13,10 +14,11 @@ $(document).ready(function () {
     e.stopPropagation();
     return false;
   });
-  $("html").not("#tools").not("#btnShowTools").not(".btnOpenMap").on("click", function () {
+  setupDatePickers();
+  $("html").not("#tools").not("#btnShowTools").not(".btnOpenMap").not(".ui-datepicker").on("click", function () {
     hideTools();
   });
-  $("#btnShowTools, #tools, .btnOpenMap").on("click", function (e) {
+  $("#btnShowTools, #tools, .btnOpenMap, .ui-datepicker").on("click", function (e) {
     e.stopPropagation();
   });
   //Enable minimizing parts of the curriculum map
@@ -32,6 +34,8 @@ $(document).ready(function () {
   $(".widgetLink").on("click", function () { this.select(); });
   //Update following DDL
   getFollowing();
+
+  toggleStandardsSection();
 });
 
 //Add next/previous functionality
@@ -144,12 +148,12 @@ function preview(id, useGoogle) {
         var target = "";
         if (files[i].url.toLowerCase().indexOf("contentdocs") > -1) {
           if (useGoogle || $(window).width() <= 500 || files[i].url.toLowerCase().indexOf(".pdf") > 0) {
-            target = "http://docs.google.com/viewer?embedded=true&url=" + encodeURI("http://ioer.ilsharedlearning.org" + files[i].url);
+            target = "//docs.google.com/viewer?embedded=true&url=" + encodeURI("http://ioer.ilsharedlearning.org" + files[i].url);
             $("#googlePreviewerLink").hide();
             $("#officePreviewerLink").show();
           }
           else {
-            target = "http://view.officeapps.live.com/op/view.aspx?src=" + encodeURI("http://ioer.ilsharedlearning.org" + files[i].url);
+            target = "//view.officeapps.live.com/op/view.aspx?src=" + encodeURI("http://ioer.ilsharedlearning.org" + files[i].url);
             $("#googlePreviewerLink").show();
             $("#officePreviewerLink").hide();
           }
@@ -218,16 +222,35 @@ function showStandard(id) {
   $(".standardText[data-standardID=" + id + "]").slideToggle();
   triggerResize();
 }
+
+//Show or hide standards section
+function toggleStandardsSection() {
+		if ($("#alignedStandards").hasClass("noresize")) {
+			return;
+		}
+    if (showingStandardsSection) {
+        $("#btnToggleStandardsSection").attr("value", "Show All");
+        $("#alignedStandards").removeClass("showingAll").addClass("showingSample");
+        showingStandardsSection = false;
+        triggerResize(500);
+    }
+    else {
+        $("#btnToggleStandardsSection").attr("value", "Show Sample");
+        $("#alignedStandards").addClass("showingAll").removeClass("showingSample");
+        showingStandardsSection = true;
+        triggerResize(500);
+    }
+}
 //Show or hide all standards
 function toggleAllStandards() {
   if (showingAllStandards) {
-    $("#btnToggleAllStandards").attr("value", "Expand All");
+    $("#btnToggleAllStandards").attr("value", "Expand Each");
     $(".standardText").slideUp();
     showingAllStandards = false;
     triggerResize(260);
   }
   else {
-    $("#btnToggleAllStandards").attr("value", "Collapse All");
+    $("#btnToggleAllStandards").attr("value", "Collapse Each");
     $(".standardText").slideDown();
     showingAllStandards = true;
     triggerResize(500);
@@ -351,8 +374,8 @@ function successAddLike(data, type) {
 }
 
 function successGetFollowing(data) {
-  if (data.valid) {
-    $("#ddlTimelineSubscribe option[value=" + data.type + "]").prop("selected", true);
+	if (data.valid) {
+    $("#ddlTimelineSubscribe option[value=" + data.data.type + "]").prop("selected", true);
   }
 }
 
@@ -366,7 +389,7 @@ function renderComments() {
   var template = $("#template_comment").html();
   var box = $("#commentsList");
   if (comments.length == 0) {
-    box.html("<p class='grayMessage'>No comments found for this Node</p>");
+    box.html("<p class='grayMessage'>No comments found for this Layer</p>");
     return;
   }
   else {

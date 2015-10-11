@@ -3,16 +3,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-using AcctSvce = ILPathways.AccountServiceReference;
-using wnGlossary = ILPathways.workNetGlossary;
+using AcctSvce = IOER.AccountServiceReference;
+//using wnGlossary = ILPathways.workNetGlossary;
 using utilities = ILPathways.Utilities;
 using BO = ILPathways.Business;
 using LRWarehouse.Business;
+using ThisUser = ILPathways.Business.Patron;
 
 //using PatronMgr = LRWarehouse.DAL.PatronManager;
 using PatronMgr = Isle.BizServices.AccountServices;
 
-namespace ILPathways.Controllers
+namespace IOER.Controllers
 {
     public class UserController
     {
@@ -26,38 +27,38 @@ namespace ILPathways.Controllers
         /// <param name="pRowId"></param>
         /// <param name="statusMessage"></param>
         /// <returns></returns>
-        public bool Delete( string pRowId, ref string statusMessage )
-        {
-            //TODO - chg to ws call??
-            PatronMgr mgr = new PatronMgr();
-            return mgr.Delete( pRowId, ref statusMessage );
+		//public bool Delete( string pRowId, ref string statusMessage )
+		//{
+		//	//TODO - chg to ws call??
+		//	PatronMgr mgr = new PatronMgr();
+		//	return mgr.Delete( pRowId, ref statusMessage );
            
-        }//
+		//}//
 
-        /// <summary>
-        /// Add an User record
-        /// </summary>
-        /// <param name="entity"></param>
-        /// <param name="statusMessage"></param>
-        /// <returns></returns>
-        public int Create( Patron entity, ref string statusMessage )
-        {
-            PatronMgr mgr = new PatronMgr();
-            return mgr.Create( entity, ref statusMessage );
+		///// <summary>
+		///// Add an User record
+		///// </summary>
+		///// <param name="entity"></param>
+		///// <param name="statusMessage"></param>
+		///// <returns></returns>
+		//public int Create( Patron entity, ref string statusMessage )
+		//{
+		//	PatronMgr mgr = new PatronMgr();
+		//	return mgr.Create( entity, ref statusMessage );
            
-        }
+		//}
 
-        /// <summary>
-        /// Update an User record
-        /// </summary>
-        /// <param name="entity"></param>
-        /// <returns></returns>
-        public string Update( Patron entity )
-        {
-            PatronMgr mgr = new PatronMgr();
-            return mgr.Update( entity );
+		///// <summary>
+		///// Update an User record
+		///// </summary>
+		///// <param name="entity"></param>
+		///// <returns></returns>
+		//public string Update( Patron entity )
+		//{
+		//	PatronMgr mgr = new PatronMgr();
+		//	return mgr.Update( entity );
 
-        }//
+		//}//
         #endregion
 
         #region ====== Retrieval Methods ===============================================
@@ -66,85 +67,85 @@ namespace ILPathways.Controllers
         /// </summary>
         /// <param name="pId"></param>
         /// <returns></returns>
-        public Patron Get( int pId )
-        {
-            PatronMgr mgr = new PatronMgr();
-            return mgr.Get( pId );
-        }//
+		//public Patron Get( int pId )
+		//{
+		//	PatronMgr mgr = new PatronMgr();
+		//	return mgr.Get( pId );
+		//}//
 
-        /// <summary>
-        /// Check if a username exists
-        /// </summary>
-        /// <param name="userName"></param>
-        /// <returns></returns>
-        public bool DoesUserNameExist( string userName )
-        {
-            PatronMgr mgr = new PatronMgr();
-            return mgr.DoesUserNameExist( userName );
-        }//
+		///// <summary>
+		///// Check if a username exists
+		///// </summary>
+		///// <param name="userName"></param>
+		///// <returns></returns>
+		//public bool DoesUserNameExist( string userName )
+		//{
+		//	PatronMgr mgr = new PatronMgr();
+		//	return mgr.DoesUserNameExist( userName );
+		//}//
 
-        /// <summary>
-        /// Check if an email already is associated with an account
-        /// </summary>
-        /// <param name="email"></param>
-        /// <returns></returns>
-        public bool DoesUserEmailExist( string email )
-        {
-            PatronMgr mgr = new PatronMgr();
-            return mgr.DoesUserEmailExist( email );
+		///// <summary>
+		///// Check if an email already is associated with an account
+		///// </summary>
+		///// <param name="email"></param>
+		///// <returns></returns>
+		//public bool DoesUserEmailExist( string email )
+		//{
+		//	PatronMgr mgr = new PatronMgr();
+		//	return mgr.DoesUserEmailExist( email );
 
-        }//
-        /// <summary>
-        /// retrieve user by username
-        /// </summary>
-        /// <param name="userName"></param>
-        /// <returns></returns>
-        public Patron GetByUsername( string userName )
-        {
-            PatronMgr mgr = new PatronMgr();
-            return mgr.GetByUsername( userName );
+		//}//
+		///// <summary>
+		///// retrieve user by username
+		///// </summary>
+		///// <param name="userName"></param>
+		///// <returns></returns>
+		//public Patron GetByUsername( string userName )
+		//{
+		//	PatronMgr mgr = new PatronMgr();
+		//	return mgr.GetByUsername( userName );
 
-        }//
-        /// <summary>
-        /// Get User record via rowId
-        /// </summary>
-        /// <param name="pRowId"></param>
-        /// <returns></returns>
-        public Patron GetByRowId( string pRowId )
-        {
-            PatronMgr mgr = new PatronMgr();
-            return mgr.GetByRowId( pRowId );
-        }//
+		//}//
+		///// <summary>
+		///// Get User record via rowId
+		///// </summary>
+		///// <param name="pRowId"></param>
+		///// <returns></returns>
+		//public Patron GetByRowId( string pRowId )
+		//{
+		//	PatronMgr mgr = new PatronMgr();
+		//	return mgr.GetByRowId( pRowId );
+		//}//
 
-        /// <summary>
-        /// Get User record via email
-        /// </summary>
-        /// <param name="email"></param>
-        /// <returns></returns>
-        public Patron GetByEmail( string email )
-        {
-            PatronMgr mgr = new PatronMgr();
-            return mgr.GetByEmail( email );
+		///// <summary>
+		///// Get User record via email
+		///// </summary>
+		///// <param name="email"></param>
+		///// <returns></returns>
+		//public Patron GetByEmail( string email )
+		//{
+		//	PatronMgr mgr = new PatronMgr();
+		//	return mgr.GetByEmail( email );
 
-        }//
+		//}//
 
 
-        public Patron GetByWorkNetId( int pworkNetId )
-        {
-            PatronMgr mgr = new PatronMgr();
-            return mgr.GetByWorkNetId( pworkNetId );
-        }//
+		//public Patron GetByWorkNetId( int pworkNetId )
+		//{
+		//	PatronMgr mgr = new PatronMgr();
+		//	return mgr.GetByWorkNetId( pworkNetId );
+		//}//
 
-        public Patron GetByWorkNetCredentials( string loginId, string token )
-        {
-            return GetByExtSiteCredentials( 1, loginId, token );
-        }//
+		//public Patron GetByWorkNetCredentials( string loginId, string token )
+		//{
+		//	return GetByExtSiteCredentials( 1, loginId, token );
+		//}//
 
-        public Patron GetByExtSiteCredentials( int externalSiteId, string loginId, string token )
-        {
-            PatronMgr mgr = new PatronMgr();
-            return mgr.GetByExtSiteCredentials( externalSiteId, loginId, token );
-        }//
+		//public Patron GetByExtSiteCredentials( int externalSiteId, string loginId, string token )
+		//{
+		//	PatronMgr mgr = new PatronMgr();
+		//	return mgr.GetByExtSiteCredentials( externalSiteId, loginId, token );
+		//}//
 
         //public Patron Authorize( string userName, string password )
         //{
@@ -152,11 +153,11 @@ namespace ILPathways.Controllers
         //    return mgr.Authorize( userName, password );
         //}
 
-        public Patron RecoverPassword( string lookup )
-        {
-            PatronMgr mgr = new PatronMgr();
-            return mgr.RecoverPassword( lookup );
-        }
+		//public Patron RecoverPassword( string lookup )
+		//{
+		//	PatronMgr mgr = new PatronMgr();
+		//	return mgr.RecoverPassword( lookup );
+		//}
 
 
         /// <summary>
@@ -188,7 +189,7 @@ namespace ILPathways.Controllers
 
         string codedPassword = "Niemand hat die Absicht, eine mauer zu errichten!";
 
-        public Patron LoginViaWorkNet(string loginName, string password)
+        public ThisUser LoginViaWorkNet(string loginName, string password)
         {
             AcctSvce.AccountSoapClient wsClient = new AcctSvce.AccountSoapClient();
             AcctSvce.AccountDetail acct = new AcctSvce.AccountDetail();
@@ -200,7 +201,7 @@ namespace ILPathways.Controllers
             {
                 //now do we arbitrarily create a pathways account?
                 //BO.AppUser user = new BO.AppUser();
-                Patron user = new Patron();
+                ThisUser user = new ThisUser();
                 user.FirstName = acct.firstName;
                 user.LastName = acct.lastName;
                 user.Email = acct.email;
@@ -214,7 +215,7 @@ namespace ILPathways.Controllers
             }
             else
             {
-                Patron user = new Patron();
+                ThisUser user = new ThisUser();
                 user.Message = acct.statusMessage; //"Error: Invalid Username or Password";
                 user.IsValid = false;
 

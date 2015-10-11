@@ -5,7 +5,7 @@ using System.Web;
 
 using LRWarehouse.Business;
 
-namespace ILPathways.Controls.Rubrics
+namespace IOER.Controls.Rubrics
 {
   /* Base Rubric */
   public abstract class BaseRubricModule : System.Web.UI.UserControl

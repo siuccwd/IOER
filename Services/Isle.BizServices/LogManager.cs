@@ -10,11 +10,11 @@ namespace Isle.BusinessServices
 {
     public static class LogManager
     {
-        public static void LogException( ExceptionLogBEO exceptionLogBEO )
-        {
-            //LogBO.LogException( exceptionLogBEO );
+		//public static void LogException( ExceptionLogBEO exceptionLogBEO )
+		//{
+		//	//LogBO.LogException( exceptionLogBEO );
 
-            LogManager.LogException( exceptionLogBEO );
-        }
+		//	LogManager.LogException( exceptionLogBEO );
+		//}
     }
 }

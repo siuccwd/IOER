@@ -5,7 +5,7 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
-namespace ILPathways.Help
+namespace IOER.Help
 {
     public partial class Guide : System.Web.UI.Page
     {

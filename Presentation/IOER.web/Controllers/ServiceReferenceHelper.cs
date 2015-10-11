@@ -2,10 +2,11 @@
 using System.Collections.ObjectModel;
 using System.Net;
 
-using ILPathways.ResourceServiceReference;
+using IOER.ResourceServiceReference;
 //using ILPathways.UserDataServiceReference;
 
-namespace ILPathways.Controllers
+using ILPathways.Utilities;
+namespace IOER.Controllers
 {
     public class ServiceReferenceHelper
     {
@@ -24,7 +25,7 @@ namespace ILPathways.Controllers
        // public static UserDataServiceReference.UserDataContract CurrentUser;
         public static string GetServicesAddress()
         {
-            return Utilities.UtilityManager.GetAppKeyValue( "ServicesAddress", "http://www.IllinoisPathways.com:3333/" );
+            return UtilityManager.GetAppKeyValue( "ServicesAddress", "http://www.IllinoisPathways.com:3333/" );
         }
 
 		public static Guid GetCurrentUserId()

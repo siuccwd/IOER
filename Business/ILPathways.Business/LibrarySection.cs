@@ -136,11 +136,12 @@ namespace ILPathways.Business
     /// <summary>
     /// Return a url friendly title
     /// </summary>
-    public string FriendlyTitle
+    public string FriendlyTitleXX
     {
         get
         {
-            return UrlFriendlyTitle( this._title);
+            //return UrlFriendlyTitle( this._title);
+            return this._title;
         }
  
     }
@@ -309,7 +310,7 @@ namespace ILPathways.Business
             if ( Id == 0 )
                 return "";
             else
-                return string.Format( "/Library/Collection/{0}/{1}/{2}",LibraryId, Id, this.FriendlyTitle );
+                return ""; // string.Format( "/Library/Collection/{0}/{1}/{2}", LibraryId, Id, this.FriendlyTitle );
         }
 
     }

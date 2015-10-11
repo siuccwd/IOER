@@ -1,4 +1,4 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Masters/Responsive2.Master" AutoEventWireup="true" CodeBehind="DocumentEditor.aspx.cs" Inherits="ILPathways.My.DocumentEditor" %>
+﻿<%@ Page Title="Illinois Open Educational Resources - Document Editor" Language="C#" MasterPageFile="~/Masters/Responsive2.Master" AutoEventWireup="true" CodeBehind="DocumentEditor.aspx.cs" Inherits="IOER.My.DocumentEditor" %>
 
 <%@ Register TagPrefix="uc1" TagName="AuthorTool" Src="/Controls/Content/DocumentEditor.ascx" %>
 

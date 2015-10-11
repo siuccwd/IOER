@@ -22,7 +22,7 @@ using Obout.Ajax.UI.HTMLEditor.QF;
 
 //using CustomPopups = ILPathways.HTMLEditor.CustomPopups;
 
-//namespace ILPathways.CustomToolbarButton
+//namespace IOER.CustomToolbarButton
 namespace CustomToolbarButton
 {
     [ParseChildren(true)]

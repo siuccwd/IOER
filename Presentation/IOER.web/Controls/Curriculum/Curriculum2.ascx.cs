@@ -6,15 +6,16 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 
 using Isle.BizServices;
-using ILPathways.Library;
+using IOER.Library;
+using ILPathways.Common;
 
-namespace ILPathways.Controls.Curriculum
+namespace IOER.Controls.Curriculum
 {
     public partial class Curriculum2 : BaseUserControl
     {
-        public List<Common.CodeItem> k12Subjects { get; set; }
-        public List<Common.CodeItem> gradeLevels { get; set; }
-        public List<Common.CodeItem> orgs { get; set; }
+        public List<CodeItem> k12Subjects { get; set; }
+        public List<CodeItem> gradeLevels { get; set; }
+        public List<CodeItem> orgs { get; set; }
 
         protected void Page_Load( object sender, EventArgs e )
         {

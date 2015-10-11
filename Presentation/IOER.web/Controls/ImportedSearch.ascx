@@ -1,4 +1,4 @@
-﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="ImportedSearch.ascx.cs" Inherits="ILPathways.Controls.ImportedSearch" %>
+﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="ImportedSearch.ascx.cs" Inherits="IOER.Controls.ImportedSearch" %>
 
 <script type="text/javascript">
   function renderSelectedTags() { }

@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ILPathways.My {
+namespace IOER.My {
     
     
     public partial class Library2 {
@@ -19,6 +19,6 @@ namespace ILPathways.My {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ILPathways.Controls.Libraries.Library Library1;
+        protected global::IOER.Controls.Libraries.Library Library1;
     }
 }

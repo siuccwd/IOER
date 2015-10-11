@@ -41,7 +41,7 @@ namespace LRWarehouse.DAL
     //Search
     public string Search( string queryJSON )
     {
-      return Search( queryJSON, "collection5" );
+      return Search( queryJSON, "mainSearchCollection" );
     }
     public string Search( string queryJSON, string indexName )
     {
@@ -54,23 +54,36 @@ namespace LRWarehouse.DAL
     }
 
     //More Like This
-    public string FindMoreLikeThis( int intID, string text, string[] fields )
+    public string FindMoreLikeThis( int intID, string text, string[] fields, int minFieldMatches, int maxFieldMatches )
     {
-      var parameters = new
-      {
-        query = new
-        {
-          more_like_this = new
-          {
-            fields = fields,
-            like_text = text,
-            min_term_freq = 1,
-            max_query_terms = 12
-          }
-        }
-      };
+			var parameters = new
+			{
+				query = new
+				{
+					more_like_this = new
+					{
+						fields = fields,
+						like_text = text,
+						min_term_freq = minFieldMatches <= 0 ? 1 : minFieldMatches,
+						max_query_terms = maxFieldMatches < minFieldMatches ? minFieldMatches + 5 : maxFieldMatches,
+					}
+					/*more_like_this = new
+					{
+						fields = fields,
+						min_term_freq = minFieldMatches <= 0 ? 1 : minFieldMatches,
+						max_query_terms = maxFieldMatches < minFieldMatches ? minFieldMatches + 5 : maxFieldMatches,
+						docs = new object[] {
+							new {
+								_index = "mainSearchCollection",
+								_type = type,
+								_id = intID
+							}
+						}
+					}*/
+				}
+			};
       //return Search( serializer.Serialize( parameters ) );
-      return client.Mlt<string>( "collection5", type, intID.ToString(), parameters ).Response;
+      return client.Mlt<string>( "mainSearchCollection", type, intID.ToString(), parameters ).Response;
     }
 
     //Create or replace record(s) in the index
@@ -184,7 +197,7 @@ namespace LRWarehouse.DAL
       var bulkC7 = new List<object>();
       foreach ( var item in ids )
       {
-        bulkC7.Add( new { delete = new { _index = "collection7", _type = type, _id = item } } );
+        bulkC7.Add( new { delete = new { _index = "mainSearchCollection", _type = type, _id = item.ToString() } } );
       }
       client.Bulk( bulkC7 );
     }
@@ -202,9 +215,10 @@ namespace LRWarehouse.DAL
     }
 
     //Bulk upload data
-    public void DoBulkUpload( List<object> preformattedBulkData )
+    public string DoBulkUpload( List<object> preformattedBulkData )
     {
-      client.Bulk( preformattedBulkData );
+      var response = client.Bulk( preformattedBulkData ).ToString();
+      return response;
     }
     #endregion
     #region Helper methods

@@ -1,4 +1,4 @@
-﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="SearchV5.ascx.cs" Inherits="ILPathways.Controls.SearchV5.SearchV5" %>
+﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="SearchV5.ascx.cs" Inherits="IOER.Controls.SearchV5.SearchV5" %>
 
 <link rel="stylesheet" type="text/css" href="/Styles/common2.css" />
 <link rel="stylesheet" type="text/css" href="/controls/searchv5/searchv5.css" />

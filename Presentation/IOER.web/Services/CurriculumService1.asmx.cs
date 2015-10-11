@@ -7,11 +7,11 @@ using System.Web.Services;
 using LRWarehouse.Business;
 using Isle.BizServices;
 using ILPathways.Business;
-using JSON = ILPathways.Services.UtilityService.GenericReturn;
+using JSON = IOER.Services.UtilityService.GenericReturn;
 using System.IO;
 using ILPathways.Utilities;
 
-namespace ILPathways.Services
+namespace IOER.Services
 {
   /// <summary>
   /// Summary description for Curriculum1
@@ -117,7 +117,12 @@ namespace ILPathways.Services
       {
         output.Add( GetStandardDTO( item, true ) );
       }
-      output.Sort( delegate( StandardDTO x, StandardDTO y ) { return string.Compare(x.code, y.code) > 0 ? 1 : -1; } ); //Not sure this has any effect
+			try
+			{
+				output.Sort( delegate( StandardDTO x, StandardDTO y ) { return string.Compare( x.code, y.code ) > 0 ? 1 : -1; } ); //Not sure this has any effect
+			}
+			catch { }
+
       return output;
     }
     //Get standards for a node -- hope to phase this out, only used in the curriculum viewer
@@ -227,10 +232,11 @@ namespace ILPathways.Services
         LastUpdated = DateTime.Now,
         LastUpdatedById = user.Id,
         IsActive = true,
-        //TODO - ??should NOT default to published?????
-        StatusId = ContentItem.PUBLISHED_STATUS,
-        TypeId = 50,
-        PrivilegeTypeId = 1,
+
+        StatusId = ContentItem.DRAFT_STATUS,
+
+        TypeId = ContentItem.CURRICULUM_CONTENT_ID,
+        PrivilegeTypeId = ContentItem.PUBLIC_PRIVILEGE,
         OrgId = organizationID
       };
 
@@ -254,7 +260,7 @@ namespace ILPathways.Services
     public JSON Curriculum_Publish( int curriculumID )
     {
       //Get the top level node
-      var topNode = curriculumService.Get( curriculumID );
+		var topNode = curriculumService.GetCurriculumNodeForPublish( curriculumID );
 
       //Validate the user
       var permissions = GetValidatedUser( curriculumID, topNode.CreatedById );
@@ -270,10 +276,14 @@ namespace ILPathways.Services
         return Fail( "You don't have permission to do that." );
       }
 
+	  string llUrl = ServiceHelper.GetAppKeyValue( "learningListUrl", "http://ioer.ilsharedlearning.org/learninglist/{0}/{1}" );
       //Create the resource
+		//later:
+		//ResourceUrl = string.Format( llUrl, curriculumID, ResourceBizService.FormatFriendlyTitle( topNode.Title )),
+
       var newRes = new Resource()
       {
-        ResourceUrl = "http://ioer.ilsharedlearning.org/learninglist/" + curriculumID + "/" + ResourceBizService.FormatFriendlyTitle( topNode.Title ),
+		  ResourceUrl = "http://ioer.ilsharedlearning.org/learninglist/" + curriculumID + "/" + ResourceBizService.FormatFriendlyTitle( topNode.Title ),
         CreatedById = user.Id,
         LastUpdatedById = user.Id
       };
@@ -289,6 +299,26 @@ namespace ILPathways.Services
         Submitter = user.FullName(),
         IsActive = true
       };
+		//if node has standards, copy to resource
+	  if ( topNode.ContentStandards.Count > 0 )
+	  {
+		  ResourceStandardCollection coll = new ResourceStandardCollection();
+		  ResourceStandard standard = new ResourceStandard();
+		  foreach ( Content_StandardSummary css in topNode.ContentStandards )
+		  {
+
+			  standard = new ResourceStandard();
+			  standard.AlignedById = css.AlignedById;
+			  standard.StandardId = css.StandardId;
+			  standard.AlignmentTypeCodeId = css.AlignmentTypeCodeId;
+			  //???????????????
+			  standard.AlignmentDegreeId = css.UsageTypeId;
+
+			  coll.Add( standard );
+		  }
+
+		  newRes.Standard = coll;
+	  }
 
       //Add English
       //TODO: Test this
@@ -337,6 +367,13 @@ namespace ILPathways.Services
           File.WriteAllBytes( thumbnailFolder + intID + "-large.png", File.ReadAllBytes( thumbnailFolder + topNode.RowId + ".png" ) );
         }
 
+		//Auto-add it to the SIUC collection of learning lists
+		//may need to use a different, arbitrary user ID
+		  //MP====> no,no,no
+		int learningListCollectionId = UtilityManager.GetAppKeyValue( "learningListCollectionId", 693 );
+		if ( learningListCollectionId > 0)
+			new LibraryBizService().LibraryResourceCreate( learningListCollectionId, intID, user.Id, ref status );
+
         return Reply( intID, true, "okay", null );
       }
       else
@@ -360,7 +397,16 @@ namespace ILPathways.Services
     [WebMethod( EnableSession = true )]
     public JSON Node_Create( int curriculumID, int nodeID )
     {
-      return Save_Properties( curriculumID, 0, nodeID, "New Level", "", "", 1, null, null );
+			var unknownRightsID = 0;
+			try
+			{
+				unknownRightsID = new ResourceV2Services().GetUsageRightsList().Where( m => m.Unknown ).FirstOrDefault().CodeId;
+			}
+			catch
+			{
+				unknownRightsID = 0;
+			}
+      return Save_Properties( curriculumID, 0, nodeID, "New Level", "", "", 1, null, null, unknownRightsID, "" );
     }
 
     //Delete a node
@@ -578,7 +624,7 @@ namespace ILPathways.Services
 
     //Save a node (create or update)'s properties
     [WebMethod( EnableSession = true )]
-    public JSON Save_Properties( int curriculumID, int nodeID, int parentID, string title, string summary, string timeframe, int accessID, List<int> k12SubjectIDs, List<int> gradeLevelIDs )
+    public JSON Save_Properties( int curriculumID, int nodeID, int parentID, string title, string summary, string timeframe, int accessID, List<int> k12SubjectIDs, List<int> gradeLevelIDs, int usageRightsId, string usageRightsUrl )
     {
       var valid = true;
       var status = "";
@@ -614,6 +660,11 @@ namespace ILPathways.Services
         //Timeframe
         timeframe = util.ValidateText( timeframe, 0, "Timeframe", ref valid, ref status );
         if ( !valid ) { return Fail( status ); }
+				//Usage Rights URL
+				if ( usageRightsUrl.Length > 0 )
+				{
+					usageRightsUrl = util.ValidateURL( usageRightsUrl, false, ref valid, ref status );
+				}
       }
 
       if ( existingNode == null || existingNode.Id == 0 )
@@ -652,7 +703,9 @@ namespace ILPathways.Services
           StatusId = ContentItem.INPROGRESS_STATUS,
           TypeId = typeId,
           OrgId = curriculumService.GetCurriculumNodeForEdit( curriculumID, user ).OrgId,
-          SortOrder = sortOrder
+          SortOrder = sortOrder,
+					UseRightsUrl = usageRightsUrl,
+					ConditionsOfUseId = usageRightsId
           //grade level
           //k12 subject
         };
@@ -675,7 +728,8 @@ namespace ILPathways.Services
         existingNode.Summary = summary;
         existingNode.Timeframe = timeframe;
         existingNode.PrivilegeTypeId = accessID;
-
+				existingNode.ConditionsOfUseUrl = usageRightsUrl;
+				existingNode.ConditionsOfUseId = usageRightsId;
         existingNode.LastUpdatedById = user.Id;
         //grade level
         //k12 subject
@@ -999,6 +1053,15 @@ namespace ILPathways.Services
             //Get siblings
             var siblings = node.ChildItems;
 
+            //If there are any duplicate sort orders among siblings, reorder them
+            if ( siblings.Select( m => m.SortOrder ).Distinct().ToList().Count() < siblings.Count() )
+            {
+              //Do the reordering
+              ReorderAttachments( null, null, nodeID, user );
+              //Then refresh
+              siblings = curriculumService.GetACurriculumNode( nodeID ).ChildItems;
+            }
+
             //Get item to be moved
             var swapee = new ContentItem() { Id = 0 };
             if ( title == "up" )
@@ -1027,6 +1090,7 @@ namespace ILPathways.Services
       }
       catch ( Exception ex )
       {
+        LoggingHelper.LogError( ex, "There was an error managing attachments for learning list node " + nodeID + " and attachment " + attachmentID );
         return Reply( ex.Message, false, "There was an error processing your request.", ex.ToString() );
       }
     }
@@ -1034,6 +1098,12 @@ namespace ILPathways.Services
     //Post a news item
     [WebMethod( EnableSession = true )]
     public JSON Save_News( int nodeID, string text )
+    {
+      return Save_NewsItem( nodeID, text, 0 );
+    }
+
+    [WebMethod( EnableSession = true )]
+    public JSON Save_NewsItem( int nodeID, string text, int newsID )
     {
       bool valid = true;
       string status = "";
@@ -1045,17 +1115,89 @@ namespace ILPathways.Services
       text = new UtilityService().ValidateText( text, 10, "News", ref valid, ref status );
       if ( !valid ) { return Fail( status ); }
 
-      //Add the news item
+      //Add/Update the news item
       try
       {
-        var newsID = curriculumService.Curriculum_AddHistory( nodeID, text, user.Id );
-        return Reply( newsID, true, "okay", null );
+        if ( newsID == 0 )
+        {
+          var newNewsID = curriculumService.Curriculum_AddHistory( nodeID, text, user.Id );
+          return Reply( newNewsID, true, "okay", null );
+        }
+        else
+        {
+          var success = curriculumService.Curriculum_UpdateHistory( newsID, text, user.Id );
+          return Reply( success, true, "okay", newsID );
+        }
       }
-      catch( Exception ex )
+      catch ( Exception ex )
       {
-        return Reply( "", false, "Sorry, there was a problem posting your news item.", ex.Message );
+        return Reply( "", false, "Sorry, there was a problem saving your news item.", ex.Message );
       }
     }
+
+		[WebMethod( EnableSession = true )]
+		public JSON RegenerateThumbnail( int nodeID, int contentID, string contentURL )
+		{
+			var user = GetValidatedUser( nodeID, 0 );
+			if ( user.write )
+			{
+				if ( contentID > 0 && !string.IsNullOrWhiteSpace( contentURL ) )
+				{
+					var title = "content-" + contentID;
+					new LRWarehouse.DAL.ResourceThumbnailManager().CreateThumbnailAsync( title, contentURL, true, 1 );
+					return new JSON() { data = true, valid = true, status = "Regenerating...", extra = new { title = title } };
+				}
+				else
+				{
+					return new JSON() { data = null, valid = false, status = "Incorrect parameters - please double-check.", extra = new { nodeID = nodeID, contentID = contentID, contentURL = contentURL } };
+				}
+			}
+			else
+			{
+				return new JSON() { data = null, valid = false, status = "You are not authorized to do that.", extra = null };
+			}
+		}
+
+    //Get news items
+    [WebMethod]
+    public JSON Get_News( int nodeID )
+    {
+      try
+      {
+        var newsItems = curriculumService.Curriculum_GetHistory( nodeID );
+        return Reply( newsItems, true, "okay", null );
+      }
+      catch
+      {
+        return Reply( null, false, "No news items found.", null );
+      }
+    }
+
+    //Delete a news item
+    [WebMethod( EnableSession = true )]
+    public JSON Delete_News( int nodeID, int newsID )
+    {
+      bool valid = true;
+      string status = "";
+      //Validate the user
+      var user = GetValidatedUser( nodeID, 0 ).user;
+      if ( user == null ) { return Fail( "You must login to delete a news item." ); }
+
+      //Need a way to ensure the user has rights to delete the news item?
+
+      //Do the delete
+      try
+      {
+        //This method doesn't exist
+        //var success = curriculumService.Curriculum_DeleteHistory( newsID );
+        return Reply( null, false, "Not implemented yet", null );
+      }
+      catch ( Exception ex )
+      {
+        return Reply( "", false, "Sorry, there was a problem deleting the news item.", ex.Message );
+      }
+    }
+
     #endregion
 
     #region Helper Methods
@@ -1063,7 +1205,8 @@ namespace ILPathways.Services
     public ValidationPermissions GetValidatedUser( int entityID, int createdByID )
     {
       //Get the user
-        var user = ( Patron )Session[ Constants.USER_REGISTER ];
+      //var user = ( Patron )Session[ Constants.USER_REGISTER ];
+			var user = AccountServices.GetUserFromSession( Session );
       if ( user == null || user.Id == 0 )
       {
         return new ValidationPermissions() { user = null, read = false, write = false };
@@ -1076,7 +1219,7 @@ namespace ILPathways.Services
 
       //Check global admin permissions
       //Temporary hack
-      if ( user.Id == 2 || user.Id == 22 )
+	  if ( user.Id == 2 || user.Id == 22 || user.TopAuthorization < 5 )
       { // If Mike or Nate
         return new ValidationPermissions() { user = user, read = true, write = true };
       }
@@ -1090,17 +1233,21 @@ namespace ILPathways.Services
       }
       else
       {
-        var privileges = SecurityManager.GetGroupObjectPrivileges( user, "ILPathways.LRW.controls.Authoring" );
-        ContentPartner partner = ContentServices.ContentPartner_Get( entityID, user.Id );
+        var privileges = SecurityManager.GetGroupObjectPrivileges( user, "IOER.controls.Authoring" );
+        //ContentPartner partner = ContentServices.ContentPartner_Get( entityID, user.Id );
 
-        if ( partner == null || partner.PartnerTypeId == 0 )
+		//Check for partner association with top level node
+		var topNodeID = curriculumService.GetCurriculumIDForNode( curriculumService.GetACurriculumNode( entityID ) );
+		var topPartner = ContentServices.ContentPartner_Get( topNodeID, user.Id );
+
+        if ( topPartner == null || topPartner.PartnerTypeId == 0 )
         {
           return new ValidationPermissions() { user = user, read = false, write = false };
         }
         else
         {
-          var canRead = partner.PartnerTypeId > 0;
-          var canWrite = partner.PartnerTypeId >= 2 || privileges.WritePrivilege > (int) ILPathways.Business.EPrivilegeDepth.Region;
+          var canRead = topPartner.PartnerTypeId > 0;
+          var canWrite = topPartner.PartnerTypeId >= 2 || privileges.WritePrivilege > (int) ILPathways.Business.EPrivilegeDepth.Region;
           return new ValidationPermissions() { user = user, read = canRead, write = canWrite };
         }
       }
@@ -1126,12 +1273,18 @@ namespace ILPathways.Services
     //Overloads for standardizing standards
     public StandardDTO GetStandardDTO( ContentResourceStandard item, bool isContentStandard )
     {
+			var code = "";
+			try
+			{
+				code = string.IsNullOrWhiteSpace( item.NotationCode ) ? item.Description.Substring( 0, 20 ) + "..." : item.NotationCode;
+			}
+			catch { }
       return new StandardDTO()
       {
         recordID = item.StandardRecordId,
         standardID = item.StandardId,
         contentID = item.ContentId,
-        code = ( string.IsNullOrWhiteSpace( item.NotationCode ) ? item.Description.Substring( 0, 20 ) + "..." : item.NotationCode ),
+        code = code,
         text = item.Description,
         isContentStandard = isContentStandard,
         usageID = 1,
@@ -1140,12 +1293,18 @@ namespace ILPathways.Services
     }
     public StandardDTO GetStandardDTO( Content_StandardSummary item, bool isContentStandard )
     {
+			var code = "";
+			try
+			{
+				code = string.IsNullOrWhiteSpace( item.NotationCode ) ? item.Description.Substring( 0, 20 ) + "..." : item.NotationCode;
+			}
+			catch { }
       return new StandardDTO()
       {
         recordID = item.StandardRecordId,
         standardID = item.StandardId,
         contentID = item.ContentId,
-        code = ( string.IsNullOrWhiteSpace( item.NotationCode ) ? item.Description.Substring( 0, 20 ) + "..." : item.NotationCode ),
+        code = code,
         text = item.Description,
         isContentStandard = isContentStandard,
         usageID = item.UsageTypeId,

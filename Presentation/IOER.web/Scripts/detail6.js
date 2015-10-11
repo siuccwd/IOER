@@ -5,6 +5,8 @@ var moreLikeThisAttempts = 0;
 var validUpdate = false;
 var userIsAdmin = userIsAdmin.toLowerCase() == "true";
 var userIsAuthor = userIsAuthor.toLowerCase() == "true";
+//var mltQueries = [];
+//var mltResults = [];
 var thumbDivTypes = [
     //{ match: ".docXX", header: ".doc File", text: "Microsoft Word Document" },
     //{ match: ".ppt", header: ".ppt File", text: "Microsoft PowerPoint" },
@@ -28,7 +30,23 @@ var thumbIconTypes = [
     { match: ".zip", header: "Archive File", file: "/images/icons/icon_zip_400x300.png" },
     { match: ".rar", header: "Archive File", file: "/images/icons/icon_zip_400x300.png" },
     { match: ".7z", header: "Archive File", file: "/images/icons/icon_zip_400x300.png" },
-    { match: ".tar", header: "Archive File", file: "/images/icons/icon_zip_400x300.png" }
+    { match: ".tar", header: "Archive File", file: "/images/icons/icon_zip_400x300.png" },
+    { match: ".asx", header: "Audio Stream", file: "/images/icons/filethumbs/filethumb_swf_400x400.png" },
+    { match: ".mp4", header: "Video File", file: "/images/icons/icon_video_400x300.png" },
+    { match: ".avi", header: "Video File", file: "/images/icons/icon_video_400x300.png" },
+    { match: ".mpg", header: "Video File", file: "/images/icons/icon_video_400x300.png" },
+    { match: ".3gp", header: "Video File", file: "/images/icons/icon_video_400x300.png" },
+    { match: ".flv", header: "Video File", file: "/images/icons/icon_video_400x300.png" },
+    { match: ".mp3", header: "Audio File", file: "/images/icons/icon_audio_400x300.png" },
+    { match: ".ogg", header: "Audio File", file: "/images/icons/icon_audio_400x300.png" },
+    { match: ".ram", header: "Audio File", file: "/images/icons/icon_audio_400x300.png" },
+    { match: ".wav", header: "Audio File", file: "/images/icons/icon_audio_400x300.png" },
+    { match: ".wma", header: "Audio File", file: "/images/icons/icon_audio_400x300.png" },
+    { match: ".jnlp", header: "Download File", file: "/images/icons/icon_download_400x300.png" },
+    { match: ".tga", header: "Download File", file: "/images/icons/icon_download_400x300.png" },
+    { match: ".tiff", header: "Download File", file: "/images/icons/icon_download_400x300.png" },
+    { match: ".tif", header: "Download File", file: "/images/icons/icon_download_400x300.png" },
+    { match: "view.d2l", header: "Download File", file: "/images/icons/icon_download_400x300.png" },
 ];
 
 
@@ -44,12 +62,16 @@ $(document).ready(function () {
     if (window == window.top) {
       $("#btnMsgResource").remove();
     }
+		//Auto show the rubrics tab if the user just did an evaluation
+    if (window.location.href.indexOf("evaluationFinished=true") > -1) {
+    	$(".tabNavigator a[data-id=rubrics]").trigger("click");
+    }
+    $(".tabNavigator a").on("mouseout", function () { $(this).blur(); });
 });
 
 /* ---   ---   Data Management   ---   --- */
 //Load data via Ajax
 function loadResourceData() {
-  console.log("Reloading Resource Data");
     doAjax("LoadAllResourceData", { vid: resourceVersionID }, refreshData);
 }
 
@@ -123,7 +145,8 @@ function renderViewMetadataTags() {
         for (i in jTarget.items) {
             var current = jTarget.items[i];
             if (current.selected) {
-                output += ", " + current.title;
+              //output += ", " + current.title;
+              output += ", " + "<a target=\"_blank\" href='/search?text=\"" + encodeURIComponent(current.title) + "\"'>" + current.title + "</a>";
             }
         }
         $(this).append($("#template_CBXL").html()
@@ -167,8 +190,10 @@ function renderViewSpecialData() {
         catch (e) { }
     }
 
-    //Usage Rights
-    $("#usageRights .view").attr("src", resource.usageRights.usageRightsIconURL != "" ? resource.usageRights.usageRightsIconURL : "http://mirrors.creativecommons.org/presskit/cc.primary.srr.gif");
+	//Usage Rights
+    var rightsUnknown = resource.usageRights.usageRightsURL.toLowerCase() == "unknown";
+    $("#usageRights .view").attr("src", resource.usageRights.usageRightsIconURL != "" && !rightsUnknown ? resource.usageRights.usageRightsIconURL : "/images/icons/rightsunknown.png");
+    $("#usageRights #usageRightsUrl").attr("href", rightsUnknown ? "javascript:void(0)" : resource.usageRights.usageRightsURL);
     $("#pickUsageRights.edit select option").attr("selected", "false");
     $("#pickUsageRights.edit select option[value=" + resource.usageRights.usageRightsValue + "]").attr("selected", "selected");
     $("#pickUsageRights.edit .txtConditionsOfUse").val(resource.usageRightsURL);
@@ -187,14 +212,16 @@ function renderViewSpecialData() {
 
         $("#thumbnail img").attr("src", "//ioer.ilsharedlearning.org/OERThumbs/large/" + resource.intID + "-large.png");
         for (i in thumbIconTypes) {
-            console.log(resource.url.indexOf(thumbIconTypes[i].match) > -1);
-            console.log(thumbIconTypes[i].file);
             if (resource.url.indexOf(thumbIconTypes[i].match) > -1) {
                 $("#thumbnail img").attr("src", thumbIconTypes[i].file);
             }
         }
         $("#thumbnail img").on("error", function () {
-            $(this).replaceWith(
+        	$(this).attr("src", "/images/icon_resources_400x300.png");
+        	setTimeout(function () {
+        		$("#thumbnail img").attr("src", "//ioer.ilsharedlearning.org/OERThumbs/large/" + resource.intID + "-large.png");
+        	}, 30000);
+            /*$(this).replaceWith(
                 $("<div></div>")
                     .attr("id", "mainThumbDiv")
                     .addClass("thumbnailDiv")
@@ -202,7 +229,7 @@ function renderViewSpecialData() {
             );
             setTimeout(function () {
                 doAjax("GetThumbnail", { intID: resource.intID, url: resource.url }, successGetThumbnail);
-            }, 15000);
+            }, 15000);*/
         });
         for (i in thumbDivTypes) {
             if (resource.url.indexOf(thumbDivTypes[i].match) > -1) {
@@ -223,10 +250,10 @@ function renderViewSpecialData() {
     $("#requires").attr("data-hasContent", (resource.requires.length > 0 ? "true" : "false"));
 
     //Critical Info
-    $("#creator span").html(resource.creator);
-    $("#publisher span").html('<a href="/search?q=' + encodeURIComponent( resource.publisher ) + '" target="_blank">' + resource.publisher + '</a>');
-    $("#submitter span").html(resource.submitter);
-    userIsAdmin ? {} : $("#submitter").hide();
+    $("#creator span").html("<a href='/search?text=creator:\"" + encodeURIComponent(resource.creator.replace(/\|/, "").replace(/  /, " ")) + "\"' target=\"_blank\">" + resource.creator + "</a>");
+    $("#publisher span").html("<a href='/search?text=publisher:\"" + encodeURIComponent(resource.publisher.replace(/\|/, "").replace(/  /, " ")) + "\"' target=\"_blank\">" + resource.publisher + "</a>");
+    $("#submitter span").html("<a href='/search?text=submitter:\"" + encodeURIComponent(resource.submitter.split("<")[0].replace(/\|/, "").replace(/  /, " ")) + "\"' target=\"_blank\">" + resource.submitter + "</a>");
+    //userIsAdmin ? {} : $("#submitter").hide();
     $("#created span").html(resource.created);
 
     //LR Doc ID
@@ -242,16 +269,23 @@ function renderViewTabCounts() {
     for (i in resource.evaluations) {
       rubricsRatingsCount += resource.evaluations[i].HasCertificationTotal + resource.evaluations[i].NonCertificationTotal;
     }
+    setTabValue("comments", resource.comments.length);
+    setTabValue("tags", $("#tags div[data-hasContent=true]").length);
+    setTabValue("keyword", resource.keyword.items.length + resource.subject.items.length);
+    setTabValue("alignedStandards", resource.standards.length);
+    setTabValue("standardsRatings", resource.standards.length);
+    setTabValue("rubrics", rubricsRatingsCount);
+    setTabValue("library", resource.libColInfo.libraries.length);
+
+	/*
     $(".tabNavigator a[data-id=comments]").html(resource.comments.length);
     $(".tabNavigator a[data-id=tags]").html($("#tags div[data-hasContent=true]").length);
-    $(".tabNavigator a[data-id=keyword]").html(resource.keyword.items.length);
-    $(".tabNavigator a[data-id=subject]").html(resource.subject.items.length);
-    $(".tabNavigator a[data-id=moreLikeThis]").html($("#moreLikeThis .resourceLikeThis").length);
+    $(".tabNavigator a[data-id=keyword]").html(resource.keyword.items.length + resource.subject.items.length);
+    //$(".tabNavigator a[data-id=moreLikeThis]").html($("#moreLikeThis .resourceLikeThis").length);
     $(".tabNavigator a[data-id=alignedStandards]").html(resource.standards.length);
     $(".tabNavigator a[data-id=standardsRatings]").html(resource.standards.length);
     $(".tabNavigator a[data-id=rubrics]").html(rubricsRatingsCount);
-    $(".tabNavigator a[data-id=likedislike]").html(resource.paradata.likes + resource.paradata.dislikes);
-    $(".tabNavigator a[data-id=library]").html(resource.libColInfo.libraries.length);
+    $(".tabNavigator a[data-id=library]").html(resource.libColInfo.libraries.length);*/
 
 }
 //Comments
@@ -290,10 +324,19 @@ function renderViewSubjectsKeywords() {
     }
     //keywords
     keywordList.html(resource.keyword.items.length > 0 ? "" : "<p class=\"pleaseLogin\">No keywords yet.</p>");
-    for (i in resource.keyword.items) {
+    var printWords = resource.keyword.items.concat(resource.subject.items);
+    for (var i in printWords) {
+      if (printWords[i].length >= 3) {
         keywordList.append(
-            listTemplate.replace(/{text}/g, resource.keyword.items[i])
+            listTemplate.replace(/{text}/g, printWords[i])
         );
+      }
+    }
+	//Hashtag-ify keywords for search engines
+    var hashtags = $("#hashtags");
+    for (var i in printWords) {
+    	var word = printWords[i].replace(/ /g, "").replace(/"/g, "").replace(/#/g, "").replace(/'/g, "").trim();
+    	hashtags.append("#" + word + " ");
     }
 }
 //Likes and Dislikes
@@ -303,15 +346,15 @@ function renderLikesDislikes() {
     box.find("#text .spanlikes").html(resource.paradata.likes);
     box.find("#text .spandislikes").html(resource.paradata.dislikes);
     if (resource.paradata.iLikeThis) {
-        box.find(".myopinion").show().html("You like this Resource.");
+        box.find(".myopinion").show().html("You like this resource.");
         box.find("input").hide();
     }
     else if (resource.paradata.iDislikeThis) {
-        box.find(".myopinion").show().html("You dislike this Resource.");
+        box.find(".myopinion").show().html("You dislike this resource.");
         box.find("input").hide();
     }
     else if (userGUID == "") {
-        box.find(".myopinion").show().html("<p class=\"pleaseLogin\">Please login to Like or Dislike this Resource.</p>");
+        box.find(".myopinion").show().html("<p class=\"pleaseLogin\">Please login to Like or Dislike this resource.</p>");
         box.find("input").hide();
     }
     else {
@@ -348,7 +391,7 @@ function renderLikesDislikes() {
 function renderBadges() {
     var badgeList = $("#badges");
     var badgeTemplate = $("#template_badge").html();
-    badgeList.html(resource.libColInfo.libraries.length > 0 ? "<h3>This Resource appears in the following Librar" + (resource.libColInfo.libraries.length > 1 ? "ies" : "y") + ":</h3>" : "");
+    badgeList.html(resource.libColInfo.libraries.length > 0 ? "<h3>This resource is in these public Librar" + (resource.libColInfo.libraries.length > 1 ? "ies" : "y") + ":</h3>" : "");
     for (i in resource.libColInfo.libraries) {
         var current = resource.libColInfo.libraries[i];
         badgeList.append(
@@ -359,14 +402,14 @@ function renderBadges() {
         );
     }
     if (resource.libColInfo.libraries.length == 0) {
-        $("#badges").html("<p class=\"pleaseLogin\">This Resource does not appear in any Libraries yet.</p>");
+        $("#badges").html("<p class=\"pleaseLogin\">This resource does not appear in any Libraries yet.</p>");
     }
 }
 //My Library
 function renderMyLibrary() {
   var box = $("#myLibrary");
   if (userGUID == "") {
-    box.html("<p class=\"pleaseLogin\">Please login to add this Resource to your Library.</p>");
+    box.html("<p class=\"pleaseLogin\">Please login to add this resource to your Library.</p>");
   }
   else if (resource.libColInfo.myLibraries.length == 0) {
     $("#myCollections").replaceWith("<p class=\"pleaseLogin\">This account is not associated with a Library.</p>");
@@ -424,18 +467,21 @@ function renderEvaluations() {
 
   box.html("");
   if (resource.evaluations.length == 0) {
-    box.append("<p class=\"pleaseLogin\">This Resource has not been evaluated yet.</p>");
+    box.append("<p class=\"pleaseLogin\">This resource has not been evaluated yet.</p>");
   }
   if (userGUID != "") {
-    if (resource.userAlreadyEvaluated) {
-      //box.append("<p class=\"pleaseLogin\">You already evaluated this Resource.</p>");
+    /*if (resource.userAlreadyEvaluated) {
+      //box.append("<p class=\"pleaseLogin\">You already evaluated this resource.</p>");
     }
     else if (resource.userCanEvaluate) {
-      box.append("<p class=\"pleaseLogin\"><a href=\"/Rubrics/?resourceIntID=" + resource.intID + "&resourceURL=" + resource.url + "\">Evaluate this Resource</a></p>");
-    }
+    	//box.append("<p class=\"pleaseLogin\"><a href=\"/Rubrics/?resourceIntID=" + resource.intID + "&resourceURL=" + resource.url + "\">Evaluate this resource</a></p>");
+    	box.append("<p class=\"pleaseLogin\"><a href=\"/evaluate/" + resource.intID + "\">Evaluate this resource</a></p>");
+		}
     else {
-      box.append("<p class=\"pleaseLogin\">Currently only trained users can evaluate Resources.<br /><a href=\"http://oerevaluationteam.weebly.com/\" target=\"_blank\">Learn more about evaluator training</a></p>");
-    }
+      box.append("<p class=\"pleaseLogin\">Currently only trained users can evaluate resources.<br /><a href=\"http://oerevaluationteam.weebly.com/\" target=\"_blank\">Learn more about evaluator training</a></p>");
+    }*/
+		//Allow adding or replacing ratings regardless as long as the user is logged in
+    box.append("<p class=\"pleaseLogin\"><a href=\"/evaluate/" + resource.intID + "\">Evaluate this resource</a></p>");
   }
   else {
     box.append("<p class=\"pleaseLogin\">Please login to Evaluate.</p>");
@@ -445,15 +491,15 @@ function renderEvaluations() {
     var rubric = resource.evaluations[i];
     //Determine whether the user can evaluate with this rubric
     var evalText = "";
-    if (rubric.RequiresCertification) {
+    /*if (rubric.RequiresCertification) {
       evalText = "This Rubric requires <a href=\"#\" target=\"_blank\">certification</a> to use."; //Link to certification
     }
     else {
       evalText = "You are not able to use this Evaluation."; //Shouldn't happen
     }
     if (rubric.UserHasCompletedEvaluation) { //Overwrite any above text if the user has already completed the evaluation
-      evalText = "You have already completed this Evaluation with this Resource.";
-    }
+      evalText = "You have already completed this Evaluation with this resource.";
+    }*/
 
     //Fill out each dimension..
     var dimensionsText = "";
@@ -502,8 +548,8 @@ function renderStandards() {
 
   //Messages
   if (resource.standards.length == 0) {
-    box.append("<p class=\"pleaseLogin\">This Resource has not been aligned to any Standards yet.</p>");
-    listBox.html("<p class=\"pleaseLogin\">This Resource has not been aligned to any Standards yet.</p>");
+    box.append("<p class=\"pleaseLogin\">This resource has not been aligned to any Standards yet.</p>");
+    listBox.html("<p class=\"pleaseLogin\">This resource has not been aligned to any Standards yet.</p>");
     return;
   }
 
@@ -576,8 +622,8 @@ function renderStandardsOld(hide) {
     var template = $("#template_standardScoreometer").html();
     box.html("<h2 class=\"title\">Aligned Standards</h2>");
     if (resource.standards.length == 0) {
-        box.append("<p class=\"pleaseLogin\">This Resource has not been aligned to any Standards yet.</p>");
-        listBox.html("<p class=\"pleaseLogin\">This Resource has not been aligned to any Standards yet.</p>");
+        box.append("<p class=\"pleaseLogin\">This resource has not been aligned to any standards yet.</p>");
+        listBox.html("<p class=\"pleaseLogin\">This resource has not been aligned to any standards yet.</p>");
         return;
     }
     listBox.html("");
@@ -688,7 +734,7 @@ function prefillEditFields() {
 //Resource update buttons
 function renderButtonBox() {
     if ($("#modifyThis input").length == 0) {
-        $("#modifyThis p").addClass("pleaseLogin").html("Please login to modify this Resource.");
+        $("#modifyThis p").addClass("pleaseLogin").html("Please login to modify this resource.");
     }
 }
 
@@ -758,14 +804,13 @@ function renderEditTags() {
 
 
 //More Like This
-function renderMoreLikeThis() {
+/*function renderMoreLikeThisOLD() {
     $("#moreLikeThis .resourcesLikeThis").html("");
     var attempts = [
-        { fields: "standardNotations", min: getPartialLength(resource.standards.length, 0.5) },
-        { fields: "title,description", min: getPartialLength(resource.title.split(" ").length, 0.5) },
-        { fields: "gradeLevels,subjects", min: getPartialLength(resource.gradeLevel.length + resource.subject.length, 0.7) },
-        { fields: "gradeLevels,keywords", min: getPartialLength(resource.gradeLevel.length + resource.keyword.length, 0.7) },
-        { fields: "creator,publisher", min: 1 }
+        { fields: "Title,Description", min: getPartialLength(resource.title.split(" ").length, 0.5) },
+        { fields: "StandardNotations", min: getPartialLength(resource.standards.length, 0.5) },
+        { fields: "Fields.Tags,GradeAliases,Keywords", min: getPartialLength(resource.gradeLevel.length + resource.keyword.length, 0.7) },
+        { fields: "Creator,Publisher,Submitter", min: 1 }
     ]
     try {
         var data = { intID: resourceID, text: resource.title, parameters: attempts[moreLikeThisAttempts].fields, minFieldMatches: attempts[moreLikeThisAttempts].min };
@@ -774,24 +819,194 @@ function renderMoreLikeThis() {
         moreLikeThisAttempts++;
     }
     catch (e) {
-        $("#moreLikeThis .resourcesLikeThis").append("<p class=\"pleaseLogin\">Sorry, no similar Resources found.</p>");
+        $("#moreLikeThis .resourcesLikeThis").append("<p class=\"pleaseLogin\">Sorry, no similar resources found.</p>");
     }
+}*/
+
+function renderMoreLikeThis() {
+	//Start with title and keywords
+	var mltTestTerms = [resource.title, resource.creator, resource.publisher].concat(resource.keyword.items).concat(resource.subject.items);
+	//Add metadata fields
+	var targetFields = ["careerCluster", "educationalUse", "endUser", "gradeLevel", "groupType", "k12subject", "language", "mediaType", "resourceType"];
+	for (var i in targetFields) {
+		var items = resource[targetFields[i]].items;
+		for (var j in items) {
+			if (items[j].selected) {
+				mltTestTerms.push(items[j].title);
+			}
+		}
+	}
+	//Add standards
+	for (var i in resource.standards) {
+		if (resource.standards[i].NotationCode != null && resource.standards[i].NotationCode.length > 0) {
+			mltTestTerms.push(resource.standards[i].NotationCode);
+		}
+	}
+	//Remove noise words
+	var noiseWords = "a an the or and with for use by . , : ; & ! _ % $ # @ * ^".split(" ");
+	for (var i in mltTestTerms) {
+		for (var j in noiseWords) {
+			var regex = new RegExp(" " + noiseWords[j] + " ", "g");
+			mltTestTerms[i] = mltTestTerms[i].trim().toLowerCase().replace(regex, " ");
+		}
+	}
+	var finalQueryString = mltTestTerms.join(" ");
+	var data = { text: finalQueryString };
+	console.log("Performing MLT Test with: ", data);
+	doAjax("FindMoreLikeThis_MultiMatch", data, updateMoreLikeThis_multiMatch);
+}
+
+/*function renderMoreLikeThisOLD2() {
+	//Make a query out of the title
+	var noiseWords = "a an the or and with for use by . , : ; & ! _ % $ # @ * ^".split(" ");
+	var inputTitle = (" " + resource.title + " ").toLowerCase();
+	for (var i in noiseWords) {
+		var regex = new RegExp(" " + noiseWords[i] + " ", "g");
+		inputTitle = inputTitle.replace(regex, "");
+	}
+	inputTitle = inputTitle.trim();
+	mltQueries.push(inputTitle);
+
+	//Make more queries from keywords
+	var sourceWords = [].concat(resource.keyword.items).concat(resource.subject.items);
+	var searchWords = [];
+	console.log("Source words", sourceWords);
+	for (var i in sourceWords) {
+		//If the word is not too short and not too long and not more than 2 words, add it
+		if (sourceWords[i].length > 5 && sourceWords[i].length < 30 && sourceWords[i].split(" ").length < 3) {
+			searchWords.push(sourceWords[i]);
+		}
+	}
+	console.log("Search words", searchWords);
+	var queryCounter = 0;
+	var query = [];
+	for (var i in searchWords) {
+		if (queryCounter < 3) {
+			query.push(searchWords[i]);
+			queryCounter++;
+		}
+		else {
+			console.log("query", query);
+			mltQueries.push(query.join(" "));
+			console.log("mlt queries", mltQueries);
+			queryCounter = 0;
+			query = [];
+		}
+	}
+	if (query.length > 0) {
+		mltQueries.push(query.join(" "));
+	}
+	console.log("MLT queries:", mltQueries);
+	try {
+		moreLikeThisAttempts = 0;
+		var data = { intID: resourceID, text: mltQueries[moreLikeThisAttempts], parameters: "", minFieldMatches: 0 };
+		doAjax("FindMoreLikeThis", data, updateMoreLikeThis);
+		//test
+		var search = window.location.search;
+		if (!testDataSet && search.indexOf("mlt=true") > -1) {
+			if (search.indexOf("type=cross_fields") > -1) { data.parameters = "cross_fields"; }
+			if (search.indexOf("type=most_fields") > -1) { data.parameters = "most_fields"; }
+			if (search.indexOf("type=best_fields") > -1) { data.parameters = "best_fields"; }
+			//Need to get a full set of data without breaking the existing process
+			//Start with title and keywords
+			var mltTestTerms = [resource.title, resource.creator, resource.publisher].concat(resource.keyword.items).concat(resource.subject.items);
+			//Add metadata fields
+			var targetFields = ["careerCluster", "educationalUse", "endUser", "gradeLevel", "groupType", "k12subject", "language", "mediaType", "resourceType"];
+			for (var i in targetFields) {
+				var items = resource[targetFields[i]].items;
+				for (var j in items) {
+					if (items[j].selected) {
+						mltTestTerms.push(items[j].title);
+					}
+				}
+			}
+			//Add standards
+			for (var i in resource.standards) {
+				if (resource.standards[i].NotationCode != null && resource.standards[i].NotationCode.length > 0) {
+					mltTestTerms.push(resource.standards[i].NotationCode);
+				}
+			}
+			//remove noise words
+			for (var i in mltTestTerms) {
+				for (var j in noiseWords) {
+					var regex = new RegExp(" " + noiseWords[j] + " ", "g");
+					mltTestTerms[i] = mltTestTerms[i].trim().toLowerCase().replace(regex, " ");
+				}
+			}
+			var finalQueryString = mltTestTerms.join(" ");
+			data.text = finalQueryString
+			console.log("Performing MLT Test with: ", data);
+			doAjax("FindMoreLikeThis_Test", data, updateMoreLikeThis_test);
+		}
+		moreLikeThisAttempts++;
+	}
+	catch (e) {
+		box.append("<p class=\"pleaseLogin\">Sorry, no similar resources found.</p>");
+	}
+}*/
+
+/*
+function renderMoreLikeThisOLD() {
+  var box = $("#moreLikeThis .resourcesLikeThis");
+  box.html("");
+  var junkWords = "for,of,and,or,by,with,to,me,the,is,',#,&".split(",");
+  var cleanedTitle = " " + resource.title + " ";
+  for (var i in junkWords) {
+  	cleanedTitle = cleanedTitle.replace(new RegExp(" " + junkWords[i] + " ", "g"), "");
+  }
+  cleanedTitle = cleanedTitle.trim(); // Not used due to error in spacing
+  var keywordTitle = "";
+  var tempWords = [];
+  var keysAndSubjects = resource.keyword.items.concat(resource.subject.items);
+  for (var i = 0; i < keysAndSubjects.length && tempWords.length < 5; i++) {
+  	var word = keysAndSubjects[i];
+  	if (word.length > 3 && word.length < 25 && word.split(" ").length <= 2) {
+  		tempWords.push(word);
+  	}
+  }
+  keywordTitle = tempWords.join(" ");
+  var useThisTitle = keywordTitle.length > 5 ? keywordTitle : resource.title;
+  console.log("More Like This search with:", useThisTitle);
+  var attempts = [
+    { fields: "Title,Description,Keywords,Creator,Publisher,Submitter,StandardNotations", min: getPartialLength(cleanedTitle.split(" ").length + resource.keyword.items.length + resource.standards.length, 0.8) },
+    { fields: "Title,Description,Keywords,Creator,Publisher,Submitter", min: getPartialLength(cleanedTitle.split(" ").length + resource.keyword.items.length, 0.8) },
+    { fields: "Title,Description,Keywords", min: getPartialLength(cleanedTitle.split(" ").length + resource.keyword.items.length, 0.5) },
+		{ fields: "Title,Description", min: getPartialLength(cleanedTitle.split(" ").length, 0.8) },
+    { fields: "StandardNotations", min: getPartialLength(resource.standards.length, 0.5) },
+    { fields: "Fields.Tags,GradeAliases,Keywords", min: getPartialLength(resource.gradeLevel.length + resource.keyword.items.length, 0.7) },
+    { fields: "Creator,Publisher,Submitter", min: 3 }
+  ];
+  try {
+  	var data = { intID: resourceID, text: useThisTitle, parameters: attempts[moreLikeThisAttempts].fields, minFieldMatches: attempts[moreLikeThisAttempts].min };
+    doAjax("FindMoreLikeThis", data, updateMoreLikeThis);
+    moreLikeThisAttempts++;
+  }
+  catch (e) {
+    box.append("<p class=\"pleaseLogin\">Sorry, no similar resources found.</p>");
+  }
 }
 function getPartialLength(value, percentage) {
     try {
         var toReturn = Math.floor(value * percentage);
         if (isNaN(toReturn)) {
-            return 2;
+            return 5;
         }
         else {
             return toReturn;
         }
     }
     catch (e) {
-        return 2;
+        return 5;
     }
 }
-
+function getKeyPhrases() {
+	var phrases = [];
+	for (var i in resource.keyword.items) {
+		phrases.push('"' + resource.keyword.items[i] + '"');
+	}
+	return phrases.join(" ");
+}
+*/
 
 /* ---   ---   Ajax Functions   ---   --- */
 function doAjax(method, data, success) {
@@ -805,6 +1020,14 @@ function doAjax(method, data, success) {
             catch (e) {
                 success(msg.d);
             }
+        },
+        error: function (msg) {
+        	try {
+        		success($.parseJSON(msg.d));
+        	}
+        	catch (e) {
+        		success(msg.d);
+        	}
         },
         type: "POST",
         data: JSON.stringify(data),
@@ -861,7 +1084,6 @@ function updateStandards(data) {
 
 function updateLibraryInfo(data) {
     $("#myLibrary input").attr("disabled", false).attr("value", "Add");
-    console.log(data);
     resource.libColInfo = data;
     renderMyLibrary();
     renderBadges();
@@ -882,25 +1104,155 @@ function updateComments(data) {
     $("#comments input[type=button]").attr("disabled", false).attr("value", "Submit");
 }
 
-function updateMoreLikeThis(data) {
+/*function updateMoreLikeThis(data) {
+	try {
+		if (typeof (data) == "string") {
+			data = $.parseJSON(data);
+		}
+		console.log("More Like This (vanilla) Result Data", data);
+		var resultsPerQueryLimit = 10 - mltQueries.length;
+		resultsPerQueryLimit = resultsPerQueryLimit < 5 ? 5 : resultsPerQueryLimit;
+		var addedCount = 0;
+		for (var i = 0; i < data.hits.hits.length && addedCount < resultsPerQueryLimit; i++) {
+			//Prevent duplicates
+			for (var j in mltResults) {
+				if (mltResults[j].ResourceId == data.hits.hits[i]._source.ResourceId) { continue; }
+			}
+			//Add the result if it's not the resource
+			if (data.hits.hits[i]._source.ResourceId != resource.intID) {
+				mltResults.push(data.hits.hits[i]._source);
+				addedCount++;
+			}
+		}
+	}
+	catch (e) { }
+	if (mltResults.length < 25 && moreLikeThisAttempts <= mltQueries.length && moreLikeThisAttempts < 5) {
+		moreLikeThisAttempts++;
+		console.log("additional attempt");
+		var search = { intID: resourceID, text: mltQueries[moreLikeThisAttempts], parameters: "", minFieldMatches: 0 };
+		console.log(search);
+		setTimeout(function () {
+			doAjax("FindMoreLikeThis", search, updateMoreLikeThis);
+		}, 1000);
+	}
+	else {
+		//Render MLT results
+		console.log("MLT Results:", mltResults);
+		var box = $("#moreLikeThis #moreLikeThisResults");
+		box.html("");
+		if(mltResults.length > 0){
+			for (var i in mltResults) {
+				var current = mltResults[i];
+				box.append(
+					$("#template_moreLikeThis").html()
+						.replace(/{rid}/g, current.ResourceId)
+						.replace(/{urlTitle}/g, current.UrlTitle.replace(/&/g, ""))
+						.replace(/{title}/g, current.Title)
+						.replace(/{description}/g, current.Description)
+						.replace(/{intID}/g, current.ResourceId)
+        );
+				for (i in thumbDivTypes) {
+					if (current.url.indexOf(thumbDivTypes[i].match) > -1) {
+						$(".resourcesLikeThis").last().find("img").replaceWith(
+								$("<div></div>").addClass("thumbnailDiv").css({ "width": "150px", "height": "113px" }).html(thumbDivTypes[i].header)
+						);
+					}
+				}
+			}
+		}
+		$(".tabNavigator a[data-id=moreLikeThis]").html(mltResults.length);
+	}
+}
+function noMoreLikeThis() {
+	$("#moreLikeThis .resourcesLikeThis").html("<p class=\"pleaseLogin\">Sorry, no similar resources found.</p>");
+}*/
+
+function updateMoreLikeThis_multiMatch(data) {
+	console.log("More Like This (multi match) Result Data", data);
+	renderMLT($.parseJSON(data.data));
+}
+
+function renderMLT(data) {
+	console.log(data);
+	var box = $("#moreLikeThis #moreLikeThisResults");
+	box.html("");
+	var minRequiredScore = 1;
+	//var max = data.hits.max_score;
+	//Determine max score (sans self-match)
+	var max = 0;
+	for (var i in data.hits.hits) {
+		if (data.hits.hits[i]._source.ResourceId != resource.intID && data.hits.hits[i]._score > max) {
+			max = data.hits.hits[i]._score;
+		}
+	}
+
+	//Tweak this section to adjust MLT 
+	if (max >= 10) { minRequiredScore = 5; }
+	else if (max >= 7.5) { minRequiredScore = 3.75; }
+	else if (max >= 5) { minRequiredScore = 2.5; }
+	else if (max >= 2) { minRequiredScore = 1; }
+	else if (max >= 1) { minRequiredScore = 0.85; }
+	else { minRequiredScore = 0.7; }
+
+	console.log("Max MLT Score: " + max);
+	console.log("Min Required: " + minRequiredScore);
+	for (var i in data.hits.hits) {
+		//Minimum score tweak
+		if (data.hits.hits[i]._score < minRequiredScore) {
+			continue;
+		}
+		var current = data.hits.hits[i]._source;
+		//Remove identical document
+		if (current.ResourceId == resource.intID) {
+			continue;
+		}
+		box.append(
+			$("#template_moreLikeThis").html()
+				.replace(/{rid}/g, current.ResourceId)
+				.replace(/{urlTitle}/g, current.UrlTitle.replace(/&/g, ""))
+				.replace(/{title}/g, current.Title)
+				.replace(/{description}/g, current.Description)
+				.replace(/{intID}/g, current.ResourceId)
+		);
+		for (i in thumbDivTypes) {
+			if (current.url.indexOf(thumbDivTypes[i].match) > -1) {
+				$(".resourcesLikeThis").last().find("img").replaceWith(
+						$("<div></div>").addClass("thumbnailDiv").css({ "width": "150px", "height": "113px" }).html(thumbDivTypes[i].header)
+				);
+			}
+		}
+	}
+	var finalLength = box.find(".resourceLikeThis").length;
+	setTabValue("moreLikeThis", finalLength);
+	if (finalLength == 0) {
+		box.html("<p class=\"pleaseLogin\">Sorry, no similar resources found.</p>");
+	}
+}
+
+/*
+function updateMoreLikeThisOLD(data) {
+	if (typeof (data) == "string") {
+		data = $.parseJSON(data);
+	}
     if (typeof (data) == "string") { renderMoreLikeThis(); return; }
     if (data.hits.total == 0) {
         renderMoreLikeThis();
     }
     else {
+    	//moreLikeThisAttempts = 0;
         $(".resourcesLikeThis").html("");
         var counter = 0;
-        for (i in data.hits.hits) {
-            var current = data.hits.hits[i]._source;
-            if (current.versionID == resourceVersionID || current.url == resource.url) { continue; }
+        for (var i in data.hits.hits) {
+        	var current = data.hits.hits[i]._source;
+            if (current.VersionId == resourceVersionID || current.Url == resource.url) { continue; }
             counter++;
             $(".resourcesLikeThis").append(
                 $("#template_moreLikeThis").html()
-                    .replace(/{rid}/g, current.intID)
-                    .replace(/{urlTitle}/g, current.title.replace(/ /g, "_").replace(/:/g, "").substring(0, 100))
-                    .replace(/{title}/g, current.title)
-                    .replace(/{description}/g, current.description)
-                    .replace(/{intID}/g, current.intID)
+                    .replace(/{rid}/g, current.ResourceId)
+                    .replace(/{urlTitle}/g, current.Title.replace(/ /g, "_").replace(/:/g, "").substring(0, 100))
+                    .replace(/{title}/g, current.Title)
+                    .replace(/{description}/g, current.Description)
+                    .replace(/{intID}/g, current.ResourceId)
             );
             for (i in thumbDivTypes) {
                 if (current.url.indexOf(thumbDivTypes[i].match) > -1) {
@@ -913,7 +1265,7 @@ function updateMoreLikeThis(data) {
         $(".tabNavigator a[data-id=moreLikeThis]").html(counter);
     }
 }
-
+*/
 function updateLikesDislikes(data) {
     if (data) {
         resource.paradata = data;
@@ -923,13 +1275,11 @@ function updateLikesDislikes(data) {
 }
 
 function updateClickThroughs(data) {
-    console.log(data);
     resource.paradata.clickThroughs = parseInt(data);
     $("#clickthroughs").html("Visited " + resource.paradata.clickThroughs + " Times");
 }
 
 function updateResource(data) {
-    console.log(data);
     $(".btn.finish").attr("value", "Save Changes").attr("disabled", false);
     resource = data;
     $(".tab .addedTextItem").remove();
@@ -940,7 +1290,6 @@ function updateResource(data) {
 }
 
 function confirmDeactivated(data) {
-    console.log(data);
     alert(data);
     location.reload();
 }
@@ -971,12 +1320,10 @@ function initTabBox() {
         resizeStuff();
         return false;
     });
-    $(".tabNavigator a[data-id=tags], .tabNavigator a[data-id=library]").trigger("click");
+    $(".tabNavigator a[data-id=tags], .tabNavigator a[data-id=comments]").trigger("click");
 }
 //Keywords and Subjects
 function addFreeText(text, field) {
-  console.log("called");
-  console.log(text);
     text = text.replace(/</g, "").replace(/>/g, "").replace(/\"/g, "").replace(/'/g, "");
     var box = $("#" + field);
     var isValid = true;
@@ -1060,7 +1407,6 @@ function sendUpdatedResource() {
         standards: readStandardsV7()
     }
 
-    console.log(update);
     //send the updated object
     if (validUpdate) {
       doAjax("UpdateResource", { versionID: resourceVersionID, userGUID: userGUID, update: update }, updateResource);
@@ -1146,6 +1492,10 @@ function readStandardsV7() {
   return standards;
 }
 
+function setTabValue(tabID, value) {
+	$(".tabNavigator a[data-id=" + tabID + "] .value").html(value);
+}
+
 /* ---   ---   Page Buttons   ---   --- */
 //Switch the page to update mode
 function switchToUpdateMode() {
@@ -1206,7 +1556,7 @@ function toggleShowHide() {
 
 //Deactivate the Resource
 function deactivate() {
-    if (confirm("Really deactivate this Resource?")) {
+    if (confirm("Really deactivate this resource?")) {
         doAjax("DeactivateResource", { userGUID: userGUID, versionID: resourceVersionID }, confirmDeactivated);
     }
 }

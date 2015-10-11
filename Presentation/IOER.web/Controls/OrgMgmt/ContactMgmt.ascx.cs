@@ -8,26 +8,27 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
-using ILPathways.Library;
+using IOER.Library;
 using ILPathways.Common;
 using ILPathways.Utilities;
 using EmailHelper = ILPathways.Utilities.EmailManager;
 using MyManager = Isle.BizServices.OrganizationBizService;
 using ILPathways.DAL;
 using ILPathways.Business;
+using IOER.Services;
 using Isle.BizServices;
 
 using LRWarehouse.Business;
 using LRWarehouse.DAL;
 using LDBM = LRWarehouse.DAL.DatabaseManager;
 
-namespace ILPathways.Controls.OrgMgmt
+namespace IOER.Controls.OrgMgmt
 {
     public partial class ContactMgmt : BaseUserControl
     {
         const string thisClassName = "ContactMgmt";
         MyManager myManager = new MyManager();
-        Services.UtilityService utilService = new Services.UtilityService();
+        UtilityService utilService = new UtilityService();
         string statusMessage = "";
 
         #region Properties
@@ -359,12 +360,12 @@ namespace ILPathways.Controls.OrgMgmt
                 if ( currentOmbr.OrgMemberTypeId == 0 )
                 {
                     currentOmbr.CreatedById = WebUser.Id;
-                    orgMbrId = MyManager.OrganizationMember_Create( currentOmbr, ref statusMessage );
+                    orgMbrId = myManager.OrganizationMember_Create(currentOmbr, ref statusMessage);
                     currentOmbr.Id = orgMbrId;
                 }
                 else
                 {
-                    MyManager.OrganizationMember_Update( currentOmbr );
+                    myManager.OrganizationMember_Update(currentOmbr);
                 }
             }
 
@@ -403,7 +404,7 @@ namespace ILPathways.Controls.OrgMgmt
                 if ( roleFound == false )
                 {
                     //delete role
-                    MyManager.OrganizationMemberRole_Delete( role2.Id, ref statusMessage );
+                    myManager.OrganizationMemberRole_Delete(role2.Id, ref statusMessage);
                 }
             }
             //handle new
@@ -429,7 +430,7 @@ namespace ILPathways.Controls.OrgMgmt
                         role.CreatedById = WebUser.Id;
                         if ( orgMbr.Id > 0 )
                         {
-                            int id = MyManager.OrganizationMemberRole_Create( role, ref statusMessage );
+                            int id = myManager.OrganizationMemberRole_Create(role, ref statusMessage);
                         }
                     }
                 }

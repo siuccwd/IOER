@@ -5,13 +5,15 @@ using System.Web;
 using System.Web.Script.Serialization;
 using System.Web.Services;
 
+using IB=ILPathways.Business;
 using ILPathways.Utilities;
 using Isle.BizServices;
 using LRWarehouse.Business;
 using LRWarehouse.DAL;
 using DataBaseHelper = LRWarehouse.DAL.BaseDataManager;
+using Patron = LRWarehouse.Business.Patron;
 
-namespace ILPathways.Services
+namespace IOER.Services
 {
     /// <summary>
     /// Summary description for LibraryService
@@ -40,7 +42,7 @@ namespace ILPathways.Services
         /// <param name="sort"></param>
         /// <param name="start"></param>
         /// <returns></returns>
-      [WebMethod]
+       [WebMethod(EnableSession = true)]
       public string DoLibrariesSearch( string searchType, string text, List<JSONInputFilter> filters, string userGUID, bool useSubscribedLibraries, string sort, int start )
       {
         try
@@ -126,9 +128,9 @@ namespace ILPathways.Services
         /// <param name="useSubscribedLibraries"></param>
         /// <param name="generatedFilter"></param>
         /// <returns></returns>
-      public List<Business.Library> DoLibrariesSearch( string text, List<JSONInputFilter> filters, Patron user, string sort, int start, int max, bool useSubscribedLibraries, ref string generatedFilter )
+      public List<IB.Library> DoLibrariesSearch( string text, List<JSONInputFilter> filters, Patron user, string sort, int start, int max, bool useSubscribedLibraries, ref string generatedFilter )
       {
-        text = FormHelper.SanitizeUserInput( text.Trim() );
+        text = FormHelper.CleanText( text.Trim() );
 
         string filter = FormatFilter( text, filters, user, useSubscribedLibraries );
         generatedFilter = filter;
@@ -138,6 +140,8 @@ namespace ILPathways.Services
         LoggingHelper.DoTrace( 5, string.Format("Library search. User: {0}, Filter: {1}", user.Id,  filter) );
         //Get the library search results
         var libraries = libService.LibrarySearchAsList( filter, sort, start, max, ref totalRows );
+
+        ActivityBizServices.LibrariesSearchHit(filter, user, "Libraries");
 
         return libraries;
       }
@@ -153,9 +157,9 @@ namespace ILPathways.Services
         /// <param name="useSubscribedLibraries"></param>
         /// <param name="generatedFilter"></param>
         /// <returns></returns>
-      public List<Business.LibrarySection> DoCollectionsSearch( string text, List<JSONInputFilter> filters, Patron user, string sort, int start, int max, bool useSubscribedLibraries, ref string generatedFilter )
+      public List<IB.LibrarySection> DoCollectionsSearch( string text, List<JSONInputFilter> filters, Patron user, string sort, int start, int max, bool useSubscribedLibraries, ref string generatedFilter )
       {
-        text = FormHelper.SanitizeUserInput( text.Trim() );
+        text = FormHelper.CleanText( text.Trim() );
 
         string filter = FormatFilter( text, filters, user, useSubscribedLibraries );
         generatedFilter = filter;
@@ -165,6 +169,7 @@ namespace ILPathways.Services
         //Get the collection search results
         var collections = libService.LibrarySections_SearchAsList( filter, sort, start, max, ref totalRows );
 
+        ActivityBizServices.LibrariesSearchHit(filter, user, "Collections");
         return collections;
       }
 
@@ -351,9 +356,9 @@ namespace ILPathways.Services
       /// <param name="max"></param>
       /// <param name="generatedFilter"></param>
       /// <returns></returns>
-      public List<Business.LibraryResource> DoPendingApprovalsSearch2( string text, string libraryId, string collectionId, string sort, int start, int pageSize, ref int totalRows )
+      public List<IB.LibraryResource> DoPendingApprovalsSearch2( string text, string libraryId, string collectionId, string sort, int start, int pageSize, ref int totalRows )
       {
-          text = FormHelper.SanitizeUserInput( text.Trim() );
+          text = FormHelper.CleanText( text.Trim() );
 
           string filter = FormatPendingFilter( text, libraryId, collectionId);
           
@@ -362,16 +367,16 @@ namespace ILPathways.Services
 
           return resources;
       }
-      public List<JSONLibResourcesSearchResult> BuildPendingApprovalsResults( List<Business.LibraryResource> resources )
+      public List<JSONLibResourcesSearchResult> BuildPendingApprovalsResults( List<IB.LibraryResource> resources )
       {
           var output = new List<JSONLibResourcesSearchResult>();
 
-          foreach ( Business.LibraryResource item in resources )
+          foreach ( IB.LibraryResource item in resources )
           {
               var res = new JSONLibResourcesSearchResult();
               res.title = item.Title;
               res.description = "TBD";
-              string encodedTitle = Business.Library.UrlFriendlyTitle( res.title );
+              string encodedTitle = UtilityManager.UrlFriendlyTitle( res.title );
 
               res.resourceUrl = item.ResourceUrl;
               res.resourceId = item.ResourceIntId;
@@ -460,7 +465,7 @@ namespace ILPathways.Services
       }	//
       protected void FormatKeyword( string text, string booleanOperator, ref string filter )
       {
-        string keyword = DataBaseHelper.HandleApostrophes( FormHelper.SanitizeUserInput( text ) );
+        string keyword = DataBaseHelper.HandleApostrophes( FormHelper.CleanText( text ) );
         string keywordFilter = "";
         string keywordTemplate = " (lib.Title like '{0}'  OR lib.[Description] like '{0}' OR owner.[SortName] like '{0}'  OR owner.[Organization] like '{0}' OR org.[Name] like '{0}') ";
 
@@ -580,15 +585,15 @@ namespace ILPathways.Services
         }
       }
 
-      public List<JSONLibrarySearchResult> BuildLibrarySearchResults( List<Business.Library> libraries )
+      public List<JSONLibrarySearchResult> BuildLibrarySearchResults( List<IB.Library> libraries )
       {
         var output = new List<JSONLibrarySearchResult>();
 
-        foreach ( Business.Library item in libraries )
+        foreach ( IB.Library item in libraries )
         {
           var lib = new JSONLibrarySearchResult();
           lib.title = item.Title;
-          string encodedTitle = Business.Library.UrlFriendlyTitle( lib.title );
+          string encodedTitle = UtilityManager.UrlFriendlyTitle( lib.title );
 
           lib.description = item.Description;
           lib.iconURL = item.ImageUrl;
@@ -604,11 +609,11 @@ namespace ILPathways.Services
           lib.id = item.Id;
 
           var collections = libService.LibrarySectionsSelectList( item.Id, 1 );
-          foreach ( Business.LibrarySection section in collections )
+          foreach ( IB.LibrarySection section in collections )
           {
             var col = new JSONLibColSearchResultItem();
             col.title = section.Title;
-            string encodedColTitle = Business.Library.UrlFriendlyTitle( col.title );
+            string encodedColTitle = UtilityManager.UrlFriendlyTitle( col.title );
 
             col.description = section.Description;
             col.iconURL = section.ImageUrl;
@@ -625,20 +630,20 @@ namespace ILPathways.Services
       }
 
 
-      public List<JSONLibrarySearchResult> BuildCollectionSearchResults( List<Business.LibrarySection> collections )
+      public List<JSONLibrarySearchResult> BuildCollectionSearchResults( List<IB.LibrarySection> collections )
       {
         var output = new List<JSONLibrarySearchResult>();
 
-        foreach ( Business.LibrarySection item in collections )
+        foreach ( IB.LibrarySection item in collections )
         {
           var col = new JSONLibrarySearchResult();
           col.title = item.Title;
-          string encodedTitle = Business.Library.UrlFriendlyTitle( col.title );
+          string encodedTitle = UtilityManager.UrlFriendlyTitle( col.title );
 
           col.description = item.Description;
           col.iconURL = item.ImageUrl;
           col.libraryTitle = item.LibraryTitle;
-          col.libraryUrl = string.Format( "/Library/{0}/{1}", item.LibraryId, Business.Library.UrlFriendlyTitle( item.LibraryTitle ) );
+          col.libraryUrl = string.Format( "/Library/{0}/{1}", item.LibraryId, UtilityManager.UrlFriendlyTitle( item.LibraryTitle ) );
           col.organization = "";
           if ( item.ParentLibrary != null && item.ParentLibrary.OrgId > 0 )
           {
@@ -706,471 +711,5 @@ namespace ILPathways.Services
 
       #endregion
 
-      /*
-        #region main methods
-
-        [WebMethod]
-        public jsonLibCol UpdateLibrary( string identity, jsonLibCol input )
-        {
-            //Validate the User
-            validUser user = ValidateUser( identity );
-
-            //Validate the input
-            try
-            {
-                input = ValidateJSONLibCol( input );
-                if ( input == null )
-                {
-                    return null;
-                }
-            }
-            catch
-            {
-                return null;
-            }
-
-            //Update the library
-            try
-            {
-                Business.Library currentLibrary = user.library;  //User can only alter their own library since input's library ID is ignored
-                currentLibrary.Title = input.title;
-                currentLibrary.Description = input.description;
-                currentLibrary.IsPublic = input.isPublic;
-                currentLibrary.IsDiscoverable = input.isDiscoverable;
-                libService.Update( currentLibrary );
-            }
-            catch
-            {
-                return null;
-            }
-
-            return input;
-        }
-
-        [WebMethod]
-        public List<jsonLibCol> DoCollectionAction( string identity, collectionAction input )
-        {
-            //Validate the User
-            validUser user = ValidateUser( identity );
-
-            //Copy, Move, or Delete
-            bool valid = false;
-            string status = "";
-            if ( input.action == "copy" )
-            {
-                //Protect against spoof data
-                if ( !SectionsContainID( user.collections, input.targetCollection ) )
-                {
-                    return null;
-                }
-
-                //Do the copy
-                int newID = libService.ResourceCopy( input.intID, input.targetCollection, user.user.Id, ref status );
-                if ( newID != 0 )
-                {
-                    valid = true;
-                    esManager.AddToCollection( input.intID.ToString(), input.targetCollection );
-                    esManager.AddToLibrary( input.intID.ToString(), user.library.Id );
-                }
-            }
-            else if ( input.action == "move" )
-            {
-                //Protect against spoof data
-                if ( !SectionsContainID( user.collections, input.originCollection ) || !SectionsContainID( user.collections, input.targetCollection ) )
-                {
-                    return null;
-                }
-
-                //Do the move
-                string message = libService.ResourceMove( input.originCollection, input.intID, input.targetCollection, user.user.Id, ref status );
-                if ( message == "successful" )
-                {
-                    valid = true;
-                    esManager.AddToCollection( input.intID.ToString(), input.targetCollection );
-                    esManager.RemoveFromCollection( input.intID.ToString(), input.originCollection );
-                }
-            }
-            else if ( input.action == "delete" )
-            {
-                //Protect against spoof data
-                if ( !SectionsContainID( user.collections, input.originCollection ) )
-                {
-                    return null;
-                }
-
-                //Do the delete
-                bool successful = libService.LibraryResourceDelete( input.originCollection, input.intID, ref status );
-                if ( successful )
-                {
-                    valid = true;
-                    esManager.RemoveFromCollection( input.intID.ToString(), input.originCollection );
-
-                    //Remove it from our library (in elasticsearch) if need be
-                    if ( !libService.IsResourceInLibrary( user.user, input.intID ) )
-                    {
-                        esManager.RemoveFromLibrary( input.intID.ToString(), user.library.Id );
-
-                    }
-                }
-            }
-
-            if ( valid )
-            {
-                return FetchJSONCollections( user.library.Id ); //Need to regenerate the collection list
-            }
-            else
-            {
-                return null;
-            }
-        }
-
-        [WebMethod]
-        public List<jsonLibCol> UpdateCollection( string identity, jsonLibCol input )
-        {
-            //Validate the User
-            validUser user = ValidateUser( identity );
-
-            //Validate the input
-            try
-            {
-                input = ValidateJSONLibCol( input );
-                if ( input == null )
-                {
-                    return null;
-                }
-            }
-            catch
-            {
-                return null;
-            }
-
-            //Validate the input ID
-            if ( !SectionsContainID( user.collections, input.id ) )
-            {
-                return null;
-            }
-
-            //Update the collection
-            try
-            {
-                Business.LibrarySection section = libService.LibrarySectionGet( input.id );
-                section.Title = input.title;
-                section.Description = input.description;
-                section.IsPublic = input.isPublic;
-                libService.LibrarySectionUpdate( section );
-            }
-            catch
-            {
-                return null;
-            }
-
-            return FetchJSONCollections( user.library.Id ); //Need to regenerate the collection list
-        }
-
-        [WebMethod]
-        public List<jsonLibCol> CreateCollection( string identity, jsonLibCol input )
-        {
-            //Validate the User
-            validUser user = ValidateUser( identity );
-
-            //Validate the input
-            try
-            {
-                input = ValidateJSONLibCol( input );
-                if ( input == null )
-                {
-                    return null;
-                }
-            }
-            catch
-            {
-                return null;
-            }
-
-            //Create the Collection
-            try
-            {
-                string status = "";
-                Business.LibrarySection section = new Business.LibrarySection();
-                section.Title = input.title;
-                section.Description = input.description;
-                section.IsPublic = input.isPublic;
-                section.CreatedById = user.user.Id;
-                section.LibraryId = user.library.Id;
-                section.SectionTypeId = 3;
-                section.IsDefaultSection = false;
-                section.AreContentsReadOnly = false;
-                section.ParentId = 0;
-                libService.LibrarySectionCreate( section, ref status );
-            }
-            catch
-            {
-                return null;
-            }
-
-            return FetchJSONCollections( user.library.Id ); //Need to regenerate the collection list
-        }
-
-        [WebMethod]
-        public List<jsonLibCol> MakeCollectionDefault( string identity, int input )
-        {
-            //Validate the User
-            validUser user = ValidateUser( identity );
-
-            //Validate the input
-            if ( !SectionsContainID( user.collections, input ) )
-            {
-                return null;
-            }
-
-            //Defaultize the collection
-            try
-            {
-                List<Business.LibrarySection> collections = libService.LibrarySectionsSelectList( user.library.Id, 2 );
-                foreach ( Business.LibrarySection section in collections )
-                {
-                    //If the selected one is already the default, do nothing
-                    if ( section.IsDefaultSection && section.Id == input ) { break; }
-                    //When we find the new default, set it. The stored procedure handles unsetting the old one.
-                    if ( section.Id == input )
-                    {
-                        section.IsDefaultSection = true;
-                        libService.LibrarySectionUpdate( section );
-                    }
-                }
-            }
-            catch { return null; }
-            return FetchJSONCollections( user.library.Id );
-        }
-
-        [WebMethod]
-        public List<jsonLibCol> DeleteCollection( string identity, int input )
-        {
-            //Validate the User
-            validUser user = ValidateUser( identity );
-
-            //Validate the input
-            if ( !SectionsContainID( user.collections, input ) )
-            {
-                return null;
-            }
-
-            //Delete the collection
-            try
-            {
-                string status = "";
-                libService.LibrarySection_Delete( input, ref status );
-            }
-            catch
-            {
-                return null;
-            }
-
-            return FetchJSONCollections( user.library.Id ); //Need to regenerate the collection list
-        }
-
-        [WebMethod]
-        public string GetAvatar( string identity, string input )
-        {
-            validUser user = ValidateUser( identity );
-            return user.library.ImageUrl;
-        }
-        [WebMethod]
-        public string GetCollectionAvatar( string collectionId, string input )
-        {
-            //??????
-            return "";
-        }
-        [WebMethod]
-        public string GetSubscription( string identity, string input )
-        {
-            validUser user = ValidateUser( identity );
-
-            int libraryID = int.Parse( input );
-
-            if ( libService.IsSubcribedtoLibrary( libraryID, user.user.Id ) )
-            {
-                Business.ObjectSubscription membership = libService.LibrarySubscriptionGet( libraryID, user.user.Id );
-                return membership.SubscriptionTypeId.ToString();
-            }
-
-            return "0";
-        }
-
-        [WebMethod]
-        public string SetSubscription( string identity, jsonFollowing input )
-        {
-            validUser user = ValidateUser( identity );
-
-            int libraryID = input.id;
-
-            if ( input.type != 0 )
-            {
-                if ( GetSubscription( identity, input.id.ToString() ) != "0" )
-                {
-                    libService.LibrarySubScriptionUpdate( libraryID, user.user.Id, input.type );
-                }
-                else
-                {
-                    string status = "";
-                    libService.LibrarySubScriptionCreate( libraryID, user.user.Id, input.type, ref status );
-                }
-            }
-
-            return input.type.ToString();
-        }
-
-        #endregion
-
-        #region utility methods
-
-        protected jsonLibCol ValidateJSONLibCol( jsonLibCol input )
-        {
-            input.title = Cleanse( input.title );
-            input.description = Cleanse( input.description );
-            if ( input.title.Length >= 5 && input.description.Length >= 10 )
-            {
-                return input;
-            }
-            else
-            {
-                return null;
-            }
-        }
-
-        protected string Cleanse( string input )
-        {
-            return input
-                .Replace( "<", "" )
-                .Replace( ">", "" )
-                .Replace( "\\", "" )
-                .Replace( "\"", "" );
-            //.Replace( "'", "" );
-        }
-
-        public List<jsonLibCol> FetchJSONCollections( int libraryID )
-        {
-            List<Business.LibrarySection> collections = libService.LibrarySectionsSelectList( libraryID, 2 );
-            return FetchJSONCollections( collections );
-        }
-
-        protected List<jsonLibCol> FetchJSONCollections( List<Business.LibrarySection> collections )
-        {
-            List<jsonLibCol> returnData = new List<jsonLibCol>();
-            foreach ( Business.LibrarySection section in collections )
-            {
-                jsonLibCol json = new jsonLibCol();
-                json.id = section.Id;
-                json.title = section.Title;
-                json.description = section.Description;
-                json.isPublic = section.IsPublic;
-                json.isDiscoverable = true;
-                json.isDefaultCollection = section.IsDefaultSection;
-                returnData.Add( json );
-            }
-
-            return returnData;
-        }
-
-        public validUser ValidateUser( string guid )
-        {
-            validUser validUser = new validUser();
-
-            //Validate user
-            Patron user = new Patron();
-            user.IsValid = false;
-            try
-            {
-                user = new AccountServices().GetByRowId( guid );
-            }
-            catch
-            {
-                return null;
-            }
-            if ( user.IsValid )
-            {
-                validUser.user = user;
-            }
-            else
-            {
-                return null;
-            }
-
-            //Get valid library/collections
-            validUser.library = libService.GetMyLibrary( user );
-            validUser.collections = libService.LibrarySectionsSelectList( validUser.library.Id, 2 );
-
-            return validUser;
-        }
-
-        protected bool SectionsContainID( List<Business.LibrarySection> sections, int targetID )
-        {
-            bool flag = false;
-            foreach ( Business.LibrarySection section in sections )
-            {
-                if ( section.Id == targetID )
-                {
-                    flag = true;
-                    break;
-                }
-            }
-            return flag;
-        }
-
-        #endregion
-
-        #region subclasses
-
-        public class validUser
-        {
-            //Validate the User
-            public Patron user;
-            public Business.Library library;
-            public List<Business.LibrarySection> collections;
-        }
-
-        public class collectionAction
-        {
-            public int intID;
-            public string action;
-            public int targetCollection;
-            public int originCollection;
-        }
-
-        public class jsonLibCol
-        {
-            public int id;
-            public string title;
-            public string description;
-            public bool isPublic;
-            public bool isDiscoverable;
-            public bool isDefaultCollection;
-        }
-
-        public class jsonLibrary
-        {
-            public int id;
-            public string title;
-            public string description;
-            public bool isPublic;
-            public bool isDiscoverable;
-        }
-        public class jsonCollection
-        {
-            public int id;
-            public string title;
-            public string description;
-            public bool isPublic;
-            public bool IsReadOnly;
-            public bool isDefaultCollection;
-
-        }
-        public class jsonFollowing
-        {
-            public int id;
-            public int type;
-        }
-
-        #endregion*/
     }
 }

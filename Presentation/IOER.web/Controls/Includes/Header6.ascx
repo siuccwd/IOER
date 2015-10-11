@@ -1,4 +1,4 @@
-﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="Header6.ascx.cs" Inherits="ILPathways.Controls.Includes.Header6" %>
+﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="Header6.ascx.cs" Inherits="IOER.Controls.Includes.Header6" %>
 <% 
   //Easy CSS colors
   string css_black      = "#4F4E4F";
@@ -241,7 +241,7 @@
         <h2>My IOER</h2>
         <div class="navLinks">
           <a href="/My/Library" class="navLink">My Library and Collections</a>
-          <a href="/My/Authored.aspx" class="navLink">Resources I Created</a>
+          <a href="/My/Authored" class="navLink">Resources I Created</a>
           <a href="/My/Favorites.aspx" class="navLink">Libraries I Follow</a>
           <a href="/My/Timeline" class="navLink">My IOER Timeline</a>
           <a href="/Libraries/Admin.aspx" class="navLink" runat="server" id="libAdminLink" visible="false">Library Administration</a>
@@ -278,7 +278,7 @@
 </div>
 
 <div id="hiddenStuff" runat="server" visible="false">
-  <asp:Literal ID="txtAdminSecurityName" runat="server" Visible="false">ILPathways.Admin.QueryMgmt</asp:Literal>
+  <asp:Literal ID="txtAdminSecurityName" runat="server" Visible="false">Site.Admin.QueryMgmt</asp:Literal>
 
 <div data-icon="admin" class="navTop" id="mpMenu" visible="false" runat="server" data-href="">
         <h2>MP Admin</h2>

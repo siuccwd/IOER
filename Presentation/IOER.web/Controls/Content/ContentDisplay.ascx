@@ -1,4 +1,4 @@
-﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="ContentDisplay.ascx.cs" Inherits="ILPathways.Controls.Content.ContentDisplay" %>
+﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="ContentDisplay.ascx.cs" Inherits="IOER.Controls.Content.ContentDisplay" %>
 <%@ Register TagPrefix="uc1" TagName="CurriculumDisplay" Src="/Controls/Curriculum/Curriculum1.ascx" %>
 
 <script type="text/javascript" language="javascript">var heightThreshhold = 150;</script>
@@ -91,7 +91,9 @@ a.showHideLink {
     #pageTabBox a.selected { background-color: #4AA394; }
     #pageTabBox a:hover, #pageTabBox a:focus { background-color: #FF5707; }
 
-
+@media screen and (min-width: 980px) {
+  .pageContent { width: 55%; }
+}
 </style>
 
 <h1 class="isleH1"><%=resourceTitle %></h1>
@@ -108,8 +110,26 @@ a.showHideLink {
          <p><%=resourceSummary %></p>
 
     </asp:Panel>
-
+<p><b>Download this file:</b></p>
 <asp:label id="pageContent" runat="server"></asp:label>
+
+	<% //if(showIframeContent){  %>
+	<% if(IsUserAuthenticated() && WebUser.Id == 22) { //Temp hack to test on prod with %>
+	
+	<script type="text/javascript">
+		$(document).ready(function () {
+			$("#previewFrame").attr("src", "//docs.google.com/viewer?embedded=true&url=http://ioer.ilsharedlearning.org" + $("#BodyContent_ResourcePageData_pageContent a").attr("href"));
+			//$("#previewFrame").attr("src", "//view.officeapps.live.com/op/view.aspx?src=http://ioer.ilsharedlearning.org/" + $("#BodyContent_ResourcePageData_pageContent a").attr("href"));
+		});
+	</script>
+	<style type="text/css">
+		#previewFrame { display: block; width: 100%; height: 500px; }
+	</style>
+	<iframe id="previewFrame" src=""></iframe>
+
+	<% } %>
+	<% //} %>
+
 <asp:Panel ID="curriculumPanel" runat="server" Visible="false">
    
     <uc1:CurriculumDisplay ID="curriculum" runat="server" />
@@ -148,7 +168,10 @@ a.showHideLink {
     <asp:label id="lblPrivileges" runat="server" />
   </div>
   <h3 >Resource Authored by</h3>
-  <div class="sectionContent" ><asp:Label ID="lblAuthor" runat="server" /></div>
+  <div class="sectionContent" ><asp:Label ID="lblAuthor" runat="server" visible="false" />
+      <asp:HyperLink ID="hlAuthor" runat="server" Text="Author"></asp:HyperLink>
+  </div>
+    
   
   <asp:panel ID="communityViewPanel" runat="server" Visible="false">
   <h2 class="isleBox_H2">Community View</h2>
@@ -189,17 +212,18 @@ a.showHideLink {
 <div class="clearFloat"></div>
 </asp:Panel>
 <asp:Panel ID="hiddenStuff" Visible="false" runat="server">
-  <asp:Literal ID="txtFormSecurityName" runat="server">ILPathways.LRW.controls.ResourcePage</asp:Literal>
   <asp:Literal ID="showingRefUrl" runat="server">yes</asp:Literal>
   <asp:Literal ID="showingImageAttachmentsInline" runat="server">yes</asp:Literal>
   <asp:Literal ID="canAuthorApproveOwnContent" runat="server">no</asp:Literal>
+  <asp:Literal ID="redirecting50ToLearningList" runat="server">yes</asp:Literal>
 
   <asp:Literal ID="txtCurrentContentId" runat="server">0</asp:Literal>
   <asp:Literal ID="docLinkTemplate" runat="server"><a href="{0}" target="_blank">{1}</a></asp:Literal>
-  <asp:Literal ID="imageLinkTemplate" runat="server"><img src="/Repository/Show.aspx?rid={0}" /></asp:Literal>
+  <asp:Literal ID="imageLinkTemplate" runat="server"><img alt='' src="/Repository/Show.aspx?rid={0}" /></asp:Literal>
   <asp:Literal ID="ccouImageLinkTemplate" runat="server"><a href="{0}" title="{2}" target="_blank"><img src="{1}" alt="{2}" /></a></asp:Literal>
   <asp:Literal ID="rvLink" runat="server">/ResourceDetail.aspx?vid={0}</asp:Literal>
-
+    <asp:Literal ID="profLink" runat="server">/Profile/{0}/{1}</asp:Literal>
+    
   <asp:Literal ID="privateContentMsg" runat="server"><h2>Page not Available</h2><p>This content is under construction or has been designated as not available for public viewing.</p></asp:Literal>
 
 

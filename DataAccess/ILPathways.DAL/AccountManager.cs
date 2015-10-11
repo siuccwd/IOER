@@ -9,7 +9,7 @@ using System.Web.Security;
 using System.Web.SessionState;
 using Microsoft.ApplicationBlocks.Data;
 using Patron = ILPathways.Business.AppUser;
-using PatronProfile = ILPathways.Business.AppUserProfile;
+using PatronProfile = ILPathways.Business.PatronProfile;	//.AppUserProfile;
 using ILPathways.Business;
 
 

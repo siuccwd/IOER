@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ILPathways.Masters {
+namespace IOER.Masters {
     
     
     public partial class Responsive {
@@ -20,15 +20,6 @@ namespace ILPathways.Masters {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.HtmlControls.HtmlHead Head1;
-        
-        /// <summary>
-        /// hints control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::ILPathways.SessionHints hints;
         
         /// <summary>
         /// litHidingAddThis control.
@@ -73,7 +64,7 @@ namespace ILPathways.Masters {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ILPathways.Controls.Includes.Header7 header;
+        protected global::IOER.Controls.Includes.Header8 header;
         
         /// <summary>
         /// systemMessageLine control.
@@ -82,7 +73,7 @@ namespace ILPathways.Masters {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ILPathways.Includes.SystemMessageLine systemMessageLine;
+        protected global::IOER.Includes.SystemMessageLine systemMessageLine;
         
         /// <summary>
         /// BodyContent control.
@@ -100,6 +91,6 @@ namespace ILPathways.Masters {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ILPathways.Controls.Includes.footer3 pagefooter;
+        protected global::IOER.Controls.Includes.Footer4 pagefooter;
     }
 }

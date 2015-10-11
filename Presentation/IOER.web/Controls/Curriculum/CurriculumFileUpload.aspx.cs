@@ -6,17 +6,17 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 
 using System.Web.Script.Serialization;
-using ILPathways.Services;
+using IOER.Services;
 using ILPathways.Business;
 using LRWarehouse.Business;
 using Isle.BizServices;
-using ILPathways.Controllers;
-using ILPathways.Library;
+using IOER.Controllers;
+using IOER.Library;
 using System.IO;
 using System.Drawing;
 using ILPathways.Utilities;
 
-namespace ILPathways.Controls.Curriculum
+namespace IOER.Controls.Curriculum
 {
   public partial class CurriculumFileUpload : System.Web.UI.Page
   {
@@ -134,7 +134,7 @@ namespace ILPathways.Controls.Curriculum
         node.ImageUrl = savingURL;
         contentService.Update( node );
 
-        if ( UtilityManager.GetAppKeyValue( "envType" ) != "dev" )
+		if ( UtilityManager.GetAppKeyValue( "creatingThumbnails" ) == "yes" )
         {
             //Write placeholder to thumbnail folder
             var thumbnailFolder = ILPathways.Utilities.UtilityManager.GetAppKeyValue( "serverThumbnailFolder", @"\\OERDATASTORE\OerThumbs\large\" );
@@ -156,6 +156,7 @@ namespace ILPathways.Controls.Curriculum
         var serializer = new JavaScriptSerializer();
         bool valid = true;
         string status = "";
+		  string siteRoot = UtilityManager.GetAppKeyValue( "siteRoot", "http://ioer.ilsharedlearning.org" );
 
         //Uploaded an attachment document
         var metadata = serializer.Deserialize<AttachmentInput>( hdnMetadata.Value );
@@ -206,7 +207,7 @@ namespace ILPathways.Controls.Curriculum
 
             //Create thumbnail
             var content = new ContentServices().Get( newID );
-            var fixedURL = content.DocumentUrl.IndexOf( "ilsharedlearning" ) > -1 ? content.DocumentUrl : ( "http://ioer.ilsharedlearning.org" + ( content.DocumentUrl.IndexOf( "/" ) == 0 ? content.DocumentUrl : "/" + content.DocumentUrl ) );
+            var fixedURL = content.DocumentUrl.IndexOf( "ilsharedlearning" ) > -1 ? content.DocumentUrl : ( siteRoot + ( content.DocumentUrl.IndexOf( "/" ) == 0 ? content.DocumentUrl : "/" + content.DocumentUrl ) );
             new LRWarehouse.DAL.ResourceThumbnailManager().CreateThumbnailAsync( "content-" + newID, fixedURL, true, 4 );
 
         }
@@ -239,7 +240,7 @@ namespace ILPathways.Controls.Curriculum
 
             //Recreate thumbnail
             var content = new ContentServices().Get( item.Id );
-            var fixedURL = content.DocumentUrl.IndexOf( "ilsharedlearning" ) > -1 ? content.DocumentUrl : ( "http://ioer.ilsharedlearning.org" + ( content.DocumentUrl.IndexOf( "/" ) == 0 ? content.DocumentUrl : "/" + content.DocumentUrl ) );
+            var fixedURL = content.DocumentUrl.IndexOf( "ilsharedlearning" ) > -1 ? content.DocumentUrl : ( siteRoot + ( content.DocumentUrl.IndexOf( "/" ) == 0 ? content.DocumentUrl : "/" + content.DocumentUrl ) );
             new LRWarehouse.DAL.ResourceThumbnailManager().CreateThumbnailAsync( "content-" + content.Id, fixedURL, true, 4 );
         }
 

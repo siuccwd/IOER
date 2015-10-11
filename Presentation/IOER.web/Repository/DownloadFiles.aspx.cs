@@ -12,14 +12,14 @@ using Ionic.Zip;
 using Isle.BizServices;
 using AcctManager = Isle.BizServices.AccountServices;
 
-using ILPathways.Controllers;
-using ILPathways.Library;
+using IOER.Controllers;
+using IOER.Library;
 using ILPathways.Business;
 using ILPathways.Utilities;
-using LRB = LRWarehouse.Business;
+//using LRB = LRWarehouse.Business;
+using Patron = LRWarehouse.Business.Patron;
 
-
-namespace ILPathways.Repository
+namespace IOER.Repository
 {
     /// <summary>
     /// Handle the download of a curriculum node
@@ -56,11 +56,15 @@ namespace ILPathways.Repository
             catch ( System.Threading.ThreadAbortException tae )
             {
                 //LoggingHelper.LogError( tae, "DownloadFiles.HandleRequest()" );
-                LoggingHelper.DoTrace( 1, "DownloadFiles.HandleRequest() ThreadAbortException: " + tae.Message );
+                LoggingHelper.DoTrace( 5, "DownloadFiles.HandleRequest() ThreadAbortException: " + tae.Message );
+                mainPanel.Visible = false;
+                errorPanel.Visible = true;
             }
             catch ( Exception ex )
             {
                 LoggingHelper.DoTrace( 1, "DownloadFiles.HandleRequest() Exception: " + ex.Message );
+                mainPanel.Visible = false;
+                errorPanel.Visible = true;
             }
         }
 
@@ -68,10 +72,10 @@ namespace ILPathways.Repository
         {
             string downloadFolder = UtilityManager.GetAppKeyValue( "path.WorkOutputPath", "C:\\IOER\\ContentDocs\\" );
             string downloadUrl = UtilityManager.GetAppKeyValue( "path.WorkOutputUrl", "/ContentDocs/" );
-            LRB.Patron user = new LRB.Patron();
+            Patron user = new Patron();
             //will need to pass user if present
             if ( IsUserAuthenticated() )
-                user = ( LRB.Patron )WebUser;
+                user = ( Patron )WebUser;
 
             ContentItem entity = new CurriculumServices().DownloadCurriculumNode( nodeId, user, includingChildren, false );
             if ( entity == null || entity.Id == 0 )
@@ -241,7 +245,7 @@ namespace ILPathways.Repository
                             {
                                 try
                                 {
-                                    LoggingHelper.DoTrace(4, string.Format( "Zipping item: id: {0}, type: {1}, title: {2}, filePath: {3}", item.Id, item.TypeId, item.Title, filePath ));
+                                    LoggingHelper.DoTrace(6, string.Format( "Zipping item: id: {0}, type: {1}, title: {2}, filePath: {3}", item.Id, item.TypeId, item.Title, filePath ));
 
                                     //adding duplicate file name (even if a different folder?), results in an argument exception
                                     if ( zip.ContainsEntry( filePath ) == false )

@@ -43,7 +43,7 @@ namespace ILPathways.Business
             }
         }
 
-
+		public bool IsModerated { get; set; }
         public bool IsActive { get; set; }
         public DateTime Created { get; set; }
         public int CreatedById { get; set; }

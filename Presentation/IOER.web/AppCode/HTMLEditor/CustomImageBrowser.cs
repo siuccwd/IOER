@@ -18,7 +18,7 @@ using System.Text.RegularExpressions;
 using System.Globalization;
 using System.IO;
 
-//namespace ILPathways.HTMLEditor.CustomPopups
+//namespace IOER.HTMLEditor.CustomPopups
 namespace CustomPopups
 {
     #region [ Customized 'Image properties' popup class ]

@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ILPathways.Controls.Rubrics {
+namespace IOER.Controls.Rubrics {
     
     
     public partial class RubricCore {
@@ -28,7 +28,7 @@ namespace ILPathways.Controls.Rubrics {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ILPathways.Controls.Rubrics.AchieveRubric AchieveRubric;
+        protected global::IOER.Controls.Rubrics.AchieveRubric AchieveRubric;
         
         /// <summary>
         /// CCSSMathRubric control.
@@ -37,7 +37,7 @@ namespace ILPathways.Controls.Rubrics {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ILPathways.Controls.Rubrics.CCSSMathRubric CCSSMathRubric;
+        protected global::IOER.Controls.Rubrics.CCSSMathRubric CCSSMathRubric;
         
         /// <summary>
         /// CCSSELAK_2Rubric control.
@@ -46,7 +46,7 @@ namespace ILPathways.Controls.Rubrics {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ILPathways.Controls.Rubrics.CCSSELAK_2Rubric CCSSELAK_2Rubric;
+        protected global::IOER.Controls.Rubrics.CCSSELAK_2Rubric CCSSELAK_2Rubric;
         
         /// <summary>
         /// CCSSELA3_12Rubric control.
@@ -55,7 +55,7 @@ namespace ILPathways.Controls.Rubrics {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ILPathways.Controls.Rubrics.CCSSELA3_12Rubric CCSSELA3_12Rubric;
+        protected global::IOER.Controls.Rubrics.CCSSELA3_12Rubric CCSSELA3_12Rubric;
         
         /// <summary>
         /// selectRubric control.

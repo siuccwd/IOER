@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 
@@ -8,7 +10,7 @@ using ILPathways.Common;
 using MyManager = ILPathways.DAL.SecurityManager;
 using ILPathways.Utilities;
 using ThisUser = LRWarehouse.Business.Patron;
-using EFMgr = GatewayBusinessEntities.EFSecurityManager;
+using EFMgr = IoerContentBusinessEntities.EFSecurityManager;
 
 namespace Isle.BizServices
 {
@@ -36,7 +38,7 @@ namespace Isle.BizServices
         /// <param name="currentUser"></param>
         /// <param name="pObjectName">Control name, or channel, etc.</param>
         /// <returns></returns>
-        public static ApplicationRolePrivilege GetGroupObjectPrivilegesOLD( IWebUser currentUser, string pObjectName )
+        private static ApplicationRolePrivilege GetGroupObjectPrivilegesOLD( IWebUser currentUser, string pObjectName )
         {
             return MyManager.GetGroupObjectPrivilegesOLD( currentUser, pObjectName );
         }
@@ -62,7 +64,7 @@ namespace Isle.BizServices
                 return entity;
             }
 
-            LoggingHelper.DoTrace( 5, string.Format( "Isle.BizServices.SecurityManager.GetGroupObjectPrivileges(IWebUser currentUser). UserId: {0}, object: {1}", currentUser.Id, pObjectName ) );
+            LoggingHelper.DoTrace( 7, string.Format( "Isle.BizServices.SecurityManager.GetGroupObjectPrivileges(IWebUser currentUser). UserId: {0}, object: {1}", currentUser.Id, pObjectName ) );
             //currently only checking if not previously checked, however if an org is added since first check
            //then will miss it!!!!
             OrganizationBizService.FillUserOrgsMbrs( currentUser );
@@ -76,47 +78,6 @@ namespace Isle.BizServices
             return entity;
         }//
 
-        public static ApplicationRolePrivilege GetGroupObjectPrivilegesXXX( ThisUser currentUser, string pObjectName )
-        {
-            LoggingHelper.DoTrace( 2, string.Format( "Isle.BizServices.SecurityManager.GetGroupObjectPrivileges(ThisUser currentUser). UserId: {0}, object: {1}", currentUser.Id, pObjectName ) );
-            ApplicationRolePrivilege entity = new ApplicationRolePrivilege();
-
-            if ( currentUser.OrgMemberships == null )
-            {
-                List<OrganizationMember> orgs = OrganizationBizService.OrganizationMember_GetUserOrgs( currentUser.Id );
-                if ( currentUser.OrgId > 0 )
-                {
-                    bool hasOrg = false;
-                    if ( orgs == null )
-                        orgs = new List<OrganizationMember>();
-                    //check if included in orgs
-                    foreach ( OrganizationMember mbr in orgs )
-                    {
-                        if ( mbr.OrgId == currentUser.OrgId )
-                        {
-                            hasOrg = true;
-                            break;
-                        }
-                    }
-                    if ( hasOrg == false )
-                    {
-                        OrganizationMember om = new OrganizationMember();
-                        om.OrgId = currentUser.OrgId;
-                        om.UserId = currentUser.Id;
-                        om.OrgMemberTypeId = OrganizationMember.MEMBERTYPE_EMPLOYEE;
-                        om.MemberRoles = new List<OrganizationMemberRole>();
-
-                        orgs.Add( om );
-                    }
-                }
-                //this would have to be added back to session to be useful (ie session persisted!)
-                currentUser.OrgMemberships = orgs;
-            }
-
-            entity =  MyManager.GetUserGroupObjectPrivileges( currentUser, pObjectName );
-
-            return entity;
-        }//
         #endregion  
 
         #region ApplicationGroupPrivilege
@@ -162,6 +123,33 @@ namespace Isle.BizServices
                 return entity;
             }
         }//
+
+        /// <summary>
+        /// Get all app object privileges for the group
+        /// </summary>
+        /// <param name="groupId"></param>
+        /// <returns></returns>
+        public static DataSet ApplicationGroupPrivilege_Select( int groupId )
+        {
+            return MyManager.ApplicationGroupPrivilege_Select( groupId );
+        }
+
+        /// <summary>
+        /// Get application objects not currently in passed group
+        /// </summary>
+        /// <param name="groupId"></param>
+        /// <returns></returns>
+        public static DataSet ApplicationGroupPrivilege_SelectNotInGroup( int groupId )
+        {
+            return MyManager.ApplicationGroupPrivilege_SelectNotInGroup( groupId );
+        }
+
+        public static List<ApplicationGroupPrivilege> ApplicationGroupPrivilegeSelect( int groupId )
+        {
+            return EFMgr.ApplicationGroupPrivilege_Select( groupId );
+        }
+
+
         public static List<CodeItem> Codes_PrivilegeDepth_Select()
         {
             List<CodeItem> list = EFMgr.Codes_PrivilegeDepth_Select();

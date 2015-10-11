@@ -9,7 +9,7 @@ using LRWarehouse.DAL;
 using System.Web.Script.Serialization;
 using LRWarehouse.Business;
 
-namespace ILPathways.Services
+namespace IOER.Services
 {
     /// <summary>
     /// Summary description for ResourceStandardsService

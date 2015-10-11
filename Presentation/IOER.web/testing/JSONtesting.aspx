@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="JSONtesting.aspx.cs" Inherits="ILPathways.testing.JSONtesting" MasterPageFile="/Masters/Responsive.Master" %>
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="JSONtesting.aspx.cs" Inherits="IOER.testing.JSONtesting" MasterPageFile="/Masters/Responsive.Master" %>
 
 <asp:Content runat="server" ContentPlaceHolderID="BodyContent">
   <link rel="stylesheet" href="/Styles/common2.css" type="text/css" />

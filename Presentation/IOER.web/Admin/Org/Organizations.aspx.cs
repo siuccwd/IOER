@@ -14,12 +14,12 @@ using ILPathways.Utilities;
 using EmailHelper = ILPathways.Utilities.EmailManager;
 using MyManager = Isle.BizServices.OrganizationBizService;
 using AcctManager = Isle.BizServices.AccountServices;
-using ILPathways.DAL;
+//using ILPathways.DAL;
 using ILPathways.Business;
 using Isle.BizServices;
 
 using LRWarehouse.Business;
-using LRWarehouse.DAL;
+using LRDAL = LRWarehouse.DAL;
 using LDBM = LRWarehouse.DAL.DatabaseManager;
 
 namespace ILPathways.Admin.Org
@@ -33,6 +33,14 @@ namespace ILPathways.Admin.Org
         string statusMessage = "";
 
         #region Properties
+        /// <summary>
+        /// Set value used when check form privileges
+        /// </summary>
+        public string FormSecurityName
+        {
+            get { return this.formSecurityName.Text; }
+            set { this.formSecurityName.Text = value; }
+        }
         public int LastOrgId
         {
             get
@@ -153,6 +161,15 @@ namespace ILPathways.Admin.Org
 
         protected void Page_Load( object sender, EventArgs e )
         {
+            if (IsUserAuthenticated() == false)
+            {
+                SetConsoleErrorMessage("Error: you must be authenticated in order to use this page.<br/>Please login and try again.");
+                TabContainer1.Visible = false;
+                return;
+            }
+            //get current user
+            CurrentUser = GetAppUser();
+
             if ( !this.IsPostBack )
             {
                 this.InitializeForm();
@@ -162,15 +179,39 @@ namespace ILPathways.Admin.Org
         private void InitializeForm()
         {
             PopulateControls();
+            //formSecurityName
+            this.FormPrivileges = SecurityManager.GetGroupObjectPrivileges(this.CurrentUser, FormSecurityName);
+            if (FormPrivileges.CreatePrivilege < 2)
+            {
+                if (OrganizationBizService.IsAnyOrgAdministrator(CurrentUser.Id))
+                {
+                    FormPrivileges.SetOrgPrivileges();
+                }
+            }
 
+            RecordPrivileges = new ApplicationRolePrivilege();
+
+
+            //TODO - add checks to ensure user has access to the entered orgId
+            //actually add guid version
             int recordId = GetRequestKeyValue( "id", 0 );
+            string rowId = GetRequestKeyValue( "rid", "" );
             if ( recordId > 0 )
             {
-                LastOrgId = recordId;
                 TabContainer1.ActiveTabIndex = 1;
                 DoMembersSearch();
                 this.Get( recordId );
             }
+            else if ( rowId.Length == 36 )
+            {
+                TabContainer1.ActiveTabIndex = 1;
+                DoMembersSearch();
+                this.Get(rowId);
+            }
+
+            //do an auto search
+            DoSearch();
+
             try
             {
                 //we don't want addThis on this page, so show literal in master
@@ -200,15 +241,21 @@ namespace ILPathways.Admin.Org
                     memberPanel.Visible = false;
                     litOrgTitle.Text = "";
                 }
-                else if ( LastOrgId > 0 && LastOrgId != LocalOrgId)
+                else if ( LastOrgId > 0 )
                 {
-                    //likely due to addition of new org
-                    //can't add members yet, but maybe make members visible?
-                    memberPanel.Visible = true;
-                    addMemberPanel.Visible = false;
-                    importPanel.Visible = false;
-                    LocalOrgId = LastOrgId;
-                    Get( LocalOrgId );
+                    if (LastOrgId != LocalOrgId)  
+                    {
+                        //likely due to addition of new org
+                        //can't add members yet, but maybe make members visible?
+                        memberPanel.Visible = true;
+                        addMemberPanel.Visible = false;
+                        importPanel.Visible = false;
+
+                        LocalOrgId = LastOrgId;
+                        Get( LocalOrgId );
+                    }
+
+                   
                 }
             }
             catch
@@ -320,6 +367,13 @@ namespace ILPathways.Admin.Org
             string filter = "";
             string booleanOperator = "AND";
 
+            //need to limit to orgs user is allowed to see
+            if (FormPrivileges.CreatePrivilege < 4)
+            {
+                string where = string.Format(orgAdminFilter.Text, CurrentUser.Id);
+                filter += MyManager.FormatSearchItem(filter, where, booleanOperator);
+            }
+            //
             int typeId = 0;
             if ( ddlOrgType.SelectedIndex > 0 )
             {
@@ -392,6 +446,7 @@ namespace ILPathways.Admin.Org
                 else
                 {
                     litOrgTitle.Text = entity.Name;
+                    LocalOrgId = LastOrgId = entity.Id;
                 }
 
             }
@@ -405,6 +460,35 @@ namespace ILPathways.Admin.Org
 
         }	// End method
 
+        public void Get( string recId )
+        {
+            try
+            {
+                //get record
+                Organization entity = MyManager.EFGetByRowId( recId );
+
+                if ( entity == null || entity.IsValid == false )
+                {
+                    this.SetConsoleErrorMessage( "Sorry the requested record does not exist" );
+                    return;
+
+                }
+                else
+                {
+                    litOrgTitle.Text = entity.Name;
+                    LocalOrgId = LastOrgId = entity.Id;
+                }
+
+            }
+            catch ( System.Exception ex )
+            {
+                //Action??		- display message and close form??	
+                LoggingHelper.LogError( ex, thisClassName + ".Get() - Unexpected error encountered" );
+                this.SetConsoleErrorMessage( "Unexpected error encountered - Close this form and try again. (System Admin has been notified)<br/>" + ex.ToString() );
+
+            }
+
+        }	// End method
 
         /// <summary>
         /// Reset selected item on sort
@@ -603,7 +687,7 @@ namespace ILPathways.Admin.Org
         }
         protected void ResetMember()
         {
-
+            profileLinkPanel.Visible = false;
             mbrDetailPanel.Enabled = true;
             lblUserId.Text = "0";
             lblAddMbrUserId.Text = "0";
@@ -623,7 +707,9 @@ namespace ILPathways.Admin.Org
             existingMbrOptionPanel.Visible = false;
 
             addMemberPanel.Visible = true;
+
             ResetMember();
+            profileLinkPanel.Visible = true;
             Patron user = AccountServices.GetUser( id );
 
             lblUserId.Text = user.Id.ToString();
@@ -631,6 +717,7 @@ namespace ILPathways.Admin.Org
             txtLastName.Text = user.LastName;
             txtEmail.Text = user.Email;
             txtConfirmEmail.Text = user.Email;
+            profileLink.NavigateUrl = string.Format(profileUrl.Text, user.Id, user.FullName());
 
             OrganizationMember ombr = OrganizationBizService.OrganizationMember_Get( LastOrgId, user.Id );
 
@@ -762,7 +849,7 @@ namespace ILPathways.Admin.Org
             else
             {
                 //existing user, must exist
-                user = new PatronManager().GetByEmail( inputEmail );
+                user = new AcctManager().GetByEmail(inputEmail);
                 if ( user.IsValid && user.Id > 0 )
                 {
                     lblAddMbrUserId.Text = user.Id.ToString();
@@ -1007,12 +1094,12 @@ namespace ILPathways.Admin.Org
                 if ( currentOmbr.Id == 0 )
                 {
                     currentOmbr.CreatedById = WebUser.Id;
-                    orgMbrId = MyManager.OrganizationMember_Create( currentOmbr, ref statusMessage );
+                    orgMbrId = myManager.OrganizationMember_Create( currentOmbr, ref statusMessage );
                     currentOmbr.Id = orgMbrId;
                 }
                 else
                 {
-                    MyManager.OrganizationMember_Update( currentOmbr );
+                    myManager.OrganizationMember_Update( currentOmbr );
                 }
             }
 
@@ -1050,7 +1137,7 @@ namespace ILPathways.Admin.Org
                 if ( roleFound == false )
                 {
                     //delete role
-                    MyManager.OrganizationMemberRole_Delete( role2.Id, ref statusMessage );
+                    myManager.OrganizationMemberRole_Delete( role2.Id, ref statusMessage );
                 }
             }
             //handle new
@@ -1076,7 +1163,7 @@ namespace ILPathways.Admin.Org
                         role.CreatedById = WebUser.Id;
                         if ( orgMbr.Id > 0 )
                         {
-                            int id = MyManager.OrganizationMemberRole_Create( role, ref statusMessage );
+                            int id = myManager.OrganizationMemberRole_Create( role, ref statusMessage );
                         }
                     }
                 }

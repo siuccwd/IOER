@@ -738,7 +738,9 @@ namespace ILPathways.DAL
                     foreach ( DataRow dr in ds.Tables[ 0 ].Rows )
                     {
                         Library entity = Fill( dr );
-                        collection.Add( entity );
+						//TODO - need to eventually only show org libs, and totals for personal public personal libs
+						//if (entity.OrgId > 0)
+							collection.Add( entity );
                     }
                 }
                 return collection;

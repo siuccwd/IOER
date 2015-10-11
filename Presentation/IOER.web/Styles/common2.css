@@ -1,5 +1,6 @@
 ﻿/* Big stuff */
-* { box-sizing: border-box; -moz-box-sizing: border-box; -webkit-box-sizing: border-box; }
+* { box-sizing: border-box; -moz-box-sizing: border-box; -webkit-box-sizing: border-box; font-size: 16px; }
+body { width: initial; margin-left: initial; margin-right: initial; }
 form #container.addThis { transition: padding 1s; }
 @media screen and (min-width: 979px) {
   form #container.addThis { padding-left: 50px; }
@@ -8,7 +9,8 @@ form #container.addThis { transition: padding 1s; }
 /* Gray Boxes */
 /* Margins intentionally left out--it's usually better to pad the parent element */
 .grayBox { background-color: #EEE; padding: 10px; border-radius: 5px; }
-.grayBox .header { background-color: #4AA394; display: block; color: #FFF; font-size: 1.2em; margin: -10px -10px 5px -10px; padding: 2px 5px; border-radius: 5px 5px 0 0; }
+.grayBox .header, .grayBox .midHeader { background-color: #4AA394; display: block; color: #FFF; font-size: 1.2em; margin: -10px -10px 5px -10px; padding: 2px 5px; border-radius: 5px 5px 0 0; }
+.grayBox .midHeader { border-radius: 0; margin: 10px -10px 5px -10px; }
 .grayBox .mid { background-color: #DDD; font-size: 1.1em; margin: 5px -10px 5px -10px; padding: 1px 5px; }
 .grayBox.slim { padding: 5px; }
 .grayBox.slim .header { margin: -5px -5px 5px -5px; }
@@ -16,11 +18,12 @@ form #container.addThis { transition: padding 1s; }
 
 /* Buttons */
 input[type=button]:hover, input[type=button]:focus, input[type=submit]:hover, input[type=submit]:focus { cursor: pointer; }
-.isleButton { padding: 2px 5px; width: 100%; color: #FFF; font-weight: bold; border-radius: 5px; border-width: 1px; transition: background-color 0.1s, color 0.1s; }
+.isleButton { padding: 2px 5px; width: 100%; color: #FFF; font-weight: bold; border-radius: 5px; border-width: 1px; transition: background-color 0.2s, color 0.2s; }
 .isleButton:hover, .isleButton:focus { background-color: #FF6A00; color: #FFF; cursor: pointer; }
 .isleButton.shaded { box-shadow: 0 5px 25px -5px #FFF inset; border: 1px solid #FFF; }
 .closeButton { color: #FFF; background-color: #D33; border-radius: 5px; text-align: center; padding-bottom: 1px; height: 23px; width: 23px; font-size: 22px; line-height: 16px; font-weight: bold; border: 0; float: right; }
 .closeButton:hover, .closeButton:focus { background-color: #F00; box-shadow: 0 0 10px -3px #F00; }
+input[type=button], input[type=submit] { -webkit-appearance: none; } /* Fix for iOS Safari */
 
 /* Inputs */
 .bigText label, .bigText input[type=text], .bigText input[type=password], .bigText select, .bigText input[type=file], .bigText div.displayDiv,
@@ -58,8 +61,8 @@ div.displayDiv.bigText { padding: 2px 5px; }
 #content { transition: padding-left 1s; -webkit-transition: padding-left 1s; min-width: 300px; }
 #at4-share { transition: left 1s; -webkit-transition: left 1s; left: -50px; }
 @media screen and (min-width: 980px) {
-  #content { padding-left: 50px; }
-  #at4-share { left: 0px; }
+  #content { padding: 0 40px 0 15px; }
+  #at4-share { left: auto !important; right: 0; }
 }
 
 /* Lists */

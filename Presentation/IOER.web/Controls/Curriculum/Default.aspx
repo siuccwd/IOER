@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="Default.aspx.cs" Inherits="ILPathways.Controls.Curriculum.Default" MasterPageFile="/Masters/Responsive.Master" %>
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="Default.aspx.cs" Inherits="IOER.Controls.Curriculum.Default" MasterPageFile="/Masters/Responsive.Master" %>
 <%@ Register TagPrefix="uc1" TagName="CurriculumControl" Src="/Controls/Curriculum/CurriculumView1.ascx" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="HeadContent" runat="server">

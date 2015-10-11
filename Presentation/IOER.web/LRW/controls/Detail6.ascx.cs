@@ -7,7 +7,7 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 
 using ILPathways.Utilities;
-using ILPathways.Library;
+using IOER.Library;
 using System.Web.Script.Serialization;
 //using ILPathways.DAL;
 using Isle.BizServices;
@@ -20,7 +20,7 @@ using LRWarehouse.Business;
 
 using MyLibraryManager = Isle.BizServices.LibraryBizService;
 
-namespace ILPathways.LRW.controls
+namespace IOER.LRW.controls
 {
     public partial class Detail6 : BaseUserControl
     {
@@ -150,6 +150,7 @@ namespace ILPathways.LRW.controls
                 {
 
                     resourceIntID = 0;
+					//or use display version to primarily get keywords to feed meta tags
                     ResourceVersion entity = MyManager.ResourceVersion_Get( resourceVersionID );
                     var isActive = false;
                     if ( entity != null && entity.Id > 0 )
@@ -160,6 +161,9 @@ namespace ILPathways.LRW.controls
                         int libId = FormHelper.GetRequestKeyValue( "libId", 0 );
                         int colId = FormHelper.GetRequestKeyValue( "colId", 0 );
                         ActivityBizServices.ResourceHit( resourceIntID, entity.Title, libId, colId, WebUser );
+
+						SetMetaTags( entity.Description );
+						SetMetaTags( entity.Title, "keywords" );
                     }
 
                     return ( resourceVersionID != 0 && isActive );
@@ -241,7 +245,7 @@ namespace ILPathways.LRW.controls
                 if ( FormPrivileges.CreatePrivilege > ( int )EPrivilegeDepth.Region )
                 {
                     btnUbertag.Visible = true;
-                    btnUbertag.Attributes[ "onclick" ] = "window.location.href = '/ubertagger?resourceid=" + resourceIntID + "'";
+										btnUbertag.Attributes[ "onclick" ] = "window.location.href = '/tagger?theme=ioer&mode=tag&resourceID=" + resourceIntID + "'";
                     btnDeactivateResource.Visible = true;
                     btnReActivateResource.Visible = true;
                     btnRegenerateThumbnail.Visible = true;

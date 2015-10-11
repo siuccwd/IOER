@@ -6,7 +6,7 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using ILPathways.Utilities;
 
-namespace ILPathways.Account
+namespace IOER.Account
 {
     public partial class Profile : System.Web.UI.Page
     {

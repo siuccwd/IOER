@@ -6,17 +6,17 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
-using ILPathways.Library;
+using IOER.Library;
 using ILPathways.Utilities;
-using ILPathways.classes;
+using IOER.classes;
 using ILPathways.Business;
 using MyManager = ILPathways.DAL.AppItemManager;
 
-using wnAppItem = ILPathways.AppItemsServiceReference;
+using wnAppItem = IOER.AppItemsServiceReference;
 using BDM = LRWarehouse.DAL.DatabaseManager;
 using LRWarehouse.DAL;
 
-namespace ILPathways.Controllers
+namespace IOER.Controllers
 {
 	public class AppItemController : BaseController
     {
@@ -53,7 +53,7 @@ namespace ILPathways.Controllers
 
             if ( keywords.Trim().Length > 0 )
             {
-                string keyword = BDM.HandleApostrophes( FormHelper.SanitizeUserInput( keywords.Trim() ) );
+                string keyword = BDM.HandleApostrophes( FormHelper.CleanText( keywords.Trim() ) );
 
                 if ( keyword.IndexOf( "%" ) == -1 )
                     keyword = "%" + keyword + "%";

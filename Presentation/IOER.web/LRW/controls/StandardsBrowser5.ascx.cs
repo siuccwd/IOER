@@ -5,7 +5,7 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
-namespace ILPathways.LRW.controls
+namespace IOER.LRW.controls
 {
     public partial class StandardsBrowser5 : System.Web.UI.UserControl
     {

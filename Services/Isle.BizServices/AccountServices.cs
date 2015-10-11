@@ -4,6 +4,8 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
+using System.Web;
+using System.Web.SessionState;
 //using AutoMapper;
 
 using ILPathways.Business;
@@ -18,7 +20,7 @@ using PatronMgr = LRWarehouse.DAL.PatronManager;
 //using PatronMgr = ILPathways.DAL.PatronManager;
 
 using LRWarehouse.Business;
-using ThisUser = LRWarehouse.Business.Patron;
+using Patron = LRWarehouse.Business.Patron;
 using ThisUserProfile = LRWarehouse.Business.PatronProfile;
 using EFDal = IOERBusinessEntities;
 
@@ -34,23 +36,44 @@ namespace Isle.BizServices
 
         #region Authorization
 
-        private static bool CanUserAuthor( ThisUser appUser )
+        private static bool CanUserAuthor( Patron appUser )
         {
             bool isValid = false;
 
             return isValid;
         }
 
-        private static bool CanUserOrgAuthor( ThisUser appUser )
+        private static bool CanUserOrgAuthor( Patron appUser )
         {
             bool isValid = false;
 
             return isValid;
         }
-       
 
+		/// <summary>
+		/// return true if user is part of the site admin group
+		/// </summary>
+		/// <param name="user"></param>
+		/// <returns></returns>
+		public bool IsUserAdmin(Patron user)
+		{
+			string siteAdminObjectName = ServiceHelper.GetAppKeyValue("siteAdminObjectName");
+			//"Site.Admin"
+			return SecurityManager.GetGroupObjectPrivileges(user, siteAdminObjectName).DeletePrivilege > (int)ILPathways.Business.EPrivilegeDepth.State;
+		}
+
+		public void SetUserAdminRole(Patron appUser)
+		{
+			string siteAdminObjectName = ServiceHelper.GetAppKeyValue("siteAdminObjectName");
+			ApplicationRolePrivilege arp = SecurityManager.GetGroupObjectPrivileges(appUser, siteAdminObjectName);
+			if (arp.CreatePrivilege == 5 || arp.WritePrivilege == 5) 
+			{
+				//NOTE: this 
+				appUser.TopAuthorization = 2;
+			}
+		}
         #endregion
-        #region  ThisUser methods
+        #region  Patron methods
         #region ====== Core Methods ===============================================
         /// <summary>
         /// Delete an User record using rowId
@@ -72,7 +95,7 @@ namespace Isle.BizServices
         /// <param name="entity"></param>
         /// <param name="statusMessage"></param>
         /// <returns></returns>
-        public int Create( ThisUser entity, ref string statusMessage )
+        public int Create( Patron entity, ref string statusMessage )
         {
             PatronMgr mgr = new PatronMgr();
             return mgr.Create( entity, ref statusMessage );
@@ -84,7 +107,7 @@ namespace Isle.BizServices
         /// </summary>
         /// <param name="entity"></param>
         /// <returns></returns>
-        public string Update( ThisUser entity )
+        public string Update( Patron entity )
         {
             PatronMgr mgr = new PatronMgr();
             return mgr.Update( entity );
@@ -126,7 +149,7 @@ namespace Isle.BizServices
         /// </summary>
         /// <param name="pId"></param>
         /// <returns></returns>
-        public ThisUser Get( int pId )
+        public Patron Get( int pId )
         {
             PatronMgr mgr = new PatronMgr();
             return mgr.Get( pId );
@@ -137,7 +160,7 @@ namespace Isle.BizServices
         /// </summary>
         /// <param name="pId"></param>
         /// <returns></returns>
-        public static ThisUser GetUser( int pId )
+        public static Patron GetUser( int pId )
         {
             PatronMgr mgr = new PatronMgr();
             return mgr.Get( pId );
@@ -170,7 +193,7 @@ namespace Isle.BizServices
         /// </summary>
         /// <param name="userName"></param>
         /// <returns></returns>
-        public ThisUser GetByUsername( string userName )
+        public Patron GetByUsername( string userName )
         {
             PatronMgr mgr = new PatronMgr();
             return mgr.GetByUsername( userName );
@@ -181,7 +204,7 @@ namespace Isle.BizServices
         /// </summary>
         /// <param name="pRowId"></param>
         /// <returns></returns>
-        public ThisUser GetByRowId( string pRowId )
+        public Patron GetByRowId( string pRowId )
         {
             if ( pRowId == null || pRowId.Trim().Length != 36 )
                 return new Patron() { IsValid = false };
@@ -196,15 +219,19 @@ namespace Isle.BizServices
         /// <param name="rowId"></param>
         /// <param name="encryptedPassword"></param>
         /// <returns></returns>
-        public ThisUser GetByRowId( string rowId, ref string statusMessage )
+        public Patron GetByRowId( string rowId, ref string statusMessage )
         {
-            ThisUser user = new ThisUser();
+            Patron user = new Patron();
             string message = "There was an error while processing the request.";
 
             try
             {
                 user = myManager.GetByRowId( rowId );
-
+				if (user.Id == 0 || !user.IsValid)
+				{
+					user.IsValid = false;
+					user.Id = 0;
+				}
             }
             catch ( Exception ex )
             {
@@ -215,12 +242,13 @@ namespace Isle.BizServices
 
             return user;
         } //
+
         /// <summary>
         /// Get user using the temp proxyId
         /// </summary>
         /// <param name="pRowId"></param>
         /// <returns></returns>
-        public ThisUser GetByProxyRowId( string proxyId, ref string statusMessage  )
+        public Patron GetByProxyRowId( string proxyId, ref string statusMessage  )
         {
             if ( proxyId == null || proxyId.Trim().Length != 36 )
             {
@@ -237,7 +265,7 @@ namespace Isle.BizServices
         /// </summary>
         /// <param name="email"></param>
         /// <returns></returns>
-        public ThisUser GetByEmail( string email )
+        public Patron GetByEmail( string email )
         {
             PatronMgr mgr = new PatronMgr();
             return mgr.GetByEmail( email.Trim() );
@@ -251,7 +279,7 @@ namespace Isle.BizServices
         /// <param name="password"></param>
         /// <param name="statusMessage"></param>
         /// <returns></returns>
-        public ThisUser Login( string loginName, string password, ref string statusMessage )
+        public Patron Login( string loginName, string password, ref string statusMessage )
         {
             return Authorize( loginName, password, ref statusMessage );
         }//
@@ -263,9 +291,9 @@ namespace Isle.BizServices
         /// <param name="password"></param>
         /// <param name="statusMessage"></param>
         /// <returns></returns>
-        public ThisUser Authorize( string userName, string password, ref string statusMessage )
+        public Patron Authorize( string userName, string password, ref string statusMessage )
         {
-            ThisUser appUser = new ThisUser();
+            Patron appUser = new Patron();
             appUser.IsValid = false;
 
             if ( userName == null || userName.Length < 4
@@ -298,12 +326,14 @@ namespace Isle.BizServices
             {
                 //add proxy
                 appUser.ProxyId = Create_SessionProxyLoginId( appUser.Id, ref statusMessage );
+				//handle admin users
+				SetUserAdminRole(appUser);
             }
 
             return appUser;
         }
 
-        public ThisUser RecoverPassword( string lookup )
+        public Patron RecoverPassword( string lookup )
         {
             PatronMgr mgr = new PatronMgr();
             return mgr.RecoverPassword( lookup );
@@ -320,7 +350,7 @@ namespace Isle.BizServices
         /// <param name="pMaximumRows"></param>
         /// <param name="pTotalRows"></param>
         /// <returns></returns>
-        public List<ThisUser> Search( string pFilter, string pOrderBy, int pStartPageIndex, int pMaximumRows, bool pOutputRelTables, ref int pTotalRows )
+        public List<Patron> Search( string pFilter, string pOrderBy, int pStartPageIndex, int pMaximumRows, bool pOutputRelTables, ref int pTotalRows )
         {
             PatronMgr mgr = new PatronMgr();
             return mgr.Search( pFilter, pOrderBy, pStartPageIndex, pMaximumRows, ref pTotalRows );
@@ -380,7 +410,7 @@ namespace Isle.BizServices
                 {
                     ci = new CodeItem();
                     ci.Id = item.Id;
-                    ci.Title = item.LastName + ", " + item.FirstName;
+					ci.Title = item.LastName == null ? "" : item.LastName + ", " + item.FirstName;
                     list.Add( ci );
                 }
             }
@@ -389,6 +419,76 @@ namespace Isle.BizServices
 
         }
 
+		/// <summary>
+		/// Determine if current user is a logged in (registered) user 
+		/// </summary>
+		/// <returns></returns>
+		public static bool IsUserAuthenticated()
+		{
+			bool isUserAuthenticated = false;
+			try
+			{
+				Patron appUser = GetUserFromSession();
+				isUserAuthenticated =  IsUserAuthenticated( appUser );
+			}
+			catch
+			{
+
+			}
+
+			return isUserAuthenticated;
+		} //
+		public static bool IsUserAuthenticated( Patron appUser )
+		{
+			bool isUserAuthenticated = false;
+			try
+			{
+				if ( appUser == null || appUser.Id == 0 || appUser.IsValid == false )
+				{
+					isUserAuthenticated = false;
+				}
+				else
+				{
+					isUserAuthenticated = true;
+				}
+			}
+			catch
+			{
+
+			}
+
+			return isUserAuthenticated;
+		} //
+		public static Patron GetUserFromSession()
+		{
+			if ( HttpContext.Current.Session != null )
+			{
+				return GetUserFromSession( HttpContext.Current.Session );
+			}
+			else
+				return null;
+		} //
+
+		public static Patron GetUserFromSession( HttpSessionState session )
+		{
+			Patron user = new Patron();
+			try
+			{ 		//Get the user
+				user = ( Patron ) session[ Constants.USER_REGISTER ];
+
+				if ( user.Id == 0 || !user.IsValid )
+				{
+					user.IsValid = false;
+					user.Id = 0;
+				}
+			}
+			catch
+			{
+				user = new Patron();
+				user.IsValid = false;
+			}
+			return user;
+		}
         #endregion
         #endregion
 
@@ -435,6 +535,12 @@ namespace Isle.BizServices
             return Create_ProxyLoginId( userId, proxyType, expiryDays, ref statusMessage );
 
         }
+
+        public string Create_SSOProxyLoginId(int userId, ref string statusMessage)
+        {
+            return Create_ProxyLoginId(userId, "SSO", 1, ref statusMessage);
+        }
+
         /// <summary>
         /// Create a proxy guid for use in auto login
         /// </summary>
@@ -542,9 +648,9 @@ namespace Isle.BizServices
             return userId;
 
         }
-        public ThisUser GetUserFromProxy( string rowId, ref string statusMessage )
+        public Patron GetUserFromProxy( string rowId, ref string statusMessage )
         {
-            ThisUser user = new ThisUser();
+            Patron user = new Patron();
             if ( rowId == null || rowId.Trim().Length != 36 )
             {
                 statusMessage = "Error: invalid proxy id.";
@@ -608,25 +714,25 @@ namespace Isle.BizServices
 
         public static DashboardDTO GetMyDashboard( int forUserId )
         {
-            ThisUser user = GetUser( forUserId );
+            Patron user = GetUser( forUserId );
 
             return GetDashboard( user, forUserId, resourcesToReturnCount );
         }
-        public static DashboardDTO GetMyDashboard( ThisUser user )
+        public static DashboardDTO GetMyDashboard( Patron user )
         {
             return GetDashboard( user, user.Id, resourcesToReturnCount );
         }
-        public static DashboardDTO GetMyDashboard( ThisUser user, int maxResources )
+        public static DashboardDTO GetMyDashboard( Patron user, int maxResources )
         {
             return GetDashboard( user, user.Id, maxResources );
         }
         private static DashboardDTO GetDashboard( int forUserId, int requestedByUserId )
         {
-            ThisUser user = GetUser( forUserId );
+            Patron user = GetUser( forUserId );
             return GetDashboard( user, requestedByUserId, resourcesToReturnCount );
         }
        
-        public static DashboardDTO GetDashboard( ThisUser user, int requestedByUserId, int maxResources )
+        public static DashboardDTO GetDashboard( Patron user, int requestedByUserId, int maxResources )
         {
             DashboardDTO dto = new DashboardDTO();
             if ( user.Id == requestedByUserId )
@@ -666,23 +772,23 @@ namespace Isle.BizServices
                 dto.message = "Error - a userid is required";
                 return;
             }
-            ThisUser user = GetUser( dto.userId );
+            Patron user = GetUser( dto.userId );
 
             FillDashboard( dto, user, dto.userId, resourcesToReturnCount );
         }
 
-        public static void FillDashboard( DashboardDTO dto, ThisUser user )
+        public static void FillDashboard( DashboardDTO dto, Patron user )
         {
-            //ThisUser user = GetUser( forUserId );
+            //Patron user = GetUser( forUserId );
 
             FillDashboard( dto, user, user.Id, resourcesToReturnCount );
         }
         public static void FillDashboard( DashboardDTO dto, int forUserId, int requestedByUserId )
         {
-            ThisUser user = GetUser( forUserId );
+            Patron user = GetUser( forUserId );
             FillDashboard( dto, user, requestedByUserId, resourcesToReturnCount );
         }
-        public static void FillDashboard( DashboardDTO dto, ThisUser user, int requestedByUserId, int maxResources )
+        public static void FillDashboard( DashboardDTO dto, Patron user, int requestedByUserId, int maxResources )
         {
             //should be initialized, but just in case
             if (dto == null)
@@ -735,23 +841,23 @@ namespace Isle.BizServices
         #region ====== workNet/external Methods ===============================================
         string codedPassword = "Niemand hat die Absicht, eine mauer zu errichten!";
 
-        public ThisUser GetByWorkNetId( int pworkNetId )
+        public Patron GetByWorkNetId( int pworkNetId )
         {
             PatronMgr mgr = new PatronMgr();
             return mgr.GetByWorkNetId( pworkNetId );
         }//
 
-        public ThisUser GetByWorkNetCredentials( string loginId, string token )
+        public Patron GetByWorkNetCredentials( string loginId, string token )
         {
             return GetByExtSiteCredentials( 1, loginId, token );
         }//
 
-        public ThisUser GetByExtSiteCredentials( int externalSiteId, string loginId, string token )
+        public Patron GetByExtSiteCredentials( int externalSiteId, string loginId, string token )
         {
             PatronMgr mgr = new PatronMgr();
             return mgr.GetByExtSiteCredentials( externalSiteId, loginId, token );
         }//
-        public ThisUser LoginViaWorkNet( string loginName, string password )
+        public Patron LoginViaWorkNet( string loginName, string password )
         {
             AcctSvce.AccountSoapClient wsClient = new AcctSvce.AccountSoapClient();
             AcctSvce.AccountDetail acct = new AcctSvce.AccountDetail();
@@ -762,8 +868,8 @@ namespace Isle.BizServices
             if ( acct != null && acct.worknetId > 0 )
             {
                 //now do we arbitrarily create a pathways account?
-                //BO.ThisUser user = new BO.ThisUser();
-                ThisUser user = new ThisUser();
+                //BO.Patron user = new BO.Patron();
+                Patron user = new Patron();
                 user.FirstName = acct.firstName;
                 user.LastName = acct.lastName;
                 user.Email = acct.email;
@@ -777,7 +883,7 @@ namespace Isle.BizServices
             }
             else
             {
-                ThisUser user = new ThisUser();
+                Patron user = new Patron();
                 user.Message = acct.statusMessage; //"Error: Invalid Username or Password";
                 user.IsValid = false;
 

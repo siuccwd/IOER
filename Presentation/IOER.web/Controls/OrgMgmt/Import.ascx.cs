@@ -1,27 +1,28 @@
-﻿using ILPathways.Business;
-using ILPathways.Library;
-using ILPathways.Utilities;
-using Isle.BizServices;
-//using MyController = workNet.Controllers.GroupsManagementController;
-using LRWarehouse.Business;
-using LumenWorks.Framework.IO.Csv;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.OleDb;
 using System.IO;
 using System.Web.UI.WebControls;
+
+using ILPathways.Business;
+using ILPathways.Utilities;
+using IOER.Library;
+using Isle.BizServices;
+
+using LRWarehouse.Business;
+using LumenWorks.Framework.IO.Csv;
 using MyManager = Isle.BizServices.AccountServices;
 using OrgManager = Isle.BizServices.OrganizationBizService;
 
-namespace ILPathways.Controls.OrgMgmt
+namespace IOER.Controls.OrgMgmt
 {
     public partial class Import : BaseUserControl
     {
-        const string thisClassName = "ILPathways.Controls.OrgMgmt_Import";
+        const string thisClassName = "IOER.Controls.OrgMgmt_Import";
         const string fileName = "";
         MyManager myManager = new MyManager();
-        //MyController myc = new MyController( MyController.SYEP2013_MASTER_GROUP_CODE );
+        OrgManager orgManager = new OrgManager();
 
         int insertErrors = 0;
         int insertSuccess = 0;
@@ -643,7 +644,7 @@ namespace ILPathways.Controls.OrgMgmt
                     if ( myManager.PatronProfile_Create( prof, ref statusMessage ) > 0 )
                     {
                         //add to org
-                        int omid = OrgManager.OrganizationMember_Create( orgId, prof.UserId, import.EmployeeTypeId, WebUser.Id, ref statusMessage );
+                        int omid = orgManager.OrganizationMember_Create( orgId, prof.UserId, import.EmployeeTypeId, WebUser.Id, ref statusMessage );
                         //what about libraries??
                         if ( omid > 0 )
                         {

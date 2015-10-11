@@ -1,4 +1,4 @@
-﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="ContactMgmt.ascx.cs" Inherits="ILPathways.Controls.OrgMgmt.ContactMgmt" %>
+﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="ContactMgmt.ascx.cs" Inherits="IOER.Controls.OrgMgmt.ContactMgmt" %>
 
 <%@ Register Src="~/Controls/OrgMgmt/Import.ascx" TagPrefix="uc1" TagName="Import" %>
 <h2 style="text-align: center;"><asp:Literal ID="litOrgTitle" runat="server"></asp:Literal></h2>

@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ILPathways.Controls.AppItems {
+namespace IOER.Controls.AppItems {
     
     
     public partial class AnnouncementDisplay {

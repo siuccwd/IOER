@@ -4,10 +4,11 @@ using System.Linq;
 using System.Web;
 
 using LRWarehouse.Business;
-using ILPathways.Services;
+using IOER.Services;
 using Isle.BizServices;
+using Patron = LRWarehouse.Business.Patron;
 
-namespace ILPathways.Services.AdminService1Components
+namespace IOER.Services.AdminService1Components
 {
   public class LearningList : IManageObject
   {
@@ -30,7 +31,7 @@ namespace ILPathways.Services.AdminService1Components
     }
     public List<UserDTO> ListAllMembers( int manageID )
     {
-      var data = service.Learninglist_AllUsers( manageID );
+        var data = CurriculumServices.Learninglist_AllUsers( manageID );
       return GetUserDTOs( data );
     }
     public List<UserDTO> ListMembers( int manageID, int privilegeID )
@@ -87,7 +88,7 @@ namespace ILPathways.Services.AdminService1Components
     private Valid GetUpdatedMembership( int manageID, int memberID, int privilegeID, int userID )
     {
       var result = new Valid() { id = memberID };
-
+      string status = "";
       //Get the member
       var member = ContentServices.ContentPartner_Get( manageID, memberID );
 
@@ -95,7 +96,7 @@ namespace ILPathways.Services.AdminService1Components
       member.PartnerTypeId = privilegeID;
 
       //Save
-      if ( service.ContentPartner_Update( member ) )
+      if ( service.ContentPartner_Update( member, ref status ) )
       {
         result.valid = true;
       }

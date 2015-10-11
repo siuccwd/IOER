@@ -9,7 +9,7 @@ using Isle.BizServices;
 using LRWarehouse.Business.ResourceV2;
 using System.Drawing;
 
-namespace ILPathways.Controls.SearchV6.Themes
+namespace IOER.Controls.SearchV6.Themes
 {
   public partial class ioer : SearchTheme
   {
@@ -18,7 +18,8 @@ namespace ILPathways.Controls.SearchV6.Themes
     {
       //var fields = ltlFieldList.Text.Split( ',' ).ToList();
       //Temporary
-      var fields = "accessRights,accessibilityAPI,accessibilityControl,accessibilityFeature,accessibilityHazard,educationalRole,careerCluster,educationalUse,gradeLevel,groupType,inLanguage,mediaType,learningResourceType,k12Subject,assessmentType".Split( ',' ).ToList();
+			//var fields = "accessRights,accessibilityAPI,accessibilityControl,accessibilityFeature,accessibilityHazard,educationalRole,careerCluster,educationalUse,gradeLevel,groupType,inLanguage,mediaType,learningResourceType,k12Subject,assessmentType,usageRights,nrsEducationalFunctioningLevel".Split( ',' ).ToList();
+			var fields = "educationalRole,careerCluster,educationalUse,gradeLevel,inLanguage,mediaType,learningResourceType,k12Subject,nrsEducationalFunctioningLevel".Split( ',' ).ToList();
       SetFields( fields );
 
       //Fields = new ResourceV2Services().GetFieldAndTagCodeData();
@@ -29,8 +30,12 @@ namespace ILPathways.Controls.SearchV6.Themes
 
     protected void Page_Load( object sender, EventArgs e )
     {
-      
     }
 
+		public override string GetInitialSearchDataJSON() {
+			var splash = new Splash3();
+			splash.GetNewestResourcesV7();
+			return splash.newestResources;
+		}
   }
 }

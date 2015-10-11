@@ -25,5 +25,7 @@ namespace IOERBusinessEntities
         public Nullable<int> ConditionOfUseCategory { get; set; }
         public Nullable<int> WarehouseTotal { get; set; }
         public string MiniIconUrl { get; set; }
+        public bool IsCustom { get; set; }
+        public bool IsUnknown { get; set; }
     }
 }

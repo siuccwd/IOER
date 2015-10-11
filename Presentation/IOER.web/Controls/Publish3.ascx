@@ -1,4 +1,4 @@
-﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="Publish3.ascx.cs" Inherits="ILPathways.Controls.Publish3" %>
+﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="Publish3.ascx.cs" Inherits="IOER.Controls.Publish3" %>
 <%@ Register TagPrefix="custom" TagName="StandardsBrowser" Src="/Controls/StandardsBrowser7.ascx" %>
 <%@ Register TagPrefix="custom" TagName="UsageRightsSelector" Src="/LRW/Controls/ConditionsOfUseSelector.ascx" %>
 <%@ Register TagPrefix="custom" TagName="CheckBoxList" Src="/LRW/Controls/ListPanel.ascx" %>

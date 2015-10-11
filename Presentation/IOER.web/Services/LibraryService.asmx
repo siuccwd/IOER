@@ -1,1 +1,1 @@
-﻿<%@ WebService Language="C#" CodeBehind="LibraryService.asmx.cs" Class="ILPathways.Services.LibraryService" %>
+﻿<%@ WebService Language="C#" CodeBehind="LibraryService.asmx.cs" Class="IOER.Services.LibraryService" %>

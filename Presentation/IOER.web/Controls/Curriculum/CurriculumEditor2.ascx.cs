@@ -6,15 +6,16 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 
 using System.Data;
-using ILPathways.Library;
+using IOER.Library;
 using Isle.BizServices;
 using System.Web.Script.Serialization;
-using ILPathways.Services;
+using IOER.Services;
 using ILPathways.Business;
 using LRWarehouse.DAL;
 using LRWarehouse.Business;
+using LRWarehouse.Business.ResourceV2;
 
-namespace ILPathways.Controls.Curriculum
+namespace IOER.Controls.Curriculum
 {
   public partial class CurriculumEditor2 : BaseUserControl
   {
@@ -54,6 +55,9 @@ namespace ILPathways.Controls.Curriculum
     //List of siblings of the current node
     public List<Isle.DTO.ContentNode> nodeSiblings { get; set; }
 
+		//Usage Rights list
+		public List<UsageRights> UsageRightsList { get; set; }
+
     //Nearby nodes
     public int previousNodeID { get; set; }
     public int nextNodeID { get; set; }
@@ -71,48 +75,59 @@ namespace ILPathways.Controls.Curriculum
       currentNode = new ContentItem();
     }
 
-    protected void Page_Load( object sender, EventArgs e )
-    {
-      //Get started
-      if ( IsPostBack )
-      {
-        CreateNewCurriculum();
-        return;
-      }
+	protected void Page_Load(object sender, EventArgs e)
+	{
+		//Get started
+		if (IsPostBack)
+		{
+			CreateNewCurriculum();
+			return;
+		}
 
-      //Determine mode
-      curriculumError.Visible = false;
-      var node = Request.Params[ "node" ] ?? Page.RouteData.Values[ "node" ].ToString();
-      if ( node == "new" )
-      {
-        //Show the create interface
-        curriculumEditor.Visible = false;
-        curriculumStarter.Visible = true;
-        LoadOrganizationDDL();
-      }
-      else
-      {
-        curriculumStarter.Visible = false;
-        curriculumEditor.Visible = true;
+		//Determine mode
+		curriculumError.Visible = false;
+		var node = Request.Params["node"] ?? Page.RouteData.Values["node"].ToString();
 
-        //Must load these code tables first
-        LoadPermissionDDLs();
-        
-        //kill if this fails
-        if ( !LoadParameters() ) { return; }
-           
-        LoadStandards();
-        LoadAttachments();
-        LoadNodeSiblings();
-      }
+		//Reject if user isn't logged in
+		//shouldn't this be done earlier? MP moved 15-09-20
+		if (!IsUserAuthenticated())
+		{
+			Response.Redirect("/Account/Login.aspx?nextUrl=/My/LearningList/" + node);
+		}
 
-      //Reject if user isn't logged in
-      if ( !IsUserAuthenticated() )
-      {
-        Response.Redirect( "/Account/Login.aspx?nextUrl=/My/LearningList/" + node );
-      }
+		if (node == "new")
+		{
+			//Show the create interface
+			curriculumEditor.Visible = false;
+			curriculumStarter.Visible = true;
+			LoadOrganizationDDL();
+		}
+		else
+		{
+			curriculumStarter.Visible = false;
+			curriculumEditor.Visible = true;
 
-    }
+			//Must load these code tables first
+			LoadPermissionDDLs();
+			UsageRightsList = new ResourceV2Services().GetUsageRightsList();
+
+			//Load parameters, includes check for requested id
+			if (!LoadParameters())
+			{
+				//kill if this fails
+				return;
+			}
+
+			LoadStandards();
+			LoadAttachments();
+			LoadNodeSiblings();
+			LoadUserManager();
+
+		}
+
+
+
+	}
 
     //Get Started
     private void CreateNewCurriculum()
@@ -148,6 +163,8 @@ namespace ILPathways.Controls.Curriculum
       var data = new CurriculumService1().Curriculum_Create( title, description, organizationID );
       if ( data.valid )
       {
+        //NOTE: the Curriculum_Create process results in adding creator as a content.partner administrator
+
         Response.Redirect( "/my/learninglist/" + data.data );
       }
       else
@@ -167,14 +184,21 @@ namespace ILPathways.Controls.Curriculum
           Value = "0",
           Text = "No organization"
         } );
-        foreach ( var item in WebUser.OrgMemberships )
-        {
-          ddlOrganization.Items.Add( new ListItem()
-          {
-            Value = item.Id.ToString(),
-            Text = item.Organization
-          } );
-        }
+				if ( WebUser.OrgMemberships == null )
+				{
+					addToOrg.Visible = false;
+				}
+				else
+				{
+					foreach ( var item in WebUser.OrgMemberships )
+					{
+						ddlOrganization.Items.Add( new ListItem()
+						{
+							Value = item.Id.ToString(),
+							Text = item.Organization
+						} );
+					}
+				}
       }
     }
 
@@ -203,7 +227,8 @@ namespace ILPathways.Controls.Curriculum
 
       try
       {
-          currentNode = curriculumServices.GetCurriculumNodeForEdit( int.Parse( Request.Params[ "node" ] ?? Page.RouteData.Values[ "node" ].ToString() ), user);
+		int requestedId = int.Parse(Request.Params["node"] ?? Page.RouteData.Values["node"].ToString());
+		currentNode = curriculumServices.GetCurriculumNodeForEdit(requestedId, user);
         if ( currentNode.Id == 0 )
         {
           throw new ArgumentException( "Invalid Level ID" );
@@ -272,6 +297,16 @@ namespace ILPathways.Controls.Curriculum
       //Handle outdenting better
       outdentSortID = parentNode.SortOrder + 5;
     }
+
+		//Load user manager
+		private void LoadUserManager()
+		{
+			var manager = userManagerContainer.FindControl( "userManager" ) as Controls.ManageUsers;
+			manager.ObjectId = currentNode.Id;
+			manager.ObjectTitle = currentNode.Title;
+			manager.ObjectTypeTitle = "Learning List";
+			manager.ObjectType = "learninglist";
+		}
 
     #endregion
 

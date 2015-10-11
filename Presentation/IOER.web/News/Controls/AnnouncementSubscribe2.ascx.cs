@@ -15,17 +15,17 @@ using System.Web.UI.HtmlControls;
 //using vos_portal.Library;
 //using workNet.BusObj.Entity;
 
-using MyManager = ILPathways.Controllers.NewsController;
+using MyManager = IOER.Controllers.NewsController;
 //using MyAppEmailManager = workNet.DAL.AnnouncementEmailManager;
 
-using ILPathways.Controllers;
-using ILPathways.Library;
+using IOER.Controllers;
+using IOER.Library;
 using ILPathways.Utilities;
 using ILPathways.Business;
 
-namespace ILPathways.Controls.AppItems
+namespace IOER.Controls.AppItems
 {
-    public partial class AnnouncementSubscribe2 : ILPathways.Library.BaseUserControl
+    public partial class AnnouncementSubscribe2 : IOER.Library.BaseUserControl
     {
         private MyManager myManager = new MyManager();
         //private MyAppEmailManager myEmailTemplateMgr = new MyAppEmailManager();
@@ -135,7 +135,7 @@ namespace ILPathways.Controls.AppItems
                 pnlDetail.Visible = false;
                 return;
             }
-            CurrentNewsTemplate = ILPathways.Controllers.NewsController.NewsTemplateGet( NewsItemTemplateCode );
+            CurrentNewsTemplate = IOER.Controllers.NewsController.NewsTemplateGet( NewsItemTemplateCode );
             if ( CurrentNewsTemplate == null || CurrentNewsTemplate.Id == 0 )
             {
                 //hide, no code found

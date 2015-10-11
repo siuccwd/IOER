@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="Guide.aspx.cs" Inherits="ILPathways.Guide" MasterPageFile="/Masters/Responsive.Master" %>
+﻿<%@ Page Language="C#" Title="Illinois Open Educational Resources Guide" AutoEventWireup="true" CodeBehind="Guide.aspx.cs" Inherits="IOER.Guide" MasterPageFile="/Masters/Responsive.Master" %>
 
 <asp:Content ID="Content2" ContentPlaceHolderID="BodyContent" runat="server">
 

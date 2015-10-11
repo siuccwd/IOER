@@ -6,7 +6,7 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 
 
-namespace ILPathways.My
+namespace IOER.My
 {
     public partial class Favorites : System.Web.UI.Page
     {

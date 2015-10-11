@@ -35,7 +35,7 @@ namespace Isle.BizServices
             return list;
         }
         [Obsolete]
-        public List<LibraryActivitySummary> ActivityLibraryTotals( int libraryId, DateTime startDate, DateTime endDate )
+        private List<LibraryActivitySummary> ActivityLibraryTotals( int libraryId, DateTime startDate, DateTime endDate )
         {
             List<LibraryActivitySummary> list = new List<LibraryActivitySummary>();
             list = ActivityAuditManager.ActivityLibraryTotals( libraryId, startDate, endDate );
@@ -218,6 +218,47 @@ namespace Isle.BizServices
         {
             PublishActivity( resource, user, "Publish" );
         }
+
+		/// <summary>
+		/// Iniated auto publish for components of a hierarchy
+		/// </summary>
+		/// <param name="resource"></param>
+		/// <param name="user"></param>
+		/// <param name="resourceList">List of auto published resources</param>
+		public void AutoPublishActivity( LRW.Resource resource, IPB.IWebUser user, string resourceList )
+		{
+			if ( resource == null || resource.Id == 0 )
+				return;
+
+			try
+			{
+				string title = ResourceBizService.FormatFriendlyTitle( resource.Version.Title );
+
+				EFDAL.ActivityLog log = new EFDAL.ActivityLog();
+				log.CreatedDate = System.DateTime.Now;
+				log.ActivityType = "Audit";
+				log.Activity = "Resource";
+				log.Event = "Auto-publish Hierarchy";
+
+				log.RelatedTargetUrl = string.Format( "/Resource/{0}/{1}", resource.Id, ResourceBizService.FormatFriendlyTitle( resource.Version.Title ) );
+
+				log.Comment = string.Format( "{0} published resource: {1} (Id:{2}) which resulted in an auto-publish: {3}", user.FullName(), title, resource.Id, resourceList );
+				//actor type - person
+				log.ActionByUserId = ( user == null || user.Id == 0 ) ? 0 : user.Id;
+				log.TargetUserId = 0;
+
+				log.ActivityObjectId = resource.Id;
+
+				log.SessionId = GetCurrentSessionId();
+				SiteActivityAdd( log );
+
+			}
+			catch ( Exception ex )
+			{
+				LoggingHelper.LogError( ex, thisClassName + ".PublishActivity()" );
+				return;
+			}
+		}
         public void PublishActivity( LRW.Resource resource, IPB.IWebUser user, string eventType )
         {
             if ( resource == null || resource.Id == 0 )
@@ -256,6 +297,38 @@ namespace Isle.BizServices
         #endregion
                     
         #region Site Activity - libraries
+        public static void LibrariesSearchHit(string filter, ThisUser user, string type)
+        {
+
+            //EFDAL.IsleContentEntities ctx = new EFDAL.IsleContentEntities();
+            EFDAL.ActivityLog log = new EFDAL.ActivityLog();
+            log.CreatedDate = System.DateTime.Now;
+            log.ActivityType = "Audit";
+            log.Activity = "Library";
+            log.Event = type + " Search";
+
+            log.RelatedTargetUrl = "";
+
+            if (user != null && user.Id > 0)
+                log.Comment = string.Format("Action: {0}, user: {1}, Filter: {2}", log.Event, user.FullName(), filter);
+            else
+                log.Comment = string.Format("Action: {0},  Guest user, Filter: {1}", log.Event, filter);
+            //actor type - person
+            log.ActionByUserId = (user == null || user.Id == 0) ? 0 : user.Id;
+            log.TargetUserId = 0;
+            log.ActivityObjectId = 0;
+            log.SessionId = GetCurrentSessionId();
+
+            try
+            {
+                SiteActivityAdd(log);
+            }
+            catch (Exception ex)
+            {
+                LoggingHelper.LogError(ex, thisClassName + ".LibrariesSearchHit()");
+                return;
+            }
+        }
         public static void LibraryHit( int libraryId, ThisUser user, string action )
         {
             if ( libraryId == 0 )
@@ -525,6 +598,36 @@ namespace Isle.BizServices
         #endregion
 
         #region Site Activity - Content
+        public static void ContentSearchHit(string filter, ThisUser user)
+        {
+            EFDAL.ActivityLog log = new EFDAL.ActivityLog();
+            log.CreatedDate = System.DateTime.Now;
+            log.ActivityType = "Audit";
+            log.Activity = "Content";
+            log.Event = "Search";
+
+            log.RelatedTargetUrl = "";
+
+            if (user != null && user.Id > 0)
+                log.Comment = string.Format("Action: {0}, user: {1}, Filter: {2}", log.Event, user.FullName(), filter);
+            else
+                log.Comment = string.Format("Action: {0},  Guest user, Filter: {1}", log.Event, filter);
+            //actor type - person
+            log.ActionByUserId = (user == null || user.Id == 0) ? 0 : user.Id;
+            log.TargetUserId = 0;
+            log.ActivityObjectId = 0;
+            log.SessionId = GetCurrentSessionId();
+
+            try
+            {
+                SiteActivityAdd(log);
+            }
+            catch (Exception ex)
+            {
+                LoggingHelper.LogError(ex, thisClassName + ".ContentSearchHit()");
+                return;
+            }
+        }
         public void ContentHit( int contentId, IWebUser user )
         {
             if ( contentId == 0 )
@@ -698,7 +801,10 @@ namespace Isle.BizServices
             EFDAL.ActivityLog log = new EFDAL.ActivityLog();
             log.CreatedDate = System.DateTime.Now;
             log.ActivityType = "Audit";
-            log.Activity = "Content";
+            if (entity.TypeId == ContentItem.CURRICULUM_CONTENT_ID)
+                log.Activity = "Learning List";
+            else 
+                log.Activity = "Content";
 
             log.Event = "Download";   // +entity.Title;
 
@@ -706,6 +812,7 @@ namespace Isle.BizServices
                 log.Comment = string.Format( "Action: {0}, Content: {1}, user: {2}", log.Event, entity.Title, user.FullName() );
             else
                 log.Comment = string.Format( "Action: {0}, Content: {1},  Guest user", log.Event, entity.Title );
+
             //actor type - person
             log.ActionByUserId = ( user == null || user.Id == 0 ) ? 0 : user.Id;
             log.TargetUserId = 0;
@@ -875,7 +982,7 @@ namespace Isle.BizServices
         public static void SessionStartActivity(string comment, string sessionId, string ipAddress, string referrer)
         {
             EFDAL.ActivityLog log = new EFDAL.ActivityLog();
-
+            bool isBot = false;
             string server = ILPathways.Utilities.UtilityManager.GetAppKeyValue( "serverName", "" );
             try
             {
@@ -886,7 +993,7 @@ namespace Isle.BizServices
                 log.Activity = "Session";
                 log.Event = "Start";
                 log.Comment = comment + string.Format( " (on server: {0})", server );
-                log.Comment += GetUserAgent();
+                log.Comment += GetUserAgent(ref isBot);
 
                 log.SessionId = sessionId;
                 log.IPAddress = ipAddress;
@@ -1075,20 +1182,34 @@ namespace Isle.BizServices
         {
             int count = 0;
             string truncateMsg = "";
-
+            bool isBot = false;
             string server = ILPathways.Utilities.UtilityManager.GetAppKeyValue( "serverName", "" );
+
+            string agent = GetUserAgent( ref isBot );
 
             if ( log.RelatedTargetUrl == null ) log.RelatedTargetUrl = "";
             if ( log.RelatedImageUrl == null ) log.RelatedImageUrl = "";
             if ( log.Referrer == null ) log.Referrer = "";
             if ( log.Comment == null ) log.Comment = "";
-
-            if ( log.SessionId == null || log.SessionId.Length < 10 )
+			if ( log.SessionId == null || log.SessionId.Length < 10 )
                 log.SessionId = GetCurrentSessionId();
 
             if ( log.IPAddress == null || log.IPAddress.Length < 10 )
                 log.IPAddress = GetUserIPAddress();
+            //================================
+			if ( isBot )
+			{
+				ServiceHelper.DoBotTrace( 6, string.Format( ".SiteActivityAdd Skipping Bot: activity. Agent: {0}, Activity: {1}, Event: {2}, \r\nRelatedTargetUrl: {3}", agent, log.Activity, log.Event, log.RelatedTargetUrl ) );
+				//should this be added with isBot attribute for referencing when crawled?
+				return 0;
+			}
+			//================================
+            if (IsADuplicateRequest(log.Comment))
+                return 0;
 
+            StoreLastRequest(log.Comment);
+
+            //----------------------------------------------
             if ( log.Referrer == null || log.Referrer.Trim().Length < 5 )
             {
                 string referrer = GetUserReferrer();
@@ -1188,8 +1309,46 @@ namespace Isle.BizServices
                     return count;
                 }
             }
+ } //
+        public static void StoreLastRequest( string actionComment)
+        {
+            string sessionKey = GetCurrentSessionId() + "_lastHit";
+
+            try
+            {
+                if (HttpContext.Current.Session != null)
+                {
+                    HttpContext.Current.Session[sessionKey] = actionComment;
+                }
+            }
+            catch
+            {
+            }
+            
         } //
 
+        public static bool IsADuplicateRequest(string actionComment)
+        {
+            string sessionKey = GetCurrentSessionId() + "_lastHit";
+            bool isDup = false;
+            try
+            {
+                if (HttpContext.Current.Session != null)
+                {
+                    string lastAction = HttpContext.Current.Session[sessionKey].ToString();
+                    if (lastAction.ToLower() == actionComment.ToLower())
+                    {
+                        ServiceHelper.DoTrace(7, "ActivityBizServices. Duplicate action: " + actionComment);
+                        return true;
+                    }
+                }
+            }
+            catch
+            {
+
+            }
+            return isDup;
+        }
         public static string GetCurrentSessionId()
         {
             string sessionId = "unknown";
@@ -1252,7 +1411,7 @@ namespace Isle.BizServices
 
             return lRefererPage;
         } //
-        private static string GetUserAgent()
+        private static string GetUserAgent(ref bool isBot)
         {
             string agent = "";
             try
@@ -1262,7 +1421,7 @@ namespace Isle.BizServices
                     agent = HttpContext.Current.Request.UserAgent;
                 }
 
-                bool isBot = false;
+                isBot = false;
                 if ( agent.ToLower().IndexOf( "bot" ) > -1
                     || agent.ToLower().IndexOf( "spider" ) > -1
                     || agent.ToLower().IndexOf( "slurp" ) > -1

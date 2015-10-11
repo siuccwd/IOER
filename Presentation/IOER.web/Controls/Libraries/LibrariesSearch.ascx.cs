@@ -7,10 +7,10 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 
 using ILPathways.Utilities;
-using ILPathways.Library;
-using ILPathways.Services;
+using IOER.Library;
+using IOER.Services;
 
-namespace ILPathways.Controls.Libraries
+namespace IOER.Controls.Libraries
 {
     /// <summary>
     /// Search for libraries
@@ -51,16 +51,18 @@ namespace ILPathways.Controls.Libraries
             userGUID = "var userGUID = \"\";";
             useSubscribedLibraries = "var useSubscribedLibraries = false;";
 
-            if ( IsUserAuthenticated() )
-            {
-                string showFollowed = GetRequestKeyValue( "showFollowed", "no" );
+			if ( IsUserAuthenticated() )
+			{
+				string showFollowed = GetRequestKeyValue( "showFollowed", "no" );
 
-                userGUID = "var userGUID = \"" + WebUser.RowId.ToString() + "\";";
-                if ( SubscribedLibrariesView == "yes" || showFollowed == "yes" )
-                {
-                    useSubscribedLibraries = "var useSubscribedLibraries = true;";
-                }
-            }
+				userGUID = "var userGUID = \"" + WebUser.RowId.ToString() + "\";";
+				if ( SubscribedLibrariesView == "yes" || showFollowed == "yes" )
+				{
+					useSubscribedLibraries = "var useSubscribedLibraries = true;";
+				}
+			}
+			//example all libraries containing a resource
+			string showRelated = GetRequestKeyValue( "filter", "" );
 
             ConstructFilters();
         }
@@ -90,7 +92,7 @@ namespace ILPathways.Controls.Libraries
             libraryType.name = "libraryType";
             libraryType.type = "cbxl";
             libraryType.tip = "Show:";
-            libraryType.items.Add( new jsonLibraryFilterItem() { selected = false, text = "Organization Libraries", value = 2 } );
+            libraryType.items.Add( new jsonLibraryFilterItem() { selected = true, text = "Organization Libraries", value = 2 } );
 
             libraryType.items.Add( new jsonLibraryFilterItem() { selected = false, text = "User Libraries", value = 1 } );
             currentFilters.Add( libraryType );

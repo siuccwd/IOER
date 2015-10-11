@@ -1,4 +1,4 @@
-﻿<%@ Page Title="My Favorite Libraries" Language="C#" MasterPageFile="~/Masters/Responsive.Master" AutoEventWireup="true" CodeBehind="Favorites.aspx.cs" Inherits="ILPathways.My.Favorites" %>
+﻿<%@ Page Title="My Favorite Libraries" Language="C#" MasterPageFile="~/Masters/Responsive.Master" AutoEventWireup="true" CodeBehind="Favorites.aspx.cs" Inherits="IOER.My.Favorites" %>
 
 <%@ Register TagPrefix="uc1" TagName="LibrariesSearch" Src="/Controls/Libraries/LibrariesSearch.ascx" %>
 

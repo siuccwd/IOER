@@ -216,55 +216,6 @@ namespace Isle.BizServices
             LDBM.PopulateList( list, ds, "StringValue", "StringValue", "Select Size" );
         } //
 
-        #region == old methods
-        //public CodeSearchResponse CodeTableSearch( CodeSearchRequest request )
-        //{
-        //    DatabaseManager myManager = new DatabaseManager();
-        //    // int totalRows = 0;
-        //    string message = "";
-        //    CodeSearchResponse searchResponse = new CodeSearchResponse();
-        //    //ServiceHelper.DoTrace( 6, "Isle.BizServices.CodeTableSearch, table: " + request.TableName );
-
-        //    //search
-        //    DataSet ds = DatabaseManager.CodeTableSearch( request.TableName, request.IdColumn, request.TitleColumn, request.OrderBy, request.Filter, request.UseWarehouseTotalTitle );
-
-        //    List<CodesDataContract> dataContractList = new List<CodesDataContract>();
-        //    if ( DatabaseManager.DoesDataSetHaveRows( ds ) )
-        //    {
-        //        //check for error message
-        //        if ( ServiceHelper.HasErrorMessage( ds ) )
-        //        {
-        //            message = ServiceHelper.GetWsMessage( ds );
-        //            searchResponse.Error.Message += message + "; ";
-        //            searchResponse.Status = StatusEnumDataContract.Failure;
-        //        }
-        //        else
-        //        {
-
-        //            CodesDataContract dataContract;
-        //            foreach ( DataRow dr in ds.Tables[ 0 ].DefaultView.Table.Rows )
-        //            {
-        //                int id = DatabaseManager.GetRowColumn( dr, request.IdColumn, 0 );
-        //                string title = DatabaseManager.GetRowColumn( dr, request.TitleColumn, "" );
-
-        //                dataContract = new CodesDataContract() { Id = id, Title = title };
-        //                dataContract.TableName = request.TableName;
-        //                dataContractList.Add( dataContract );
-
-        //            } //end foreach
-        //        }
-        //    }
-
-
-        //    searchResponse.ResultList = dataContractList;
-        //    searchResponse.TableName = request.TableName;
-        //    searchResponse.ResultCount = dataContractList.Count;
-        //    searchResponse.TotalRows = dataContractList.Count;
-
-        //    return searchResponse;
-        //}//
-
-        #endregion
 
     }
 }

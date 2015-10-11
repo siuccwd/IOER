@@ -1,4 +1,4 @@
-﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="PublishersSearch.ascx.cs" Inherits="ILPathways.LRW.controls.PublishersSearch" %>
+﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="PublishersSearch.ascx.cs" Inherits="IOER.LRW.controls.PublishersSearch" %>
 
  
 <style type="text/css">

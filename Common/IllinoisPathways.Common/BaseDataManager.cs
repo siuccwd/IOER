@@ -1970,20 +1970,11 @@ namespace ILPathways.Common
                 //Allow if the requested level is <= the application thresh hold
                 if ( level <= appTraceLevel )
                 {
-                    string usingBriefFormat = GetAppKeyValue( "usingBriefFormat", "yes" );
-                    if ( usingBriefFormat == "yes" )
-                    {
-                        //if (useBriefFormat) {
-                        msg = "\n " + System.DateTime.Now.ToString() + " - " + message;
 
-                    }
-                    else
-                    {
-                        msg = "\n======================= Trace ================================= ";
-                        msg += "\nTime: " + System.DateTime.Now.ToString();
-                        msg += "\nTrace: " + message;
-                        msg += "\n=============================================================== ";
-                    }
+                    //if (useBriefFormat) {
+                    msg = "\n " + System.DateTime.Now.ToString() + " - " + message;
+
+               
                     string datePrefix = System.DateTime.Today.ToString( "u" ).Substring( 0, 10 );
                     string logFile = GetAppKeyValue( "path.trace.log", "C:\\VOS_LOGS.txt" );
                     string outputFile = logFile.Replace( "[date]", datePrefix );

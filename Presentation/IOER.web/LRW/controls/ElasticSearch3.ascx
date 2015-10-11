@@ -1,4 +1,4 @@
-﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="ElasticSearch3.ascx.cs" Inherits="ILPathways.LRW.controls.ElasticSearch3" %>
+﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="ElasticSearch3.ascx.cs" Inherits="IOER.LRW.controls.ElasticSearch3" %>
 <%@ Register TagPrefix="uc1" TagName="StandardsBrowser" Src="/LRW/controls/StandardsBrowser5.ascx" %>
 <%@ Register TagPrefix="uc1" TagName="StandardsBrowser7" Src="/Controls/StandardsBrowser7.ascx" %>
 
@@ -1267,7 +1267,7 @@
       <!-- /leftColumn -->
       <div id="search">
         <div id="searchBarBox" data-responsivemode="normal">
-          <input type="text" id="searchBar" placeholder="Start typing to Search..." />
+          <input type="text" id="searchBar" title="Search Keywords" placeholder="Start typing to Search..." />
           <a href="#" onclick="clearSearchBar(); return false;" id="searchBarX">X</a>
           <div id="activeFilters">
             <div id="activeFiltersList"></div>
@@ -1373,7 +1373,8 @@
             </div>--><!-- /display -->
           </div>          
           <div id="ddls" style="">
-            <select id="ddlSorting">
+              <%--<label for="ddlSorting" class="offScreenX">Sort Order</label>--%>
+            <select id="ddlSorting" title="Sort Order">
               <option data-val="relevancy" value="|">Relevancy</option>
               <option data-val="newest" value="intID|desc" selected="selected">Newest First</option>
               <option data-val="oldest" value="intID|asc">Oldest First</option>
@@ -1384,12 +1385,14 @@
               <option data-val="favorites" value="favorites|desc">Most Favorited</option>
               <option data-val="comments" value="commentsCount|desc">Most Commented On</option>
             </select>
-            <select id="ddlDisplayCount">
+              <%--<label for="ddlDisplayCount" class="offScreen">Number of Results to Show</label>--%>
+            <select id="ddlDisplayCount" title="Number of Results to Show">
               <option selected="selected" value="20">Show 20 Items</option>
               <option value="50">Show 50 Items</option>
               <option value="100">Show 100 Items</option>
             </select>
-            <select id="ddlRendering">
+              <%--<label for="ddlRendering" class="offScreen">Display Format</label>--%>
+            <select id="ddlRendering" title="Display Format">
               <option value="list" selected="selected">List View</option>
               <option value="grid">Grid View</option>
               <option value="compact">Text-only View</option>
@@ -1429,7 +1432,7 @@
 
       <script type="text/template" id="template_result_list">
         <div class="result result_list" data-vid="{vid}" data-intid="{intID}">
-          <a class="thumbnailLink" href="/Resource/{intID}/{simpleTitle}" target="_resultWindow">
+          <a class="thumbnailLink" href="/Resource/{intID}/{simpleTitle}" target="_self">
             {thumbnail}
             {paradata}
           </a>
@@ -1439,7 +1442,7 @@
             {cbxls}
           </div>
           <div class="data">
-            <h2><a href="/Resource/{intID}/{simpleTitle}" target="_resultWindow">{title}</a></h2>
+            <h2><a href="/Resource/{intID}/{simpleTitle}" target="_self">{title}</a></h2>
             <%--<input type="button" class="previewerButton" onclick="preview({intID})" value="Preview" />--%>
             <div class="libraryControls"></div>
             <p class="fadeCollapse">
@@ -1452,7 +1455,7 @@
 
       <script type="text/template" id="template_result_grid">
         <div class="result result_grid" data-vid="{vid}" data-intid="{intID}">
-          <a class="thumbnailLink" href="/Resource/{intID}/{simpleTitle}" target="_resultWindow">
+          <a class="thumbnailLink" href="/Resource/{intID}/{simpleTitle}" target="_self">
             {thumbnail}
             <h2>{title}</h2>
             {paradata}
@@ -1462,7 +1465,7 @@
 
       <script type="text/template" id="template_result_compact">
         <div class="result result_compact">
-          <h2><a href="/Resource/{intID}/{simpleTitle}" target="_resultWindow">{title}</a></h2>
+          <h2><a href="/Resource/{intID}/{simpleTitle}" target="_self">{title}</a></h2>
           <p class="fadeCollapse">
             {description}
           </p>

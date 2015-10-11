@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ILPathways.Account {
+namespace IOER.Account {
     
     
     public partial class ForgotPassword {

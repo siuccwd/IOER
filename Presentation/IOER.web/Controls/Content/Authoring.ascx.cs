@@ -11,9 +11,9 @@ using Obout.Ajax.UI.TreeView;
 using GDAL = Isle.BizServices;
 using ILPathways.Business;
 using ILPathways.Common;
-using ILPathways.Controllers;
+using IOER.Controllers;
 
-using ILPathways.Library;
+using IOER.Library;
 using ILPathways.Utilities;
 using Isle.BizServices;
 using Isle.DTO;
@@ -24,7 +24,7 @@ using AppUser = LRWarehouse.Business.Patron; //ILPathways.Business.AppUser;
 
 
 
-namespace ILPathways.Controls.Content
+namespace IOER.Controls.Content
 {
     public partial class Authoring : BaseUserControl
     {
@@ -40,6 +40,7 @@ namespace ILPathways.Controls.Content
         //public string conditionsOfUse_iconURLs;
 
         ContentServices myManager = new ContentServices();
+		ContentSearchServices mySearchManager = new ContentSearchServices();
         CurriculumServices crcManager = new CurriculumServices();
         
 
@@ -290,7 +291,8 @@ namespace ILPathways.Controls.Content
             if ( entity.Id > 0 )
             {
                 if ( FormPrivileges.WritePrivilege > ( int ) ILPathways.Business.EPrivilegeDepth.Region
-                    || entity.CreatedById == WebUser.Id )
+                    || entity.CreatedById == WebUser.Id 
+					|| WebUser.TopAuthorization < 4)
                 {
                     //OK
                 }
@@ -632,47 +634,53 @@ namespace ILPathways.Controls.Content
             else 
                 selectedTab = ltlAttachmentsTabName.Text;
         }
-        protected void btnPublish2_Click( object sender, EventArgs e )
-        {
+		/// <summary>
+		/// note should not be used
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		[Obsolete]
+		protected void btnPublish2_Click(object sender, EventArgs e)
+		{
 
-            /*cases
-             * - personal, just update status, maybe resource IsActive
-             * 
-             * 
-             * 
-             */
-            if ( ValidateSummary() & this.IsFormValid() )
-            {
-                if ( CurrentRecord.IsOrgContentOwner == false )
-                {
-                    //only showing if previously published==> maybe
-                    this.UpdateForm( ContentItem.PUBLISHED_STATUS );
-                    btnPublish.Visible = false;
-                }
-                else
-                {
-                    if ( CurrentRecord.StatusId == ContentItem.REVISIONS_REQUIRED_STATUS )
-                    {
-                        //update just in case
-                        this.UpdateForm();
+			/*cases
+			 * - personal, just update status, maybe resource IsActive
+			 * 
+			 * 
+			 * 
+			 */
+			if (ValidateSummary() & this.IsFormValid())
+			{
+				if (CurrentRecord.IsOrgContentOwner == false)
+				{
+					//only showing if previously published==> maybe
+					this.UpdateForm(ContentItem.PUBLISHED_STATUS);
+					btnPublish.Visible = false;
+				}
+				else
+				{
+					if (CurrentRecord.StatusId == ContentItem.REVISIONS_REQUIRED_STATUS)
+					{
+						//update just in case
+						this.UpdateForm();
 
-                        string statusMessage = string.Empty;
-                        AppUser user = GetAppUser();
-                        if ( ContentController.RequestApproval( CurrentRecord.Id, user, ref statusMessage ) == true )
-                        {
-                            SetConsoleSuccessMessage( "An email was sent requesting a review of your resource." );
-                            //refresh
-                            Get( CurrentRecord.Id );
-                            btnPublish.Visible = false;
-                        }
-                        else
-                            SetConsoleErrorMessage( "An error occurred attempting to initiate a review of your resource.<br/>System administration has been notified.<br/>" + statusMessage );
+						string statusMessage = string.Empty;
+						AppUser user = GetAppUser();
+						if (myManager.RequestApproval(CurrentRecord.Id, user, ref statusMessage) == true)
+						{
+							SetConsoleSuccessMessage("An email was sent requesting a review of your resource.");
+							//refresh
+							Get(CurrentRecord.Id);
+							btnPublish.Visible = false;
+						}
+						else
+							SetConsoleErrorMessage("An error occurred attempting to initiate a review of your resource.<br/>System administration has been notified.<br/>" + statusMessage);
 
-                    }
-                }
+					}
+				}
 
-            }
-        }
+			}
+		}
         protected void btnPublish_Click( Object sender, CommandEventArgs ev )
         {
             if ( ValidateSummary() & this.IsFormValid() )
@@ -721,7 +729,7 @@ namespace ILPathways.Controls.Content
 
             string statusMessage = string.Empty;
             AppUser user = GetAppUser();
-            if ( ContentController.RequestApproval( CurrentRecord.Id, user, ref statusMessage ) == true )
+			if (myManager.RequestApproval(CurrentRecord.Id, user, ref statusMessage) == true)
             {
                 SetConsoleSuccessMessage( "An email was sent requesting a review of your resource." );
                 //refresh
@@ -959,7 +967,7 @@ namespace ILPathways.Controls.Content
                     //TODO - need to delete LR related stuff!
                     if (CurrentRecord.HasResourceId())
                     {
-                        ResourceBizService.Resource_SetInactive( CurrentRecord.ResourceIntId, ref statusMessage );
+                        new ResourceBizService().Resource_SetInactive( CurrentRecord.ResourceIntId, ref statusMessage );
                         //ResourceVersion entity = new ResourceVersionManager().GetByResourceId( CurrentRecord.ResourceIntId );
                         //if ( entity != null && entity.Id > 0 )
                         //{
@@ -991,7 +999,7 @@ namespace ILPathways.Controls.Content
 
                     this.SetConsoleSuccessMessage( "Delete of record was successful " + extraMessage );
 
-                    Response.Redirect( "/My/Authored.aspx", true );
+                    Response.Redirect( "/My/Authored", true );
                     //this.ResetForm();
 
                 }
@@ -1044,7 +1052,7 @@ namespace ILPathways.Controls.Content
                     string extraMessage = "";
                     if ( resid > 0 )
                     {
-                        ResourceBizService.Resource_SetInactive( resid, ref statusMessage );
+                        new ResourceBizService().Resource_SetInactive( resid, ref statusMessage );
 
                         //ResourceVersion entity = new ResourceVersionManager().GetByResourceId( resid );
                         //if ( entity != null && entity.Id > 0 )
@@ -2150,12 +2158,13 @@ namespace ILPathways.Controls.Content
             string filter = "";
             string where = string.Format( "([TypeId] = 20 AND base.CreatedById = {0}) ", WebUser.Id );
             filter = BDM.FormatSearchItem( filter, where, booleanOperator );
+
             int pTotalRows = 0;
-            DataSet ds = myManager.Search( filter, "", 1, 25, ref pTotalRows );
+			DataSet ds = mySearchManager.Search( filter, "", 1, 25, ref pTotalRows );
             if ( DoesDataSetHaveRows( ds ) )
                 hasHomeContent = true;
             SetContentType2( hasHomeContent );
-            //SetContentType();
+			//SetNodeContentType();
 
             //check if org admin, and whether already has an org home page
 
@@ -2164,7 +2173,7 @@ namespace ILPathways.Controls.Content
             SetTemplates();
         } //
 
-        private void SetContentType()
+		private void SetNodeContentType()
         {
             //may only allow on first create?
             List<CodeItem> list = myManager.ContentType_ActiveList();
@@ -2186,7 +2195,10 @@ namespace ILPathways.Controls.Content
             List<CodeItem> list2 = myManager.ContentType_TopLevelActiveList();
             BDM.PopulateList( this.ddlContentType, list2, "Id", "Title", "Select type" );
 
-
+            if (list2.Count == 1)
+            {
+                ddlContentType.SelectedIndex = 1;
+            }
             //may only allow on first create?
             //DataSet ds = myManager.ContentType_Select();
             //if ( DatabaseManager.DoesDataSetHaveRows( ds ) )
@@ -2507,7 +2519,7 @@ namespace ILPathways.Controls.Content
             Int32.TryParse( ddlLessons.SelectedValue, out lessons );
             Int32.TryParse( ddlActivities.SelectedValue, out activities );
 
-            ContentItem hier = new ContentServices().CreateHierarchy( CurrentRecord.Id, modules, units, lessons, activities );
+            ContentItem hier = myManager.CreateHierarchy( CurrentRecord.Id, modules, units, lessons, activities );
             if ( hier != null && hier.Id > 0 && hier.HasChildItems )
             {
                 CurrentRecord.ChildItems = hier.ChildItems;
@@ -3236,7 +3248,7 @@ namespace ILPathways.Controls.Content
 
             try
             {
-                if ( new ContentServices().ContentConnectorDelete( nodeId, id, ref statusMessage ) )
+                if ( myManager.ContentConnectorDelete( nodeId, id, ref statusMessage ) )
                 {
                     RemoveServerFile( item );
 

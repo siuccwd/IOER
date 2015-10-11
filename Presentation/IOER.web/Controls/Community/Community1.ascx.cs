@@ -6,14 +6,15 @@ using System.Web.Script.Serialization;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
-using ILPathways.Library;
+using IOER.Library;
 using ILP = ILPathways.Business;
-using ILPathways.Services;
+using IOER.Services;
 using ILPathways.Utilities;
 using Isle.BizServices;
 using LRWarehouse.Business;
+using Patron = LRWarehouse.Business.Patron;
 
-namespace ILPathways.Controls.Community
+namespace IOER.Controls.Community
 {
   public partial class Community1 : BaseUserControl
   {
@@ -75,6 +76,8 @@ namespace ILPathways.Controls.Community
       }
 
       //Get community data
+	  serializer = new JavaScriptSerializer();
+	  serializer.MaxJsonLength = Int32.MaxValue;
       communityData = "var communityData = " + serializer.Serialize( comService.GetJSONCommunity( currentUser, communityID ) ) + ";";
 
        //get all communities
@@ -83,7 +86,7 @@ namespace ILPathways.Controls.Community
       List<ILP.Community> list = new CommunityServices().Community_SelectAll();
       foreach ( ILP.Community item in list )
       {
-          communities += string.Format( template, item.Id, UtilityManager.UrlFriendlyTitle( item.Title), item.Title );
+          communities += string.Format( template, item.Id, ResourceBizService.FormatFriendlyTitle( item.Title ), item.Title );
       }
       if ( communities.Length > 1 )
           txtCommunities.Text = "<ul>" + communities + "</ul>";

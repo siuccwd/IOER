@@ -1,4 +1,4 @@
-﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="Rubric4.ascx.cs" Inherits="ILPathways.Controls.Rubric4" %>
+﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="Rubric4.ascx.cs" Inherits="IOER.Controls.Rubric4" %>
 
 <div id="rubric" class="rubric" runat="server">
 

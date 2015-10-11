@@ -6,11 +6,12 @@ using System.Web.Services;
 
 using System.Web.Script.Serialization;
 using LRWarehouse.Business;
-using ILPathways.Services;
+using IOER.Services;
 using LRWarehouse.DAL;
 using Isle.BizServices;
+using Patron = LRWarehouse.Business.Patron;
 
-namespace ILPathways.Services
+namespace IOER.Services
 {
   /// <summary>
   /// Summary description for Dashboard2Service

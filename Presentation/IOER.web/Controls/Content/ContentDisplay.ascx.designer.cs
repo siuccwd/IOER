@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ILPathways.Controls.Content {
+namespace IOER.Controls.Content {
     
     
     public partial class ContentDisplay {
@@ -73,7 +73,7 @@ namespace ILPathways.Controls.Content {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ILPathways.Controls.Curriculum.Curriculum1 curriculum;
+        protected global::IOER.Controls.Curriculum.Curriculum1 curriculum;
         
         /// <summary>
         /// buttonBox control.
@@ -193,6 +193,15 @@ namespace ILPathways.Controls.Content {
         protected global::System.Web.UI.WebControls.Label lblAuthor;
         
         /// <summary>
+        /// hlAuthor control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.HyperLink hlAuthor;
+        
+        /// <summary>
         /// communityViewPanel control.
         /// </summary>
         /// <remarks>
@@ -283,15 +292,6 @@ namespace ILPathways.Controls.Content {
         protected global::System.Web.UI.WebControls.Panel hiddenStuff;
         
         /// <summary>
-        /// txtFormSecurityName control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Literal txtFormSecurityName;
-        
-        /// <summary>
         /// showingRefUrl control.
         /// </summary>
         /// <remarks>
@@ -317,6 +317,15 @@ namespace ILPathways.Controls.Content {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Literal canAuthorApproveOwnContent;
+        
+        /// <summary>
+        /// redirecting50ToLearningList control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Literal redirecting50ToLearningList;
         
         /// <summary>
         /// txtCurrentContentId control.
@@ -362,6 +371,15 @@ namespace ILPathways.Controls.Content {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Literal rvLink;
+        
+        /// <summary>
+        /// profLink control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Literal profLink;
         
         /// <summary>
         /// privateContentMsg control.

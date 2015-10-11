@@ -1,4 +1,4 @@
-﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="Library.ascx.cs" Inherits="ILPathways.Controls.Libraries.Library" %>
+﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="Library.ascx.cs" Inherits="IOER.Controls.Libraries.Library" %>
 
 <%--<%@ Register TagPrefix="uc1" TagName="Search" Src="/LRW/Controls/ElasticSearch3.ascx" %>--%>
 
@@ -489,7 +489,9 @@
                   </div>
                   <div class="column">
                     <h4>Embed this Library:</h4>
-                    <p>Select up to 10 publicly-available collections, listed below. Up to 10 of the most recent resources from each will be displayed.</p>
+                    <p>Select up to 10 publicly-available collections, listed below. Up to 10 of the most recent resources from each will be displayed.
+                        For tips on styling the widget on your page, see the <span style="font-weight:bold;">Guidance</span> section on the 
+                        <a href="//widgets/" target="_blank">IOER Widgets</a> page.</p>
                     <input type="text" readonly="readonly" id="txtWidgetConfig" onclick="this.select()" />
                     <div id="widgetConfigList"></div>
                   </div>
@@ -500,9 +502,9 @@
                     <h4>Follow:</h4>
                     <select id="followingOptions">
                       <option value="0">Not Following</option>
-                      <option value="1">Follow without email notifications</option>
-                      <option value="2">Follow with weekly email updates</option>
-                      <option value="3">Follow with daily email updates</option>
+        					 <option value="1">Follow in my Timeline</option>
+                      <option value="2">Follow with a daily email and in my Timeline</option>
+                      <option value="3">Follow with a weekly email and in my Timeline</option>
                     </select>
            <%--                             <option value="4">Follow with immediate email updates</option>--%>
                     <input type="button" id="btnFollowingUpdate" onclick="updateFollowingOption(); return false;" value="Save" class="btn green" />

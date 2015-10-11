@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ILPathways.Controls.Curriculum {
+namespace IOER.Controls.Curriculum {
     
     
     public partial class Curriculum2 {

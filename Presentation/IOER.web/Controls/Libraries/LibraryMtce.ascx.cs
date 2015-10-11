@@ -13,8 +13,8 @@ using System.Web.UI.WebControls;
 
 using EmailHelper = ILPathways.Utilities.EmailManager;
 
-using ILPlibrary = ILPathways.Library;
-using ILPathways.Controllers;
+using ILPlibrary = IOER.Library;
+using IOER.Controllers;
 using ILPathways.Common;
 using ILPathways.Utilities;
 using GDAL = Isle.BizServices;
@@ -24,7 +24,7 @@ using MyManager = Isle.BizServices.LibraryBizService;
 using ContentManager = Isle.BizServices.ContentServices;
 using DataBaseHelper = LRWarehouse.DAL.BaseDataManager;
 
-namespace ILPathways.Controls.Libraries
+namespace IOER.Controls.Libraries
 {
     public partial class LibraryMtce : ILPlibrary.BaseUserControl
     {
@@ -639,8 +639,8 @@ namespace ILPathways.Controls.Libraries
                 }
 
                 /* assign form fields 			 */
-                entity.Title = FormHelper.SanitizeUserInput( this.txtTitle.Text );
-                entity.Description = FormHelper.SanitizeUserInput( this.txtDescription.Text );
+                entity.Title = FormHelper.CleanText( this.txtTitle.Text );
+                entity.Description = FormHelper.CleanText( this.txtDescription.Text );
 
                 entity.AllowJoinRequest = this.ConvertYesNoToBool( this.rblAllowJoinRequest.SelectedValue );
                 entity.IsDiscoverable = this.ConvertYesNoToBool( this.rblIsDiscoverable.SelectedValue );

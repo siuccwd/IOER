@@ -1,4 +1,4 @@
-﻿<%@ Page Title="OBOUT test"  Language="C#"  MasterPageFile="~/Masters/Pathway.Master" AutoEventWireup="true" CodeBehind="OBOUT.aspx.cs" Inherits="ILPathways.Content.OBOUT" %>
+﻿<%@ Page Title="OBOUT test"  Language="C#"  MasterPageFile="~/Masters/Pathway.Master" AutoEventWireup="true" CodeBehind="OBOUT.aspx.cs" Inherits="IOER.Content.OBOUT" %>
 <%@ Register
     Assembly="Obout.Ajax.UI"
     Namespace="Obout.Ajax.UI.HTMLEditor"
@@ -14,7 +14,7 @@
 <%@ Register assembly="Obout.Ajax.UI" namespace="Obout.Ajax.UI.HTMLEditor.Popups" tagprefix="obout" %>
 <%@ Register Assembly="Obout.Ajax.UI" Namespace="Obout.Ajax.UI.FileUpload" TagPrefix="obout" %>
 
-<%@ Register TagPrefix="custom"	Namespace="CustomToolbarButton" Assembly="IllinoisPathways"  %>
+<%@ Register TagPrefix="custom"	Namespace="CustomToolbarButton" Assembly="IOER"  %>
 <%@ Register TagPrefix="custom" Namespace="CustomPopups"  %>
 
 

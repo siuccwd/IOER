@@ -13,7 +13,7 @@ using System.Web.UI.WebControls;
 
 using LRWarehouse.DAL;
 
-namespace ILPathways.Controllers
+namespace IOER.Controllers
 {
     public static class ResourceCheckBoxFiller
     {

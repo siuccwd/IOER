@@ -14,15 +14,15 @@ namespace ILPathways.DAL
 {
     public class LogManager : BaseDataManager
     {
-        public static void LogException( ExceptionLogBEO exceptionLogDAO )
-        {
+		//public static void LogException( ExceptionLogBEO exceptionLogDAO )
+		//{
 
-            //using Linq???
-            //using ( LogDataContext logDataContext = LinqHelper.CreateDataContext<LogDataContext>() )
-            //{
-            //    logDataContext.usp_ExceptionLogInsert( exceptionLogDAO.MessageId, exceptionLogDAO.MessageText, exceptionLogDAO.ExceptionMessage, exceptionLogDAO.StackTrace, exceptionLogDAO.LastUpdatedBy );
-            //}
-        }
+		//	//using Linq???
+		//	//using ( LogDataContext logDataContext = LinqHelper.CreateDataContext<LogDataContext>() )
+		//	//{
+		//	//    logDataContext.usp_ExceptionLogInsert( exceptionLogDAO.MessageId, exceptionLogDAO.MessageText, exceptionLogDAO.ExceptionMessage, exceptionLogDAO.StackTrace, exceptionLogDAO.LastUpdatedBy );
+		//	//}
+		//}
 
         #region Page Logging Routines
         /// <summary>

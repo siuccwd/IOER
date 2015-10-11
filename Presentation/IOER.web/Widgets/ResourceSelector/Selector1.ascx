@@ -1,4 +1,4 @@
-﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="Selector1.ascx.cs" Inherits="ILPathways.Widgets.ResourceSelector.Selector1" %>
+﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="Selector1.ascx.cs" Inherits="IOER.Widgets.ResourceSelector.Selector1" %>
 
 <link rel="stylesheet" type="text/css" href="/Styles/ISLE.css" />
 <link rel="stylesheet" type="text/css" href="/Styles/common2.css" />

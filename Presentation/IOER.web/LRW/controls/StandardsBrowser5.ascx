@@ -1,4 +1,4 @@
-﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="StandardsBrowser5.ascx.cs" Inherits="ILPathways.LRW.controls.StandardsBrowser5" %>
+﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="StandardsBrowser5.ascx.cs" Inherits="IOER.LRW.controls.StandardsBrowser5" %>
 
 <!-- Standards Browser v5 JS -->
 <!-- From Server -->

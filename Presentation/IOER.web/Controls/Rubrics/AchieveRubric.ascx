@@ -1,4 +1,4 @@
-﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="AchieveRubric.ascx.cs" Inherits="ILPathways.Controls.Rubrics.AchieveRubric" %>
+﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="AchieveRubric.ascx.cs" Inherits="IOER.Controls.Rubrics.AchieveRubric" %>
 
 <script type="text/javascript">
   //Initialization

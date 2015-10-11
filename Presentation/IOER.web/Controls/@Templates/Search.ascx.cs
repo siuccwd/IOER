@@ -12,10 +12,10 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Web.UI.HtmlControls;
 
-using ILPathways.Library;
+using IOER.Library;
 using ILPathways.Utilities;
 using LogManager = ILPathways.Utilities.LoggingHelper;
-using ILPathways.classes;
+using IOER.classes;
 using ILPathways.Business;
 using ILPathways.DAL;
 using MyManager = ILPathways.DAL.TemplateManager;
@@ -23,7 +23,7 @@ using SecurityManager = Isle.BizServices.GroupServices;
 using LRWarehouse.DAL;
 using LDBM = LRWarehouse.DAL.DatabaseManager;
 
-namespace ILPathways.Controls._Templates
+namespace IOER.Controls._Templates
 {
     public partial class Search : BaseUserControl
     {
@@ -325,7 +325,7 @@ namespace ILPathways.Controls._Templates
 
             if ( txtKeyword.Text.Trim().Length > 0 )
             {
-                string keyword = MyManager.HandleApostrophes( FormHelper.SanitizeUserInput( txtKeyword.Text.Trim() ) );
+                string keyword = MyManager.HandleApostrophes( FormHelper.CleanText( txtKeyword.Text.Trim() ) );
 
                 if ( keyword.IndexOf( "%" ) == -1 )
                     keyword = "%" + keyword + "%";

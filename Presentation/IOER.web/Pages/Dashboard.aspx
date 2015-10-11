@@ -1,4 +1,4 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Masters/Responsive.Master" AutoEventWireup="true" CodeBehind="Dashboard.aspx.cs" Inherits="ILPathways.Pages.Dashboard" %>
+﻿<%@ Page Title="Illinois Open Educational Resources Dashboard" Language="C#" MasterPageFile="~/Masters/Responsive.Master" AutoEventWireup="true" CodeBehind="Dashboard.aspx.cs" Inherits="IOER.Pages.Dashboard" %>
 <%@ Register TagPrefix="uc1" TagName="Dashboard" Src="/Account/controls/Dashboard.ascx" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="HeadContent" runat="server">

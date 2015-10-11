@@ -4,7 +4,7 @@ using System.Data;
 using System.Linq;
 using System.Web;
 
-namespace ILPathways.Controllers
+namespace IOER.Controllers
 {
 	public class BaseController
 	{

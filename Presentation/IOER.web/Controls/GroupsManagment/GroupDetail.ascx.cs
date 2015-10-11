@@ -6,23 +6,24 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
+using IOER.Library;
 using ILPathways.Business;
-using ILPathways.Controllers;
+using IOER.Controllers;
 using ILPathways.Utilities;
 using GDAL = Isle.BizServices;
 using MyManager = Isle.BizServices.GroupServices;
 using UserManager = Isle.BizServices.AccountServices;
-using GroupManager = Isle.BizServices.GroupServices;
-using MyGroupController = ILPathways.Controllers.GroupsManagementController;
+//using GroupManager = Isle.BizServices.GroupServices;
+//using MyGroupController = IOER.Controllers.GroupsManagementController;
 //using bizService = ILPathways.GatewayServiceReference;
 
 using Group = ILPathways.Business.AppGroup;
 using LDAL = LRWarehouse.DAL;
 using BDM = LRWarehouse.DAL.BaseDataManager; 
 
-namespace ILPathways.Controls.GroupsManagment
+namespace IOER.Controls.GroupsManagment
 {
-    public partial class GroupDetail : GroupsManagementController
+    public partial class GroupDetail : BaseUserControl
     {
 
         /// <summary>
@@ -30,7 +31,8 @@ namespace ILPathways.Controls.GroupsManagment
         /// </summary>
         const string thisClassName = "Controls_GroupsManagement_GroupDetail";
 
-        MyGroupController myc = new MyGroupController();
+        //MyGroupController myc = new MyGroupController();
+		MyManager grpMgr = new MyManager();
 
         #region properties
         /// <summary>
@@ -103,7 +105,7 @@ namespace ILPathways.Controls.GroupsManagment
             get { return this._ThisContainerPaneIndex; }
             set { _ThisContainerPaneIndex = value; }
         }
-        private int _ThisContainerPaneIndex = GroupsManagementController.CONTROLLER_PANE_DETAIL;
+		private int _ThisContainerPaneIndex = MyManager.CONTROLLER_PANE_DETAIL;
 
         /// <summary>
         /// INTERNAL PROPERTY: CurrentRecord
@@ -124,7 +126,7 @@ namespace ILPathways.Controls.GroupsManagment
         /// <param name="ex"></param>
         protected void Page_Load( object sender, EventArgs ex )
         {
-            this.InstanceGroupCode = CurrentGroupSessionCode;
+           // this.InstanceGroupCode = CurrentGroupSessionCode;
 
             if ( IsUserAuthenticated() == false )
             {
@@ -245,14 +247,14 @@ namespace ILPathways.Controls.GroupsManagment
         {
             try
             {
-                if ( CurrentGroupExists() )
+				if ( grpMgr.CurrentGroupExists() )
                 {
-                    if ( CurrentGroup.Id > 0 )
+                    if ( grpMgr.CurrentGroup.Id > 0 )
                     {
-                        if ( CurrentGroup.Id.ToString() != txtId.Text )
+                        if ( grpMgr.CurrentGroup.Id.ToString() != txtId.Text )
                         {
-                            //this.Get( CurrentGroup.Id );
-                            PopulateForm( CurrentGroup );
+                            //this.Get( grpMgr.CurrentGroup.Id );
+                            PopulateForm( grpMgr.CurrentGroup );
                         }
                         else
                         {
@@ -264,17 +266,6 @@ namespace ILPathways.Controls.GroupsManagment
                         this.txtId.Text = "0";
                     }
                 }
-
-                //check if groupId exists in parent and has changed
-                //Label txtCurrentParentId = ( Label ) FindChildControl( Page, "txtCurrentParentId" );
-                //if ( txtCurrentParentId != null )
-                //{
-                //    int id = int.Parse( txtCurrentParentId.Text.ToString() );
-                //    if ( id > 0 && DidParentRecordChange )
-                //    {
-                //        this.Get( id );
-                //    }
-                //}
 
             }
             catch
@@ -317,18 +308,6 @@ namespace ILPathways.Controls.GroupsManagment
             }
         }	// End method
 
-
-        /// <summary>
-        /// Populate the form 
-        ///</summary>
-        //private void PopulateForm( bizService.GroupDataContract gc )
-        //{
-        //    Group entity = myc.MapGroup( gc );
-
-        //    PopulateForm( entity );
-        //}	// End method
-
-
         /// <summary>
         /// Populate the form 
         ///</summary>
@@ -348,7 +327,7 @@ namespace ILPathways.Controls.GroupsManagment
                 lblContactOrg.Text = "";
             }
 
-            CurrentGroup = entity;
+            grpMgr.CurrentGroup = entity;
 
             this.txtId.Text = entity.Id.ToString();
             this.groupName.Text = entity.Title;
@@ -356,13 +335,6 @@ namespace ILPathways.Controls.GroupsManagment
 
             this.txtDescription.Text = entity.Description;
             this.rbIsActive.SelectedValue = this.ConvertBoolToYesNo( entity.IsActive );
-
-            //this.rbHasPrivateCredentials.SelectedValue = this.ConvertBoolToYesNo( entity.HasPrivateCredentials );
-
-            //TODO populate lists
-
-            //this.contactId.Text = entity.ContactId.ToString();
-            //this.orgId.Text = entity.OrgId.ToString();
 
             this.parentGroupId.Text = entity.ParentGroupId.ToString();
 
@@ -400,7 +372,7 @@ namespace ILPathways.Controls.GroupsManagment
         /// <param name="ex"></param>
         public void FormButton_Click( Object sender, CommandEventArgs ex )
         {
-            LastActiveContainerIdx = ThisContainerPaneIndex;
+			grpMgr.LastActiveContainerIdx = ThisContainerPaneIndex;
             switch ( ex.CommandName )
             {
                 case "New":
@@ -542,7 +514,7 @@ namespace ILPathways.Controls.GroupsManagment
                 else
                 {
                     // get current record from viewstate
-                    entity = CurrentGroup;
+                    entity = grpMgr.CurrentGroup;
                     action = "Update";
                 }
                 /*
@@ -624,9 +596,9 @@ namespace ILPathways.Controls.GroupsManagment
             //int id = 0;
             //string msg = "";
 
-            Group entity = CurrentGroup;
-            int prevGroupId = CurrentGroup.Id;
-            string prevGroupCode = CurrentGroup.GroupCode;
+            Group entity = grpMgr.CurrentGroup;
+            int prevGroupId = grpMgr.CurrentGroup.Id;
+            string prevGroupCode = grpMgr.CurrentGroup.GroupCode;
             try
             {
                 entity.Id = 0;
@@ -751,11 +723,11 @@ namespace ILPathways.Controls.GroupsManagment
         private void UpdateGroupOwner()
         {
             //TODO - update to use the person search like site mgmt
-            int groupId = CurrentGroup.Id;
+            int groupId = grpMgr.CurrentGroup.Id;
             if ( groupId > 0 )
             {
-                GroupsManagementController.GroupUserSearchParameters searchParms = new GroupsManagementController.GroupUserSearchParameters();
-                searchParms.groupId = CurrentGroup.Id.ToString();
+				MyManager.GroupUserSearchParameters searchParms = new MyManager.GroupUserSearchParameters();
+                searchParms.groupId = grpMgr.CurrentGroup.Id.ToString();
                 //only look for wfp users
                 searchParms.roleId = "2";
                 //type: groupTeamMember or eagroupTeamMember or groupOwner
@@ -771,7 +743,7 @@ namespace ILPathways.Controls.GroupsManagment
                 searchParms.searchTitle = "New Group Owner Search";
                 string navigateUrl = "/vos_portal/UserSearch.aspx?";
 
-                OpenSearchForm( searchParms, navigateUrl );
+               // OpenSearchForm( searchParms, navigateUrl );
 
 
                 //--------------------------------------------------------
@@ -811,9 +783,9 @@ namespace ILPathways.Controls.GroupsManagment
         /// <param name="searchParms"></param>
         /// <param name="title"></param>
         /// <param name="navigateUrl"></param>
-        protected void OpenSearchForm( GroupsManagementController.GroupUserSearchParameters searchParms, string navigateUrl )
+		protected void OpenSearchForm( MyManager.GroupUserSearchParameters searchParms, string navigateUrl )
         {
-            Session[ GroupsManagementController.GROUPS_SESSIONVAR_USERSEARCH_PARMS ] = searchParms;
+			Session[ MyManager.GROUPS_SESSIONVAR_USERSEARCH_PARMS ] = searchParms;
 
             string hostName = Request.Url.Host.ToString();
             BrowserWindow win = new BrowserWindow( hostName + navigateUrl, 800, 600, true );
@@ -826,7 +798,7 @@ namespace ILPathways.Controls.GroupsManagment
         /// </summary>
         private void ResetForm()
         {
-            CurrentGroup = new Group();
+            grpMgr.CurrentGroup = new Group();
             //reset form by populating with an empty business object
             Group entity = new Group();
             //do any defaults. 
@@ -852,7 +824,7 @@ namespace ILPathways.Controls.GroupsManagment
         private void SetGroupTypeList()
         {
 
-            DataSet ds = GroupManager.CodesGroupType_Select();
+			DataSet ds = MyManager.CodesGroupType_Select();
             BDM.PopulateList( ddlGroupType, ds, "Id", "Title", "Select a Group Type" );
 
         } //

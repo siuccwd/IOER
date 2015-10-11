@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ILPathways.Controls.Admin {
+namespace IOER.Controls.Admin {
     
     
     public partial class BigAdmin1 {

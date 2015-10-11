@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ILPathways.Controls {
+namespace IOER.Controls {
     
     
     public partial class QuickContribute {
@@ -118,7 +118,7 @@ namespace ILPathways.Controls {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ILPathways.LRW.controls.ConditionsOfUseSelector RightsSelector;
+        protected global::IOER.LRW.controls.ConditionsOfUseSelector RightsSelector;
         
         /// <summary>
         /// accessRightsPanel control.
@@ -145,7 +145,7 @@ namespace ILPathways.Controls {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ILPathways.Controls.StandardsBrowser7 standards;
+        protected global::IOER.Controls.StandardsBrowser7 standards;
         
         /// <summary>
         /// cbxlSubject control.
@@ -154,7 +154,7 @@ namespace ILPathways.Controls {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ILPathways.LRW.controls.ListPanel cbxlSubject;
+        protected global::IOER.LRW.controls.ListPanel cbxlSubject;
         
         /// <summary>
         /// cbxlGradeLevel control.
@@ -163,7 +163,7 @@ namespace ILPathways.Controls {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ILPathways.LRW.controls.ListPanel cbxlGradeLevel;
+        protected global::IOER.LRW.controls.ListPanel cbxlGradeLevel;
         
         /// <summary>
         /// cbxlCareerCluster control.
@@ -172,7 +172,7 @@ namespace ILPathways.Controls {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ILPathways.LRW.controls.ListPanel cbxlCareerCluster;
+        protected global::IOER.LRW.controls.ListPanel cbxlCareerCluster;
         
         /// <summary>
         /// submitPanel control.

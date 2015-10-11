@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ILPathways.testing {
+namespace IOER.testing {
     
     
     public partial class JSONtesting {

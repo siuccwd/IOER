@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ILPathways.Admin.Groups {
+namespace IOER.Admin.Groups {
     
     
     public partial class GroupsMgmt {
@@ -136,7 +136,7 @@ namespace ILPathways.Admin.Groups {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ILPathways.Controls.GroupsManagment.GroupDetail groupDetail1;
+        protected global::IOER.Controls.GroupsManagment.GroupDetail groupDetail1;
         
         /// <summary>
         /// tabMembers control.
@@ -154,7 +154,7 @@ namespace ILPathways.Admin.Groups {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ILPathways.Controls.GroupsManagment.GroupMembers teamDetail1;
+        protected global::IOER.Controls.GroupsManagment.GroupMembers teamDetail1;
         
         /// <summary>
         /// tabPrivileges control.
@@ -181,7 +181,7 @@ namespace ILPathways.Admin.Groups {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ILPathways.Controls.GroupsManagment.GroupPrivileges privilegeDetail2;
+        protected global::IOER.Controls.GroupsManagment.GroupPrivileges privilegeDetail2;
         
         /// <summary>
         /// txtCurrentParentId control.

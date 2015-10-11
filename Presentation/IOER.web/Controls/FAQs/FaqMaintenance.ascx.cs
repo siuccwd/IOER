@@ -14,19 +14,19 @@ using System.Web.UI.WebControls;
 using System.Web.UI.HtmlControls;
 
 using EmailHelper = ILPathways.Utilities.EmailManager;
-using MyManager = ILPathways.Controllers.FaqController;
+using MyManager = IOER.Controllers.FaqController;
 using ILPathways.Business;
-using ILPathways.classes;
+using IOER.classes;
 using BDM = ILPathways.Common;
-using ILPathways.Controllers;
+using IOER.Controllers;
 //using ILPathways.DAL;
 using Isle.BizServices;
-using ILPathways.Library;
+using IOER.Library;
 using ILPathways.Utilities;
 using LRWarehouse.Business;
 using LRD = LRWarehouse.DAL;
 
-namespace ILPathways.Controls.FAQs
+namespace IOER.Controls.FAQs
 {
     public partial class FaqMaintenance : BaseUserControl
     {

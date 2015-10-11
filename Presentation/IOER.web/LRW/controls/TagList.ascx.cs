@@ -6,12 +6,12 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 
 using System.Web.Script.Serialization;
-using ILPathways.Library;
+using IOER.Library;
 using System.Data;
 using LRWarehouse.DAL;
 using System.Data.SqlClient;
 
-namespace ILPathways.LRW.controls
+namespace IOER.LRW.controls
 {
     public partial class TagList : BaseUserControl
     {

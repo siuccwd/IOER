@@ -766,10 +766,71 @@ namespace LRWarehouse.DAL
             return canEdit;
         }
 
-        #endregion 
 
-        #region Publish Pending
-        /// <summary>
+		#endregion
+
+		#region Delayed Publishing
+		/// <summary>
+		/// Call proc to create resource objects for all components of a hierarchy like a learing list
+		/// </summary>
+		/// <param name="contentId"></param>
+		/// <param name="resourceId"></param>
+		/// <param name="createdById"></param>
+		/// <param name="statusMessage"></param>
+		/// <returns>A comma separated list of resource Ids</returns>
+		public bool InitiateDelayedPublishing( int contentId, int resourceId, int createdById, ref string resourceList,  ref string statusMessage )
+		{
+			bool successful = false;
+			resourceList = "";
+			SqlParameter[] sqlParameters = new SqlParameter[ 4 ];
+			sqlParameters[ 0 ] = new SqlParameter( "@TopContentId", contentId );
+			sqlParameters[ 1 ] = new SqlParameter( "@ContentId", 0 );
+			sqlParameters[ 2 ] = new SqlParameter( "@TopResourceId", resourceId );
+			sqlParameters[ 3 ] = new SqlParameter( "@CreatedById", createdById );
+			//sqlParameters[ 3 ] = new SqlParameter( "@TopResourceVersionId", 0 );
+
+			using ( SqlConnection conn = new SqlConnection( LRWarehouse() ) )
+			{
+				DataSet ds = new DataSet();
+				try
+				{
+					//get resources list
+					ds = SqlHelper.ExecuteDataset( conn, CommandType.StoredProcedure, "[Resource.PublishRelatedContent]", sqlParameters );
+
+					if ( DoesDataSetHaveRows( ds ) )
+					{
+						foreach ( DataRow dr in ds.Tables[ 0 ].Rows )
+						{
+							resourceList = GetRowColumn( dr, "Resources", "" );
+							//only return one
+							DoTrace( 1, string.Format("ResourceManager.InitiateDelayedPublishing. ContentId: {0}, resId: {1}, resources: {2}", contentId, resourceId, resourceList) );
+							successful = true;
+							break;
+						}
+					}
+					else
+					{
+						statusMessage = "Warning no resources were returnede";
+					}
+
+				}
+				catch ( Exception ex )
+				{
+					LogError( ex, thisClassName + ".InitiateDelayedPublishing() " );
+					statusMessage = thisClassName + "- Unsuccessful: InitiateDelayedPublishing(): " + ex.Message.ToString();
+
+					successful = false;
+
+				}
+			}
+
+	
+			return successful;
+		}//
+		#endregion
+
+		#region Publish Pending
+		/// <summary>
         /// Delete an Publish.Pending record using rowId
         /// </summary>
         /// <param name="pRowId"></param>

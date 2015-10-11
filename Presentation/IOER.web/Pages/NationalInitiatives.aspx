@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="NationalInitiatives.aspx.cs" Inherits="ILPathways.Pages.NationalInitiatives" MasterPageFile="/Masters/Responsive.Master" %>
+﻿<%@ Page Title="Illinois Open Educational Resources - National Initiatives" Language="C#" AutoEventWireup="true" CodeBehind="NationalInitiatives.aspx.cs" Inherits="IOER.Pages.NationalInitiatives" MasterPageFile="/Masters/Responsive.Master" %>
 
 <asp:Content ContentPlaceHolderID="HeadContent" runat="server">
   <link rel="stylesheet" type="text/css" href="/Styles/common2.css" />
@@ -17,6 +17,8 @@
     #icon_cc { background-image: url('/images/logo_cc.jpg'); }
     #icon_achieve { background-image: url('/images/logo_achieve.png'); }
     #icon_ceds { background-image: url('/images/logo_ceds.jpg'); }
+  	#icon_dcmi { background-image: url('/images/logo_dcmi.png'); }
+  	#icon_oet { background-image: url('/images/logo_oet.png'); }
 
     @media screen and (max-width: 525px) {
       .partnerBox .icon { position: static; margin: 0 auto 5px auto; }
@@ -28,18 +30,10 @@
     <p class="center">The ISLE Open Educational Resource program participates with the following national initiatives:</p>
 
     <div class="partnerBox grayBox">
-      <div class="icon"><a id="icon_lr" href="http://learningregistry.org" target="_blank"></a></div>
+      <div class="icon"><a id="icon_achieve" href="http://achieve.org" target="_blank"></a></div>
       <div class="text">
-        <p>ISLE OER operates a node in the Learning Registry network to share Resources.</p>
-        <p><a class="textLink" href="http://learningregistry.org" target="_blank">http://learningregistry.org</a></p>
-      </div>
-    </div>
-
-    <div class="partnerBox grayBox">
-      <div class="icon"><a id="icon_lrmi" href="http://www.lrmi.net" target="_blank"></a></div>
-      <div class="text">
-        <p>ISLE OER uses the LRMI Metadata Schema adopted by <a class="textLink" href="http://www.schema.org" target="_blank">schema.org</a>.</p>
-        <p><a class="textLink" href="http://www.lrmi.net" target="_blank">http://www.lrmi.net</a></p>
+        <p>ISLE OER provides an online OER evaluation rubric based on Achieve's OER Rubrics and a derivative of Achieve's EQuIP Rubrics.</p>
+        <p><a class="textLink" href="http://achieve.org" target="_blank">http://achieve.org</a></p>
       </div>
     </div>
 
@@ -52,6 +46,14 @@
     </div>
 
     <div class="partnerBox grayBox">
+      <div class="icon"><a id="icon_ceds" href="https://ceds.ed.gov" target="_blank"></a></div>
+      <div class="text">
+        <p>ISLE OER uses selected items of the Common Education Data Standards vocabulary in collaboration with the <a class="textLink" href="http://www2.ed.gov/programs/racetothetop/index.html" target="_blank">Race to the Top Project</a> states.</p>
+        <p><a class="textLink" href="https://ceds.ed.gov" target="_blank">https://ceds.ed.gov</a></p>
+      </div>
+    </div>
+
+    <div class="partnerBox grayBox">
       <div class="icon"><a id="icon_cc" href="http://creativecommons.org" target="_blank"></a></div>
       <div class="text">
         <p>ISLE OER provides users direct access to Creative Commons attribution licenses to describe access to Resources.</p>
@@ -60,20 +62,44 @@
     </div>
 
     <div class="partnerBox grayBox">
-      <div class="icon"><a id="icon_achieve" href="http://achieve.org" target="_blank"></a></div>
+      <div class="icon"><a id="icon_dcmi" href="http://dublincore.org/" target="_blank"></a></div>
       <div class="text">
-        <p>ISLE OER provides an online OER evaluation rubric based on Achieve's OER Rubrics and a derivative of Achieve's EQuIP Rubrics.</p>
-        <p><a class="textLink" href="http://achieve.org" target="_blank">http://achieve.org</a></p>
+        <p>ISLE OER works with the Dublin Core Metadata Initiative to develop metadata schemas for use with the Learning Registry.</p>
+        <p><a class="textLink" href="http://dublincore.org/" target="_blank">http://dublincore.org/</a></p>
       </div>
     </div>
 
     <div class="partnerBox grayBox">
-      <div class="icon"><a id="icon_ceds" href="https://ceds.ed.gov" target="_blank"></a></div>
+      <div class="icon"><a id="icon_lr" href="http://learningregistry.org" target="_blank"></a></div>
       <div class="text">
-        <p>ISLE OER uses selected items of the Common Education Data Standards vocabulary in collaboration with the <a class="textLink" href="http://www2.ed.gov/programs/racetothetop/index.html" target="_blank">Race to the Top Project</a> states.</p>
-        <p><a class="textLink" href="https://ceds.ed.gov" target="_blank">https://ceds.ed.gov</a></p>
+        <p>ISLE OER uses the Learning Registry network to share Resources.</p>
+        <p><a class="textLink" href="http://learningregistry.org" target="_blank">http://learningregistry.org</a></p>
       </div>
     </div>
+
+    <div class="partnerBox grayBox">
+      <div class="icon"><a id="icon_lrmi" href="http://dublincore.org/dcx/lrmi-terms/" target="_blank"></a></div>
+      <div class="text">
+        <p>ISLE OER leverages LRMI to publish and consume metadata.</p>
+        <p><a class="textLink" href="http://dublincore.org/dcx/lrmi-terms/" target="_blank">http://dublincore.org/dcx/lrmi-terms/</a></p>
+      </div>
+    </div>
+
+    <div class="partnerBox grayBox">
+      <div class="icon"><a id="icon_oet" href="http://tech.ed.gov/" target="_blank"></a></div>
+      <div class="text">
+        <p>ISLE OER has been recognized by the US Office of Educational Technology.</p>
+        <p><a class="textLink" href="http://tech.ed.gov/" target="_blank">http://tech.ed.gov/</a></p>
+      </div>
+    </div>
+
+    <%--<div class="partnerBox grayBox">
+      <div class="icon"><a id="icon_lrmi" href="http://www.lrmi.net" target="_blank"></a></div>
+      <div class="text">
+        <p>ISLE OER uses the LRMI Metadata Schema adopted by <a class="textLink" href="http://www.schema.org" target="_blank">schema.org</a>.</p>
+        <p><a class="textLink" href="http://www.lrmi.net" target="_blank">http://www.lrmi.net</a></p>
+      </div>
+    </div>--%>
 
   </div>
 

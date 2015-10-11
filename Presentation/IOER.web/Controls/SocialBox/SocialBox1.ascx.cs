@@ -7,7 +7,7 @@ using System.Web.UI.WebControls;
 
 using System.Web.Script.Serialization;
 
-namespace ILPathways.Controls.SocialBox
+namespace IOER.Controls.SocialBox
 {
   public partial class SocialBox1 : System.Web.UI.UserControl
   {

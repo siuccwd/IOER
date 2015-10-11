@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="CurriculumFileUpload.aspx.cs" Inherits="ILPathways.Controls.Curriculum.CurriculumFileUpload" %>
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="CurriculumFileUpload.aspx.cs" Inherits="IOER.Controls.Curriculum.CurriculumFileUpload" %>
 
 <!DOCTYPE html>
 

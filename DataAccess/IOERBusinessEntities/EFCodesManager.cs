@@ -329,24 +329,31 @@ namespace IOERBusinessEntities
         public static Codes_TagValue Codes_TagValue_Get( ResourceContext context, int id )
         {
             Codes_TagValue item = new Codes_TagValue();
+			try
+			{
+				// using ( var context = new ResourceContext() )
+				// {
+				item = context.Codes_TagValue
+					.Include( "Codes_TagCategory" )
+					.SingleOrDefault( s => s.Id == id );
 
-           // using ( var context = new ResourceContext() )
-           // {
-                item = context.Codes_TagValue
-                    .Include( "Codes_TagCategory" )
-                    .SingleOrDefault( s => s.Id == id );
+				if ( item == null || item.Id == 0 )
+				{
+					LoggingHelper.DoTrace( 2, string.Format( "EFCodesManagerCodes_TagValue_Get. Did not find Id: {0}", id ) );
+				}
+				else
+				{
+					if ( item.Codes_TagCategory == null | item.Codes_TagCategory.Id == 0 )
+					{
+						item.Codes_TagCategory = Codes_TagCategory_Get( context, item.CategoryId );
+					}
+				}
+			}
+			catch ( Exception ex )
+			{
+				//catch here and use proc
 
-                if ( item == null || item.Id == 0 )
-                {
-                    LoggingHelper.DoTrace( 2, string.Format( "EFCodesManagerCodes_TagValue_Get. Did not find Id: {0}", id ) );
-                }
-                else
-                {
-                    if ( item.Codes_TagCategory == null | item.Codes_TagCategory.Id == 0 )
-                    {
-                        item.Codes_TagCategory = Codes_TagCategory_Get( context, item.CategoryId );
-                    }
-                }
+			}
             //}
             return item;
         }

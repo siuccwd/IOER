@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ILPathways.Libraries {
+namespace IOER.Libraries {
     
     
     public partial class Default {
@@ -19,6 +19,6 @@ namespace ILPathways.Libraries {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ILPathways.Controls.Libraries.LibrariesSearch LibSearch;
+        protected global::IOER.Controls.Libraries.LibrariesSearch LibSearch;
     }
 }

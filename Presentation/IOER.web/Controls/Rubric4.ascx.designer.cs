@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ILPathways.Controls {
+namespace IOER.Controls {
     
     
     public partial class Rubric4 {

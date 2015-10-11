@@ -8,7 +8,7 @@ using System.Web.UI.WebControls;
 using LRWarehouse.Business;
 
 
-namespace ILPathways.Controls.Rubrics
+namespace IOER.Controls.Rubrics
 {
   public partial class CCSSELA3_12Rubric : BaseRubricModule
   {

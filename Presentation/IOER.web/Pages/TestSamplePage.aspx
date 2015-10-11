@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="TestSamplePage.aspx.cs" Inherits="ILPathways.Pages.TestSamplePage" %>
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="TestSamplePage.aspx.cs" Inherits="IOER.Pages.TestSamplePage" %>
 
 <!DOCTYPE html>
 

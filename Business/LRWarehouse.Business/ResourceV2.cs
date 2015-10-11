@@ -13,9 +13,19 @@ namespace LRWarehouse.Business.ResourceV2
   {
     public ResourceBase()
     {
+			LrDocId = "";
+			Title = "";
+			UrlTitle = "";
+			Description = "";
+			Requirements = "";
+			Url = "";
+			ResourceCreated = "";
+			Creator = "";
+			Publisher = "";
+			Submitter = "";
+			ThumbnailUrl = "";
       Keywords = new List<string>();
       IsleSectionIds = new List<int>();
-      UsageRights = new UsageRights();
     }
     public int ResourceId { get; set; }
     public int VersionId { get; set; } //Hopefully we won't need this one day!
@@ -32,7 +42,6 @@ namespace LRWarehouse.Business.ResourceV2
     public string ThumbnailUrl { get; set; }
     public List<string> Keywords { get; set; }
     public List<int> IsleSectionIds { get; set; }
-    public UsageRights UsageRights { get; set; }
   }
 
   //Standards Base
@@ -50,12 +59,15 @@ namespace LRWarehouse.Business.ResourceV2
   //Usage Rights
   public class UsageRights
   {
-    public int Id { get; set; }
+    public int CodeId { get; set; } //ID from the [ConditionOfUse] code table
     public string Title { get; set; }
     public string Description { get; set; }
     public string Url { get; set; }
     public string IconUrl { get; set; }
     public string MiniIconUrl { get; set; }
+    public int TagId { get; set; } //ID from the [Resource.TagValue] code table
+		public bool Custom { get; set; } //Is custom
+		public bool Unknown { get; set; } //Is unknown
   }
 
   //Paradata
@@ -96,6 +108,7 @@ namespace LRWarehouse.Business.ResourceV2
       Standards = new List<StandardsDB>();
       Paradata = new ParadataDB();
       Fields = new List<FieldDB>();
+      UsageRights = new UsageRights();
     }
     //Single Value Fields
     public int CreatedById { get; set; }
@@ -107,6 +120,7 @@ namespace LRWarehouse.Business.ResourceV2
     public List<StandardsDB> Standards { get; set; }
     public ParadataDB Paradata { get; set; }
     public List<FieldDB> Fields { get; set; }
+    public UsageRights UsageRights { get; set; }
   }
 
   //Standards for use with database CRUD
@@ -114,6 +128,7 @@ namespace LRWarehouse.Business.ResourceV2
   {
     public int RecordId { get; set; } //database record
     public int CreatedById { get; set; }
+		public string StandardUrl { get; set; }
   }
 
   //Paradata for use with database CRUD
@@ -122,12 +137,12 @@ namespace LRWarehouse.Business.ResourceV2
     public ParadataDB()
     {
       Comments = new List<ResourceComment>();
-      Evaluations = new List<ResourceEvaluation>();
-      StandardEvaluations = new List<ResourceStandardEvaluation>();
+			RubricEvaluations = new List<EvaluationSummaryV2>();
+			StandardEvaluations = new List<EvaluationSummaryV2>();
     }
     public List<ResourceComment> Comments { get; set; }
-    public List<ResourceEvaluation> Evaluations { get; set; }
-    public List<ResourceStandardEvaluation> StandardEvaluations { get; set; }
+		public List<EvaluationSummaryV2> RubricEvaluations { get; set; }
+		public List<EvaluationSummaryV2> StandardEvaluations { get; set; }
   }
 
   //Field (aka TagCategory) for use with database
@@ -138,6 +153,7 @@ namespace LRWarehouse.Business.ResourceV2
       Tags = new List<TagDB>();
       IsleSectionIds = new List<int>();
     }
+    public int SortOrder { get; set; }
     public List<int> IsleSectionIds { get; set; }
     public List<TagDB> Tags { get; set; }
   }
@@ -163,19 +179,27 @@ namespace LRWarehouse.Business.ResourceV2
       Standards = new List<StandardsDTO>();
       Paradata = new ParadataDTO();
       Fields = new List<FieldDTO>();
+      UsageRights = new UsageRights();
     }
 
     //Special Fields
-    public int CreatedById { get; set; }
-    public List<StandardsDTO> Standards { get; set; }
-    public ParadataDTO Paradata { get; set; }
-    public List<FieldDTO> Fields { get; set; }
+	public int CreatedById { get; set; }
+	public int PrivilegeId { get; set; } //public, only teachers in org, etc.
+	public int OrganizationId { get; set; }
+	public int LibraryId { get; set; }
+	public int CollectionId { get; set; }
+	public int ContentId { get; set; }
+	public List<StandardsDTO> Standards { get; set; }
+	public ParadataDTO Paradata { get; set; }
+	public List<FieldDTO> Fields { get; set; }
+	public UsageRights UsageRights { get; set; }
   }
 
   //Standards for use with client-side detail pages
   public class StandardsDTO : StandardsBase
   {
     public int BodyId { get; set; }
+		public string Url { get; set; }
   }
 
   //Paradata for use with client-side detail pages
@@ -237,6 +261,7 @@ namespace LRWarehouse.Business.ResourceV2
   {
     public ResourceES()
     {
+			UsageRightsUrl = "";
       GradeAliases = new List<string>();
       LibraryIds = new List<int>();
       CollectionIds = new List<int>();
@@ -246,6 +271,9 @@ namespace LRWarehouse.Business.ResourceV2
       Fields = new List<FieldES>();
     }
     
+    //Single Value Fields
+    public string UsageRightsUrl { get; set; }
+
     //Special Fields
     public List<string> GradeAliases { get; set; }
     public List<int> LibraryIds { get; set; }

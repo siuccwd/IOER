@@ -15,7 +15,7 @@ using Isle.BizServices;
 using ILPathways.Utilities;
 using LRDAL = LRWarehouse.DAL;
 
-namespace ILPathways.Services
+namespace IOER.Services
 {
     /// <summary>
     /// Summary description for CascadingDropDownsService

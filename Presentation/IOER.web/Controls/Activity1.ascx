@@ -1,4 +1,4 @@
-﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="Activity1.ascx.cs" Inherits="ILPathways.Controls.Activity1" %>
+﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="Activity1.ascx.cs" Inherits="IOER.Controls.Activity1" %>
 
 
 <script type="text/javascript">
@@ -500,9 +500,9 @@
 
 
   /* Responsive */
-  @media screen and (min-width: 980px) {
+  /*@media screen and (min-width: 980px) {
     #content { padding-left: 50px; }
-  }
+  }*/
   @media screen and (max-width: 900px) {
     .event .basics { width: 25%; }
     .event .details { width: 75%; }
@@ -560,28 +560,28 @@
       </div>
       <div class="grayBox contributeTab" data-tabID="contribute">
         <div class="wayToContribute" data-id="quickTag">
-          <img src="/images/icons/icon_swirl_bg.png">
+          <img alt="" src="/images/icons/icon_swirl_bg.png">
           <h4>Quick Tag</h4>
           <p>Submit a webpage or a file that is already hosted online, tag it with basic information, and enhance your tags later.</p>
-          <a href="/Contribute/?mode=tag">Tag Now &rarr;</a>
+          <a href="/tagger?theme=quick&mode=tag">Tag Now &rarr;</a>
         </div>
         <div class="wayToContribute" data-id="quickUpload">
-          <img src="/images/icons/icon_upload_bg.png">
+          <img alt="" src="/images/icons/icon_upload_bg.png">
           <h4>Quick Upload</h4>
           <p>Upload a file, tag it with basic information, and enhance your tags later.</p>
-          <a href="/Contribute/?mode=upload">Upload Now &rarr;</a>
+          <a href="/tagger?theme=quick&mode=file">Upload Now &rarr;</a>
         </div>
         <div class="wayToContribute" data-id="author">
-          <img src="/images/icons/icon_create_bg.png">
+          <img alt="" src="/images/icons/icon_create_bg.png">
           <h4>Create a New Resource</h4>
           <p>Easily create a simple webpage and attach multiple files to it with this tool.</p>
-          <a href="/My/Author">Go to Authoring Tool &rarr;</a>
+          <a href="/My/Author.aspx">Go to Authoring Tool &rarr;</a>
         </div>
         <div class="wayToContribute" data-id="publisher">
-          <img src="/images/icons/icon_tag_bg.png">
+          <img alt="" src="/images/icons/icon_tag_bg.png">
           <h4>Tag an Online Resource</h4>
           <p>Want to thoroughly tag a website or a file that's already hosted online? Start here.</p>
-          <a href="/Publish.aspx">Go to Tagging Tool &rarr;</a>
+          <a href="/tagger?theme=ioer&mode=tag">Go to Tagging Tool &rarr;</a>
         </div>
       </div>
     </div>
@@ -617,12 +617,12 @@
     </div>
     <div id="template_small">
       <div class="event" data-type="{type}">
-        <img src="{icon}" />
+        <img alt="" src="{icon}" />
         <div class="narrowDetails">
           <h2>{actor}</h2>
           <p>{action} a {item} </p>
-          <a href="{link}" target="tmlLink" class="locationThumbnail">
-            <img src="{locationImage}" />
+          <a href="{link}" target="_self" class="locationThumbnail">
+            <img alt="" src="{locationImage}" />
             <div>{location}</div>
           </a>
         </div>
@@ -630,12 +630,12 @@
     </div>
     <div id="template_event">
       <div class="event" data-type="{type}">
-        <img src="{icon}" class="icon" />
+        <img alt="" src="{icon}" class="icon" />
         <div class="basics">
-          <h2><a href="/Profile/{userId}/{actor}" target="tmlLink" ><img class="actorAvatar" src="{actorAvatar}" /> {actor}</a></h2>
+          <h2><a href="/Profile/{userId}/{actor}" target="_self" ><img alt=""class="actorAvatar" src="{actorAvatar}" /> {actor}</a></h2>
           <p>{item}</p>
-          <a href="{link}" target="tmlLink" class="locationThumbnail {extraClass}">
-            <img src="{locationImage}" />
+          <a href="{link}" target="_self" class="locationThumbnail {extraClass}">
+            <img alt="" src="{locationImage}" />
             <div><span class="locationType">{locationType}</span><br />{location}</div>
           </a>
           <div class="date">{date}</div>
@@ -644,7 +644,7 @@
       </div>
     </div>
     <div id="template_news">
-      <h2><a href="{link}" target="tmlLink">{title}</a></h2>
+      <h2><a href="{link}" target="_self">{title}</a></h2>
       <p>{description}</p>
     </div>
     <div id="template_comment">
@@ -654,12 +654,12 @@
       <p>{description}</p>
     </div>
     <div id="template_resource">
-      <h2><a href="{link}" target="tmlLink">{title}</a></h2>
+      <h2><a href="{link}" target="_self">{title}</a></h2>
       <div class="boxWithThumb">
-        <a href="{link}" target="tmlLink" class="thumb"><img src="{thumb}" /></a>
+        <a href="{link}" target="_self" class="thumb" title="Resource Image"><img alt="" src="{thumb}" /></a>
         <p>{description}</p>
         <div class="shareLike">
-          <div class="share">Share: <input type="text" onclick="this.select()" readonly="readonly" value="http://ioer.ilsharedlearning.org{link}" /></div>
+          <div class="share">Share: <input title="share {title}" type="text" onclick="this.select()" readonly="readonly" value="http://ioer.ilsharedlearning.org{link}" /></div>
           <div class="likeBox" data-id="{id}">
             <input type="button" onclick="like(this, 'resource', {id}); return false;" value="+ Like" />
             <div class="likeBarContainer">
@@ -673,12 +673,12 @@
       </div>
     </div>
       <div id="template_evaluation">
-          <h2><a href="{link}" target="tmlLink">{title}</a></h2>
+          <h2><a href="{link}" target="_self">{title}</a></h2>
           <div class="boxWithThumb">
-            <a href="{link}" target="tmlLink" class="thumb"><img src="{thumb}" /></a>
+            <a href="{link}" target="_self" class="thumb" title="Resource Image"><img alt="" src="{thumb}" /></a>
             <p>{description}</p>
             <div class="shareLike">
-              <div class="share">Share: <input type="text" onclick="this.select()" readonly="readonly" value="http://ioer.ilsharedlearning.org{link}" /></div>
+              <div class="share">Share: <input title="share {title}" type="text" onclick="this.select()" readonly="readonly" value="http://ioer.ilsharedlearning.org{link}" /></div>
               <div class="likeBox" data-id="{id}">
                 <input type="button" onclick="like(this, 'resource', {id}); return false;" value="+ Like" />
                 <div class="likeBarContainer">
@@ -692,12 +692,12 @@
           </div>
     </div>
     <div id="template_collection">
-      <h2><a href="{link}" target="tmlLink">{title}</a></h2>
+      <h2><a href="{link}" target="_self">{title}</a></h2>
       <div class="boxWithThumb">
-        <a href="{link}" target="tmlLink" class="thumb"><img src="{thumb}" /></a>
+        <a href="{link}" target="_self" class="thumb" title="Resource Image"><img alt="" src="{thumb}" /></a>
         <p>{description}</p>
         <div class="shareLike">
-          <p class="share"><label>Share: </label><input type="text" onclick="this.select()" readonly="readonly" value="http://ioer.ilsharedlearning.org{link}" /></p>
+          <p class="share"><label>Share: </label><input title="share {title}" type="text" onclick="this.select()" readonly="readonly" value="http://ioer.ilsharedlearning.org{link}" /></p>
           <div class="likeBox">
             <input type="button" onclick="like(this, 'collection', {id}); return false;" value="+ Like" />
             <div class="likeBarContainer">

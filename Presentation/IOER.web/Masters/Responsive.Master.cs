@@ -5,9 +5,9 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using IPU = ILPathways.Utilities;
-using ILPathways.classes;
+using IOER.classes;
 
-namespace ILPathways.Masters
+namespace IOER.Masters
 {
     public partial class Responsive : System.Web.UI.MasterPage
     {

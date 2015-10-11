@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ILPathways.My {
+namespace IOER.My {
     
     
     public partial class Author {
@@ -28,6 +28,6 @@ namespace ILPathways.My {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ILPathways.Controls.Content.Authoring AuthoringTool;
+        protected global::IOER.Controls.Content.Authoring AuthoringTool;
     }
 }

@@ -7,13 +7,14 @@ using System.Web.UI.WebControls;
 
 using MyManager = Isle.BizServices.AccountServices;
 using Isle.BizServices;
-using ILPathways.Controllers;
+using IOER.Controllers;
 using LRWarehouse.DAL;
 using LRWarehouse.Business;
-using ILPathways.Library;
+using IOER.Library;
 using ILPathways.Utilities;
+//using Patron = LRWarehouse.Business.Patron;
 
-namespace ILPathways.Account
+namespace IOER.Account
 {
     public partial class ForgotPassword : BaseAppPage
     {

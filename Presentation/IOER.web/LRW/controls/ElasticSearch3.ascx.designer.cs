@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ILPathways.LRW.controls {
+namespace IOER.LRW.controls {
     
     
     public partial class ElasticSearch3 {
@@ -19,7 +19,7 @@ namespace ILPathways.LRW.controls {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ILPathways.Controls.StandardsBrowser7 sBrowser7;
+        protected global::IOER.Controls.StandardsBrowser7 sBrowser7;
         
         /// <summary>
         /// imgThumbnail control.

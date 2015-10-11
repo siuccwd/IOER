@@ -1,4 +1,4 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Masters/Pathway.Master" Async="true"  AutoEventWireup="true" CodeBehind="Default.aspx.cs" Inherits="ILPathways.Admin.Groups.Default" %>
+﻿<%@ Page Title="Illinois Open Educational Resources - Groups" Language="C#" MasterPageFile="~/Masters/Pathway.Master" Async="true"  AutoEventWireup="true" CodeBehind="Default.aspx.cs" Inherits="IOER.Admin.Groups.Default" %>
 <%@ Register TagPrefix="uc1" TagName="groupMgr" Src="~/Controls/GroupsManagment/GroupsManager.ascx" %>
 
 

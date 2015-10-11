@@ -11,13 +11,13 @@ using Ionic.Zip;
 using Isle.BizServices;
 using AcctManager = Isle.BizServices.AccountServices;
 using OrgManager = Isle.BizServices.OrganizationBizService;
-using ILPathways.Controllers;
-using ILPathways.Library;
+using IOER.Controllers;
+using IOER.Library;
 using ILPathways.Business;
 using ILPathways.Utilities;
 using LRB = LRWarehouse.Business;
 
-namespace ILPathways.Controls.Curriculum
+namespace IOER.Controls.Curriculum
 {
 
     public partial class Curriculum1 : BaseUserControl
@@ -113,7 +113,7 @@ namespace ILPathways.Controls.Curriculum
                     //{
                     //    //reload node, then redirect back
 
-                    //   // new ILPathways.Services.DisplayJSONNode( "", CurrentRecordID, false );
+                    //   // new IOER.Services.DisplayJSONNode( "", CurrentRecordID, false );
                     //}
                     startingNodeId = "var startingNodeId = " + CurrentRecordID.ToString() + ";";
                    // startingNodeId = CurrentRecordID.ToString();
@@ -131,7 +131,7 @@ namespace ILPathways.Controls.Curriculum
                     }
                     //var targetID = 0;
                     //int.TryParse( Request.Params[ "id" ], out targetID );
-                    nodes = "var nodes = " + new ILPathways.Services.CurriculumService().GetTree( CurrentRecordID ) + ";"; //2176, 2207
+                    nodes = "var nodes = " + new IOER.Services.CurriculumService().GetTree( CurrentRecordID ) + ";"; //2176, 2207
 
                     //Get( CurrentRecordID );
 

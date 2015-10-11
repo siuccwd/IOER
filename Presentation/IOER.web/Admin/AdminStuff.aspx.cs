@@ -12,13 +12,13 @@ using ILP=ILPathways.Business;
 using MyMgr= Isle.BizServices.LibraryBizService;
 using ResMgr = Isle.BizServices.AccountServices;
 using ILPathways.Common;
-using ILPathways.Library;
+using IOER.Library;
 using ILPathways.Utilities;
 using IDBM=ILPathways.DAL.DatabaseManager;
 //using DBM = LRWarehouse.DAL.DatabaseManager;
 using LRWarehouse.Business;
 
-namespace ILPathways.Admin
+namespace IOER.Admin
 {
     public partial class AdminStuff : BaseAppPage
     {
@@ -96,6 +96,16 @@ namespace ILPathways.Admin
 
             PopulateList( this.ddlPersons, list, "Id", "Title", "Select a Person" );
 
+			try
+			{
+				//we don't want addThis on this page, so show literal in master
+				Literal showingAddThis = (Literal)FormHelper.FindChildControl(Page, "litHidingAddThis");
+				if (showingAddThis != null)
+					showingAddThis.Visible = true;
+			}
+			catch
+			{
+			}
         }
         public void PopulateList( DropDownList list, List<CodeItem> items, string dataValueField, string dataTextField, string selectTitle )
         {

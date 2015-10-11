@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ILPathways {
+namespace IOER {
     
     
     public partial class UberTagger {
@@ -19,6 +19,6 @@ namespace ILPathways {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ILPathways.Controls.UberTaggerV1.UberTaggerV1 uberTagger;
+        protected global::IOER.Controls.UberTaggerV1.UberTaggerV1 uberTagger;
     }
 }

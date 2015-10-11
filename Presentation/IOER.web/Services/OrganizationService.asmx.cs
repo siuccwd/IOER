@@ -12,7 +12,7 @@ using LRWarehouse.Business;
 using LRWarehouse.DAL;
 using DataBaseHelper = LRWarehouse.DAL.BaseDataManager;
 
-namespace ILPathways.Services
+namespace IOER.Services
 {
     /// <summary>
     /// Summary description for OrganizationService
@@ -93,9 +93,9 @@ namespace ILPathways.Services
         /// <param name="useAssociatedOrgs"></param>
         /// <param name="generatedFilter"></param>
         /// <returns></returns>
-        public List<Business.Organization> DoSearch( string text, List<JSONInputFilter> filters, Patron user, string sortTerm, int selectedPageNbr, int pageSize, bool useAssociatedOrgs, ref string generatedFilter )
+        public List<Organization> DoSearch( string text, List<JSONInputFilter> filters, Patron user, string sortTerm, int selectedPageNbr, int pageSize, bool useAssociatedOrgs, ref string generatedFilter )
         {
-            text = FormHelper.SanitizeUserInput( text.Trim() );
+            text = FormHelper.CleanText( text.Trim() );
 
             string filter = FormatFilter( text, filters, user, useAssociatedOrgs );
             generatedFilter = filter;
@@ -157,7 +157,7 @@ namespace ILPathways.Services
         }	//
         protected void FormatKeyword( string text, string booleanOperator, ref string filter )
         {
-            string keyword = DataBaseHelper.HandleApostrophes( FormHelper.SanitizeUserInput( text ) );
+            string keyword = DataBaseHelper.HandleApostrophes( FormHelper.CleanText( text ) );
             string keywordFilter = "";
             string keywordTemplate = " (base.Name like '{0}' OR base.[City] like '{0}' ";
 
@@ -239,15 +239,15 @@ namespace ILPathways.Services
             }
         }
 
-        public List<JSONOrganizationSearchResult> BuildSearchResults( List<Business.Organization> orgs )
+        public List<JSONOrganizationSearchResult> BuildSearchResults( List<Organization> orgs )
         {
             var output = new List<JSONOrganizationSearchResult>();
 
-            foreach ( Business.Organization item in orgs )
+            foreach ( Organization item in orgs )
             {
                 var org = new JSONOrganizationSearchResult();
                 org.name = item.Name;
-                string encodedTitle = Business.Organization.UrlFriendlyTitle( org.name );
+                string encodedTitle = UtilityManager.UrlFriendlyTitle( org.name );
 
                 org.city = item.City;
                 org.iconURL = item.LogoUrl;

@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ILPathways.Controls.UberTaggerV1 {
+namespace IOER.Controls.UberTaggerV1 {
     
     
     public partial class UberTaggerV1 {
@@ -46,7 +46,7 @@ namespace ILPathways.Controls.UberTaggerV1 {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ILPathways.Controls.StandardsBrowser7 StandardsBrowser;
+        protected global::IOER.Controls.StandardsBrowser7 StandardsBrowser;
         
         /// <summary>
         /// hdnStandards control.

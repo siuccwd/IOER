@@ -6,18 +6,19 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 
 using LRWarehouse.Business;
-using AppUser = LRWarehouse.Business.Patron; //ILPathways.Business.AppUser;
-using ILPathways.Library;
+using AppUser = LRWarehouse.Business.Patron; // LRWarehouse.Business.Patron; //ILPathways.Business.AppUser;
+using IOER.Library;
 using ILPathways.Utilities;
 using ILPathways.Business;
 using Isle.BizServices;
 using OrgMgr = Isle.BizServices.OrganizationBizService;
 
-namespace ILPathways.Account.controls
+namespace IOER.Account.controls
 {
   public partial class Registration2 : BaseUserControl
   {
     Services.UtilityService utilService = new Services.UtilityService();
+    OrganizationBizService orgMgr = new OrganizationBizService();
 
     #region Properties
     public string ReturnURL
@@ -336,7 +337,7 @@ namespace ILPathways.Account.controls
             om.CreatedById = entity.CreatedById;
             om.LastUpdatedById = entity.CreatedById;
 
-            int omid = OrganizationBizService.OrganizationMember_Create( om, ref statusMessage );
+            int omid = orgMgr.OrganizationMember_Create(om, ref statusMessage);
             if ( omid > 0 )
             {
                 welcomeMsg += "- added to invited organization";
@@ -378,7 +379,7 @@ namespace ILPathways.Account.controls
             role.CreatedById = invitation.CreatedById;
             if ( orgMbrId > 0 )
             {
-                int id = OrgMgr.OrganizationMemberRole_Create( role, ref statusMessage );
+                int id = orgMgr.OrganizationMemberRole_Create( role, ref statusMessage );
                 if ( id > 0 )
                     LoggingHelper.DoTrace( 5, "Registration2.HandleOrgMbrRoles. Success add new org roleId of " + item );
                 else

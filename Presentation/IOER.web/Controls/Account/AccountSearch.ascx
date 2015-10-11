@@ -1,4 +1,4 @@
-﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="AccountSearch.ascx.cs" Inherits="ILPathways.Controls.Account.AccountSearch" %>
+﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="AccountSearch.ascx.cs" Inherits="IOER.Controls.Account.AccountSearch" %>
 
 
 <asp:Panel ID="filtersPanel" runat="server" >

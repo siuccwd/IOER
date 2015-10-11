@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ILPathways.Admin {
+namespace IOER.Admin {
     
     
     public partial class Query {
@@ -236,5 +236,14 @@ namespace ILPathways.Admin {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Literal showingTitleToAll;
+        
+        /// <summary>
+        /// txtFormSecurityName control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Literal txtFormSecurityName;
     }
 }

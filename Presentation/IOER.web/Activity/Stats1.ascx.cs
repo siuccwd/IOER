@@ -6,12 +6,12 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 
 using Isle.BizServices;
-using ILPathways.Business;
+using IB = ILPathways.Business;
 using LRWarehouse.Business;
 
 using System.Data;
 
-namespace ILPathways.Activity
+namespace IOER.Activity
 {
   public partial class Stats1 : System.Web.UI.UserControl
   {
@@ -37,7 +37,7 @@ namespace ILPathways.Activity
       //next get all unique orgIDs
       //then get the orgs based on that list of IDs
       //recycle the data where possible later
-      var libraries = new List<Business.Library>();
+      var libraries = new List<IB.Library>();
       var librariesDS = Microsoft.ApplicationBlocks.Data.SqlHelper.ExecuteDataset( ILPathways.DAL.LibraryManager.ContentConnectionRO(), System.Data.CommandType.Text, "SELECT * FROM Library WHERE OrgId IS NOT NULL" );
       var orgsToGet = new List<int>();
       foreach ( DataRow row in librariesDS.Tables[ 0 ].Rows )

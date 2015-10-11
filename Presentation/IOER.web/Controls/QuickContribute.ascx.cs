@@ -11,14 +11,14 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 
 using ILPathways.Business;
-using ILPathways.Controllers;
-using ILPathways.Library;
+using IOER.Controllers;
+using IOER.Library;
 using ILPathways.Utilities;
 using Isle.BizServices;
 using LRWarehouse.Business;
 using BDM = LRWarehouse.DAL.BaseDataManager;
 
-namespace ILPathways.Controls
+namespace IOER.Controls
 {
   public partial class QuickContribute : BaseUserControl
   {
@@ -117,7 +117,7 @@ namespace ILPathways.Controls
       selectedCollectionOutput = "var selectedCollectionID = 0";
 
       //Show or hide the Debug mode checkbox
-      if ( ILPathways.classes.SessionManager.Get( Session, "CAN_VIEW_ADMIN_MENU", "missing" ) == "yes" )
+      if ( IOER.classes.SessionManager.Get( Session, "CAN_VIEW_ADMIN_MENU", "missing" ) == "yes" )
       {
         lblDebugMode.Visible = true;
       }
@@ -132,7 +132,8 @@ namespace ILPathways.Controls
           gooruSearch.Visible= true;
           try
           {
-            gooruSessionToken = new ILPathways.Pages.GooruSearch().GetSessionToken();
+			  //HACK WARNING
+            gooruSessionToken = new IOER.Pages.GooruSearch().GetSessionToken();
           }
           catch ( Exception ex )
           {
@@ -374,7 +375,7 @@ namespace ILPathways.Controls
         SetConsoleErrorMessage( "You must enter at least one keyword." );
       }
       var count = 1;
-      var maxKeywords = 25;
+      var maxKeywords = UtilityManager.GetAppKeyValue("maxKeywords", 50); ;
       List<string> keywords = new List<string>();
       foreach ( string word in rawKeywords )
       {
@@ -750,7 +751,7 @@ namespace ILPathways.Controls
                 //prob should be calling handle approvals?
                 bool hasApproval = false;
                 string statusMessage2 = "";
-                bool isValid = ILPathways.Controllers.ContentController.HandleContentApproval( resource, contentId, user, ref hasApproval, ref statusMessage2 );
+				bool isValid = new ContentServices().HandleContentApproval(resource, contentId, user, ref hasApproval, ref statusMessage2);
                 if ( hasApproval )
                 {
                     SetConsoleSuccessMessage( "<p>NOTE: Approval is required, an email has been sent requesting a review of this resource.</p>" );

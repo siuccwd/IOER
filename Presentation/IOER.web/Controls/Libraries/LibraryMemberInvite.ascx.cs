@@ -6,13 +6,13 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 
 using ILPathways.Business;
-using ILPathways.Library;
+using IOER.Library;
 using ILPathways.Utilities;
 using EmailHelper = ILPathways.Utilities.EmailManager;
 using MyManager = Isle.BizServices.LibraryBizService;
 using ENoticeMgr = Isle.BizServices.EmailServices;
 
-namespace ILPathways.Controls.Libraries
+namespace IOER.Controls.Libraries
 {
     public partial class LibraryMemberInvite : BaseUserControl
     {
@@ -301,7 +301,7 @@ namespace ILPathways.Controls.Libraries
 
             InvitationType = EInvitationType.Group;
             //now retrieve the invite by the pass code --> note have to prevent duplicate passcodes on entry!
-            string passcode = FormHelper.SanitizeUserInput( this.txtPasscode.Text.Trim() );
+            string passcode = FormHelper.CleanText( this.txtPasscode.Text.Trim() );
             GetByPasscode( passcode );
 
         }//

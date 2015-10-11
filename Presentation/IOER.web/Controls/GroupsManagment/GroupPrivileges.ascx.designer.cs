@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ILPathways.Controls.GroupsManagment {
+namespace IOER.Controls.GroupsManagment {
     
     
     public partial class GroupPrivileges {

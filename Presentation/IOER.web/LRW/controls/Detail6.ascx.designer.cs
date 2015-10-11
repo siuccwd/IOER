@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ILPathways.LRW.controls {
+namespace IOER.LRW.controls {
     
     
     public partial class Detail6 {
@@ -47,6 +47,24 @@ namespace ILPathways.LRW.controls {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl content;
+        
+        /// <summary>
+        /// btnUbertag control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlInputButton btnUbertag;
+        
+        /// <summary>
+        /// oldButtons control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl oldButtons;
         
         /// <summary>
         /// btnStartUpdateMode control.
@@ -94,22 +112,13 @@ namespace ILPathways.LRW.controls {
         protected global::System.Web.UI.HtmlControls.HtmlInputButton btnRegenerateThumbnail;
         
         /// <summary>
-        /// btnUbertag control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlInputButton btnUbertag;
-        
-        /// <summary>
         /// usageRightsSelector control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ILPathways.LRW.controls.ConditionsOfUseSelector usageRightsSelector;
+        protected global::IOER.LRW.controls.ConditionsOfUseSelector usageRightsSelector;
         
         /// <summary>
         /// sBrowser control.
@@ -118,7 +127,7 @@ namespace ILPathways.LRW.controls {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ILPathways.Controls.StandardsBrowser7 sBrowser;
+        protected global::IOER.Controls.StandardsBrowser7 sBrowser;
         
         /// <summary>
         /// reportProblemContainer control.

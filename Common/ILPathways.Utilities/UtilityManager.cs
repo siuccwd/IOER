@@ -1189,11 +1189,18 @@ namespace ILPathways.Utilities
 
         /// <summary>
         /// Format a title (such as for a library) to be url friendly
+        /// NOTE: there is another method:
+        /// LRWarehouse.Business.BaseBusinessDataEntity.UrlFriendlyTitle()
         /// </summary>
         /// <param name="title"></param>
         /// <returns></returns>
         public static string UrlFriendlyTitle( string title )
         {
+            if ( title == null || title.Trim().Length == 0 )
+                return "";
+
+            title = title.Trim();
+
             string encodedTitle = title.Replace( " - ", "-" );
             encodedTitle = encodedTitle.Replace( " ", "_" );
             //encodedTitle = encodedTitle.Replace( ".", "-" );
@@ -1216,8 +1223,10 @@ namespace ILPathways.Utilities
             encodedTitle = encodedTitle.Replace( ">", "_" );
             encodedTitle = encodedTitle.Replace( "__", "_" );
             encodedTitle = encodedTitle.Replace( "__", "_" );
+
             if ( encodedTitle.EndsWith( "." ) )
                 encodedTitle = encodedTitle.Substring( 0, encodedTitle.Length - 1 );
+
             return encodedTitle;
         } //
 

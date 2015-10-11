@@ -26,7 +26,7 @@ using Obout.Ajax.UI.HTMLEditor.ToolbarButton;
 [assembly: WebResource( "App_Scripts.HTMLEditor.scripts.InsertDate.js", "application/x-javascript" )]
 
 
-//namespace ILPathways.HTMLEditor.CustomToolbarButton
+//namespace IOER.HTMLEditor.CustomToolbarButton
 namespace CustomToolbarButton
 {
     [ParseChildren( true )]

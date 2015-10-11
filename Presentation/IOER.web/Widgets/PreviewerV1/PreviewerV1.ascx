@@ -1,4 +1,4 @@
-﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="PreviewerV1.ascx.cs" Inherits="ILPathways.Controls.PreviewerV1.PreviewerV1" %>
+﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="PreviewerV1.ascx.cs" Inherits="IOER.Controls.PreviewerV1.PreviewerV1" %>
 
 <div id="rpMainContainer">
   <div id="resourcePreviewer">

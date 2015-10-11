@@ -1,4 +1,4 @@
-﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="wn_userguide.ascx.cs" Inherits="ILPathways.Controls.SearchV6.Themes.wn_userguide" %>
+﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="wn_userguide.ascx.cs" Inherits="IOER.Controls.SearchV6.Themes.wn_userguide" %>
 
 <script type="text/javascript">
   var keywordSchemas = [ "educationalRole", "learningResourceType", "mediaType", "k12Subject" ];
@@ -76,8 +76,8 @@
 </script>
 <style type="text/css">
   /* Search Header */
-  #btnToggleFilters { background-color: <%=MainColorHex %>; color: #FFF; }
-  #btnToggleFilters.expanded { background-color: #4D4D4D; }
+  #buttons input { background-color: <%=MainColorHex %>; color: #FFF; }
+  #buttons input.expanded { background-color: #4D4D4D; }
 
   /* Filters */
   #filters #categories input { background-color: rgba(<%=MainColor.R %>,<%=MainColor.G %>,<%=MainColor.B %>, 0.9); color: #FFF; }

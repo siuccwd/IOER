@@ -1,4 +1,4 @@
-﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="UserProfile2.ascx.cs" Inherits="ILPathways.Account.controls.UserProfile2" %>
+﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="UserProfile2.ascx.cs" Inherits="IOER.Account.controls.UserProfile2" %>
 
 <script type="text/javascript">
   $(document).ready(function () {
@@ -183,7 +183,7 @@
   p.vm.red { color: #B03D25; }
   p.vm.green { color: #4AA394; }
   p.vm:empty { max-height: 0.2em; }
-  
+  a.isleButton {  width: 100%;   text-align: center;  display: block; font-size: 22px;   }
    #loader {
         display:none; 
         position:fixed;   
@@ -208,6 +208,11 @@
 <div id="content">
   <h1 class="isleH1">My Account &amp; Profile</h1>
   <div class="column">
+       <div class="grayBox bigText" id="messageDiv" runat="server" visible="false">
+           <h2 class="header">Welcome</h2>
+           <p>Update your profile, including a profile image. <br />When you are finished, click the button below to navigate to target Page. </p>
+          <asp:HyperLink ID="nextUrlLink" runat="server" CssClass="isleButton bgBlue"  text="Navigate to Next Page (when done)"></asp:HyperLink>
+       </div>
     <div class="grayBox bigText" id="account">
       <!-- Email, Password, Name -->
       <h2 class="header">Account Information</h2>
@@ -223,6 +228,7 @@
       <p class="vm" id="validation_lastName" data-validation="lastName"></p>
       <asp:Button runat="server" ID="btnUpdateAccount" OnClick="btnUpdateAccount_Click" Text="Update Account" CssClass="isleButton bgGreen" OnClientClick="validateAccount()" />
     </div>
+ 
   </div><!-- /account -->
   <div class="column">
     <div class="grayBox bigText" id="avatar">

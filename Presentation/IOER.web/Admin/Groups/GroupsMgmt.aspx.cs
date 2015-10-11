@@ -13,25 +13,25 @@ using System.Web.UI.HtmlControls;
 using EmailHelper = ILPathways.Utilities.EmailManager;
 using MyManager = Isle.BizServices.GroupServices;
 using ILPathways.Business;
-using ILPathways.classes;
-using ILPathways.Controllers;
+using IOER.classes;
+using IOER.Controllers;
 //using ILPathways.DAL;
 using Isle.BizServices;
 
-using ILPathways.Library;
+using IOER.Library;
 using ILPathways.Utilities;
 using LRDAL = LRWarehouse.DAL;
 
-namespace ILPathways.Admin.Groups
+namespace IOER.Admin.Groups
 {
-    public partial class GroupsMgmt : ILPathways.Library.BaseAppPage
+    public partial class GroupsMgmt : IOER.Library.BaseAppPage
     {
-        GroupsManagementController controller = new GroupsManagementController();
+		MyManager grpMgr = new MyManager();
 
         /// <summary>
         /// Set constant for this control to be used in log messages, etc
         /// </summary>
-        const string thisClassName = "GroupsManagementController";
+		const string thisClassName = "GroupsMgmt";
 
         /// <summary>
         /// Session variable for group-user search parameters
@@ -153,9 +153,9 @@ namespace ILPathways.Admin.Groups
             }
             //get current user
             CurrentUser = GetAppUser();
-            //this probably only needs to be set in the main controller for the maintenance page!
+            //this probably only needs to be set in the main grpMgr for the maintenance page!
             //this.InstanceGroupCode = CurrentGroupSessionCode;
-            controller.InstanceGroupCode = GroupsManagementController.CONTROLLER_CURRENT_GROUP;
+            grpMgr.InstanceGroupCode = MyManager.CONTROLLER_CURRENT_GROUP;
 
             if ( !Page.IsPostBack )
             {
@@ -178,9 +178,9 @@ namespace ILPathways.Admin.Groups
             catch
             {
             }
-            controller.LastActiveContainerIdx = -1;
-            controller.DidParentRecordChange = false;
-            controller.CurrentGroup = new AppGroup();
+            grpMgr.LastActiveContainerIdx = -1;
+            grpMgr.DidParentRecordChange = false;
+            grpMgr.CurrentGroup = new AppGroup();
 
             //formSecurityName
             this.FormPrivileges = SecurityManager.GetGroupObjectPrivileges( this.CurrentUser, FormSecurityName );
@@ -247,14 +247,14 @@ namespace ILPathways.Admin.Groups
             if ( id > 0 )
             {
                 //txtCurrentParentId.Text = id.ToString();
-                controller.DidParentRecordChange = true;
+                grpMgr.DidParentRecordChange = true;
                 this.Get( id );
 
             }
             else if ( gcode.Length > 0 )
             {
                 //txtCurrentParentId.Text = id.ToString();
-                controller.DidParentRecordChange = true;
+                grpMgr.DidParentRecordChange = true;
                 this.Get( gcode );
 
             }
@@ -272,19 +272,19 @@ namespace ILPathways.Admin.Groups
         /// <param name="e"></param>
         protected void Page_PreRender( object sender, EventArgs e )
         {
-            if ( controller.LastActiveContainerIdx > -1 )
+            if ( grpMgr.LastActiveContainerIdx > -1 )
             {
-                formContainer.ActiveTabIndex = controller.LastActiveContainerIdx;
+                formContainer.ActiveTabIndex = grpMgr.LastActiveContainerIdx;
             }
             //check for a change to the parentId (ex after a new record)
             try
             {
 
-                if ( controller.CurrentGroup != null && controller.CurrentGroup.IsValidEntity() )
+                if ( grpMgr.CurrentGroup != null && grpMgr.CurrentGroup.IsValidEntity() )
                 {
-                    if ( controller.CurrentGroup.Id != LastGroupId )
+                    if ( grpMgr.CurrentGroup.Id != LastGroupId )
                     {
-                        LastGroupId = controller.CurrentGroup.Id;
+                        LastGroupId = grpMgr.CurrentGroup.Id;
                         //get record????
                         Get( LastGroupId );
                     }
@@ -313,7 +313,7 @@ namespace ILPathways.Admin.Groups
         /// <param name="groupCode"></param>
         private void Get( string groupCode )
         {
-            controller.CurrentGroup = MyManager.GetByCode( groupCode );
+            grpMgr.CurrentGroup = MyManager.GetByCode( groupCode );
             //HandleGroupRequest();
         } //
 
@@ -323,7 +323,7 @@ namespace ILPathways.Admin.Groups
         /// <param name="recId"></param>
         private void Get( int recId )
         {
-            controller.CurrentGroup = MyManager.Get( recId );
+            grpMgr.CurrentGroup = MyManager.Get( recId );
             try
             {
                 //detailPane.ToolTip = CurrentGroup.GroupName;
@@ -331,7 +331,7 @@ namespace ILPathways.Admin.Groups
                 HyperLink lnk = ( HyperLink ) this.FindControl( "ctl00_MainContent_ctl00_ctl00_detailPaneHeaderLink" );
                 if ( lnk != null )
                 {
-                    lnk.Text = "Group: " + controller.CurrentGroup.Title;
+                    lnk.Text = "Group: " + grpMgr.CurrentGroup.Title;
                 }
             }
             catch ( Exception ex )
@@ -492,7 +492,7 @@ namespace ILPathways.Admin.Groups
 
             if ( txtKeyword.Text.Trim().Length > 0 )
             {
-                string keyword = MyManager.HandleApostrophes( FormHelper.SanitizeUserInput( txtKeyword.Text.Trim() ) );
+                string keyword = MyManager.HandleApostrophes( FormHelper.CleanText( txtKeyword.Text.Trim() ) );
 
                 if ( keyword.IndexOf( "%" ) == -1 )
                     keyword = "%" + keyword + "%";

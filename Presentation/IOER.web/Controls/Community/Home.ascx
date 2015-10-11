@@ -1,4 +1,4 @@
-﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="Home.ascx.cs" Inherits="ILPathways.Controls.Community.Home" %>
+﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="Home.ascx.cs" Inherits="IOER.Controls.Community.Home" %>
 
 <link rel="stylesheet" type="text/css" href="/Styles/common2.css" />
 

@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ILPathways.Controls.GroupsManagment {
+namespace IOER.Controls.GroupsManagment {
     
     
     public partial class GroupsManager {
@@ -127,7 +127,7 @@ namespace ILPathways.Controls.GroupsManagment {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ILPathways.Controls.GroupsManagment.GroupDetail groupDetail1;
+        protected global::IOER.Controls.GroupsManagment.GroupDetail groupDetail1;
         
         /// <summary>
         /// teamDetail1 control.
@@ -136,7 +136,7 @@ namespace ILPathways.Controls.GroupsManagment {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ILPathways.Controls.GroupsManagment.GroupMembers teamDetail1;
+        protected global::IOER.Controls.GroupsManagment.GroupMembers teamDetail1;
         
         /// <summary>
         /// actionsPanel1 control.
@@ -154,7 +154,7 @@ namespace ILPathways.Controls.GroupsManagment {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ILPathways.Controls.GroupsManagment.GroupPrivileges privilegeDetail2;
+        protected global::IOER.Controls.GroupsManagment.GroupPrivileges privilegeDetail2;
         
         /// <summary>
         /// formContainer control.

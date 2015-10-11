@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="upload.aspx.cs" Inherits="ILPathways.Controls.UberTaggerV2.upload" MasterPageFile="/Masters/Plain.Master" %>
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="upload.aspx.cs" Inherits="IOER.Controls.UberTaggerV2.upload" MasterPageFile="/Masters/Plain.Master" %>
 
 <asp:Content ContentPlaceHolderID="BodyContent" runat="server">
 
@@ -39,7 +39,7 @@
 
   <style type="text/css">
     body { overflow: hidden; height: 100%; width: 100%; padding: 0; margin: 0; }
-    #fileUpload { width: 100%; height: 100%; }
+    .fileUpload { width: 100%; height: 100%; }
   </style>
   
   <div id="uploadBox" runat="server">

@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="TGLandingPage.aspx.cs" Inherits="ILPathways.TGLandingPage" %>
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="TGLandingPage.aspx.cs" Inherits="IOER.TGLandingPage" %>
 
 <!DOCTYPE html>
 

@@ -1,4 +1,4 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Masters/Responsive2.Master" AutoEventWireup="true" CodeBehind="Author.aspx.cs" Inherits="ILPathways.My.Author" %>
+﻿<%@ Page Title="Illinois Open Educational Resources - Content Author" Language="C#" MasterPageFile="~/Masters/Responsive2.Master" AutoEventWireup="true" CodeBehind="Author.aspx.cs" Inherits="IOER.My.Author" %>
 <%@ Register TagPrefix="uc1" TagName="AuthorTool" Src="/Controls/Content/authoring.ascx" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="HeadContent" runat="server">

@@ -1,4 +1,4 @@
-﻿<%@ Page Title="IOER - Gooru Search" Language="C#" MasterPageFile="~/Masters/Responsive.Master" AutoEventWireup="true" CodeBehind="GooruSearch.aspx.cs" Inherits="ILPathways.Pages.GooruSearch" %>
+﻿<%@ Page Title="IOER - Gooru Search" Language="C#" MasterPageFile="~/Masters/Responsive.Master" AutoEventWireup="true" CodeBehind="GooruSearch.aspx.cs" Inherits="IOER.Pages.GooruSearch" %>
 <%@ Register TagPrefix="UC1" TagName="StandardsBrowser" Src="/Controls/StandardsBrowser7.ascx"%>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="HeadContent" runat="server">
@@ -6,7 +6,8 @@
     
     <link href="/Styles/common2.css" rel="stylesheet" />
 <style>
-    #container {padding-left: 50px; min-height: 500px; transition: padding 1s; }
+    /*padding-left: 50px;*/
+   #content { min-height: 500px; transition: padding 1s; }
 
     @media (max-width:500px) {
 
@@ -285,13 +286,13 @@
         display:inline-block;
     }
   @media screen and (max-width: 975px) {
-    #container { padding-left: 0; }
+    #content { padding-left: 0; }
   }
 </style>
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="BodyContent" runat="server">
 
-      <div id="container">  
+      <div id="content">  
           <h1 class="isleH1"">IOER gooru Search (beta)</h1>
 
 
@@ -741,7 +742,7 @@
         if ($("#resourceSearch").is(':checked')) {
             $.ajax({
                 type: 'GET',
-                url: "http://concept.goorulearning.org/gooruapi/rest/search/resource?sessionToken=d9a38a1a-88d0-444f-8e4b-a15120308b29&pageSize=20",
+                url: "//concept.goorulearning.org/gooruapi/rest/search/resource?sessionToken=d9a38a1a-88d0-444f-8e4b-a15120308b29&pageSize=20",
                 data: input,
                 dataType: "jsonp",
                 crossDomain: true,
@@ -751,7 +752,7 @@
         } else {
             $.ajax({
                 type: 'GET',
-                url: "http://concept.goorulearning.org/gooruapi/rest/search/collection?sessionToken=d9a38a1a-88d0-444f-8e4b-a15120308b29&pageSize=20",
+                url: "//concept.goorulearning.org/gooruapi/rest/search/collection?sessionToken=d9a38a1a-88d0-444f-8e4b-a15120308b29&pageSize=20",
                 data: input,
                 dataType: "jsonp",
                 crossDomain: true,
@@ -815,6 +816,7 @@
         //gooruOid
         $(".pageButtons").show();
         var results = data.searchResults;
+        console.log("Results:", results);
 
         $("#resultCount").empty(); 
         $("#results").empty();
@@ -823,9 +825,12 @@
             for (var i = 0; i < results.length; i++) {
                 var playerUrl = "/gooruResource?t=r&id=" + results[i].gooruOid;
 
-                $("#results").append("<div id = 'resultData' class='resources'><a href ='" + playerUrl + "'  target='gooruRes'><img class='thumbnail' src ='" + results[i].thumbnails.url +
+            	try {
+            		$("#results").append("<div id = 'resultData' class='resources'><a href ='" + playerUrl + "'  target='gooruRes'><img class='thumbnail' src ='" + results[i].thumbnails.url +
                     "' onerror='fixThumbnail(this)'/></a><a href = '" + playerUrl + "' target='gooruRes'><h2>" + results[i].title + "</h2></a><br><p>" + results[i].description +
                     "</p><br> Media Type: " + results[i].category + "<br> Views: " + results[i].viewCount + "<br>Subscribers: " + results[i].subscriptionCount + "</div>");
+            	}
+            	catch (e) { }
             }
         } else {
             for (var i = 0; i < results.length; i++) { 
@@ -836,9 +841,12 @@
                 var goals = results[i].goals;
                 if (goals == undefined) goals = "";
 
-                $("#results").append("<div id = 'resultData' class='resources'><a href ='" + playerUrl + "'  target='gooruRes'><img class='thumbnail' src ='" + results[i].thumbnails.url +
+            	try {
+            		$("#results").append("<div id = 'resultData' class='resources'><a href ='" + playerUrl + "'  target='gooruRes'><img class='thumbnail' src ='" + results[i].thumbnails.url +
                     "'onerror='fixThumbnail(this)'/></a><a href = '" + playerUrl + "' target='gooruRes'><h2>" + results[i].title + "</h2></a><br><p>" +
                     goals + "</p><br> Views: " + results[i].viewCount + "<br>Subscribers: " + results[i].subscriptionCount + "</div>");
+            	}
+            	catch (e) { }
             }
         }
         $("#loader").hide();
@@ -846,19 +854,19 @@
 </script>
 
 <asp:Panel ID="hiddenPanel" runat="server" >
-<asp:Literal ID="gooruTemplateResourceUrl" runat="server" Visible="false">http://www.goorulearning.org/gooruapi/rest/search/resource?sessionToken={0}&pageSize=20</asp:Literal>
-<asp:Literal ID="gooruTemplateCollectionsUrl" runat="server" Visible="false">http://www.goorulearning.org/gooruapi/rest/search/scollection?sessionToken={0}&pageSize=20</asp:Literal>
+<asp:Literal ID="gooruTemplateResourceUrl" runat="server" Visible="false">//www.goorulearning.org/gooruapi/rest/search/resource?sessionToken={0}&pageSize=20</asp:Literal>
+<asp:Literal ID="gooruTemplateCollectionsUrl" runat="server" Visible="false">//www.goorulearning.org/gooruapi/rest/search/scollection?sessionToken={0}&pageSize=20</asp:Literal>
 
     <%-- NOTE: This value is now superseded by the gooruApiUrl value in the Web.Config  --%>
-    <asp:Literal ID="gooruApiUrl" runat="server" Visible="false">http://www.goorulearning.org/gooruapi/rest/v2/account/loginas/anonymous?apiKey=960a9175-eaa7-453f-ba03-ecd07e1f1afc</asp:Literal>
+    <asp:Literal ID="gooruApiUrl" runat="server" Visible="false">//www.goorulearning.org/gooruapi/rest/v2/account/loginas/anonymous?apiKey=960a9175-eaa7-453f-ba03-ecd07e1f1afc</asp:Literal>
 
     <%--//via dev key: 
-    //  http://concept.goorulearning.org/gooruapi/rest/search/collection?sessionToken=d9a38a1a-88d0-444f-8e4b-a15120308b29&pageSize=20
-    //  http://concept.goorulearning.org/gooruapi/rest/search/resource?sessionToken=d9a38a1a-88d0-444f-8e4b-a15120308b29&pageSize=20
+    //  //concept.goorulearning.org/gooruapi/rest/search/collection?sessionToken=d9a38a1a-88d0-444f-8e4b-a15120308b29&pageSize=20
+    //  //concept.goorulearning.org/gooruapi/rest/search/resource?sessionToken=d9a38a1a-88d0-444f-8e4b-a15120308b29&pageSize=20
     //prod: 
     
-    //  http://www.goorulearning.org/gooruapi/rest/search/resource?sessionToken=&pageSize=20",
-    //  http://www.goorulearning.org/gooruapi/rest/search/collection?sessionToken=960a9175-eaa7-453f-ba03-ecd07e1f1afc&pageSize=20
+    //  //www.goorulearning.org/gooruapi/rest/search/resource?sessionToken=&pageSize=20",
+    //  //www.goorulearning.org/gooruapi/rest/search/collection?sessionToken=960a9175-eaa7-453f-ba03-ecd07e1f1afc&pageSize=20
     // old 14-12-15: 783186ec-256e-41e9-a9e5-2cc7cf285f0--%>
 
 

@@ -11,7 +11,7 @@ using LRWarehouse.Business;
 
 using comService = Isle.BizServices.CommunityServices;
 
-namespace ILPathways.Services
+namespace IOER.Services
 {
   /// <summary>
   /// Summary description for CommunityService
@@ -161,7 +161,7 @@ namespace ILPathways.Services
         return utilService.ImmediateReturn( "", false, status, null );
       }
 
-      var item = new ILPathways.Controls.Activity1();
+      var item = new IOER.Controls.Activity1();
 
       //Determine what to show
       var activities = new List<ObjectActivity>();
@@ -199,14 +199,18 @@ namespace ILPathways.Services
         status = "You must login to post!";
         return;
       }
-
+      bool allowingHtmlPosts = ServiceHelper.GetAppKeyValue("allowingHtmlPosts", false);
       //Validate text
-      text = utilService.ValidateText( text, minimumLength, "Message", ref isValid, ref status );
+      text = utilService.ValidateText( text, minimumLength, "Message", allowingHtmlPosts, ref isValid, ref status );
       if ( !isValid )
       {
         return;
       }
-
+		//need to handle images - or with css
+	  if ( text.ToLower().IndexOf( "style=\"width: 558px;\"" ) > -1 )
+	  {
+		  text = text.Replace( "width: 558px", "width: 90%" );
+	  }
       //Create the posting
       comService.PostingAdd( communityID, text, user.Id, parentID );
       isValid = true;

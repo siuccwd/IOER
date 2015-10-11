@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Login" Language="C#" MasterPageFile="/Masters/Responsive.Master" AutoEventWireup="true" CodeBehind="Login.aspx.cs" Inherits="ILPathways.Pages.Login" %>
+﻿<%@ Page Title="Login" Language="C#" MasterPageFile="/Masters/Responsive.Master" AutoEventWireup="true" CodeBehind="Login.aspx.cs" Inherits="IOER.Pages.Login" %>
 
 <%@ Register Src="~/Account/controls/LoginController.ascx" TagPrefix="uc1" TagName="LoginController" %>
 

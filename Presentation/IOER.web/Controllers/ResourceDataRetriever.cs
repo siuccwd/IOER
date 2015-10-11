@@ -6,7 +6,7 @@ using LRWarehouse.DAL;
 using LRWarehouse.Business;
 using System.Data;
 
-namespace ILPathways.Controllers
+namespace IOER.Controllers
 {
     public class ResourceDataRetriever
     {

@@ -1,4 +1,4 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Masters/Pathway.Master" AutoEventWireup="true" CodeBehind="Library2.aspx.cs" Inherits="ILPathways.My.Library2" %>
+﻿<%@ Page Title="Illinois Open Educational Resources - Library" Language="C#" MasterPageFile="~/Masters/Pathway.Master" AutoEventWireup="true" CodeBehind="Library2.aspx.cs" Inherits="IOER.My.Library2" %>
 
 <%@ Register Src="~/Controls/Libraries/Library.ascx" TagPrefix="uc2" TagName="Library" %>
 

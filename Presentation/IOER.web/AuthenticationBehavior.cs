@@ -5,7 +5,7 @@ using System.ServiceModel.Channels;
 using System.ServiceModel;
 using System.ServiceModel.Description;
 
-namespace ILPathways
+namespace IOER
 {
     public class ContextPusher : IClientMessageInspector
     {

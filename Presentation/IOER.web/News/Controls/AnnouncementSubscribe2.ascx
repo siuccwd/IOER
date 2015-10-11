@@ -1,4 +1,4 @@
-﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="AnnouncementSubscribe2.ascx.cs" Inherits="ILPathways.Controls.AppItems.AnnouncementSubscribe2" %>
+﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="AnnouncementSubscribe2.ascx.cs" Inherits="IOER.Controls.AppItems.AnnouncementSubscribe2" %>
 
 
 <style type="text/css">

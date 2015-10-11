@@ -4,7 +4,8 @@ using System.Data;
 using System.Linq;
 using System.Text;
 //using AutoMapper;
-using GatewayBusinessEntities;
+//using GatewayBusinessEntities;
+using IoerContentBusinessEntities;
 
 using IPDAL = ILPathways.DAL;
 using DBM = ILPathways.DAL.DatabaseManager;
@@ -50,7 +51,7 @@ namespace Isle.BizServices
                 AppGroup.Description = entity.Description;
                 AppGroup.GroupCode = entity.GroupCode;
                 AppGroup.ContactId = entity.ContactId; ;
-                AppGroup.ApplicationId = entity.ApplicationId;
+                //AppGroup.ApplicationId = entity.ApplicationId;
                 AppGroup.GroupTypeId = entity.GroupTypeId;
                 AppGroup.IsActive = entity.IsActive;
                 AppGroup.OrgId = entity.OrgId;
@@ -134,7 +135,7 @@ namespace Isle.BizServices
         public static void LogSessionStart( string sessionId, string serverName, string comment, string remoteIP, string referrer )
         {
             bool showingTrace = false;
-            GatewayEntities1 ctx = new GatewayEntities1();
+            GatewayContext ctx = new GatewayContext();
             AppVisitLog log = new AppVisitLog();
             log.CreatedDate = System.DateTime.Now;
             log.SessionId = sessionId;

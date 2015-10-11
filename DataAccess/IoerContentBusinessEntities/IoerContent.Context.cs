@@ -65,7 +65,6 @@ namespace IoerContentBusinessEntities
         public DbSet<Community_Member> Community_Member { get; set; }
         public DbSet<Community_PostingDocument> Community_PostingDocument { get; set; }
         public DbSet<Community_PostingSummary> Community_PostingSummary { get; set; }
-        public DbSet<Codes_PostingType> Codes_PostingType { get; set; }
         public DbSet<Community_Posting> Community_Posting { get; set; }
         public DbSet<Community_PostItem> Community_PostItem { get; set; }
         public DbSet<Content_Resource> Content_Resource { get; set; }
@@ -99,5 +98,23 @@ namespace IoerContentBusinessEntities
         public DbSet<Curriculum_DistinctStandards> Curriculum_DistinctStandards { get; set; }
         public DbSet<Community_MemberSummary> Community_MemberSummary { get; set; }
         public DbSet<Content_ChildResourceSummary> Content_ChildResourceSummary { get; set; }
+        public DbSet<Codes_PostingType> Codes_PostingType { get; set; }
+        public DbSet<Organization> Organizations { get; set; }
+        public DbSet<Organization_Member> Organization_Member { get; set; }
+        public DbSet<Organization_MemberRole> Organization_MemberRole { get; set; }
+        public DbSet<OrganizationRequest> OrganizationRequests { get; set; }
+        public DbSet<Codes_ObjectMemberType> Codes_ObjectMemberType { get; set; }
+        public DbSet<Codes_OrgMemberRole> Codes_OrgMemberRole { get; set; }
+        public DbSet<Codes_OrgMemberType> Codes_OrgMemberType { get; set; }
+        public DbSet<Codes_OrgType> Codes_OrgType { get; set; }
+        public DbSet<Codes_PublishingRole> Codes_PublishingRole { get; set; }
+        public DbSet<AppGroup> AppGroups { get; set; }
+        public DbSet<AppGroup_Member> AppGroup_Member { get; set; }
+        public DbSet<AppGroup_OrgMember> AppGroup_OrgMember { get; set; }
+        public DbSet<AppGroup_Privilege> AppGroup_Privilege { get; set; }
+        public DbSet<AppGroup_RelatedObject> AppGroup_RelatedObject { get; set; }
+        public DbSet<ApplicationObject> ApplicationObjects { get; set; }
+        public DbSet<Codes_GroupType> Codes_GroupType { get; set; }
+        public DbSet<Object_Member> Object_Member { get; set; }
     }
 }

@@ -1,4 +1,4 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Masters/Pathway.Master" AutoEventWireup="true" CodeBehind="Default.aspx.cs" Inherits="ILPathways.Content.Default" %>
+﻿<%@ Page Title="Illinois Open Educational Resources - Authoring" Language="C#" MasterPageFile="~/Masters/Pathway.Master" AutoEventWireup="true" CodeBehind="Default.aspx.cs" Inherits="IOER.Content.Default" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="HeadContent" runat="server">
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="BodyContent" runat="server">
@@ -14,5 +14,5 @@
 
 </div>
 
-<asp:Literal ID="txtAuthorSecurityName" runat="server" Visible="false">ILPathways.LRW.controls.Authoring</asp:Literal>
+<asp:Literal ID="txtAuthorSecurityName" runat="server" Visible="false">IOER.controls.Authoring</asp:Literal>
 </asp:Content>

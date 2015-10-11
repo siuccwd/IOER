@@ -1,4 +1,4 @@
-﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="Import.ascx.cs" Inherits="ILPathways.Controls.OrgMgmt.Import" %>
+﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="Import.ascx.cs" Inherits="IOER.Controls.OrgMgmt.Import" %>
 <style type="text/css">
     .defaultButton { width: 200px; }
 </style>
@@ -136,12 +136,22 @@
 
 <asp:Label ID="userAddConfirmation" runat="server">The user accounts have been created and emails were sent with a link to activate the account.</asp:Label>
 <asp:literal ID="sendEmailonImport" runat="server" >yes</asp:literal>
+
 <asp:Label ID="noticeSubject" runat="server">{0} added you to an "Illinois Open Educational Resources" organization</asp:Label>
 <asp:Label ID="noticeEmail" runat="server">
 Welcome<br />An IOER account has been created for you:
     <br />Organization: <strong>{0}</strong> 
     <br />Member Type: <strong>{1}</strong>.
 <p>Use the link below to activate your account. You will then have access to the latter organization.</p>
+    <p>Upon activation a personal library will be created where you can store the resources that you find interesting.</p>
+</asp:Label>
+
+<asp:Label ID="noticeSubject_RI" runat="server">EdTechRI Meetup Today - Welcome to IOER</asp:Label>
+<asp:Label ID="noticeEmail_RI" runat="server">
+Welcome
+<p>We're looking forward to seeing you at the EdTechRI Meetup today!   To get you started, we've added you to IOER as a Highlander Institute member. Bring a device (laptop or tablet) and headphones with you. We will be getting down and dirty with the ISLE OER platform, so you will need a wifi-accessible device to use.</p>    
+    
+<p>Use the link below to activate your account. You will then have access to add resources to the Highlander Institute library.</p>
     <p>Upon activation a personal library will be created where you can store the resources that you find interesting.</p>
 </asp:Label>
 

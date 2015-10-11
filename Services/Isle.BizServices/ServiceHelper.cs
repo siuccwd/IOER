@@ -11,6 +11,7 @@ using System.Web;
 //temp use of:ILPathways.Utilities for email - probably should do differently
 using ILPathways.Utilities;
 using IPB = ILPathways.Business;
+using LRWarehouse.Business;
 
 namespace Isle.BizServices
 {
@@ -116,13 +117,19 @@ namespace Isle.BizServices
         }
 
         #endregion
+
+
         #region Helpers and validaton
         public static bool IsLocalHost()
         {
             string host = HttpContext.Current.Request.Url.Host.ToString();
             return ( host.Contains( "localhost" ) || host.Contains( "209.175.164.200" ) );
         }
-
+		public static bool IsTestEnv()
+		{
+			string host = HttpContext.Current.Request.Url.Host.ToString();
+			return ( host.Contains( "localhost" ) || host.Contains( "209.175.164.200" ) );
+		}
         public static int StringToInt( string value, int defaultValue )
         {
             int returnValue = defaultValue;
@@ -921,22 +928,12 @@ namespace Isle.BizServices
                 //Allow if the requested level is <= the application thresh hold
                 if ( level <= appTraceLevel )
                 {
-                    string usingBriefFormat = GetAppKeyValue( "usingBriefFormat", "yes" );
-                    if ( usingBriefFormat == "yes" )
-                    {
-                        if ( showingDatetime )
-                            msg = "\n " + System.DateTime.Now.ToString() + " - " + message;
-                        else
-                            msg = "\n " + message;
-
-                    }
+                    if ( showingDatetime )
+                        msg = "\n " + System.DateTime.Now.ToString() + " - " + message;
                     else
-                    {
-                        msg = "\n======================= Trace ================================= ";
-                        msg += "\nTime: " + System.DateTime.Now.ToString();
-                        msg += "\nTrace: " + message;
-                        msg += "\n=============================================================== ";
-                    }
+                        msg = "\n " + message;
+
+
                     string datePrefix = System.DateTime.Today.ToString( "u" ).Substring( 0, 10 );
                     string logFile = GetAppKeyValue( "path.trace.log", "C:\\VOS_LOGS.txt" );
                     string outputFile = logFile.Replace( "[date]", datePrefix );
@@ -954,6 +951,41 @@ namespace Isle.BizServices
             }
 
         }
+
+		public static void DoBotTrace(int level, string message)
+		{
+			string msg = "";
+			int appTraceLevel = 0;
+
+			try
+			{
+				appTraceLevel = GetAppKeyValue("botTraceLevel", 5);
+
+				//Allow if the requested level is <= the application thresh hold
+				if (level <= appTraceLevel)
+				{
+					msg = "\n " + System.DateTime.Now.ToString() + " - " + message;
+
+					string datePrefix = System.DateTime.Today.ToString("u").Substring(0, 10);
+					string logFile = GetAppKeyValue("path.botTrace.log", "");
+					if (logFile.Length > 5)
+					{
+						string outputFile = logFile.Replace("[date]", datePrefix);
+
+						StreamWriter file = File.AppendText(outputFile);
+
+						file.WriteLine(msg);
+						file.Close();
+					}
+
+				}
+			}
+			catch
+			{
+				//ignore errors
+			}
+
+		}
         #endregion
 
         #region Common Utility Methods
@@ -1134,24 +1166,27 @@ namespace Isle.BizServices
 
             try
             {
-                //need to handle case where multiple messages are written to console??
-                if ( HttpContext.Current.Session[ sessionMessageName ] != null )
-                {
-                    IPB.FormMessage existingMessage = ( IPB.FormMessage )HttpContext.Current.Session[ sessionMessageName ];
-                    if ( existingMessage.Text.Trim().Length > 0 )
-                    {
-                        if ( existingMessage.Title.Length > 0 )
-                            formMessage.Text += "<br/>" + existingMessage.Title;
-                        if ( existingMessage.Text.Length > 0 )
-                            formMessage.Text += "<br/>" + existingMessage.Text;
-                    }
-                }
-                HttpContext.Current.Session[ sessionMessageName ] = formMessage;
+				if ( HttpContext.Current.Session != null )
+				{
+					//need to handle case where multiple messages are written to console??
+					if ( HttpContext.Current.Session[ sessionMessageName ] != null )
+					{
+						IPB.FormMessage existingMessage = ( IPB.FormMessage ) HttpContext.Current.Session[ sessionMessageName ];
+						if ( existingMessage.Text.Trim().Length > 0 )
+						{
+							if ( existingMessage.Title.Length > 0 )
+								formMessage.Text += "<br/>" + existingMessage.Title;
+							if ( existingMessage.Text.Length > 0 )
+								formMessage.Text += "<br/>" + existingMessage.Text;
+						}
+					}
+					HttpContext.Current.Session[ sessionMessageName ] = formMessage;
+				}
             }
             catch ( Exception ex )
             {
                 //ignore
-                LogError( ex, thisClassName + ".SetSessionMessage: " + ex.ToString() );
+                LogError( ex, thisClassName + string.Format(".SetSessionMessage(title: {0}, message: {1}) ", title, msgString) + ex.ToString() );
             }
 
 

@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ILPathways.Pages {
+namespace IOER.Pages {
     
     
     public partial class Dashboard {
@@ -19,6 +19,6 @@ namespace ILPathways.Pages {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ILPathways.Account.controls.Dashboard UserDashboard;
+        protected global::IOER.Account.controls.Dashboard UserDashboard;
     }
 }

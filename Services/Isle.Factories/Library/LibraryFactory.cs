@@ -32,7 +32,7 @@ namespace Isle.Factories
 
                 //need to provide current domain name
                 dto.ImageUrl = site + entity.ImageUrl;
-                dto.Url = site + entity.FriendlyUrl;
+                dto.Url = site + LibraryBizService.GetLibraryFriendlyUrl( entity ); 
 
                 //?? arbitrarily return list of collections??
                 //public only until can have means to verify privileges

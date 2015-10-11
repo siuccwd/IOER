@@ -1,8 +1,8 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="Default.aspx.cs" Inherits="ILPathways.Widgets.Standards.Default" %>
+﻿<%@ Page Title="Illinois Open Educational Resources - Standards Widget" Language="C#" AutoEventWireup="true" CodeBehind="Default.aspx.cs" Inherits="IOER.Widgets.Standards.Default" %>
 <%@ Register TagPrefix="uc1" TagName="browser" Src="/controls/StandardsBrowser7.ascx" %>
 
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head runat="server">
     <title></title>
     <link rel="Stylesheet" href="/Styles/ISLE.css" />

@@ -11,14 +11,15 @@ using System.Web;
 using System.Web.Script.Serialization;
 using System.Web.Services;
 
-using ILPathways.Controllers;
+using IOER.Controllers;
+using IB = ILPathways.Business;
 using ILPathways.Utilities;
 using LRWarehouse.Business;
 using LRWarehouse.DAL;
 using ResMgr = Isle.BizServices.ResourceBizService;
+using Patron = LRWarehouse.Business.Patron;
 
-
-namespace ILPathways.Services
+namespace IOER.Services
 {
     /// <summary>
     /// Summary description for WebDALService
@@ -85,7 +86,7 @@ namespace ILPathways.Services
         /// <param name="user">The user doing the Liking</param>
         /// <param name="type">"resource" or "collection"</param>
         /// <param name="id">Resource ID of the Resource or ID of the collection</param>
-        public int LikeResourceOrCollection( Patron user, string type, int id, ref bool isValid, ref string status )
+		public int LikeResourceOrCollection( Patron user, string type, int id, ref bool isValid, ref string status )
         {
           var utilService = new UtilityService();
 
@@ -109,13 +110,13 @@ namespace ILPathways.Services
 
               status = "okay";
               isValid = true;
-              return libService.LibrarySection_LikeSummary( id ).First<Business.DataItem>().Int1;
+              return libService.LibrarySection_LikeSummary( id ).First<IB.DataItem>().Int1;
             }
             else
             {
               status = "You already liked or disliked this!";
               isValid = false;
-              return libService.LibrarySection_LikeSummary( id ).First<Business.DataItem>().Int1;
+			  return libService.LibrarySection_LikeSummary(id).First<IB.DataItem>().Int1;
             }
           }
           else if ( type == "resource" )

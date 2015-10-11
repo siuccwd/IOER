@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="IsleSSO.aspx.cs" Inherits="ILPathways.secure.IsleSSO" %>
+﻿<%@ Page Title="Illinois Open Educational Resources - SSO" Language="C#" AutoEventWireup="true" CodeBehind="IsleSSO.aspx.cs" Inherits="IOER.secure.IsleSSO" %>
 <%@ Register TagPrefix="uc1" TagName="Login" Src="/secure/controls/IsleSSO.ascx" %>
 <form id="aspnet_form" runat="server">
     <div>

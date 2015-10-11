@@ -18,13 +18,13 @@ using System.Web.UI.WebControls;
 using System.Web.UI.HtmlControls;
 
 using ILPathways.Utilities;
-using ILPathways.classes;
+using IOER.classes;
 using EmailHelper = ILPathways.Utilities.EmailManager;
 using IPB = ILPathways.Business;
 using AppUser = LRWarehouse.Business.Patron; //ILPathways.Business.AppUser;
 
 
-namespace ILPathways.Library
+namespace IOER.Library
 {
     /// <summary>
     /// Summary description for BaseAppPage
@@ -44,7 +44,12 @@ namespace ILPathways.Library
         /// </summary>
         protected IPB.ApplicationRolePrivilege FormPrivileges
         {
-            get { return ViewState[ "formPrivileges" ] as IPB.ApplicationRolePrivilege; }
+            get {
+                if (ViewState["formPrivileges"] == null)
+                    ViewState["formPrivileges"] = new IPB.ApplicationRolePrivilege();
+
+                return ViewState[ "formPrivileges" ] as IPB.ApplicationRolePrivilege; 
+            }
             set { ViewState[ "formPrivileges" ] = value; }
         }
 
@@ -54,7 +59,13 @@ namespace ILPathways.Library
         /// </summary>
         public IPB.ApplicationRolePrivilege RecordPrivileges
         {
-            get { return ViewState[ "recordPrivileges" ] as IPB.ApplicationRolePrivilege; }
+            get
+            {
+                if (ViewState["recordPrivileges"] == null)
+                    ViewState["recordPrivileges"] = new IPB.ApplicationRolePrivilege();
+
+                return ViewState["recordPrivileges"] as IPB.ApplicationRolePrivilege;
+            }
             set { ViewState[ "recordPrivileges" ] = value; }
         }
 
@@ -185,87 +196,87 @@ namespace ILPathways.Library
             }
         }
 
-        protected override void Render( HtmlTextWriter output )
-        {
+		//protected override void RenderXXXX( HtmlTextWriter output )
+		//{
 
-            string alwaysPreProcessPage = UtilityManager.GetAppKeyValue( "alwaysPreProcessPage", "yes" );
-            int view = FormHelper.GetRequestKeyValue( "v", 0 );
+		//	string alwaysPreProcessPage = UtilityManager.GetAppKeyValue( "alwaysPreProcessPage", "yes" );
+		//	int view = FormHelper.GetRequestKeyValue( "v", 0 );
 
-            formRm = SessionManager.getResourceManager( Session );
+		//	formRm = SessionManager.getResourceManager( Session );
 
-            string pageLang = UtilityManager.getLanguage();
+		//	string pageLang = UtilityManager.getLanguage();
 
-            //mp - if in pfv, destroy accordion
-            if ( view.Equals( 1 ) )
-            {
-                using ( System.IO.MemoryStream ms = new System.IO.MemoryStream() )
-                {
-                    using ( System.IO.StreamWriter sw = new System.IO.StreamWriter( ms ) )
-                    {
-                        HtmlTextWriter htWriter = new HtmlTextWriter( sw );
-                        base.Render( htWriter );
-                        htWriter.Flush();
+		//	//mp - if in pfv, destroy accordion
+		//	if ( view.Equals( 1 ) )
+		//	{
+		//		using ( System.IO.MemoryStream ms = new System.IO.MemoryStream() )
+		//		{
+		//			using ( System.IO.StreamWriter sw = new System.IO.StreamWriter( ms ) )
+		//			{
+		//				HtmlTextWriter htWriter = new HtmlTextWriter( sw );
+		//				base.Render( htWriter );
+		//				htWriter.Flush();
 
-                        //We've captured the rendered page, now rewind and read it back in as a string
-                        ms.Position = 0;
-                        using ( System.IO.StreamReader sr = new System.IO.StreamReader( ms ) )
-                        {
-                            string text = sr.ReadToEnd();
-                            //mp - if in pfv, destroy accordion
-                            if ( view.Equals( 1 ) )
-                            {
-                                if ( text.IndexOf( "id=\"vertical_container" ) > -1 )
-                                    text = text.Replace( "id=\"vertical_container", "id=\"vertical_containerPFV" );
-                                else if ( text.IndexOf( "id='vertical_container" ) > -1 )
-                                    text = text.Replace( "id='vertical_container", "id='vertical_containerPFV" );
-                                else if ( text.IndexOf( "id=vertical_container" ) > -1 )
-                                    text = text.Replace( "id=vertical_container", "id=vertical_containerPFV" );
-                            }
-                            //resolve custome tags
-                            //text = UtilityManager.HandleGlossarySnippet( text, true );
-                            text = ContentHelper.HandleAllSnippets( text, true );
-                            //Now output the page
-                            Response.Write( text );
-                            sr.Close();
-                        }
-                    }
-                }
+		//				//We've captured the rendered page, now rewind and read it back in as a string
+		//				ms.Position = 0;
+		//				using ( System.IO.StreamReader sr = new System.IO.StreamReader( ms ) )
+		//				{
+		//					string text = sr.ReadToEnd();
+		//					//mp - if in pfv, destroy accordion
+		//					if ( view.Equals( 1 ) )
+		//					{
+		//						if ( text.IndexOf( "id=\"vertical_container" ) > -1 )
+		//							text = text.Replace( "id=\"vertical_container", "id=\"vertical_containerPFV" );
+		//						else if ( text.IndexOf( "id='vertical_container" ) > -1 )
+		//							text = text.Replace( "id='vertical_container", "id='vertical_containerPFV" );
+		//						else if ( text.IndexOf( "id=vertical_container" ) > -1 )
+		//							text = text.Replace( "id=vertical_container", "id=vertical_containerPFV" );
+		//					}
+		//					//resolve custome tags
+		//					//text = UtilityManager.HandleGlossarySnippet( text, true );
+		//					text = ContentHelper.HandleAllSnippets( text, true );
+		//					//Now output the page
+		//					Response.Write( text );
+		//					sr.Close();
+		//				}
+		//			}
+		//		}
 
-            }
-            else
-            {
-                if ( alwaysPreProcessPage.Equals( "yes" ) )
-                {
-                    using ( System.IO.MemoryStream ms = new System.IO.MemoryStream() )
-                    {
-                        using ( System.IO.StreamWriter sw = new System.IO.StreamWriter( ms ) )
-                        {
-                            HtmlTextWriter htWriter = new HtmlTextWriter( sw );
-                            base.Render( htWriter );
-                            htWriter.Flush();
+		//	}
+		//	else
+		//	{
+		//		if ( alwaysPreProcessPage.Equals( "yes" ) )
+		//		{
+		//			using ( System.IO.MemoryStream ms = new System.IO.MemoryStream() )
+		//			{
+		//				using ( System.IO.StreamWriter sw = new System.IO.StreamWriter( ms ) )
+		//				{
+		//					HtmlTextWriter htWriter = new HtmlTextWriter( sw );
+		//					base.Render( htWriter );
+		//					htWriter.Flush();
 
-                            //We've captured the rendered page, now rewind and read it back in as a string
-                            ms.Position = 0;
-                            using ( System.IO.StreamReader sr = new System.IO.StreamReader( ms ) )
-                            {
-                                string text = sr.ReadToEnd();
-                                //resolve custome tags
-                                //text = UtilityManager.HandleGlossarySnippet( text, true );
-                               // text = ContentHelper.HandleAllSnippets( text, true );
-                                //Now output the page
-                                Response.Write( text );
-                                sr.Close();
-                            }
-                        }
-                    }
-                }
-                else
-                {
-                    base.Render( output );
-                }
-            }
+		//					//We've captured the rendered page, now rewind and read it back in as a string
+		//					ms.Position = 0;
+		//					using ( System.IO.StreamReader sr = new System.IO.StreamReader( ms ) )
+		//					{
+		//						string text = sr.ReadToEnd();
+		//						//resolve custome tags
+		//						//text = UtilityManager.HandleGlossarySnippet( text, true );
+		//					   // text = ContentHelper.HandleAllSnippets( text, true );
+		//						//Now output the page
+		//						Response.Write( text );
+		//						//sr.Close();
+		//					}
+		//				}
+		//			}
+		//		}
+		//		else
+		//		{
+		//			base.Render( output );
+		//		}
+		//	}
       
-        }//
+		//}//
 
 
 

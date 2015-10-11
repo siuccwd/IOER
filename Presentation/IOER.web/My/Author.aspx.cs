@@ -6,7 +6,7 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using ILPathways.Utilities;
 
-namespace ILPathways.My
+namespace IOER.My
 {
     public partial class Author : System.Web.UI.Page
     {

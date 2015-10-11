@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ILPathways.Widgets.Library {
+namespace IOER.Widgets.Library {
     
     
     public partial class Library1 {

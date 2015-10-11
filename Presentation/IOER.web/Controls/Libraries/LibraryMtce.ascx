@@ -1,4 +1,4 @@
-﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="LibraryMtce.ascx.cs" Inherits="ILPathways.Controls.Libraries.LibraryMtce" %>
+﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="LibraryMtce.ascx.cs" Inherits="IOER.Controls.Libraries.LibraryMtce" %>
 
 
 <%@ Register TagPrefix="uc1" TagName="ImageHelper" Src="/LRW/controls/ImageHelper.ascx" %>
@@ -292,7 +292,7 @@
 </div>
 
 <asp:Panel ID="hiddenStuff" runat="server" Visible="false">
-<asp:Literal ID="formSecurityName" runat="server" Visible="false">ILPathways.Admin</asp:Literal>
+<asp:Literal ID="formSecurityName" runat="server" Visible="false">Site.Admin</asp:Literal>
 <!-- control variables -->
 <asp:Literal ID="txtDefaultLibraryTypeId" runat="server" Visible="false">1</asp:Literal>
 <asp:Literal ID="showingImagePath" runat="server" Visible="false">no</asp:Literal>

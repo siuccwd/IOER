@@ -1,4 +1,4 @@
-﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="GroupDetail.ascx.cs" Inherits="ILPathways.Controls.GroupsManagment.GroupDetail" %>
+﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="GroupDetail.ascx.cs" Inherits="IOER.Controls.GroupsManagment.GroupDetail" %>
 
 
 <script language="javascript" type="text/javascript" >
@@ -188,5 +188,5 @@
 </div>
 
 <asp:Panel ID="hiddenPanel" runat="server" Visible="false">
-<asp:Literal ID="txtFormSecurityName" runat="server" Visible="false">ILPathways.controls.GroupsManagement.GroupDetail</asp:Literal>
+<asp:Literal ID="txtFormSecurityName" runat="server" Visible="false">IOER.Controls.GroupsManagement.GroupDetail</asp:Literal>
 </asp:Panel>

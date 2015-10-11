@@ -267,12 +267,23 @@ namespace IoerContentBusinessEntities
             return entity;
         }
 
+		/// <summary>
+		/// Get content by resourceId
+		/// Typically used to determine if a resource is associated with with a content Item
+		/// </summary>
+		/// <param name="pResourceIntId"></param>
+		/// <returns></returns>
         public static IB.ContentItem Content_GetByResourceId( int pResourceIntId )
         {
             IB.ContentItem entity = new IB.ContentItem();
             using ( var context = new IsleContentContext() )
             {
                 Content item = context.Contents.SingleOrDefault( s => s.ResourceIntId == pResourceIntId );
+				//List<Content> eflist = context.Contents
+				//		.Where(s => s.ResourceIntId == pResourceIntId)
+				//		.OrderBy(s => s.ResourceIntId).ThenBy(s => s.Id)
+				//		.ToList(); 
+				Content item2 = context.Contents.FirstOrDefault(s => s.ResourceIntId == pResourceIntId);
 
                 if ( item != null && item.Id > 0 )
                 {
@@ -545,7 +556,7 @@ namespace IoerContentBusinessEntities
             int cacheHours = UtilityManager.GetAppKeyValue( "curriculumCacheHours", 1 );
             int cacheHoursElapsed = cacheHours * -1;
 
-            //just cache Curriculumn for now
+            //just cache Curriculum for now
             string key = "";
 
             ContentNode node = new ContentNode();
@@ -568,18 +579,18 @@ namespace IoerContentBusinessEntities
                         {
                             if ( cache.lastUpdated > DateTime.Now.AddHours( cacheHoursElapsed ) )
                             {
-                                LoggingHelper.DoTrace( 2, string.Format( "===Content_GetHierarchyOutline === Using cached version of curriculum, Id: {0}, {1}", entity.Id, entity.Title ) );
+                                LoggingHelper.DoTrace( 6, string.Format( "===Content_GetHierarchyOutline === Using cached version of curriculum, Id: {0}, {1}", entity.Id, entity.Title ) );
                                 return cache.nodeOutline;
                             }
                         }
                         catch ( Exception ex )
                         {
-                            LoggingHelper.DoTrace( 2, "===Content_GetHierarchyOutline === exception " + ex.Message );
+                            LoggingHelper.DoTrace( 6, "===Content_GetHierarchyOutline === exception " + ex.Message );
                         }
                     }
                     else
                     {
-                        LoggingHelper.DoTrace( 2, string.Format( "****** Content_GetHierarchyOutline === Retrieving full version of curriculum, Id: {0}, {1}", entity.Id, entity.Title ) );
+                        LoggingHelper.DoTrace( 6, string.Format( "****** Content_GetHierarchyOutline === Retrieving full version of curriculum, Id: {0}, {1}", entity.Id, entity.Title ) );
                     }
                 }
                 node.Id = entity.Id;
@@ -604,12 +615,12 @@ namespace IoerContentBusinessEntities
                         HttpRuntime.Cache.Remove( key );
                         HttpRuntime.Cache.Insert( key, newCache );
 
-                        LoggingHelper.DoTrace( 2, string.Format( "===Content_GetHierarchyOutline $$$ Updating cached version of curriculum, Id: {0}, {1}", entity.Id, entity.Title ) );
+                        LoggingHelper.DoTrace( 6, string.Format( "===Content_GetHierarchyOutline $$$ Updating cached version of curriculum, Id: {0}, {1}", entity.Id, entity.Title ) );
 
                     }
                     else
                     {
-                        LoggingHelper.DoTrace( 2, string.Format( "===Content_GetHierarchyOutline ****** Inserting new cached version of curriculum, Id: {0}, {1}", entity.Id, entity.Title ) );
+                        LoggingHelper.DoTrace( 5, string.Format( "===Content_GetHierarchyOutline ****** Inserting new cached version of curriculum, Id: {0}, {1}", entity.Id, entity.Title ) );
                         //HttpContext.Current.Cache.Insert( key, newCache );
 
                         System.Web.HttpRuntime.Cache.Insert( key, newCache, null, DateTime.Now.AddHours( cacheHours ), TimeSpan.Zero );
@@ -1195,7 +1206,7 @@ namespace IoerContentBusinessEntities
                 if ( entity == null || entity.Id == 0 )
                     return entity;
 
-                //just cache Curriculumn for now
+                //just cache Curriculum for now
                 //NOTE - the big issue is the standards!
                 string key = "";
 
@@ -1211,7 +1222,7 @@ namespace IoerContentBusinessEntities
                         {
                             if ( cache.lastUpdated > DateTime.Now.AddHours( cacheHoursElapsed ) )
                             {
-                                LoggingHelper.DoTrace( 2, string.Format( "===Content_GetHierarchyNode === Using cached version of node, Id: {0}, {1}, {2}", entity.Id, entity.Title, entity.TypeId ) );
+                                LoggingHelper.DoTrace( 6, string.Format( "===Content_GetHierarchyNode === Using cached version of node, Id: {0}, {1}, {2}", entity.Id, entity.Title, entity.TypeId ) );
                                 return cache.Item;
                             }
                         }
@@ -1222,11 +1233,11 @@ namespace IoerContentBusinessEntities
                     }
                     else
                     {
-                        LoggingHelper.DoTrace( 2, string.Format( "****** Content_GetHierarchyNode === Retrieving full version of curriculum, Id: {0}, {1}", entity.Id, entity.Title ) );
+                        LoggingHelper.DoTrace( 5, string.Format( "****** Content_GetHierarchyNode === Retrieving full version of curriculum, Id: {0}, {1}", entity.Id, entity.Title ) );
                     }
                 }
             
-
+				//15-09-14 mparsons - this should be using the request object
                 Content_FillHierarchyNode( context, entity, true );
 
                 //Cache the output
@@ -1246,12 +1257,12 @@ namespace IoerContentBusinessEntities
                         //HttpContext.Current.Cache.Remove( key );
                         //HttpContext.Current.Cache.Insert( key,  newCache );
 
-                        LoggingHelper.DoTrace( 2, string.Format( "===Content_GetHierarchyNode $$$ Updating cached version of curriculum, Id: {0}, {1}", entity.Id, entity.Title ) );
+                        LoggingHelper.DoTrace( 5, string.Format( "===Content_GetHierarchyNode $$$ Updating cached version of curriculum, Id: {0}, {1}", entity.Id, entity.Title ) );
 
                     }
                     else
                     {
-                        LoggingHelper.DoTrace( 2, string.Format( "===Content_GetHierarchyNode ****** Inserting new cached version of curriculum, Id: {0}, {1}", entity.Id, entity.Title ) );
+                        LoggingHelper.DoTrace( 5, string.Format( "===Content_GetHierarchyNode ****** Inserting new cached version of curriculum, Id: {0}, {1}", entity.Id, entity.Title ) );
                         //HttpContext.Current.Cache.Insert( key, newCache );
 
                         System.Web.HttpRuntime.Cache.Insert( key, newCache, null, DateTime.Now.AddHours( cacheHours ), TimeSpan.Zero );
@@ -2111,10 +2122,10 @@ namespace IoerContentBusinessEntities
                     efEntity.UserId = entity.UserId;
 
                     efEntity.CreatedById = entity.CreatedById;
-                    efEntity.LastUpdatedById = entity.LastUpdatedById;
+                    efEntity.LastUpdatedById = entity.CreatedById;
                     efEntity.Created = System.DateTime.Now;
                     efEntity.LastUpdated = System.DateTime.Now;
-                    ctx.Content_Partner.Add( efEntity );
+                    context.Content_Partner.Add( efEntity );
 
                     // submit the change to database
                     int count = context.SaveChanges();
@@ -2146,7 +2157,7 @@ namespace IoerContentBusinessEntities
         /// <returns></returns>
         public bool ContentPartner_Update( IB.ContentPartner entity )
         {
-            bool isValid = false;
+            bool isValid = true;
             try
             {
                 using ( var context = new IsleContentContext() )
@@ -2202,7 +2213,12 @@ namespace IoerContentBusinessEntities
             return isSuccessful;
         }
 
-        public static List<IB.ContentPartner> Content_GetContentPartner( int contentId )
+        public static List<IB.ContentPartner> Content_GetContentPartners(int contentId)
+        {
+            return Content_GetContentPartners(contentId, 0);
+        }
+
+        public static List<IB.ContentPartner> Content_GetContentPartners( int contentId, int minimumType )
         {
             IB.ContentPartner entity = new IB.ContentPartner();
             List<IB.ContentPartner> list = new List<IB.ContentPartner>();
@@ -2212,7 +2228,7 @@ namespace IoerContentBusinessEntities
             using ( var context = new IsleContentContext() )
             {
                 List<Content_Partner> mbrs = context.Content_Partner
-                                    .Where( s => s.ContentId == contentId && s.PartnerTypeId > 0 )
+                                    .Where(s => s.ContentId == contentId && s.PartnerTypeId > minimumType)
                                     .ToList();
 
                 if ( mbrs.Count > 0 )
@@ -2258,6 +2274,7 @@ namespace IoerContentBusinessEntities
                 else
                 {
                     //check if author. Should only relate to queries, not updates
+                    //===> future will be to only allow author check if the content doesn't use content partner
                     Content item = context.Contents
                             .SingleOrDefault( s => s.Id == contentId );
                     if ( item != null && item.Id > 0 )
@@ -2377,6 +2394,48 @@ namespace IoerContentBusinessEntities
             return list;
         }
 
+        public static ObjectMember Learninglist_GetUserAccess(int contentId, int userId)
+        {
+            ObjectMember entity = new ObjectMember();
+            using (var context = new IsleContentContext())
+            {
+                List<LearningList_MembersSummary> mbrs = context.LearningList_MembersSummary
+                                    .Where(s => s.ContentId == contentId && s.UserId == userId)
+                                    .OrderBy(s => s.LastName).ThenBy(s => s.FirstName)
+                                    .ToList();
+
+                if (mbrs.Count > 0)
+                {
+                    foreach (LearningList_MembersSummary item in mbrs)
+                    {
+                        entity = new ObjectMember();
+                        entity.ObjectId = item.ContentId;
+                        entity.UserId = item.UserId;
+                        entity.MemberTypeId = item.PartnerTypeId;
+                        entity.MemberType = item.PartnerType;
+
+                        entity.FirstName = item.FirstName;
+                        entity.LastName = item.LastName;
+                        entity.Email = item.Email;
+                        entity.Organization = item.Organization;
+                        entity.OrgId = item.OrgId == null ? 0 : (int)item.OrgId;
+
+                        entity.MemberImageUrl = item.ImageUrl;
+                        entity.MemberHomeUrl = string.Format("/Profile/{0}/{1}", entity.UserId, entity.MemberFullName.Replace(" ", "_"));
+
+                        entity.Created = (DateTime)item.PartnerCreated;
+                        entity.LastUpdated = (DateTime)item.PartnerLastUpdated;
+
+                        return entity;
+                        //list.Add(entity);
+
+                    }
+                }
+                //if we get this far, we can consider to still allow author access!
+            }
+
+            return entity;
+        }
         #endregion
         #region content for download
         public static IB.ContentItem Content_DownloadNode( int contentId, bool activeOnly )
@@ -2868,6 +2927,7 @@ namespace IoerContentBusinessEntities
                             entity = new CommentDTO();
                             entity.Text = item.Description;
                             entity.Date = item.Created.ToShortDateString();
+                            entity.Id = item.Id;
 
                             list.Add( entity );
                         }

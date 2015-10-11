@@ -5,9 +5,9 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
-using ILPathways.Library;
+using IOER.Library;
 
-namespace ILPathways.Controls
+namespace IOER.Controls
 {
   public partial class SplashMini : BaseUserControl
   {

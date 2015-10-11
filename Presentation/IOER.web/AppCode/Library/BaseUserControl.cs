@@ -19,13 +19,14 @@ using System.Web.UI.HtmlControls;
 
 using ILPathways.Utilities;
 using EmailHelper = ILPathways.Utilities.EmailManager;
-using ILPathways.classes;
+using IOER.classes;
 
 using IPB = ILPathways.Business;
 using AppUser = LRWarehouse.Business.Patron; //ILPathways.Business.AppUser;
+using IWebUser = ILPathways.Business.IWebUser;
 using LRWarehouse.Business;
 
-namespace ILPathways.Library
+namespace IOER.Library
 {
     /// <summary>
     /// Summary description for BaseUserControl
@@ -1001,16 +1002,28 @@ namespace ILPathways.Library
             return;
         }
 
-
-        /// <summary>
-        /// Output meta tags for this page
-        /// </summary>
-        protected void SetMetaTags( string description )
+		/// <summary>
+		/// Output description meta tags for this page
+		/// </summary>
+		/// <param name="text"></param>
+		protected void SetMetaTags( string text )
+		{
+			SetMetaTags( text, "description" );
+		}
+		/// <summary>
+		/// Output meta tags for this page
+		/// </summary>
+		/// <param name="text"></param>
+		/// <param name="type">description (default), keyword </param>
+        protected void SetMetaTags( string text, string type )
         {
             HtmlMeta tag = new HtmlMeta();
 
-            tag.Name = "description";
-            tag.Content = description;
+			if ( type != null && type.ToLower() == "keyword")
+				tag.Name = "keyword";
+			else
+				tag.Name = "description";
+            tag.Content = text;
             Page.Header.Controls.Add( tag );
 
         }//
@@ -1549,11 +1562,11 @@ namespace ILPathways.Library
         /// Gets/Sets an instance of a Registered IPB.AppUser object to/from the active user's session.
         /// </summary>
         /// <remarks>This property is explicitly thread safe.</remarks>
-        public IPB.IWebUser WebUser
+        public IWebUser WebUser
         {
             get
             {
-                IPB.IWebUser user = SessionManager.GetUserFromSession( HttpContext.Current.Session, Constants.USER_REGISTER );
+                IWebUser user = SessionManager.GetUserFromSession( HttpContext.Current.Session, Constants.USER_REGISTER );
 
                 if ( user == null )
                 {

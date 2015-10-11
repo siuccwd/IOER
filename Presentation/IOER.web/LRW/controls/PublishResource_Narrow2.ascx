@@ -1,4 +1,4 @@
-﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="PublishResource_Narrow2.ascx.cs" Inherits="ILPathways.LRW.controls.PublishResource_Narrow2" %>
+﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="PublishResource_Narrow2.ascx.cs" Inherits="IOER.LRW.controls.PublishResource_Narrow2" %>
 <%@ Register TagPrefix="uc1" TagName="LoginBox" Src="/Account/Controls/LoginController.ascx" %>
 <%@ Register TagPrefix="uc1" TagName="ConditionsOfUseSelector" Src="/LRW/controls/ConditionsOfUseSelector.ascx" %>
 <%@ Register TagPrefix="uc1" TagName="HeaderControl" Src="/Controls/Includes/Header6.ascx" %>

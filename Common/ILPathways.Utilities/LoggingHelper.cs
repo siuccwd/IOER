@@ -255,22 +255,13 @@ namespace ILPathways.Utilities
                 //Allow if the requested level is <= the application thresh hold
                 if ( level <= appTraceLevel )
                 {
-                    string usingBriefFormat = UtilityManager.GetAppKeyValue( "usingBriefFormat", "yes" );
-                    if ( usingBriefFormat == "yes" )
-                    {
-                        if ( showingDatetime )
-                            msg = "\n " + System.DateTime.Now.ToString() + " - " + message;
-                        else
-                            msg = "\n " + message;
 
-                    }
+                    if ( showingDatetime )
+                        msg = "\n " + System.DateTime.Now.ToString() + " - " + message;
                     else
-                    {
-                        msg = "\n======================= Trace ================================= ";
-                        msg += "\nTime: " + System.DateTime.Now.ToString();
-                        msg += "\nTrace: " + message;
-                        msg += "\n=============================================================== ";
-                    }
+                        msg = "\n " + message;
+
+      
                     string datePrefix = System.DateTime.Today.ToString( "u" ).Substring( 0, 10 );
                     string logFile = UtilityManager.GetAppKeyValue( "path.trace.log", "C:\\VOS_LOGS.txt" );
                     string outputFile = logFile.Replace( "[date]", datePrefix );

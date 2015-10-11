@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ILPathways.Controls.OrgMgmt {
+namespace IOER.Controls.OrgMgmt {
     
     
     public partial class Import {
@@ -416,6 +416,24 @@ namespace ILPathways.Controls.OrgMgmt {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label noticeEmail;
+        
+        /// <summary>
+        /// noticeSubject_RI control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label noticeSubject_RI;
+        
+        /// <summary>
+        /// noticeEmail_RI control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label noticeEmail_RI;
         
         /// <summary>
         /// activateLink control.

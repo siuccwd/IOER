@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ILPathways.Controls.SearchV6.Themes
+namespace IOER.Controls.SearchV6.Themes
 {
 
 

@@ -6,11 +6,11 @@ using System.Web.Services;
 using Isle.BizServices;
 
 using LRWarehouse.Business;
-using ILPathways.Services.AdminService1Components;
-using JSON = ILPathways.Services.UtilityService.GenericReturn;
+using IOER.Services.AdminService1Components;
+using JSON = IOER.Services.UtilityService.GenericReturn;
+using Patron = LRWarehouse.Business.Patron;
 
-
-namespace ILPathways.Services
+namespace IOER.Services
 {
   /// <summary>
   /// Summary description for AdminService1

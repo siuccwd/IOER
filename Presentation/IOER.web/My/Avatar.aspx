@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="Avatar.aspx.cs" Inherits="ILPathways.My.Avatar" %>
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="Avatar.aspx.cs" Inherits="IOER.My.Avatar" %>
 
 <!DOCTYPE HTML>
 <html>

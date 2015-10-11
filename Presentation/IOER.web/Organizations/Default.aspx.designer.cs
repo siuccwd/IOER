@@ -7,18 +7,18 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ILPathways.Organizations {
+namespace IOER.Organizations {
     
     
     public partial class Default {
         
         /// <summary>
-        /// OrgSearch control.
+        /// orgManager control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ILPathways.Controls.OrgMgmt.OrgSearch OrgSearch;
+        protected global::IOER.Organizations.OrganizationManagement orgManager;
     }
 }

@@ -7,22 +7,23 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 
 using ILPathways.Utilities;
-using ILPathways.classes;
+using IOER.classes;
 using ILPathways.Business;
 using Isle.BizServices;
 using LRWarehouse.Business;
-using ILPathways.Controllers;
+using IOER.Controllers;
 using LDAL = LRWarehouse.DAL;
 using MyManager = Isle.BizServices.AccountServices;
 using CurrentUser = LRWarehouse.Business.Patron;
 
 
-namespace ILPathways.secure.controls
+namespace IOER.secure.controls
 {
-    public partial class IsleSSO : ILPathways.Library.BaseUserControl
+    public partial class IsleSSO : IOER.Library.BaseUserControl
     {
         MyManager myManager = new MyManager();
         CurrentUser currentUser = new CurrentUser();
+        OrganizationBizService orgMgr = new OrganizationBizService();
         public string errorMessage = "";
 
         protected void Page_Load(object sender, EventArgs e)
@@ -125,7 +126,7 @@ namespace ILPathways.secure.controls
                     string profileMessage = string.Format(profileCreateMessage.Text, profileRedirect.Text);
                     SetConsoleSuccessMessage(profileMessage);
 
-                    OrganizationBizService.AssociateUserWithOrg( applicant );
+                    orgMgr.AssociateUserWithOrg(applicant);
 
                     string ipAddress = this.GetUserIPAddress();
                     ActivityBizServices.UserRegistrationFromPortal( applicant, ipAddress );

@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ILPathways.Account.controls {
+namespace IOER.Account.controls {
     
     
     public partial class Registration2 {

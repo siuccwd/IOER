@@ -1,4 +1,4 @@
-﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="FaqList.ascx.cs" Inherits="ILPathways.Controls.FAQs.FaqList" %>
+﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="FaqList.ascx.cs" Inherits="IOER.Controls.FAQs.FaqList" %>
 
 <%@ Register TagPrefix="uc1" TagName="AskQuestion" Src="~/Controls/FAQs/PostQuestion.ascx" %>
 

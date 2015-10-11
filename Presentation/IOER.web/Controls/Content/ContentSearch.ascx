@@ -1,4 +1,4 @@
-﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="ContentSearch.ascx.cs" Inherits="ILPathways.Controls.Content.ContentSearch" %>
+﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="ContentSearch.ascx.cs" Inherits="IOER.Controls.Content.ContentSearch" %>
 
 
 <% 
@@ -15,13 +15,18 @@
 %>
 
 
-<script type="text/javascript" language="javascript">  var defaultFlyoutWidth = 280;</script>
+<script type="text/javascript" >  var defaultFlyoutWidth = 280;</script>
 <script src="/Scripts/flyout.js" type="text/javascript"></script>
 <link rel="Stylesheet" href="/Styles/Flyout.css" />
 
 <!-- Page Setup -->
-<script type="text/javascript" language="javascript">
+<script type="text/javascript" >
+    var countDown = 50;
+
     $(document).ready(function () {
+
+        //setupCountDown();
+
         //Inject missing attribute
         $(".txtKeyword").attr("placeholder", "Search in Resources...");
 
@@ -29,6 +34,48 @@
         $("table").css("border-collapse", "separate")
         $("table th").addClass("isleH2");
 
+    });
+
+
+    function setupCountDown() {
+        setInterval(tickCountDown, 100);
+    }
+
+
+    function resetCountDown() {
+        alert("resetCountDown");
+        countDown = 30;
+    }
+
+    function tickCountDown() {
+        if (countDown > 0) {
+            countDown--;
+            if (countDown == 0) {
+                newSearch();
+            }
+        }
+    }
+
+    function newSearch() {
+        //alert("newSearch");
+        //$('input[type=submit]').click();
+        //$('#searchImgBtn').click();
+        $('.searchImgBtn').trigger('click');
+    }
+
+    $("#ctl00_BodyContent_search1_txtKeyword").on("keyup", function (event) {
+
+        if (event.which) {
+            if (event.which == 16 || event.which == 9) { }
+            else if (event.which == 13) {
+                resetCountDown();
+                event.stopPropagation();
+            } else {
+                resetCountDown();
+            }
+        } else {
+            resetCountDown();
+        }
     });
 </script>
 
@@ -232,7 +279,7 @@ table tr.gridItem td {
         clearRadioButtonList('<%=rblIDateCreated.ClientID %>', false)
         CheckBoxListSelect('<%=cbxContentType.ClientID %>', false)
 
-
+        resetCountDown();
         return false;
     } //end function
     function CheckBoxListSelect(cbControl, state) {
@@ -289,12 +336,21 @@ table tr.gridItem td {
       <div class="flyoutContent">
               <h2 class="isleBox_H2">Created By </h2>
               <asp:Label ID="createdByMessage" runat="server" Visible="false"></asp:Label>
+          <!-- hiding my district until relavent 
+              <asp:ListItem Text="My District" Value="2"></asp:ListItem>-->
               <asp:RadioButtonList id="listCreatedBy" causesvalidation="false" RepeatLayout="UnorderedList"   runat="server" tooltip="Created By options" RepeatDirection="Vertical">
-	                <asp:ListItem Text="Created By Me" Value="1" Selected="True" ></asp:ListItem>
-                  <asp:ListItem Text="My Organzation" Value="2"></asp:ListItem>
-                  <asp:ListItem Text="My District" Value="3"></asp:ListItem>
+	                <asp:ListItem Text="Created By Me" Value="0" Selected="True" ></asp:ListItem>
+                  <asp:ListItem Text="My Organzation" Value="1"></asp:ListItem>
+                  <asp:ListItem Text="Shared with Me" Value="3"></asp:ListItem>
                   <asp:ListItem Text="All" Value="4"></asp:ListItem>
               </asp:RadioButtonList>
+
+           <asp:checkboxlist id="cbxListCreatedBy" Visible="false" causesvalidation="false" RepeatLayout="UnorderedList"   runat="server" tooltip="Created By options" RepeatDirection="Vertical">
+	              <asp:ListItem Text="Created By Me" Value="0" Selected="True" ></asp:ListItem>
+                  <asp:ListItem Text="My Organzation" Value="1"></asp:ListItem>
+                  <asp:ListItem Text="Shared with Me" Value="3"></asp:ListItem>
+                  <asp:ListItem Text="All" Value="4"></asp:ListItem>
+              </asp:checkboxlist>
             </div>
     </asp:Panel>
 
@@ -432,9 +488,9 @@ table tr.gridItem td {
 </asp:Panel>
 
 <asp:Panel ID="hiddenStuff" runat="server" Visible="false">
-<asp:Literal ID="txtFormSecurityName" runat="server" Visible="false">ILPathways.LRW.controls.ContentSearch</asp:Literal>
+<asp:Literal ID="txtFormSecurityName" runat="server" Visible="false">IOER.LRW.controls.ContentSearch</asp:Literal>
 <asp:Literal ID="txtAuthorSecurityName" runat="server" Visible="false"></asp:Literal>
-<asp:Literal ID="txtAuthorSecurityName2" runat="server" Visible="false">ILPathways.LRW.controls.Authoring</asp:Literal>
+<asp:Literal ID="txtAuthorSecurityName2" runat="server" Visible="false">IOER.controls.Authoring</asp:Literal>
 <asp:Literal ID="txtLibraryId" runat="server" Visible="false">0</asp:Literal>
 
 <asp:Literal ID="formattedTitleTemplate" runat="server" Visible="false"><a style="color:#000;  cursor:pointer;" href="{0}" target="_blank" title="Website link opens in a new window">{1}</a></asp:Literal>
@@ -448,6 +504,8 @@ table tr.gridItem td {
 <asp:Literal ID="litCurriculumPublicUrl" runat="server" Visible="false"><a href='/Curriculum/{0}/{1}' target="_blank">{2}</a></asp:Literal>
 <asp:Literal ID="litConentPublicUrl" runat="server" Visible="false"><a href='/Content/{0}/{1}' target="_blank">{2}</a></asp:Literal>
 
+    
+
 </asp:Panel>
 <asp:Panel ID="Panel4" runat="server" Visible="false">
 
@@ -456,6 +514,8 @@ table tr.gridItem td {
 
 <asp:Literal ID="txtCustomFilter" runat="server" Visible="false"></asp:Literal>
 <asp:Literal ID="txtPublicFilter" runat="server" Visible="false">(base.PrivilegeTypeId = 1 AND base.IsActive = 1  AND base.StatusId = 5 AND TypeId in (10, 50)) </asp:Literal>
+<!-- content shared with user, status can probably be anything-->
+<asp:Literal ID="litSharedWithMeFilter" runat="server" Visible="false">(base.StatusId > 1 AND base.ContentId in (SELECT [ContentId] FROM [dbo].[Content.Partner] where  [UserId] = {0} and [PartnerTypeId] > 0) )  </asp:Literal>
 <asp:Literal ID="showingContentTypeFilters" runat="server" Visible="false">yes</asp:Literal>
 <asp:Literal ID="txtTypeFilter" runat="server" Visible="false">( TypeId in (10, 40, 50, 52)) </asp:Literal>
 <!-- only:
@@ -464,6 +524,11 @@ or public
 or ( published and (my org, or my district) )
 -->
 <asp:Literal ID="txtAuthFilter" runat="server" Visible="false">(base.PrivilegeTypeId = 1 AND base.StatusId = 5 ) </asp:Literal>
+
+<font face="Arial">Dear {0},<br/><p>This is to notify you that <b>{1}</b> has granted access to the learning list: <em>{2}</em>, with a role of <i>{3}</i>. </p>   <p> You may use the following (one-time) link to login into IOER and navigate to the latter page.</p><p><a href="{4}">Edit {2}</a></p><div>Sincerely,</div><div>The ISLE OER Team</div></font>
+
+
+<font face="Arial">Welcome,<br/><p>This is to notify you that <b>{0}</b> has granted access to the learning list: <em>{1}</em>, with a role of <i>{2}</i>.</p><p>An initial account has been created for you. You may use the following (one-time) link to login into IOER and navigate to your user profile page. Please update your profile. After saving your profile you will be directed to the learning list content page.</p><p><a href="{3}">Complete your profile, and then view <b>{1}</b></a></p><div>Sincerely,</div><div>The ISLE OER Team</div></font>
 </asp:Panel>
 
 

@@ -7,18 +7,18 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace IllinoisPathways {
+namespace IOER {
     
     
     public partial class _Default {
         
         /// <summary>
-        /// searchController control.
+        /// ssplash control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ILPathways.Controls.Splash2 searchController;
+        protected global::IOER.Controls.Splash3 ssplash;
     }
 }

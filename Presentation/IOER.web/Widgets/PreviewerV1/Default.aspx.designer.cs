@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ILPathways.Widgets.PreviewerV1 {
+namespace IOER.Widgets.PreviewerV1 {
     
     
     public partial class Index {
@@ -19,6 +19,6 @@ namespace ILPathways.Widgets.PreviewerV1 {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ILPathways.Controls.PreviewerV1.PreviewerV1 previewer;
+        protected global::IOER.Controls.PreviewerV1.PreviewerV1 previewer;
     }
 }

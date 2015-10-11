@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ILPathways.Account.controls {
+namespace IOER.Account.controls {
     
     
     public partial class Dashboard {
@@ -38,6 +38,15 @@ namespace ILPathways.Account.controls {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.HtmlControls.HtmlInputButton btnFollow;
+        
+        /// <summary>
+        /// orgAdminLink control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlAnchor orgAdminLink;
         
         /// <summary>
         /// libAdminLink control.

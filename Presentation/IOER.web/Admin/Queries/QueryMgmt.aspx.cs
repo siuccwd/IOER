@@ -6,7 +6,7 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
-using ILPathways.Library;
+using IOER.Library;
 using ILPathways.Utilities;
 using EmailHelper = ILPathways.Utilities.EmailManager;
 using MyManager = ILPathways.DAL.SqlQueryManager;
@@ -17,7 +17,7 @@ using LRWarehouse.Business;
 using LRWarehouse.DAL;
 using LDBM = LRWarehouse.DAL.DatabaseManager;
 
-namespace ILPathways.Admin
+namespace IOER.Admin
 {
     public partial class QueryMgmt : BaseAppPage
     {
@@ -26,10 +26,7 @@ namespace ILPathways.Admin
         /// Set constant for this control to be used in log messages, etc
         /// </summary>
         const string thisClassName = "QueryMgmt";
-        /// <summary>
-        /// Set value used when check form privileges
-        /// </summary>
-        const string formSecurityName = "ILPathways.Admin.QueryMgmt";
+
 
         #region Properties
         /// <summary>
@@ -91,7 +88,7 @@ namespace ILPathways.Admin
             GridViewSortExpression = "";
             GridViewSortDirection = System.Web.UI.WebControls.SortDirection.Descending;
             //
-            this.FormPrivileges = SecurityManager.GetGroupObjectPrivileges( this.WebUser, formSecurityName );
+			this.FormPrivileges = SecurityManager.GetGroupObjectPrivileges(this.WebUser, txtFormSecurityName.Text);
 
             //= Add attribute to btnDelete to allow client side confirm
             btnDelete.Attributes.Add( "onClick", "return confirmDelete(this);" );

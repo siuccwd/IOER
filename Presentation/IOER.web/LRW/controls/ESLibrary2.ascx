@@ -1,4 +1,4 @@
-﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="ESLibrary2.ascx.cs" Inherits="ILPathways.LRW.controls.ESLibrary2" %>
+﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="ESLibrary2.ascx.cs" Inherits="IOER.LRW.controls.ESLibrary2" %>
 <%--<%@ Register TagPrefix="uc1" TagName="Search" Src="/LRW/Controls/ElasticSearch3.ascx" %>
 <%@ Register TagPrefix="uc1" TagName="Search" Src="/Controls/ImportedSearch.ascx" %>--%>
 <%@ Register TagPrefix="uc1" TagName="ActivityRenderer" Src="/Activity/ActivityRenderer.ascx" %>
@@ -299,13 +299,14 @@
     #pnlShareFollow #btnFollowingUpdate { margin: 0; }
     #pnlShareFollow #widgetConfigList label { display: inline-block; vertical-align: top; width: 32%; padding: 2px 5px; }
     #pnlShareFollow #widgetConfigList label:hover { cursor: pointer; }
+    #pnlShareFollow .shareID { opacity: 0.65; font-style: italic; font-size: 80%; }
 
     /* Responsive */
     @media screen and (max-width:550px){
       #pnlDetails #shareFollow, #pnlDetails #opinionBox, #pnlSettings .third { width: 100%; display: block; }
       #pnlAddResources .wayToAdd { width: 100%; }
       #libTabBox a { font-size: 12px; }
-      #pnlShareFollow #followBox, #pnlShareFollow #shareBox { width: 100%; display: block; }
+      #pnlShareFollow #followBox, #pnlShareFollow #shareBox { width: 100%; display: block; margin-bottom: 5px; }
       #pnlDetails #description, #pnlDetails #opinionBox { width: 100%; display: block; }
     }
     @media screen and (max-width:650px) {
@@ -346,7 +347,7 @@
     }
 
     /* Patches */
-    #libraryHeader { padding-right: 35px; }
+    #libraryHeader { padding-right: 5px; }
     #content .theme #searchHeader { margin-right: 5px; }
   </style>
 
@@ -415,6 +416,7 @@
               <input type="text" id="txtTitle" />
               <h4>Description</h4>
               <textarea id="txtDescription"></textarea>
+              <div id="libColID"></div>
             </div>
             <div class="third">
               <h4>Upload Icon</h4>
@@ -487,32 +489,35 @@
             <!--<h3 class="panelHeader">Share and Follow</h3>-->
             <div id="shareFollowContent">
               <div id="shareFollow">
-                <div id="shareBox">
-                  <div class="column">
-                    <h4 class="shareLinkHeader">Share:</h4>
-                    <input type="text" readonly="readonly" id="txtShareBox" onclick="this.select()" />
-                  </div>
-                  <div class="column">
-                    <h4>Embed this Library:</h4>
-                    <p>Select up to 10 publicly-available collections, listed below. Up to 10 of the most recent resources from each will be displayed.</p>
-                    <input type="text" readonly="readonly" id="txtWidgetConfig" onclick="this.select()" />
-                    <div id="widgetConfigList"></div>
-                  </div>
-                </div>
                 <div id="followBox">
                   <p class="middle" id="followingMessage">You are already following this entire Library.</p>
                   <div id="followingControls">
                     <h4>Follow:</h4>
                     <select id="followingOptions">
                       <option value="0">Not Following</option>
-                      <option value="1">Follow without email notifications</option>
-                      <option value="2">Follow with weekly email updates</option>
-                      <option value="3">Follow with daily email updates</option>
+        					 <option value="1">Follow in my Timeline</option>
+                      <option value="2">Follow with a daily email and in my Timeline</option>
+                      <option value="3">Follow with a weekly email and in my Timeline</option>
                     </select>
            <%--                             <option value="4">Follow with immediate email updates</option>--%>
                     <input type="button" id="btnFollowingUpdate" onclick="updateFollowingOption(); return false;" value="Save" class="btn green" />
                   </div>
                 </div>
+								<div id="shareBox">
+                  <div class="column">
+                    <h4 class="shareLinkHeader">Share:</h4>
+                    <input type="text" readonly="readonly" id="txtShareBox" onclick="this.select()" />
+                  </div>
+                  <div class="column">
+                    <h4>Embed this Library:</h4>
+                    <p>Select up to 10 publicly-available collections, listed below. Up to 10 of the most recent resources from each will be displayed.
+                        For tips on styling the widget on your page, see the <span style="font-weight:bold;">Guidance</span> section on the 
+                        <a href="//widgets/" target="_blank">IOER Widgets</a> page.</p>
+                    <input type="text" readonly="readonly" id="txtWidgetConfig" onclick="this.select()" />
+                    <div id="widgetConfigList"></div>
+                  </div>
+                </div>
+                
               </div>
             </div>
           </div>
@@ -545,9 +550,13 @@
                 .activity.divbars .activityItem { width: 100%; display: block; padding: 0 10px; margin: 10px 0; }
               }
             </style>
-            <h3 class="panelHeader">Activity for this Library (Last <%=activityDaysAgo.Text %> days):</h3>
+
+            <h3 class="panelHeader">Activity for this Library (<%=(activityRenderer.startDate.ToShortDateString() + " - " + activityRenderer.endDate.ToShortDateString()) %>)</h3>
+						<div class="grayBox" id="dateSelector">
+							Show activity from <input type="text" class="date startDate" id="txtStartDate" runat="server" /> to <input type="text" class="date endDate" id="txtEndDate" runat="server" /> <input type="button" class="isleButton bgBlue" value="Show" onclick="submit();" />
+						</div>
             <div id="libraryActivity"></div>
-            <h3>Activity for this Library's Collections (Last <%=activityDaysAgo.Text %> days):</h3>
+            <h3>Activity for this Library's Collections (<%=(activityRenderer.startDate.ToShortDateString() + " - " + activityRenderer.endDate.ToShortDateString()) %>)</h3>
             <div id="collectionsActivity"></div>
           </div>
           <!-- /pnlActivity -->
@@ -555,7 +564,7 @@
       </div><!-- /libraryHeaderContent -->
     </div> <!-- /libraryHeader -->
   
-  <uc1:Search ID="searchControl" runat="server" />
+  <uc1:Search ID="searchControl" ThemeName="ioer_library" runat="server" />
 </div><!-- /libraryStuff -->
 
 
@@ -643,6 +652,5 @@
         <p>Your library was created for you!  <br />Your library is public, if you would like to change access to your library, use the Settings tab.</p><p>Within your library is a default collection; you may add collections to your library and share with others.  Use the Settings tab to add titles, descriptions and images.</p>  </asp:Label>
 
 <asp:Literal ID="libraryCreateMsg" runat="server" Visible="false">Your personal library was created. <br />Be sure to review the getting started guide for information on libraries</asp:Literal>
-  <asp:Literal ID="activityDaysAgo" runat="server" Visible="false">90</asp:Literal>
 </div>
 

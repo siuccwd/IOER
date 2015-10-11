@@ -1,4 +1,4 @@
-﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="RubricCore.ascx.cs" Inherits="ILPathways.Controls.Rubrics.RubricCore" %>
+﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="RubricCore.ascx.cs" Inherits="IOER.Controls.Rubrics.RubricCore" %>
 <%@ Register TagPrefix="rubric" TagName="AchieveRubricControl" Src="/Controls/Rubrics/AchieveRubric.ascx" %>
 <%@ Register TagPrefix="rubric" TagName="CCSSMathRubricControl" Src="/Controls/Rubrics/CCSSMathRubric.ascx" %>
 <%@ Register TagPrefix="rubric" TagName="CCSSELAK_2RubricControl" Src="/Controls/Rubrics/CCSSELAK-2Rubric.ascx" %>

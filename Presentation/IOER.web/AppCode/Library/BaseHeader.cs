@@ -10,14 +10,14 @@ using System.Web.UI.HtmlControls;
 using System.Drawing.Text;
 
 using ILPathways.Utilities;
-using ILPathways.classes;
+using IOER.classes;
 using ILPathways.Business;
 using EmailHelper = ILPathways.Utilities.EmailManager;
 
 //using DAL = workNet.DAL;
 //using workNet.BusObj.Entity;
 
-namespace ILPathways.Library
+namespace IOER.Library
 {
 	/// <summary>
 	/// Summary description for BaseHeader

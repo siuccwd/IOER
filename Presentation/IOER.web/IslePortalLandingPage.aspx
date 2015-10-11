@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="IslePortalLandingPage.aspx.cs" Inherits="ILPathways.IslePortalLandingPage" %>
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="IslePortalLandingPage.aspx.cs" Inherits="IOER.IslePortalLandingPage" %>
 
 <!DOCTYPE html>
 

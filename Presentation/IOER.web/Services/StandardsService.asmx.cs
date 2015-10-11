@@ -7,7 +7,7 @@ using System.Web.Services;
 using LRWarehouse.DAL;
 using System.Web.Script.Serialization;
 
-namespace ILPathways.Services
+namespace IOER.Services
 {
   /// <summary>
   /// Summary description for StandardsService

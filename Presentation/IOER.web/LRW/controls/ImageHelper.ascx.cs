@@ -10,10 +10,10 @@ using SD = System.Drawing;
 using System.Drawing.Imaging;
 using System.Drawing.Drawing2D;
 
-using ILPathways.Controllers;
+using IOER.Controllers;
 using ILPathways.Business;
 using ILPathways.Utilities;
-using ILPlibrary = ILPathways.Library;
+using ILPlibrary = IOER.Library;
 
 //using GDAL = Isle.BizServices;
 //using ThisLibrary = ILPathways.Business.Library;
@@ -21,7 +21,7 @@ using ILPlibrary = ILPathways.Library;
 //using ContentManager = Isle.BizServices.ContentServices;
 
 
-namespace ILPathways.LRW.controls
+namespace IOER.LRW.controls
 {
     public partial class ImageHelper : ILPlibrary.BaseUserControl
     {

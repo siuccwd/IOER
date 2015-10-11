@@ -5,16 +5,17 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
-using ILPathways.Library;
-using ILPathways.Services;
+using IOER.Library;
+using IOER.Services;
 using ILPathways.Utilities;
-using ILPathways.Controllers;
+using IOER.Controllers;
 using ILPathways.Business;
+using IB = ILPathways.Business;
 using System.IO;
 using Isle.BizServices;
 using AccountManager = Isle.BizServices.AccountServices;
 
-namespace ILPathways.My
+namespace IOER.My
 {
     public partial class Avatar : System.Web.UI.Page
     {
@@ -116,7 +117,7 @@ namespace ILPathways.My
         }
       }
 
-      public void UpdateAvatar( FileUpload fileControl, ILPathways.Business.Library library, Business.LibrarySection collection )
+      public void UpdateAvatar( FileUpload fileControl, IB.Library library, LibrarySection collection )
       {
         //Validation
           if ( !fileControl.HasFile ) 

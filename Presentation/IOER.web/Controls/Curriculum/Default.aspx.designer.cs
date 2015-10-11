@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ILPathways.Controls.Curriculum {
+namespace IOER.Controls.Curriculum {
     
     
     public partial class Default {
@@ -19,6 +19,6 @@ namespace ILPathways.Controls.Curriculum {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ILPathways.Controls.Curriculum.CurriculumView1 Curriculum;
+        protected global::IOER.Controls.Curriculum.CurriculumView1 Curriculum;
     }
 }

@@ -7,10 +7,10 @@ using System.Web.UI.WebControls;
 
 using System.Web.Script.Serialization;
 
-using ILPathways.Library;
+using IOER.Library;
 using Isle.BizServices;
 
-namespace ILPathways.Controls
+namespace IOER.Controls
 {
   public partial class Splash3 : BaseUserControl
   {
@@ -23,6 +23,7 @@ namespace ILPathways.Controls
     public string mostCommentedResources { get; set; }
     public string featuredResources { get; set; }
     public string featuredLearningLists { get; set; }
+		public string featuredLibraries { get; set; }
     public string communityPosts { get; set; }
     
     protected void Page_Load( object sender, EventArgs e )
@@ -46,6 +47,7 @@ namespace ILPathways.Controls
       GetMostCommentedResourcesV7();
       GetFeaturedResourcesV7();
       GetFeaturedLearningListsV7();
+			GetFeaturedLibrariesV7();
       GetCommunityPosts();
 
     }
@@ -53,6 +55,7 @@ namespace ILPathways.Controls
     public void GetNewestResourcesV7()
     {
       var input = GetSortedInputV7( "ResourceId", "desc" );
+			input.size = 20;
       newestResources = ( string ) searchService.DoSearchCollection7( input ).data;
     }
 
@@ -80,9 +83,18 @@ namespace ILPathways.Controls
       featuredLearningLists = ( string ) searchService.DoSearchCollection7( input ).data;
     }
 
+		public void GetFeaturedLibrariesV7()
+		{
+			var input = GetSortedInputV7( "ResourceId", "desc" );
+			input.libraryIDs.Add( 286 );
+			input.collectionIDs.Add( 788 );
+			input.size = 10;
+			featuredLibraries = ( string ) searchService.DoSearchCollection7( input ).data;
+		}
+
     public void GetCommunityPosts()
     {
-      communityPosts = new ILPathways.Services.CommunityService().GetRecentPosts( 1, 5 );
+      communityPosts = new IOER.Services.CommunityService().GetRecentPosts( 1, 5 );
     }
 
     public Services.ElasticSearchService.JSONQueryV7 GetSortedInputV7( string field, string order )

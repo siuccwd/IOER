@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ILPathways.Contribute {
+namespace IOER.Contribute {
     
     
     public partial class Default {
@@ -28,6 +28,6 @@ namespace ILPathways.Contribute {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ILPathways.Controls.QuickContribute contributer;
+        protected global::IOER.Controls.QuickContribute contributer;
     }
 }

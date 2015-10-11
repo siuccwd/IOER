@@ -1,4 +1,4 @@
-﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="AppItemManagement.ascx.cs" Inherits="ILPathways.Controls.AppItems.AppItemManagement" %>
+﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="AppItemManagement.ascx.cs" Inherits="IOER.Controls.AppItems.AppItemManagement" %>
 <%@ Register
     Assembly="Obout.Ajax.UI"
     Namespace="Obout.Ajax.UI.HTMLEditor"

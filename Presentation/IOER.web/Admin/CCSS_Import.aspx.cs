@@ -15,7 +15,7 @@ using MyManager = LRWarehouse.DAL.StandardDataManager;
 
 using ILPathways.Utilities;
 
-namespace ILPathways.Admin
+namespace IOER.Admin
 {
     public partial class CCSS_Import : System.Web.UI.Page
     {

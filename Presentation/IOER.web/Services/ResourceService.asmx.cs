@@ -9,514 +9,456 @@ using System.Web.UI;
 using System.IO;
 using System.Web.Script.Services;
 
+using ILPathways.Business;
 using LRWarehouse.DAL;
 using LRWarehouse.Business;
+using LRWarehouse.Business.ResourceV2;
 //using ILPathways.DAL;
 using Isle.BizServices;
+using IOER.classes;
+using ILPathways.Utilities;
 
 using DatabaseManager = LRWarehouse.DAL.DatabaseManager;
 using PatronManager = LRWarehouse.DAL.PatronManager;
 
-namespace ILPathways.Services
+namespace IOER.Services
 {
-    /// <summary>
-    /// Summary description for ResourceService
-    /// </summary>
-    [WebService( Namespace = "http://tempuri.org/" )]
-    [WebServiceBinding( ConformsTo = WsiProfiles.BasicProfile1_1 )]
-    [System.ComponentModel.ToolboxItem( false )]
-    // To allow this Web Service to be called from script, using ASP.NET AJAX, uncomment the following line. 
-    [System.Web.Script.Services.ScriptService]
-    public class ResourceService : System.Web.Services.WebService
-    {
-        JavaScriptSerializer serializer;
+	/// <summary>
+	/// Summary description for ResourceService
+	/// </summary>
+	[WebService( Namespace = "http://tempuri.org/" )]
+	[WebServiceBinding( ConformsTo = WsiProfiles.BasicProfile1_1 )]
+	[System.ComponentModel.ToolboxItem( false )]
+	// To allow this Web Service to be called from script, using ASP.NET AJAX, uncomment the following line. 
+	[System.Web.Script.Services.ScriptService]
+	public class ResourceService : System.Web.Services.WebService
+	{
+		JavaScriptSerializer serializer = new JavaScriptSerializer();
 
-        public ResourceService()
-        {
-            serializer = new JavaScriptSerializer();
-        }
+		[WebMethod( EnableSession = true )]
+		public string AjaxSaveResource( ResourceDTO input, bool testingMode )
+		{
+			try
+			{
+				var result = SaveResource( input, testingMode );
+				return serializer.Serialize( result );
+			}
+			catch ( Exception ex )
+			{
+				return serializer.Serialize( Fail( "There was an error while attempting to publish the Resource. Please try again later.", ex.ToString() ) );
+			}
+		}
+		public UtilityService.GenericReturn SaveResource( ResourceDTO input, bool testingMode )
+		{
+			//Determine where the slow parts are
+			var stopwatch = new System.Diagnostics.Stopwatch();
+			stopwatch.Start();
 
-        #region Communication Methods
-        [WebMethod]
-        public void Fetch( string widgetName, int vid )
-        {
-            switch ( widgetName ) //Uses Response.Write to return any kind of widget without needing separate methods
-            {
-                case "basicInfo":
-                    //Return data for Basic Info widget
-                    //Title, URL, Description, Requirements
-                    HttpContext.Current.Response.Write( serializer.Serialize( Get_BasicInfo( vid ) ) );
-                    break;
-                case "criticalInfo":
-                    //Return data for Critical info widget
-                    //Publisher, Creator, Created Date, Usage Rights
-                    HttpContext.Current.Response.Write( serializer.Serialize( Get_CriticalInfo( vid ) ) );
-                    break;
-                case "details":
-                    //Return details
-                    //checkbox lists and single value items
-                    HttpContext.Current.Response.Write( serializer.Serialize( Get_Details( vid ).lists ) );
-                    break;
-                case "keywords":
-                    //Return keywords
-                    HttpContext.Current.Response.Write( serializer.Serialize( Get_Keywords( vid ) ) );
-                    break;
-                case "subjects":
-                    //Return subjects
-                    HttpContext.Current.Response.Write( serializer.Serialize( Get_Subjects( vid ) ) );
-                    break;
-                case "morelikethis":
-                    //Return More Like This
-                    HttpContext.Current.Response.Write( serializer.Serialize( Get_MoreLikeThis( vid ) ) );
-                    break;
-                case "comments":
-                    //Return comment list
-                    HttpContext.Current.Response.Write( serializer.Serialize( Get_Comments( vid ) ) );
-                    break;
-                default:
-                    HttpContext.Current.Response.Write( serializer.Serialize( new { d = "Error: Invalid Widget Name" } ) );
-                    break;
-            }
-        }
+			var service = new ResourceV2Services();
+			var util = new UtilityService();
+			var valid = true;
+			var status = "";
+			var versionID = input.VersionId;
+			var intID = input.ResourceId;
+			var sortTitle = input.UrlTitle;
+			var lrDocID = input.LrDocId;
+			var isNewResource = input.ResourceId == 0;
+			var updateContentSpecialFields = false;
+			var loggingData = new List<string>();
 
-        [WebMethod]
-        public void FetchForUser( string widgetName, int vid, string userGUID )
-        {
-            switch ( widgetName )
-            {
-                case "paradata":
-                    //Return Likes, Dislikes, and icons
-                    HttpContext.Current.Response.Write( serializer.Serialize( Get_Paradata( vid, userGUID ) ) );
-                    break;
-                case "libraries":
-                    //Return a list of libraries for the resource, as well as info about the user's library
-                    HttpContext.Current.Response.Write( serializer.Serialize( Get_LibraryInfo( vid, userGUID ) ) );
-                    break;
-                default:
-                    HttpContext.Current.Response.Write( serializer.Serialize( new { d = "Error: Invalid Widget Name" } ) );
-                    break;
-                case "standards":
-                    //Return learning standards
-                    HttpContext.Current.Response.Write( serializer.Serialize( Get_LearningStandards( vid, userGUID ) ) );
-                    break;
+			loggingData.Add( "TIMER: Initialization complete @ " + stopwatch.ElapsedMilliseconds );
 
-            }
-        }
+			//Validate User
+			var user = AccountServices.GetUserFromSession( Session );	//SessionManager.GetUserFromSession( Session ) ?? new Patron();
+			if ( user.Id == 0 )
+			{
+				return Fail( "You must be logged in to save resources.", null );
+			}
 
-        #endregion
+			loggingData.Add( "TIMER: User retrieved @ " + stopwatch.ElapsedMilliseconds );
 
-        #region Intra-Server methods
-        public bool CanUserEdit( string userGUID )
-        {
-            Patron user = new PatronManager().GetByRowId( userGUID );
-            return SecurityManager.GetGroupObjectPrivileges( user, "ILPathways.LRW.Pages.ResourceDetail" ).CanUpdate();
-        }
+			//Validate basic tagging authority
+			string allowingOpenPublishing = ServiceHelper.GetAppKeyValue( "allowingOpenPublishing", "no" );
+			var privileges = Isle.BizServices.SecurityManager.GetGroupObjectPrivileges( user, "Isle.Controls.CanPublish" );
+			if ( !privileges.CanCreate() && allowingOpenPublishing == "no" )
+			{
+				return Fail( "You do not have permission to save or publish resources.", null );
+			}
 
-        public bool IsUserAdmin( Patron user )
-        {
-            return SecurityManager.GetGroupObjectPrivileges( user, "ILPathways.LRW.Pages.ResourceDetail" ).CreatePrivilege > ( int )ILPathways.Business.EPrivilegeDepth.State;
-        }
+			loggingData.Add( "TIMER: Publish permissions checked @ " + stopwatch.ElapsedMilliseconds );
 
-        public int GetIntIDFromVersionID( int versionID )
-        {
-            return new ResourceVersionManager().Get( versionID ).ResourceIntId;
-        }
+			//Validate Resource
+			//URL
+			input.Url = util.ValidateURL( input.Url, isNewResource, ref valid, ref status );
+			if ( !valid ) { return Fail( status, null ); }
 
-        public Widget_FreeWords GetFreeWords( List<ResourceChildItem> data )
-        {
-            var output = new Widget_FreeWords();
-            foreach ( ResourceChildItem item in data )
-            {
-                output.words.Add( item.OriginalValue );
-            }
-            return output;
-        }
-        #endregion
+			loggingData.Add( "TIMER: URL validated @ " + stopwatch.ElapsedMilliseconds );
 
-        #region Widget-Specific Methods
-        /*  *   *   *   *   *   Widgets   * *   *   *   *   */
-        protected Widget_BasicInfo Get_BasicInfo( int versionID )
-        {
-            var widget = new Widget_BasicInfo();
+			//Title
+			input.Title = util.ValidateText( input.Title, 3, "Title", ref valid, ref status );
+			if ( !valid ) { return Fail( status, null ); }
 
-            ResourceVersion source = new ResourceVersionManager().Get( versionID );
-            if ( source != null && source.IsValid )
-            {
-                widget.title = source.Title;
-                widget.url = source.ResourceUrl;
-                widget.description = source.Description;
-                widget.requirements = source.Requirements;
-            }
+			loggingData.Add( "TIMER: Title validated @ " + stopwatch.ElapsedMilliseconds );
 
-            return widget;
-        }
+			//Description
+			input.Description = util.ValidateText( input.Description, 25, "Description", ref valid, ref status );
+			if ( !valid ) { return Fail( status, null ); }
 
-        protected Widget_CriticalInfo Get_CriticalInfo( int versionID )
-        {
-            var widget = new Widget_CriticalInfo();
-            ResourceVersion source = new ResourceVersionManager().Get( versionID );
-            if ( source != null && source.IsValid )
-            {
-                widget.creator = source.Creator;
-                widget.publisher = source.Publisher;
-                widget.created = source.Created.ToShortDateString();
-                widget.rightsURL = source.Rights;
-            }
+			loggingData.Add( "TIMER: Description validated @ " + stopwatch.ElapsedMilliseconds );
 
-            return widget;
-        }
+			//Keywords
+			input.Keywords = input.Keywords.Distinct().ToList();
+			foreach ( var item in input.Keywords )
+			{
+				util.ValidateText( item, 3, item, ref valid, ref status );
+				if ( !valid ) { return Fail( status, null ); }
+			}
 
-        public Widget_Details Get_Details( int versionID )
-        {
-            var output = new Widget_Details();
+			loggingData.Add( "TIMER: Keywords validated @ " + stopwatch.ElapsedMilliseconds );
 
-            List<jsonCheckboxList> lists = new List<jsonCheckboxList>();
+			//Usage Rights
+			if ( input.UsageRights.Url != "" )
+			{
+				input.UsageRights.Url = util.ValidateURL( input.UsageRights.Url, false, ref valid, ref status );
+				if ( !valid ) { return Fail( status, null ); }
+			}
 
-            string[] tables = new string[] { "assessmentType", "accessRights", "careerCluster", "educationalUse", "mediaType", "gradeLevel", "groupType", "endUser", "itemType", "language", "resourceType" };
-            string[] titles = new string[] { "Assessment Type", "Access Rights", "Career Cluster", "Educational Use", "Media Type", "Grade Level", "Group Type", "End User", "Item Type", "Language", "Resource Type" };
+			loggingData.Add( "TIMER: Usage Rights validated @ " + stopwatch.ElapsedMilliseconds );
 
-            //Get the Resource Int ID
-            int intID = GetIntIDFromVersionID( versionID );
+			//Creator
+			input.Creator = util.ValidateText( input.Creator, 0, "Creator", ref valid, ref status );
+			if ( !valid ) { return Fail( status, null ); }
 
-            //Load the data for that ID
-            var dataManager = new ResourceDataManager();
-            for ( int i = 0; i < tables.Length; i++ )
-            {
-                DataSet ds = dataManager.SelectedCodes( ResourceDataManager.ResourceDataSubclassFinder.getSubclassByName( tables[ i ] ), intID );
+			//Publisher
+			input.Publisher = util.ValidateText( input.Publisher, 0, "Publisher", ref valid, ref status );
+			if ( !valid ) { return Fail( status, null ); }
 
-                //Convert it into the JSON object
-                var list = new jsonCheckboxList();
-                list.title = titles[ i ];
-                list.name = tables[ i ];
-                foreach ( DataRow dr in ds.Tables[ 0 ].Rows )
-                {
-                    var item = new jsonCBXLItem();
-                    item.id = int.Parse( DatabaseManager.GetRowColumn( dr, "Id" ) );
-                    item.selected = bool.Parse( DatabaseManager.GetRowColumn( dr, "IsSelected" ) );
-                    item.title = DatabaseManager.GetRowColumn( dr, "Title" );
-                    list.items.Add( item );
-                }
+			//Requirements
+			input.Requirements = util.ValidateText( input.Requirements, 0, "Requirements", ref valid, ref status );
+			if ( !valid ) { return Fail( status, null ); }
 
-                //Return the JSON object
-                lists.Add( list );
-            }
+			loggingData.Add( "TIMER: Creator, Publisher, Requirements validated @ " + stopwatch.ElapsedMilliseconds );
 
-            output.lists = lists;
+			//Add automatic data
+			string defaultSubmitter = UtilityManager.GetAppKeyValue( "defaultSubmitter", "ISLE OER on Behalf of " );
+			input.Submitter = defaultSubmitter + user.FullName();
+			input.CreatedById = user.Id;
+			input.ResourceCreated = DateTime.Now.ToShortDateString();
 
-            return output;
-        }
+			loggingData.Add( "TIMER: Text inputs validated @ " + stopwatch.ElapsedMilliseconds );
 
-        protected Widget_FreeWords Get_Keywords( int versionID )
-        {
-            List<ResourceChildItem> data = new ResourceKeywordManager().Select( GetIntIDFromVersionID( versionID ) );
-            return GetFreeWords( data );
-        }
+			//Mark input tags as selected - useful for processing later
+			var finalFields = serializer.Deserialize<List<FieldDTO>>( serializer.Serialize( service.GetFieldAndTagCodeData() ) );
+			foreach ( var field in input.Fields )
+			{
+				var matchedField = finalFields.Where( f => f.Schema == field.Schema ).FirstOrDefault();
+				foreach ( var tag in field.Tags )
+				{
+					tag.Selected = true;
+					var matchedTag = matchedField.Tags.Where( t => t.Id == tag.Id ).FirstOrDefault();
+					matchedTag.Selected = true;
+				}
+			}
+			input.Fields = finalFields;
 
-        protected Widget_FreeWords Get_Subjects( int versionID )
-        {
-            List<ResourceChildItem> data = new ResourceSubjectManager().Select( GetIntIDFromVersionID( versionID ) );
-            return GetFreeWords( data );
-        }
+			loggingData.Add( "TIMER: Tagged fields selected @ " + stopwatch.ElapsedMilliseconds );
 
-        protected Widget_MoreLikeThis Get_MoreLikeThis( int intID )
-        {
-            //return new Widget_MoreLikeThis() { result = new ElasticSearchManager().GetByVersionID( versionID ) };
-            return new Widget_MoreLikeThis() { result = new ElasticSearchManager().FindMoreLikeThis( intID, "words", new string[] { "title", "description", "keywords" } ) };
-        }
+			//Fill in standards
+			foreach ( var item in input.Standards )
+			{
+				var standard = new StandardDataManager().StandardItem_Get( item.StandardId );
+				item.NotationCode = standard.NotationCode;
+				item.Description = standard.Description;
+				item.Url = standard.StandardUrl;
+			}
 
-        protected Widget_Comments Get_Comments( int versionID )
-        {
-            var output = new Widget_Comments();
-            var manager = new ResourceCommentManager();
-            var intID = GetIntIDFromVersionID( versionID );
-            DataSet ds = manager.Select( intID );
-            if ( DatabaseManager.DoesDataSetHaveRows( ds ) )
-            {
-                foreach ( DataRow dr in ds.Tables[ 0 ].Rows )
-                {
-                    var comment = new jsonWidgetComment();
-                    comment.name = DatabaseManager.GetRowColumn( dr, "CreatedBy" );
-                    comment.commentID = int.Parse( DatabaseManager.GetRowColumn( dr, "Id" ) );
-                    comment.commentDate = DateTime.Parse( DatabaseManager.GetRowColumn( dr, "Created" ) ).ToShortDateString();
-                    comment.commentText = DatabaseManager.GetRowColumn( dr, "Comment" );
-                    comment.avatarURL = ""; //One day, this will be useful
-                    output.comments.Add( comment );
-                }
-            }
-            return output;
-        }
+			loggingData.Add( "TIMER: Standards added @ " + stopwatch.ElapsedMilliseconds );
 
-        protected Widget_Paradata Get_Paradata( int versionID, string userGUID )
-        {
-            var output = new Widget_Paradata();
-            var intID = GetIntIDFromVersionID( versionID );
-            string status = "";
-            var user = new PatronManager().GetByRowId( userGUID );
-            if ( user == null ) { return null; }
-            var summary = new ResourceLikeSummaryManager().GetForDisplay( intID, user.Id, ref status );
-            if ( summary.YouLikeThis )
-            {
-                output.iLikeThis = true;
-                output.iDislikeThis = false;
-            }
-            else if ( summary.YouDislikeThis )
-            {
-                output.iLikeThis = false;
-                output.iDislikeThis = true;
-            }
-            else
-            {
-                output.iLikeThis = false;
-                output.iDislikeThis = false;
-            }
+			//Save
+			if ( input.ResourceId > 0 ) //Updating existing resource
+			{
+				loggingData.Add( "Updating existing resource (ID " + input.ResourceId + ")" );
 
-            output.likes = summary.LikeCount;
-            output.dislikes = summary.DislikeCount;
+				//Get existing resource
+				var existing = service.GetResourceDTO( input.ResourceId );
+				if ( existing == null || existing.ResourceId == 0 )
+				{
+					return Fail( "Error getting the existing resource", "service.GetResourceDTO() did not return a valid resource" );
+				}
 
-            return output;
-        }
+				loggingData.Add( "TIMER: Existing resource retrieved @ " + stopwatch.ElapsedMilliseconds );
 
-        protected Widget_LibraryInfo Get_LibraryInfo( int versionID, string userGUID )
-        {
-            //Setup
-            var output = new Widget_LibraryInfo();
-            var intID = GetIntIDFromVersionID( versionID );
-            string status = "";
-            var libraryManager = new Isle.BizServices.LibraryBizService();
-            var user = new PatronManager().GetByRowId( userGUID );
+				//Protect against spoofed resource IDs
+				if ( existing.Url != input.Url )
+				{
+					return Fail( "The target resource URL does not match the current resource URL.", "Input ResourceId does not match Existing ResourceId" );
+				}
 
-            //Check to see if the resource is in your library
-            output.isInMyLibrary = libraryManager.IsResourceInLibrary( user, intID );
+				//Check for existing or new keywords
+				if ( input.Keywords.Count() == 0 && existing.Keywords.Count() == 0 )
+				{
+					return Fail( "You must add at least one keyword.", null );
+				}
 
-            //Get info about libraries that contain the resource
-            var flats = new ResourceJSONManager().GetJSONFlatByIntID( intID );
-            foreach ( ResourceJSONFlat flat in flats ) //Should only be one
-            {
-                foreach ( int item in flat.collectionIDs )
-                {
-                    var info = new jsonLibraryInfo();
-                    var tempCollection = libraryManager.LibrarySectionGet( item );
-                    var tempLibrary = libraryManager.Get( tempCollection.LibraryId );
-                    if ( tempCollection.IsPublic && tempLibrary.IsPublic )
-                    {
-                        info.libraryID = tempLibrary.Id;
-                        info.collectionID = tempCollection.Id;
-                        info.libraryName = tempLibrary.Title;
-                        info.collectionName = tempCollection.Title;
-                        info.libraryAvatarURL = tempLibrary.ImageUrl;
-                        output.inLibraries.Add( info );
-                    }
+				loggingData.Add( "TIMER: Preliminary checks complete @ " + stopwatch.ElapsedMilliseconds );
 
-                }
-            }
+				//Check permissions to make sure the user can update this resource
+				var openPublishing = UtilityManager.GetAppKeyValue( "allowingOpenPublishing", "no" ) == "yes";
+				var canEdit = ResourceBizService.CanUserEditResource( input.ResourceId, user.Id );
+				var permissions = SecurityManager.GetGroupObjectPrivileges( user, "IOER.Pages.ResourceDetail" );
+				if ( !openPublishing )
+				{
+					if ( !permissions.CanUpdate() || !canEdit )
+					{
+						return Fail( "You do not have permission to update this resource.", null );
+					}
+				}
 
-            //Get user's collection info
-            if ( user.IsValid && user.Id != 0 )
-            {
-                var myCollections = libraryManager.LibrarySectionsSelectList( libraryManager.GetMyLibrary( user ).Id, 2 );
-                foreach ( Business.LibrarySection collection in myCollections )
-                {
-                    var item = new jsonMyCollection();
-                    item.id = collection.Id;
-                    item.name = collection.Title;
-                    output.myCollections.Add( item );
-                }
-            }
+				loggingData.Add( "TIMER: General update permission checks complete @ " + stopwatch.ElapsedMilliseconds );
 
-            return output;
-        }
+				//Check to see if the user can update special fields
+				if ( canEdit || permissions.CreatePrivilege > ( int ) ILPathways.Business.EPrivilegeDepth.State )
+				{
+					var didTitleOrDescriptionChange = ( input.Title != existing.Title || input.Description != existing.Description );
+					updateContentSpecialFields = true;
+				}
+				else //Otherwise, overwrite the input
+				{
+					input.Title = existing.Title;
+					input.Description = existing.Description;
+					input.Requirements = existing.Requirements;
+				}
 
-        protected Widget_LearningStandards Get_LearningStandards( int versionID, string userGUID )
-        {
-            var output = new Widget_LearningStandards();
-            var standardManager = new ResourceStandardManager();
-            var evaluationManager = new ResourceEvaluationManager();
-            var intID = GetIntIDFromVersionID( versionID );
-            var ratings = standardManager.Select( intID );
-            var user = new PatronManager().GetByRowId( userGUID );
+				loggingData.Add( "TIMER: Special field update permission checks complete @ " + stopwatch.ElapsedMilliseconds );
 
-            ResourceStandardCollection collection = standardManager.Select( intID );
-            foreach ( ResourceStandard standard in collection )
-            {
-                //Setup
-                string status = "";
-                LearningStandard item = new LearningStandard();
+				//Ensure certain fields aren't changed
+				input.Url = existing.Url;
+				//cannot change the createdById!!!
+				input.CreatedById = existing.CreatedById;  //( existing.CreatedById == 0 ? user.Id : existing.CreatedById );
+				input.Submitter = existing.Submitter;
 
-                //Basic, standalone data
-                item.alignmentType = ( standard.AlignmentTypeValue == "" ? "Aligns to" : standard.AlignmentTypeValue );
-                item.standardNotationCode = standard.StandardNotationCode;
-                item.standardURL = standard.StandardUrl;
-                item.standardID = standard.StandardId;
-                item.description = standard.StandardDescription;
-                item.myRating = -1;
-                item.ratingCount = 0;
+				loggingData.Add( "TIMER: Update branch complete @ " + stopwatch.ElapsedMilliseconds );
+			}
+			else //Creating a new resource
+			{
+				loggingData.Add( "Creating a new resource" );
 
-                //Paradata
-                DataSet ds = evaluationManager.Select( intID, 0, standard.StandardId, 0, ref status );
-                double tempCount = 0;
-                if ( DatabaseManager.DoesDataSetHaveRows( ds ) )
-                {
-                    item.ratingCount = ds.Tables[ 0 ].Rows.Count;
-                    foreach ( DataRow dr in ds.Tables[ 0 ].Rows )
-                    {
-                        var value = DatabaseManager.GetRowPossibleColumn( dr, "Value" );
-                        if ( value == "" ) { value = "0"; }
-                        tempCount += int.Parse( value );
-                        if ( DatabaseManager.GetRowPossibleColumn( dr, "CreatedById" ) == user.Id.ToString() )
-                        {
-                            item.myRating = ( int )tempCount;
-                        }
-                    }
-                }
-                if ( item.ratingCount > 0 )
-                {
-                    double tempRatingCount = ( double )item.ratingCount;
-                    double average = tempCount / item.ratingCount; //Get the average
-                    double percentage = average / 3; //Get the percentage of max score (0-3)
-                    item.communityRating = percentage;
-                }
-                else
-                {
-                    item.communityRating = -1;
-                }
+				//Ensure that keywords are added
+				if ( input.Keywords.Count() == 0 )
+				{
+					return Fail( "You must add at least one keyword.", null );
+				}
 
-                output.standards.Add( item );
+				loggingData.Add( "TIMER: Keyword checks complete @ " + stopwatch.ElapsedMilliseconds );
 
-            }
+				//Separated this so it gets tested instead of skipped
+				var payload = service.GetJSONLRMIPayloadFromResource( input, ref loggingData );
 
-            return output;
-        }
-    }
-        #endregion
+				loggingData.Add( "TIMER: Publish payload retrieved @ " + stopwatch.ElapsedMilliseconds );
 
-    //Basic Info
-    public class Widget_BasicInfo
-    {
-        public string title { get; set; }
-        public string url { get; set; }
-        public string description { get; set; }
-        public string requirements { get; set; }
-    }
+				//If in dev, we don't want to modify the input at all and we don't want to publish
+				if ( ServiceHelper.GetAppKeyValue( "envType", "prod" ) != "dev" )
+				{
+					//If not in dev, check for testing mode
+					if ( !testingMode )
+					{
+						//If not in dev and not testing, then do LR publish
+						PublishingServices.PublishToLearningRegistry( payload, input.Url, input.Submitter, input.Keywords, ref valid, ref status, ref lrDocID );
+						if ( !valid )
+						{
+							return Fail( "There was an error publishing to the Learning Registry.", "" );
+						}
+						input.LrDocId = lrDocID;
 
-    //Critical Info
-    public class Widget_CriticalInfo
-    {
-        public string publisher { get; set; }
-        public string creator { get; set; }
-        public string created { get; set; }
-        public string rightsURL { get; set; }
-    }
+						loggingData.Add( "TIMER: LR publish complete @ " + stopwatch.ElapsedMilliseconds );
 
-    //Details
-    public class Widget_Details
-    {
-        public List<jsonCheckboxList> lists { get; set; }
-    }
-    public class jsonCheckboxList
-    {
-        public jsonCheckboxList()
-        {
-            items = new List<jsonCBXLItem>();
-        }
-        public string title { get; set; }
-        public string name { get; set; }
-        public List<jsonCBXLItem> items { get; set; }
-    }
-    public class jsonCBXLItem
-    {
-        public string title { get; set; }
-        public int id { get; set; }
-        public bool selected { get; set; }
-    }
+					}
+					else
+					{
+						//Otherwise, if not in dev but we ARE testing, then modify input
+						input.Creator = "delete";
+						input.Publisher = "delete";
+						input.Description = "Test Data: " + input.Description;
 
-    //Keywords and Subjects
-    public class Widget_FreeWords
-    {
-        public Widget_FreeWords()
-        {
-            words = new List<string>();
-        }
-        public List<string> words;
-    }
+						loggingData.Add( "TIMER: LR publish skipped @ " + stopwatch.ElapsedMilliseconds );
+					}
+				}
 
-    //More Like This
-    public class Widget_MoreLikeThis
-    {
-        public string result { get; set; }
-    }
+				//We do however want to set the content's special fields for a new resource:
+				updateContentSpecialFields = true;
+			}
 
-    //Comments
-    public class Widget_Comments
-    {
-        public Widget_Comments()
-        {
-            comments = new List<jsonWidgetComment>();
-        }
-        public List<jsonWidgetComment> comments;
-    }
+			loggingData.Add( "TIMER: Processing for database begins @ " + stopwatch.ElapsedMilliseconds );
 
-    //Paradata
-    public class Widget_Paradata
-    {
-        public bool iLikeThis { get; set; }
-        public bool iDislikeThis { get; set; }
-        public int likes { get; set; }
-        public int dislikes { get; set; }
-        //Other paradata items are handled by the external system, at least for now 
-    }
-    public class jsonWidgetComment
-    {
-        public string name { get; set; }
-        public int commentID { get; set; }
-        public string avatarURL { get; set; }
-        public string commentDate { get; set; }
-        public string commentText { get; set; }
-    }
+			//Regardless of new or update, save to Database
+			var tags = input.Fields.SelectMany( i => i.Tags ).Where( t => t.Selected ).Select( t => t.Id ).ToList();
 
-    //Libraries
-    public class Widget_LibraryInfo
-    {
-        public Widget_LibraryInfo()
-        {
-            inLibraries = new List<jsonLibraryInfo>();
-            myCollections = new List<jsonMyCollection>();
-        }
-        public List<jsonLibraryInfo> inLibraries { get; set; }
-        public List<jsonMyCollection> myCollections { get; set; }
-        public bool isInMyLibrary { get; set; }
-    }
-    public class jsonLibraryInfo
-    {
-        public string libraryName { get; set; }
-        public string collectionName { get; set; }
-        public int libraryID { get; set; }
-        public int collectionID { get; set; }
-        public string libraryAvatarURL { get; set; }
-    }
-    public class jsonMyCollection
-    {
-        public string name { get; set; }
-        public int id { get; set; }
-    }
+			loggingData.Add( "TIMER: Relevant tags selected @ " + stopwatch.ElapsedMilliseconds );
 
-    //Learning Standards
-    public class Widget_LearningStandards
-    {
-        public Widget_LearningStandards()
-        {
-            standards = new List<LearningStandard>();
-        }
-        public List<LearningStandard> standards { get; set; }
-    }
-    public class LearningStandard
-    {
-        public int standardID { get; set; }
-        public string standardNotationCode { get; set; }
-        public string standardURL { get; set; }
-        public double communityRating { get; set; }
-        public int ratingCount { get; set; }
-        public int myRating { get; set; }
-        public string alignmentType { get; set; }
-        public string description { get; set; }
-    }
+			PublishingServices.PublishToDatabase( input, input.OrganizationId, tags, ref valid, ref status, ref versionID, ref intID, ref sortTitle );
+			if ( !valid )
+			{
+				return Fail( "There was an error publishing to the Database.", status );
+			}
+			input.VersionId = versionID;
+			input.ResourceId = intID;
+			input.UrlTitle = sortTitle;
+
+			loggingData.Add( "TIMER: Database publish complete @ " + stopwatch.ElapsedMilliseconds );
+
+			//Update ElasticSearch
+			PublishingServices.PublishToElasticSearchAsynchronously( intID );
+			loggingData.Add( "TIMER: ElasicSearch publish complete @ " + stopwatch.ElapsedMilliseconds );
+
+			//Add to library
+			if ( input.LibraryId != 0 && input.CollectionId != 0 )
+			{
+				try
+				{
+					new LibraryBizService().LibraryResourceCreate( input.CollectionId, input.ResourceId, user.Id, ref status );
+				}
+				catch ( Exception ex )
+				{
+					return Fail( "There was a problem adding the resource to the selected library and collection.", ex.Message );
+				}
+			}
+
+			loggingData.Add( "TIMER: Added resource to Library @ " + stopwatch.ElapsedMilliseconds );
+
+			//Log activity
+			System.Threading.ThreadPool.QueueUserWorkItem( delegate
+			{
+				new ActivityBizServices().PublishActivity( new ResourceManager().Get( input.ResourceId ), user );
+			} );
+
+			loggingData.Add( "TIMER: Activity added @ " + stopwatch.ElapsedMilliseconds );
+
+			//If there is an associated content item, set its privilege level to that of the resource
+			var contentServices = new ContentServices();
+			var canView = true;
+			//First get by ID, for existing resource/content pairs
+			loggingData.Add( "Loading content..." );
+			var content = contentServices.GetForResourceDetail( input.ResourceId, ( Patron ) user, ref canView );
+			if ( content != null && content.Id > 0 )
+			{
+				loggingData.Add( "Content loaded (first method): " + content.Id );
+				loggingData.Add( "TIMER: Content loaded @ " + stopwatch.ElapsedMilliseconds );
+				SetContentData( input, content, contentServices, updateContentSpecialFields, loggingData );
+				loggingData.Add( "TIMER: Content set @ " + stopwatch.ElapsedMilliseconds );
+			}
+			//Otherwise try to get based on passed ID
+			else if ( input.ContentId > 0 )
+			{
+				content = contentServices.Get( input.ContentId );
+				loggingData.Add( "Content loaded (second method): " + content.Id );
+				loggingData.Add( "TIMER: Content loaded @ " + stopwatch.ElapsedMilliseconds );
+
+				//oops - can this result in a missed update. With a shared resource, publisher may not be the creator
+				if ( content.CreatedById == user.Id || content.ResourceIntId == 0 )
+				{
+					SetContentData( input, content, contentServices, updateContentSpecialFields, loggingData );
+					loggingData.Add( "TIMER: Content set @ " + stopwatch.ElapsedMilliseconds );
+
+					if ( content.ResourceIntId == 0 && content.TypeId == ContentItem.CURRICULUM_CONTENT_ID )
+					{
+						//just 50 for now
+						//start auto publish  of hierarchy
+						string resourceList = "";
+						new ResourceManager().InitiateDelayedPublishing( input.ContentId, input.ResourceId, user.Id, ref resourceList, ref status );
+
+						loggingData.Add( "TIMER: Delayed publishing initiated @ " + stopwatch.ElapsedMilliseconds );
+
+						if ( resourceList.Length > 0 )
+						{
+							new ActivityBizServices().AutoPublishActivity( new ResourceManager().Get( input.ResourceId ), user, resourceList );
+
+							//this could be lengthy, do we want to handle with a scheduled task?
+							if ( UtilityManager.GetAppKeyValue( "doElasticIndexUpdateWithAutoPublish" ) == "yes" )
+							{
+								ResourceV2Services mgr2 = new ResourceV2Services();
+								mgr2.ImportRefreshResources( resourceList );
+							}
+						}
+					}
+				}
+			}
+			//URL publish only, so just create the thumbnail
+			else
+			{
+				loggingData.Add( "No content found." );
+				//Generate thumbnail
+
+				loggingData.Add( "TIMER: Beginning thumbnail generation @ " + stopwatch.ElapsedMilliseconds );
+				new ResourceThumbnailManager().CreateThumbnail( input.ResourceId, input.Url, true );
+				loggingData.Add( "TIMER: Thumbnail finished @ " + stopwatch.ElapsedMilliseconds );
+			}
+
+			//Return
+			loggingData.Add( "TIMER: All operations finished @ " + stopwatch.ElapsedMilliseconds );
+			stopwatch.Stop();
+			return UtilityService.DoReturn( input, true, "okay", loggingData );
+		}
+
+		public UtilityService.GenericReturn Fail( string message, string exception )
+		{
+			return Fail( message, exception, new List<string>() );
+		}
+
+		public UtilityService.GenericReturn Fail( string message, string exception, List<string> loggingData )
+		{
+			if ( !string.IsNullOrWhiteSpace( exception ) )
+			{
+				LoggingHelper.LogError( "Tagger Error: " + message + " | Exception Data: " + exception, true );
+			}
+			return UtilityService.DoReturn( loggingData, false, message, exception );
+		}
+
+		private void SetContentData( ResourceDTO input, ContentItem content, ContentServices contentServices, bool updateContentSpecialFields, List<string> loggingData )
+		{
+			if ( updateContentSpecialFields )
+			{
+				loggingData.Add( "Updating special fields" );
+				content.Title = input.Title;
+				content.Summary = input.Description;
+				//==> no, potential serious error
+				//content.Description = input.Description;
+			}
+			//what if not entered, ex on a quick tag
+			content.PrivilegeTypeId = input.PrivilegeId;
+			content.StatusId = ContentItem.PUBLISHED_STATUS;
+			content.ResourceIntId = input.ResourceId;
+			contentServices.Update( content, false );
+			input.ContentId = content.Id;
+
+			loggingData.Add( "input.PrivilegeId: " + input.PrivilegeId );
+			loggingData.Add( "ContentItem.PUBLIC_PRIVILEGE: " + ContentItem.PUBLIC_PRIVILEGE );
+			loggingData.Add( "content.DocumentUrl: " + content.DocumentUrl );
+			loggingData.Add( "content.TypeId: " + content.TypeId );
+			loggingData.Add( "ContentItem.CURRICULUM_CONTENT_ID: " + ContentItem.CURRICULUM_CONTENT_ID );
+			loggingData.Add( "content.ImageUrl: " + content.ImageUrl );
+
+			//Change thumbnail to document if public and available
+			var thumbURL = "/content/" + content.Id;
+			loggingData.Add( "Initial thumbnail URL: " + thumbURL );
+			if ( input.PrivilegeId == ContentItem.PUBLIC_PRIVILEGE && !string.IsNullOrWhiteSpace( content.DocumentUrl ) )
+			{
+				loggingData.Add( "Changing thumbnail URL to: " + content.DocumentUrl );
+				thumbURL = content.DocumentUrl;
+			}
+			//If the content already has a is the top level of a learning list and already has a thumbnail, do not replace the thumbnail
+			if ( content.TypeId == ContentItem.CURRICULUM_CONTENT_ID && !string.IsNullOrWhiteSpace( content.ImageUrl ) )
+			{
+				loggingData.Add( "Doing nothing with thumbnails" );
+				//do nothing
+			}
+			else
+			{
+				loggingData.Add( "Overwriting thumbnail: " + "http://ioer.ilsharedlearning.org" + thumbURL );
+				//Getting called needlessly - commenting out for now
+				//new ResourceThumbnailManager().CreateThumbnail( input.ResourceId, "http://ioer.ilsharedlearning.org" + thumbURL, true );
+			}
+
+		}
+
+	}
 }

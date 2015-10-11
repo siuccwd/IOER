@@ -5,7 +5,7 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
-namespace ILPathways.Controls.Content
+namespace IOER.Controls.Content
 {
     public partial class Curriculum : System.Web.UI.UserControl
     {

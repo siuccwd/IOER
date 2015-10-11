@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ILPathways.Controls.Includes {
+namespace IOER.Controls.Includes {
     
     
     public partial class Header7 {
@@ -49,6 +49,15 @@ namespace ILPathways.Controls.Includes {
         protected global::System.Web.UI.HtmlControls.HtmlAnchor profileLink;
         
         /// <summary>
+        /// photoPrompt control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl photoPrompt;
+        
+        /// <summary>
         /// logoutLink control.
         /// </summary>
         /// <remarks>
@@ -74,24 +83,6 @@ namespace ILPathways.Controls.Includes {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl mpMenu;
-        
-        /// <summary>
-        /// myIOERMenu control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlGenericControl myIOERMenu;
-        
-        /// <summary>
-        /// libAdminLink control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlAnchor libAdminLink;
         
         /// <summary>
         /// myIOERMenuLink control.

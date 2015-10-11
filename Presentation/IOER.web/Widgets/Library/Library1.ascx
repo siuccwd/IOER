@@ -1,4 +1,4 @@
-﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="Library1.ascx.cs" Inherits="ILPathways.Widgets.Library.Library1" %>
+﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="Library1.ascx.cs" Inherits="IOER.Widgets.Library.Library1" %>
 
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js" type="text/javascript"></script>
 <link rel="stylesheet" type="text/css" href="/Styles/ISLE.css" />

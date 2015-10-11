@@ -1,4 +1,4 @@
-﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="Authoring.ascx.cs" Inherits="ILPathways.Controls.Content.Authoring" %>
+﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="Authoring.ascx.cs" Inherits="IOER.Controls.Content.Authoring" %>
 
 
 <%@ Register Assembly="Obout.Ajax.UI" TagPrefix="obout" Namespace="Obout.Ajax.UI.HTMLEditor" %>
@@ -6,7 +6,7 @@
 <%@ Register Assembly="Obout.Ajax.UI" TagPrefix="obout" Namespace="Obout.Ajax.UI.HTMLEditor.ContextMenu"  %>
 
 <%@ Register Assembly="Obout.Ajax.UI" TagPrefix="obout" Namespace="Obout.Ajax.UI.HTMLEditor.Popups" %>
-<%@ Register TagPrefix="custom"	Namespace="CustomToolbarButton" Assembly="IllinoisPathways"  %>
+<%@ Register TagPrefix="custom"	Namespace="CustomToolbarButton" Assembly="IOER"  %>
 <%@ Register TagPrefix="custom" Namespace="CustomPopups"  %>
 <%@ Register assembly="Obout.Ajax.UI" namespace="Obout.Ajax.UI.TreeView" tagprefix="obout" %>
 
@@ -743,7 +743,7 @@ ul {
 <h1 class="isleH1">IOER Resource Authoring Tool</h1>
 <asp:panel ID="containerPanel" runat="server">
 <div id="statusDiv" style="float:right;" runat="server" visible="false">
-    <a href="/My/Authored.aspx">Back to Search</a>
+    <a href="/My/Authored">Back to Search</a>
 <asp:Button ID="btnPublish2" runat="server" Visible="false" CssClass="defaultButton publishButton" OnClick="btnPublish2_Click"  Text="Publish" CausesValidation="false"></asp:Button>
 <asp:button id="btnPublish" runat="server" Visible="false" CssClass="defaultButton publishButton" OnCommand="btnPublish_Click" CommandName="PublishUpdate" Text="Publish" causesvalidation="false"></asp:button>
 
@@ -794,7 +794,7 @@ ul {
       <asp:DropDownList ID="ddlTemplates" runat="server" CssClass="ddl" ></asp:DropDownList>
       </asp:Panel>
 
-      <h3 class="isleH3_Block required">Title<a class="toolTipLink" id="tipTitle" title="Title|The name or title of the resource"><img src="/images/icons/infoBubble.gif" alt="" /></a> <span class="lengthTracker" id="lt_Title" minLength="5"></span></h3>
+      <h3 class="isleH3_Block required">Title<a class="toolTipLink" id="tipTitle" title="Title|The name or title of the resource"><img alt='' src="/images/icons/infoBubble.gif" alt="" /></a> <span class="lengthTracker" id="lt_Title" minLength="5"></span></h3>
       <asp:TextBox ID="txtTitle" class="textBox textTracker" trackerName="lt_Title" runat="server" />
 
       <h3 class="isleH3_Block required">Description<a class="toolTipLink" id="tipDescription" title="Description|A brief description of the resource. This field will be displayed in search results and the resource detail page as well as in the Learning Registry metadata if you choose to Publish it."><img src="/images/icons/infoBubble.gif" alt="" /></a> <span class="lengthTracker" id="lt_Description" minLength="15"></span></h3>
@@ -1468,7 +1468,7 @@ ul {
                             <p>Optionally, you can have the resource automatically added to a library collection.</p>
                             <p>Finally, submit the resource to be published.</p>
                             <div>After publishing the resource, the contribute tool will offer to 'remember' your selections. The selected checkboxes and keywords can be used for the next resource upload - saving you a little time. These values are only remembered for the current node. They are lost when a new node is selected. </div>
-                            <div>The system will update the node page with the document details as follows: <br /><img src="/Help/images/documentOptions.png" /><br />The document section includes four possible actions: 
+                            <div>The system will update the node page with the document details as follows: <br /><img alt='' src="/Help/images/documentOptions.png" /><br />The document section includes four possible actions: 
                                 <ul>
                                      <li><b>Edit</b> - will open the document editor in a new tab. Use this option to update the title, description, etc or upload a new version of the file.</li>
                                     <li><b>View</b> - view the physical document</li>
@@ -1478,7 +1478,7 @@ ul {
                         </div>
                         </div>
                     <h4>Publishing a Node</h4>
-                    <div>In order to prevent work-in-progress from being displayed to the public, only published nodes and documents are displayed. Documents are published through the <a href="#uploadSection" >process discussed above</a>. Once a node is published, it can found via the resources search, added to libraries, etc. Note that only resources with a privilege of public will be available in the search. <br /> The status of a node appears above the title. <br /><img src="/Help/images/curriculumNodeStatus.png" /><br />Note, don't confuse the status of the node with the status of the curriculum - the curriculum as a whole has its own status which is displayed in the top right corner of the page. The latter image shows the lesson has a status of <b>In Progress</b>. If a node has not been published, the link: <span style="color: blue; font-weight:bold">Tag/publish Lesson</span>, will be displayed. It is displayed above the status and is used to publish the node. On click of this link:
+                    <div>In order to prevent work-in-progress from being displayed to the public, only published nodes and documents are displayed. Documents are published through the <a href="#uploadSection" >process discussed above</a>. Once a node is published, it can found via the resources search, added to libraries, etc. Note that only resources with a privilege of public will be available in the search. <br /> The status of a node appears above the title. <br /><img alt='' src="/Help/images/curriculumNodeStatus.png" /><br />Note, don't confuse the status of the node with the status of the curriculum - the curriculum as a whole has its own status which is displayed in the top right corner of the page. The latter image shows the lesson has a status of <b>In Progress</b>. If a node has not been published, the link: <span style="color: blue; font-weight:bold">Tag/publish Lesson</span>, will be displayed. It is displayed above the status and is used to publish the node. On click of this link:
                         <ul><li>The system will open the quick contribute tool in a new tab</li>
                             <li>The system will prefill the public resource URL,title, summary, and privacy level </li>
                             <li>You would then fill in the remaining fields as for a file upload, including:
@@ -1523,7 +1523,7 @@ ul {
 
 <asp:Panel ID="hiddenStuff" runat="server" Visible="false">
   <asp:Literal ID="txtFormSecurityName" runat="server" Visible="false"></asp:Literal>
-  <asp:Literal ID="txtFormSecurityName2" runat="server" Visible="false">ILPathways.LRW.controls.Authoring</asp:Literal>
+  <asp:Literal ID="txtFormSecurityName2" runat="server" Visible="false">IOER.controls.Authoring</asp:Literal>
   <asp:Literal ID="ltlTabGetter" runat="server" Visible="false">tabID</asp:Literal>
   <asp:Literal ID="ltlBasicTabName" runat="server" Visible="false">basicInfo</asp:Literal>
   <asp:Literal ID="ltlWebContentTabName" runat="server" Visible="false">webcontent</asp:Literal>

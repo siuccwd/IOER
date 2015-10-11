@@ -1,4 +1,4 @@
-﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="Curriculum2.ascx.cs" Inherits="ILPathways.Controls.Curriculum.Curriculum2" %>
+﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="Curriculum2.ascx.cs" Inherits="IOER.Controls.Curriculum.Curriculum2" %>
 
 <script type="text/javascript">
   /* From Server */

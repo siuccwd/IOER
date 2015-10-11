@@ -1,4 +1,4 @@
-﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="PostQuestion.ascx.cs" Inherits="ILPathways.Controls.FAQs.PostQuestion" %>
+﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="PostQuestion.ascx.cs" Inherits="IOER.Controls.FAQs.PostQuestion" %>
 
 <style type="text/css">
 .questionPanel table {

@@ -9,11 +9,11 @@ using System.Web.UI.WebControls;
 
 using ILPathways.Business;
 //using ILPathways.DAL;
-using ILPathways.Library;
+using IOER.Library;
 using ILPathways.Utilities;
 using MyManager = Isle.BizServices.ContentServices;
 
-namespace ILPathways.Content
+namespace IOER.Content
 {
     /// <summary>
     /// Show a document from the Document.Version table

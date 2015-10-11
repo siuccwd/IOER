@@ -1,4 +1,4 @@
-﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="LRWarehouseAdvSearch.ascx.cs" Inherits="ILPathways.LRW.controls.LRWarehouseAdvSearch" %>
+﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="LRWarehouseAdvSearch.ascx.cs" Inherits="IOER.LRW.controls.LRWarehouseAdvSearch" %>
 
 <style type="text/css">
 .narrowingSection h3 {

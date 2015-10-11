@@ -14,9 +14,9 @@ using Obout.Ajax.UI.TreeView;
 using GDAL = Isle.BizServices;
 using ILPathways.Business;
 using ILPathways.Common;
-using ILPathways.Controllers;
+using IOER.Controllers;
 
-using ILPathways.Library;
+using IOER.Library;
 using ILPathways.Utilities;
 using Isle.BizServices;
 using LRWarehouse.DAL;
@@ -25,7 +25,7 @@ using LDAL = LRWarehouse.DAL;
 using BDM = LRWarehouse.DAL.BaseDataManager;
 using AppUser = LRWarehouse.Business.Patron; 
 
-namespace ILPathways.Controls.Content
+namespace IOER.Controls.Content
 {
     /// <summary>
     /// handle editing of existing documents
@@ -38,6 +38,7 @@ namespace ILPathways.Controls.Content
         public string cleanTitle;
 
         ContentServices myManager = new ContentServices();
+		ContentSearchServices mySearchManager = new ContentSearchServices();
 
         #region Properties
         /// <summary>
@@ -811,7 +812,7 @@ namespace ILPathways.Controls.Content
 
             string statusMessage = string.Empty;
             AppUser user = GetAppUser();
-            if ( ContentController.RequestApproval( CurrentRecordId, user, ref statusMessage ) == true )
+			if (new ContentServices().RequestApproval(CurrentRecordId, user, ref statusMessage) == true)
             {
                 SetConsoleSuccessMessage( "An email was sent requesting a review of your resource." );
                 //refresh
@@ -1051,7 +1052,7 @@ namespace ILPathways.Controls.Content
                         {
                             try
                             {
-                                ResourceBizService.Resource_SetInactive( entity.ResourceIntId, ref statusMessage );
+                                new ResourceBizService().Resource_SetInactive( entity.ResourceIntId, ref statusMessage );
                                 extraMessage = "Resource Deactivated";
                             }
                             catch ( Exception ex )
@@ -1072,7 +1073,7 @@ namespace ILPathways.Controls.Content
 
                     this.SetConsoleSuccessMessage( "Delete of record was successful " + extraMessage );
 
-                    Response.Redirect( "/My/Authored.aspx", true );
+                    Response.Redirect( "/My/Authored", true );
                     //this.ResetForm();
 
                 }
@@ -1126,7 +1127,7 @@ namespace ILPathways.Controls.Content
                         ResourceVersion entity = ResourceBizService.ResourceVersion_GetByResourceId( ci.ResourceIntId );
                         if ( entity != null && entity.Id > 0 )
                         {
-                            ResourceBizService.Resource_SetInactive( entity.ResourceIntId, ref extraMessage );
+                            new ResourceBizService().Resource_SetInactive( entity.ResourceIntId, ref extraMessage );
                             //note can have a RV id not not be published to LR. Need to check for a resource docid
                             if ( entity.LRDocId != null && entity.LRDocId.Length > 10 )
                             {
@@ -1164,7 +1165,7 @@ namespace ILPathways.Controls.Content
             string where = string.Format( "([TypeId] = 20 AND base.CreatedById = {0}) ", WebUser.Id );
             filter = BDM.FormatSearchItem( filter, where, booleanOperator );
             int pTotalRows = 0;
-            DataSet ds = myManager.Search( filter, "", 1, 25, ref pTotalRows );
+			DataSet ds = mySearchManager.Search( filter, "", 1, 25, ref pTotalRows );
             if ( DoesDataSetHaveRows( ds ) )
                 hasHomeContent = true;
             SetContentType2( hasHomeContent );

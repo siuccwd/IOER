@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ILPathways.My {
+namespace IOER.My {
     
     
     public partial class Favorites {
@@ -19,6 +19,6 @@ namespace ILPathways.My {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ILPathways.Controls.Libraries.LibrariesSearch librariesSearch1;
+        protected global::IOER.Controls.Libraries.LibrariesSearch librariesSearch1;
     }
 }

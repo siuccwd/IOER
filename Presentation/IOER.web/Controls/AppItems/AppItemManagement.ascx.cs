@@ -16,18 +16,18 @@ using System.Web.UI.HtmlControls;
 using EmailHelper = ILPathways.Utilities.EmailManager;
 using MyManager = ILPathways.DAL.AppItemManager;
 using ILPathways.Business;
-using ILPathways.classes;
-using ILPathways.Controllers;
+using IOER.classes;
+using IOER.Controllers;
 using BDM = ILPathways.Common.BaseDataManager;
 using LRDAL = LRWarehouse.DAL;
 //using ILPathways.DAL;
 using Isle.BizServices;
-using ILPathways.Library;
+using IOER.Library;
 using ILPathways.Utilities;
 
 using Obout.Ajax.UI.HTMLEditor;
 
-namespace ILPathways.Controls.AppItems
+namespace IOER.Controls.AppItems
 {
     public partial class AppItemManagement : BaseUserControl
     {

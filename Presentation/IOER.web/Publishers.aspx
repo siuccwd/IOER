@@ -1,4 +1,4 @@
-﻿<%@ Page Title="IOER Publisher Search" Language="C#" MasterPageFile="~/Masters/Responsive.Master" AutoEventWireup="true" CodeBehind="Publishers.aspx.cs" Inherits="ILPathways.Publishers" %>
+﻿<%@ Page Title="IOER Publisher Search" Language="C#" MasterPageFile="~/Masters/Responsive.Master" AutoEventWireup="true" CodeBehind="Publishers.aspx.cs" Inherits="IOER.Publishers" %>
 <%@ Register TagPrefix="uc1" TagName="Publishers" Src="/LRW/controls/PublishersSearch2.ascx" %>
 
 <asp:Content ID="Content2" ContentPlaceHolderID="BodyContent" runat="server">

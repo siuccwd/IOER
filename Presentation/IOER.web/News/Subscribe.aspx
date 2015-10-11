@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Illinois Open Education Resources News Subscribe" Language="C#" MasterPageFile="~/Masters/Responsive2.Master" AutoEventWireup="true" CodeBehind="Subscribe.aspx.cs" Inherits="ILPathways.Pages.Subscribe" %>
+﻿<%@ Page Title="Illinois Open Education Resources News Subscribe" Language="C#" MasterPageFile="~/Masters/Responsive2.Master" AutoEventWireup="true" CodeBehind="Subscribe.aspx.cs" Inherits="IOER.Pages.Subscribe" %>
 <%@ Register TagName="Subscribe" TagPrefix="uc1" Src="~/News/Controls/AnnouncementSubscribe2.ascx" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="HeadContent" runat="server">

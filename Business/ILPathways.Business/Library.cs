@@ -51,11 +51,12 @@ namespace ILPathways.Business
         /// <summary>
         /// Return a url friendly title
         /// </summary>
-        public string FriendlyTitle
+        public string FriendlyTitleX
         {
             get
             {
-                return UrlFriendlyTitle( this._title );
+                //return UrlFriendlyTitle( this._title );
+                return this._title;
             }
         } //
 
@@ -272,14 +273,14 @@ namespace ILPathways.Business
             }
         }
 
-        public string FriendlyUrl
+        public string FriendlyUrlXX
         {
             get
             {
                 if ( Id == 0 )
                     return "";
                 else
-                    return string.Format( "/Library/{0}/{1}", Id, this.FriendlyTitle );
+                    return "";// string.Format( "/Library/{0}/{1}", Id, this.FriendlyTitle );
             }
            
         }

@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ILPathways.Controls._Templates {
+namespace IOER.Controls._Templates {
     
     
     public partial class Search {

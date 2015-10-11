@@ -8,7 +8,7 @@ using System.Web.UI.WebControls;
 
 using ILPathways.Utilities;
 
-namespace ILPathways.Pages
+namespace IOER.Pages
 {
     public partial class gooruPlayer : System.Web.UI.Page
     {

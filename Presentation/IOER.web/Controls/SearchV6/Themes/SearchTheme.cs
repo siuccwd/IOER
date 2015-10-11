@@ -7,7 +7,7 @@ using LRWarehouse.Business.ResourceV2;
 using Isle.BizServices;
 using System.Drawing;
 
-namespace ILPathways.Controls.SearchV6.Themes
+namespace IOER.Controls.SearchV6.Themes
 {
   public class SearchTheme : System.Web.UI.UserControl
   {
@@ -63,6 +63,11 @@ namespace ILPathways.Controls.SearchV6.Themes
     {
       return MainColor;
     }
+
+		public virtual string GetInitialSearchDataJSON()
+		{
+			return "{}";
+		}
 
   }
 }

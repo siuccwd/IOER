@@ -52,5 +52,7 @@ namespace LRWarehouse.Business
             get { return this._criteriaInfo; }
             set { this._criteriaInfo = value; }
         }
+
+				public string Title { get; set; }
     }
 }

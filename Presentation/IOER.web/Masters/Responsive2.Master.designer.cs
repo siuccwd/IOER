@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ILPathways.Masters {
+namespace IOER.Masters {
     
     
     public partial class Responsive2 {
@@ -55,7 +55,7 @@ namespace ILPathways.Masters {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ILPathways.Controls.Includes.Header7 header;
+        protected global::IOER.Controls.Includes.Header8 header;
         
         /// <summary>
         /// systemMessageLine control.
@@ -64,7 +64,7 @@ namespace ILPathways.Masters {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ILPathways.Includes.SystemMessageLine systemMessageLine;
+        protected global::IOER.Includes.SystemMessageLine systemMessageLine;
         
         /// <summary>
         /// BodyContent control.
@@ -82,6 +82,6 @@ namespace ILPathways.Masters {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ILPathways.Controls.Includes.footer3 pagefooter;
+        protected global::IOER.Controls.Includes.Footer4 pagefooter;
     }
 }

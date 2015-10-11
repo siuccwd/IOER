@@ -6,7 +6,7 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using ILPathways.Utilities;
 
-namespace ILPathways.LRW.controls
+namespace IOER.LRW.controls
 {
     public partial class ElasticSearch3 : System.Web.UI.UserControl
     {

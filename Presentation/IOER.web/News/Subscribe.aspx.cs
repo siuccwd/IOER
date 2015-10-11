@@ -6,7 +6,7 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using ILPathways.Utilities;
 
-namespace ILPathways.Pages
+namespace IOER.Pages
 {
     public partial class Subscribe : System.Web.UI.Page
     {

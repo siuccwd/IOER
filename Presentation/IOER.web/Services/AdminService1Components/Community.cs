@@ -4,10 +4,11 @@ using System.Linq;
 using System.Web;
 
 using LRWarehouse.Business;
-using ILPathways.Services;
+using IOER.Services;
 using Isle.BizServices;
+using Patron = LRWarehouse.Business.Patron;
 
-namespace ILPathways.Services.AdminService1Components
+namespace IOER.Services.AdminService1Components
 {
   public class Community : IManageObject
   {

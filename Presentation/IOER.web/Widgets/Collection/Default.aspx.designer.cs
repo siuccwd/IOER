@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ILPathways.Widgets.Collection {
+namespace IOER.Widgets.Collection {
     
     
     public partial class Default {

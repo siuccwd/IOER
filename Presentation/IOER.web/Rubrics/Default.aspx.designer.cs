@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ILPathways.Controls.Rubrics {
+namespace IOER.Controls.Rubrics {
     
     
     public partial class Default {
@@ -19,6 +19,6 @@ namespace ILPathways.Controls.Rubrics {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ILPathways.Controls.Rubrics.RubricCore RubricCore;
+        protected global::IOER.Controls.Rubrics.RubricCore RubricCore;
     }
 }

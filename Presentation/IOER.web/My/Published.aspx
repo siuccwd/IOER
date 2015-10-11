@@ -1,4 +1,4 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Masters/Pathway.Master" AutoEventWireup="true" CodeBehind="Published.aspx.cs" Inherits="ILPathways.My.Published" %>
+﻿<%@ Page Title="Illinois Open Educational Resources - Published" Language="C#" MasterPageFile="~/Masters/Pathway.Master" AutoEventWireup="true" CodeBehind="Published.aspx.cs" Inherits="IOER.My.Published" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="HeadContent" runat="server">
 </asp:Content>

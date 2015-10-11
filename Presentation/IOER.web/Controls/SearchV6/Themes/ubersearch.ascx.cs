@@ -9,7 +9,7 @@ using Isle.BizServices;
 using LRWarehouse.Business.ResourceV2;
 using System.Drawing;
 
-namespace ILPathways.Controls.SearchV6.Themes
+namespace IOER.Controls.SearchV6.Themes
 {
   public partial class ubersearch : SearchTheme
   {

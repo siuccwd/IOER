@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ILPathways.Account {
+namespace IOER.Account {
     
     
     public partial class Register {
@@ -19,6 +19,6 @@ namespace ILPathways.Account {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ILPathways.Account.controls.Registration2 Registration2;
+        protected global::IOER.Account.controls.Registration2 Registration2;
     }
 }

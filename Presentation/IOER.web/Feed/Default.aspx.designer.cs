@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ILPathways.Feed {
+namespace IOER.Feed {
     
     
     public partial class Default {
@@ -19,6 +19,6 @@ namespace ILPathways.Feed {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ILPathways.Feed.Feed1 FeedBox;
+        protected global::IOER.Feed.Feed1 FeedBox;
     }
 }

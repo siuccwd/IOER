@@ -292,16 +292,24 @@ namespace ILPathways.Utilities
 		/// </summary>
 		/// <param name="text"></param>
 		/// <returns></returns>
-		public static String SanitizeUserInput( String text )
-		{
-			return CleanText( text );
-		}
+        //public static String CleanText( String text )
+        //{
+        //    return CleanText( text );
+        //}
         /// <summary>
         /// Strip tags from user input.
         /// </summary>
         /// <param name="text"></param>
         /// <returns></returns>
-        public static String CleanText( String text )
+        /// 
+
+
+        public static String CleanText(String text)
+        {
+            return CleanText(text, false);
+        }
+
+        public static String CleanText(String text, bool allowingHtmlPosts)
         {
             if ( String.IsNullOrEmpty( text.Trim() ) )
                 return String.Empty;
@@ -309,9 +317,16 @@ namespace ILPathways.Utilities
             String output = String.Empty;
             try
             {
-                String rxPattern = "<(?>\"[^\"]*\"|'[^']*'|[^'\">])*>";
-                Regex rx = new Regex( rxPattern );
-                output = rx.Replace( text, String.Empty );
+                if (allowingHtmlPosts == false)
+                {
+                    String rxPattern = "<(?>\"[^\"]*\"|'[^']*'|[^'\">])*>";
+                    Regex rx = new Regex(rxPattern);
+                    output = rx.Replace(text, String.Empty);
+                }
+                else
+                {
+                    output = text;
+                }
                 if ( output.ToLower().IndexOf( "<script" ) > -1
                     || output.ToLower().IndexOf( "javascript" ) > -1 )
                 {
@@ -444,6 +459,8 @@ namespace ILPathways.Utilities
 			} else
 			{
                 request = CleanText( request );
+                request = HttpUtility.UrlDecode(request);
+
                 //if (request.IndexOf("';") > -1)
                 //{
                 //  request = request.Substring(0, request.IndexOf("';"));

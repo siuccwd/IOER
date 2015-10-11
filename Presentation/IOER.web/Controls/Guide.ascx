@@ -1,4 +1,4 @@
-﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="Guide.ascx.cs" Inherits="ILPathways.Controls.Guide" %>
+﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="Guide.ascx.cs" Inherits="IOER.Controls.Guide" %>
 
 <script type="text/javascript">
   var videosLoaded = false;
@@ -18,8 +18,8 @@
     if (videosLoaded) {
       return;
     }
-    $("#overviewBox .youtube").attr("src", "//www.youtube.com/embed/vFxYZ4VAqtE?wmode=transparent&rel=0");
-    $("#overviewBox .youtubeLink").attr("href", "http://www.youtube.com/watch?v=vFxYZ4VAqtE");
+    $("#overviewBox .youtube").attr("src", "//www.youtube.com/embed/SLxD8ECjQhU?list=PLlkuU1Id_xm_wnuoFjqe4p7mK-cZdTusZ&listType=playlist&wmode=transparent&rel=0");
+    $("#overviewBox .youtubeLink").attr("href", "http://www.youtube.com/watch?v=SLxD8ECjQhU&list=PLlkuU1Id_xm_wnuoFjqe4p7mK-cZdTusZ");
     $("#searchBox .youtube").attr("src", "//www.youtube.com/embed/6jaS81hUcwk?wmode=transparent&rel=0");
     $("#searchBox .youtubeLink").attr("href", "http://www.youtube.com/watch?v=6jaS81hUcwk");
     $("#contributeBox .youtube").attr("src", "//www.youtube.com/embed/Jo_tvwv8voU?wmode=transparent&rel=0");
@@ -104,8 +104,8 @@
   .group .data { overflow: auto; }
   h2 { font-size: 24px; }
   h3 { font-style: italic; color: #333; }
-  .youtubeBox img { width: 100%; }
-  .youtubeBox { position: relative; max-width: 550px; margin: 5px 0 5px 5px; }
+  .youtubeBox img, .slideshareBox img { width: 100%; }
+  .youtubeBox, .slideshareBox { position: relative; max-width: 550px; margin: 5px 0 5px 5px; }
   #searchBox .youtubeBox, #contributeBox .youtubeBox { margin: 5px 0 0 0; }
   .youtube { width: 100%; height: 100%; position: absolute; top: 0; left: 0; }
   .youtubeLink { display: none; font-weight: bold; text-align: right; padding: 2px; }
@@ -114,7 +114,9 @@
   .downlinks a:hover, .downlinks a:focus { background-color: #FF6A00 ; }
   .downlinks a:first-child { border-radius: 5px 0 0 5px; }
   .downlinks a:last-child { margin-right: 0; border-radius: 0 5px 5px 0; }
+	.downlinks.bigLink a { width: 100%; border-radius: 5px; }
   .pdfLink { display: block; font-weight: bold; text-align: right; padding: 2px; }
+	.slideshareBox iframe { border: none; position: absolute; left: 0; top: 0; width: 100%; height: 100%; }
 
   /* Individualism */
   #step1 { font-size: 0; }
@@ -123,7 +125,11 @@
   #contributeBox { margin-left: calc(1% + 25px); }
   #resourceBox { margin-left: 20%; }
   #librariesBox { margin-right: 20%; }
-  .data .youtubeBox { float: right; }
+  .data .youtubeBox, .data .slideshareBox { float: right; }
+	.data .mediaBox .youtubeBox, .data .mediaBox .slideshareBox { float: none; display: inline-block; vertical-align: top; width: 31%; margin: 5px 1%; }
+	.data .mediaBox { text-align: center; }
+	#contributeBox .slideshareBox { margin: 5px 0 0 0; }
+	#step3 .data .mediaBox .youtubeBox, #step3 .data .mediaBox .slideshareBox { width: 48%; }
 
   /* SVG */
   #arrows { width: 100%; height: 100%; position: absolute; }
@@ -136,7 +142,7 @@
   }
   @media screen and (max-width: 800px) {
     .data span { display: block; }
-    .data .youtubeBox { float: none; margin: 0 auto; display: block; }
+    .data .youtubeBox, .data .slideshareBox { float: none; margin: 0 auto; display: block; }
   }
   @media screen and (max-width: 650px) {
     /*.data .youtubeBox, .youtubeBox { display: none; }
@@ -186,26 +192,38 @@
 
       <div class="step" id="step0">
         <div class="group" id="overviewBox">
-          <img src="/images/icons/icon_help_med.png" class="icon" />
+          <img alt="" src="/images/icons/icon_help_med.png" class="icon" />
           <h2>Overview</h2>
           <h3>"What is this site all about?"</h3>
           <div class="data">
-            <div class="youtubeBox">
-              <img src="/images/youtube-autoresizer.png" />
-              <iframe class="youtube" src="" frameborder="0" allowfullscreen></iframe>
-            </div>
             <span>IOER provides you with one-click access to open, standards-aligned educational content. Use our tools to find, remix, and comment on resources for your personalized IOER learning library. Hosting more than 200,000 open and available learning resources, IOER provides specific, standards-aligned resources utilizing filters and engaging tools to refine and share quality, peer-reviewed educational collections and resources. </span>
             <a class="pdfLink" href="/OERThumbs/files/QuickStart.pdf" target="_blank">Quick Start Guide (PDF)</a>
+						<a class="pdfLink" href="/OERThumbs/files/2015IllinoisECET2Final.pdf" target="_blank">PowerPoint for ISLE OER session at 2015 Illinois ECET2: Teachers Leading the Way! (PDF)</a>
+            <a class="pdfLink" href="/OERThumbs/files/Org_instructions.pdf" target="_blank">Organization Administration Guide (PDF)</a>
             <a class="pdfLink" href="/OERThumbs/files/Admin.pdf" target="_blank">IOER Administration Guide (PDF)</a>
             <a class="pdfLink" href="/OERThumbs/files/Overview.pptx" target="_blank">IOER Overview (PPTX)</a>
             <a class="youtubeLink" href="http://www.youtube.com/watch?v=j2wsNSGQQx4" target="_blank">Watch Video &rarr;</a>
+						<div class="mediaBox">
+							<div class="slideshareBox">
+								<img alt="" style="width:89%;" src="/images/ThumbnailResizer.png">
+								<iframe src="https://www.slideshare.net/slideshow/embed_code/key/5NUM0MvV2t4w9f?rel=0"></iframe>
+							</div><!--
+							--><div class="slideshareBox">
+								<img alt="" style="width:89%;" src="/images/ThumbnailResizer.png">
+								<iframe src="https://www.slideshare.net/slideshow/embed_code/key/ZYZSKdcF28kdT?rel=0"></iframe>
+							</div><!--
+							--><div class="youtubeBox">
+								<img alt="" src="/images/youtube-autoresizer.png" />
+								<iframe class="youtube" src="" frameborder="0" allowfullscreen></iframe>
+							</div>
+						</div>
           </div>
         </div>
       </div>
 
       <div class="step" id="step1">
         <div class="group" id="searchBox">
-          <img src="/images/icons/icon_search_med.png" class="icon" />
+          <img alt="" src="/images/icons/icon_search_med.png" class="icon" />
           <h2>Search</h2>
           <h3>"I want to find Resources"</h3>
           <div class="data">
@@ -213,20 +231,20 @@
             <a class="pdfLink" href="/OERThumbs/files/Search.pdf" target="_blank">Search Guide (PDF)</a>
           </div>
           <div class="youtubeBox">
-            <img src="/images/youtube-autoresizer.png" />
+            <img alt="" src="/images/youtube-autoresizer.png" />
             <iframe class="youtube" src="" frameborder="0" allowfullscreen></iframe>
           </div>
           <a class="youtubeLink" href="http://www.youtube.com/watch?v=FedkwWdEiio" target="_blank">Watch Video &rarr;</a>
           <div class="downlinks">
             <a href="/Libraries/Default.aspx" target="_blank">Libraries Search</a>
+						<a href="/learninglists" target="_blank">Learning Lists Search</a>
             <a href="/Search.aspx" target="_blank">Resources Search</a>
-            <a href="/Publishers.aspx" target="_blank">Publishers Search</a>
           </div>
         </div>
 
         <div class="group" id="contributeBox">
-          <img src="/images/icons/icon_tag_med.png" class="icon" />
-          <h2>Contribute</h2>
+          <img alt="" src="/images/icons/icon_tag_med.png" class="icon" />
+          <h2>Share</h2>
           <h3>"I want to submit Resources"</h3>
           <div class="data">
             <span>Many options for Contributing in IOER allow you to quickly tag a resource using standards alignment and keywords, create a new resource from your computer directly to the Internet, as well as more detailed tagging and creation tools.  Fast or methodical, IOER has learning resources for everyone.</span>
@@ -234,28 +252,40 @@
             <a class="pdfLink" href="/OERThumbs/files/Contribute.pdf" target="_blank">Contribute Guide (PDF)</a>
             <a class="pdfLink" href="/OERThumbs/files/LearningLists_about.pdf" target="_blank">About Learning Lists (PDF)</a>
             <a class="pdfLink" href="/OERThumbs/files/LearningLists_create.pdf" target="_blank">How To Create Learning Lists (PDF)</a>
+            <a class="pdfLink" href="/OERThumbs/files/LearningLists_instructions.pdf" target="_blank">Learning List Instructions (PDF)</a>
           </div>
+					<div class="slideshareBox">
+						<img alt="" style="width:110%;" src="/images/ThumbnailResizer.png">
+						<iframe src="https://www.slideshare.net/slideshow/embed_code/key/2VY49zf7k3yAwF?rel=0"></iframe>
+					</div>
+					<div class="slideshareBox">
+						<img alt="" style="width:85%;" src="/images/ThumbnailResizer.png">
+						<iframe src="https://www.slideshare.net/slideshow/embed_code/key/8KirWPmMossbbN?rel=0"></iframe>
+					</div>
           <div class="youtubeBox">
-            <img src="/images/youtube-autoresizer.png" />
+            <img alt="" src="/images/youtube-autoresizer.png" />
             <iframe class="youtube" src="" frameborder="0" allowfullscreen></iframe>
           </div>
           <a class="youtubeLink" href="http://www.youtube.com/watch?v=AsuiH4bUdKY" target="_blank">Watch Video &rarr;</a>
-          <div class="downlinks">
+					<div class="downlinks bigLink">
+						<a href="/Contribute">Contribute a Resource</a>
+					</div>
+          <!--<div class="downlinks">
             <a href="/Publish.aspx" target="_blank">Tagging Tool</a>
             <a href="/My/Author.aspx" target="_blank">Authoring Tool</a>
             <a href="/Contribute" target="_blank">Quick Contribute</a>
-          </div>
+          </div>-->
         </div>
       </div>
 
       <div class="step" id="step2">
         <div class="group" id="resourceBox">
-          <img src="/images/icons/icon_resources_med.png" class="icon" />
+          <img alt="" src="/images/icons/icon_resources_med.png" class="icon" />
           <h2>Resources</h2>
           <h3>"I want to learn about a Resource"</h3>
           <div class="data">
             <div class="youtubeBox">
-              <img src="/images/youtube-autoresizer.png" />
+              <img alt="" src="/images/youtube-autoresizer.png" />
               <iframe class="youtube" src="" frameborder="0" allowfullscreen></iframe>
             </div>
             <span>Each resource has its own Detail Page, providing in-depth information about each resource found in IOER.  In addition to highly detailed standards-alignment tabs, Commenting, Likes and Sharing options are available with just a click for each resource in the Learning Registry, through IOER.</span>
@@ -267,17 +297,24 @@
 
       <div class="step" id="step3">
         <div class="group" id="librariesBox">
-          <img src="/images/icons/icon_library_med.png" class="icon" />
+          <img alt="" src="/images/icons/icon_library_med.png" class="icon" />
           <h2>Libraries</h2>
           <h3>"I want to catalog and organize Resources"</h3>
           <div class="data">
-            <div class="youtubeBox">
-              <img src="/images/youtube-autoresizer.png" />
-              <iframe class="youtube" src="" frameborder="0" allowfullscreen></iframe>
-            </div>
+						<div class="mediaBox">
+							<div class="slideshareBox">
+								<img alt="" style="width:85%;" src="/images/ThumbnailResizer.png">
+								<iframe src="https://www.slideshare.net/slideshow/embed_code/key/nzF9ILMPS4z05e?rel=0"></iframe>
+							</div><!--
+							--><div class="youtubeBox">
+								<img alt="" src="/images/youtube-autoresizer.png" />
+								<iframe class="youtube" src="" frameborder="0" allowfullscreen></iframe>
+							</div>
+						</div>
             <span>IOER Libraries provide many ways for you to tag, contribute, create, organize and share your learning resources with fast and easy-to-use tools that allow for public and private settings.  User and Organizational Libraries allow individuals and groups to quickly categorize their learning resources in so many ways.</span>
             <a class="pdfLink" href="/OERThumbs/files/Libraries.pdf" target="_blank">Libraries Guide (PDF)</a>
             <a class="pdfLink" href="/OERThumbs/files/Libraries_howto.pdf" target="_blank">How To Create Libraries (PDF)</a>
+            <a class="pdfLink" href="/OERThumbs/files/Libraries_instructions.pdf" target="_blank">Libraries Instructions (PDF)</a>
           </div>
           <a class="youtubeLink" href="http://www.youtube.com/watch?v=bpUqQR0YZTA" target="_blank">Watch Video &rarr;</a>
         </div>
@@ -285,12 +322,12 @@
 
       <div class="step" id="step4">
         <div class="group" id="shareBox">
-          <img src="/images/icons/icon_swirl_med.png" class="icon" />
-          <h2>Sharing</h2>
+          <iimg alt=""mg src="/images/icons/icon_swirl_med.png" class="icon" />
+          <h2>Community</h2>
           <h3>"I want to share Resources with my colleagues"</h3>
           <div class="data">
             <div class="youtubeBox">
-              <img src="/images/youtube-autoresizer.png" />
+              <img alt="" src="/images/youtube-autoresizer.png" />
               <iframe class="youtube" src="" frameborder="0" allowfullscreen></iframe>
             </div>
             <span>Community-building is what IOER is all about!  As you begin building your selected library of chosen collections of learning resources, you will find a continued focus on adding responsive design tools to assist you in the development of your learning environment.</span>

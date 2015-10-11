@@ -5,7 +5,7 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
-namespace ILPathways.Widgets.FullSearch
+namespace IOER.Widgets.FullSearch
 {
   public partial class Default : System.Web.UI.Page
   {
