@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Elasticsearch.Net.JsonNet</name>
+    </assembly>
+    <members>
+        <member name="M:Elasticsearch.Net.JsonNet.ElasticsearchJsonNetSerializer.Deserialize``1(System.IO.Stream)">
+            <summary>
+            Deserialize an object 
+            </summary>
+        </member>
+    </members>
+</doc>

@@ -1,0 +1,1 @@
+﻿ (base.Title like '{0}' OR base.[Summary] like '{0}' OR base.[Description] like '{0}' OR auth.SortName like '{0}') 

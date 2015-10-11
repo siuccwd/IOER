@@ -1,0 +1,1 @@
+﻿(base.PrivilegeTypeId = 1 AND base.IsActive = 1  AND base.StatusId = 5 AND TypeId in (10, 50)) 
