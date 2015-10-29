@@ -39,18 +39,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IoerContentBusinessEntities
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IOER.web", "Presentation\IOER.web\IOER.web.csproj", "{FDEF36B9-84D1-4FCD-9B3F-86B0D8077548}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Database", "Database", "{98019CAC-E288-4DB2-89C7-9C6F9BC8B16F}"
-	ProjectSection(SolutionItems) = preProject
-		Database\CREATE DATABASE Gateway.sql = Database\CREATE DATABASE Gateway.sql
-		Database\CREATE DATABASE Isle_IOER.sql = Database\CREATE DATABASE Isle_IOER.sql
-		Database\CREATE DATABASE IsleContent.sql = Database\CREATE DATABASE IsleContent.sql
-		Database\backups\Gateway_140309.zip = Database\backups\Gateway_140309.zip
-		Database\Gateway_script.sql = Database\Gateway_script.sql
-		Database\Isle_IOER_script.sql = Database\Isle_IOER_script.sql
-		Database\backups\IsleContent_140309.zip = Database\backups\IsleContent_140309.zip
-		Database\IsleContent_script.sql = Database\IsleContent_script.sql
-	EndProjectSection
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LR_Import", "LearningRegistryImport\LR_Import\LR_Import.csproj", "{8F0CB0E5-8F8C-4C10-97DB-BC0A8BE885E2}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Testing", "Testing", "{FF546DF3-A880-4F28-8643-0391DE25A1B2}"
@@ -80,6 +68,23 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{B0FF5B
 		.nuget\NuGet.Config = .nuget\NuGet.Config
 		.nuget\NuGet.exe = .nuget\NuGet.exe
 		.nuget\NuGet.targets = .nuget\NuGet.targets
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ServerFiles", "ServerFiles", "{69D92F70-D09C-44F4-BF6B-5D1C31EBE0EB}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AdditionalFiles", "AdditionalFiles", "{9BEE0284-9DC9-4C51-AA7C-D235519B233B}"
+	ProjectSection(SolutionItems) = preProject
+		Other\IOER_server.zip = Other\IOER_server.zip
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{F289E3FE-45CC-4B4F-854C-43D88945727C}"
+	ProjectSection(SolutionItems) = preProject
+		Database\Scripts\Isle_IOER_script.sql = Database\Scripts\Isle_IOER_script.sql
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Database", "Database", "{CC8B96CD-81E1-4D2C-A459-F215E3F35C9B}"
+	ProjectSection(SolutionItems) = preProject
+		Database\backups\Isle_IOER_sandbox_151028.zip = Database\backups\Isle_IOER_sandbox_151028.zip
 	EndProjectSection
 EndProject
 Global
