@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Illinois Open Educational Resources - Register" Language="C#" MasterPageFile="/Masters/Responsive.Master" AutoEventWireup="true" CodeBehind="Register.aspx.cs" Inherits="IOER.Account.Register" %>
+﻿<%@ Page Title="Illinois Open Educational Resources - Register" Language="C#" MasterPageFile="/Masters/Responsive2.Master" AutoEventWireup="true" CodeBehind="Register.aspx.cs" Inherits="IOER.Account.Register" %>
 
 <%@ Register TagPrefix="uc1" TagName="RegisterController" Src="/Account/controls/Registration2.ascx" %>
 

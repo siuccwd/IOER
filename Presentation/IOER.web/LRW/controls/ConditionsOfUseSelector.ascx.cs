@@ -27,7 +27,12 @@ namespace IOER.LRW.controls
             get { return txtConditionsOfUse.Text; }
             set { txtConditionsOfUse.Text = value; }
         }
-
+		public string IsNewContext
+        {
+			get { return litIsNewContext.Text; }
+			set { litIsNewContext.Text = value; }
+        }
+		
         protected void Page_Load( object sender, EventArgs e )
         {
             PopulateItems();

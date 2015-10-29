@@ -121,6 +121,24 @@ namespace IOER.Account.controls {
         protected global::System.Web.UI.WebControls.Literal libraryCreateMsg;
         
         /// <summary>
+        /// passCodeConfirmationDate control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Literal passCodeConfirmationDate;
+        
+        /// <summary>
+        /// passCodeConfirmation control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Literal passCodeConfirmation;
+        
+        /// <summary>
         /// autoAddToOrg control.
         /// </summary>
         /// <remarks>

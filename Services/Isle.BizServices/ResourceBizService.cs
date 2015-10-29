@@ -19,7 +19,7 @@ using EfMgr = IOERBusinessEntities.EFResourceManager;
 using EIMgr = Isle.BizServices.ElasticIndexServices;
 using ResBiz = IOERBusinessEntities;
 using ThisUser = LRWarehouse.Business.Patron;
-using Thumbnailer = LRWarehouse.DAL.ResourceThumbnailManager;
+//using Thumbnailer = LRWarehouse.DAL.ResourceThumbnailManager;
 
 namespace Isle.BizServices
 {
@@ -107,7 +107,8 @@ namespace Isle.BizServices
 
                 SetConsoleSuccessMessage( "Successfully published the Resource" );
 
-                new Thumbnailer().CreateThumbnail( dto.Id, dto.ResourceUrl );
+                //new Thumbnailer().CreateThumbnail( dto.Id, dto.ResourceUrl );
+								ThumbnailServices.CreateThumbnail( dto.Id.ToString(), dto.ResourceUrl, false );
                          }
             catch ( Exception ex )
             {
@@ -173,182 +174,51 @@ namespace Isle.BizServices
             return new ResourceManager().GetByVersion( versionID );
         }
 
-        public string CheckBlacklist(string url)
-        {
-            string reputation = "Safe";
-            string status = "successful";
+		/// <summary>
+		/// Check if url already exists in the resource table.
+		/// </summary>
+		/// <param name="url"></param>
+		/// <returns>true if found, otherwise false</returns>
+		public static bool DoesUrlExist( string url )
+		{
+			bool exists = false;
+			ResBiz.ResourceContext ctx = new ResBiz.ResourceContext();
+			url = url.ToLower().Trim();
+			string alturl = url;
 
-            try
-            {
-                Uri uri = new Uri(url);
+			//need to check with and without trailing slash
+			//really need to check with and without www
+			//prob also http vs https
+			if ( url.Trim().EndsWith( "/" ) )
+				alturl = url.Substring( 0, url.Length - 1 );
+			else
+				alturl += "/";
 
-                BlacklistedHost bh = new BlacklistedHostManager().GetByHostname(uri.Host, ref status);
-                if (bh != null)
-                {
-                    reputation = "Blacklisted";
-                }
-                else
-                {
-                    reputation = UtilityManager.CheckUnsafeUrl(url);
-                }
-            }
-            catch (UriFormatException uex)
-            {
-                LogError(thisClassName + ".CheckBlacklist(): " + uex.ToString());
-                reputation = uex.Message;
-            }
-            catch (FormatException fex)
-            {
-                LogError(thisClassName + ".CheckBlacklist(): " + fex.ToString());
-                reputation = fex.Message;
-            }
-            catch (Exception ex)
-            {
-                LogError(thisClassName + ".CheckBlacklist(): " + ex.ToString());
-                reputation = ex.Message;
-            }
+			//sql is not case sensitive, not sure if entity framework is????
+			ResBiz.Resource res = ctx.Resources.FirstOrDefault( s => s.ResourceUrl.ToLower() == url || s.ResourceUrl.ToLower() == alturl );
+			if ( res != null && res.Id > 0 )
+				exists = true;
 
-            return reputation;
-        }
-        /// <summary>
-        /// Strip fragment identifiers, convert %20 to +, and otherwise clean a URL
-        /// </summary>
-        /// <param name="url"></param>
-        /// <returns></returns>
-        public string CleanseUrl(string url)
-        {
-            url = url.Replace("ioer.ilsharedlearning.net", "ioer.ilsharedlearning.org");
-            url = url.Replace("ioer.ilsharedlearning.com", "ioer.ilsharedlearning.org");
-            url = url.Replace("ioer.ilsharedlearning.info", "ioer.ilsharedlearning.org");
-            url = url.Replace("ioer.ilsharedlearning.mobi", "ioer.ilsharedlearning.org");
-            url = url.Replace("%20", "+");
+			return exists;
 
-            /* According to IETF RFC 3986 (http://tools.ietf.org/html/rfc3986#page-24), the fragment identifier 
-             * is terminated by the end of the URL.  Therefore it is safe to truncate everything at the optional '#'
-             * character. */
-            if (url.IndexOf("#") > -1)
-            {
-                url = url.Substring(0, url.IndexOf("#"));
-            }
+		}
+		/// <summary>
+		/// Update the custom image url for a resource
+		/// </summary>
+		/// <param name="resourceId"></param>
+		/// <param name="imageUrl"></param>
+		/// <returns></returns>
+		public int UpdateImageUrl( int resourceId, string imageUrl )
+		{
+			int result = new EfMgr().Resource_UpdateImageUrl( resourceId, imageUrl );
+			if ( result > 0 )
+			{
+				//need to update elastic - what if pending updates, don't want to have multiple updates if not needed
+				new Isle.BizServices.ResourceV2Services().RefreshResource( resourceId );
+			}
 
-            try
-            {
-                Uri locator = new Uri(url);
-                string status = "";
-                DataSet cleansingRules = cleanseUrlManager.GetCleansingRules(locator.Host, ref status);
-                if (CleanseUrlManager.DoesDataSetHaveRows(cleansingRules))
-                {
-                    string absolutePath = locator.AbsolutePath;
-                    string queryString = "";
-                    if (locator.Query.Length > 0)
-                    {
-                        queryString = locator.Query.Substring(1, locator.Query.Length - 1); // strip leading ?
-                    }
-                    queryString = queryString.Replace("?", "&"); // Change embedded ? to & - don't trust the URL!
-                    List<string> parameterList = queryString.Split('&').ToList<string>();
-                    foreach (DataRow dr in cleansingRules.Tables[0].Rows)
-                    {
-                        string parameter = CleanseUrlManager.GetRowColumn(dr, "urlParameterToDrop", "");
-                        for (int i = 0; i < parameterList.Count; i++)
-                        {
-                            int pos = parameterList[i].IndexOf("=");
-                            if (pos > -1)
-                            {
-                                if (parameterList[i].Substring(0, pos) == parameter)
-                                {
-                                    parameterList.RemoveAt(i);
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                    queryString = string.Empty;
-                    foreach (string keyvalue in parameterList)
-                    {
-                        if (queryString == string.Empty)
-                        {
-                            queryString += "?" + keyvalue;
-                        }
-                        else
-                        {
-                            queryString += "&" + keyvalue;
-                        }
-                    }
-                    if (queryString.Length > 1)
-                    {
-                        url = ReconstructUrl(locator, absolutePath, queryString);
-                    }
-                    else
-                    {
-                        url = ReconstructUrl(locator, absolutePath, "");
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                CleanseUrlManager.LogError("BaseDataController.CleanseUrl(): " + ex.ToString());
-            }
-
-
-            return url;
-        }
-
-        /// <summary>
-        /// Rebuild a URL from a URI, absolute path, and query string.  Currently used by CleanseUrl
-        /// </summary>
-        /// <param name="locator"></param>
-        /// <param name="absolutePath"></param>
-        /// <param name="queryString"></param>
-        /// <returns></returns>
-        private string ReconstructUrl(Uri locator, string absolutePath, string queryString)
-        {
-            string retVal = locator.Scheme + "://" + locator.Host;
-            if (!locator.IsDefaultPort)
-            {
-                retVal += ":" + locator.Port;
-            }
-            retVal += absolutePath;
-            if (queryString != null && queryString.Length > 0)
-            {
-                if (queryString.IndexOf("?") != 0)
-                {
-                    queryString = "?" + queryString;
-                }
-                retVal += queryString;
-            }
-
-            return retVal;
-        }
-
-
-        /// <summary>
-        /// Check if url already exists in the resource table.
-        /// </summary>
-        /// <param name="url"></param>
-        /// <returns>true if found, otherwise false</returns>
-        public static bool DoesUrlExist(string url)
-        {
-            bool exists = false;
-            ResBiz.ResourceContext ctx = new ResBiz.ResourceContext();
-            url = url.ToLower().Trim();
-            string alturl = url;
-
-            //need to check with and without trailing slash
-            //really need to check with and without www
-            //prob also http vs https
-            if ( url.Trim().EndsWith( "/" ) )
-                alturl = url.Substring( 0, url.Length - 1 );
-            else
-                alturl += "/";
-
-            //sql is not case sensitive, not sure if entity framework is????
-            ResBiz.Resource res = ctx.Resources.FirstOrDefault( s => s.ResourceUrl.ToLower() == url || s.ResourceUrl.ToLower() == alturl );
-            if ( res != null && res.Id > 0 )
-                exists = true;
-
-            return exists;
-
-        }
+			return result;
+		}
 
         public static string UpdateFavorite( int resourceId )
         {
@@ -358,7 +228,17 @@ namespace Isle.BizServices
         {
             return new ResourceManager().DecreaseFavoritesByOne( resourceId );
         }
-
+		public static int ResourceClickThroughs( int resourceId )
+		{
+			int count = 0;
+			//Need a proc for this
+			DataSet ds = DoQuery( "SELECT COUNT(*) AS 'Count' FROM [Resource.View] WHERE ResourceIntId = " + resourceId );
+			if ( DoesDataSetHaveRows( ds ) )
+			{
+				count = GetRowColumn( ds.Tables[ 0 ].Rows[ 0 ], "Count", 0 );
+			}
+			return count;
+		}
         /// <summary>
         /// Determine if user is the resource author 
         /// </summary>
@@ -385,8 +265,52 @@ namespace Isle.BizServices
         #endregion
 
         #region == content related methods ===
+	
+
+		public string ResourceVersion_SyncContentItemChanges( ContentItem entity )
+        {
+            string result = "";
+			ResourceVersion rv = EfMgr.ResourceVersion_GetByResourceId( entity.ResourceIntId );
+			if ( rv != null && rv.Id > 0 )
+			{
+				if ( rv.Title != entity.Title || rv.Description != entity.Summary )
+				{
+					rv.Title = entity.Title;
+					rv.Description = entity.Summary;
+					result = new ResourceVersionManager().UpdateById( rv );
+				}
+			}
+			if ( string.IsNullOrWhiteSpace( entity.ImageUrl ) == false )
+			{
+				UpdateImageUrl( entity.ResourceIntId, entity.ImageUrl );
+			}
+            return result;
+        }// 
+		//private static string ResourceVersion_SyncContentItemChanges( int rvId, string title, string summary )
+		//{
+		//	string result = "";
+		//	ResourceVersion rv = new ResourceVersionManager().Get( rvId );
+		//	if (rv != null && rv.Id > 0)
+		//		result = ResourceVersion_SyncContentItemChanges( rv, title, summary );
+		//	return result;
+		//}// 
+		//private static string ResourceVersion_SyncContentItemChanges( ResourceVersion rv, string title, string summary )
+		//{
+		//	string result = "";
+		//	if ( rv.Title != title || rv.Description != summary )
+		//	{
+		//		rv.Title = title;
+		//		rv.Description = summary;
+
+		//		result = new ResourceVersionManager().UpdateById( rv );
+		//	}
+
+		//	return result;
+		//}// 
+
         /// <summary>
-        /// Set a resource inactive and remove from elastic search
+		/// Set a resource inactive by resourceId and remove from elastic search
+		/// Also check if related to a content item
         /// TODO - need to handle learning registry deletes
         /// </summary>
         /// <param name="resourceId"></param>
@@ -395,38 +319,25 @@ namespace Isle.BizServices
         {
             //need to get resource version, in order to get LR doc id
             ResourceVersion entity = new ResourceVersionManager().GetByResourceId( resourceId );
+			if ( entity != null && entity.ResourceIntId > 0 )
+				Resource_SetInactive( entity, ref statusMessage );
 
-            statusMessage = new ResourceManager().SetResourceActiveState( resourceId, false );
-            //TODO - need check for lr  doc id on rv record!
-            EIMgr.RemoveResource( resourceId, ref statusMessage );
-
-            //note can have a RV id not not be published to LR. Need to check for a resource docid
-            if ( entity.LRDocId != null && entity.LRDocId.Length > 10 )
-            {
-                //post request to delete ==> this process would take care of actual delete of the Resource hierarchy
-                string msg = string.Format( "Set resource: {0} to be inactive. BUT the process is incomplete.<br/>NEED TO ADD CODE TO REMOVE FROM THE LR, AND DO PHYSICAL DELETE OF THE RESOURCE HIERARCHY.", resourceId );
-
-                EmailManager.NotifyAdmin( "JEROME - Resource set inactive - need to handle delete from Learning Registry", msg );
-                msg = msg.Replace( "<br/>", "\\r\\n" );
-                LoggingHelper.DoTrace( 3, msg );
-            }
         }
-        public static void Resource_SetInactiveByVersionId( int resourceVersionId, ref string statusMessage )
+
+		/// <summary>
+		/// Set a resource inactive by resourceVersionId and remove from elastic search
+		/// </summary>
+		/// <param name="resourceVersionId"></param>
+		/// <param name="statusMessage"></param>
+        public void Resource_SetInactiveByVersionId( int resourceVersionId, ref string statusMessage )
         {
             ResourceVersion entity = new ResourceVersionManager().Get( resourceVersionId );
 
             if ( entity != null && entity.ResourceIntId > 0 )
             {
                 LoggingHelper.DoTrace( 2, string.Format( "@@@@@@ Resource_SetInactiveByResVersionId - Setting a resource version INACTVE. rId: {0}, rvId: {1}, title ", entity.ResourceIntId, resourceVersionId, entity.Title ) );
+				Resource_SetInactive( entity, ref statusMessage );
 
-                statusMessage = new ResourceManager().SetResourceActiveState( entity.ResourceIntId, false );
-                //should not have to do this, but old code is resource version oriented and seems necessary
-                new ResourceVersionManager().SetActiveState( false, resourceVersionId );
-
-                //EIMgr.RemoveResource( entity.ResourceIntId, ref statusMessage );
-                EIMgr.RemoveResourceVersion( entity.Id, ref statusMessage );
-                //again for new collection
-                EIMgr.RemoveResource_NewCollection( entity.ResourceIntId, ref statusMessage );
             }
             else
             {
@@ -435,49 +346,79 @@ namespace Isle.BizServices
 
         }
 
+		private void Resource_SetInactive( ResourceVersion entity, ref string statusMessage )
+		{
+			//need to get resource version, in order to get LR doc id
+			//ResourceVersion entity = new ResourceVersionManager().GetByResourceId( resourceId );
+
+			statusMessage = new ResourceManager().SetResourceActiveState( entity.ResourceIntId, false );
+			//should not have to do this, but old code is resource version oriented and seems necessary
+			new ResourceVersionManager().SetActiveState( false, entity.Id );
+
+			//TODO need to remove resourceIntId from related content
+			new ContentServices().HandleResourceDeactivate( entity.ResourceIntId );
+			//TODO - need check for lr  doc id on rv record!
+			EIMgr.RemoveResource( entity.ResourceIntId, ref statusMessage );
+			//?????? do we need both
+			EIMgr.RemoveResourceVersion( entity.Id, ref statusMessage );
+			//again for new collection???
+			EIMgr.RemoveResource_NewCollection( entity.ResourceIntId, ref statusMessage );
+
+			//note can have a RV id not not be published to LR. Need to check for a resource docid
+			if ( entity.LRDocId != null && entity.LRDocId.Length > 10 )
+			{
+				//post request to delete ==> this process would take care of actual delete of the Resource hierarchy
+				string msg = string.Format( "Set resource: {0} to be inactive. BUT the process is incomplete.<br/>NEED TO ADD CODE TO REMOVE FROM THE LR, AND DO PHYSICAL DELETE OF THE RESOURCE HIERARCHY.", entity.ResourceIntId );
+
+				EmailManager.NotifyAdmin( "JEROME - Resource set inactive - need to handle delete from Learning Registry", msg );
+				msg = msg.Replace( "<br/>", "\\r\\n" );
+				LoggingHelper.DoTrace( 3, msg );
+			}
+		}
+
         /// <summary>
         /// OBSOLETE - VERIFY NOT NEEDED
         /// </summary>
         /// <param name="resourceVersionId"></param>
         /// <param name="statusMessage"></param>
         /// <returns></returns>
-        [Obsolete]
-        private  static bool ResourceVersion_SetInactive( int resourceVersionId, ref string statusMessage )
-        {
-            bool isValid = false;
+		//[Obsolete]
+		//private  static bool ResourceVersion_SetInactive( int resourceVersionId, ref string statusMessage )
+		//{
+		//	bool isValid = false;
 
-            ResourceVersion entity = new ResourceVersionManager().Get( resourceVersionId );
-            if ( entity != null && entity.Id > 0 )
-            {
-                LoggingHelper.DoTrace( 2, string.Format( "###### ResourceVersion_SetInactive - Setting a resource version INACTVE. rId: {0}, rvId: {1}, title ", entity.ResourceIntId, resourceVersionId, entity.Title ) );
+		//	ResourceVersion entity = new ResourceVersionManager().Get( resourceVersionId );
+		//	if ( entity != null && entity.Id > 0 )
+		//	{
+		//		LoggingHelper.DoTrace( 2, string.Format( "###### ResourceVersion_SetInactive - Setting a resource version INACTVE. rId: {0}, rvId: {1}, title ", entity.ResourceIntId, resourceVersionId, entity.Title ) );
 
-                try
-                {
-                    new ResourceVersionManager().SetActiveState( false, resourceVersionId );
-                    string response = "";
-                    EIMgr.RemoveResourceVersion( resourceVersionId, ref response );
-                    //var esManager = new ElasticSearchManager();
-                    //new ElasticSearchManager().DeleteByVersionID( resourceVersionId, ref response );
-                    statusMessage = "Resource Deactivated";
-                }
-                catch ( Exception ex )
-                {
-                    statusMessage = "There was a problem deactivating the Resource: " + ex.ToString();
-                }
+		//		try
+		//		{
+		//			new ResourceVersionManager().SetActiveState( false, resourceVersionId );
+		//			string response = "";
+		//			EIMgr.RemoveResourceVersion( resourceVersionId, ref response );
+		//			//var esManager = new ElasticSearchManager();
+		//			//new ElasticSearchManager().DeleteByVersionID( resourceVersionId, ref response );
+		//			statusMessage = "Resource Deactivated";
+		//		}
+		//		catch ( Exception ex )
+		//		{
+		//			statusMessage = "There was a problem deactivating the Resource: " + ex.ToString();
+		//		}
 
 
-                //note can have a RV id not not be published to LR. Need to check for a resource docid
-                if ( entity.LRDocId != null && entity.LRDocId.Length > 10 )
-                {
-                    //post request to delete ==> this process would take care of actual delete of the Resource hierarchy
-                    //if ( IsTestEnv() )
-                    //    statusMessage = "<br/>( WELL ALMOST - NEED TO ADD CODE TO REMOVE FROM THE LR, AND DO PHYSICAL DELETE OF THE RESOURCE HIERARCHY - JEROME)";
-                }
+		//		//note can have a RV id not not be published to LR. Need to check for a resource docid
+		//		if ( entity.LRDocId != null && entity.LRDocId.Length > 10 )
+		//		{
+		//			//post request to delete ==> this process would take care of actual delete of the Resource hierarchy
+		//			//if ( IsTestEnv() )
+		//			//    statusMessage = "<br/>( WELL ALMOST - NEED TO ADD CODE TO REMOVE FROM THE LR, AND DO PHYSICAL DELETE OF THE RESOURCE HIERARCHY - JEROME)";
+		//		}
 
-            }
+		//	}
 
-            return isValid;
-        }
+		//	return isValid;
+		//}
 
         /// <summary>
         /// use for to reactivate a resource version and resource.
@@ -1296,26 +1237,26 @@ namespace Isle.BizServices
             return resList;
         }
 
-        public static void TestJoins()
-        {
-            int resourceIntId = 444671;
-            using ( var context = new ResBiz.ResourceContext() )
-            {
-                // use DefaultIfEmpty() to do a left join (otherwise it is an inner join.
-                var results = ( from rs in context.Resource_Standard
-                                join st in context.StandardBody_Node
-                                    on rs.StandardId equals st.Id
-                                //join rse in context.Resource_StandardEvaluationSummary.DefaultIfEmpty()
-                                //    on rs.Id equals rse.ResourceIntId
-                                where rs.ResourceIntId == resourceIntId
-                                select new { rs.ResourceIntId, rs.StandardId, st.Description, st.NotationCode, rs.CreatedById } ).ToList();
-                if ( results != null )
-                {
-                    //Success code
-                }
+		public static void TestJoins()
+		{
+			int resourceIntId = 444671;
+			using ( var context = new ResBiz.ResourceContext() )
+			{
+				// use DefaultIfEmpty() to do a left join (otherwise it is an inner join.
+				var results = ( from rs in context.Resource_Standard
+								join st in context.StandardBody_Node
+									on rs.StandardId equals st.Id
+								//join rse in context.Resource_StandardEvaluationSummary.DefaultIfEmpty()
+								//    on rs.Id equals rse.ResourceIntId
+								where rs.ResourceIntId == resourceIntId
+								select new { rs.ResourceIntId, rs.StandardId, st.Description, st.NotationCode, rs.CreatedById } ).ToList();
+				if ( results != null )
+				{
+					//Success code
+				}
 
-            }
-        }
+			}
+		}
         #endregion
 
         #region ResourceVersion methods
@@ -1334,36 +1275,7 @@ namespace Isle.BizServices
           ResourceVersion rv = EfMgr.ResourceVersion_GetByResourceId( resourceId, mustBeActive );
           
           return rv;
-        }
-        public string ResourceVersion_SyncContentItemChanges( string title, string summary, int resourceId )
-        {
-            string result = "";
-            //ResourceVersion rv = new ResourceVersionManager().GetByResourceId( resourceId );
-            ResourceVersion rv = EfMgr.ResourceVersion_GetByResourceId( resourceId );
-            if ( rv.Title != title || rv.Description != summary )
-            {
-                rv.Title = title;
-                rv.Description = summary;
-
-                result = new ResourceVersionManager().UpdateById( rv );
-            }
-
-            return result;
-        }// 
-        public static string ResourceVersion_SyncContentItemChanges( int rvId, string title, string summary )
-        {
-            string result = "";
-            ResourceVersion rv = new ResourceVersionManager().Get( rvId );
-            if ( rv.Title != title || rv.Description != summary )
-            {
-                rv.Title = title;
-                rv.Description = summary;
-
-                result = new ResourceVersionManager().UpdateById( rv );
-            }
-
-            return result;
-        }// 
+		}
 
         /// <summary>
         /// Get RV by url - it is possible to have multiple versions, so returning a list. The caller will have to handle.
@@ -1574,17 +1486,7 @@ namespace Isle.BizServices
         }
 
         #endregion
-        public static int ResourceClickThroughs( int resourceId )
-        {
-            int count = 0;
-            //Need a proc for this
-            DataSet ds = DoQuery( "SELECT COUNT(*) AS 'Count' FROM [Resource.View] WHERE ResourceIntId = " + resourceId );
-            if ( DoesDataSetHaveRows( ds ) )
-            {
-                count = GetRowColumn( ds.Tables[ 0 ].Rows[ 0 ], "Count",0 );
-            }
-            return count;
-        }
+
         #region OLD methods, called from webservices
         //public ResourceGetResponse ResourceGet( ResourceGetRequest request )
         //{
@@ -1812,7 +1714,158 @@ namespace Isle.BizServices
         //}
         #endregion
 
-        /// <summary>
+		#region helper methods ===
+
+		public string CheckBlacklist( string url )
+		{
+			string reputation = "Safe";
+			string status = "successful";
+
+			try
+			{
+				Uri uri = new Uri( url );
+
+				BlacklistedHost bh = new BlacklistedHostManager().GetByHostname( uri.Host, ref status );
+				if ( bh != null )
+				{
+					reputation = "Blacklisted";
+				}
+				else
+				{
+					reputation = UtilityManager.CheckUnsafeUrl( url );
+				}
+			}
+			catch ( UriFormatException uex )
+			{
+				LogError( thisClassName + ".CheckBlacklist(): " + uex.ToString() );
+				reputation = uex.Message;
+			}
+			catch ( FormatException fex )
+			{
+				LogError( thisClassName + ".CheckBlacklist(): " + fex.ToString() );
+				reputation = fex.Message;
+			}
+			catch ( Exception ex )
+			{
+				LogError( thisClassName + ".CheckBlacklist(): " + ex.ToString() );
+				reputation = ex.Message;
+			}
+
+			return reputation;
+		}
+		/// <summary>
+		/// Strip fragment identifiers, convert %20 to +, and otherwise clean a URL
+		/// </summary>
+		/// <param name="url"></param>
+		/// <returns></returns>
+		public string CleanseUrl( string url )
+		{
+			url = url.Replace( "ioer.ilsharedlearning.net", "ioer.ilsharedlearning.org" );
+			url = url.Replace( "ioer.ilsharedlearning.com", "ioer.ilsharedlearning.org" );
+			url = url.Replace( "ioer.ilsharedlearning.info", "ioer.ilsharedlearning.org" );
+			url = url.Replace( "ioer.ilsharedlearning.mobi", "ioer.ilsharedlearning.org" );
+			url = url.Replace( "%20", "+" );
+
+			/* According to IETF RFC 3986 (http://tools.ietf.org/html/rfc3986#page-24), the fragment identifier 
+			 * is terminated by the end of the URL.  Therefore it is safe to truncate everything at the optional '#'
+			 * character. */
+			if ( url.IndexOf( "#" ) > -1 )
+			{
+				url = url.Substring( 0, url.IndexOf( "#" ) );
+			}
+
+			try
+			{
+				Uri locator = new Uri( url );
+				string status = "";
+				DataSet cleansingRules = cleanseUrlManager.GetCleansingRules( locator.Host, ref status );
+				if ( CleanseUrlManager.DoesDataSetHaveRows( cleansingRules ) )
+				{
+					string absolutePath = locator.AbsolutePath;
+					string queryString = "";
+					if ( locator.Query.Length > 0 )
+					{
+						queryString = locator.Query.Substring( 1, locator.Query.Length - 1 ); // strip leading ?
+					}
+					queryString = queryString.Replace( "?", "&" ); // Change embedded ? to & - don't trust the URL!
+					List<string> parameterList = queryString.Split( '&' ).ToList<string>();
+					foreach ( DataRow dr in cleansingRules.Tables[ 0 ].Rows )
+					{
+						string parameter = CleanseUrlManager.GetRowColumn( dr, "urlParameterToDrop", "" );
+						for ( int i = 0; i < parameterList.Count; i++ )
+						{
+							int pos = parameterList[ i ].IndexOf( "=" );
+							if ( pos > -1 )
+							{
+								if ( parameterList[ i ].Substring( 0, pos ) == parameter )
+								{
+									parameterList.RemoveAt( i );
+									break;
+								}
+							}
+						}
+					}
+					queryString = string.Empty;
+					foreach ( string keyvalue in parameterList )
+					{
+						if ( queryString == string.Empty )
+						{
+							queryString += "?" + keyvalue;
+						}
+						else
+						{
+							queryString += "&" + keyvalue;
+						}
+					}
+					if ( queryString.Length > 1 )
+					{
+						url = ReconstructUrl( locator, absolutePath, queryString );
+					}
+					else
+					{
+						url = ReconstructUrl( locator, absolutePath, "" );
+					}
+				}
+			}
+			catch ( Exception ex )
+			{
+				CleanseUrlManager.LogError( "BaseDataController.CleanseUrl(): " + ex.ToString() );
+			}
+
+
+			return url;
+		}
+
+		/// <summary>
+		/// Rebuild a URL from a URI, absolute path, and query string.  Currently used by CleanseUrl
+		/// </summary>
+		/// <param name="locator"></param>
+		/// <param name="absolutePath"></param>
+		/// <param name="queryString"></param>
+		/// <returns></returns>
+		private string ReconstructUrl( Uri locator, string absolutePath, string queryString )
+		{
+			string retVal = locator.Scheme + "://" + locator.Host;
+			if ( !locator.IsDefaultPort )
+			{
+				retVal += ":" + locator.Port;
+			}
+			retVal += absolutePath;
+			if ( queryString != null && queryString.Length > 0 )
+			{
+				if ( queryString.IndexOf( "?" ) != 0 )
+				{
+					queryString = "?" + queryString;
+				}
+				retVal += queryString;
+			}
+
+			return retVal;
+		}
+
+
+		
+		/// <summary>
         /// execute dynamic sql against the content db
         /// </summary>
         /// <param name="sql"></param>
@@ -1825,6 +1878,8 @@ namespace Isle.BizServices
         public static DataSet ExecuteProc( string procedureName, SqlParameter[] parameters )
         {
             return DatabaseManager.ExecuteProc( procedureName, parameters );
-        }
-    }
+		}
+
+		#endregion
+	}
 }

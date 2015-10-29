@@ -125,6 +125,33 @@
           <Property Name="LastUpdated" Type="datetime" />
           <Property Name="LastUpdatedById" Type="int" />
         </EntityType>
+        <EntityType Name="AppVisitLog">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="SessionId" Type="varchar" MaxLength="30" Nullable="false" />
+          <Property Name="CreatedDate" Type="datetime" Nullable="false" />
+          <Property Name="Application" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="URL" Type="varchar" MaxLength="300" Nullable="false" />
+          <Property Name="Parameters" Type="varchar" MaxLength="300" />
+          <Property Name="IsPostback" Type="bit" />
+          <Property Name="Userid" Type="varchar" MaxLength="50" />
+          <Property Name="Comment" Type="varchar" MaxLength="500" />
+          <Property Name="RemoteIP" Type="varchar" MaxLength="25" />
+          <Property Name="ServerName" Type="varchar" MaxLength="25" />
+          <Property Name="CurrentZip" Type="varchar" MaxLength="12" />
+          <Property Name="Referrer" Type="varchar" MaxLength="1000" />
+        </EntityType>
+        <EntityType Name="Codes_AuthorizationLevel">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" Nullable="false" />
+          <Property Name="Title" Type="varchar" MaxLength="50" />
+          <Property Name="Description" Type="varchar" MaxLength="200" />
+          <Property Name="Created" Type="datetime" />
+        </EntityType>
         <EntityType Name="Codes_ContentPartnerType">
           <Key>
             <PropertyRef Name="Id" />
@@ -153,6 +180,14 @@
           <Property Name="Id" Type="int" Nullable="false" />
           <Property Name="Title" Type="varchar" MaxLength="50" />
           <Property Name="Created" Type="datetime" />
+        </EntityType>
+        <EntityType Name="Codes_ExternalSite">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" Nullable="false" />
+          <Property Name="Title" Type="varchar" MaxLength="100" />
+          <Property Name="Url" Type="varchar" MaxLength="200" />
         </EntityType>
         <EntityType Name="Codes_GroupType">
           <Key>
@@ -221,6 +256,22 @@
           <Property Name="Title" Type="varchar" MaxLength="50" />
           <Property Name="Created" Type="datetime" />
         </EntityType>
+        <EntityType Name="Codes_PrivilegeDepth">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" Nullable="false" />
+          <Property Name="Title" Type="varchar" MaxLength="75" Nullable="false" />
+          <Property Name="Created" Type="datetime" />
+        </EntityType>
+        <EntityType Name="Codes_PrivilegeType">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" Nullable="false" />
+          <Property Name="Title" Type="varchar" MaxLength="75" Nullable="false" />
+          <Property Name="Created" Type="datetime" />
+        </EntityType>
         <EntityType Name="Codes_PublishingRole">
           <Key>
             <PropertyRef Name="Id" />
@@ -238,6 +289,14 @@
           <Property Name="Id" Type="int" Nullable="false" />
           <Property Name="Title" Type="varchar" MaxLength="50" />
           <Property Name="Created" Type="datetime" />
+        </EntityType>
+        <EntityType Name="Codes_State">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" Nullable="false" />
+          <Property Name="StateCode" Type="varchar" MaxLength="2" />
+          <Property Name="State" Type="varchar" MaxLength="50" />
         </EntityType>
         <EntityType Name="Codes_SubscriptionType">
           <Key>
@@ -393,6 +452,15 @@
           <Property Name="LastUpdated" Type="datetime" />
           <Property Name="LastUpdatedById" Type="int" />
         </EntityType>
+        <EntityType Name="Content_RelatedStandard">
+          <Key>
+            <PropertyRef Name="ContentId" />
+            <PropertyRef Name="ContentStandardId" />
+          </Key>
+          <Property Name="ContentId" Type="int" Nullable="false" />
+          <Property Name="ContentStandardId" Type="int" Nullable="false" />
+          <Property Name="Created" Type="datetime" Nullable="false" />
+        </EntityType>
         <EntityType Name="Content_Resource">
           <Key>
             <PropertyRef Name="Id" />
@@ -413,6 +481,7 @@
           <Property Name="StandardId" Type="int" Nullable="false" />
           <Property Name="AlignmentTypeCodeId" Type="int" />
           <Property Name="UsageTypeId" Type="int" />
+          <Property Name="IsDirectStandard" Type="bit" />
           <Property Name="Created" Type="datetime" />
           <Property Name="CreatedById" Type="int" />
           <Property Name="LastUpdated" Type="datetime" />
@@ -760,6 +829,7 @@
           <Property Name="RowId" Type="uniqueidentifier" />
           <Property Name="IsIsleMember" Type="bit" />
           <Property Name="EmailDomain" Type="varchar" MaxLength="50" />
+          <Property Name="Description" Type="varchar(max)" />
         </EntityType>
         <EntityType Name="Organization_Member">
           <Key>
@@ -806,6 +876,23 @@
           <Property Name="FollowingUserId" Type="int" Nullable="false" />
           <Property Name="FollowedByUserId" Type="int" Nullable="false" />
           <Property Name="Created" Type="datetime" />
+        </EntityType>
+        <EntityType Name="SqlQuery">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Title" Type="varchar" MaxLength="125" Nullable="false" />
+          <Property Name="Description" Type="varchar" MaxLength="500" />
+          <Property Name="QueryCode" Type="varchar" MaxLength="50" />
+          <Property Name="Category" Type="varchar" MaxLength="25" />
+          <Property Name="SQL" Type="varchar(max)" Nullable="false" />
+          <Property Name="OwnerId" Type="int" />
+          <Property Name="IsPublic" Type="bit" />
+          <Property Name="Created" Type="datetime" />
+          <Property Name="CreatedBy" Type="varchar" MaxLength="50" />
+          <Property Name="LastUpdated" Type="datetime" />
+          <Property Name="LastUpdatedBy" Type="varchar" MaxLength="50" />
         </EntityType>
         <!--Errors Found During Generation:
 warning 6002: The table/view 'IsleContent.dbo.Codes.AccessRights' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
@@ -1036,6 +1123,39 @@ warning 6002: The table/view 'IsleContent.dbo.Content.DocumentSummary' does not 
           <Property Name="PrivilegeTypeId" Type="int" />
         </EntityType>
         <!--Errors Found During Generation:
+warning 6002: The table/view 'IsleContent.dbo.Content.RelatedStandardsSummary' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="Content_RelatedStandardsSummary">
+          <Key>
+            <PropertyRef Name="ContentStandardId" />
+            <PropertyRef Name="ContentId" />
+            <PropertyRef Name="StandardId" />
+            <PropertyRef Name="AlignmentTypeCodeId" />
+            <PropertyRef Name="AlignmentType" />
+            <PropertyRef Name="UsageTypeId" />
+            <PropertyRef Name="StandardUsage" />
+            <PropertyRef Name="IsDirectStandard" />
+            <PropertyRef Name="RelatedStandardCreated" />
+            <PropertyRef Name="CreatedById" />
+          </Key>
+          <Property Name="ContentStandardId" Type="int" Nullable="false" />
+          <Property Name="ContentId" Type="int" Nullable="false" />
+          <Property Name="TypeId" Type="int" />
+          <Property Name="ParentId" Type="int" />
+          <Property Name="StandardId" Type="int" Nullable="false" />
+          <Property Name="StandardUrl" Type="varchar" MaxLength="200" />
+          <Property Name="NotationCode" Type="varchar" MaxLength="50" />
+          <Property Name="Description" Type="varchar(max)" />
+          <Property Name="AlignmentTypeCodeId" Type="int" Nullable="false" />
+          <Property Name="AlignmentType" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="UsageTypeId" Type="int" Nullable="false" />
+          <Property Name="StandardUsage" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="IsDirectStandard" Type="int" Nullable="false" />
+          <Property Name="StatusId" Type="int" />
+          <Property Name="ResourceIntId" Type="int" />
+          <Property Name="RelatedStandardCreated" Type="datetime" Nullable="false" />
+          <Property Name="CreatedById" Type="int" Nullable="false" />
+        </EntityType>
+        <!--Errors Found During Generation:
 warning 6002: The table/view 'IsleContent.dbo.Content.TagSummary' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="Content_TagSummary">
           <Key>
@@ -1208,6 +1328,9 @@ warning 6002: The table/view 'IsleContent.dbo.ContentStandard_Summary' does not 
           <Property Name="AlignmentType" Type="varchar" MaxLength="50" Nullable="false" />
           <Property Name="UsageTypeId" Type="int" Nullable="false" />
           <Property Name="StandardUsage" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="IsDirectStandard" Type="bit" />
+          <Property Name="StatusId" Type="int" />
+          <Property Name="ResourceIntId" Type="int" />
         </EntityType>
         <!--Errors Found During Generation:
 warning 6002: The table/view 'IsleContent.dbo.ContentSummaryView' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
@@ -1258,7 +1381,7 @@ warning 6002: The table/view 'IsleContent.dbo.ContentSummaryView' does not have 
           <Property Name="DocumentRowId" Type="uniqueidentifier" />
           <Property Name="SortOrder" Type="int" />
           <Property Name="Timeframe" Type="varchar" MaxLength="100" />
-          <Property Name="ImageUrl" Type="varchar" MaxLength="200" />
+          <Property Name="ImageUrl" Type="varchar" MaxLength="8000" />
           <Property Name="OrgId" Type="int" Nullable="false" />
           <Property Name="Organization" Type="varchar" MaxLength="100" />
           <Property Name="ParentOrgId" Type="int" />
@@ -1297,6 +1420,7 @@ warning 6002: The table/view 'IsleContent.dbo.Curriculum_DistinctStandards' does
           <Property Name="StandardUrl" Type="varchar" MaxLength="200" />
           <Property Name="NotationCode" Type="varchar" MaxLength="50" />
           <Property Name="Description" Type="varchar(max)" />
+          <Property Name="IsDirectStandard" Type="bit" />
           <Property Name="AlignmentType" Type="varchar" MaxLength="50" Nullable="false" />
           <Property Name="AlignmentTypeCodeId" Type="int" Nullable="false" />
           <Property Name="StandardUsage" Type="varchar" MaxLength="50" Nullable="false" />
@@ -1618,6 +1742,103 @@ warning 6002: The table/view 'IsleContent.dbo.LR.ResourceVersion_Summary' does n
           <Property Name="PublishedById" Type="int" />
         </EntityType>
         <!--Errors Found During Generation:
+warning 6002: The table/view 'IsleContent.dbo.Organization.AdminMembers' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="Organization_AdminMembers">
+          <Key>
+            <PropertyRef Name="OrgMbrId" />
+            <PropertyRef Name="OrgId" />
+            <PropertyRef Name="Organization" />
+            <PropertyRef Name="UserId" />
+            <PropertyRef Name="MemberAdded" />
+          </Key>
+          <Property Name="OrgMbrId" Type="int" Nullable="false" />
+          <Property Name="OrgId" Type="int" Nullable="false" />
+          <Property Name="Organization" Type="varchar" MaxLength="100" Nullable="false" />
+          <Property Name="UserId" Type="int" Nullable="false" />
+          <Property Name="FirstName" Type="varchar" MaxLength="50" />
+          <Property Name="LastName" Type="varchar" MaxLength="50" />
+          <Property Name="Email" Type="varchar" MaxLength="100" />
+          <Property Name="OrgMemberTypeId" Type="int" />
+          <Property Name="OrgMemberType" Type="varchar" MaxLength="50" />
+          <Property Name="Roles" Type="nvarchar(max)" />
+          <Property Name="MemberAdded" Type="datetime" Nullable="false" />
+          <Property Name="BaseOrgId" Type="int" />
+          <Property Name="BaseOrganization" Type="varchar" MaxLength="100" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'IsleContent.dbo.Organization_MemberCrosstab' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="Organization_MemberCrosstab">
+          <Key>
+            <PropertyRef Name="Organization" />
+            <PropertyRef Name="OrgId" />
+          </Key>
+          <Property Name="Organization" Type="varchar" MaxLength="100" Nullable="false" />
+          <Property Name="OrgId" Type="int" Nullable="false" />
+          <Property Name="Administrator" Type="int" />
+          <Property Name="Employee" Type="int" />
+          <Property Name="External" Type="int" />
+          <Property Name="Student" Type="int" />
+          <Property Name="All" Type="int" />
+          <Property Name="Other" Type="int" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'IsleContent.dbo.Organization_MemberSummary' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="Organization_MemberSummary">
+          <Key>
+            <PropertyRef Name="OrgMbrId" />
+            <PropertyRef Name="OrgId" />
+            <PropertyRef Name="Organization" />
+            <PropertyRef Name="UserId" />
+            <PropertyRef Name="Created" />
+            <PropertyRef Name="MemberAdded" />
+          </Key>
+          <Property Name="OrgMbrId" Type="int" Nullable="false" />
+          <Property Name="OrgId" Type="int" Nullable="false" />
+          <Property Name="Organization" Type="varchar" MaxLength="100" Nullable="false" />
+          <Property Name="IsActive" Type="bit" />
+          <Property Name="IsIsleMember" Type="bit" />
+          <Property Name="UserId" Type="int" Nullable="false" />
+          <Property Name="FirstName" Type="varchar" MaxLength="50" />
+          <Property Name="LastName" Type="varchar" MaxLength="50" />
+          <Property Name="FullName" Type="varchar" MaxLength="101" />
+          <Property Name="SortName" Type="varchar" MaxLength="102" />
+          <Property Name="Email" Type="varchar" MaxLength="100" />
+          <Property Name="ImageUrl" Type="varchar" MaxLength="200" />
+          <Property Name="UserProfileUrl" Type="varchar" MaxLength="8000" />
+          <Property Name="OrgMemberTypeId" Type="int" />
+          <Property Name="OrgMemberType" Type="varchar" MaxLength="50" />
+          <Property Name="BaseOrgId" Type="int" />
+          <Property Name="BaseOrganization" Type="varchar" MaxLength="100" />
+          <Property Name="Created" Type="datetime" Nullable="false" />
+          <Property Name="MemberAdded" Type="datetime" Nullable="false" />
+          <Property Name="CreatedById" Type="int" />
+          <Property Name="LastUpdated" Type="datetime" />
+          <Property Name="LastUpdatedById" Type="int" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'IsleContent.dbo.OrganizationMember.RoleIdCSV' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="OrganizationMember_RoleIdCSV">
+          <Key>
+            <PropertyRef Name="OrgId" />
+            <PropertyRef Name="OrgMbrId" />
+            <PropertyRef Name="UserId" />
+            <PropertyRef Name="IsAdmin" />
+            <PropertyRef Name="IsContentAdmin" />
+            <PropertyRef Name="IsLibraryAdmin" />
+            <PropertyRef Name="IsAccountAdmin" />
+            <PropertyRef Name="IsContentCreator" />
+          </Key>
+          <Property Name="OrgId" Type="int" Nullable="false" />
+          <Property Name="OrgMbrId" Type="int" Nullable="false" />
+          <Property Name="UserId" Type="int" Nullable="false" />
+          <Property Name="Roles" Type="nvarchar(max)" />
+          <Property Name="IsAdmin" Type="int" Nullable="false" />
+          <Property Name="IsContentAdmin" Type="int" Nullable="false" />
+          <Property Name="IsLibraryAdmin" Type="int" Nullable="false" />
+          <Property Name="IsAccountAdmin" Type="int" Nullable="false" />
+          <Property Name="IsContentCreator" Type="int" Nullable="false" />
+        </EntityType>
+        <!--Errors Found During Generation:
 warning 6002: The table/view 'IsleContent.dbo.Resource.Standard' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="Resource_Standard">
           <Key>
@@ -1647,6 +1868,7 @@ warning 6002: The table/view 'IsleContent.dbo.Resource.Standard' does not have a
           <Property Name="AlignmentType" Type="varchar" MaxLength="50" Nullable="false" />
           <Property Name="AlignmentDegreeId" Type="int" Nullable="false" />
           <Property Name="AlignmentDegree" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="IsDirectStandard" Type="bit" />
           <Property Name="Created" Type="datetime" />
           <Property Name="CreatedById" Type="int" Nullable="false" />
         </EntityType>
@@ -1943,6 +2165,32 @@ warning 6002: The table/view 'IsleContent.dbo.Resource.Standard' does not have a
             </Principal>
             <Dependent Role="Content_Reference">
               <PropertyRef Name="ParentId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Content_RelatedStandard_Content">
+          <End Role="Content" Type="Self.Content" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Content_RelatedStandard" Type="Self.Content_RelatedStandard" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Content">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Content_RelatedStandard">
+              <PropertyRef Name="ContentId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Content_RelatedStandard_Content_Standard">
+          <End Role="Content_Standard" Type="Self.Content_Standard" Multiplicity="1" />
+          <End Role="Content_RelatedStandard" Type="Self.Content_RelatedStandard" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Content_Standard">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Content_RelatedStandard">
+              <PropertyRef Name="ContentStandardId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -2426,9 +2674,12 @@ warning 6002: The table/view 'IsleContent.dbo.Resource.Standard' does not have a
           <EntitySet Name="AppGroup_Privilege" EntityType="Self.AppGroup_Privilege" Schema="dbo" Table="AppGroup.Privilege" store:Type="Tables" />
           <EntitySet Name="AppGroup_RelatedObject" EntityType="Self.AppGroup_RelatedObject" Schema="dbo" Table="AppGroup.RelatedObject" store:Type="Tables" />
           <EntitySet Name="ApplicationObject" EntityType="Self.ApplicationObject" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="AppVisitLog" EntityType="Self.AppVisitLog" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Codes_AuthorizationLevel" EntityType="Self.Codes_AuthorizationLevel" Schema="dbo" Table="Codes.AuthorizationLevel" store:Type="Tables" />
           <EntitySet Name="Codes_ContentPartnerType" EntityType="Self.Codes_ContentPartnerType" Schema="dbo" Table="Codes.ContentPartnerType" store:Type="Tables" />
           <EntitySet Name="Codes_ContentPrivilege" EntityType="Self.Codes_ContentPrivilege" Schema="dbo" Table="Codes.ContentPrivilege" store:Type="Tables" />
           <EntitySet Name="Codes_ContentStatus" EntityType="Self.Codes_ContentStatus" Schema="dbo" Table="Codes.ContentStatus" store:Type="Tables" />
+          <EntitySet Name="Codes_ExternalSite" EntityType="Self.Codes_ExternalSite" Schema="dbo" Table="Codes.ExternalSite" store:Type="Tables" />
           <EntitySet Name="Codes_GroupType" EntityType="Self.Codes_GroupType" Schema="dbo" Table="Codes.GroupType" store:Type="Tables" />
           <EntitySet Name="Codes_LibraryAccessLevel" EntityType="Self.Codes_LibraryAccessLevel" Schema="dbo" Table="Codes.LibraryAccessLevel" store:Type="Tables" />
           <EntitySet Name="Codes_LibraryMemberType" EntityType="Self.Codes_LibraryMemberType" Schema="dbo" Table="Codes.LibraryMemberType" store:Type="Tables" />
@@ -2437,8 +2688,11 @@ warning 6002: The table/view 'IsleContent.dbo.Resource.Standard' does not have a
           <EntitySet Name="Codes_OrgMemberType" EntityType="Self.Codes_OrgMemberType" Schema="dbo" Table="Codes.OrgMemberType" store:Type="Tables" />
           <EntitySet Name="Codes_OrgType" EntityType="Self.Codes_OrgType" Schema="dbo" Table="Codes.OrgType" store:Type="Tables" />
           <EntitySet Name="Codes_PostingType" EntityType="Self.Codes_PostingType" Schema="dbo" Table="Codes.PostingType" store:Type="Tables" />
+          <EntitySet Name="Codes_PrivilegeDepth" EntityType="Self.Codes_PrivilegeDepth" Schema="dbo" Table="Codes.PrivilegeDepth" store:Type="Tables" />
+          <EntitySet Name="Codes_PrivilegeType" EntityType="Self.Codes_PrivilegeType" Schema="dbo" Table="Codes.PrivilegeType" store:Type="Tables" />
           <EntitySet Name="Codes_PublishingRole" EntityType="Self.Codes_PublishingRole" Schema="dbo" Table="Codes.PublishingRole" store:Type="Tables" />
           <EntitySet Name="Codes_StandardUsage" EntityType="Self.Codes_StandardUsage" Schema="dbo" Table="Codes.StandardUsage" store:Type="Tables" />
+          <EntitySet Name="Codes_State" EntityType="Self.Codes_State" Schema="dbo" Table="Codes.State" store:Type="Tables" />
           <EntitySet Name="Codes_SubscriptionType" EntityType="Self.Codes_SubscriptionType" Schema="dbo" Table="Codes.SubscriptionType" store:Type="Tables" />
           <EntitySet Name="Community" EntityType="Self.Community" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Community_Member" EntityType="Self.Community_Member" Schema="dbo" Table="Community.Member" store:Type="Tables" />
@@ -2450,6 +2704,7 @@ warning 6002: The table/view 'IsleContent.dbo.Resource.Standard' does not have a
           <EntitySet Name="Content_Like" EntityType="Self.Content_Like" Schema="dbo" Table="Content.Like" store:Type="Tables" />
           <EntitySet Name="Content_Partner" EntityType="Self.Content_Partner" Schema="dbo" Table="Content.Partner" store:Type="Tables" />
           <EntitySet Name="Content_Reference" EntityType="Self.Content_Reference" Schema="dbo" Table="Content.Reference" store:Type="Tables" />
+          <EntitySet Name="Content_RelatedStandard" EntityType="Self.Content_RelatedStandard" Schema="dbo" Table="Content.RelatedStandard" store:Type="Tables" />
           <EntitySet Name="Content_Resource" EntityType="Self.Content_Resource" Schema="dbo" Table="Content.Resource" store:Type="Tables" />
           <EntitySet Name="Content_Standard" EntityType="Self.Content_Standard" Schema="dbo" Table="Content.Standard" store:Type="Tables" />
           <EntitySet Name="Content_Subscription" EntityType="Self.Content_Subscription" Schema="dbo" Table="Content.Subscription" store:Type="Tables" />
@@ -2480,6 +2735,7 @@ warning 6002: The table/view 'IsleContent.dbo.Resource.Standard' does not have a
           <EntitySet Name="Organization_MemberRole" EntityType="Self.Organization_MemberRole" Schema="dbo" Table="Organization.MemberRole" store:Type="Tables" />
           <EntitySet Name="OrganizationRequest" EntityType="Self.OrganizationRequest" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Person_Following" EntityType="Self.Person_Following" Schema="dbo" Table="Person.Following" store:Type="Tables" />
+          <EntitySet Name="SqlQuery" EntityType="Self.SqlQuery" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Codes_AccessRights" EntityType="Self.Codes_AccessRights" store:Type="Views" store:Schema="dbo" store:Name="Codes.AccessRights">
             <DefiningQuery>SELECT 
 [Codes_AccessRights].[Id] AS [Id], 
@@ -2651,6 +2907,27 @@ FROM [dbo].[Content.ChildResourceSummary] AS [Content_ChildResourceSummary]</Def
 [Content_DocumentSummary].[PrivilegeTypeId] AS [PrivilegeTypeId]
 FROM [dbo].[Content.DocumentSummary] AS [Content_DocumentSummary]</DefiningQuery>
           </EntitySet>
+          <EntitySet Name="Content_RelatedStandardsSummary" EntityType="Self.Content_RelatedStandardsSummary" store:Type="Views" store:Schema="dbo" store:Name="Content.RelatedStandardsSummary">
+            <DefiningQuery>SELECT 
+[Content_RelatedStandardsSummary].[ContentStandardId] AS [ContentStandardId], 
+[Content_RelatedStandardsSummary].[ContentId] AS [ContentId], 
+[Content_RelatedStandardsSummary].[TypeId] AS [TypeId], 
+[Content_RelatedStandardsSummary].[ParentId] AS [ParentId], 
+[Content_RelatedStandardsSummary].[StandardId] AS [StandardId], 
+[Content_RelatedStandardsSummary].[StandardUrl] AS [StandardUrl], 
+[Content_RelatedStandardsSummary].[NotationCode] AS [NotationCode], 
+[Content_RelatedStandardsSummary].[Description] AS [Description], 
+[Content_RelatedStandardsSummary].[AlignmentTypeCodeId] AS [AlignmentTypeCodeId], 
+[Content_RelatedStandardsSummary].[AlignmentType] AS [AlignmentType], 
+[Content_RelatedStandardsSummary].[UsageTypeId] AS [UsageTypeId], 
+[Content_RelatedStandardsSummary].[StandardUsage] AS [StandardUsage], 
+[Content_RelatedStandardsSummary].[IsDirectStandard] AS [IsDirectStandard], 
+[Content_RelatedStandardsSummary].[StatusId] AS [StatusId], 
+[Content_RelatedStandardsSummary].[ResourceIntId] AS [ResourceIntId], 
+[Content_RelatedStandardsSummary].[RelatedStandardCreated] AS [RelatedStandardCreated], 
+[Content_RelatedStandardsSummary].[CreatedById] AS [CreatedById]
+FROM [dbo].[Content.RelatedStandardsSummary] AS [Content_RelatedStandardsSummary]</DefiningQuery>
+          </EntitySet>
           <EntitySet Name="Content_TagSummary" EntityType="Self.Content_TagSummary" store:Type="Views" store:Schema="dbo" store:Name="Content.TagSummary">
             <DefiningQuery>SELECT 
 [Content_TagSummary].[ContentTagId] AS [ContentTagId], 
@@ -2761,7 +3038,10 @@ FROM [dbo].[ContentNodeSummary] AS [ContentNodeSummary]</DefiningQuery>
 [ContentStandard_Summary].[AlignmentTypeCodeId] AS [AlignmentTypeCodeId], 
 [ContentStandard_Summary].[AlignmentType] AS [AlignmentType], 
 [ContentStandard_Summary].[UsageTypeId] AS [UsageTypeId], 
-[ContentStandard_Summary].[StandardUsage] AS [StandardUsage]
+[ContentStandard_Summary].[StandardUsage] AS [StandardUsage], 
+[ContentStandard_Summary].[IsDirectStandard] AS [IsDirectStandard], 
+[ContentStandard_Summary].[StatusId] AS [StatusId], 
+[ContentStandard_Summary].[ResourceIntId] AS [ResourceIntId]
 FROM [dbo].[ContentStandard_Summary] AS [ContentStandard_Summary]</DefiningQuery>
           </EntitySet>
           <EntitySet Name="ContentSummaryView" EntityType="Self.ContentSummaryView" store:Type="Views" store:Schema="dbo">
@@ -2821,6 +3101,7 @@ FROM [dbo].[ContentSummaryView] AS [ContentSummaryView]</DefiningQuery>
 [Curriculum_DistinctStandards].[StandardUrl] AS [StandardUrl], 
 [Curriculum_DistinctStandards].[NotationCode] AS [NotationCode], 
 [Curriculum_DistinctStandards].[Description] AS [Description], 
+[Curriculum_DistinctStandards].[IsDirectStandard] AS [IsDirectStandard], 
 [Curriculum_DistinctStandards].[AlignmentType] AS [AlignmentType], 
 [Curriculum_DistinctStandards].[AlignmentTypeCodeId] AS [AlignmentTypeCodeId], 
 [Curriculum_DistinctStandards].[StandardUsage] AS [StandardUsage], 
@@ -3055,6 +3336,74 @@ FROM [dbo].[LR.PatronOrgSummary] AS [LR_PatronOrgSummary]</DefiningQuery>
 [LR_ResourceVersion_Summary].[PublishedById] AS [PublishedById]
 FROM [dbo].[LR.ResourceVersion_Summary] AS [LR_ResourceVersion_Summary]</DefiningQuery>
           </EntitySet>
+          <EntitySet Name="Organization_AdminMembers" EntityType="Self.Organization_AdminMembers" store:Type="Views" store:Schema="dbo" store:Name="Organization.AdminMembers">
+            <DefiningQuery>SELECT 
+[Organization_AdminMembers].[OrgMbrId] AS [OrgMbrId], 
+[Organization_AdminMembers].[OrgId] AS [OrgId], 
+[Organization_AdminMembers].[Organization] AS [Organization], 
+[Organization_AdminMembers].[UserId] AS [UserId], 
+[Organization_AdminMembers].[FirstName] AS [FirstName], 
+[Organization_AdminMembers].[LastName] AS [LastName], 
+[Organization_AdminMembers].[Email] AS [Email], 
+[Organization_AdminMembers].[OrgMemberTypeId] AS [OrgMemberTypeId], 
+[Organization_AdminMembers].[OrgMemberType] AS [OrgMemberType], 
+[Organization_AdminMembers].[Roles] AS [Roles], 
+[Organization_AdminMembers].[MemberAdded] AS [MemberAdded], 
+[Organization_AdminMembers].[BaseOrgId] AS [BaseOrgId], 
+[Organization_AdminMembers].[BaseOrganization] AS [BaseOrganization]
+FROM [dbo].[Organization.AdminMembers] AS [Organization_AdminMembers]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="Organization_MemberCrosstab" EntityType="Self.Organization_MemberCrosstab" store:Type="Views" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+[Organization_MemberCrosstab].[Organization] AS [Organization], 
+[Organization_MemberCrosstab].[OrgId] AS [OrgId], 
+[Organization_MemberCrosstab].[Administrator] AS [Administrator], 
+[Organization_MemberCrosstab].[Employee] AS [Employee], 
+[Organization_MemberCrosstab].[External] AS [External], 
+[Organization_MemberCrosstab].[Student] AS [Student], 
+[Organization_MemberCrosstab].[All] AS [All], 
+[Organization_MemberCrosstab].[Other] AS [Other]
+FROM [dbo].[Organization_MemberCrosstab] AS [Organization_MemberCrosstab]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="Organization_MemberSummary" EntityType="Self.Organization_MemberSummary" store:Type="Views" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+[Organization_MemberSummary].[OrgMbrId] AS [OrgMbrId], 
+[Organization_MemberSummary].[OrgId] AS [OrgId], 
+[Organization_MemberSummary].[Organization] AS [Organization], 
+[Organization_MemberSummary].[IsActive] AS [IsActive], 
+[Organization_MemberSummary].[IsIsleMember] AS [IsIsleMember], 
+[Organization_MemberSummary].[UserId] AS [UserId], 
+[Organization_MemberSummary].[FirstName] AS [FirstName], 
+[Organization_MemberSummary].[LastName] AS [LastName], 
+[Organization_MemberSummary].[FullName] AS [FullName], 
+[Organization_MemberSummary].[SortName] AS [SortName], 
+[Organization_MemberSummary].[Email] AS [Email], 
+[Organization_MemberSummary].[ImageUrl] AS [ImageUrl], 
+[Organization_MemberSummary].[UserProfileUrl] AS [UserProfileUrl], 
+[Organization_MemberSummary].[OrgMemberTypeId] AS [OrgMemberTypeId], 
+[Organization_MemberSummary].[OrgMemberType] AS [OrgMemberType], 
+[Organization_MemberSummary].[BaseOrgId] AS [BaseOrgId], 
+[Organization_MemberSummary].[BaseOrganization] AS [BaseOrganization], 
+[Organization_MemberSummary].[Created] AS [Created], 
+[Organization_MemberSummary].[MemberAdded] AS [MemberAdded], 
+[Organization_MemberSummary].[CreatedById] AS [CreatedById], 
+[Organization_MemberSummary].[LastUpdated] AS [LastUpdated], 
+[Organization_MemberSummary].[LastUpdatedById] AS [LastUpdatedById]
+FROM [dbo].[Organization_MemberSummary] AS [Organization_MemberSummary]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="OrganizationMember_RoleIdCSV" EntityType="Self.OrganizationMember_RoleIdCSV" store:Type="Views" store:Schema="dbo" store:Name="OrganizationMember.RoleIdCSV">
+            <DefiningQuery>SELECT 
+[OrganizationMember_RoleIdCSV].[OrgId] AS [OrgId], 
+[OrganizationMember_RoleIdCSV].[OrgMbrId] AS [OrgMbrId], 
+[OrganizationMember_RoleIdCSV].[UserId] AS [UserId], 
+[OrganizationMember_RoleIdCSV].[Roles] AS [Roles], 
+[OrganizationMember_RoleIdCSV].[IsAdmin] AS [IsAdmin], 
+[OrganizationMember_RoleIdCSV].[IsContentAdmin] AS [IsContentAdmin], 
+[OrganizationMember_RoleIdCSV].[IsLibraryAdmin] AS [IsLibraryAdmin], 
+[OrganizationMember_RoleIdCSV].[IsAccountAdmin] AS [IsAccountAdmin], 
+[OrganizationMember_RoleIdCSV].[IsContentCreator] AS [IsContentCreator]
+FROM [dbo].[OrganizationMember.RoleIdCSV] AS [OrganizationMember_RoleIdCSV]</DefiningQuery>
+          </EntitySet>
           <EntitySet Name="Resource_Standard" EntityType="Self.Resource_Standard" store:Type="Views" store:Schema="dbo" store:Name="Resource.Standard">
             <DefiningQuery>SELECT 
 [Resource_Standard].[ResourceStandardId] AS [ResourceStandardId], 
@@ -3071,6 +3420,7 @@ FROM [dbo].[LR.ResourceVersion_Summary] AS [LR_ResourceVersion_Summary]</Definin
 [Resource_Standard].[AlignmentType] AS [AlignmentType], 
 [Resource_Standard].[AlignmentDegreeId] AS [AlignmentDegreeId], 
 [Resource_Standard].[AlignmentDegree] AS [AlignmentDegree], 
+[Resource_Standard].[IsDirectStandard] AS [IsDirectStandard], 
 [Resource_Standard].[Created] AS [Created], 
 [Resource_Standard].[CreatedById] AS [CreatedById]
 FROM [dbo].[Resource.Standard] AS [Resource_Standard]</DefiningQuery>
@@ -3166,6 +3516,14 @@ FROM [dbo].[Resource.Standard] AS [Resource_Standard]</DefiningQuery>
           <AssociationSet Name="FK_Content_Reference_Content" Association="Self.FK_Content_Reference_Content">
             <End Role="Content" EntitySet="Content" />
             <End Role="Content_Reference" EntitySet="Content_Reference" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Content_RelatedStandard_Content" Association="Self.FK_Content_RelatedStandard_Content">
+            <End Role="Content" EntitySet="Content" />
+            <End Role="Content_RelatedStandard" EntitySet="Content_RelatedStandard" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Content_RelatedStandard_Content_Standard" Association="Self.FK_Content_RelatedStandard_Content_Standard">
+            <End Role="Content_Standard" EntitySet="Content_Standard" />
+            <End Role="Content_RelatedStandard" EntitySet="Content_RelatedStandard" />
           </AssociationSet>
           <AssociationSet Name="FK_Content_Resource_Content" Association="Self.FK_Content_Resource_Content">
             <End Role="Content" EntitySet="Content" />
@@ -3664,6 +4022,27 @@ FROM [dbo].[Resource.Standard] AS [Resource_Standard]</DefiningQuery>
             <End Role="Codes_ObjectMemberType" EntitySet="Codes_ObjectMemberType" />
             <End Role="Object_Member" EntitySet="Object_Member" />
           </AssociationSet>
+          <EntitySet Name="Codes_AuthorizationLevel" EntityType="IsleContentModel.Codes_AuthorizationLevel" />
+          <EntitySet Name="Codes_ExternalSite" EntityType="IsleContentModel.Codes_ExternalSite" />
+          <EntitySet Name="Codes_PrivilegeDepth" EntityType="IsleContentModel.Codes_PrivilegeDepth" />
+          <EntitySet Name="Codes_PrivilegeType" EntityType="IsleContentModel.Codes_PrivilegeType" />
+          <EntitySet Name="Codes_State" EntityType="IsleContentModel.Codes_State" />
+          <EntitySet Name="Organization_MemberSummary" EntityType="IsleContentModel.Organization_MemberSummary" />
+          <EntitySet Name="AppVisitLogs" EntityType="IsleContentModel.AppVisitLog" />
+          <EntitySet Name="SqlQueries" EntityType="IsleContentModel.SqlQuery" />
+          <EntitySet Name="Organization_AdminMembers" EntityType="IsleContentModel.Organization_AdminMembers" />
+          <EntitySet Name="Organization_MemberCrosstab" EntityType="IsleContentModel.Organization_MemberCrosstab" />
+          <EntitySet Name="OrganizationMember_RoleIdCSV" EntityType="IsleContentModel.OrganizationMember_RoleIdCSV" />
+          <EntitySet Name="Content_RelatedStandard" EntityType="IsleContentModel.Content_RelatedStandard" />
+          <AssociationSet Name="FK_Content_RelatedStandard_Content" Association="IsleContentModel.FK_Content_RelatedStandard_Content">
+            <End Role="Content" EntitySet="Contents" />
+            <End Role="Content_RelatedStandard" EntitySet="Content_RelatedStandard" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Content_RelatedStandard_Content_Standard" Association="IsleContentModel.FK_Content_RelatedStandard_Content_Standard">
+            <End Role="Content_Standard" EntitySet="Content_Standard" />
+            <End Role="Content_RelatedStandard" EntitySet="Content_RelatedStandard" />
+          </AssociationSet>
+          <EntitySet Name="Content_RelatedStandardsSummary" EntityType="IsleContentModel.Content_RelatedStandardsSummary" />
           </EntityContainer>
         <EntityType Name="Codes_ContentPrivilege">
           <Key>
@@ -3747,6 +4126,7 @@ FROM [dbo].[Resource.Standard] AS [Resource_Standard]</DefiningQuery>
           <NavigationProperty Name="Content_Tag" Relationship="IsleContentModel.FK_Content_Tag_Content" FromRole="Content" ToRole="Content_Tag" />
           <Property Type="String" Name="ImageUrl" MaxLength="200" FixedLength="false" Unicode="false" />
           <NavigationProperty Name="Document_Version" Relationship="IsleContentModel.FK_Content_Document_Version" FromRole="Content" ToRole="Document_Version" />
+          <NavigationProperty Name="Content_RelatedStandard" Relationship="IsleContentModel.FK_Content_RelatedStandard_Content" FromRole="Content" ToRole="Content_RelatedStandard" />
           </EntityType>
         <EntityType Name="Content_History">
           <Key>
@@ -4271,7 +4651,7 @@ FROM [dbo].[Resource.Standard] AS [Resource_Standard]</DefiningQuery>
           <Property Type="String" Name="ConditionsOfUseUrl" Nullable="false" MaxLength="200" FixedLength="false" Unicode="false" />
           <Property Type="String" Name="ConditionsOfUseIconUrl" Nullable="false" MaxLength="200" FixedLength="false" Unicode="false" />
           <Property Type="String" Name="Timeframe" MaxLength="100" FixedLength="false" Unicode="false" />
-          <Property Type="String" Name="ImageUrl" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="ImageUrl" MaxLength="8000" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="Library_SectionResourceSummary">
           <Key>
@@ -4996,6 +5376,7 @@ FROM [dbo].[Resource.Standard] AS [Resource_Standard]</DefiningQuery>
           <Property Type="String" Name="AlignmentDegree" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Type="DateTime" Name="Created" Precision="3" />
           <Property Type="Int32" Name="CreatedById" Nullable="false" />
+          <Property Name="IsDirectStandard" Type="Boolean" />
         </EntityType>
         <EntityType Name="ContentConnector_ChildSummary">
           <Key>
@@ -5328,6 +5709,8 @@ FROM [dbo].[Resource.Standard] AS [Resource_Standard]</DefiningQuery>
           <NavigationProperty Name="Content" Relationship="IsleContentModel.FK_Content_Standard_Content" FromRole="Content_Standard" ToRole="Content" />
           <Property Type="DateTime" Name="LastUpdated" Precision="3" />
           <Property Type="Int32" Name="LastUpdatedById" />
+          <Property Name="IsDirectStandard" Type="Boolean" />
+          <NavigationProperty Name="Content_RelatedStandard" Relationship="IsleContentModel.FK_Content_RelatedStandard_Content_Standard" FromRole="Content_Standard" ToRole="Content_RelatedStandard" />
         </EntityType>
         <EntityType Name="Content_Subscription">
           <Key>
@@ -5461,6 +5844,9 @@ FROM [dbo].[Resource.Standard] AS [Resource_Standard]</DefiningQuery>
           <Property Type="String" Name="StandardUsage" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Type="Int32" Name="TypeId" />
           <Property Type="Int32" Name="ParentId" />
+          <Property Name="IsDirectStandard" Type="Boolean" />
+          <Property Name="StatusId" Type="Int32" />
+          <Property Name="ResourceIntId" Type="Int32" />
         </EntityType>
         <EntityType Name="Codes_TagCategoryValue_Summary">
           <Key>
@@ -5629,6 +6015,7 @@ FROM [dbo].[Resource.Standard] AS [Resource_Standard]</DefiningQuery>
           <Property Type="Int32" Name="UsageTypeId" Nullable="false" />
           <Property Type="Int32" Name="ParentId" />
           <Property Type="Int32" Name="AlignmentTypeCodeId" Nullable="false" />
+          <Property Name="IsDirectStandard" Type="Boolean" />
         </EntityType>
         <EntityType Name="Community_MemberSummary">
           <Key>
@@ -5747,6 +6134,7 @@ FROM [dbo].[Resource.Standard] AS [Resource_Standard]</DefiningQuery>
           <NavigationProperty Name="AppGroups" Relationship="IsleContentModel.FK_AppGroup_Organization" FromRole="Organization" ToRole="AppGroup" />
           <NavigationProperty Name="AppGroup_Member" Relationship="IsleContentModel.FK_AppGroup_Member_Organization" FromRole="Organization" ToRole="AppGroup_Member" />
           <NavigationProperty Name="AppGroup_OrgMember" Relationship="IsleContentModel.FK_AppGroup_OrgMember_Organization" FromRole="Organization" ToRole="AppGroup_OrgMember" />
+          <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="Organization_Member">
           <Key>
@@ -6161,6 +6549,239 @@ FROM [dbo].[Resource.Standard] AS [Resource_Standard]</DefiningQuery>
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityType Name="Codes_AuthorizationLevel">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" />
+          <Property Name="Title" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Description" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Name="Created" Type="DateTime" Precision="3" />
+        </EntityType>
+        <EntityType Name="Codes_ExternalSite">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" />
+          <Property Name="Title" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="Url" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="Codes_PrivilegeDepth">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" />
+          <Property Name="Title" Type="String" Nullable="false" MaxLength="75" FixedLength="false" Unicode="false" />
+          <Property Name="Created" Type="DateTime" Precision="3" />
+        </EntityType>
+        <EntityType Name="Codes_PrivilegeType">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" />
+          <Property Name="Title" Type="String" Nullable="false" MaxLength="75" FixedLength="false" Unicode="false" />
+          <Property Name="Created" Type="DateTime" Precision="3" />
+        </EntityType>
+        <EntityType Name="Codes_State">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" />
+          <Property Name="StateCode" Type="String" MaxLength="2" FixedLength="false" Unicode="false" />
+          <Property Name="State" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="Organization_MemberSummary">
+          <Key>
+            <PropertyRef Name="OrgMbrId" />
+            <PropertyRef Name="OrgId" />
+            <PropertyRef Name="Organization" />
+            <PropertyRef Name="UserId" />
+            <PropertyRef Name="Created" />
+            <PropertyRef Name="MemberAdded" />
+          </Key>
+          <Property Name="OrgMbrId" Type="Int32" Nullable="false" />
+          <Property Name="OrgId" Type="Int32" Nullable="false" />
+          <Property Name="Organization" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="IsActive" Type="Boolean" />
+          <Property Name="IsIsleMember" Type="Boolean" />
+          <Property Name="UserId" Type="Int32" Nullable="false" />
+          <Property Name="FirstName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="LastName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="FullName" Type="String" MaxLength="101" FixedLength="false" Unicode="false" />
+          <Property Name="SortName" Type="String" MaxLength="102" FixedLength="false" Unicode="false" />
+          <Property Name="Email" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="ImageUrl" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Name="UserProfileUrl" Type="String" MaxLength="8000" FixedLength="false" Unicode="false" />
+          <Property Name="OrgMemberTypeId" Type="Int32" />
+          <Property Name="OrgMemberType" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="BaseOrgId" Type="Int32" />
+          <Property Name="BaseOrganization" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="Created" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="MemberAdded" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="CreatedById" Type="Int32" />
+          <Property Name="LastUpdated" Type="DateTime" Precision="3" />
+          <Property Name="LastUpdatedById" Type="Int32" />
+        </EntityType>
+        <EntityType Name="AppVisitLog">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="SessionId" Type="String" Nullable="false" MaxLength="30" FixedLength="false" Unicode="false" />
+          <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="Application" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="URL" Type="String" Nullable="false" MaxLength="300" FixedLength="false" Unicode="false" />
+          <Property Name="Parameters" Type="String" MaxLength="300" FixedLength="false" Unicode="false" />
+          <Property Name="IsPostback" Type="Boolean" />
+          <Property Name="Userid" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Comment" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Name="RemoteIP" Type="String" MaxLength="25" FixedLength="false" Unicode="false" />
+          <Property Name="ServerName" Type="String" MaxLength="25" FixedLength="false" Unicode="false" />
+          <Property Name="CurrentZip" Type="String" MaxLength="12" FixedLength="false" Unicode="false" />
+          <Property Name="Referrer" Type="String" MaxLength="1000" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="SqlQuery">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Title" Type="String" Nullable="false" MaxLength="125" FixedLength="false" Unicode="false" />
+          <Property Name="Description" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Name="QueryCode" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Category" Type="String" MaxLength="25" FixedLength="false" Unicode="false" />
+          <Property Name="SQL" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="OwnerId" Type="Int32" />
+          <Property Name="IsPublic" Type="Boolean" />
+          <Property Name="Created" Type="DateTime" Precision="3" />
+          <Property Name="CreatedBy" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="LastUpdated" Type="DateTime" Precision="3" />
+          <Property Name="LastUpdatedBy" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="Organization_AdminMembers">
+          <Key>
+            <PropertyRef Name="OrgMbrId" />
+            <PropertyRef Name="OrgId" />
+            <PropertyRef Name="Organization" />
+            <PropertyRef Name="UserId" />
+            <PropertyRef Name="MemberAdded" />
+          </Key>
+          <Property Name="OrgMbrId" Type="Int32" Nullable="false" />
+          <Property Name="OrgId" Type="Int32" Nullable="false" />
+          <Property Name="Organization" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="UserId" Type="Int32" Nullable="false" />
+          <Property Name="FirstName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="LastName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Email" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="OrgMemberTypeId" Type="Int32" />
+          <Property Name="OrgMemberType" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Roles" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="MemberAdded" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="BaseOrgId" Type="Int32" />
+          <Property Name="BaseOrganization" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="Organization_MemberCrosstab">
+          <Key>
+            <PropertyRef Name="Organization" />
+            <PropertyRef Name="OrgId" />
+          </Key>
+          <Property Name="Organization" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="OrgId" Type="Int32" Nullable="false" />
+          <Property Name="Administrator" Type="Int32" />
+          <Property Name="Employee" Type="Int32" />
+          <Property Name="External" Type="Int32" />
+          <Property Name="Student" Type="Int32" />
+          <Property Name="All" Type="Int32" />
+          <Property Name="Other" Type="Int32" />
+        </EntityType>
+        <EntityType Name="OrganizationMember_RoleIdCSV">
+          <Key>
+            <PropertyRef Name="OrgId" />
+            <PropertyRef Name="OrgMbrId" />
+            <PropertyRef Name="UserId" />
+            <PropertyRef Name="IsAdmin" />
+            <PropertyRef Name="IsContentAdmin" />
+            <PropertyRef Name="IsLibraryAdmin" />
+            <PropertyRef Name="IsAccountAdmin" />
+            <PropertyRef Name="IsContentCreator" />
+          </Key>
+          <Property Name="OrgId" Type="Int32" Nullable="false" />
+          <Property Name="OrgMbrId" Type="Int32" Nullable="false" />
+          <Property Name="UserId" Type="Int32" Nullable="false" />
+          <Property Name="Roles" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="IsAdmin" Type="Int32" Nullable="false" />
+          <Property Name="IsContentAdmin" Type="Int32" Nullable="false" />
+          <Property Name="IsLibraryAdmin" Type="Int32" Nullable="false" />
+          <Property Name="IsAccountAdmin" Type="Int32" Nullable="false" />
+          <Property Name="IsContentCreator" Type="Int32" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Content_RelatedStandard">
+          <Key>
+            <PropertyRef Name="ContentId" />
+            <PropertyRef Name="ContentStandardId" />
+          </Key>
+          <Property Name="ContentId" Type="Int32" Nullable="false" />
+          <Property Name="ContentStandardId" Type="Int32" Nullable="false" />
+          <Property Name="Created" Type="DateTime" Nullable="false" Precision="3" />
+          <NavigationProperty Name="Content" Relationship="IsleContentModel.FK_Content_RelatedStandard_Content" FromRole="Content_RelatedStandard" ToRole="Content" />
+          <NavigationProperty Name="Content_Standard" Relationship="IsleContentModel.FK_Content_RelatedStandard_Content_Standard" FromRole="Content_RelatedStandard" ToRole="Content_Standard" />
+        </EntityType>
+        <Association Name="FK_Content_RelatedStandard_Content">
+          <End Type="IsleContentModel.Content" Role="Content" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="IsleContentModel.Content_RelatedStandard" Role="Content_RelatedStandard" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Content">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Content_RelatedStandard">
+              <PropertyRef Name="ContentId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Content_RelatedStandard_Content_Standard">
+          <End Type="IsleContentModel.Content_Standard" Role="Content_Standard" Multiplicity="1" />
+          <End Type="IsleContentModel.Content_RelatedStandard" Role="Content_RelatedStandard" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Content_Standard">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Content_RelatedStandard">
+              <PropertyRef Name="ContentStandardId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="Content_RelatedStandardsSummary">
+          <Key>
+            <PropertyRef Name="ContentStandardId" />
+            <PropertyRef Name="ContentId" />
+            <PropertyRef Name="StandardId" />
+            <PropertyRef Name="AlignmentTypeCodeId" />
+            <PropertyRef Name="AlignmentType" />
+            <PropertyRef Name="UsageTypeId" />
+            <PropertyRef Name="StandardUsage" />
+            <PropertyRef Name="IsDirectStandard" />
+            <PropertyRef Name="RelatedStandardCreated" />
+            <PropertyRef Name="CreatedById" />
+          </Key>
+          <Property Name="ContentStandardId" Type="Int32" Nullable="false" />
+          <Property Name="ContentId" Type="Int32" Nullable="false" />
+          <Property Name="TypeId" Type="Int32" />
+          <Property Name="ParentId" Type="Int32" />
+          <Property Name="StandardId" Type="Int32" Nullable="false" />
+          <Property Name="StandardUrl" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Name="NotationCode" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="AlignmentTypeCodeId" Type="Int32" Nullable="false" />
+          <Property Name="AlignmentType" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="UsageTypeId" Type="Int32" Nullable="false" />
+          <Property Name="StandardUsage" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="IsDirectStandard" Type="Int32" Nullable="false" />
+          <Property Name="StatusId" Type="Int32" />
+          <Property Name="ResourceIntId" Type="Int32" />
+          <Property Name="RelatedStandardCreated" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="CreatedById" Type="Int32" Nullable="false" />
+        </EntityType>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -6939,6 +7560,7 @@ FROM [dbo].[Resource.Standard] AS [Resource_Standard]</DefiningQuery>
           <EntitySetMapping Name="Resource_Standard">
             <EntityTypeMapping TypeName="IsleContentModel.Resource_Standard">
               <MappingFragment StoreEntitySet="Resource_Standard">
+                <ScalarProperty Name="IsDirectStandard" ColumnName="IsDirectStandard" />
                 <ScalarProperty Name="CreatedById" ColumnName="CreatedById" />
                 <ScalarProperty Name="Created" ColumnName="Created" />
                 <ScalarProperty Name="AlignmentDegree" ColumnName="AlignmentDegree" />
@@ -7194,6 +7816,7 @@ FROM [dbo].[Resource.Standard] AS [Resource_Standard]</DefiningQuery>
           <EntitySetMapping Name="Content_Standard">
             <EntityTypeMapping TypeName="IsleContentModel.Content_Standard">
               <MappingFragment StoreEntitySet="Content_Standard">
+                <ScalarProperty Name="IsDirectStandard" ColumnName="IsDirectStandard" />
                 <ScalarProperty Name="LastUpdatedById" ColumnName="LastUpdatedById" />
                 <ScalarProperty Name="LastUpdated" ColumnName="LastUpdated" />
                 <ScalarProperty Name="CreatedById" ColumnName="CreatedById" />
@@ -7232,6 +7855,9 @@ FROM [dbo].[Resource.Standard] AS [Resource_Standard]</DefiningQuery>
           <EntitySetMapping Name="ContentStandard_Summary">
             <EntityTypeMapping TypeName="IsleContentModel.ContentStandard_Summary">
               <MappingFragment StoreEntitySet="ContentStandard_Summary">
+                <ScalarProperty Name="ResourceIntId" ColumnName="ResourceIntId" />
+                <ScalarProperty Name="StatusId" ColumnName="StatusId" />
+                <ScalarProperty Name="IsDirectStandard" ColumnName="IsDirectStandard" />
                 <ScalarProperty Name="ParentId" ColumnName="ParentId" />
                 <ScalarProperty Name="TypeId" ColumnName="TypeId" />
                 <ScalarProperty Name="StandardUsage" ColumnName="StandardUsage" />
@@ -7359,6 +7985,7 @@ FROM [dbo].[Resource.Standard] AS [Resource_Standard]</DefiningQuery>
           <EntitySetMapping Name="Curriculum_DistinctStandards">
             <EntityTypeMapping TypeName="IsleContentModel.Curriculum_DistinctStandards">
               <MappingFragment StoreEntitySet="Curriculum_DistinctStandards">
+                <ScalarProperty Name="IsDirectStandard" ColumnName="IsDirectStandard" />
                 <ScalarProperty Name="AlignmentTypeCodeId" ColumnName="AlignmentTypeCodeId" />
                 <ScalarProperty Name="ParentId" ColumnName="ParentId" />
                 <ScalarProperty Name="UsageTypeId" ColumnName="UsageTypeId" />
@@ -7438,6 +8065,7 @@ FROM [dbo].[Resource.Standard] AS [Resource_Standard]</DefiningQuery>
           <EntitySetMapping Name="Organizations">
             <EntityTypeMapping TypeName="IsleContentModel.Organization">
               <MappingFragment StoreEntitySet="Organization">
+                <ScalarProperty Name="Description" ColumnName="Description" />
                 <ScalarProperty Name="EmailDomain" ColumnName="EmailDomain" />
                 <ScalarProperty Name="IsIsleMember" ColumnName="IsIsleMember" />
                 <ScalarProperty Name="RowId" ColumnName="RowId" />
@@ -7682,6 +8310,197 @@ FROM [dbo].[Resource.Standard] AS [Resource_Standard]</DefiningQuery>
                 <ScalarProperty Name="ParentRowId" ColumnName="ParentRowId" />
                 <ScalarProperty Name="RowId" ColumnName="RowId" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Codes_AuthorizationLevel">
+            <EntityTypeMapping TypeName="IsleContentModel.Codes_AuthorizationLevel">
+              <MappingFragment StoreEntitySet="Codes_AuthorizationLevel">
+                <ScalarProperty Name="Created" ColumnName="Created" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="Title" ColumnName="Title" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Codes_ExternalSite">
+            <EntityTypeMapping TypeName="IsleContentModel.Codes_ExternalSite">
+              <MappingFragment StoreEntitySet="Codes_ExternalSite">
+                <ScalarProperty Name="Url" ColumnName="Url" />
+                <ScalarProperty Name="Title" ColumnName="Title" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Codes_PrivilegeDepth">
+            <EntityTypeMapping TypeName="IsleContentModel.Codes_PrivilegeDepth">
+              <MappingFragment StoreEntitySet="Codes_PrivilegeDepth">
+                <ScalarProperty Name="Created" ColumnName="Created" />
+                <ScalarProperty Name="Title" ColumnName="Title" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Codes_PrivilegeType">
+            <EntityTypeMapping TypeName="IsleContentModel.Codes_PrivilegeType">
+              <MappingFragment StoreEntitySet="Codes_PrivilegeType">
+                <ScalarProperty Name="Created" ColumnName="Created" />
+                <ScalarProperty Name="Title" ColumnName="Title" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Codes_State">
+            <EntityTypeMapping TypeName="IsleContentModel.Codes_State">
+              <MappingFragment StoreEntitySet="Codes_State">
+                <ScalarProperty Name="State" ColumnName="State" />
+                <ScalarProperty Name="StateCode" ColumnName="StateCode" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Organization_MemberSummary">
+            <EntityTypeMapping TypeName="IsleContentModel.Organization_MemberSummary">
+              <MappingFragment StoreEntitySet="Organization_MemberSummary">
+                <ScalarProperty Name="LastUpdatedById" ColumnName="LastUpdatedById" />
+                <ScalarProperty Name="LastUpdated" ColumnName="LastUpdated" />
+                <ScalarProperty Name="CreatedById" ColumnName="CreatedById" />
+                <ScalarProperty Name="MemberAdded" ColumnName="MemberAdded" />
+                <ScalarProperty Name="Created" ColumnName="Created" />
+                <ScalarProperty Name="BaseOrganization" ColumnName="BaseOrganization" />
+                <ScalarProperty Name="BaseOrgId" ColumnName="BaseOrgId" />
+                <ScalarProperty Name="OrgMemberType" ColumnName="OrgMemberType" />
+                <ScalarProperty Name="OrgMemberTypeId" ColumnName="OrgMemberTypeId" />
+                <ScalarProperty Name="UserProfileUrl" ColumnName="UserProfileUrl" />
+                <ScalarProperty Name="ImageUrl" ColumnName="ImageUrl" />
+                <ScalarProperty Name="Email" ColumnName="Email" />
+                <ScalarProperty Name="SortName" ColumnName="SortName" />
+                <ScalarProperty Name="FullName" ColumnName="FullName" />
+                <ScalarProperty Name="LastName" ColumnName="LastName" />
+                <ScalarProperty Name="FirstName" ColumnName="FirstName" />
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
+                <ScalarProperty Name="IsIsleMember" ColumnName="IsIsleMember" />
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="Organization" ColumnName="Organization" />
+                <ScalarProperty Name="OrgId" ColumnName="OrgId" />
+                <ScalarProperty Name="OrgMbrId" ColumnName="OrgMbrId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AppVisitLogs">
+            <EntityTypeMapping TypeName="IsleContentModel.AppVisitLog">
+              <MappingFragment StoreEntitySet="AppVisitLog">
+                <ScalarProperty Name="Referrer" ColumnName="Referrer" />
+                <ScalarProperty Name="CurrentZip" ColumnName="CurrentZip" />
+                <ScalarProperty Name="ServerName" ColumnName="ServerName" />
+                <ScalarProperty Name="RemoteIP" ColumnName="RemoteIP" />
+                <ScalarProperty Name="Comment" ColumnName="Comment" />
+                <ScalarProperty Name="Userid" ColumnName="Userid" />
+                <ScalarProperty Name="IsPostback" ColumnName="IsPostback" />
+                <ScalarProperty Name="Parameters" ColumnName="Parameters" />
+                <ScalarProperty Name="URL" ColumnName="URL" />
+                <ScalarProperty Name="Application" ColumnName="Application" />
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+                <ScalarProperty Name="SessionId" ColumnName="SessionId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SqlQueries">
+            <EntityTypeMapping TypeName="IsleContentModel.SqlQuery">
+              <MappingFragment StoreEntitySet="SqlQuery">
+                <ScalarProperty Name="LastUpdatedBy" ColumnName="LastUpdatedBy" />
+                <ScalarProperty Name="LastUpdated" ColumnName="LastUpdated" />
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+                <ScalarProperty Name="Created" ColumnName="Created" />
+                <ScalarProperty Name="IsPublic" ColumnName="IsPublic" />
+                <ScalarProperty Name="OwnerId" ColumnName="OwnerId" />
+                <ScalarProperty Name="SQL" ColumnName="SQL" />
+                <ScalarProperty Name="Category" ColumnName="Category" />
+                <ScalarProperty Name="QueryCode" ColumnName="QueryCode" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="Title" ColumnName="Title" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Organization_AdminMembers">
+            <EntityTypeMapping TypeName="IsleContentModel.Organization_AdminMembers">
+              <MappingFragment StoreEntitySet="Organization_AdminMembers">
+                <ScalarProperty Name="BaseOrganization" ColumnName="BaseOrganization" />
+                <ScalarProperty Name="BaseOrgId" ColumnName="BaseOrgId" />
+                <ScalarProperty Name="MemberAdded" ColumnName="MemberAdded" />
+                <ScalarProperty Name="Roles" ColumnName="Roles" />
+                <ScalarProperty Name="OrgMemberType" ColumnName="OrgMemberType" />
+                <ScalarProperty Name="OrgMemberTypeId" ColumnName="OrgMemberTypeId" />
+                <ScalarProperty Name="Email" ColumnName="Email" />
+                <ScalarProperty Name="LastName" ColumnName="LastName" />
+                <ScalarProperty Name="FirstName" ColumnName="FirstName" />
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
+                <ScalarProperty Name="Organization" ColumnName="Organization" />
+                <ScalarProperty Name="OrgId" ColumnName="OrgId" />
+                <ScalarProperty Name="OrgMbrId" ColumnName="OrgMbrId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Organization_MemberCrosstab">
+            <EntityTypeMapping TypeName="IsleContentModel.Organization_MemberCrosstab">
+              <MappingFragment StoreEntitySet="Organization_MemberCrosstab">
+                <ScalarProperty Name="Other" ColumnName="Other" />
+                <ScalarProperty Name="All" ColumnName="All" />
+                <ScalarProperty Name="Student" ColumnName="Student" />
+                <ScalarProperty Name="External" ColumnName="External" />
+                <ScalarProperty Name="Employee" ColumnName="Employee" />
+                <ScalarProperty Name="Administrator" ColumnName="Administrator" />
+                <ScalarProperty Name="OrgId" ColumnName="OrgId" />
+                <ScalarProperty Name="Organization" ColumnName="Organization" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="OrganizationMember_RoleIdCSV">
+            <EntityTypeMapping TypeName="IsleContentModel.OrganizationMember_RoleIdCSV">
+              <MappingFragment StoreEntitySet="OrganizationMember_RoleIdCSV">
+                <ScalarProperty Name="IsContentCreator" ColumnName="IsContentCreator" />
+                <ScalarProperty Name="IsAccountAdmin" ColumnName="IsAccountAdmin" />
+                <ScalarProperty Name="IsLibraryAdmin" ColumnName="IsLibraryAdmin" />
+                <ScalarProperty Name="IsContentAdmin" ColumnName="IsContentAdmin" />
+                <ScalarProperty Name="IsAdmin" ColumnName="IsAdmin" />
+                <ScalarProperty Name="Roles" ColumnName="Roles" />
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
+                <ScalarProperty Name="OrgMbrId" ColumnName="OrgMbrId" />
+                <ScalarProperty Name="OrgId" ColumnName="OrgId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Content_RelatedStandard">
+            <EntityTypeMapping TypeName="IsleContentModel.Content_RelatedStandard">
+              <MappingFragment StoreEntitySet="Content_RelatedStandard">
+                <ScalarProperty Name="Created" ColumnName="Created" />
+                <ScalarProperty Name="ContentStandardId" ColumnName="ContentStandardId" />
+                <ScalarProperty Name="ContentId" ColumnName="ContentId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Content_RelatedStandardsSummary">
+            <EntityTypeMapping TypeName="IsleContentModel.Content_RelatedStandardsSummary">
+              <MappingFragment StoreEntitySet="Content_RelatedStandardsSummary">
+                <ScalarProperty Name="CreatedById" ColumnName="CreatedById" />
+                <ScalarProperty Name="RelatedStandardCreated" ColumnName="RelatedStandardCreated" />
+                <ScalarProperty Name="ResourceIntId" ColumnName="ResourceIntId" />
+                <ScalarProperty Name="StatusId" ColumnName="StatusId" />
+                <ScalarProperty Name="IsDirectStandard" ColumnName="IsDirectStandard" />
+                <ScalarProperty Name="StandardUsage" ColumnName="StandardUsage" />
+                <ScalarProperty Name="UsageTypeId" ColumnName="UsageTypeId" />
+                <ScalarProperty Name="AlignmentType" ColumnName="AlignmentType" />
+                <ScalarProperty Name="AlignmentTypeCodeId" ColumnName="AlignmentTypeCodeId" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="NotationCode" ColumnName="NotationCode" />
+                <ScalarProperty Name="StandardUrl" ColumnName="StandardUrl" />
+                <ScalarProperty Name="StandardId" ColumnName="StandardId" />
+                <ScalarProperty Name="ParentId" ColumnName="ParentId" />
+                <ScalarProperty Name="TypeId" ColumnName="TypeId" />
+                <ScalarProperty Name="ContentId" ColumnName="ContentId" />
+                <ScalarProperty Name="ContentStandardId" ColumnName="ContentStandardId" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

@@ -1,14 +1,15 @@
 ﻿<%@ Page Title="Illinois Open Educational Resources - Search Widget" Language="C#" AutoEventWireup="true" CodeBehind="Default.aspx.cs" Inherits="IOER.Widgets.FullSearch.Default" MasterPageFile="/Masters/Plain.Master" %>
-<%@ Register TagPrefix="uc1" TagName="Search" Src="/Controls/SearchV6/SearchV6.ascx" %>
+<%@ Register TagPrefix="uc1" TagName="Search" Src="/Controls/SearchV7/SearchV7.ascx" %>
 
 <asp:Content ContentPlaceHolderID="HeadContent" runat="server"></asp:Content>
 <asp:Content ContentPlaceHolderID="BodyContent" runat="server">
-  <% if(Request.Params["scrollbars"] == "false") { %>
   <style type="text/css">
+  <% if(Request.Params["scrollbars"] == "false") { %>
     body { overflow: hidden; }
-  </style>
   <% } %>
-  <uc1:Search ID="search" runat="server" ThemeName="ioer" />
+		#content { padding: 0; }
+  </style>
+  <uc1:Search ID="search" runat="server" />
   <script type="text/javascript">
     //Preselect tags passed in via parent URL
     $(document).ready(function () {
@@ -26,4 +27,5 @@
     //Request tags
     window.parent.postMessage(JSON.stringify({ action: "getQueryString" }), "*");
   </script>
+	<asp:Literal ID="defaultTheme" runat="server" Visible="false">ioer_library</asp:Literal>
 </asp:Content>

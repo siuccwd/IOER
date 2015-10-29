@@ -293,7 +293,7 @@
 		<% var isUserAdmin = IsUserAuthenticated() ? new int[] { 2, 22, 29, 303 }.Contains( WebUser.Id ) : false; //total hack - we need a global admin role + detection of some sort  %>
     <% if(currentNode.ChildItems.Count() > 0) { %>
       <div id="filesBox" class="<%=(currentNode.ChildItems.Count() >= 3 ? "centered" : "") %> <%=( hasFeaturedItem ? "scrolling" : "grid" ) %>">
-        <h3>Files <% if( currentNode.ChildItems.Where(m => m.CanViewDocument).Count() > 0 ) { %> <a href="/Repository/DownloadFiles.aspx?all=false&nid=<%=currentNode.Id %>" class="downloadFilesLink"><img alt="" src="/images/icons/download-orange.png" /> Download These Files</a><% } %></h3>
+        <h3>Files <% if( currentNode.ChildItems.Where(m => m.CanViewDocument).Count() > 0 && currentNode.ChildItems.Where( m => m.TypeId != 41 ).Count() > 0 ) { %> <a href="/Repository/DownloadFiles.aspx?all=false&nid=<%=currentNode.Id %>" class="downloadFilesLink"><img alt="" src="/images/icons/download-orange.png" /> Download These Files</a><% } %></h3>
         <% if( currentNode.ChildItems.Where( m => m.CanViewDocument == false ).Count() > 0 ) { %>
           <p class="grayMessage">Private documents below can only be accessed by authorized users. <a href="//ioer.ilsharedlearning.org/Account/Login.aspx?<%=( isWidget ? "hidechrome=1&" : "" ) %>nextUrl=<%=Request.Url.PathAndQuery %>">Login</a></p>
         <% } %>

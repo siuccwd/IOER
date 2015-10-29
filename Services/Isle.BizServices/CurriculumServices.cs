@@ -8,6 +8,7 @@ using System.Text;
 using Isle.DTO;
 
 using ILPathways.Business;
+using IB = ILPathways.Business;
 using ILPathways.Utilities;
 using ILPathways.Common;
 using MyManager = ILPathways.DAL.ContentManager;
@@ -16,6 +17,9 @@ using DBM = ILPathways.DAL.DatabaseManager;
 
 using EFDAL = IoerContentBusinessEntities;
 using EFManager = IoerContentBusinessEntities.EFContentManager;
+using CSMgr = IoerContentBusinessEntities.ContentStandardManager;
+using EFBus = IoerContentBusinessEntities;
+
 using AcctManager = Isle.BizServices.AccountServices;
 using GroupManager = Isle.BizServices.GroupServices;
 using dto = Isle.DTO;
@@ -28,7 +32,7 @@ namespace Isle.BizServices
 {
     public class CurriculumServices : ContentServices
     {
-
+		CSMgr csMgr = new CSMgr();
         static string thisClassName = "CurriculumServices";
         #region == methods for groups of curriculum ==
 
@@ -608,27 +612,46 @@ namespace Isle.BizServices
 
 
         #region  === Content.Standard
-        public static int ContentStandard_Add( List<ContentStandard> standards )
+		public int ContentStandard_Add( int nodeID, int userId, List<ContentStandard> standards )
         {
+			CSMgr csMgr = new CSMgr();
             int cntr = 0;
             int added = 0;
             foreach ( ContentStandard standard in standards )
             {
                 cntr++;
-                if ( EFManager.ContentStandard_Add( standard ) > 0 )
-                    added++;
+				int newId = csMgr.ContentStandard_Add( standard );
+				if ( newId > 0 )
+				{
+					added++;
+					//add related standard
+					//may need at a higher level so that can reference elastic update code
+					ContentRelatedStandard_Add( standard.ContentId, newId );
+				}
             }
             //some check to ensure all were added.
+
+			//sync if published
+			new ResourceV2Services().CheckForDelayedPublishing( nodeID, userId );
+			
             return added;
         }
 
-        public static int ContentStandard_Add( int contentId, int standardId, int alignmentTypeCodeId, int usageTypeId, int createdById )
+        public int ContentStandard_Add( int contentId, int standardId, int alignmentTypeCodeId, int usageTypeId, int createdById )
         {
-            return EFManager.ContentStandard_Add( contentId, standardId, alignmentTypeCodeId, usageTypeId, createdById );
+			//CSMgr csMgr = new CSMgr();
+			int newId = csMgr.ContentStandard_Add( contentId, standardId, alignmentTypeCodeId, usageTypeId, createdById );
+			//add related standard
+			//may need at a higher level so that can reference elastic update code
+			ContentRelatedStandard_Add( contentId, newId );
+
+			new ResourceV2Services().CheckForDelayedPublishing( contentId, createdById );
+			return newId;
         }
-        public static bool ContentStandard_Update( int id, int alignmentTypeCodeId, int usageTypeId, int lastUpdatedById, ref string statusMessage )
+        public bool ContentStandard_Update( int id, int alignmentTypeCodeId, int usageTypeId, int lastUpdatedById, ref string statusMessage )
         {
-            return EFManager.ContentStandard_Update( id, alignmentTypeCodeId, usageTypeId, lastUpdatedById, ref statusMessage );
+			CSMgr csMgr = new CSMgr();
+			return csMgr.ContentStandard_Update( id, alignmentTypeCodeId, usageTypeId, lastUpdatedById, ref statusMessage );
         }
 
         /// <summary>
@@ -637,9 +660,17 @@ namespace Isle.BizServices
         /// <param name="id"></param>
         /// <param name="statusMessage"></param>
         /// <returns></returns>
-        public static bool ContentStandard_Delete( int id, ref string statusMessage )
+        public bool ContentStandard_Delete( int parentId, int userId,  int contentStandardId, ref string statusMessage )
         {
-            return EFManager.ContentStandard_Delete( id, ref statusMessage );
+			
+			//need to delete related first, as no RI cascade was possible
+			ContentRelatedStandard_Delete( contentStandardId );
+			//now delete standard
+			bool ok = csMgr.ContentStandard_Delete( contentStandardId, ref statusMessage );
+
+			//do delayed
+			new ResourceV2Services().CheckForDelayedPublishing( parentId, userId );
+			return ok;
         }
 
         /// <summary>
@@ -649,10 +680,86 @@ namespace Isle.BizServices
         /// <returns></returns>
         public static List<Content_StandardSummary> ContentStandard_Select( int contentId )
         {
-            return EFManager.Fill_ContentStandards( contentId );
+			return CSMgr.Fill_ContentStandards( contentId );
         }
         #endregion
+		#region Content.RelatedStandards
 
+		public int ContentRelatedStandard_Add( int contentId, int contentStandardId )
+		{
+			int newId = 0;
+			CSMgr csMgr = new CSMgr();
+			ResourceV2Services resMgr = new ResourceV2Services();
+			int cntr = 0;
+			bool doingDelayedPubHere = false;
+			try
+			{
+				//get content and add to parent
+				ContentItem item = GetBasic( contentId );
+
+				//while each parent has a parent, add the related standard to the node
+				while ( item.ParentId > 0 )
+				{
+					//add
+					csMgr.ContentRelatedStandard_Add( item.ParentId, contentStandardId );
+
+					//if has resourceId, do something 
+					//==> actually would have been necessary after adding teh content.standard. Should use the delayed publishing!
+					if ( item.ResourceIntId > 0 && doingDelayedPubHere )
+					{
+						//call proc to do copy - probably need top node Id
+						//add delayed record and submit later
+						resMgr.ResourceDelayedPublish_AddElasticRequest( item.Id, item.ResourceIntId );
+						cntr++;
+					}
+					//get next
+					item = GetBasic( item.ParentId );
+
+				} //while
+
+				if ( cntr > 0 )
+				{
+					//initiate elastic update
+					//done elsewhere
+				}
+			}
+			catch ( Exception ex )
+			{
+				LoggingHelper.LogError( ex, thisClassName + ".ContentRelatedStandard_Add()" );
+			}
+		
+
+			return newId;
+}
+		
+		public void ContentRelatedStandard_Delete( int contentStandardId )
+		{
+			int cntr = 0;
+			bool doingDelayedPubHere = false;
+			ResourceV2Services resMgr = new ResourceV2Services();
+			List<IB.Content_RelatedStandardsSummary> list = CSMgr.ContentRelatedStandard_Summary( contentStandardId );
+			foreach ( IB.Content_RelatedStandardsSummary item in list )
+			{
+				//delete related
+				csMgr.ContentRelatedStandard_Delete( item.ContentStandardId, item.ContentId );
+
+				//ContentItem ci = GetBasic( item.ContentId );
+				if ( item.ResourceIntId > 0 && doingDelayedPubHere )
+				{
+					//add delayed record and submit later
+					resMgr.ResourceDelayedPublish_AddElasticRequest( item.ContentId, item.ResourceIntId );
+					cntr++;
+				}
+			}
+
+			if ( cntr > 0 )
+			{
+				//initiate elastic update
+				//elsewhere
+			}
+		}//
+
+		#endregion
 
         #region  === Content.Tag
 

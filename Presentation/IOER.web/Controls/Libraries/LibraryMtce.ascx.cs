@@ -80,15 +80,14 @@ namespace IOER.Controls.Libraries
         /// <param name="ex"></param>
         protected void Page_Load( object sender, EventArgs ex )
         {
-            if ( IsUserAuthenticated() )
+            if ( IsUserAuthenticated() == false)
             {
-                WebUser = GetAppUser();
+				SetConsoleErrorMessage( "Error - you must be logged in and authorized to use this function" );
+				detailsPanel.Enabled = false;
+				return;
             }
-            else
-            {
-                //set message - only do where clearly on form by itself.
-                //or just disable, ==> done in populate as previously end user could see the detail
-            }
+
+			CurrentUser = GetAppUser();
             if ( Page.IsPostBack == false )
             {
                 this.InitializeForm();
@@ -115,7 +114,7 @@ namespace IOER.Controls.Libraries
 
             //handling setting of which action buttons are available to the current user
             this.btnNew.Enabled = false;
-            this.btnSave.Enabled = false;
+            //this.btnSave.Enabled = false;
             this.btnDelete.Visible = false;
 
             SetValidators( false );
@@ -142,8 +141,9 @@ namespace IOER.Controls.Libraries
             entity.LibraryTypeId = 2;
             ddlLibraryType.Enabled = false;
             entity.HasChanged = false;
+
             this.btnNew.Visible = false;
-            btnSave.Enabled = true;
+			btnSave.Visible = true;
             detailsPanel.Visible = true;
             if ( orgCodesList != null && orgCodesList.Count > 0 )
             {
@@ -206,7 +206,7 @@ namespace IOER.Controls.Libraries
 
             entity.HasChanged = false;
             this.btnNew.Visible = false;
-            btnSave.Enabled = true;
+			btnSave.Visible = true;
 
             PopulateForm( entity );
         }//
@@ -329,6 +329,9 @@ namespace IOER.Controls.Libraries
         private void PopulateForm( ThisLibrary entity )
         {
             //CurrentRecord = entity;
+			this.btnSave.Visible = true;
+			this.btnDelete.Visible = false;
+
             lblOrganization.Text = "";
             viewLibraryLink.Visible = false ;
             this.txtId.Text = entity.Id.ToString();
@@ -366,6 +369,17 @@ namespace IOER.Controls.Libraries
                 if ( CurrentLibraryMemberTypeId == LibraryMember.LIBRARY_MEMBER_TYPE_ID_ADMIN )
                     FormPrivileges.DeletePrivilege = 3;
 
+				if ( CurrentLibraryMemberTypeId <= LibraryMember.LIBRARY_MEMBER_TYPE_ID_READER )
+				{
+					FormPrivileges.DeletePrivilege = 0;
+				}
+				else
+					btnSave.Visible = true;
+				if ( FormPrivileges.CanDelete() )
+				{
+					btnDelete.Visible = true;
+				}
+
                 viewLibraryLink.NavigateUrl = string.Format("/Libraries/Library.aspx?id={0}", entity.Id);
                 viewLibraryLink.Visible = true;
                 if ( entity.OrgId > 0 )
@@ -392,10 +406,7 @@ namespace IOER.Controls.Libraries
                         FormatImageTag( defaultLibraryImage );
                 }
                 ddlLibraryType.Enabled = false;
-                if ( FormPrivileges.CanDelete()  )
-                {
-                    btnDelete.Visible = true;
-                }
+
 
                 this.lblLibraryDisplay.Text = entity.LibrarySummaryFormatted( "isleBox_H2" );
 
@@ -403,16 +414,16 @@ namespace IOER.Controls.Libraries
                 //Assuming that if user can get this far, has already been vetted
                 //
                 //    && WebUser.Id == entity.CreatedById
-                if ( IsUserAuthenticated() )
-                {
-                    btnSave.Enabled = true;
-                    btnSave.Visible = true;
-                }
-                else
-                {
-                    btnSave.Visible = false;
-                    detailsPanel.Enabled = false;
-                }
+				//if ( IsUserAuthenticated() )
+				//{
+				//   // btnSave.Enabled = true;
+				//	btnSave.Visible = true;
+				//}
+				//else
+				//{
+				//	btnSave.Visible = false;
+				//	detailsPanel.Enabled = false;
+				//}
             }
             else
             {
@@ -423,6 +434,7 @@ namespace IOER.Controls.Libraries
                 if ( entity.LibraryTypeId > 0 )
                     ddlLibraryType.Enabled = false;
 
+				btnSave.Visible = true;
                 btnDelete.Visible = false;
                 detailsPanel.Enabled = true;
 				currentImage.Text = "";

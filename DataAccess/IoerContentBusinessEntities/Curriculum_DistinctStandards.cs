@@ -27,5 +27,6 @@ namespace IoerContentBusinessEntities
         public int UsageTypeId { get; set; }
         public Nullable<int> ParentId { get; set; }
         public int AlignmentTypeCodeId { get; set; }
+        public Nullable<bool> IsDirectStandard { get; set; }
     }
 }

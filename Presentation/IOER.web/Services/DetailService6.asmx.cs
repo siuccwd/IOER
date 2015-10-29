@@ -56,6 +56,8 @@ namespace IOER.Services
                 //OR??? detail.title = version.SortTitle;
 
                 detail.url = version.ResourceUrl;
+				detail.imageUrl = version.ResourceImageUrl;
+
                 detail.description = version.Description;
                 detail.requires = version.Requirements;
                 detail.created = version.Created.ToShortDateString();
@@ -588,13 +590,13 @@ namespace IOER.Services
                 try 
                 {
                     string response = "";
-                    ResBiz.Resource_SetInactiveByVersionId( versionID, ref response );
+                    new ResBiz().Resource_SetInactiveByVersionId( versionID, ref response );
 
                     //new ResourceVersionManager().SetActiveState( false, versionID );
                     
                     //var esManager = new ElasticSearchManager();
                     //new ElasticSearchManager().DeleteByVersionID( versionID, ref response );
-                    new ResourceV2Services().DeleteResourceByVersionID( versionID );
+					new ResourceV2Services().DeleteResourceByVersionID( versionID );
 
                     ActivityBizServices.SiteActivityAdd( "Resource", "Deactivate", string.Format( "Resource VersionID: {0} was deactivated by {1}", versionID, user.FullName() ), user.Id, 0, versionID );
 
@@ -1071,6 +1073,7 @@ namespace IOER.Services
                 comments = new List<jsonComment>();
                 evaluations = new List<ResourceEvaluationSummaryDTO>();
                 resourceNote = "";
+				imageUrl = "";
                 IsPrivateDocument = false;
             }
 
@@ -1079,6 +1082,10 @@ namespace IOER.Services
             public int intID { get; set; }
             public string title { get; set; }
             public string url { get; set; }
+			/// <summary>
+			/// resource image url.If blank, then will use the default location
+			/// </summary>
+			public string imageUrl { get; set; }
             public string description { get; set; }
             public string resourceNote { get; set; }
             public string requires { get; set; }

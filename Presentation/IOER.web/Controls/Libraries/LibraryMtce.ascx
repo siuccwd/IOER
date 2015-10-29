@@ -56,35 +56,35 @@
     .imgStyle { background-color: #E6E6E6; box-shadow: 3px 3px 4px #AAA; border-radius: 5px; }
 </style>
  <script type="text/javascript">
-     jQuery(document).ready(function () {
-         jQuery('#imgCrop').Jcrop({
-             onChange: showPreview,
-             onSelect: storeCoords,
-             aspectRatio: .75
-         });
-     }); //end ready
+     //jQuery(document).ready(function () {
+     //    jQuery('#imgCrop').Jcrop({
+     //        onChange: showPreview,
+     //        onSelect: storeCoords,
+     //        aspectRatio: .75
+     //    });
+     //}); //end ready
 
 
-     function storeCoords(c) {
-         jQuery('#X').val(c.x);
-         jQuery('#Y').val(c.y);
-         jQuery('#W').val(c.w);
-         jQuery('#H').val(c.h);
-     };
+     //function storeCoords(c) {
+     //    jQuery('#X').val(c.x);
+     //    jQuery('#Y').val(c.y);
+     //    jQuery('#W').val(c.w);
+     //    jQuery('#H').val(c.h);
+     //};
 
 
-     //When the selection is moved, this function is called:
-     function showPreview(coords) {
-         var rx = 100 / coords.w;
-         var ry = 100 / coords.h;
+     ////When the selection is moved, this function is called:
+     //function showPreview(coords) {
+     //    var rx = 100 / coords.w;
+     //    var ry = 100 / coords.h;
 
-         $('#previewImage').css({
-             width: Math.round(rx * 500) + 'px',
-             height: Math.round(ry * 370) + 'px',
-             marginLeft: '-' + Math.round(rx * coords.x) + 'px',
-             marginTop: '-' + Math.round(ry * coords.y) + 'px'
-         });
-     }
+     //    $('#previewImage').css({
+     //        width: Math.round(rx * 500) + 'px',
+     //        height: Math.round(ry * 370) + 'px',
+     //        marginLeft: '-' + Math.round(rx * coords.x) + 'px',
+     //        marginTop: '-' + Math.round(ry * coords.y) + 'px'
+     //    });
+     //}
 </script>
 
 <asp:validationsummary id="vsErrorSummary" HeaderText="Errors on page" forecolor="" CssClass="errorMessage" runat="server"></asp:validationsummary>

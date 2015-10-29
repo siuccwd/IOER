@@ -9,7 +9,7 @@ using ILPathways.Utilities;
 using ILPathways.Business;
 using Isle.BizServices;
 using LRWarehouse.DAL;
-using Thumbnailer = LRWarehouse.DAL.ResourceThumbnailManager;
+//using Thumbnailer = LRWarehouse.DAL.ResourceThumbnailManager;
 using LRWarehouse.Business;
 using ThisUser = LRWarehouse.Business.Patron;
 
@@ -480,7 +480,9 @@ namespace IOER.Services
 				{
 					if ( isUserAdmin( user ) )
 					{
-						new Thumbnailer().CreateThumbnail( intID, url, true );
+						//new Thumbnailer().CreateThumbnail( intID, url, true );
+						ThumbnailServices.CreateThumbnail( intID.ToString(), url, true );
+
 						return ImmediateReturn( true, true, "Regenerating, please wait", null );
 					}
 					else
@@ -498,6 +500,20 @@ namespace IOER.Services
         return ImmediateReturn( false, false, "Error: " + ex.Message, ex.ToString() );
       }
     }
+
+		[WebMethod]
+		public string CheckThumbnailerStatus()
+		{
+			try
+			{
+				var status = ThumbnailServices.ExamineChain();
+				return ImmediateReturn( status, true, "okay", null );
+			}
+			catch ( Exception ex )
+			{
+				return ImmediateReturn( null, false, ex.Message, ex.ToString() );
+			}
+		}
 
     /*
     //Run in console:

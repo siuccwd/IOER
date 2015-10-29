@@ -231,7 +231,7 @@
  
   </div><!-- /account -->
   <div class="column">
-    <div class="grayBox bigText" id="avatar">
+    <div class="grayBox bigText" style="display: none" id="avatar">
       <!-- Avatar -->
       <h2 class="header">Profile Image</h2>
       <div id="profileAvatar" style="background-image:url('<%=avatarURL %>')"></div>

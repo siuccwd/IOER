@@ -16,6 +16,7 @@ using DBM = ILPathways.DAL.DatabaseManager;
 
 using EFDAL = IoerContentBusinessEntities;
 using EFManager = IoerContentBusinessEntities.EFContentManager;
+using CSMgr = IoerContentBusinessEntities.ContentStandardManager;
 using AcctManager = Isle.BizServices.AccountServices;
 using GroupManager = Isle.BizServices.GroupServices;
 using ResourceManager = Isle.BizServices.ResourceBizService;
@@ -68,6 +69,14 @@ namespace Isle.BizServices
             }
             return isValid;
 		}//
+
+		/// <summary>
+		/// Delete a content Item
+		/// NOTE: identical method exists in EFContentManager - need to merge these methods!!!
+		/// </summary>
+		/// <param name="id"></param>
+		/// <param name="statusMessage"></param>
+		/// <returns></returns>
         private bool Content_Delete( int id, ref string statusMessage )
         {
             bool isSuccessful = false;
@@ -143,9 +152,13 @@ namespace Isle.BizServices
             int contentId = Create_ef( entity, ref statusMessage );
 
             //until a better process is designed, always add creator of a learning list as an admin partner
-            if (contentId > 0 && entity.TypeId == ContentItem.CURRICULUM_CONTENT_ID)
+			//actually may want to do other top levels, including content (10)
+			//not sure about documents - typically within a list, but are suppliments?
+            if (contentId > 0 )
             {
-                Content_AddCreatorPartner(contentId, entity.CreatedById, ref statusMessage);
+				if ( entity.TypeId == ContentItem.CURRICULUM_CONTENT_ID
+					|| ( entity.TypeId >= ContentItem.GENERAL_CONTENT_ID && entity.TypeId < ContentItem.DOCUMENT_CONTENT_ID ) )
+					Content_AddCreatorPartner(contentId, entity.CreatedById, ref statusMessage);
             }
             return contentId;
 		}
@@ -170,25 +183,21 @@ namespace Isle.BizServices
 			return Update( entity, true );
 		}//
 
-				public string Update( ContentItem entity, bool updateResourceVersion )
-				{
+		public string Update( ContentItem entity, bool updateResourceVersion )
+		{
             string result = "";
-            //if ( 1 == 1 )
-            //result = myMgr.ContentUpdate( entity );
-            //else
-            //{
-                if ( myEfManager.ContentUpdate( entity ) )
+            if ( myEfManager.ContentUpdate( entity ) )
                     result = "successful";
-            //}
+           
             if ( entity.HasResourceId() && updateResourceVersion )
             {
                 //may want to check on sync of RV content!
                 //should only do if published status?
-                new ResourceBizService().ResourceVersion_SyncContentItemChanges( entity.Title, entity.Summary, entity.ResourceIntId );
+                new ResourceBizService().ResourceVersion_SyncContentItemChanges( entity);
             }
             return result;
 
-				}
+		}
 
         /// <summary>
         /// Update ContentItem with related ResourceVersionId
@@ -196,12 +205,12 @@ namespace Isle.BizServices
         /// <param name="id"></param>
         /// <param name="resourceVersionId"></param>
         /// <returns></returns>
-        [Obsolete]
-        private string UpdateResourceVersionId( int id, int resourceVersionId )
-        {
-            //return myMgr.UpdateResourceVersionId( id, resourceVersionId );
-            return "obsolete";
-        }//
+		//[Obsolete]
+		//private string UpdateResourceVersionId( int id, int resourceVersionId )
+		//{
+		//	//return myMgr.UpdateResourceVersionId( id, resourceVersionId );
+		//	return "obsolete";
+		//}//
 
         /// <summary>
         /// Do a quick update to ensure image is generated correctly
@@ -237,6 +246,23 @@ namespace Isle.BizServices
 
         }//
 
+		/// <summary>
+		/// If any content items referred to a resource that has been deleted or set inactive, then the resourceId is removed, and the status is changed
+		/// ==> which makes reactivating difficult - implies can only be done via content
+		/// </summary>
+		/// <param name="resourceIntId"></param>
+		public void HandleResourceDeactivate( int resourceIntId )
+		{
+			try
+			{
+				//NOTE: could have multiple
+				new EFManager().HandleResourceDeactivate( resourceIntId );
+			}
+			catch ( Exception ex )
+			{
+				LoggingHelper.LogError( ex, thisClassName + "HandleResourceDeactivate()" );
+			}
+		}//
         public void HandleSyncResourceVersionChgs( ResourceVersion rv )
         {
             try
@@ -522,15 +548,36 @@ namespace Isle.BizServices
         public ContentItem Get( int pContentId )
 		{
 
-            ContentItem entity = new ContentItem();
+			return Get( pContentId, false, true );
 
-            if ( pContentId > 0 )
-            {
-                entity = myMgr.Get( pContentId );
-                FormatResourceContent(entity);
-            }
-            
-            return entity;
+		}//
+		public ContentItem Get( int pContentId, bool includingStandards )
+		{
+
+			return Get( pContentId, includingStandards, true );
+
+		}//
+		public ContentItem GetBasic( int pContentId )
+		{
+
+			return Get( pContentId, false, false );
+
+		}//
+		public ContentItem Get( int pContentId, bool includingStandards, bool formatingResource )
+		{
+
+			ContentItem entity = new ContentItem();
+
+			if ( pContentId > 0 )
+			{
+				entity = myMgr.Get( pContentId );
+				if ( formatingResource )
+					FormatResourceContent( entity );
+				if ( includingStandards )
+					GetContentStandards( entity );
+			}
+
+			return entity;
 
 		}//
 		public void GetContentStandards( ContentItem entity )
@@ -538,7 +585,7 @@ namespace Isle.BizServices
 
 			if ( entity != null && entity.Id > 0 )
 			{
-				entity.ContentStandards = EFManager.Fill_ContentStandards( entity.Id );
+				entity.ContentStandards = CSMgr.Fill_ContentStandards( entity.Id );
 				
 			}
 
@@ -549,7 +596,7 @@ namespace Isle.BizServices
 
 			if ( entity != null && entity.Id > 0 )
 			{
-				entity.ContentStandards = EFManager.Fill_ContentStandards( entity.Id );
+				entity.ContentStandards = CSMgr.Fill_ContentStandards( entity.Id );
 				
 			}
 
@@ -588,8 +635,12 @@ namespace Isle.BizServices
 
             if (resourceId > 0)
             {
-                entity = EFManager.Content_GetByResourceId(resourceId);
+				//15-10-10 mp - there can now be multiple records returned
+               // entity = EFManager.Content_GetByResourceId(resourceId);
 
+				List<ContentItem> list = EFManager.Content_ListByResourceId( resourceId );
+				if ( list.Count > 0 )
+					entity = list[ 0 ];
                 //if found, what else would we want
                 if (entity != null && entity.Id > 0)
                 {
@@ -621,8 +672,8 @@ namespace Isle.BizServices
                     else if (entity.TypeId == ContentItem.CURRICULUM_CONTENT_ID)
                     {
                         //could get all standards, but would take a lot of time - unless cached
-                        string content = "<div id='compDescription'>Note: Only standards directly aligned to the curriculum are displayed here. The curriculum resource page will display all standards that have been aligned to any of the curriculum components.</div>";
-                        entity.Message = string.Format( "<div class='isleBox'><h2 class='isleBox_H2'>Curriculum Information</h2>{0}</div>", content );
+						//string content = "<div id='compDescription'>Note: Only standards directly aligned to this resource are displayed here. The related resource page will display all standards that have been aligned to any of the components.</div>";
+						//entity.Message = string.Format( "<div class='isleBox'><h2 class='isleBox_H2'>Resource Set Information</h2>{0}</div>", content );
                     }
 					else if (entity.IsHierarchyType 
 						|| entity.TypeId == ContentItem.EXTERNAL_URL_CONTENT_ID)
@@ -636,6 +687,55 @@ namespace Isle.BizServices
             return entity;
 
         }//
+		private void HandleContentItems( ContentItem entity, Patron user, ref bool canViewItem )
+		{
+			string statusMessage = "";
+			string extraMessage = "";
+			string formattedUrl = "";
+
+			if ( entity != null && entity.Id > 0 )
+			{
+				if ( entity.TypeId == ContentItem.DOCUMENT_CONTENT_ID )
+				{
+					canViewItem = CanViewDocument( entity, user, ref statusMessage, ref formattedUrl );
+					if ( canViewItem == false )
+					{
+						//for consistancy, just use formattedUrl always - except can't assume the H level.
+						//MP- in this case, let caller do the formatting. It will have access to ResourceFriendlyUrl and DocumentUrl
+						//in this case, the caller (detail page), needs to handle
+						extraMessage = "<p class='restrictedMsg'>" + statusMessage + "</p>";
+					}
+					//method first checks if part of a curriculum, then formats message with link to item under the curriculum
+					//for docs, should link to parent node!
+					if ( FormatCurriculumMessage( entity, extraMessage ) == false )
+					{
+						//HACK WARNING - using standAloneContent to indicate not part of curriculum, so detail page can show actual file url
+						string message = " <div id='compDescription' class='standAloneContent'>This resource has a related page:<div style='margin-left:20px;'><br/><a href='{0}'>{1}</a></div></div>";
+						//
+						string content = string.Format( message, FormatContentFriendlyUrl( entity ), entity.Title );
+						content += extraMessage;
+
+						entity.Message = string.Format( "<div class='isleBox'><h2 class='isleBox_H2'>Resource Note</h2>{0}</div>", content );
+					}
+
+				}
+
+				else if ( entity.TypeId == ContentItem.CURRICULUM_CONTENT_ID )
+				{
+					//could get all standards, but would take a lot of time - unless cached
+					//string content = "<div id='compDescription'>Note: Only standards directly aligned to the resource are displayed here. The related resource page will display all standards that have been aligned to any of the resource components.</div>";
+					//entity.Message = string.Format( "<div class='isleBox'><h2 class='isleBox_H2'>Resource Set Information</h2>{0}</div>", content );
+				}
+				else if ( entity.IsHierarchyType
+					|| entity.TypeId == ContentItem.EXTERNAL_URL_CONTENT_ID )
+				{
+					FormatCurriculumMessage( entity, extraMessage );
+				}
+
+			}
+
+			//return entity.Message;
+		}//
 
         /// <summary>
         /// Check if content item is part of a curriculum.
@@ -648,7 +748,7 @@ namespace Isle.BizServices
         {
             bool foundTopNode = false;
             
-            string message = "<div id='compDescription'>This resource is a component of:<div style='margin-left:20px;'><br/><a href='{0}'>{1}</a><br/>{2}</div></div>";
+            string message = "<div id='compDescription'>This resource is included with:<div style='margin-left:20px;'><br/><a href='{0}'>{1}</a><br/>{2}</div></div>";
 
             ContentItem topNode = EFManager.GetTopNode( entity );
             if ( topNode == null || topNode.Id == 0 )
@@ -662,7 +762,7 @@ namespace Isle.BizServices
             {
                 string content = string.Format( message, FormatCurriculumFriendlyUrl( topNode, entity ), topNode.Title, noteBody );
                 content += extraMessage;
-                entity.Message = string.Format( "<div class='isleBox'><h2 class='isleBox_H2'>Curriculum Component</h2>{0}</div>", content );
+				entity.Message = string.Format( "<div class='isleBox'><h2 class='isleBox_H2'>Resource Set</h2>{0}</div>", content );
             }
             else if ( topNode.IsHierarchyType )
             {
@@ -729,19 +829,19 @@ namespace Isle.BizServices
             return  new EFManager().CreateHierarchy( contentId, modules, units, lessons, activities );
         }
 
-        public int ContentConnectorAdd( int parentId, int childId, int createdById )
-        {
-            return new EFManager().ContentConnectorAdd( parentId, childId, createdById );
-        }
-        public bool ContentConnectorDelete( int id, ref string statusMessage )
-        {
-            return new EFManager().ContentConnector_Delete( id, ref statusMessage );
-        }
+ //	   public int ContentConnectorAdd( int parentId, int childId, int createdById )
+ //	   {
+ //		   return new EFManager().ContentConnectorAdd( parentId, childId, createdById );
+ //	   }
+ //	   public bool ContentConnectorDelete( int id, ref string statusMessage )
+ //	   {
+ //		   return new EFManager().ContentConnector_Delete( id, ref statusMessage );
+ //	   }
 
-        public bool ContentConnectorDelete( int parentId, int childId, ref string statusMessage )
-        {
-            return myEfManager.ContentConnector_Delete( parentId, childId, ref statusMessage );
- }
+ //	   public bool ContentConnectorDelete( int parentId, int childId, ref string statusMessage )
+ //	   {
+ //		   return myEfManager.ContentConnector_Delete( parentId, childId, ref statusMessage );
+ //}
 
         protected ContentNode GetCurriculumOutline( int pContentId, bool publishedOnly )
         {
@@ -1586,6 +1686,19 @@ namespace Isle.BizServices
             else
                 return false;
         }
+		public static bool DoesUserHaveContentEditAccess( int contentId, int userId )
+		{
+			ContentPartner entity = ContentPartner_Get( contentId, userId );
+			if ( entity != null && entity.Id > 0 )
+			{
+				if ( entity.PartnerTypeId > ContentPartner.PARTNER_TYPE_ID_READER )
+					return true;
+				else
+					return false;
+			}
+			else
+				return false;
+		}
 
         public static ContentPartner ContentPartner_Get( int contentId, int userId )
         {

@@ -53,7 +53,8 @@ namespace ILPathways.Business
         public string AlignmentDegree { get; set; }
 
         public System.DateTime Created { get; set; }
-  
+
+		public bool IsDirectStandard { get; set; }
         /// <summary>
         /// when gathering unique standards for a list of items, store unique ids that could be used to display all content items with the standard
         /// </summary>

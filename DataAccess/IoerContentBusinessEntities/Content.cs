@@ -26,6 +26,7 @@ namespace IoerContentBusinessEntities
             this.Content_Standard = new HashSet<Content_Standard>();
             this.Content_Subscription = new HashSet<Content_Subscription>();
             this.Content_Tag = new HashSet<Content_Tag>();
+            this.Content_RelatedStandard = new HashSet<Content_RelatedStandard>();
         }
     
         public int Id { get; set; }
@@ -72,5 +73,6 @@ namespace IoerContentBusinessEntities
         public virtual ICollection<Content_Subscription> Content_Subscription { get; set; }
         public virtual ICollection<Content_Tag> Content_Tag { get; set; }
         public virtual Document_Version Document_Version { get; set; }
+        public virtual ICollection<Content_RelatedStandard> Content_RelatedStandard { get; set; }
     }
 }

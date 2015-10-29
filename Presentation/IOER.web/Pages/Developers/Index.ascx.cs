@@ -12,7 +12,7 @@ namespace IOER.Pages.Developers
 		public Index()
 		{
 			PageTitle = "Documentation Home";
-			UpdatedDate = DateTime.Parse( "2015/07/01" );
+			UpdatedDate = DateTime.Parse( "2015/10/23" );
 		}
 
 		protected void Page_Load( object sender, EventArgs e )

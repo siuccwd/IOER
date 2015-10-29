@@ -1172,7 +1172,7 @@ namespace Isle.BizServices
                         ResourceBizService.UpdateFavorite( resourceIntId );
 
                     LibraryResource_UpdateElasticSearchForAllLibrariesAndSectionsForResource( resourceIntId );
-                    ActivityBizServices.LibResourceCopy( fromLibraryId, toCollectionId, resourceIntId, user, "Copied" );
+					ActivityBizServices.LibResourceCopy( fromLibraryId, toCollectionId, resourceIntId, user, "Resource Copy" );
                 }
                 else
                 {
@@ -1181,7 +1181,7 @@ namespace Isle.BizServices
                     //send email
                     SendResourceApprovalRequestEmail( lsec.LibraryId, user, entity, ref statusMessage );
                     //probably should have required the source collection
-                    ActivityBizServices.LibResourceCopy( fromLibraryId, toCollectionId, resourceIntId, user, "Copy - Pending" );
+					ActivityBizServices.LibResourceCopy( fromLibraryId, toCollectionId, resourceIntId, user, "Resource Copy - Pending" );
                 }
             }
             else
@@ -1231,7 +1231,7 @@ namespace Isle.BizServices
                 if ( isActive )
                 {
                     LibraryResource_UpdateElasticSearchForAllLibrariesAndSectionsForResource( resourceIntId );
-                    ActivityBizServices.LibResourceActivity( fromCollectionId, toCollectionId, resourceIntId, user, "Moved" );
+					ActivityBizServices.LibResourceActivity( fromCollectionId, toCollectionId, resourceIntId, user, "Resource Move" );
                 }
                 else
                 {
@@ -1239,7 +1239,7 @@ namespace Isle.BizServices
                     
                     //send email
                     SendResourceApprovalRequestEmail( lsec.LibraryId, user, entity, ref statusMessage );
-                    ActivityBizServices.LibResourceActivity( fromCollectionId, toCollectionId, resourceIntId, user, "Moved - Pending" );
+					ActivityBizServices.LibResourceActivity( fromCollectionId, toCollectionId, resourceIntId, user, "Resource Move - Pending" );
                 }
             }
             else

@@ -69,6 +69,21 @@
     renderCommunityPosts(communityPosts.data);
   	//Detect links in community posts
     detectLinks();
+
+
+    //Back to Top
+    $(window).scroll(function () {
+        if ($(this).scrollTop() > 50) {
+            $('#backToTopRight').fadeIn('slow');
+        } else {
+            $('#backToTopRight').fadeOut('slow');
+        }
+    });
+    $('#backToTopRight').click(function () {
+        $("html, body").animate({ scrollTop: 0 }, 500);
+        return false;
+    });
+
   });
 
 	//Text Search
@@ -117,7 +132,7 @@
           { title: current.Title,
             url: (directLink ? current.Url : "/resource/" + current.ResourceId + "/" + current.Title.replace(/ /g, "_").replace(/&/g, "_").replace(/:/g, "_").replace(/\?/g, "_")),
             id: current.ResourceId,
-            img: "//ioer.ilsharedlearning.org/OERThumbs/large/" + current.ResourceId + "-large.png"
+            img: (typeof(current.ThumbnailUrl) != "undefined" && current.ThumbnailUrl.length > 0) ? current.ThumbnailUrl : "//ioer.ilsharedlearning.org/OERThumbs/large/" + current.ResourceId + "-large.png"
           }          
         );
       }
@@ -249,7 +264,7 @@
   #main { padding-right: 250px; position: relative; }
   #sidebar { width: 250px; position: absolute; right: 0; top: 0; height: 100%; background-color: #F5F5F5; background-image: linear-gradient(rgba(53, 114, 184, 0.2), rgba(255,255,255,0)); padding-bottom: 50px; }
   .section { background-image: linear-gradient(rgba(74, 163, 148, 0.2), rgba(74, 163, 148, 0)); margin-bottom: 25px; }
-  #main h2 { font-size: 40px; margin: 10px; color: #4AA394; }
+  #main h2 { font-size: 40px; margin: 10px; color: #4F4E4F; padding-left: 25px; }
 
   <%--
 	/* Rotator */
@@ -281,7 +296,7 @@
 	#txtSearchMain, #btnSearchMain { display: inline-block; vertical-align: top; padding: 0 5px; }
 	#txtSearchMain { font-size: 32px; padding: 2px 10px; width: 80%; max-width: 1200px; margin: 0 auto; height: 45px; border-radius: 5px 0 0 5px; background-image: linear-gradient(#EEE, #FFF 50%, #FFF 85%, #EFEFEF); }
 	#btnSearchMain { height: 45px; width: 20%; border-radius: 0 5px 5px 0; font-size: 32px; border-width: 1px; }
-	#headlineBox { background-color: #4AA394; background-image: linear-gradient(#59E6E0, #4AA394); }
+	#headlineBox { background: url('/images/banner_background.jpg') no-repeat center bottom; background-size: cover; }
 	#headlines { margin: 0 auto; max-width: 1200px; padding: 5px 5px 15px 5px; text-align: center; }
 	#headlines .headline { background-color: #4AA394; background-image: linear-gradient(#49C6B0, #4AA394); border-radius: 5px; padding: 5px; display: inline-block; vertical-align: top; width: 30%; margin: 10px 1.5%; min-height: 350px; position: relative; box-shadow: 0 0 6px -1px #4AA394; }
 	#headlines .headline .headlineBackground { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-repeat: no-repeat; background-size: 275px auto; background-position: left -50px bottom -100px; opacity: 0.2; border-radius: 5px; }
@@ -310,9 +325,25 @@
   .communityPost { padding: 5px; border-radius: 5px; margin: 5px 0 20px 0; position: relative; min-height: 60px; word-wrap: break-word; }
   .communityPost .avatar { background-size: cover; width: 50px; height: 50px; border: 1px solid #99D; border-radius: 5px; position: absolute; top: 5px; left: 5px; background-color: #99D; }
   .communityPost .name { padding-left: 55px; border-bottom: 1px solid #99D; font-weight: bold; }
-  .communityPost .text { padding-left: 55px; }
+  .communityPost .text { padding-left: 55px; padding-right: 10px; }
   .communityPost .date { position: absolute; left: 8px; top: 55px; font-size: 10px; }
 	#sidebar #communityBox { overflow-y: auto; overflow-x: hidden; max-height: calc(100% - 125px); }
+
+a#backToTopRight {
+	width:64px;
+	height:64px;
+	opacity:0.5;
+	position:fixed;
+	bottom:15px;
+  right: 10px;
+	display:none;
+	text-indent:-10000px;
+	outline:none !important;
+	background-image: url('/images/icons/Top.png');
+	background-repeat: no-repeat;
+	z-index:500;
+}
+
 
   @media (min-width: 1500px) {
     .resourcesBox .resource .title { font-size: 18px; }
@@ -511,6 +542,8 @@
       </div><!-- /sidebar -->
     </div><!-- /main -->
   </div><!-- /columns -->
+
+  <a href="#" id="backToTopRight" title="back to top"></a>
 </div>
 
 <div id="templates" style="display:none;">
@@ -541,3 +574,10 @@
   </script>
 
 </div>
+
+<asp:Panel ID="hiddenStuff" runat="server" Visible="false" >
+<asp:Literal ID="txtFeaturedLibrariesId" runat="server" >286</asp:Literal>
+<asp:Literal ID="txtFeaturedLibrariesCollId" runat="server" >788</asp:Literal>
+<asp:Literal ID="txtFeaturedLearningListsColId" runat="server" >642</asp:Literal>
+<asp:Literal ID="txtFeaturedResourcesColId" runat="server" >532</asp:Literal>
+</asp:Panel>

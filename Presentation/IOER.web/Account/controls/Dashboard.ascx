@@ -11,6 +11,15 @@
   
 </script>
 <script type="text/javascript">
+    $(document).ready(function () {
+        $("#myProfileImageToggle").click(function () {
+           
+            console.log("+++++++++++ " + $("#myProfileImageToggle").css("background-color"));
+
+            $("#myProfileImage").slideToggle('normal');
+            $("#myProfileImageToggle").css("background-color", "#B74AE4");
+        });
+    });
 
     function toggleFollowing() {
         doAjax("ToggleFollowing", { followingUserId: followingUserId, followedByUserId: followedByUserId }, successToggleFollowing, null);
@@ -80,18 +89,28 @@
         alert(data.status);
       }
     }
+
+    function changeImage(a) {
+        //alert("This is a test");
+        $("#myProfileImage").css("Display:Show");
+        $("#myProfileImage").width("300px");
+        $("#myProfileImage").height("300px");
+    }
 </script>
+
+
+<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
 
 <style type="text/css">
   #content { min-height: 500px; }
   #columns { white-space: nowrap; position: relative; }
   #columns .column { white-space: normal; display: inline-block; vertical-align: top; margin-right: -4px; padding: 5px; }
 
-  #columns #leftColumn { width: 200px; position: absolute; top: 0; left: 0; }
-  #columns #rightColumn { width: 100%; padding-left: 205px; }
+  #columns #leftColumn { width: 250px; position: absolute; top: 0; left: 0; }
+  #columns #rightColumn { width: calc(100%-260px); padding-left: 265px; }
 
   #myProfile img { width: 100%; border: 1px solid #CCC; border-radius: 5px; overflow: hidden; }
-
+  #myProfileImageToggle {border-radius: 5px;    color: white;    padding: 2px 5px;    text-align: center;     }
   #leftColumn .grayBox { margin-bottom: 10px; }
   #quickLinks a { display: block; background-color: #3572B8; color: #FFF; text-align: left; padding: 3px 5px; margin-bottom: 1px; }
   #quickLinks a:hover, #quickLinks a:focus { background-color: #FF6A00; color: #FFF; }
@@ -115,6 +134,16 @@
     #myProfile img { width: 50px; float: left; margin: 0 10px 10px 0; }
     .resourcesBox .resources { text-align: center; }
   }
+
+  #myProfileImageXXX 
+  {  
+    position: absolute;
+    top: 0;  
+    left: 200px;       
+    background: #EEE;   
+    padding-left: 10px;    
+
+  }
 </style>
 
 <div id="content">
@@ -127,11 +156,32 @@
       <div id="myProfile" class="grayBox">
         <h2 class="header"><%=dashboard.name %></h2>
         <img alt="" src="<%=dashboard.avatarUrl %>" />
+                  <%if( dashboard.isMyDashboard){  %> 
+       <%--   <a href="#myProfileImage" class="textLink" data-toggle="modal" onclick="changeImage()">Update Profile Image</a> --%>
+          <div id="myProfileImageToggle" class="bgBlue" >Update Profile Image</div>
+          <% } %> 
+
+                    
+        <div id="myProfileImage" class="grayBox" style="display:none">
+          <div>
+              <h2 class="header offScreen">Profile Image</h2>
+              <label>Change Image</label><asp:FileUpload ID="fileAvatar" CssClass="fileAvatar" runat="server" />
+              <div style="margin-top:10px;" >
+	             <asp:Button runat="server" ID="btnUpdateAvatar" OnClick="btnUpdateAvatar_Click" Text="Update Profile Image" CssClass="isleButton bgGreen" />
+              </div>
+              
+          </div>
+      </div> 
+
         <%if( dashboard.organization != null) { %><p><%=dashboard.organization %></p><% } %>
         <p><%=dashboard.jobTitle %></p>
         <p><%=dashboard.description %></p>
         <%if( dashboard.isMyDashboard){  %> <a href="/Account/Profile.aspx" class="textLink">Update My Profile</a> <% } %>
           <input type="button" class="isleButton bgBlue btnFollow" id="btnFollow" onclick="toggleFollowing()" value="Follow" runat="server" />
+
+        
+
+
       </div>
 
       <%if(dashboard.isMyDashboard){ %>
@@ -149,6 +199,9 @@
 
     </div><!-- /leftColumn -->
   
+
+
+
     <div class="column" id="rightColumn">
 
       <div class="resourcesBox" id="myLibrary">

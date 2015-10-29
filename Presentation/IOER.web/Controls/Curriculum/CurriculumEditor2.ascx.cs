@@ -175,32 +175,63 @@ namespace IOER.Controls.Curriculum
     }
 
     //Allow the user to choose the org to create the curriculum as a part of
-    private void LoadOrganizationDDL()
-    {
-      if ( IsUserAuthenticated() )
-      {
-        ddlOrganization.Items.Add( new ListItem()
-        {
-          Value = "0",
-          Text = "No organization"
-        } );
-				if ( WebUser.OrgMemberships == null )
+	private void LoadOrganizationDDL()
+	{
+		if ( IsUserAuthenticated() )
+		{
+			ddlOrganization.Items.Add( new ListItem()
+			{
+				Value = "0",
+				Text = "No organization"
+			} );
+			if ( WebUser.OrgMemberships == null )
+			{
+				addToOrg.Visible = false;
+			}
+			else
+			{
+				foreach ( var item in WebUser.OrgMemberships )
 				{
-					addToOrg.Visible = false;
-				}
-				else
-				{
-					foreach ( var item in WebUser.OrgMemberships )
+					ddlOrganization.Items.Add( new ListItem()
 					{
-						ddlOrganization.Items.Add( new ListItem()
-						{
-							Value = item.Id.ToString(),
-							Text = item.Organization
-						} );
-					}
+						Value = item.Id.ToString(),
+						Text = item.Organization
+					} );
 				}
-      }
-    }
+			}
+		}
+	}
+	private void LoadOrganizationDDL2()
+	{
+		if ( IsUserAuthenticated() )
+		{
+			ddlOrganization2.Items.Add( new ListItem()
+			{
+				Value = "0",
+				Text = "No organization"
+			} );
+			if ( WebUser.OrgMemberships == null )
+			{
+				//will there be an issue where a user from diff org could be given access?
+				addToOrg.Visible = false;
+			}
+			else
+			{
+				foreach ( var item in WebUser.OrgMemberships )
+				{
+					ddlOrganization2.Items.Add( new ListItem()
+					{
+						Value = item.Id.ToString(),
+						Text = item.Organization
+					} );
+				}
+				if ( currentNode.OrgId > 0 )
+				{
+					ddlOrganization2.Items.FindByValue( currentNode.OrgId.ToString() ).Selected = true;
+				}
+			}
+		}
+	}
 
     //Populate the drop-down lists of user permissions
     private void LoadPermissionDDLs()
@@ -215,53 +246,63 @@ namespace IOER.Controls.Curriculum
       }
     }
 
-    //Get parameters from the request
-    private bool LoadParameters()
-    {
-      var user = new Patron();
+	//Get parameters from the request
+	private bool LoadParameters()
+	{
+		var user = new Patron();
 
-      if ( IsUserAuthenticated() )
-      {
-        user = ( Patron ) WebUser;
-      }
+		if ( IsUserAuthenticated() )
+		{
+			user = ( Patron ) WebUser;
+		}
 
-      try
-      {
-		int requestedId = int.Parse(Request.Params["node"] ?? Page.RouteData.Values["node"].ToString());
-		currentNode = curriculumServices.GetCurriculumNodeForEdit(requestedId, user);
-        if ( currentNode.Id == 0 )
-        {
-          throw new ArgumentException( "Invalid Level ID" );
-        }
-        curriculumID = curriculumServices.GetCurriculumIDForNode( currentNode );
-      }
-      catch ( Exception ex )
-      {
-        curriculumError.Visible = true;
-        curriculumStarter.Visible = false;
-        curriculumEditor.Visible = false;
-        curriculumErrorMessage.InnerHtml = "Error: Invalid Level ID. Please check the URL and try again.";
-        curriculumErrorMessageHidden.InnerHtml = ex.Message;
-        return false;
-      }
+		try
+		{
+			int requestedId = int.Parse( Request.Params[ "node" ] ?? Page.RouteData.Values[ "node" ].ToString() );
+			currentNode = curriculumServices.GetCurriculumNodeForEdit( requestedId, user );
+			if ( currentNode.Id == 0 )
+			{
+				throw new ArgumentException( "Invalid Level ID" );
+			}
+			if ( currentNode.ImageUrl.ToLower().IndexOf( "ioer.ilsharedlearning.org/oerthumbs" ) > -1 )
+			{
+				//appears to be the default image for a published item. Remove for editing
+				currentNode.ImageUrl = "";
+			}
+			curriculumID = curriculumServices.GetCurriculumIDForNode( currentNode );
+		}
+		catch ( Exception ex )
+		{
+			curriculumError.Visible = true;
+			curriculumStarter.Visible = false;
+			curriculumEditor.Visible = false;
+			curriculumErrorMessage.InnerHtml = "Error: Invalid Level ID. Please check the URL and try again.";
+			curriculumErrorMessageHidden.InnerHtml = ex.Message;
+			return false;
+		}
 
-      if ( curriculumID == 0 )
-      {
-        curriculumID = currentNode.Id;
-      }
-      nodeParentID = currentNode.ParentId;
+		if ( curriculumID == 0 )
+		{
+			curriculumID = currentNode.Id;
+		}
+		nodeParentID = currentNode.ParentId;
 
-      txtTitle.Value = currentNode.Title;
-      txtDescription.Value = currentNode.Summary;
-      txtTimeframe.Value = currentNode.Timeframe;
-      ddlNodePermissions.Items.FindByValue( currentNode.PrivilegeTypeId.ToString() ).Selected = true;
+		txtTitle.Value = currentNode.Title;
+		txtDescription.Value = currentNode.Summary;
+		txtTimeframe.Value = currentNode.Timeframe;
+		ddlNodePermissions.Items.FindByValue( currentNode.PrivilegeTypeId.ToString() ).Selected = true;
 
-      lblHistory.Text = currentNode.HistoryTitle();
-      //cbxlK12Subject
-      //cbxlGradeLevel
+		if ( curriculumID == currentNode.Id )
+		{
+			LoadOrganizationDDL2();
+		}
 
-      return true;
-    }
+		lblHistory.Text = currentNode.HistoryTitle();
+		//cbxlK12Subject
+		//cbxlGradeLevel
+
+		return true;
+	}
 
     //Get the current Standards
     private void LoadStandards()
@@ -298,15 +339,15 @@ namespace IOER.Controls.Curriculum
       outdentSortID = parentNode.SortOrder + 5;
     }
 
-		//Load user manager
-		private void LoadUserManager()
-		{
-			var manager = userManagerContainer.FindControl( "userManager" ) as Controls.ManageUsers;
-			manager.ObjectId = currentNode.Id;
-			manager.ObjectTitle = currentNode.Title;
-			manager.ObjectTypeTitle = "Learning List";
-			manager.ObjectType = "learninglist";
-		}
+	//Load user manager
+	private void LoadUserManager()
+	{
+		var manager = userManagerContainer.FindControl( "userManager" ) as Controls.ManageUsers;
+		manager.ObjectId = currentNode.Id;
+		manager.ObjectTitle = currentNode.Title;
+		manager.ObjectTypeTitle = "Learning List";
+		manager.ObjectType = "learninglist";
+	}
 
     #endregion
 

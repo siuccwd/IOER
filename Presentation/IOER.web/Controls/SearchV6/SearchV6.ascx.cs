@@ -45,6 +45,7 @@ namespace IOER.Controls.SearchV6
     public string ViewMode { get; set; }
     public Color MainColor { get; set; }
     public string SortOrder { get; set; }
+		public string DoAutoNewestSearch { get; set; }
 		public string UsageRightsIconsJSON { get; set; }
 		public string InitialResultsJSON { get; set; }
 
@@ -82,8 +83,20 @@ namespace IOER.Controls.SearchV6
       //Preselected tags to use
 			PreselectedTags = ServiceHelper.CommaSeparatedListToIntegerList( Request.Params[ "tagIDs" ] ?? ( string ) Request.RequestContext.RouteData.Values[ "tagIDs" ] ?? "" );
 
-      //Determine preselected sort order
-      SortOrder = ( Request.Params[ "sort" ] ?? "ResourceId|desc" );
+      //Determine preselected sort order if it hasn't been set by an external control
+			if ( string.IsNullOrWhiteSpace( SortOrder ) )
+			{
+				SortOrder = ( Request.Params[ "sort" ] ?? "" );
+			}
+			//Skip auto newest search in some cases
+			if ( string.IsNullOrWhiteSpace( DoAutoNewestSearch ) || DoAutoNewestSearch.ToLower().Trim() == "true" )
+			{
+				DoAutoNewestSearch = "true";
+			}
+			else
+			{
+				DoAutoNewestSearch = "false";
+			}
 
 			//Get usage rights data
 			var rightsData = new ResourceV2Services().GetUsageRightsList();

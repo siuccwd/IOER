@@ -501,8 +501,11 @@ namespace IOER.Services
         }
         else 
         {
-            ActivityBizServices.LibraryHit( libraryID, user, "LibraryResource Copy" );
-            ActivityBizServices.CollectionHit( toCollection, user, "Collection Resource Copied from: " + libraryID.ToString() );
+			//two activities? from and to 
+			//this is done in libService.ResourceCopy
+            //ActivityBizServices.LibraryHit( libraryID, user, "LibraryResource Copy" );
+			//should we be doing copy from?
+           // ActivityBizServices.CollectionHit( toCollection, user, "Resource Copied from: " + libraryID.ToString() );
             return serializer.Serialize( GetAllLibraryData( user, libraryID ) );
         }
       }
@@ -539,7 +542,9 @@ namespace IOER.Services
         if ( id != "successful" ) { return ""; }
         else
         {
-            ActivityBizServices.LibraryHit( libraryID, user, "Resource Move" );
+			//this is done in libService.ResourceMove
+            //ActivityBizServices.LibraryHit( libraryID, user, "Resource Move" );
+
           return serializer.Serialize( GetAllLibraryData( user, libraryID ) );
         }
       }

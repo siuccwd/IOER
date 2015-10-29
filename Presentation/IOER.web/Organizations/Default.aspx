@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Illinois Open Educational Resources - Organizations" Language="C#" MasterPageFile="~/Masters/Responsive.Master" AutoEventWireup="true" CodeBehind="Default.aspx.cs" Inherits="IOER.Organizations.Default" %>
+﻿<%@ Page Title="Illinois Open Educational Resources - Organizations" Language="C#" MasterPageFile="~/Masters/Responsive2.Master" AutoEventWireup="true" CodeBehind="Default.aspx.cs" Inherits="IOER.Organizations.Default" %>
 
 <%@ Register Src="~/Organizations/controls/OrganizationManagement.ascx" TagPrefix="uc1" TagName="OrganizationManagement" %>
 

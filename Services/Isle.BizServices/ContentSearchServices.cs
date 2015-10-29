@@ -27,6 +27,7 @@ namespace Isle.BizServices
 		private static string KeywordTemplate = "(base.Title like '{0}' OR base.[Summary] like '{0}' OR base.[Description] like '{0}' OR auth.SortName like '{0}') ";
 		private static string SharedWithMeFilter = "base.StatusId >= 0 AND base.privilegetypeid >= 1 AND base.ContentId in (SELECT [ContentId] FROM [dbo].[Content.Partner] where  [UserId] = {0} and [PartnerTypeId] > 0) ";
 		string ContentTypeFilter = " base.TypeId in ({0})";
+		string StatusTypeFilter = " base.StatusId in ({0})";
 		string PrivilegeTypeFilter = " base.PrivilegeTypeId in ({0})";
 		private static string StandardsFilter = "(base.ContentId in (SELECT [ContentId] FROM [dbo].[ContentStandard_Summary] where [StandardId] in ({0})) )  ";
 
@@ -255,8 +256,6 @@ namespace Isle.BizServices
 				if ( filter.ToLower().IndexOf( "base.privilegetypeid " ) == -1 )
 					filter += ServiceHelper.FormatSearchItem( filter, " base.PrivilegeTypeId = 1 ", booleanOperator );
 
-				if ( filter.ToLower().IndexOf( "base.statusid " ) == -1 )
-					filter += ServiceHelper.FormatSearchItem( filter, " base.statusid = 5 ", booleanOperator );
 			}
 			else
 			{
@@ -269,12 +268,16 @@ namespace Isle.BizServices
 
 			FormatContentTypeFilter( query, booleanOperator, ref filter, ref filterDesc );
 
+			FormatStatusFilter( query, booleanOperator, ref filter, ref filterDesc );
+
 			FormatStandardsFilter( query, booleanOperator, ref filter, ref filterDesc );
 			//
 			FormatKeyword( query.Text, booleanOperator, ref filter );
 
-			//if (filter.ToLower().IndexOf("isactive =") == -1)
-			//	filter += ServiceHelper.FormatSearchItem(filter, " base.isactive = 1 ", booleanOperator);
+			//15-10-14 may want to save this to the end - ==> I had commented out for some reason?
+			//should be able to see non pub for org - only if a partner
+			if ( filter.ToLower().IndexOf( "base.statusid " ) == -1 )
+				filter += ServiceHelper.FormatSearchItem( filter, " base.statusid = 5 ", booleanOperator );
 
 			if ( ServiceHelper.IsLocalHost() || (user != null && user.Id == 2 ))
 			{
@@ -487,6 +490,40 @@ namespace Isle.BizServices
 			filter += ServiceHelper.FormatSearchItem( filter, where, booleanOperator );
 			string selDesc = string.Format( " Modified > {0}", endDate.ToString( "yyyy-MM-dd" ) );
 			filterDesc = filterDesc + "<div class='searchSection isleBox'>" + selDesc + "</div>";
+		}
+
+		public void FormatStatusFilter( ContentSearchQuery query, string booleanOperator, ref string filter, ref string filterDesc )
+		{
+			string csv = "";
+			string selDesc = "";
+			string comma = "";
+
+			//==> consider resource.tag approach
+			foreach ( ContentSearchFilter li in query.Filters )
+			{
+				if ( li.Category == "Status" )
+				{
+					foreach ( string tag in li.Tags )
+					{
+						if ( tag != "0" )
+						{
+							csv += tag + ",";
+							selDesc += comma + tag; //can we get the text name
+							comma = ", ";
+						}
+					}
+
+				}
+			}
+			if ( csv.Length > 0 )
+			{
+				csv = csv.Substring( 0, csv.Length - 1 );
+
+				string where = string.Format( StatusTypeFilter, csv );
+				filter += ServiceHelper.FormatSearchItem( filter, where, booleanOperator );
+				filterDesc = filterDesc + "<div class='searchSection isleBox'>" + selDesc + "</div>";
+			}
+		
 		}
 
 		public void FormatContentTypeFilter( ContentSearchQuery query, string booleanOperator, ref string filter, ref string filterDesc )

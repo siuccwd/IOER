@@ -14,6 +14,11 @@ namespace IoerContentBusinessEntities
     
     public partial class Content_Standard
     {
+        public Content_Standard()
+        {
+            this.Content_RelatedStandard = new HashSet<Content_RelatedStandard>();
+        }
+    
         public int Id { get; set; }
         public int ContentId { get; set; }
         public int StandardId { get; set; }
@@ -23,7 +28,9 @@ namespace IoerContentBusinessEntities
         public Nullable<int> CreatedById { get; set; }
         public Nullable<System.DateTime> LastUpdated { get; set; }
         public Nullable<int> LastUpdatedById { get; set; }
+        public Nullable<bool> IsDirectStandard { get; set; }
     
         public virtual Content Content { get; set; }
+        public virtual ICollection<Content_RelatedStandard> Content_RelatedStandard { get; set; }
     }
 }

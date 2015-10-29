@@ -18,6 +18,7 @@
   var countdown = {};
   var sortMode = { field: "ResourceId", order: "desc" };
   var preselectedSort = "<%=SortOrder %>";
+	var doAutoNewestSearch = <%=DoAutoNewestSearch %>;
   var pageSize = 20;
   var viewMode = "<%=ViewMode %>";
   var currentStartPage = 1;
@@ -65,6 +66,21 @@
     setupPreselectedSortOrder();
   	//Setup accessibility items
     setupAccessibility();
+
+
+      //Back to Top
+    $(window).scroll(function () {
+        if ($(this).scrollTop() > 50) {
+            $('#backToTopRight').fadeIn('slow');
+        } else {
+            $('#backToTopRight').fadeOut('slow');
+        }
+    });
+    $('#backToTopRight').click(function () {
+        $("html, body").animate({ scrollTop: 0 }, 500);
+        return false;
+    });
+
   });
 
   //Setup window resize events
@@ -81,22 +97,24 @@
       sortMode = { field: "", order: "" };
       return;
     }
-    if(window.location.search.indexOf("sort") == -1){ 
-      setTimeout(function() {
-        var sortModeParts = $("#ddlSortOrder option:selected").attr("value").split("|");
-        sortMode = { field: sortModeParts[0], order: sortModeParts[1] };
-      }, 805);
+    if(doAutoNewestSearch){
+    	var tempSort = sortMode;
+    	sortMode = { field: "ResourceId", order: "desc" };
+    	pipeline("doSearch");
+    	sortMode = tempSort;
     }
-    else {
-      $("#ddlSortOrder option").each(function() {
-        if($(this).attr("value").toLowerCase() == preselectedSort.toLowerCase()){
-          console.log("true");
-          $(this).prop("selected", true);
-        }
-      });
-      setTimeout(function() {
-        $("#ddlSortOrder").trigger("change");
-      }, 805);
+    if(preselectedSort.length > 0){
+    	var sortModeParts = preselectedSort.split("|");
+    	sortMode = { field: sortModeParts[0], order: sortModeParts[1] };
+    	$("#ddlSortOrder option").each(function() {
+    		if($(this).attr("value").toLowerCase() == preselectedSort.toLowerCase()){
+    			console.log("true");
+    			$(this).prop("selected", true);
+    		}
+    	});
+    	setTimeout(function() {
+    		$("#ddlSortOrder").trigger("change");
+    	}, 805);
     }
   }
 
@@ -198,7 +216,7 @@
   	var location = window.location.href.toLowerCase();
 		//If there is no preexisting data or the page is not the main search or there is a user-entered query, do an auto-search
   	//if(typeof(currentResults.hits) == "undefined" || location.indexOf("/search") == -1 || location.indexOf("text=") > -1){
-  	if(typeof(currentResults.hits) == "undefined"|| location.indexOf("text=") > -1) {
+  	if(typeof(currentResults.hits) == "undefined" || location.indexOf("text=") > -1) {
   		pipeline("updateFiltering");
   		pipeline("resetCountdown");
   	}
@@ -389,7 +407,9 @@
 
   //Jump to page
   function jumpToPage(page){
-    currentStartPage = page;
+      currentStartPage = page;
+      $("html, body").animate({ scrollTop: 0 }, 500);
+      
     pipeline("doSearch", "isPagedSearch");
   }
 
@@ -561,6 +581,10 @@
     }
   }
   function getThumbnail(current){
+  	console.log("Thumbnail for: ", current);
+  	if(typeof(current.ThumbnailUrl) != "undefined" && current.ThumbnailUrl != "") {
+  	    return current.ThumbnailUrl;
+  	}
     for(var i in fileIcons){
       for(var j in fileIcons[i].match){
         if(current.Url.toLowerCase().indexOf(fileIcons[i].match[j]) > -1){
@@ -620,6 +644,7 @@
     		count++;
     	}
     	else {
+				result += "<span class=\"moreStandards\">(+" + (current.StandardNotations.length - count) + " additional standards)</span>"
     		break;
     	}
     }
@@ -854,6 +879,10 @@
   div[data-filterid=searchTips] ul { margin-left: 25px; margin-bottom: 20px; }
   div[data-filterid=searchTips] ul li { margin-bottom: 2px; }
 	.btnAccessibilityFilterHelper { display: none; }
+	.moreStandards { font-style: italic; opacity: 0.8; }
+
+  /* backToTop */
+	a#backToTopRight { width:64px; height:64px; opacity:0.5; position:fixed; bottom:15px; right: 250px; display:none; text-indent:-10000px; outline:none !important; background-image: url('/images/icons/Top.png'); background-repeat: no-repeat; z-index:500; }
 
   /* Media Queries */
   @media (max-width: 850px) {
@@ -905,6 +934,8 @@
 			<div id="ddls">
 				<select title="Sort Order" id="ddlSortOrder">
 					<option value="|" selected="selected">Most Relevant</option>
+					<option value="UrlTitle|asc">Alphabetical A-Z</option>
+					<option value="UrlTitle|desc">Alphabetical Z-A</option>
 					<option value="ResourceId|desc">Newest First</option>
 					<option value="ResourceId|asc">Oldest First</option>
 					<option value="Paradata.ResourceViews|desc">Most Visited</option>
@@ -1031,7 +1062,9 @@
   <div id="paginatorTop" class="paginator top" style="display:none;"></div>
   <div id="searchResults" data-mode="<%=ViewMode %>"></div><!-- /searchResults -->
   <div id="paginatorBottom" class="paginator bottom"></div>
-
+    <div style="display: none;" >
+  <a href="#" id="backToTopRight" title="back to top"></a>
+        </div>
 </div>
 
 <div id="templates" style="display:none;">

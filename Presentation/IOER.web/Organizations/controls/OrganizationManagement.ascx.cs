@@ -6,6 +6,7 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 
 using IOER.Library;
+using IOER.Controllers;
 using LRWarehouse.Business;
 using Isle.BizServices;
 using MyOrg = ILPathways.Business.Organization;
@@ -34,6 +35,7 @@ namespace IOER.Organizations
 		public int errors = 0;
 		public bool isSiteAdmin = false;
 		public int currOrgId = 0;
+		public bool CanAdministerUsers { get; set; }
 
 		protected void Page_Load( object sender, EventArgs e )
 		{
@@ -92,6 +94,8 @@ namespace IOER.Organizations
 			}
 
 			var targetOrgID = 0;
+			CanAdministerUsers = false;
+
 			string action = FormHelper.GetRequestKeyValue( "action", "" );
 			//check for create request
 			
@@ -115,7 +119,10 @@ namespace IOER.Organizations
 
 				if ( targetOrgID > 0 )
 				{
+					//?????
 					OrganizationMember mbr = myOrganizations.Where( m => m.OrgId == targetOrgID ).FirstOrDefault();
+					//
+					OrganizationMember actingOrgMbr = OrganizationBizService.OrganizationMember_Get( targetOrgID, user.Id );
 
 					if ( mbr != null || isSiteAdmin )
 					{
@@ -125,6 +132,7 @@ namespace IOER.Organizations
 							this.btnDeleteOrg.Visible = true;
 						}
 					}
+
 				}
 				else
 				{
@@ -142,6 +150,48 @@ namespace IOER.Organizations
 			states = OrganizationBizService.States_Select();
 		}
 
+
+		protected void Page_PreRender( object sender, EventArgs e )
+		{
+			try
+			{
+				if ( activeOrganization.Id > 0 )
+				{
+					CheckAuthorization( activeOrganization );
+				}
+				
+			}
+			catch
+			{
+				//no action
+			}
+
+		}//
+		private void CheckAuthorization( Organization org )
+		{
+			OrganizationMember actingOrgMbr = OrganizationBizService.OrganizationMember_Get( org.Id, WebUser.Id );
+
+			var manager = userManagerContainer.FindControl( "userManager" ) as Controls.ManageUsers;
+
+			if ( actingOrgMbr.IsAdministration()
+				|| actingOrgMbr.HasAdministratorRole()
+				|| actingOrgMbr.HasAccountAdministratorRole() )
+			{
+				orgActionsPanel.Visible = true;
+				CanAdministerUsers = true;
+				manager.CanAdministerUsers = true;
+				manager.SetImportOrg( org.RowId.ToString() );
+			}
+			else
+			{
+				//hide/disable action buttons
+				orgActionsPanel.Visible = false;
+				//NOTE - may not be able to do here, as control may not have loaded.
+				CanAdministerUsers = false;
+				manager.CanAdministerUsers = true;
+			}
+
+		}
 		//Handle postback'd input depending on mode
 		//Might not be necessary
 		private void ProcessInput()
@@ -185,6 +235,9 @@ namespace IOER.Organizations
 			manager.ObjectTitle = activeOrganization.Name;
 			manager.ObjectTypeTitle = "Organization";
 			manager.ObjectType = "organization";
+
+			if (activeOrganization.Id > 0)
+				manager.SetImportOrg( activeOrganization.RowId.ToString() );
 		}
 
 		//Load org libraries
@@ -214,8 +267,48 @@ namespace IOER.Organizations
 			activeOrganization.Id = -1;
 			this.btnDeleteOrg.Visible = false;
 		}
+
+		protected void btnSaveOrg_Click( object sender, EventArgs e )
+		{
+			UpdateProperties();
+	}
+
 		//Update org properties
 		private void UpdateProperties()
+		{
+			if ( IsValid() )
+			{
+				DoUpdate();
+			}
+		}
+		private bool IsValid()
+		{
+			bool isValid = true;
+			int id = 0;
+			Int32.TryParse( this.txtCurrentOrgId.Text, out id );
+			int maxFileSize = UtilityManager.GetAppKeyValue( "maxLibraryImageSize", 100000 );
+			if ( !FileResourceController.IsFileSizeValid( fileUpload, maxFileSize ) )
+			{
+				SetConsoleErrorMessage( string.Format( "Error: File must be {0}KB or less.", ( maxFileSize / 1024 ) ) );
+				isValid = false;
+
+			}
+			//if create
+			if ( id == 0 )
+			{
+				if ( fileUpload.PostedFile.ContentType.IndexOf( "image/" ) != 0 )
+				{
+					SetConsoleErrorMessage( "Error: You must select an image file." );
+					isValid = false;
+				}
+			}
+
+			return isValid;
+
+		}
+
+		//Update org properties
+		private void DoUpdate()
 		{
 			var valid = true;
 			int orgId = 0;
@@ -271,14 +364,14 @@ namespace IOER.Organizations
 				if ( isSiteAdmin == false )
 					activeOrganization.IsActive = false;
 
-				int id = orgService.Organization_Create( activeOrganization, ref statusMessage );
+				orgId = orgService.Organization_Create( activeOrganization, ref statusMessage );
 				//need to add current user as administrator
 				//or do this after approval
 				if ( isSiteAdmin == false )
 				{
 					SetConsoleSuccessMessage( "Your organization has been created but must be approved by site administration. You will be notified within one business day" );
 					//don't add, or will appear in the list ==> check if retrieve only gets active!!
-					orgService.AddAdminUserForNewOrg( id, WebUser.Id, ref statusMessage );
+					orgService.AddAdminUserForNewOrg( orgId, WebUser.Id, ref statusMessage );
 
 					SendApprovalRequest( activeOrganization, user );
 
@@ -289,14 +382,14 @@ namespace IOER.Organizations
 				{
 					//need to add current user as administrator
 					SetConsoleSuccessMessage( "Your organization has been created and you have been added as the administrator" );
-					if ( orgService.AddAdminUserForNewOrg( id, WebUser.Id, ref statusMessage ) == false )
+					if ( orgService.AddAdminUserForNewOrg( orgId, WebUser.Id, ref statusMessage ) == false )
 					{
 						SetConsoleErrorMessage( statusMessage );
 					}
 				}//
 
-				activeOrganization.Id = id;
-				this.txtCurrentOrgId.Text = id.ToString();
+				activeOrganization.Id = orgId;
+				this.txtCurrentOrgId.Text = orgId.ToString();
 			}
 			else
 			{
@@ -306,12 +399,75 @@ namespace IOER.Organizations
 				SetConsoleSuccessMessage( "Your changes have been saved." );
 			}
 
-			//Refresh the active org to make sure any other changes are accounted for
+			//Refresh the active org to make sure any other changes are accounted for (including a rowId)
 			//NOTE for new org (and not admin),id will be zero, so nothing displays
 			activeOrganization = OrganizationBizService.EFGet( activeOrganization.Id );
 
+			//do after update to ensure we have an id
+			if ( IsFilePresent() )
+			{
+				bool isValid = HandleUpload( activeOrganization, ref statusMessage );
+				orgService.Organization_Update( activeOrganization );
+				if ( isValid == false )
+				{
+					SetConsoleErrorMessage( statusMessage );
+					return;
+				}
+			}
+
+
 		} //End Update Org Properties
-		
+		protected bool IsFilePresent()
+		{
+			bool isPresent = false;
+
+			if ( fileUpload.HasFile || fileUpload.FileName != "" )
+			{
+				isPresent = true;
+
+			}
+
+			return isPresent;
+		}//
+		/// <summary>
+		/// Handle upload of file
+		/// </summary>
+		/// <param name="org"></param>
+		/// <param name="statusMessage"></param>
+		/// <returns></returns>
+		protected bool HandleUpload( Organization org, ref string statusMessage )
+		{
+			bool isValid = true;
+			try
+			{
+				int orgImageWidth = UtilityManager.GetAppKeyValue( "libraryImageWidth", 150 );
+
+				string savingName = "logo" + org.Id.ToString() + System.IO.Path.GetExtension( fileUpload.FileName );
+
+				FileResourceController.PathParts parts = FileResourceController.DetermineDocumentPath( WebUser.Id, org.Id, org.RowId.ToString(), "" );
+				string savingFolder = parts.filePath;	//
+				FileResourceController.DetermineDocumentPath( WebUser.Id, org );
+				string savingURL = FileResourceController.FormatPartsFullUrl( parts, savingName );
+
+				//string savingURL = FileResourceController.DetermineDocumentUrl( org, savingName );
+				org.ImageUrl = savingURL;
+				ImageStore img = new ImageStore();
+				img.FileName = savingName; 
+				img.FileDate = DateTime.Now;
+
+				FileResourceController.HandleImageResizingToWidth( img, fileUpload, orgImageWidth, orgImageWidth, true, true );
+				FileSystemHelper.HandleDocumentCaching( savingFolder, img, true );
+			}
+			catch ( Exception ex )
+			{
+				statusMessage = ex.Message;
+				LoggingHelper.LogError( ex, "OrganizationManagement().HandleUpload" );
+				isValid = false;
+			}
+			return isValid;
+		}
+
+
 		/// <summary>
 		/// verify email domain is of proper format and unique.
 		/// </summary>
@@ -426,6 +582,7 @@ namespace IOER.Organizations
 		}
 
 		#endregion 
+
 
 
 

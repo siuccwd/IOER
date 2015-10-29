@@ -62,6 +62,7 @@
     <Compile Include="%40TemplateManager.cs" />
     <Compile Include="%40TemplateManager_GuidPK.cs" />
     <Compile Include="ActivityAuditManager.cs" />
+    <Compile Include="ActivityOrgReportingManager.cs" />
     <Compile Include="BaseDataManager.cs" />
     <Compile Include="CommunityManager.cs" />
     <Compile Include="ContentManager.cs" />
@@ -91,6 +92,10 @@
     <ProjectReference Include="..\..\Common\IllinoisPathways.Common\ILPathways.Common.csproj">
       <Project>{cbb05737-7947-4ed9-8ed3-79d5c2a6597d}</Project>
       <Name>ILPathways.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Common\ILPathways.Utilities\ILPathways.Utilities.csproj">
+      <Project>{949d7eb6-93e1-489f-a5e7-2d0d9086f720}</Project>
+      <Name>ILPathways.Utilities</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Services\Isle.DTO\Isle.DTO.csproj">
       <Project>{a16be910-9990-48dc-a9de-f5985d50d09c}</Project>

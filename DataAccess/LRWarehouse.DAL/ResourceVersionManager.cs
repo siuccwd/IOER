@@ -801,6 +801,8 @@ namespace LRWarehouse.DAL
             entity.IsActive = GetRowPossibleColumn( dr, "IsActive", true );
             //get parent url
             entity.ResourceUrl = GetRowColumn( dr, "ResourceUrl", "" );
+			entity.ResourceImageUrl = GetRowPossibleColumn( dr, "ResourceImageUrl", "" );
+
             entity.ResourceIsActive = GetRowPossibleColumn( dr, "ResourceIsActive", true );
 
             entity.LRDocId = GetRowColumn( dr, "DocId", "" );

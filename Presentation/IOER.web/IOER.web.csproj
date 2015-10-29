@@ -65,8 +65,9 @@
     <Reference Include="AjaxMin">
       <HintPath>..\..\packages\AjaxMin.5.5.5091.22839\lib\net40\AjaxMin.dll</HintPath>
     </Reference>
-    <Reference Include="Antlr3.Runtime">
-      <HintPath>..\..\packages\Antlr.3.4.1.9004\lib\Antlr3.Runtime.dll</HintPath>
+    <Reference Include="Antlr3.Runtime, Version=3.4.1.9004, Culture=neutral, PublicKeyToken=eb42632606e9261f, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\Antlr.3.5.0.2\lib\Antlr3.Runtime.dll</HintPath>
     </Reference>
     <Reference Include="AutoMapper, Version=3.1.1.0, Culture=neutral, PublicKeyToken=be96cd2c38ef1005, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -321,7 +322,6 @@
     <Content Include="Controls\Guide.ascx" />
     <Content Include="Controls\ImportedSearch.ascx" />
     <Content Include="Controls\Includes\Footer4.ascx" />
-    <Content Include="Controls\Includes\Header7.ascx" />
     <Content Include="Controls\Includes\Header8.ascx" />
     <Content Include="Controls\Libraries\LibrariesSearch.ascx" />
     <Content Include="Controls\Libraries\Library.ascx" />
@@ -352,9 +352,17 @@
     <Content Include="Controls\SearchV6\Themes\ioer.ascx" />
     <Content Include="Controls\SearchV6\Themes\wn_search.ascx" />
     <Content Include="Controls\SearchV6\Themes\wn_userguide.ascx" />
+    <Content Include="Controls\SearchV7\Default.aspx" />
+    <Content Include="Controls\SearchV7\SearchV7.ascx" />
+    <Content Include="Controls\SearchV7\Themes\gooru.ascx" />
+    <Content Include="Controls\SearchV7\Themes\ioer.ascx" />
+    <Content Include="Controls\SearchV7\Themes\ioer_library.ascx" />
+    <Content Include="Controls\SearchV7\Themes\uber.ascx" />
+    <Content Include="Controls\SearchV7\Themes\worknet.ascx" />
+    <Content Include="Controls\SearchV7\Themes\worknet_userguide.ascx" />
     <Content Include="Controls\Splash3.ascx" />
     <Content Include="Controls\UberTaggerV1\UberTaggerV1.ascx" />
-    <Content Include="Controls\UberTaggerV2\Index.aspx" />
+    <Content Include="Controls\UberTaggerV2\Default.aspx" />
     <Content Include="Controls\UberTaggerV2\UberTaggerV2.ascx" />
     <Content Include="Controls\UberTaggerV2\upload.aspx" />
     <Content Include="Controls\UberTaggerV3\Default.aspx" />
@@ -363,6 +371,9 @@
     <Content Include="Help\HelpList.ascx" />
     <Content Include="images\arrow-down-white.png" />
     <Content Include="images\arrow-right-white.png" />
+    <Content Include="images\arrow-up-white.png" />
+    <Content Include="images\banner_background.jpg" />
+    <Content Include="images\gooru_logo.png" />
     <Content Include="images\icons\icon_app_med.png" />
     <Content Include="images\icons\icon_audio_400x300.png" />
     <Content Include="images\icons\icon_comments_white_med.png" />
@@ -392,8 +403,15 @@
     <Content Include="images\icons\icon_upload_black_large.png" />
     <Content Include="images\icons\icon_upload_white_large.png" />
     <Content Include="images\icons\icon_video_400x300.png" />
+    <Content Include="images\icons\icon_viewmode_grid.png" />
+    <Content Include="images\icons\icon_viewmode_list.png" />
+    <Content Include="images\icons\icon_viewmode_text.png" />
     <Content Include="images\icons\icon_zip_400x300.png" />
     <Content Include="images\icons\icon_zip_med.png" />
+    <Content Include="images\icons\license_custom.png" />
+    <Content Include="images\icons\license_custom_mini.png" />
+    <Content Include="images\icons\license_unknown.png" />
+    <Content Include="images\icons\license_unknown_mini.png" />
     <Content Include="images\icons\rightsunknown.png" />
     <Content Include="images\icons\rightsunknownmini.png" />
     <Content Include="images\icon_download_400x300.png" />
@@ -410,6 +428,9 @@
     <Content Include="Organizations\controls\Import.ascx" />
     <Content Include="Organizations\controls\OrganizationManagement.ascx" />
     <Content Include="Organizations\controls\OrganizationMgmt.ascx" />
+    <Content Include="Organizations\controls\Reports\BaseActivityFilter.ascx" />
+    <Content Include="Organizations\controls\Reports\LibraryViews.ascx" />
+    <Content Include="Organizations\Import.aspx" />
     <Content Include="Organizations\OrganizationRequest.aspx" />
     <Content Include="Organizations\Organizations.aspx" />
     <Content Include="Pages\Accessibility.aspx" />
@@ -420,6 +441,7 @@
     <Content Include="Pages\Developers\Default.aspx" />
     <Content Include="Pages\Developers\ElasticSearch.ascx" />
     <Content Include="Pages\Developers\EventCalendar.ascx" />
+    <Content Include="Pages\Developers\GithubReadme.html" />
     <Content Include="Pages\Developers\Index.ascx" />
     <Content Include="Pages\Developers\JobSearch.ascx" />
     <Content Include="Pages\Developers\LearningRegistry.ascx" />
@@ -642,7 +664,6 @@
     <Content Include="My\Avatar.aspx" />
     <Content Include="My\DocumentEditor.aspx" />
     <Content Include="Organizations\Default.aspx" />
-    <Content Include="Organizations\Organization.aspx" />
     <Content Include="Pages\Dashboard.aspx" />
     <Content Include="Pages\GooruSearch.aspx" />
     <Content Include="Pages\HS_Home.aspx" />
@@ -724,13 +745,6 @@
     <Content Include="Widgets\Search\Default.aspx" />
     <Content Include="Widgets\Standards\Default.aspx" />
     <Content Include="Scripts\jquery-1.10.2.min.map" />
-    <None Include="Service References\com.illinoisworknet.www.vos\vos.disco" />
-    <None Include="Service References\com.illinoisworknet.www.vos\configuration91.svcinfo" />
-    <None Include="Service References\com.illinoisworknet.www.vos\configuration.svcinfo" />
-    <None Include="Service References\com.illinoisworknet.www.vos\Reference.svcmap">
-      <Generator>WCF Proxy Generator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
     <Content Include="Scripts\widgets\ioersearch.js" />
     <Content Include="Scripts\widgets\standardsbrowser.js" />
     <Content Include="Scripts\widgets\widgetloader.js" />
@@ -869,130 +883,6 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
-    <None Include="Service References\AccountServiceReference\Account.wsdl" />
-    <None Include="Service References\AccountServiceReference\IlPathways.AccountServiceReference.AccountDetail.datasource">
-      <DependentUpon>Reference.svcmap</DependentUpon>
-    </None>
-    <None Include="Service References\AppItemsServiceReference\items.wsdl" />
-    <None Include="Service References\com.illinoisworknet.www.vos\vos.wsdl" />
-    <None Include="Service References\EmailNoticeServiceReference\EmailNoticeWS.wsdl" />
-    <None Include="Service References\EmailNoticeServiceReference\IlPathways.EmailNoticeServiceReference.EmailNotice.datasource">
-      <DependentUpon>Reference.svcmap</DependentUpon>
-    </None>
-    <None Include="Service References\FaqServiceReference\FaqService.wsdl" />
-    <None Include="Service References\LibraryServiceReference\LibraryService.wsdl" />
-    <None Include="Service References\LibraryServiceReference\LibraryService.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Service References\LibraryServiceReference\LibraryService1.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Service References\LibraryServiceReference\LibraryService2.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Service References\NewsServiceReference\NewsServices.wsdl" />
-    <None Include="Service References\ResourceServiceReferenceOLD\IlPathways.ResourceServiceReference.ResourceGetResponse.datasource">
-      <DependentUpon>Reference.svcmap</DependentUpon>
-    </None>
-    <None Include="Service References\ResourceServiceReferenceOLD\IlPathways.ResourceServiceReference.ResourceSearchResponse.datasource">
-      <DependentUpon>Reference.svcmap</DependentUpon>
-    </None>
-    <None Include="Service References\ResourceServiceReferenceOLD\ResourceService1.wsdl" />
-    <None Include="Service References\ResourceServiceReferenceOLD\ResourceService3.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Service References\ResourceServiceReferenceOLD\ResourceService31.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Service References\ResourceServiceReferenceOLD\ResourceService32.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Service References\ResourceServiceReference\ResourceService.wsdl" />
-    <None Include="Service References\ResourceServiceReference\ResourceService.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Service References\ResourceServiceReference\ResourceService1.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Service References\ResourceServiceReference\ResourceService2.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Service References\workNetGlossary\glossaryws.disco" />
-    <None Include="Service References\workNetGlossary\configuration91.svcinfo" />
-    <None Include="Service References\workNetGlossary\configuration.svcinfo" />
-    <None Include="Service References\workNetGlossary\IlPathways.workNetGlossary.Glossary.datasource">
-      <DependentUpon>Reference.svcmap</DependentUpon>
-    </None>
-    <None Include="Service References\workNetGlossary\Reference.svcmap">
-      <Generator>WCF Proxy Generator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-    <None Include="Service References\ResourceServiceReferenceOLD\configuration91.svcinfo" />
-    <None Include="Service References\ResourceServiceReferenceOLD\configuration.svcinfo" />
-    <None Include="Service References\ResourceServiceReferenceOLD\Reference.svcmap">
-      <Generator>WCF Proxy Generator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-    <None Include="Service References\ResourceServiceReferenceOLD\ResourceService1.disco" />
-    <None Include="Service References\AppItemsServiceReference\items.disco" />
-    <None Include="Service References\AppItemsServiceReference\configuration91.svcinfo" />
-    <None Include="Service References\AppItemsServiceReference\configuration.svcinfo" />
-    <None Include="Service References\AppItemsServiceReference\Reference.svcmap">
-      <Generator>WCF Proxy Generator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-    <None Include="Service References\EmailNoticeServiceReference\EmailNoticeWS.disco" />
-    <None Include="Service References\EmailNoticeServiceReference\configuration91.svcinfo" />
-    <None Include="Service References\EmailNoticeServiceReference\configuration.svcinfo" />
-    <None Include="Service References\EmailNoticeServiceReference\Reference.svcmap">
-      <Generator>WCF Proxy Generator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-    <None Include="Service References\AccountServiceReference\Account.disco" />
-    <None Include="Service References\AccountServiceReference\configuration91.svcinfo" />
-    <None Include="Service References\AccountServiceReference\configuration.svcinfo" />
-    <None Include="Service References\AccountServiceReference\Reference.svcmap">
-      <Generator>WCF Proxy Generator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-    <None Include="Service References\NewsServiceReference\NewsServices.disco" />
-    <None Include="Service References\NewsServiceReference\configuration91.svcinfo" />
-    <None Include="Service References\NewsServiceReference\configuration.svcinfo" />
-    <None Include="Service References\NewsServiceReference\Reference.svcmap">
-      <Generator>WCF Proxy Generator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-    <None Include="Service References\workNetSubscriptionReference\ILPathways.workNetSubscriptionReference.AppItemAnnouncementSubscription.datasource">
-      <DependentUpon>Reference.svcmap</DependentUpon>
-    </None>
-    <None Include="Service References\workNetSubscriptionReference\Subscriptions.disco" />
-    <None Include="Service References\workNetSubscriptionReference\configuration91.svcinfo" />
-    <None Include="Service References\workNetSubscriptionReference\configuration.svcinfo" />
-    <None Include="Service References\workNetSubscriptionReference\Reference.svcmap">
-      <Generator>WCF Proxy Generator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-    <None Include="Service References\FaqServiceReference\FaqService.disco" />
-    <None Include="Service References\FaqServiceReference\configuration91.svcinfo" />
-    <None Include="Service References\FaqServiceReference\configuration.svcinfo" />
-    <None Include="Service References\FaqServiceReference\Reference.svcmap">
-      <Generator>WCF Proxy Generator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-    <None Include="Service References\LibraryServiceReference\LibraryService.disco" />
-    <None Include="Service References\LibraryServiceReference\configuration91.svcinfo" />
-    <None Include="Service References\LibraryServiceReference\configuration.svcinfo" />
-    <None Include="Service References\LibraryServiceReference\Reference.svcmap">
-      <Generator>WCF Proxy Generator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-    <None Include="Service References\ResourceServiceReference\ResourceService.disco" />
-    <None Include="Service References\ResourceServiceReference\configuration91.svcinfo" />
-    <None Include="Service References\ResourceServiceReference\configuration.svcinfo" />
-    <None Include="Service References\ResourceServiceReference\Reference.svcmap">
-      <Generator>WCF Proxy Generator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
     <Content Include="Services\ElasticSearchService.asmx" />
     <Content Include="Services\ResourceStandardsService.asmx" />
     <Content Include="Services\WebDALService.asmx" />
@@ -1021,7 +911,6 @@
     <Content Include="Styles\ILPathways.css" />
     <Content Include="Styles\ToolTip.css" />
     <Content Include="Services\SearchService.asmx" />
-    <None Include="Service References\workNetSubscriptionReference\Subscriptions.wsdl" />
     <Content Include="Styles\toolTipV2.css" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
@@ -1032,9 +921,6 @@
     <Content Include="Web.Release.config">
       <DependentUpon>Web.config</DependentUpon>
     </Content>
-    <None Include="Service References\workNetGlossary\glossaryws.wsdl" />
-    <None Include="Service References\workNetSubscriptionReference\ILPathways.workNetSubscriptionReference.AppItemAnnouncementSubscription.datasource" />
-    <None Include="Service References\workNetSubscriptionReference\Subscriptions.wsdl" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Account\controls\Dashboard.ascx.cs">
@@ -1208,9 +1094,6 @@
     <Compile Include="Controllers\SearchController.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Controllers\ServiceReferenceHelper.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Controls\Activity1.ascx.cs">
       <DependentUpon>Activity1.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -1379,13 +1262,6 @@
     <Compile Include="Controls\Includes\Footer4.ascx.designer.cs">
       <DependentUpon>Footer4.ascx</DependentUpon>
     </Compile>
-    <Compile Include="Controls\Includes\Header7.ascx.cs">
-      <DependentUpon>Header7.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Controls\Includes\Header7.ascx.designer.cs">
-      <DependentUpon>Header7.ascx</DependentUpon>
-    </Compile>
     <Compile Include="Controls\Includes\Header8.ascx.cs">
       <DependentUpon>Header8.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -1536,6 +1412,65 @@
     <Compile Include="Controls\SearchV6\Themes\wn_userguide.ascx.designer.cs">
       <DependentUpon>wn_userguide.ascx</DependentUpon>
     </Compile>
+    <Compile Include="Controls\SearchV7\Default.aspx.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\SearchV7\Default.aspx.designer.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\SearchV7\SearchV7.ascx.cs">
+      <DependentUpon>SearchV7.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\SearchV7\SearchV7.ascx.designer.cs">
+      <DependentUpon>SearchV7.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\SearchV7\Themes\gooru.ascx.cs">
+      <DependentUpon>gooru.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\SearchV7\Themes\gooru.ascx.designer.cs">
+      <DependentUpon>gooru.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\SearchV7\Themes\ioer.ascx.cs">
+      <DependentUpon>ioer.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\SearchV7\Themes\ioer.ascx.designer.cs">
+      <DependentUpon>ioer.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\SearchV7\Themes\ioer_library.ascx.cs">
+      <DependentUpon>ioer_library.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\SearchV7\Themes\ioer_library.ascx.designer.cs">
+      <DependentUpon>ioer_library.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\SearchV7\Themes\SearchTheme.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\SearchV7\Themes\uber.ascx.cs">
+      <DependentUpon>uber.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\SearchV7\Themes\uber.ascx.designer.cs">
+      <DependentUpon>uber.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\SearchV7\Themes\worknet.ascx.cs">
+      <DependentUpon>worknet.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\SearchV7\Themes\worknet.ascx.designer.cs">
+      <DependentUpon>worknet.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\SearchV7\Themes\worknet_userguide.ascx.cs">
+      <DependentUpon>worknet_userguide.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\SearchV7\Themes\worknet_userguide.ascx.designer.cs">
+      <DependentUpon>worknet_userguide.ascx</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Splash3.ascx.cs">
       <DependentUpon>Splash3.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -1550,12 +1485,12 @@
     <Compile Include="Controls\UberTaggerV1\UberTaggerV1.ascx.designer.cs">
       <DependentUpon>UberTaggerV1.ascx</DependentUpon>
     </Compile>
-    <Compile Include="Controls\UberTaggerV2\Index.aspx.cs">
-      <DependentUpon>Index.aspx</DependentUpon>
+    <Compile Include="Controls\UberTaggerV2\Default.aspx.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Controls\UberTaggerV2\Index.aspx.designer.cs">
-      <DependentUpon>Index.aspx</DependentUpon>
+    <Compile Include="Controls\UberTaggerV2\Default.aspx.designer.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
     </Compile>
     <Compile Include="Controls\UberTaggerV2\UberTaggerV2.ascx.cs">
       <DependentUpon>UberTaggerV2.ascx</DependentUpon>
@@ -1654,6 +1589,27 @@
     </Compile>
     <Compile Include="Organizations\controls\OrganizationMgmt.ascx.designer.cs">
       <DependentUpon>OrganizationMgmt.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Organizations\controls\Reports\BaseActivityFilter.ascx.cs">
+      <DependentUpon>BaseActivityFilter.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Organizations\controls\Reports\BaseActivityFilter.ascx.designer.cs">
+      <DependentUpon>BaseActivityFilter.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Organizations\controls\Reports\LibraryViews.ascx.cs">
+      <DependentUpon>LibraryViews.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Organizations\controls\Reports\LibraryViews.ascx.designer.cs">
+      <DependentUpon>LibraryViews.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Organizations\Import.aspx.cs">
+      <DependentUpon>Import.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Organizations\Import.aspx.designer.cs">
+      <DependentUpon>Import.aspx</DependentUpon>
     </Compile>
     <Compile Include="Organizations\OrganizationRequest.aspx.cs">
       <DependentUpon>OrganizationRequest.aspx</DependentUpon>
@@ -2239,13 +2195,6 @@
     <Compile Include="Organizations\Default.aspx.designer.cs">
       <DependentUpon>Default.aspx</DependentUpon>
     </Compile>
-    <Compile Include="Organizations\Organization.aspx.cs">
-      <DependentUpon>Organization.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Organizations\Organization.aspx.designer.cs">
-      <DependentUpon>Organization.aspx</DependentUpon>
-    </Compile>
     <Compile Include="Pages\Dashboard.aspx.cs">
       <DependentUpon>Dashboard.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -2414,11 +2363,6 @@
     <Compile Include="Server.aspx.designer.cs">
       <DependentUpon>Server.aspx</DependentUpon>
     </Compile>
-    <Compile Include="Service References\com.illinoisworknet.www.vos\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.svcmap</DependentUpon>
-    </Compile>
     <Compile Include="Services\CommunityService.asmx.cs">
       <DependentUpon>CommunityService.asmx</DependentUpon>
       <SubType>Component</SubType>
@@ -2575,26 +2519,6 @@
     <Compile Include="Rubric.aspx.designer.cs">
       <DependentUpon>Rubric.aspx</DependentUpon>
     </Compile>
-    <Compile Include="Service References\FaqServiceReference\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.svcmap</DependentUpon>
-    </Compile>
-    <Compile Include="Service References\LibraryServiceReference\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.svcmap</DependentUpon>
-    </Compile>
-    <Compile Include="Service References\ResourceServiceReference\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.svcmap</DependentUpon>
-    </Compile>
-    <Compile Include="Service References\workNetSubscriptionReference\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.svcmap</DependentUpon>
-    </Compile>
     <Compile Include="TGLandingPage.aspx.cs">
       <DependentUpon>TGLandingPage.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -2706,9 +2630,6 @@
     <Compile Include="AppCode\Library\BaseAppPage.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="AppCode\Library\BaseHeader.cs">
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
     <Compile Include="AppCode\Library\BaseUserControl.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
@@ -2781,41 +2702,6 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
-    <Compile Include="Service References\AccountServiceReference\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.svcmap</DependentUpon>
-    </Compile>
-    <Compile Include="Service References\AppItemsServiceReference\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.svcmap</DependentUpon>
-    </Compile>
-    <Compile Include="Service References\EmailNoticeServiceReference\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.svcmap</DependentUpon>
-    </Compile>
-    <Compile Include="Service References\NewsServiceReference\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.svcmap</DependentUpon>
-    </Compile>
-    <Compile Include="Service References\ResourceServiceReferenceOLD\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.svcmap</DependentUpon>
-    </Compile>
-    <Compile Include="Service References\workNetGlossary\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.svcmap</DependentUpon>
-    </Compile>
-    <Compile Include="Service References\workNetSubscriptionReference\Reference1.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.svcmap</DependentUpon>
-    </Compile>
     <Compile Include="Services\ElasticSearchService.asmx.cs">
       <DependentUpon>ElasticSearchService.asmx</DependentUpon>
       <SubType>Component</SubType>
@@ -2839,6 +2725,7 @@
     <Folder Include="App_Obout\HTMLEditor\ImageGallery\users_images\" />
     <Folder Include="App_Obout\HTMLEditor\MediaGallery\users_medias\" />
     <Folder Include="code\" />
+    <Folder Include="Controls\SearchV7\Themes\Images\" />
     <Folder Include="temp\" />
   </ItemGroup>
   <ItemGroup>
@@ -2849,19 +2736,6 @@
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />
-  </ItemGroup>
-  <ItemGroup>
-    <WCFMetadataStorage Include="Service References\AccountServiceReference\" />
-    <WCFMetadataStorage Include="Service References\AppItemsServiceReference\" />
-    <WCFMetadataStorage Include="Service References\com.illinoisworknet.www.vos\" />
-    <WCFMetadataStorage Include="Service References\EmailNoticeServiceReference\" />
-    <WCFMetadataStorage Include="Service References\FaqServiceReference\" />
-    <WCFMetadataStorage Include="Service References\LibraryServiceReference\" />
-    <WCFMetadataStorage Include="Service References\NewsServiceReference\" />
-    <WCFMetadataStorage Include="Service References\ResourceServiceReferenceOLD\" />
-    <WCFMetadataStorage Include="Service References\ResourceServiceReference\" />
-    <WCFMetadataStorage Include="Service References\workNetGlossary\" />
-    <WCFMetadataStorage Include="Service References\workNetSubscriptionReference\" />
   </ItemGroup>
   <ItemGroup>
     <WebReferences Include="Web References\" />
@@ -2923,9 +2797,9 @@
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>42394</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://localhost:2012</IISUrl>
+          <IISUrl>http://localhost:2015</IISUrl>
           <OverrideIISAppRootUrl>True</OverrideIISAppRootUrl>
-          <IISAppRootUrl>http://localhost:2012</IISAppRootUrl>
+          <IISAppRootUrl>http://localhost:2015</IISAppRootUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>

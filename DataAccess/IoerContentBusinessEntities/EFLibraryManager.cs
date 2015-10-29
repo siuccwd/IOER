@@ -308,6 +308,8 @@ namespace IoerContentBusinessEntities
             ILP.Library to = new ILP.Library();
             to.Id = fromEntity.Id;
             to.Title = fromEntity.Title;
+			to.FriendlyTitle = UtilityManager.UrlFriendlyTitle( to.Title );
+
             to.Description = fromEntity.Description;
             to.LibraryTypeId = fromEntity.LibraryTypeId == null ? 1 : ( int )fromEntity.LibraryTypeId;
             //get type
@@ -347,8 +349,9 @@ namespace IoerContentBusinessEntities
 		/// </summary>
 		/// <param name="orgId"></param>
 		/// <param name="updatedById"></param>
+		/// <param name="activeState">set to true or false</param>
 		/// <returns></returns>
-		public bool Library_SetOrgLibsInactive( int orgId, int updatedById )
+		public bool Library_SetOrgLibsActiveState( int orgId, int updatedById, bool activeState )
 		{
 			bool action = false;
 			using ( var context = new IsleContentContext() )
@@ -358,7 +361,7 @@ namespace IoerContentBusinessEntities
 					.ToList();
 				foreach ( Library item in list )
 				{
-					item.IsActive = false;
+					item.IsActive = activeState;
 					item.LastUpdated = System.DateTime.Now;
 					item.LastUpdatedById = updatedById;
 
@@ -399,6 +402,8 @@ namespace IoerContentBusinessEntities
                 to.SectionType = fromEntity.Library_SectionType.Title;
 
             to.Title = fromEntity.Title;
+			to.FriendlyTitle = UtilityManager.UrlFriendlyTitle( to.Title );
+
             to.Description = fromEntity.Description;
             to.ParentId = fromEntity.ParentId == null ? 0 : ( int ) fromEntity.ParentId;
             to.IsDefaultSection = fromEntity.IsDefaultSection == null ? false : ( bool ) fromEntity.IsDefaultSection;
@@ -470,7 +475,7 @@ namespace IoerContentBusinessEntities
             }
             catch ( Exception ex )
             {
-                LoggingHelper.LogError( ex, string.Format( "Library_Resource_Create( librarySectionId: {0}, resourceIntId, {1},userId: {2})", librarySectionId, resourceIntId, createdById ) );
+				LoggingHelper.LogError( ex, string.Format( "LibraryResource_Create( librarySectionId: {0}, resourceIntId, {1},userId: {2})", librarySectionId, resourceIntId, createdById ) );
                 statusMessage = ex.Message;
                 return 0;
             }
@@ -615,6 +620,32 @@ namespace IoerContentBusinessEntities
                     return false;
             }
         }//
+
+		/// <summary>
+		/// Return first collection id associated with library resource
+		/// </summary>
+		/// <param name="libraryId"></param>
+		/// <param name="resourceIntId"></param>
+		/// <returns></returns>
+		public static int GetCollectionForLibraryResource( int libraryId, int resourceIntId )
+		{
+			int collId = 0;
+			using ( var context = new IsleContentContext() )
+			{
+				List<Library_SectionResourceSummary> items = context.Library_SectionResourceSummary
+								.Where( s => s.LibraryId == libraryId && s.ResourceIntId == resourceIntId )
+								.ToList();
+				if ( items != null && items.Count > 0 ) {
+					foreach ( Library_SectionResourceSummary item in items )
+					{
+						collId = item.LibrarySectionId;
+						break;
+					}
+				}
+			}
+
+			return collId;
+		}//
         public static bool IsResourceInMyLibrary( int userId, int resourceIntId )
         {
             //int libraryId, 

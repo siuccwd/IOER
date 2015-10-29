@@ -151,7 +151,9 @@ namespace IOER.Admin
 					ResourceV2Services mgr2 = new ResourceV2Services();
 					//mgr2.ImportRefreshResources( resourceList );
 					statusMessage = "";
-					//or one at a time
+					//do the thumbs
+					int thumbCntr = mgr2.AddThumbsForDelayedResources( contentId, ref statusMessage );
+					//now update elastic
 					int cntr = mgr2.AddDelayedResourcesToElastic( contentId, ref statusMessage );
 
 
@@ -163,6 +165,20 @@ namespace IOER.Admin
 					return;
 				}
 			}
+		}
+
+		protected void btnNext_Click( object sender, EventArgs e )
+		{
+			//ResourceManager mgr = new ResourceManager();
+			//int cntr = mgr2.AddThumbsForDelayedResources( contentId, ref statusMessage );
+		}
+
+		protected void btnDoElastic_Click( object sender, EventArgs e )
+		{
+			ResourceV2Services mgr2 = new ResourceV2Services();
+
+			mgr2.AddDelayedResourcesToElastic();
+
 		} //
 	}
 }

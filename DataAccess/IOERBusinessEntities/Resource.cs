@@ -30,6 +30,7 @@ namespace IOERBusinessEntities
             this.Resource_GroupType = new HashSet<Resource_GroupType>();
             this.Resource_Like = new HashSet<Resource_Like>();
             this.Resource_LikeSummary = new HashSet<Resource_LikeSummary>();
+            this.Resource_Language = new HashSet<Resource_Language>();
         }
     
         public System.Guid RowId { get; set; }
@@ -41,6 +42,7 @@ namespace IOERBusinessEntities
         public Nullable<bool> IsActive { get; set; }
         public Nullable<bool> HasPathwayGradeLevel { get; set; }
         public int Id { get; set; }
+        public string ImageUrl { get; set; }
     
         public virtual ICollection<Resource_Version> Resource_Version { get; set; }
         public virtual ICollection<Resource_Cluster> Resource_Cluster { get; set; }
@@ -57,5 +59,6 @@ namespace IOERBusinessEntities
         public virtual ICollection<Resource_GroupType> Resource_GroupType { get; set; }
         public virtual ICollection<Resource_Like> Resource_Like { get; set; }
         public virtual ICollection<Resource_LikeSummary> Resource_LikeSummary { get; set; }
+        public virtual ICollection<Resource_Language> Resource_Language { get; set; }
     }
 }

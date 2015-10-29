@@ -12,7 +12,10 @@ namespace LRWarehouse.Business
     [Serializable]
 	public class ResourceVersion : BaseBusinessDataEntity
     {
-
+		public ResourceVersion()
+		{
+			ResourceImageUrl = "";
+		}
         #region Properties
         //private Guid _resourceId;
         //public Guid ResourceId
@@ -169,6 +172,8 @@ namespace LRWarehouse.Business
             get { return this._resourceUrl; }
             set { this._resourceUrl = value; }
         }
+		public string ResourceImageUrl { get; set; }
+
         private bool _resourceIsActive;
         /// <summary>
         /// Get whether resource is active

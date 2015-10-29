@@ -9,6 +9,7 @@ using System.Net;
 using System.Reflection;
 using System.Resources;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Web.Mail;
 using RegEx = System.Text.RegularExpressions.Regex;
 using System.Threading;
@@ -875,26 +876,26 @@ namespace IOER.Library
         /// Check if the current page is one that shoud be secure (i.e. use SSL)
         /// </summary>
         /// <returns></returns>
-        protected bool IsASecurePage()
-        {
-            bool IsASecurePage = false;
+		//protected bool IsASecurePage()
+		//{
+		//	bool IsASecurePage = false;
 
-            try
-            {
-                string templatePath = HttpContext.Current.Request.Path;
-                string template = templatePath.Substring( templatePath.LastIndexOf( "/" ) + 1 );
+		//	try
+		//	{
+		//		string templatePath = HttpContext.Current.Request.Path;
+		//		string template = templatePath.Substring( templatePath.LastIndexOf( "/" ) + 1 );
 
-                string securePages = UtilityManager.GetAppKeyValue( "securePages" );
-                if ( securePages.IndexOf( template ) > -1 )
-                    IsASecurePage = true;
+		//		string securePages = UtilityManager.GetAppKeyValue( "securePages" );
+		//		if ( securePages.IndexOf( template ) > -1 )
+		//			IsASecurePage = true;
 
-            }
-            catch
-            {
-                //allow default of false on exception
-            }
-            return IsASecurePage;
-        }
+		//	}
+		//	catch
+		//	{
+		//		//allow default of false on exception
+		//	}
+		//	return IsASecurePage;
+		//}
 
         /// <summary>
         /// Determine if the current page is the live view or a content management view 
@@ -2280,6 +2281,95 @@ namespace IOER.Library
 
         } //
 
+
+        #endregion
+
+        #region Report Helper Methods
+        protected void AddColumn(GridView gv, string dataField, string headerText)
+        {
+            AddColumn(gv, dataField, headerText, false, true);
+        }
+
+        protected void AddColumn(GridView gv, string dataField, string headerText, bool rightJustify, bool htmlEncode)
+        {
+            BoundField boundField = new BoundField
+            {
+                DataField = dataField,
+                HeaderText = headerText,
+                HtmlEncode = htmlEncode
+            };
+            if (rightJustify)
+            {
+                boundField.ItemStyle.HorizontalAlign = HorizontalAlign.Right;
+            }
+            gv.Columns.Add(boundField);
+        }
+
+        protected void InitReport(string fileName)
+        {
+            // Make sure the filename ends in .csv.  If it doesn't, then add it on.
+            Regex endFileName = new Regex(@".csv$");
+            if (endFileName.Matches(fileName).Count == 0)
+            {
+                fileName += ".csv";
+            }
+
+            // Set up the report
+            Response.Clear();
+            string dateTime = DateTime.Now.ToString("yyyyMMdd_HHmmss");
+            fileName = string.Format(fileName, dateTime);
+            Response.ContentType = string.Format("text/csv; name=\"{0}\"", fileName);
+            Response.AddHeader("Content-Disposition", string.Format("attachment; filename={0}", fileName));
+            //Response.Charset = "";
+            Response.ContentEncoding = Encoding.Unicode;
+        }
+
+
+        protected string GetWriteableValue(object o, string name, StringBuilder headerRow, bool isWritingHeader)
+        {
+            return GetWriteableValue(o, name, headerRow, isWritingHeader, true);
+        }
+
+        protected string GetWriteableValue(object o, string name, StringBuilder headerRow, bool isWritingHeader, bool isCleaningHtml)
+        {
+            if (isWritingHeader)
+            {
+                headerRow.Append(name + ",");
+            }
+            if (o == null || o == Convert.DBNull)
+            {
+                return ",";
+            }
+            else if (o.ToString().IndexOf(",") == -1)
+            {
+                return FixupString(o.ToString(), isCleaningHtml) + ",";
+            }
+            else
+            {
+                return "\"" + FixupString(o.ToString(), isCleaningHtml) + "\",";
+            }
+        }
+
+
+        private string FixupString(string input, bool isCleaningHtml)
+        {
+            string retVal = input;
+            if (isCleaningHtml)
+            {
+                Regex htmlRegex = new Regex(@"\<[^\>]*\>");
+                retVal = htmlRegex.Replace(retVal, " ");
+            }
+            retVal = retVal.Replace("\"", "\"\"");
+            retVal = retVal.Replace("\n", " ");
+            retVal = retVal.Replace("\r", " ");
+
+            return retVal;
+        }
+
+        public void EndReport()
+        {
+            Response.End();
+        }
 
         #endregion
 

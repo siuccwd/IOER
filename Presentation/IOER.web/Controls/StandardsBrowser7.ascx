@@ -476,9 +476,11 @@
 
   //Fill out the HTML for a single tree item
   function renderItem(item, depth) {
+  	console.log(item);
     return treeItemTemplate
       .replace(/{id}/g, item.id)
       .replace(/{code}/g, item.code == null ? "" : item.code)
+			.replace(/{grades}/g, item.grades.join(", "))
       .replace(/{text}/g, item.description)
       .replace(/{depth}/g, depth);
   }
@@ -497,6 +499,7 @@
         .replace(/{id}/g, selectedStandards[i].id)
         .replace(/{name}/g, getName(selectedStandards[i]))
         .replace(/{code}/g, selectedStandards[i].code == null ? "" : selectedStandards[i].code)
+				.replace(/{grades}/g, selectedStandards[i].grades.join(", "))
       );
     }
 
@@ -613,15 +616,17 @@
   #SB7 #SBtree .treeItem:focus, #SB7 #SBtree .treeItem:hover { background-color: #FF5707; color: #FFF; cursor: pointer; }
   #SB7 #SBtree .treeItem input { float: left; margin: 4px 5px;  }
   #SB7 #SBtree .treeItem .code { font-weight: bold; }
+	#SB7 #SBtree .treeItem .grades, .selectedStandard .grades { font-size: 16px; font-style: italic; font-weight: normal; }
+	.selectedStandard .grades { border-top: 1px solid #CCC; }
   #SB7 #SBtree .treeItem[data-depth=d0] { padding-left: 5px; }
   #SB7 #SBtree .treeItem[data-depth=d1] { padding-left: 15px; }
   #SB7 #SBtree .treeItem[data-depth=d2] { padding-left: 30px; }
   #SB7 #SBtree .treeItem[data-depth=d3] { padding-left: 45px; }
   #SB7 #SBtree .treeItem[data-depth=d4] { padding-left: 60px; }
   #SB7 #SBtree .treeItem[data-depth=d5] { padding-left: 75px; }
-  #SB7 #SBtree .treeItem[data-depth=d0] * { font-size: 150%; font-weight: bold; }
-  #SB7 #SBtree .treeItem[data-depth=d1] * { font-size: 125%; font-weight: bold; color: #4AA394; }
-  #SB7 #SBtree .treeItem[data-depth=d2] * { font-size: 110%; }
+  #SB7 #SBtree .treeItem[data-depth=d0] .code, #SB7 #SBtree .treeItem[data-depth=d0] .text { font-size: 30px; font-weight: bold; }
+  #SB7 #SBtree .treeItem[data-depth=d1] .code, #SB7 #SBtree .treeItem[data-depth=d1] .text { font-size: 24px; font-weight: bold; color: #4AA394; }
+  #SB7 #SBtree .treeItem[data-depth=d2] .code, #SB7 #SBtree .treeItem[data-depth=d2] .text { font-size: 20px; }
   #SB7 #SBtree .treeItem[data-depth=d0] input[type=checkbox] { margin: 9px 5px; }
   #SB7 #SBtree .treeItem[data-depth=d1] input[type=checkbox] { margin: 6px 5px }
   #SB7 #SBtree .treeItem[data-depth=d2] input[type=checkbox] { margin: 5px 5px; }
@@ -633,8 +638,8 @@
   #SB7 #SBselected .selectedStandard a { position: absolute; top: 2px; right: 2px; display: block; width: 20px; height: 20px; line-height: 20px; margin: 0 0 2px 5px; color: #FFF; background-color: #D33; border-radius: 5px; text-align: center; font-weight: bold; }
   #SB7 #SBselected .selectedStandard a:hover, #SB7 #SBselected .selectedStandard a:focus { background-color: #F00; }
 
-  #SB7 #SBbuttons input { margin-bottom: 10px; width: 100%; border-radius: 5px; border: 1px solid #999; padding: 5px; background: linear-gradient(#EEE, #CCC); background: -webkit-linear-gradient(#EEE, #CCC); }
-  #SB7 #SBbuttons input:hover, #SB7 #SBbuttons input:focus { cursor: pointer; background: linear-gradient(#FAFAFA, #CFCFCF); background: -webkit-linear-gradient(#FAFAFA, #CFCFCF); }
+  #SB7 #SBbuttons input { margin-bottom: 10px; width: 100%; border-radius: 5px; border: 1px solid #999; padding: 5px; background-color: #3572B8; color: #FFF; font-weight: bold; }
+  #SB7 #SBbuttons input:hover, #SB7 #SBbuttons input:focus { cursor: pointer; background-color: #FF6A00; }
   #SB7 .usageType select { width: 100%; }
 
   #resizeFrame { display: none; }
@@ -662,8 +667,8 @@
         <option value="jsonILSocialScience" data-grade="grade">Illinois Social Science Standards</option>
         <option value="jsonILSocialEmotional" data-grade="grade">Illinois Social/Emotional Development Standards</option>
         <option value="jsonNGSS" data-grade="grade">Next Generation Science Standards</option>
-				<option value="jsonRICivics" data-grade="grade">Rhode Island GSEs for Civics &amp; Government</option>
-				<option value="jsonRIHistory" data-grade="grade">Rhode Island GSEs for Historical Perspectives/Rhode Island History</option>
+				<!--<option value="jsonRICivics" data-grade="grade">Rhode Island GSEs for Civics &amp; Government</option>
+				<option value="jsonRIHistory" data-grade="grade">Rhode Island GSEs for Historical Perspectives/Rhode Island History</option>-->
       </optgroup>
       <optgroup label="Adult Education">
         <option value="jsonILAdultEdELAReading" data-grade="adult,nrs">Illinois Adult Education (ABE/ASE) English Language Arts Standards for Reading</option>
@@ -715,7 +720,7 @@
     <div id="SBselected"></div>
 
     <div id="SBbuttons" style="display: none;">
-      <input type="button" id="SBbtnSearch" onclick="SBdoSearch()" value="Search" />
+      <input type="button" id="SBbtnSearch" onclick="SBdoSearch()" class="isleButton bgBlue" value="Search" />
       <input type="button" id="SBbtnShowResults" style="display: none;" onclick="SBshowResults()" value="Show Results" />
       <div id="SBresultsEmpty"></div>
     </div>
@@ -728,6 +733,7 @@
       <input type="checkbox" id="standard_{id}" data-standardID="{id}" />
       <div class="code">{code}</div>
       <div class="text">{text}</div>
+			<div class="grades">Applies to Grade(s): <span>{grades}</span></div>
     </label>
   </div>
   <div id="template_selectedStandard" style="display:none;">
@@ -745,6 +751,7 @@
         <option value="3">Additional</option>
       </select>
       <span>{name}</span>
+			<div class="grades">Grades {grades}</div>
     </div>
   </div>
 </div>

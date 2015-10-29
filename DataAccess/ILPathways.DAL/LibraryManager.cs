@@ -13,6 +13,8 @@ using Microsoft.ApplicationBlocks.Data;
 
 using ILPathways.Business;
 using Isle.DTO;
+using ILPathways.Utilities;
+
 namespace ILPathways.DAL
 {
     public class LibraryManager : BaseDataManager
@@ -264,7 +266,7 @@ namespace ILPathways.DAL
             }
             catch ( Exception ex )
             {
-                LogError( ex, thisClassName + ".Get() " );
+                LogError( ex, thisClassName + string.Format(".Get() id: {0} ", pId) );
                 entity.Message = "Unsuccessful: " + thisClassName + ".Get(): " + ex.Message.ToString();
                 entity.IsValid = false;
                 return entity;
@@ -319,7 +321,7 @@ namespace ILPathways.DAL
             }
             catch ( Exception ex )
             {
-                LogError( ex, thisClassName + ".Get() " );
+                LogError( ex, thisClassName + string.Format(".GetMyLibrary() User: {0} ", user.Id) );
                 entity.Message = "Unsuccessful: " + thisClassName + ".Get(): " + ex.Message.ToString();
                 entity.IsValid = false;
                 return entity;
@@ -365,7 +367,7 @@ namespace ILPathways.DAL
             }
             catch ( Exception ex )
             {
-                LogError( ex, thisClassName + ".Get() " );
+				LogError( ex, thisClassName + string.Format( ".GetMyOrgLibrary() User: {0} ", user.Id ) );
                 entity.Message = "Unsuccessful: " + thisClassName + ".Get(): " + ex.Message.ToString();
                 entity.IsValid = false;
                 return entity;
@@ -439,7 +441,7 @@ namespace ILPathways.DAL
             }
             catch ( Exception ex )
             {
-                LogError( ex, thisClassName + ".Library_SelectListWithEditAccess() " );
+				LogError( ex, thisClassName + string.Format( ".Library_SelectListWithEditAccess() Lib/User: {0}/{1} ", libraryId, pUserid ) );
                 return null;
 
             }
@@ -849,6 +851,7 @@ namespace ILPathways.DAL
 
 			entity.Id = GetRowColumn( dr, "Id", 0 );
 			entity.Title = GetRowColumn( dr, "Title", "missing" );
+			entity.FriendlyTitle = UtilityManager.UrlFriendlyTitle( entity.Title );
             entity.Description = GetRowColumn( dr, "Description", "missing" );
             
             entity.IsDiscoverable = GetRowColumn( dr, "IsDiscoverable", false );
@@ -897,6 +900,7 @@ namespace ILPathways.DAL
 
             entity.Id = GetRowColumn( dr, "Id", 0 );
             entity.Title = GetRowColumn( dr, "Title", "missing" );
+			entity.FriendlyTitle = UtilityManager.UrlFriendlyTitle( entity.Title );
             entity.Description = GetRowColumn( dr, "Description", "missing" );
         
 

@@ -31,6 +31,7 @@ namespace IOERBusinessEntities
         public Nullable<int> WarehouseTotal { get; set; }
         public string AliasValues { get; set; }
         public Nullable<System.DateTime> Created { get; set; }
+        public Nullable<int> SupportingIntValue { get; set; }
     
         public virtual Codes_TagCategory Codes_TagCategory { get; set; }
         public virtual ICollection<Resource_Tag> Resource_Tag { get; set; }

@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Illinois Open Educational Resources - Communities" Language="C#" MasterPageFile="~/Masters/Responsive.Master" AutoEventWireup="true" CodeBehind="Community.aspx.cs" Inherits="IOER.Communities.Community" %>
+﻿<%@ Page Title="Illinois Open Educational Resources - Communities" Language="C#" MasterPageFile="~/Masters/Responsive2.Master" AutoEventWireup="true" CodeBehind="Community.aspx.cs" Inherits="IOER.Communities.Community" %>
 
 <%@ Register TagPrefix="uc1" TagName="CommunityController" Src="/controls/Community/Community1.ascx" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="HeadContent" runat="server">

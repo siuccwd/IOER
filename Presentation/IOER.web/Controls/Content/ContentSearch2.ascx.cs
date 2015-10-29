@@ -101,6 +101,15 @@ namespace IOER.Controls.Content
 			}
 		}
 
+		public bool IsSiteAdmin
+		{
+			get
+			{
+				return _isSiteAdmin;
+			}
+			set { this._isSiteAdmin = value; }
+		}//
+		private bool _isSiteAdmin = false;
 		#endregion
 		protected void Page_Load( object sender, EventArgs e )
 		{
@@ -124,6 +133,11 @@ namespace IOER.Controls.Content
 			{
 				if (!Page.IsPostBack)
 					IsBlindSearch = true;
+			}
+
+			if ( this.IsUserAuthenticated() && WebUser.TopAuthorization == 2)
+			{
+				IsSiteAdmin = true;
 			}
 		}
 	}

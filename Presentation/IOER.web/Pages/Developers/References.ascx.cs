@@ -12,7 +12,7 @@ namespace IOER.Pages.Developers
 		public References()
 		{
 			PageTitle = "References";
-			UpdatedDate = DateTime.Parse( "2015/07/01" );
+			UpdatedDate = DateTime.Parse( "2015/10/23" );
 		}
 
 		protected void Page_Load( object sender, EventArgs e )

@@ -1,5 +1,6 @@
 ﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="Import.ascx.cs" Inherits="IOER.Organizations.controls.Import" %>
 
+
 <style type="text/css">
     .defaultButton { width: 200px; }
 </style>
@@ -17,8 +18,36 @@
         <asp:label ID="label1" runat="server" >Organization</asp:label>
     </div>
     <div class="dataColumn">
-        <asp:TextBox ID="txtOrgId" runat="server">0</asp:TextBox>
+        <asp:label ID="txtOrgName" runat="server" ></asp:label>
+    </div>
+            <asp:TextBox ID="txtOrgId" runat="server">0</asp:TextBox>
         <asp:DropDownList ID="ddlOrgList" runat="server"></asp:DropDownList>
+</asp:Panel>
+
+
+<asp:Panel ID="PanelOptions" runat="server" Visible="true">
+    <div class="labelTop">
+        <asp:label ID="label2" runat="server" >Use Default Password (optional, minimum of 8 characters)</asp:label>
+    </div>
+    <div class="labelColumn">&nbsp;</div>
+    <div class="dataColumn">
+        <asp:DropDownList ID="ddlPasswordTemplates" runat="server">
+            <asp:ListItem Text="Select password template" Value="0"></asp:ListItem>
+            <asp:ListItem Text="LastName_ plus datetime" Value="1"></asp:ListItem>
+            <asp:ListItem Text="FirstName_ plus datetime" Value="2"></asp:ListItem>
+            <asp:ListItem Text="ChangeMe_ plus some milliseconds" Value="3"></asp:ListItem>
+        </asp:DropDownList>
+        <asp:TextBox CssClass="password" ID="txtDefaultPassword" runat="server" ></asp:TextBox>
+
+    </div>
+    <div class="labelColumn">
+        <asp:label ID="label4" runat="server" >Send Email On Upload</asp:label>
+    </div>
+    <div class="dataColumn">
+        <asp:RadioButtonList id="rblSendEmail" autopostback="false" causesvalidation="false"   runat="server" tooltip="Yes - An email will be sent to each new member, with a (one time) link to login to IOER, No - no emails will be sent." RepeatDirection="Horizontal">
+        <asp:ListItem Text="Yes"  value="Yes" Selected="True"></asp:ListItem>
+        <asp:ListItem Text="No"   value="No"></asp:ListItem>
+        </asp:RadioButtonList>
     </div>
 </asp:Panel>
 <asp:Panel ID="importPanel" runat="server" Visible="true">
@@ -133,7 +162,7 @@
 <asp:literal ID="showImportLinkOnErrors" runat="server" >no</asp:literal>
 <asp:literal ID="usingCsvReaderToValidate" runat="server" >yes</asp:literal>
 
-<asp:literal ID="txtOrgName" runat="server" ></asp:literal>
+<asp:literal ID="txtOrgNameOLD" runat="server" ></asp:literal>
 
 <asp:Label ID="userAddConfirmation" runat="server">The user accounts have been created and emails were sent with a link to activate the account.</asp:Label>
 <asp:literal ID="sendEmailonImport" runat="server" >yes</asp:literal>

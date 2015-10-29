@@ -32,6 +32,13 @@ namespace IOER.Controls.Content
 
 		protected void Page_Load( object sender, EventArgs e )
 		{
+
+			if ( !IsUserAuthenticated() )
+			{
+				//get the user
+				User = ( Patron ) WebUser;
+			}
+
 			LoadContent();
 			if ( HasError )
 			{
@@ -50,7 +57,9 @@ namespace IOER.Controls.Content
 
 			DeterminePreviewUrl();
 			DetermineLearningList();
-			Content.ImageUrl = DetermineThumbnail( Content );
+			//basic content will not use a resource thumbanail as it would simply be an image of itself.
+			//so go with any existing content
+			//Content.ImageUrl = DetermineThumbnail( Content );
 			LoadSupplementsAndReferences();
 		}
 
@@ -60,22 +69,6 @@ namespace IOER.Controls.Content
 
 			//legacy
 			string rid = this.GetRequestKeyValue( "rid", "" );
-			//if ( Page.RouteData.Values.ContainsKey( "RouteID" ) )
-			//{
-			//	string _routeID = "";
-			//	if ( Page.RouteData.Values.Count > 0 )
-			//		_routeID = Page.RouteData.Values[ "RouteID" ].ToString();
-			//	else
-			//		_routeID = "";
-			//	if ( _routeID.Length > 0 && IsInteger( _routeID ) )
-			//	{
-			//		targetID = Int32.Parse( _routeID );
-			//	}
-			//	else if ( _routeID.Length == 36 )
-			//	{
-			//		rid = _routeID;
-			//	}
-			//}
 
 			//Get content ID
 
@@ -149,6 +142,20 @@ namespace IOER.Controls.Content
 
 				Owner = accountService.Get( Content.CreatedById );
 				Owner.OrgMemberships = OrganizationBizService.OrganizationMember_GetUserOrgs( Owner.Id );
+
+				//hide summary. If no description, use summary
+				//but showing in the summary location for now
+				if ( !string.IsNullOrWhiteSpace( Content.Description ) )
+				{
+					Content.Summary = Content.Description;
+					Content.Description = "";
+				}
+				else if ( !string.IsNullOrWhiteSpace( Content.Summary ) )
+				{
+					//Content.Description = Content.Summary;
+					Content.Description = "";
+				}
+
 			}
 			catch ( System.Threading.ThreadAbortException tex )
 			{
@@ -180,8 +187,6 @@ namespace IOER.Controls.Content
 				ContentIsVisible = false;
 				return;
 			}
-			//Otherwise, get the user
-			User = ( Patron ) WebUser;
 
 			//If the user is the owner or is site admin, show it
 			if ( Content.CreatedById == User.Id || accountService.IsUserAdmin( User ) )

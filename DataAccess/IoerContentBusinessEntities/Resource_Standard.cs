@@ -30,5 +30,6 @@ namespace IoerContentBusinessEntities
         public string AlignmentDegree { get; set; }
         public Nullable<System.DateTime> Created { get; set; }
         public int CreatedById { get; set; }
+        public Nullable<bool> IsDirectStandard { get; set; }
     }
 }

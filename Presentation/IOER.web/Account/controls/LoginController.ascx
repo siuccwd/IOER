@@ -64,6 +64,8 @@
 <asp:Literal ID="autoCreateLibraryOnActivate" runat="server" Visible="false">yes</asp:Literal>
 <asp:Literal ID="libraryCreateMsg" runat="server" Visible="false">Your personal library was created. <br />To customize, <a href="/My/Library">navigate to My/Library</a>. Be sure to review the getting started guide for information on libraries</asp:Literal>
 
+<asp:Literal ID="passCodeConfirmationDate" runat="server" Visible="false">2015-10-15</asp:Literal>
+    <asp:Literal ID="passCodeConfirmation" runat="server" Visible="false">Ioer20151015</asp:Literal>
 <asp:Literal ID="autoAddToOrg" runat="server" Visible="false"></asp:Literal>
     <asp:Literal ID="Literal1" runat="server" Visible="false">2015-09-30, 80</asp:Literal>
 </asp:Panel>

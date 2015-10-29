@@ -2,7 +2,7 @@
 <%--<%@ Register TagPrefix="uc1" TagName="Search" Src="/LRW/Controls/ElasticSearch3.ascx" %>
 <%@ Register TagPrefix="uc1" TagName="Search" Src="/Controls/ImportedSearch.ascx" %>--%>
 <%@ Register TagPrefix="uc1" TagName="ActivityRenderer" Src="/Activity/ActivityRenderer.ascx" %>
-<%@ Register TagPrefix="uc1" TagName="Search" Src="/Controls/SearchV6/SearchV6.ascx" %>
+<%@ Register TagPrefix="uc1" TagName="Search" Src="/Controls/SearchV7/SearchV7.ascx" %>
 
 
 <div id="libraryStuff" runat="server">
@@ -12,9 +12,9 @@
     var userGUID = "<%=userGUID %>";
     var proxyId = "<%=proxyId %>";
     var linkedCollectionID = <%=linkedCollectionID %>;
-
+		var libraryID = <%=libraryID %>;
   </script>
-  <script type="text/javascript" src="/Scripts/ESLibrary2.js"></script>
+  <script type="text/javascript" src="/Scripts/ESLibrary2.js?ver=2"></script>
   <!--<script type="text/javascript" language="javascript" src="/Scripts/toolTip.js"></script>-->
   <!--<link rel="Stylesheet" type="text/css" href="/Styles/ToolTip.css" />-->
   <script type="text/javascript" src="/Scripts/toolTipV2.js"></script>
@@ -23,6 +23,8 @@
   <style type="text/css">
     /* General */
     body #container { min-height: 1200px; }
+  	#content #content { padding: 5px 0; }
+  	#content.libraryContent { padding-right: 45px; }
     #libraryHeader {
       margin-bottom: 5px;
       box-sizing: border-box;
@@ -346,14 +348,11 @@
       #libTabBox a.tab span { display: none; }
     }
 
-    /* Patches */
-    #libraryHeader { padding-right: 5px; }
-    #content .theme #searchHeader { margin-right: 5px; }
   </style>
 
   <uc1:ActivityRenderer id="activityRenderer" runat="server" />
 
-<div id="content">
+<div id="content" class="libraryContent">
   <div id="libraryHeader">
     <div id="libTabBox">
       <a href="#" class="tab" data-id="pnlDetails" onclick="showPanel('pnlDetails'); return false;" title="Library/Collection"><span>Details</span></a>
@@ -564,7 +563,7 @@
       </div><!-- /libraryHeaderContent -->
     </div> <!-- /libraryHeader -->
   
-  <uc1:Search ID="searchControl" ThemeName="ioer_library" runat="server" />
+  <uc1:Search ID="searchControl" LoadTheme="ioer_library" runat="server" />
 </div><!-- /libraryStuff -->
 
 

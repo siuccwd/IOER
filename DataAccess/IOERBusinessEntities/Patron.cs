@@ -32,7 +32,6 @@ namespace IOERBusinessEntities
         public Nullable<int> LastUpdatedById { get; set; }
         public System.Guid RowId { get; set; }
         public string IsleIdentifier { get; set; }
-        public string AuthenticationProvider { get; set; }
     
         public virtual Patron_Profile Patron_Profile { get; set; }
         public virtual ICollection<Patron_Following> Patron_Following { get; set; }

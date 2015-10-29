@@ -11,7 +11,7 @@ namespace IOER.Widgets.FullSearch
   {
     protected void Page_Load( object sender, EventArgs e )
     {
-
+			search.LoadTheme = string.IsNullOrWhiteSpace( Request.Params[ "theme" ] ) ? defaultTheme.Text : ( string ) Request.Params[ "theme" ];
     }
   }
 }

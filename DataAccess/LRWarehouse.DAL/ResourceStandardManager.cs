@@ -50,6 +50,14 @@ namespace LRWarehouse.DAL
             }
             return successful;
         }//
+
+		/// <summary>
+		/// Create a resource standard 
+		///note: AlignmentDegreeId is actually the usage now as in Major, Supporting, Additional
+		/// </summary>
+		/// <param name="entity"></param>
+		/// <param name="statusMessage"></param>
+		/// <returns></returns>
         public string Create(Entity entity, ref string statusMessage)
         {
             statusMessage = "";
@@ -62,7 +70,7 @@ namespace LRWarehouse.DAL
                 sqlParameter[ 0 ] = new SqlParameter( "@ResourceIntId", entity.ResourceIntId );
                 sqlParameter[ 1 ] = new SqlParameter( "@StandardId", entity.StandardId );
                 sqlParameter[ 2 ] = new SqlParameter( "@StandardUrl", entity.StandardUrl );
-                sqlParameter[ 3 ] = new SqlParameter( "@AlignedById", entity.CreatedById );
+                sqlParameter[ 3 ] = new SqlParameter( "@AlignedById", entity.AlignedById );
                 sqlParameter[ 4 ] = new SqlParameter( "@AlignmentTypeCodeId", entity.AlignmentTypeCodeId );
                 sqlParameter[ 5 ] = new SqlParameter( "@AlignmentDegreeId", entity.AlignmentDegreeId );
 
@@ -193,6 +201,7 @@ namespace LRWarehouse.DAL
             entity.AlignmentDegreeId = GetRowColumn( dr, "AlignmentDegreeId", 0 );
             entity.AlignmentDegree = GetRowColumn( dr, "AlignmentDegree", "" );
 
+			entity.IsDirectStandard = GetRowColumn( dr, "IsDirectStandard", true );
             return entity;
         }
 

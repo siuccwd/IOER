@@ -255,9 +255,15 @@ namespace IOER.Services
 
     }
 
-    //Publish the curriculum
+    
+	  /// <summary>
+	/// Publish the curriculum
+	/// OLD - replaced by ResourceService.asmx method @@@@@@@@@@@@@@@@@@@
+	  /// </summary>
+	  /// <param name="curriculumID"></param>
+	  /// <returns></returns>
     [WebMethod( EnableSession = true )]
-    public JSON Curriculum_Publish( int curriculumID )
+    private JSON Curriculum_Publish( int curriculumID )
     {
       //Get the top level node
 		var topNode = curriculumService.GetCurriculumNodeForPublish( curriculumID );
@@ -745,7 +751,43 @@ namespace IOER.Services
       }
     }
 
-    //Add standards
+
+	  /// <summary>
+	  /// For a published node, check for and publish any new child resources
+	  /// </summary>
+	  /// <param name="curriculumID"></param>
+	  /// <param name="nodeID"></param>
+	  /// <param name="parentID"></param>
+	  /// <returns></returns>
+	[WebMethod( EnableSession = true )]
+	public JSON PublishChildResources( int curriculumID, int nodeID )
+	{
+		var valid = true;
+		var status = "";
+		if ( nodeID== 0 ) { return Fail( "A valid identifier must be provided." ); }
+		if ( curriculumID == 0 ) { return Fail( "A valid parent identifier must be provided." ); }
+		//Fetch the curriculum
+		var curriculumNode = curriculumService.GetACurriculumNode( curriculumID );
+		var existingNode = curriculumService.GetACurriculumNode( nodeID );
+
+		//Validate the user
+		var user = GetValidatedUser( nodeID, 0 ).user;
+		if ( user == null ) { return Fail( "You must login to create or edit a level" ); }
+
+		if ( existingNode == null || existingNode.Id == 0 )
+		{
+			return Fail( "Invalid Level Parent ID." );
+		}
+
+		new ResourceV2Services().PublishRelatedChildContent( existingNode, user );
+
+		return new JSON() { data = true, valid = true, status = "Publishing all new related resources", extra = new { title = "Refreshing" } };
+
+	}
+
+	#endregion
+	#region standards
+	//Add standards
     [WebMethod( EnableSession = true )]
     public JSON Standards_Add( int nodeID, int targetID, string contentItemType, List<StandardDTO> standards )
     {
@@ -773,7 +815,7 @@ namespace IOER.Services
       }
 
       //Save standards
-      CurriculumServices.ContentStandard_Add( addedStandards );
+	  new CurriculumServices().ContentStandard_Add( nodeID, user.Id, addedStandards );
 
       //Return JSON
       if ( contentItemType == "attachment" )
@@ -808,7 +850,7 @@ namespace IOER.Services
       }
 
       //Update standard
-      var valid = CurriculumServices.ContentStandard_Update( standard.recordID, standard.alignmentID, standard.usageID, user.Id, ref status );
+      var valid = new CurriculumServices().ContentStandard_Update( standard.recordID, standard.alignmentID, standard.usageID, user.Id, ref status );
 
       if ( !valid )
       {
@@ -841,13 +883,25 @@ namespace IOER.Services
       }
 
       //Delete standard
-      CurriculumServices.ContentStandard_Delete( recordID, ref status );
+	  new CurriculumServices().ContentStandard_Delete( parentID, user.Id, recordID, ref status );
 
       //Return JSON
       return GetContentStandards( parentID );
     }
 
-    //Save URL attachment (File attachment is handled in /Controls/Curriculum/CurriculumFileUpload.aspx--maybe that should be moved here?)
+	#endregion
+	#region attachments
+	/// <summary>
+	/// Save URL attachment 
+	/// (File attachment is handled in /Controls/Curriculum/CurriculumFileUpload.aspx--maybe that should be moved here?)
+	/// </summary>
+	/// <param name="nodeID"></param>
+	/// <param name="attachmentID"></param>
+	/// <param name="title"></param>
+	/// <param name="accessID"></param>
+	/// <param name="url"></param>
+	/// <param name="featured"></param>
+	/// <returns></returns>
     [WebMethod( EnableSession = true )]
     public JSON Attachment_SaveURL(int nodeID, int attachmentID, string title, int accessID, string url, bool featured )
     {
@@ -928,6 +982,13 @@ namespace IOER.Services
             item.ParentId = nodeID;
             item.CreatedById = user.Id;
             contentService.Create_ef( item, ref status );
+
+			  //if node is published, then auto publish this item
+			if ( node.StatusId == 5 && node.ResourceIntId > 0 )
+			{
+				//should be able to just do the call for the parent
+				new ResourceV2Services().PublishRelatedChildContent( node, user );
+			}
           }
           else
           {
@@ -949,7 +1010,8 @@ namespace IOER.Services
             else
             {
               //Create thumbnail
-              new LRWarehouse.DAL.ResourceThumbnailManager().CreateThumbnailAsync( "content-" + item.Id, item.DocumentUrl, true, 3 );
+              //new LRWarehouse.DAL.ResourceThumbnailManager().CreateThumbnailAsync( "content-" + item.Id, item.DocumentUrl, true, 3 );
+							ThumbnailServices.CreateThumbnail( "content-" + item.Id, item.DocumentUrl, true );
               
               //Return confirmation
               return GetAttachments( nodeID );
@@ -1015,7 +1077,8 @@ namespace IOER.Services
             }
 
             //Recreate thumbnail
-            new LRWarehouse.DAL.ResourceThumbnailManager().CreateThumbnailAsync( "content-" + attachment.Id, attachment.DocumentUrl, true, 3 );
+            //new LRWarehouse.DAL.ResourceThumbnailManager().CreateThumbnailAsync( "content-" + attachment.Id, attachment.DocumentUrl, true, 3 );
+						ThumbnailServices.CreateThumbnail( "content-" + attachment.Id, attachment.DocumentUrl, true );
 
             //Return data
             return GetAttachments( nodeID );
@@ -1094,8 +1157,9 @@ namespace IOER.Services
         return Reply( ex.Message, false, "There was an error processing your request.", ex.ToString() );
       }
     }
-
-    //Post a news item
+	#endregion
+	#region news
+	//Post a news item
     [WebMethod( EnableSession = true )]
     public JSON Save_News( int nodeID, string text )
     {
@@ -1134,29 +1198,6 @@ namespace IOER.Services
         return Reply( "", false, "Sorry, there was a problem saving your news item.", ex.Message );
       }
     }
-
-		[WebMethod( EnableSession = true )]
-		public JSON RegenerateThumbnail( int nodeID, int contentID, string contentURL )
-		{
-			var user = GetValidatedUser( nodeID, 0 );
-			if ( user.write )
-			{
-				if ( contentID > 0 && !string.IsNullOrWhiteSpace( contentURL ) )
-				{
-					var title = "content-" + contentID;
-					new LRWarehouse.DAL.ResourceThumbnailManager().CreateThumbnailAsync( title, contentURL, true, 1 );
-					return new JSON() { data = true, valid = true, status = "Regenerating...", extra = new { title = title } };
-				}
-				else
-				{
-					return new JSON() { data = null, valid = false, status = "Incorrect parameters - please double-check.", extra = new { nodeID = nodeID, contentID = contentID, contentURL = contentURL } };
-				}
-			}
-			else
-			{
-				return new JSON() { data = null, valid = false, status = "You are not authorized to do that.", extra = null };
-			}
-		}
 
     //Get news items
     [WebMethod]
@@ -1199,6 +1240,30 @@ namespace IOER.Services
     }
 
     #endregion
+
+	[WebMethod( EnableSession = true )]
+	public JSON RegenerateThumbnail( int nodeID, int contentID, string contentURL )
+	{
+		var user = GetValidatedUser( nodeID, 0 );
+		if ( user.write )
+		{
+			if ( contentID > 0 && !string.IsNullOrWhiteSpace( contentURL ) )
+			{
+				var title = "content-" + contentID;
+				//new LRWarehouse.DAL.ResourceThumbnailManager().CreateThumbnailAsync( title, contentURL, true, 1 );
+				ThumbnailServices.CreateThumbnail( title, contentURL, true );
+				return new JSON() { data = true, valid = true, status = "Regenerating...", extra = new { title = title } };
+			}
+			else
+			{
+				return new JSON() { data = null, valid = false, status = "Incorrect parameters - please double-check.", extra = new { nodeID = nodeID, contentID = contentID, contentURL = contentURL } };
+			}
+		}
+		else
+		{
+			return new JSON() { data = null, valid = false, status = "You are not authorized to do that.", extra = null };
+		}
+	}
 
     #region Helper Methods
     //Get user and permissions

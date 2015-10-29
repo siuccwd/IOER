@@ -52,6 +52,19 @@ namespace IOER.Services.UserManagement
 		public override bool InviteUser( UserManagementService.UserManagementInput input, IWebUser actingUser, ref string status )
 		{
 			//Check to see if the actingUser has authority to invite a new user
+			OrganizationMember actingOrgMbr = OrganizationBizService.OrganizationMember_Get( input.ObjectId, actingUser.Id );
+			if ( actingOrgMbr.IsAdministration()
+				|| actingOrgMbr.HasAdministratorRole()
+				|| actingOrgMbr.HasAccountAdministratorRole() )
+			{
+
+			}
+			else
+			{
+				status = "You are not authorized to invite users.";
+				return false;
+			}
+
 			if ( true )
 			{
 				//Check to see if the user exists
@@ -98,7 +111,19 @@ namespace IOER.Services.UserManagement
 			OrganizationBizService.OrganizationMember_FillRoles( targetUser );
 
 			//Check to see if the actingUser has authority to update target user role to selected role (ie ensure contributors can't add admins)
+			OrganizationMember actingOrgMbr = OrganizationBizService.OrganizationMember_Get( input.ObjectId, actingUser.Id );
+			if ( actingOrgMbr.IsAdministration()
+				|| actingOrgMbr.HasAdministratorRole()
+				|| actingOrgMbr.HasAccountAdministratorRole()
+				|| actingUser.TopAuthorization < 5 )
+			{
 
+			}
+			else
+			{
+				status = "You are not authorized to update users.";
+				return false;
+			}
 			//Check to see if the user is modifying their own role - may need special handling for this
 
 			//Ensure that the user's action won't leave the object without an owner/admin
@@ -160,10 +185,14 @@ namespace IOER.Services.UserManagement
 		{
 			var orgService = new OrganizationBizService();
 			var targetUser = OrganizationBizService.OrganizationMember_Get( input.ObjectId, input.TargetUserId );
-			var actingUserLevel = OrganizationBizService.OrganizationMember_Get( input.ObjectId, input.TargetUserId ).OrgMemberTypeId;
+			OrganizationMember actingOrgMbr = OrganizationBizService.OrganizationMember_Get( input.ObjectId, actingUser.Id );
 
 			//Check to see if the actingUser has authority to remove the selected user (ie moderator can't remove admins)
-			if ( actingUserLevel > targetUser.OrgMemberTypeId )
+			if ( actingOrgMbr.IsAdministration() 
+				|| actingOrgMbr.HasAdministratorRole()
+				|| actingOrgMbr.HasAccountAdministratorRole()
+				|| actingUser.TopAuthorization < 5)
+			//if ( actingUserLevel > targetUser.OrgMemberTypeId )
 			{
 				//Check to see if the user is removing themself - may need special handling for this
 				//actually don't care, only care if removing admin
@@ -171,7 +200,7 @@ namespace IOER.Services.UserManagement
 				//Ensure that the user's action won't leave the object without an owner/admin
 
 				//Do the update
-				orgService.OrganizationMember_Delete( input.TargetUserId );
+				orgService.OrganizationMember_Delete( input.ObjectId, input.TargetUserId );
 			}
 			else
 			{

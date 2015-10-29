@@ -427,6 +427,8 @@ namespace IOER.Organizations
 				{
 					LastOrgId = recordId;
 					TabContainer1.ActiveTabIndex = 1;
+					addMemberPanel.Visible = false;
+					importPanel.Visible = false;
 					DoMembersSearch();
 					this.Get(recordId);
 				}

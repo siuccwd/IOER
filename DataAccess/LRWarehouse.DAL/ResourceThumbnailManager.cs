@@ -10,7 +10,8 @@ using System.Threading;
 
 namespace LRWarehouse.DAL
 {
-  public class ResourceThumbnailManager
+	//OUTDATED - Use ThumbnailServices.CreateThumbnail() instead!
+  public class ResourceThumbnailManagerOLD
   {
     //The UNC Path to the thumbnail folder -- should add this to web.config
     //private const string thumbnailRootFolder = @"\\OERDATASTORE\OerThumbs\";

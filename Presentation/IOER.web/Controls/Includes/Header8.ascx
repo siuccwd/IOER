@@ -47,7 +47,6 @@
 		,
 		skipNav: function () {
 			$("h1").first().attr("tabindex", "0").focus(); //fallback
-			$("#skipLinkTarget").focus();
 		}
 	};
 </script>
@@ -58,6 +57,7 @@
 
 	/* Logo */
 	#mainSiteHeaderLogo { width: 135px; height: 100px; padding: 5px; position: absolute; top: 0; left: 0; }
+	#mainSiteHeaderLogo a { padding-left: 5px; }
 	#mainSiteHeaderLogo img { max-width: 100%; max-height: 100%; }
 	#skipLink { position: absolute; bottom: 5px; right: -100px; text-align: center; border-radius: 5px; padding: 5px; opacity: 0; height: 0; padding: 0; }
 	#skipLink:focus { opacity: 1; height: auto; padding: 5px; }
@@ -86,7 +86,7 @@
 	/* Account */
 	#mainSiteHeaderAccount { width: 300px; position: absolute; top: 0; right: 0; }
 	#mainLoginLinkBox { padding: 8px 5px; }
-	#mainLoginLink { display: block; text-align: right; padding: 5px; font-size: 20px; text-align: center; }
+	#mainLoginLink { display: block; text-align: right; padding: 5px; font-size: 20px; text-align: center; color: #FFF; }
 	#mainProfileCard { padding: 5px; position: relative; }
 	#mainProfileCard #userName { font-size: 18px; background-color: #4F4E4F; color: #FFF; padding: 2px 95px 2px 5px; text-align: right; border-radius: 5px; }
 	#mainProfileCard #mainProfileImage { position: absolute; top: 5px; right: 5px; width: 90px; height: 90px; background: #EEE center center no-repeat; background-size: cover; border-radius: 5px; border: 1px solid #4F4E4F; }
@@ -112,6 +112,35 @@
 	}
 </style>
 
+<!-- Help Search Engines -->
+<script type="application/ld+json">
+	{
+		"@context": "http://schema.org",
+		"@type": "SiteNavigationElement",
+		"about": [
+			{ 
+				"@type": "SiteNavigationElement",	
+				"name": "Search",
+				"about": [
+					{ "@type": "SiteNavigationElement", "name": "Resources", "url": "/Search" },
+					{ "@type": "SiteNavigationElement", "name": "Created Resources", "url": "/Content/Search" },
+					{ "@type": "SiteNavigationElement", "name": "Libraries", "url": "/Libraries/Search" },
+					{ "@type": "SiteNavigationElement", "name": "Learning Lists", "url": "/LearningLists" },
+					{ "@type": "SiteNavigationElement", "name": "gooru Resources", "url": "/gooruSearch" }
+				] 
+			},
+			{ 
+				"@type": "SiteNavigationElement",	
+				"name": "Share",
+				"about": [
+					{ "@type": "SiteNavigationElement", "name": "Contribute Resources", "url": "/Contribute" },
+					{ "@type": "SiteNavigationElement", "name": "Communities", "url": "/Community/1/ISLE_Community" }
+				] 
+			}
+		]
+	}
+</script>
+
 <div id="mainSiteHeader">
 	<!-- Logo -->
 	<div id="mainSiteHeaderLogo">
@@ -122,7 +151,7 @@
 	</div><!--
 	Navigation 
 	--><div id="mainSiteHeaderContent">
-		<div id="mainSiteNavigation">
+		<div id="mainSiteNavigation" role="navigation">
 			<div class="navigationItem" data-headerMenu="search">
 				<input type="button" value="Search" data-headerMenu="search" class="collapsed" />
 				<div class="navigationLinks collapsed" data-headerMenu="search">
@@ -130,7 +159,7 @@
 					<a href="/Content/Search">Created Resources</a>
 					<a href="/Libraries/Search">Libraries</a>
 					<a href="/LearningLists">Learning Lists</a>
-					<a href="/gooruSearch">gooru Resources (beta)</a>
+					<a href="/gooruSearch">gooru Resources</a>
 				</div>
 			</div><!--
 			--><div class="navigationItem" data-headerMenu="share">
@@ -200,7 +229,6 @@
 		</div>
 		<% } %>
 	</div>
-	<a id="skipLinkTarget"></a>
 </div>
 
 <asp:Panel ID="hiddenStuff" runat="server" Visible="false">

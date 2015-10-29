@@ -743,7 +743,7 @@ namespace Isle.BizServices
             if ( parent == null || parent.Id == 0 )
                 return;
 
-            ContentItem entity = new CurriculumServices().Get( nodeId );
+			ContentItem entity = new CurriculumServices().Get( contentId );
             if ( entity == null || entity.Id == 0 )
                 return;
 
@@ -1140,6 +1140,11 @@ namespace Isle.BizServices
                 log.Event = "View Resource";
                 suffix = string.Format( " from library: " + lib.Title );
                 log.ObjectRelatedId = libraryId;
+				if ( collectionId == 0 )
+				{
+					//try to get a collectionId using lib and resource. Will return first, if multiple
+					collectionId = EFDAL.EFLibraryManager.GetCollectionForLibraryResource( libraryId, resourceId );
+				}
                 if ( collectionId > 0 )
                 {
                     log.TargetObjectId = collectionId;
@@ -1196,6 +1201,9 @@ namespace Isle.BizServices
 
             if ( log.IPAddress == null || log.IPAddress.Length < 10 )
                 log.IPAddress = GetUserIPAddress();
+			if ( log.IPAddress.Length > 50 )
+				log.IPAddress = log.IPAddress.Substring( 0, 50 );
+
             //================================
 			if ( isBot )
 			{

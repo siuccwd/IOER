@@ -251,6 +251,7 @@ namespace ILPathways.Business
             FileName = FileName.Replace( " ", "_" );
             
             FileName = FileName.Replace( "'", "" );
+			FileName = FileName.Replace( "+", "plus" );
             FileName = FileName.Replace( "/", "_" );
             FileName = FileName.Replace( "\\", "_" );
             FileName = FileName.Replace( "#", "_" );

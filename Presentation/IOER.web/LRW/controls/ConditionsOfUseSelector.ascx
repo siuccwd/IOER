@@ -56,5 +56,7 @@ $(document).ready(function() {
 </div>
 
 <asp:Panel ID="hiddenStuff" runat="server" Visible="false">
-  <asp:Literal ID="ltlConditionsOfUseDefaultValue" Text="4" runat="server" />
+    <!-- rights unknown -->
+  <asp:Literal ID="ltlConditionsOfUseDefaultValue" Text="8" runat="server" />
+    <asp:Literal ID="litIsNewContext" Text="no" runat="server" />
 </asp:Panel>

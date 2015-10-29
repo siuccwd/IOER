@@ -6,7 +6,6 @@
 		#content { min-height: 500px; }
 		#contentSection, #dataSection { display: inline-block; vertical-align: top; }
 		#contentSection { width: calc(100% - 350px); padding: 0 10px 50px 0; }
-		#dataSection { width: 300px; padding: 0 0 50px; }
 		#contentSection h2 { margin-top: 15px; }
 		#contentSection h2.first { margin-top: 0; }
 
@@ -22,6 +21,7 @@
 		#content #noAccess { font-size: 20px; color: #D33; font-weight: bold; text-align: center; padding: 50px; }
 
 		/* Data */
+        #dataSection { width: 300px; padding: 0 0 50px; }
 		#dataSection .mid:first-of-type { margin-top: -5px; }
 		#dataSection .owner { display: block; position: relative; padding: 5px 55px 0 0; min-height: 50px; }
 		#dataSection .ownerAvatar { position: absolute; top: 0; right: 0; display: inline-block; width: 50px; height: 50px; vertical-align: middle; border-radius: 5px; background: #CCC no-repeat center center; background-size: cover; border: 1px solid #CCC; }
@@ -29,6 +29,10 @@
 		#dataSection .useRights img { position: absolute; top: 0; right: 0; }
 		#dataSection .learningList { display: block; position: relative; padding: 5px 105px 0 0; min-height: 60px; }
 		#dataSection .learningList img { position: absolute; top: -15px; right: 0; width: 100px; border-radius: 5px; }
+
+		@media (max-width: 800px) {
+			#contentSection, #dataSection { display: block; width: 100%; }
+		}
 	</style>
 
     <div id="content">
@@ -41,7 +45,7 @@
         </asp:Panel>
         <asp:Panel ID="detailPanel" runat="server" Visible="false">
             <div id="contentSection">
-                <h2 class="first">Summary</h2>
+                <h2 class="first offScreen">Summary</h2>
                 <% if ( !string.IsNullOrWhiteSpace( Content.ImageUrl ) && string.IsNullOrWhiteSpace( Content.DocumentUrl ) && string.IsNullOrWhiteSpace( Content.Description ) )
                    { %>
                 <img id="thumbnail" src="<%=Content.ImageUrl %>" alt="Content preview thumbnail" />
@@ -53,7 +57,7 @@
                 <% if ( !string.IsNullOrWhiteSpace( Content.Description ) && Content.Description != Content.Summary )
                    { %>
                 <div id="description">
-                    <h2>Content Data</h2>
+                    <h2 class="offScreen">Content Data</h2>
                     <div id="descriptionData">
                         <%=Content.Description %>
                     </div>
@@ -92,7 +96,7 @@
 
                 <% if ( Supplements != null && Supplements.Count() > 0 )
                    { %>
-                <h2>Supplementary Content</h2>
+                <h2>Downloadable Files</h2>
                 <% foreach ( var item in Supplements )
                    { %>
                 <div class="supplement grayBox">
@@ -104,7 +108,7 @@
 
                 <% if ( References != null && References.Count() > 0 )
                    { %>
-                <h2>References</h2>
+                <h2>Related Resources</h2>
                 <% foreach ( var item in References )
                    { %>
                 <div class="reference grayBox">
@@ -113,11 +117,8 @@
                 </div>
                 <% } %>
                 <% } %>
-            </div>
-            <!-- /contentSection -->
-            <!--
-		-->
-            <div id="dataSection">
+            </div><!-- /contentSection --><!--
+						--><div id="dataSection">
 
                 <div id="data" class="grayBox">
                     <h2 class="header">Content Information</h2>
@@ -160,6 +161,8 @@
                     <%=( string.IsNullOrWhiteSpace( Content.Organization ) ? Content.ParentOrganization : Content.Organization ) %>
                     <% } %>
 
+                    <% if ( Content.StatusId < 5 )
+                       { %>
                     <h3 class="mid">Status</h3>
                     <%=Content.Status %>
 
@@ -173,6 +176,7 @@
                         <% } %>
                     </a>
                     <% } %>
+                      <% } %>
                 </div>
 
             </div>

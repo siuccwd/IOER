@@ -12,6 +12,7 @@ namespace ILPathways.Business
         public Library()
         {
             AllowJoinRequest = true;
+			FriendlyTitle = "Library";
         }
 
 
@@ -47,18 +48,6 @@ namespace ILPathways.Business
                 }
             }
         }
-
-        /// <summary>
-        /// Return a url friendly title
-        /// </summary>
-        public string FriendlyTitleX
-        {
-            get
-            {
-                //return UrlFriendlyTitle( this._title );
-                return this._title;
-            }
-        } //
 
         private string _description = "";
         /// <summary>
@@ -273,17 +262,46 @@ namespace ILPathways.Business
             }
         }
 
-        public string FriendlyUrlXX
+
+		/// <summary>
+		/// Return a url friendly title
+		/// ==> this is no longer set in this object, it needs to be set from external methods like:
+		/// ILPathways.Utilities.UtilityManager.UrlFriendlyTitle()
+		/// </summary>
+		public string FriendlyTitle 
+		{
+			get
+			{
+				//return UrlFriendlyTitle( this._title );
+				if ( string.IsNullOrWhiteSpace( _friendlyTitle ) )
+					_friendlyTitle = "Library";
+				return this._friendlyTitle;
+			}
+			set
+			{
+				if ( this._friendlyTitle != value )
+				{
+					this._friendlyTitle = value.Trim();
+				}
+			}
+		} //
+		private string _friendlyTitle = "Library";
+
+		/// <summary>
+		/// Return a friendly url
+		/// ==> this is no longer set in this object, it needs to be set from 
+		/// </summary>
+        public string FriendlyUrl
         {
             get
             {
                 if ( Id == 0 )
                     return "";
                 else
-                    return "";// string.Format( "/Library/{0}/{1}", Id, this.FriendlyTitle );
+                    return string.Format( "/Library/{0}/{1}", Id, this.FriendlyTitle );
             }
-           
         }
+
 		#endregion
 
 

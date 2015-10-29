@@ -116,5 +116,18 @@ namespace IoerContentBusinessEntities
         public DbSet<ApplicationObject> ApplicationObjects { get; set; }
         public DbSet<Codes_GroupType> Codes_GroupType { get; set; }
         public DbSet<Object_Member> Object_Member { get; set; }
+        public DbSet<Codes_AuthorizationLevel> Codes_AuthorizationLevel { get; set; }
+        public DbSet<Codes_ExternalSite> Codes_ExternalSite { get; set; }
+        public DbSet<Codes_PrivilegeDepth> Codes_PrivilegeDepth { get; set; }
+        public DbSet<Codes_PrivilegeType> Codes_PrivilegeType { get; set; }
+        public DbSet<Codes_State> Codes_State { get; set; }
+        public DbSet<Organization_MemberSummary> Organization_MemberSummary { get; set; }
+        public DbSet<AppVisitLog> AppVisitLogs { get; set; }
+        public DbSet<SqlQuery> SqlQueries { get; set; }
+        public DbSet<Organization_AdminMembers> Organization_AdminMembers { get; set; }
+        public DbSet<Organization_MemberCrosstab> Organization_MemberCrosstab { get; set; }
+        public DbSet<OrganizationMember_RoleIdCSV> OrganizationMember_RoleIdCSV { get; set; }
+        public DbSet<Content_RelatedStandard> Content_RelatedStandard { get; set; }
+        public DbSet<Content_RelatedStandardsSummary> Content_RelatedStandardsSummary { get; set; }
     }
 }

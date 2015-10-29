@@ -20,6 +20,7 @@ namespace LRWarehouse.DAL
     /// CRUD methods for Resource
     /// See LRManager for Search methods
     /// </summary>
+	/// <remarks>15-10-19 mparsons - changed to use new versions for resource create and update, to avoid conflicts with the import, until the latter is updated</remarks>
     public class ResourceManager : BaseDataManager
     {
         static string thisClassName = "ResourceManager";
@@ -31,8 +32,8 @@ namespace LRWarehouse.DAL
         const string SEARCH_PROC = "[Resource_Search]";
         const string SEARCH_FT_PROC = "[Resource_Search_FT]";
         const string DELETE_PROC = "[ResourceDelete]";
-        const string INSERT_PROC = "[ResourceInsert]";
-        const string UPDATE_PROC = "[ResourceUpdate]";
+        const string INSERT_PROC = "[ResourceInsert2]";
+		const string UPDATE_PROC = "[ResourceUpdateById2]";
 
         #region Data Manager Declarations
         AuditReportingManager auditReportingManager = new AuditReportingManager();
@@ -140,6 +141,19 @@ namespace LRWarehouse.DAL
         //    return resourceIntId;
         //}
 
+		/// <summary>
+		/// is this used???
+		/// </summary>
+		/// <param name="resourceUrl"></param>
+		/// <param name="statusMessage"></param>
+		/// <returns></returns>
+		public int CreateByUrl( string resourceUrl, ref string statusMessage )
+		{
+			Resource pEntity = new Resource();
+			pEntity.ResourceUrl = resourceUrl;
+			return Create( pEntity, ref statusMessage );
+		}//
+
         /// <summary>
         /// Create a resource
         /// 15-03-25 mparsons - the resourse entity now includes a new property: PublishedForOrgId
@@ -159,12 +173,13 @@ namespace LRWarehouse.DAL
                 arParms[ 0 ] = new SqlParameter( "@ResourceUrl", pEntity.ResourceUrl);
                 arParms[ 1 ] = new SqlParameter( "@ViewCount", pEntity.ViewCount);
                 arParms[ 2 ] = new SqlParameter( "@FavoriteCount", pEntity.FavoriteCount);
-
+				arParms[ 3 ] = new SqlParameter( "@ImageUrl", pEntity.ImageUrl );
+				
                 //TODO - remove HasPathwayGradeLevel
-                arParms[ 3 ] = new SqlParameter( "@HasPathwayGradeLevel", SqlDbType.Bit );
-                arParms[ 3 ].Value = pEntity.HasPathwayGradeLevel;
+				//arParms[ 3 ] = new SqlParameter( "@HasPathwayGradeLevel", SqlDbType.Bit );
+				//arParms[ 3 ].Value = pEntity.HasPathwayGradeLevel;
 
-                SqlDataReader dr = SqlHelper.ExecuteReader( ConnString, CommandType.StoredProcedure, "ResourceInsert", arParms );
+				SqlDataReader dr = SqlHelper.ExecuteReader( ConnString, CommandType.StoredProcedure, INSERT_PROC, arParms );
                 if ( dr.HasRows )
                 {
                     dr.Read();
@@ -191,46 +206,7 @@ namespace LRWarehouse.DAL
             return newId;
         }//
 
-        public int CreateByUrl( string resourceUrl, ref string statusMessage )
-        {
-            statusMessage = "";
-            
-            int newId = 0;
 
-            try
-            {
-                SqlParameter[] arParms = new SqlParameter[ 4 ];
-                arParms[ 0 ] = new SqlParameter( "@ResourceUrl", resourceUrl );
-                arParms[ 1 ] = new SqlParameter( "@ViewCount", 0 );
-                arParms[ 2 ] = new SqlParameter( "@FavoriteCount", 0 );
-
-                //TODO - remove HasPathwayGradeLevel
-                arParms[ 3 ] = new SqlParameter( "@HasPathwayGradeLevel", false );
-
-                SqlDataReader dr = SqlHelper.ExecuteReader( ConnString, CommandType.StoredProcedure, "ResourceInsert", arParms );
-                if ( dr.HasRows )
-                {
-                    dr.Read();
-                    newId = int.Parse( dr[ 0 ].ToString() );
-                                        
-
-                    //if ( pEntity != null && pEntity.Id > 0 && pEntity.CreatedById > 0 )
-                    //{
-                    //    Create_ResourcePublishedBy( pEntity.Id, pEntity.CreatedById, pEntity.PublishedForOrgId, ref statusMessage );
-                    //}
-                }
-                dr.Close();
-                dr = null;
-                statusMessage = "successful";
-
-            }
-            catch ( Exception ex )
-            {
-                LogError( "ResourceManager.Create(): " + ex.ToString() );
-                statusMessage = ex.Message;
-            }
-            return newId;
-        }//
 
         /// <summary>
         /// Create a ResourcePublishedBy record
@@ -263,69 +239,85 @@ namespace LRWarehouse.DAL
             }
         }//
 
-        [Obsolete( "This method is obsolete; use UpdateById instead" )]
+		/// <summary>
+		/// Obsolete, now done in the ef manager
+		/// </summary>
+		/// <param name="pEntity"></param>
+		/// <returns></returns>
+		private string UpdateResourceImageUrl( Resource pEntity )
+		{
+			return UpdateById( pEntity );
+		}
+
+		/// <summary>
+		/// update a resource using the integer Id
+		/// </summary>
+		/// <param name="pEntity"></param>
+		/// <returns></returns>
+		public string UpdateById( Resource pEntity )
+		{
+			string status = "successful";
+			try
+			{
+				SqlParameter[] arParms = new SqlParameter[ 6 ];
+				arParms[ 0 ] = new SqlParameter( "@Id", pEntity.Id );
+
+				arParms[ 1 ] = new SqlParameter( "@ResourceUrl", pEntity.ResourceUrl );
+				arParms[ 2 ] = new SqlParameter( "@ViewCount", pEntity.ViewCount );
+				arParms[ 3 ] = new SqlParameter( "@FavoriteCount", pEntity.FavoriteCount );
+				arParms[ 4 ] = new SqlParameter( "@ImageUrl", pEntity.ImageUrl );
+				arParms[ 5 ] = new SqlParameter( "@IsActive", pEntity.IsActive );
+
+				SqlHelper.ExecuteNonQuery( ConnString, CommandType.StoredProcedure, UPDATE_PROC, arParms );
+			}
+			catch ( Exception ex )
+			{
+				LogError( "ResourceManager.UpdateById(): " + ex.ToString() );
+				status = ex.Message;
+			}
+			return status;
+		}
+
+
+		//[Obsolete( "This method is obsolete; use UpdateById instead" )]
         /// <summary>
         /// update a resource using the RowId (OBSOLETE)
         /// </summary>
         /// <param name="pEntity"></param>
         /// <returns></returns>
-        private string UpdateByRowId( Resource pEntity )
-        {
-            string status = "successful";
-            try
-            {
-                SqlParameter[] arParms = new SqlParameter[ 6 ];
-                arParms[ 0 ] = new SqlParameter( "@RowId", pEntity.RowId );
+		//private string UpdateByRowId( Resource pEntity )
+		//{
+		//	string status = "successful";
+		//	try
+		//	{
+		//		SqlParameter[] arParms = new SqlParameter[ 6 ];
+		//		arParms[ 0 ] = new SqlParameter( "@RowId", pEntity.RowId );
 
-                arParms[ 1 ] = new SqlParameter( "@ResourceUrl", SqlDbType.VarChar );
-                arParms[ 1 ].Size = 500;
-                arParms[ 1 ].Value = pEntity.ResourceUrl;
-                arParms[ 2 ] = new SqlParameter( "@ViewCount", SqlDbType.Int );
-                arParms[ 2 ].Value = pEntity.ViewCount;
-                arParms[ 3 ] = new SqlParameter( "@FavoriteCount", SqlDbType.Int );
-                arParms[ 3 ].Value = pEntity.FavoriteCount;
-                arParms[ 4 ] = new SqlParameter( "@HasPathwayGradeLevel", SqlDbType.Bit );
-                arParms[ 4 ].Value = pEntity.HasPathwayGradeLevel;
-                arParms[ 5 ] = new SqlParameter( "@IsActive", SqlDbType.Bit );
-                arParms[ 5 ].Value = pEntity.IsActive;
+		//		arParms[ 1 ] = new SqlParameter( "@ResourceUrl", SqlDbType.VarChar );
+		//		arParms[ 1 ].Size = 600;
+		//		arParms[ 1 ].Value = pEntity.ResourceUrl;
+		//		arParms[ 2 ] = new SqlParameter( "@ViewCount", SqlDbType.Int );
+		//		arParms[ 2 ].Value = pEntity.ViewCount;
+		//		arParms[ 3 ] = new SqlParameter( "@FavoriteCount", SqlDbType.Int );
+		//		arParms[ 3 ].Value = pEntity.FavoriteCount;
+		//		arParms[ 4 ] = new SqlParameter( "@ImageUrl", pEntity.ImageUrl );
 
-                SqlHelper.ExecuteNonQuery( ConnString, CommandType.StoredProcedure, "ResourceUpdate", arParms );
-            }
-            catch ( Exception ex )
-            {
-                LogError( "ResourceManager.Update(): " + ex.ToString() );
-                status = ex.Message;
-            }
-            return status;
-        }
+		//		//arParms[ 4 ] = new SqlParameter( "@HasPathwayGradeLevel", SqlDbType.Bit );
+		//		//arParms[ 4 ].Value = pEntity.HasPathwayGradeLevel;
+		//		arParms[ 5 ] = new SqlParameter( "@IsActive", SqlDbType.Bit );
+		//		arParms[ 5 ].Value = pEntity.IsActive;
 
-        /// <summary>
-        /// update a resource using the integer Id
-        /// </summary>
-        /// <param name="pEntity"></param>
-        /// <returns></returns>
-        public string UpdateById( Resource pEntity )
-        {
-            string status = "successful";
-            try
-            {
-                SqlParameter[] arParms = new SqlParameter[ 5 ];
-                arParms[ 0 ] = new SqlParameter( "@Id", pEntity.Id );
+		//		SqlHelper.ExecuteNonQuery( ConnString, CommandType.StoredProcedure, "ResourceUpdate", arParms );
+		//	}
+		//	catch ( Exception ex )
+		//	{
+		//		LogError( "ResourceManager.Update(): " + ex.ToString() );
+		//		status = ex.Message;
+		//	}
+		//	return status;
+		//}
 
-                arParms[ 1 ] = new SqlParameter( "@ResourceUrl", pEntity.ResourceUrl);
-                arParms[ 2 ] = new SqlParameter( "@ViewCount", pEntity.ViewCount);
-                arParms[ 3 ] = new SqlParameter( "@FavoriteCount", pEntity.FavoriteCount);
-                arParms[ 4 ] = new SqlParameter( "@IsActive", pEntity.IsActive);
 
-                SqlHelper.ExecuteNonQuery( ConnString, CommandType.StoredProcedure, "ResourceUpdateById", arParms );
-            }
-            catch ( Exception ex )
-            {
-                LogError( "ResourceManager.UpdateById(): " + ex.ToString() );
-                status = ex.Message;
-            }
-            return status;
-        }
         /// <summary>
         /// Update the favorite count (will add one to current)
         /// </summary>
@@ -567,21 +559,6 @@ namespace LRWarehouse.DAL
             }
         }
 
-        //public List<Resource> SelectCollection(string pFilter)
-        //{
-        //    List<Resource> collection = new List<Resource>();
-        //    DataSet ds = Select(pFilter);
-        //    if (DoesDataSetHaveRows(ds))
-        //    {
-        //        foreach (DataRow dr in ds.Tables[0].Rows)
-        //        {
-        //            Resource entity = FillWithChildren(dr);
-        //            collection.Add(entity);
-        //        }
-        //    }
-
-        //    return collection;
-        //}
         public ResourceCollection SelectCollection( string pFilter, ref string status )
         {
             ResourceCollection collection = new ResourceCollection();
@@ -598,7 +575,15 @@ namespace LRWarehouse.DAL
             return collection;
         }
 
-        public DataSet ResourceReader( int startingId, int setSize, ref string status )
+		/// <summary>
+		/// ResourceReader - ?????
+		/// </summary>
+		/// <param name="startingId"></param>
+		/// <param name="setSize"></param>
+		/// <param name="status"></param>
+		/// <returns></returns>
+        [Obsolete]
+		private DataSet ResourceReader( int startingId, int setSize, ref string status )
         {
             status = "successful";
             try
@@ -641,7 +626,9 @@ namespace LRWarehouse.DAL
             entity.FavoriteCount = GetRowColumn( dr, "FavoriteCount", 0 );
             entity.Created = GetRowColumn( dr, "Created", DateTime.Now );
             entity.LastUpdated = GetRowColumn( dr, "LastUpdated", DateTime.Now );
-            entity.HasPathwayGradeLevel = GetRowColumn( dr, "HasPathwayGradeLevel", true );
+			entity.ImageUrl = GetRowPossibleColumn(dr, "ImageUrl", "" );
+
+            //entity.HasPathwayGradeLevel = GetRowColumn( dr, "HasPathwayGradeLevel", true );
             entity.Id = GetRowColumn( dr, "Id", 0 );
 
             string filter = string.Format( "ResourceId = '{0}'", entity.RowId );
@@ -683,8 +670,10 @@ namespace LRWarehouse.DAL
             resource.Id = GetRowColumn( dr, "Id", 0 );
 
             resource.ResourceUrl = GetRowColumn( dr, "ResourceUrl", "" );
+			resource.ImageUrl = GetRowPossibleColumn( dr, "ImageUrl", "" );
             resource.ViewCount = GetRowColumn( dr, "ViewCount", 0 );
             resource.FavoriteCount = GetRowColumn( dr, "FavoriteCount", 0 );
+
             resource.Version.LRDocId = GetRowColumn( dr, "DocId", "" );
             resource.Version.Title = GetRowColumn( dr, "Title", "" );
             resource.Version.Description = GetRowColumn( dr, "Description", "" );
@@ -698,7 +687,8 @@ namespace LRWarehouse.DAL
             resource.Version.Creator = GetRowColumn( dr, "Creator", "" );
             resource.Version.TypicalLearningTime = GetRowColumn( dr, "TypicalLearningTime", "" );
             resource.Version.IsSkeletonFromParadata = GetRowColumn( dr, "IsSkeletonFromParadata", false );
-            resource.HasPathwayGradeLevel = GetRowColumn( dr, "HasPathwayGradeLevel", true );
+
+            //resource.HasPathwayGradeLevel = GetRowColumn( dr, "HasPathwayGradeLevel", true );
             //resource.Property = new ResourcePropertyCollection();
 
             string filter = string.Format( "ResourceId  = '{0}'", resource.RowId );
@@ -769,9 +759,101 @@ namespace LRWarehouse.DAL
 
 		#endregion
 
+		#region utilities
+		/// <summary>
+		/// Convert old style tags to new table
+		/// </summary>
+		/// <param name="resourceId"></param>
+		/// <returns></returns>
+		public bool ResourceTag_ConvertById( int resourceId )
+		{
+			string connectionString = LRWarehouse();
+			bool successful = false;
+
+			SqlParameter[] sqlParameters = new SqlParameter[ 1 ];
+			sqlParameters[ 0 ] = new SqlParameter( "@resourceID", resourceId );
+
+			try
+			{
+				SqlHelper.ExecuteNonQuery( connectionString, CommandType.StoredProcedure, "[ResourceTag.ConvertById]", sqlParameters );
+				successful = true;
+			}
+			catch ( Exception ex )
+			{
+				LogError( ex, thisClassName + ".ResourceTag_ConvertById() " );
+
+				successful = false;
+			}
+			return successful;
+		}//
+
+
+		/// <summary>
+		/// Get resource data from tag tables
+		/// </summary>
+		/// <param name="resourceId"></param>
+		/// <returns></returns>
+		public DataSet Resource_IndexV3TextsUpdate( int resourceId )
+		{
+			DataSet ds = new DataSet();
+
+			SqlParameter[] sqlParameters = new SqlParameter[ 1 ];
+			sqlParameters[ 0 ] = new SqlParameter( "@resourceID", resourceId );
+
+			try
+			{
+				ds = SqlHelper.ExecuteDataset( LRWarehouse(), CommandType.StoredProcedure, "[Resource_IndexV3TextsUpdate]", sqlParameters );
+				if ( ds.HasErrors )
+				{
+					return null;
+				}
+			}
+			catch ( Exception ex )
+			{
+				LogError( ex, thisClassName + ".Resource_IndexV3TextsUpdate() " );
+				return null;
+
+			}
+			return ds;
+		}//
+
+		/// <summary>
+		/// Get resource data from tag tables
+		/// </summary>
+		/// <param name="resourceId"></param>
+		/// <returns></returns>
+		public DataSet Resource_IndexV3TagsUpdate( int resourceId )
+		{
+			DataSet ds = new DataSet();
+
+			SqlParameter[] sqlParameters = new SqlParameter[ 1 ];
+			sqlParameters[ 0 ] = new SqlParameter( "@resourceID", resourceId );
+
+			try
+			{
+				ds = SqlHelper.ExecuteDataset( LRWarehouse(), CommandType.StoredProcedure, "[Resource_IndexV3TagsUpdate]", sqlParameters );
+				if ( ds.HasErrors )
+				{
+					return null;
+				}
+			}
+			catch ( Exception ex )
+			{
+				LogError( ex, thisClassName + ".Resource_IndexV3TagsUpdate() " );
+				return null;
+
+			}
+			return ds;
+		}//
+
+		#endregion
+
 		#region Delayed Publishing
 		/// <summary>
 		/// Call proc to create resource objects for all components of a hierarchy like a learing list
+		/// Take a learning list content item, and publish all child content, clone tags. 	
+		/// This proc will move recursively through the learning list children. 	
+		/// @TopContentId is the learning list top node (or could be a hierarchy item below the top level).
 		/// </summary>
 		/// <param name="contentId"></param>
 		/// <param name="resourceId"></param>

@@ -19,6 +19,7 @@ namespace ILPathways.Business
         public static int MEMBERROLE_CONTENT_APPROVER = 2;
         public static int MEMBERROLE_LIBRARY_ADMIN = 3;
         public static int MEMBERROLE_ACCOUNT_ADMIN = 4;
+		public static int MEMBERROLE_CONTENT_CURATOR = 5;
 
         public OrganizationMember()
         {
@@ -105,6 +106,27 @@ namespace ILPathways.Business
             }
             return hasRole;
         }
+
+		/// <summary>
+		/// Return true if user has an Account administration role
+		/// </summary>
+		/// <returns></returns>
+		public bool HasAccountAdministratorRole()
+		{
+			bool hasRole = false;
+			if ( MemberRoles == null || MemberRoles.Count == 0 )
+				return false;
+			foreach ( OrganizationMemberRole role in MemberRoles )
+			{
+				if ( role.RoleId == MEMBERROLE_ACCOUNT_ADMIN )
+				{
+					hasRole = true;
+					break;
+				}
+			}
+			return hasRole;
+		}
+
 
         /// <summary>
         /// Return true if user has an approver role

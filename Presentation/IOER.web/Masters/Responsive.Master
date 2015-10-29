@@ -2,7 +2,6 @@
 <%@ Register TagPrefix="uc1" TagName="HeaderControl" Src="/Controls/Includes/Header8.ascx" %>
 <%@ Register TagPrefix="uc1" TagName="Footer" Src="/Controls/Includes/footer4.ascx" %>
 <%@ Register TagPrefix="uc1" TagName="systemMessageLine" Src="/Controls/Includes/SystemMessageLine.ascx" %>
-<%@ Register TagPrefix="uc1" TagName="hints" Src="/Controls/Includes/SessionHints.ascx" %>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -16,14 +15,13 @@
 
     <script type="text/javascript">
         //kludge for IE9
-        if (typeof(window.console) == "undefined") {
+        if (typeof(window.console) === "undefined") {
             console = { log: function () { } };
         }
     </script>
     <script src="/Scripts/jquery-2.1.1.min.js"></script>
     <link rel="Stylesheet" type="text/css" href="/Styles/ISLE.css" />
     <link href="/Styles/CustomControls.css" rel="stylesheet" type="text/css" />
-<%--    <uc1:hints id="hints" runat="server" />--%>
 
       <asp:Literal ID="litHidingAddThis" Visible="false" runat="server">
          <style type="text/css">
@@ -57,12 +55,12 @@
 </head>
 <body>
     <form runat="server" id="mainform" onsubmit="return false;">
-      <uc1:HeaderControl ID="header" runat="server" />
-      <div id="systemMessageDiv">
-				<uc1:systemMessageLine ID="systemMessageLine" runat="server" />
-      </div>
-      <asp:ContentPlaceHolder ID="BodyContent" runat="server" />
-			<uc1:Footer ID="pagefooter" runat="server" />
+        <uc1:HeaderControl ID="header" runat="server" />
+        <div id="systemMessageDiv">
+            <uc1:systemMessageLine ID="systemMessageLine" runat="server" />
+        </div>
+        <asp:ContentPlaceHolder ID="BodyContent" runat="server" />
+        <uc1:Footer ID="pagefooter" runat="server" />
     </form>
 </body>
 </html>

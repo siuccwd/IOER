@@ -207,17 +207,12 @@
       padding: 3px;
     }
     #modifyThis h2 { text-align: left; }
-    #description {
-          /* margin-left: 400px; */
-      }
 
-    #resourceNote { display: inline-block; width: 50%;     }
-    #resourceMsg { margin-top:25px; padding: 10px; text-align: center;      }
-      #resourceMsg .isleBox {
-          padding-bottom: 15px;
-      }
-      
-    #compDescription { text-align: left; padding:12px;   }
+    #resourceNote { display: inline-block;     width: calc(100% - 420px);}
+    #resourceMsg { margin-top:25px; padding: 10px; text-align: center; }
+    #resourceMsg .isleBox { padding-bottom: 15px; }
+    #compDescription { text-align: left; padding:12px; }
+
     /* Edit Stuff */
     #title .edit input[type=text] { width: 80%; }
     #description .edit textarea { width: 75%; height: 280px; padding: 5px; resize: none; }
@@ -255,7 +250,7 @@
     /* Responsive */
     @media screen and (min-width: 0) and (max-width: 450px) {
       #infoTabBox .tab#comments .comment h3 .date { float: none; text-align: right; } 
-      #resourceNote { float: left; width: 90%; }
+      #resourceNote { display: block;     width: 90%;}
     }
     @media screen and (min-width: 0) and (max-width: 600px){
       .left.column, .right.column { width: 100%; }
@@ -266,6 +261,7 @@
     }
     @media screen and (min-width: 900px) and (max-width: 1160px){
         #description {margin-left: 10px; display: inline-block; width: 80%;} 
+        #resourceNote { display: block;     width: 90%;}
     }
     @media screen and (min-width: 601px) and (max-width: 900px){
       .left.column, .right.column { width: 100%; } 
@@ -336,7 +332,7 @@
       <div id="thumbAndCritical">
         <a id="thumbnail" href="#" title="resource" target="_blank"><img alt='' src="/images/ThumbnailResizer.png" /></a>
         <div id="criticalInfo">
-          <div id="usageRights"><a id="usageRightsUrl" href="" target="ccPage"><img alt='' class="view" src="/images/icons/rightsreserved.png" /></a></div>
+          <div id="usageRights"><a rel="license" id="usageRightsUrl" href="" target="ccPage"><img alt='' class="view" src="/images/icons/rightsreserved.png" /></a></div>
           <div id="created" itemprop="dateCreated"><strong>Created:</strong> <span></span></div>
         </div>
       </div>

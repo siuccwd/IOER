@@ -71,6 +71,7 @@
     <Compile Include="ContentResourceStandard.cs" />
     <Compile Include="ContentStandard.cs" />
     <Compile Include="ContentSupplement.cs" />
+    <Compile Include="Content_RelatedStandardsSummary.cs" />
     <Compile Include="Content_StandardSummary.cs" />
     <Compile Include="DataItem.cs" />
     <Compile Include="DocumentVersion.cs" />

@@ -22,5 +22,6 @@ namespace IOERBusinessEntities
         public string Title { get; set; }
         public string Description { get; set; }
         public Nullable<int> WarehouseTotal { get; set; }
+        public Nullable<int> SupportingIntValue { get; set; }
     }
 }

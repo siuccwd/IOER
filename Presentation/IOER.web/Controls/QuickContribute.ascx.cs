@@ -61,7 +61,6 @@ namespace IOER.Controls
 
     InfoMemoryJSON memory = new InfoMemoryJSON();
     Services.UtilityService utilService = new Services.UtilityService();
-    Services.PublisherService pubService = new Services.PublisherService();
     LibraryBizService libService = new LibraryBizService();
     ContentServices myManager = new ContentServices();
 
@@ -787,10 +786,11 @@ namespace IOER.Controls
           }
 
           //Publish content standards if necessary
+			//whoa is this pushing res standards back to content?
           if ( isCurriculumNode )
           {
-            contentStandards.ForEach( m => m.ContentId = docContentId );
-            CurriculumServices.ContentStandard_Add( contentStandards );
+			//contentStandards.ForEach( m => m.ContentId = docContentId );
+			  //new CurriculumServices().ContentStandard_Add( item.Id, user.Id, contentStandards );
           }
 
           //Link to detail page

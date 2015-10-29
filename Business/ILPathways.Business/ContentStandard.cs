@@ -13,6 +13,7 @@ namespace ILPathways.Business
         public int StandardId { get; set; }
         public int AlignmentTypeCodeId { get; set; }
         public int UsageTypeId { get; set; }
+		public bool IsDirectStandard { get; set; }
         public System.DateTime Created { get; set; }
         public int CreatedById { get; set; }
         public System.DateTime LastUpdated { get; set; }

@@ -140,10 +140,15 @@ namespace Isle.BizServices
             log.CreatedDate = System.DateTime.Now;
             log.SessionId = sessionId;
             log.URL = "Session Started";
-            log.RemoteIP = remoteIP;
+			if ( remoteIP.Length > 25 )
+				remoteIP = remoteIP.Substring( 0, 25 );
+			log.RemoteIP = remoteIP;
+
             log.ServerName = serverName;
             log.Comment = comment;
             log.Application = "IOER";
+			if ( string.IsNullOrWhiteSpace(referrer) == false && referrer.Length > 1000 )
+				referrer = referrer.Substring( 0, 1000 );
             log.Referrer = referrer;
 
             try

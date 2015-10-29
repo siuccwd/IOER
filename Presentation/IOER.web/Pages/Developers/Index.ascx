@@ -48,7 +48,7 @@
 <p>ISLE publishes resources to the Learning Registry (LR) for replication to ensure ISLE ​benefits from resource sharing.  Further, all related digital objects (i.e. assessment items, assessments, and other learning objects including learning map components) that are tagged will be stored within the ISLE content repository.</p>
 <p class="listHeader">Schema and Other Requirements:</p>
 <ul>
-  <li><a href="http://www.lrmi.net/the-specification" target="_blank">LRMI Schema</a></li>
+  <li><a href="http://dublincore.org/dcx/lrmi-terms/1.1/" target="_blank">LRMI Schema</a></li>
   <li><a href="/developers/schemas">Metadata and Schemas Overview</a></li>
   <li><a href="/developers/paradata">Paradata Overview</a></li>
 </ul>

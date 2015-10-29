@@ -26,7 +26,7 @@
  
 <p>IOER Metadata is based on:</p>
 <ul>
-  <li><a href="http://www.lrmi.net/the-specification" target="_blank">Learning Resource Metadata Initiative (LRMI) schema</a>&nbsp;<em>version 1.1</em></li>
+  <li><a href="http://dublincore.org/dcx/lrmi-terms/1.1/" target="_blank">Learning Resource Metadata Initiative (LRMI) schema</a>&nbsp;<em>version 1.1</em></li>
   <li>The LRMI 1.0 was adopted by Schema.org (SCH).</li>
   <li>Additional metadata has been introduced and potential exists for additional needs to be added over time. LRMI seeks to have SCH adopt any new schema.</li>
   <li>Learning Registry (LR)</li>
@@ -147,5 +147,5 @@
   <dd>Not a part of Dublin Core, NSDL_DC, LOM, LRMI, LAR, or schema.org.</dd>
   <dd>ISLE's focus is not solely K-12; the Career Cluster tag will be used with the STEM fields and other high-demand occupational fields for adults/professionals</dd><dd>The career cluster "Energy" is a career cluster local to Illinois; ISLE will be publishing this as a local rather than a Federal career cluster.</dd>
   <dd>Federal career clusters will be published with a "Country" attribute of "US" and will lack a "Region" attribute. Local career clusters are published with a "Country" attribute of "US" and a "Region" attribute of "IL". ISLE will use USPS abbreviations for regions, so a career cluster local to Puerto Rico would be published with a "Country" attribute of "US" and a "Region" attribute of "PR", because Puerto Rico is a Commonwealth of the US.</dd>
-  <dd>ISLE we will understand all 16 Federal career clusters + local cluster, "Energy" but will only publish the 9 listed at the present time.</dd>
+  <dd>ISLE understands all 16 Federal career clusters + one local cluster, "Energy".</dd>
 </dl>

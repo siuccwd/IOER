@@ -188,6 +188,28 @@ namespace LRWarehouse.DAL
             }
 
         }//
+		public static DataSet ConditionsOfUse_SelectForNewContent()
+		{
+			string connectionString = GetReadOnlyConnection();
+			DataSet ds = new DataSet();
+			try
+			{
+				ds = SqlHelper.ExecuteDataset( LRWarehouseRO(), "[ConditionsOfUse_Select]" );
+				if ( ds.HasErrors )
+				{
+					return null;
+				}
+				return ds;
+
+			}
+			catch ( Exception ex )
+			{
+				LogError( ex, thisClassName + ".ConditionsOfUse_Select() " );
+
+				return null;
+			}
+
+		}//
         #endregion
 
         #region  GradeLevel

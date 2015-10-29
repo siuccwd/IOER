@@ -19,6 +19,15 @@ namespace IOER.Widgets.FullSearch {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::IOER.Controls.SearchV6.SearchV6 search;
+        protected global::IOER.Controls.SearchV7.SearchV7 search;
+        
+        /// <summary>
+        /// defaultTheme control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Literal defaultTheme;
     }
 }

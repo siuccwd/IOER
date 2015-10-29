@@ -190,9 +190,9 @@ function renderViewSpecialData() {
         catch (e) { }
     }
 
-	//Usage Rights
+    //Usage Rights
     var rightsUnknown = resource.usageRights.usageRightsURL.toLowerCase() == "unknown";
-    $("#usageRights .view").attr("src", resource.usageRights.usageRightsIconURL != "" && !rightsUnknown ? resource.usageRights.usageRightsIconURL : "/images/icons/rightsunknown.png");
+    $("#usageRights .view").attr("src", resource.usageRights.usageRightsIconURL != "" && !rightsUnknown ? resource.usageRights.usageRightsIconURL : "/images/icons/license_unknown.png");
     $("#usageRights #usageRightsUrl").attr("href", rightsUnknown ? "javascript:void(0)" : resource.usageRights.usageRightsURL);
     $("#pickUsageRights.edit select option").attr("selected", "false");
     $("#pickUsageRights.edit select option[value=" + resource.usageRights.usageRightsValue + "]").attr("selected", "selected");
@@ -201,7 +201,7 @@ function renderViewSpecialData() {
     //Resource URL
     $("#resourceURL, #thumbnail").attr("href", resource.url);
     $("#resourceURL, #thumbnail").on("click", function () {
-      doAjax("AddClickThrough", { userGUID: userGUID, versionID: resourceVersionID }, updateClickThroughs);
+        doAjax("AddClickThrough", { userGUID: userGUID, versionID: resourceVersionID }, updateClickThroughs);
     });
     $("#resourceURL").html((resource.url.indexOf("/ContentDocs") == 0 ? "http://ioer.ilsharedlearning.org" + resource.url : resource.url));
     if (resource.url == "#")
@@ -209,36 +209,39 @@ function renderViewSpecialData() {
 
     //Thumbnail
     if (resource.IsPrivateDocument == false) {
-
-        $("#thumbnail img").attr("src", "//ioer.ilsharedlearning.org/OERThumbs/large/" + resource.intID + "-large.png");
-        for (i in thumbIconTypes) {
-            if (resource.url.indexOf(thumbIconTypes[i].match) > -1) {
-                $("#thumbnail img").attr("src", thumbIconTypes[i].file);
+        if (resource.imageUrl == null || resource.imageUrl == "") {
+            $("#thumbnail img").attr("src", "//ioer.ilsharedlearning.org/OERThumbs/large/" + resource.intID + "-large.png");
+            for (i in thumbIconTypes) {
+                if (resource.url.indexOf(thumbIconTypes[i].match) > -1) {
+                    $("#thumbnail img").attr("src", thumbIconTypes[i].file);
+                }
             }
-        }
-        $("#thumbnail img").on("error", function () {
-        	$(this).attr("src", "/images/icon_resources_400x300.png");
-        	setTimeout(function () {
-        		$("#thumbnail img").attr("src", "//ioer.ilsharedlearning.org/OERThumbs/large/" + resource.intID + "-large.png");
-        	}, 30000);
-            /*$(this).replaceWith(
-                $("<div></div>")
-                    .attr("id", "mainThumbDiv")
-                    .addClass("thumbnailDiv")
-                    .html("Generating Thumbnail...")
-            );
-            setTimeout(function () {
-                doAjax("GetThumbnail", { intID: resource.intID, url: resource.url }, successGetThumbnail);
-            }, 15000);*/
-        });
-        for (i in thumbDivTypes) {
-            if (resource.url.indexOf(thumbDivTypes[i].match) > -1) {
-                $("#thumbnail img").replaceWith(
+            $("#thumbnail img").on("error", function () {
+                $(this).attr("src", "/images/icon_resources_400x300.png");
+                setTimeout(function () {
+                    $("#thumbnail img").attr("src", "//ioer.ilsharedlearning.org/OERThumbs/large/" + resource.intID + "-large.png");
+                }, 30000);
+                /*$(this).replaceWith(
                     $("<div></div>")
+                        .attr("id", "mainThumbDiv")
                         .addClass("thumbnailDiv")
-                        .html(thumbDivTypes[i].text)
+                        .html("Generating Thumbnail...")
                 );
+                setTimeout(function () {
+                    doAjax("GetThumbnail", { intID: resource.intID, url: resource.url }, successGetThumbnail);
+                }, 15000);*/
+            });
+            for (i in thumbDivTypes) {
+                if (resource.url.indexOf(thumbDivTypes[i].match) > -1) {
+                    $("#thumbnail img").replaceWith(
+                        $("<div></div>")
+                            .addClass("thumbnailDiv")
+                            .html(thumbDivTypes[i].text)
+                    );
+                }
             }
+        } else {
+            $("#thumbnail img").attr("src", resource.imageUrl);
         }
     } else {
         hideThumbnail();
@@ -250,9 +253,24 @@ function renderViewSpecialData() {
     $("#requires").attr("data-hasContent", (resource.requires.length > 0 ? "true" : "false"));
 
     //Critical Info
-    $("#creator span").html("<a href='/search?text=creator:\"" + encodeURIComponent(resource.creator.replace(/\|/, "").replace(/  /, " ")) + "\"' target=\"_blank\">" + resource.creator + "</a>");
-    $("#publisher span").html("<a href='/search?text=publisher:\"" + encodeURIComponent(resource.publisher.replace(/\|/, "").replace(/  /, " ")) + "\"' target=\"_blank\">" + resource.publisher + "</a>");
-    $("#submitter span").html("<a href='/search?text=submitter:\"" + encodeURIComponent(resource.submitter.split("<")[0].replace(/\|/, "").replace(/  /, " ")) + "\"' target=\"_blank\">" + resource.submitter + "</a>");
+    if (resource.creator.toLowerCase() == "unknown") {
+        $("#creator").attr("data-hasContent", "false");
+    }
+    else {
+        $("#creator span").html("<a href='/search?text=creator:\"" + encodeURIComponent(resource.creator.replace(/\|/, "").replace(/  /, " ")) + "\"' target=\"_blank\">" + resource.creator + "</a>");
+    }
+    if (resource.publisher.toLowerCase() == "unknown") {
+        $("#publisher").attr("data-hasContent", "false");
+    }
+    else {
+        $("#publisher span").html("<a href='/search?text=publisher:\"" + encodeURIComponent(resource.publisher.replace(/\|/, "").replace(/  /, " ")) + "\"' target=\"_blank\">" + resource.publisher + "</a>");
+    }
+    if (resource.submitter.toLowerCase() == "unknown") {
+        $("#submitter").attr("data-hasContent", "false");
+    }
+    else {
+        $("#submitter span").html("<a href='/search?text=submitter:\"" + encodeURIComponent(resource.submitter.split("<")[0].replace(/\|/, "").replace(/  /, " ")) + "\"' target=\"_blank\">" + resource.submitter + "</a>");
+    }
     //userIsAdmin ? {} : $("#submitter").hide();
     $("#created span").html(resource.created);
 

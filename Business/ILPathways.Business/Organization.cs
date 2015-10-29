@@ -21,6 +21,7 @@ namespace ILPathways.Business
             OrgMembers = new List<OrganizationMember>();
             IsIsleMember = false;
             ExternalIdentifier = "";
+			Description = "";
         }
 
         #region Properties for Organization

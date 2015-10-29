@@ -285,10 +285,6 @@ namespace IOER.Controls.Libraries
 					{
 						editLibraryLink_Click( new object(), new EventArgs() );
 					}
-					else if ( action == "new" )
-					{
-						newLibraryLink_Click( new object(), new EventArgs() );
-					}
                 }
 			}
 			else

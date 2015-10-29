@@ -93,7 +93,7 @@
           <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="CategoryId" Type="int" Nullable="false" />
           <Property Name="CodeId" Type="int" Nullable="false" />
-          <Property Name="Title" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="Title" Type="varchar" MaxLength="100" Nullable="false" />
           <Property Name="Description" Type="varchar" MaxLength="500" />
           <Property Name="SortOrder" Type="int" />
           <Property Name="IsActive" Type="bit" />
@@ -101,6 +101,7 @@
           <Property Name="WarehouseTotal" Type="int" />
           <Property Name="AliasValues" Type="varchar" MaxLength="100" />
           <Property Name="Created" Type="datetime" />
+          <Property Name="SupportingIntValue" Type="int" />
         </EntityType>
         <EntityType Name="Codes_TagValueKeyword">
           <Key>
@@ -125,7 +126,7 @@
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
-          <Property Name="Summary" Type="varchar" MaxLength="50" />
+          <Property Name="Summary" Type="varchar" MaxLength="100" />
           <Property Name="Title" Type="varchar" MaxLength="100" />
           <Property Name="Description" Type="varchar" MaxLength="800" />
           <Property Name="IsActive" Type="bit" />
@@ -206,7 +207,6 @@
           <Property Name="LastUpdatedById" Type="int" />
           <Property Name="RowId" Type="uniqueidentifier" Nullable="false" />
           <Property Name="IsleIdentifier" Type="varchar" MaxLength="100" />
-          <Property Name="AuthenticationProvider" Type="varchar" MaxLength="50" />
         </EntityType>
         <EntityType Name="Patron_Following">
           <Key>
@@ -262,6 +262,7 @@
           <Property Name="IsActive" Type="bit" />
           <Property Name="HasPathwayGradeLevel" Type="bit" />
           <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ImageUrl" Type="varchar" MaxLength="200" />
         </EntityType>
         <EntityType Name="Resource_AssessmentType">
           <Key>
@@ -291,9 +292,13 @@
           <Property Name="ParentContentId" Type="int" Nullable="false" />
           <Property Name="ContentId" Type="int" Nullable="false" />
           <Property Name="ContentTypeId" Type="int" Nullable="false" />
+          <Property Name="ThumbnailsStatusId" Type="int" />
+          <Property Name="ElasticStatusId" Type="int" />
+          <Property Name="LRPublishStatusId" Type="int" />
           <Property Name="StatusId" Type="int" Nullable="false" />
           <Property Name="ResourceIntId" Type="int" Nullable="false" />
-          <Property Name="ResourceVersionIntId" Type="int" Nullable="false" />
+          <Property Name="ResourceVersionIntId" Type="int" />
+          <Property Name="ResourceUrl" Type="varchar" MaxLength="500" />
           <Property Name="Created" Type="datetime" Nullable="false" />
           <Property Name="CreatedById" Type="int" Nullable="false" />
           <Property Name="DocId" Type="varchar" MaxLength="500" />
@@ -475,6 +480,7 @@
           <Property Name="AlignmentDegreeId" Type="int" />
           <Property Name="Created" Type="datetime" />
           <Property Name="CreatedById" Type="int" />
+          <Property Name="IsDirectStandard" Type="bit" />
         </EntityType>
         <EntityType Name="Resource_StandardEvaluation">
           <Key>
@@ -675,6 +681,7 @@ warning 6002: The table/view 'Isle_IOER.dbo.Codes.TagCategoryValue_summary' does
           <Property Name="Title" Type="varchar" MaxLength="50" Nullable="false" />
           <Property Name="Description" Type="varchar" MaxLength="500" />
           <Property Name="WarehouseTotal" Type="int" />
+          <Property Name="SupportingIntValue" Type="int" />
         </EntityType>
         <!--Errors Found During Generation:
 warning 6002: The table/view 'Isle_IOER.dbo.Patron_ResourceSummary' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
@@ -829,6 +836,7 @@ warning 6002: The table/view 'Isle_IOER.dbo.Resource.Version_Summary' does not h
           <Property Name="Rights" Type="varchar" MaxLength="700" />
           <Property Name="ViewCount" Type="int" />
           <Property Name="FavoriteCount" Type="int" />
+          <Property Name="ImageUrl" Type="varchar" MaxLength="200" />
           <Property Name="DocId" Type="varchar" MaxLength="500" />
           <Property Name="AccessRightsId" Type="int" />
           <Property Name="AccessRights" Type="varchar" MaxLength="50" />
@@ -1060,6 +1068,20 @@ warning 6002: The table/view 'Isle_IOER.dbo.Resource.Version_Summary' does not h
               <PropertyRef Name="Id" />
             </Principal>
             <Dependent Role="Resource_GroupType">
+              <PropertyRef Name="ResourceIntId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Resource_Language_Resource">
+          <End Role="Resource" Type="Self.Resource" Multiplicity="0..1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Resource_Language" Type="Self.Resource_Language" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Resource">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Resource_Language">
               <PropertyRef Name="ResourceIntId" />
             </Dependent>
           </ReferentialConstraint>
@@ -1324,7 +1346,8 @@ warning 6002: The table/view 'Isle_IOER.dbo.Resource.Version_Summary' does not h
     [Codes_TagCategoryValue_summary].[CodeId] AS [CodeId], 
     [Codes_TagCategoryValue_summary].[Title] AS [Title], 
     [Codes_TagCategoryValue_summary].[Description] AS [Description], 
-    [Codes_TagCategoryValue_summary].[WarehouseTotal] AS [WarehouseTotal]
+    [Codes_TagCategoryValue_summary].[WarehouseTotal] AS [WarehouseTotal], 
+    [Codes_TagCategoryValue_summary].[SupportingIntValue] AS [SupportingIntValue]
     FROM [dbo].[Codes.TagCategoryValue_summary] AS [Codes_TagCategoryValue_summary]</DefiningQuery>
           </EntitySet>
           <EntitySet Name="Patron_ResourceSummary" EntityType="Self.Patron_ResourceSummary" store:Type="Views" store:Schema="dbo">
@@ -1438,6 +1461,7 @@ warning 6002: The table/view 'Isle_IOER.dbo.Resource.Version_Summary' does not h
     [Resource_Version_Summary].[Rights] AS [Rights], 
     [Resource_Version_Summary].[ViewCount] AS [ViewCount], 
     [Resource_Version_Summary].[FavoriteCount] AS [FavoriteCount], 
+    [Resource_Version_Summary].[ImageUrl] AS [ImageUrl], 
     [Resource_Version_Summary].[DocId] AS [DocId], 
     [Resource_Version_Summary].[AccessRightsId] AS [AccessRightsId], 
     [Resource_Version_Summary].[AccessRights] AS [AccessRights], 
@@ -1521,6 +1545,10 @@ warning 6002: The table/view 'Isle_IOER.dbo.Resource.Version_Summary' does not h
           <AssociationSet Name="FK_Resource_GroupType_Resource" Association="Self.FK_Resource_GroupType_Resource">
             <End Role="Resource" EntitySet="Resource" />
             <End Role="Resource_GroupType" EntitySet="Resource_GroupType" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Resource_Language_Resource" Association="Self.FK_Resource_Language_Resource">
+            <End Role="Resource" EntitySet="Resource" />
+            <End Role="Resource_Language" EntitySet="Resource_Language" />
           </AssociationSet>
           <AssociationSet Name="FK_Resource_Like_Resource" Association="Self.FK_Resource_Like_Resource">
             <End Role="Resource" EntitySet="Resource" />
@@ -1793,6 +1821,10 @@ warning 6002: The table/view 'Isle_IOER.dbo.Resource.Version_Summary' does not h
             <End Role="Resource" EntitySet="Resources" />
             <End Role="Resource_LikeSummary" EntitySet="Resource_LikeSummary" />
           </AssociationSet>
+          <AssociationSet Name="FK_Resource_Language_Resource" Association="ResourceModel.FK_Resource_Language_Resource">
+            <End Role="Resource" EntitySet="Resources" />
+            <End Role="Resource_Language" EntitySet="Resource_Language" />
+          </AssociationSet>
           </EntityContainer>
         <EntityType Name="EmailNotice">
           <Key>
@@ -1836,7 +1868,6 @@ warning 6002: The table/view 'Isle_IOER.dbo.Resource.Version_Summary' does not h
           <Property Type="String" Name="IsleIdentifier" MaxLength="100" FixedLength="false" Unicode="false" />
           <NavigationProperty Name="Patron_Following" Relationship="ResourceModel.FK_Patron_FollowedBy_Patron" FromRole="Patron" ToRole="Patron_Following" />
           <NavigationProperty Name="Patron_Following1" Relationship="ResourceModel.FK_Patron_Following_Patron" FromRole="Patron" ToRole="Patron_Following" />
-          <Property Name="AuthenticationProvider" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="Patron_Profile">
           <Key>
@@ -1895,7 +1926,7 @@ warning 6002: The table/view 'Isle_IOER.dbo.Resource.Version_Summary' does not h
             <PropertyRef Name="Id" />
           </Key>
           <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
-          <Property Type="String" Name="Summary" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="Summary" MaxLength="100" FixedLength="false" Unicode="false" />
           <Property Type="String" Name="Title" MaxLength="100" FixedLength="false" Unicode="false" />
           <Property Type="String" Name="Description" MaxLength="800" FixedLength="false" Unicode="false" />
           <Property Type="Boolean" Name="IsActive" />
@@ -1968,6 +1999,7 @@ warning 6002: The table/view 'Isle_IOER.dbo.Resource.Version_Summary' does not h
           <Property Type="Int32" Name="PublishedById" />
           <Property Name="URL" Type="String" Nullable="false" MaxLength="1231" FixedLength="false" Unicode="false" />
           <Property Name="DetailPage" Type="String" MaxLength="4000" FixedLength="false" Unicode="true" />
+          <Property Name="ImageUrl" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
         </EntityType>
         <Association Name="FK_Resource_Text_Codes_TextType">
           <End Type="ResourceModel.Codes_TextType" Role="Codes_TextType" Multiplicity="1" />
@@ -2009,6 +2041,8 @@ warning 6002: The table/view 'Isle_IOER.dbo.Resource.Version_Summary' does not h
           <NavigationProperty Name="Resource_GroupType" Relationship="ResourceModel.FK_Resource_GroupType_Resource" FromRole="Resource" ToRole="Resource_GroupType" />
           <NavigationProperty Name="Resource_Like" Relationship="ResourceModel.FK_Resource_Like_Resource" FromRole="Resource" ToRole="Resource_Like" />
           <NavigationProperty Name="Resource_LikeSummary" Relationship="ResourceModel.FK_Resource_LikeSummary_Resource" FromRole="Resource" ToRole="Resource_LikeSummary" />
+          <Property Name="ImageUrl" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Resource_Language" Relationship="ResourceModel.FK_Resource_Language_Resource" FromRole="Resource" ToRole="Resource_Language" />
         </EntityType>
         <EntityType Name="System_GenerateLoginId">
           <Key>
@@ -2509,7 +2543,7 @@ warning 6002: The table/view 'Isle_IOER.dbo.Resource.Version_Summary' does not h
           <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <Property Type="Int32" Name="CategoryId" Nullable="false" />
           <Property Type="Int32" Name="CodeId" Nullable="false" />
-          <Property Type="String" Name="Title" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="Title" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
           <Property Type="String" Name="Description" MaxLength="500" FixedLength="false" Unicode="false" />
           <Property Type="Int32" Name="SortOrder" />
           <Property Type="Boolean" Name="IsActive" />
@@ -2520,6 +2554,7 @@ warning 6002: The table/view 'Isle_IOER.dbo.Resource.Version_Summary' does not h
           <Property Type="String" Name="AliasValues" MaxLength="100" FixedLength="false" Unicode="false" />
           <NavigationProperty Name="Codes_TagValueKeyword" Relationship="ResourceModel.FK_Codes_TagValueKeyword_Codes_TagValue" FromRole="Codes_TagValue" ToRole="Codes_TagValueKeyword" />
           <Property Name="Created" Type="DateTime" Precision="3" />
+          <Property Name="SupportingIntValue" Type="Int32" />
         </EntityType>
         <Association Name="FK_Codes_TagValue_Codes_TagCategory">
           <End Type="ResourceModel.Codes_TagCategory" Role="Codes_TagCategory" Multiplicity="1">
@@ -2563,6 +2598,7 @@ warning 6002: The table/view 'Isle_IOER.dbo.Resource.Version_Summary' does not h
           <NavigationProperty Name="StandardBody_Node" Relationship="ResourceModel.FK_Resource_Standard_StandardBody_Node" FromRole="Resource_Standard" ToRole="StandardBody_Node" />
           <NavigationProperty Name="Resource" Relationship="ResourceModel.ResourceResource_Standard" FromRole="Resource_Standard" ToRole="Resource" />
           <NavigationProperty Name="Resource_StandardEvaluation" Relationship="ResourceModel.FK_Resource_StandardEvaluation_Resource_Standard" FromRole="Resource_Standard" ToRole="Resource_StandardEvaluation" />
+          <Property Name="IsDirectStandard" Type="Boolean" />
         </EntityType>
         <Association Name="FK_Resource_Standard_StandardBody_Node">
           <End Type="ResourceModel.StandardBody_Node" Role="StandardBody_Node" Multiplicity="1">
@@ -2660,6 +2696,7 @@ warning 6002: The table/view 'Isle_IOER.dbo.Resource.Version_Summary' does not h
           <Property Type="Int32" Name="ResourceIntId" />
           <Property Type="DateTime" Name="Created" Precision="3" />
           <Property Type="Int32" Name="CreatedById" />
+          <NavigationProperty Name="Resource" Relationship="ResourceModel.FK_Resource_Language_Resource" FromRole="Resource_Language" ToRole="Resource" />
         </EntityType>
         <EntityType Name="Resource_ResourceType">
           <Key>
@@ -2969,6 +3006,7 @@ warning 6002: The table/view 'Isle_IOER.dbo.Resource.Version_Summary' does not h
           <Property Type="String" Name="Title" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Type="String" Name="Description" MaxLength="500" FixedLength="false" Unicode="false" />
           <Property Type="Int32" Name="WarehouseTotal" />
+          <Property Name="SupportingIntValue" Type="Int32" />
         </EntityType>
         <EntityType Name="Patron_ResourceSummary">
           <Key>
@@ -3066,11 +3104,15 @@ warning 6002: The table/view 'Isle_IOER.dbo.Resource.Version_Summary' does not h
           <Property Name="ContentTypeId" Type="Int32" Nullable="false" />
           <Property Name="StatusId" Type="Int32" Nullable="false" />
           <Property Name="ResourceIntId" Type="Int32" Nullable="false" />
-          <Property Name="ResourceVersionIntId" Type="Int32" Nullable="false" />
+          <Property Name="ResourceVersionIntId" Type="Int32" />
           <Property Name="Created" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="CreatedById" Type="Int32" Nullable="false" />
           <Property Name="DocId" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
           <Property Name="PublishedDate" Type="DateTime" Precision="3" />
+          <Property Name="ResourceUrl" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Name="ThumbnailsStatusId" Type="Int32" />
+          <Property Name="ElasticStatusId" Type="Int32" />
+          <Property Name="LRPublishStatusId" Type="Int32" />
         </EntityType>
         <Association Name="FK_Resource_AssessmentType_Resource">
           <End Type="ResourceModel.Resource" Role="Resource" Multiplicity="1">
@@ -3154,6 +3196,20 @@ warning 6002: The table/view 'Isle_IOER.dbo.Resource.Version_Summary' does not h
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_Resource_Language_Resource">
+          <End Type="ResourceModel.Resource" Role="Resource" Multiplicity="0..1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="ResourceModel.Resource_Language" Role="Resource_Language" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Resource">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Resource_Language">
+              <PropertyRef Name="ResourceIntId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -3187,7 +3243,6 @@ warning 6002: The table/view 'Isle_IOER.dbo.Resource.Version_Summary' does not h
           <EntitySetMapping Name="Patrons">
             <EntityTypeMapping TypeName="ResourceModel.Patron">
               <MappingFragment StoreEntitySet="Patron">
-                <ScalarProperty Name="AuthenticationProvider" ColumnName="AuthenticationProvider" />
                 <ScalarProperty Name="IsleIdentifier" ColumnName="IsleIdentifier" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="UserName" ColumnName="UserName" />
@@ -3285,6 +3340,7 @@ warning 6002: The table/view 'Isle_IOER.dbo.Resource.Version_Summary' does not h
           <EntitySetMapping Name="Resource_Version_Summary">
             <EntityTypeMapping TypeName="ResourceModel.Resource_Version_Summary">
               <MappingFragment StoreEntitySet="Resource_Version_Summary">
+                <ScalarProperty Name="ImageUrl" ColumnName="ImageUrl" />
                 <ScalarProperty Name="DetailPage" ColumnName="DetailPage" />
                 <ScalarProperty Name="URL" ColumnName="URL" />
                 <ScalarProperty Name="PublishedById" ColumnName="PublishedById" />
@@ -3319,6 +3375,7 @@ warning 6002: The table/view 'Isle_IOER.dbo.Resource.Version_Summary' does not h
           <EntitySetMapping Name="Resources">
             <EntityTypeMapping TypeName="ResourceModel.Resource">
               <MappingFragment StoreEntitySet="Resource">
+                <ScalarProperty Name="ImageUrl" ColumnName="ImageUrl" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="HasPathwayGradeLevel" ColumnName="HasPathwayGradeLevel" />
                 <ScalarProperty Name="IsActive" ColumnName="IsActive" />
@@ -3611,6 +3668,7 @@ warning 6002: The table/view 'Isle_IOER.dbo.Resource.Version_Summary' does not h
           <EntitySetMapping Name="Codes_TagValue">
             <EntityTypeMapping TypeName="ResourceModel.Codes_TagValue">
               <MappingFragment StoreEntitySet="Codes_TagValue">
+                <ScalarProperty Name="SupportingIntValue" ColumnName="SupportingIntValue" />
                 <ScalarProperty Name="Created" ColumnName="Created" />
                 <ScalarProperty Name="AliasValues" ColumnName="AliasValues" />
                 <ScalarProperty Name="WarehouseTotal" ColumnName="WarehouseTotal" />
@@ -3628,6 +3686,7 @@ warning 6002: The table/view 'Isle_IOER.dbo.Resource.Version_Summary' does not h
           <EntitySetMapping Name="Resource_Standard">
             <EntityTypeMapping TypeName="ResourceModel.Resource_Standard">
               <MappingFragment StoreEntitySet="Resource_Standard">
+                <ScalarProperty Name="IsDirectStandard" ColumnName="IsDirectStandard" />
                 <ScalarProperty Name="CreatedById" ColumnName="CreatedById" />
                 <ScalarProperty Name="Created" ColumnName="Created" />
                 <ScalarProperty Name="AlignmentDegreeId" ColumnName="AlignmentDegreeId" />
@@ -3895,6 +3954,7 @@ warning 6002: The table/view 'Isle_IOER.dbo.Resource.Version_Summary' does not h
           <EntitySetMapping Name="Codes_TagCategoryValue_summary">
             <EntityTypeMapping TypeName="ResourceModel.Codes_TagCategoryValue_summary">
               <MappingFragment StoreEntitySet="Codes_TagCategoryValue_summary">
+                <ScalarProperty Name="SupportingIntValue" ColumnName="SupportingIntValue" />
                 <ScalarProperty Name="WarehouseTotal" ColumnName="WarehouseTotal" />
                 <ScalarProperty Name="Description" ColumnName="Description" />
                 <ScalarProperty Name="Title" ColumnName="Title" />
@@ -3992,6 +4052,10 @@ warning 6002: The table/view 'Isle_IOER.dbo.Resource.Version_Summary' does not h
           <EntitySetMapping Name="Resource_DelayedPublish">
             <EntityTypeMapping TypeName="ResourceModel.Resource_DelayedPublish">
               <MappingFragment StoreEntitySet="Resource_DelayedPublish">
+                <ScalarProperty Name="LRPublishStatusId" ColumnName="LRPublishStatusId" />
+                <ScalarProperty Name="ElasticStatusId" ColumnName="ElasticStatusId" />
+                <ScalarProperty Name="ThumbnailsStatusId" ColumnName="ThumbnailsStatusId" />
+                <ScalarProperty Name="ResourceUrl" ColumnName="ResourceUrl" />
                 <ScalarProperty Name="PublishedDate" ColumnName="PublishedDate" />
                 <ScalarProperty Name="DocId" ColumnName="DocId" />
                 <ScalarProperty Name="CreatedById" ColumnName="CreatedById" />

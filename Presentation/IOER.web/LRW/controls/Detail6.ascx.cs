@@ -33,13 +33,11 @@ namespace IOER.LRW.controls
         public bool isUserAuthor { get; set; }
         public bool alreadyLoaded { get; set; }
 
+		ResourceVersion pResourceVersion = new ResourceVersion();
+
         protected void Page_Load( object sender, EventArgs e )
         {
-          if ( IsPostBack )
-          {
-
-          }
-          else
+          if ( !IsPostBack )
           {
             InitRecord();
             InitButtons();
@@ -151,19 +149,20 @@ namespace IOER.LRW.controls
 
                     resourceIntID = 0;
 					//or use display version to primarily get keywords to feed meta tags
-                    ResourceVersion entity = MyManager.ResourceVersion_Get( resourceVersionID );
+                    pResourceVersion = MyManager.ResourceVersion_Get( resourceVersionID );
                     var isActive = false;
-                    if ( entity != null && entity.Id > 0 )
+                    if ( pResourceVersion != null && pResourceVersion.Id > 0 )
                     {
-                        resourceIntID = entity.ResourceIntId;
-                        isActive = entity.IsActive;
+                        resourceIntID = pResourceVersion.ResourceIntId;
+                        isActive = pResourceVersion.IsActive;
 
                         int libId = FormHelper.GetRequestKeyValue( "libId", 0 );
                         int colId = FormHelper.GetRequestKeyValue( "colId", 0 );
-                        ActivityBizServices.ResourceHit( resourceIntID, entity.Title, libId, colId, WebUser );
+                        ActivityBizServices.ResourceHit( resourceIntID, pResourceVersion.Title, libId, colId, WebUser );
 
-						SetMetaTags( entity.Description );
-						SetMetaTags( entity.Title, "keywords" );
+						SetMetaTags( pResourceVersion.Description );
+						SetMetaTags( pResourceVersion.Title, "keywords" );
+
                     }
 
                     return ( resourceVersionID != 0 && isActive );
@@ -236,19 +235,31 @@ namespace IOER.LRW.controls
 
                 if ( FormPrivileges.CanUpdate() )
                 {
+					btnUbertag.Visible = true;
+					btnUbertag.Attributes[ "onclick" ] = "window.location.href = '/tagger?theme=ioer&mode=tag&resourceID=" + resourceIntID + "'";
+
                     btnStartUpdateMode.Visible = true;
                     btnFinishUpdate.Visible = true;
                     btnReportProblem.Visible = true;
                     btnCancelChanges.Visible = true;
                 }
 
+				if ( canEdit )
+				{
+					btnDeactivateResource.Visible = true;
+				}
+
                 if ( FormPrivileges.CreatePrivilege > ( int )EPrivilegeDepth.Region )
                 {
-                    btnUbertag.Visible = true;
-										btnUbertag.Attributes[ "onclick" ] = "window.location.href = '/tagger?theme=ioer&mode=tag&resourceID=" + resourceIntID + "'";
+                   
                     btnDeactivateResource.Visible = true;
                     btnReActivateResource.Visible = true;
-                    btnRegenerateThumbnail.Visible = true;
+					if ( pResourceVersion != null && pResourceVersion.Id > 0
+						&& string.IsNullOrWhiteSpace( pResourceVersion.ResourceImageUrl ) == true )
+					{
+						btnRegenerateThumbnail.Visible = true;
+					}
+                   
                     litResourceId.Visible = true;
                     isUserAdmin = true;
                 }

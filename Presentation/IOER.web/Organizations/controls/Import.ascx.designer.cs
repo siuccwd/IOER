@@ -58,6 +58,15 @@ namespace IOER.Organizations.controls {
         protected global::System.Web.UI.WebControls.Label label1;
         
         /// <summary>
+        /// txtOrgName control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label txtOrgName;
+        
+        /// <summary>
         /// txtOrgId control.
         /// </summary>
         /// <remarks>
@@ -74,6 +83,60 @@ namespace IOER.Organizations.controls {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.DropDownList ddlOrgList;
+        
+        /// <summary>
+        /// PanelOptions control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel PanelOptions;
+        
+        /// <summary>
+        /// label2 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label label2;
+        
+        /// <summary>
+        /// ddlPasswordTemplates control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.DropDownList ddlPasswordTemplates;
+        
+        /// <summary>
+        /// txtDefaultPassword control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox txtDefaultPassword;
+        
+        /// <summary>
+        /// label4 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label label4;
+        
+        /// <summary>
+        /// rblSendEmail control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.RadioButtonList rblSendEmail;
         
         /// <summary>
         /// importPanel control.
@@ -373,13 +436,13 @@ namespace IOER.Organizations.controls {
         protected global::System.Web.UI.WebControls.Literal usingCsvReaderToValidate;
         
         /// <summary>
-        /// txtOrgName control.
+        /// txtOrgNameOLD control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Literal txtOrgName;
+        protected global::System.Web.UI.WebControls.Literal txtOrgNameOLD;
         
         /// <summary>
         /// userAddConfirmation control.

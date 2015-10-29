@@ -34,6 +34,28 @@
     <p>There are two different protocols currently supported by the link checker.  They are the HTTP and HTTPS protocols (which are treated as one), 
     and the FTP protocol.</p>
     <h3>HTTP/HTTPS</h3>
+    <h4>Rules which require staff intervention</h4>
+    <ul>
+        <li>Too many redirects - if a page redirects more than 10 levels deep, the URL is logged and no action is taken.  It is up to administrators
+            to decide what to do with the link.  This prevents the link checker from getting stuck in an infinite loop of redirects and never finishing.</li>
+        </li>
+        <li>Unknown protocols - if an unknown protocol is encountered, the URL is logged and no action is taken.  This allows technical staff to examine
+            the resource's protocol, and write code which will check the resource's validity.
+        </li>
+    </ul>
+    <h4>Code-based rules</h4>
+    <p>Code-based rules are used where it is not possible to leverage equality, substrings, or regular expressions, or where the use of such is inefficient
+        and slows the link checker down too much.  Examples of code-based rules are:
+    </p>
+    <ul>
+        <li>Checking for redirects via meta-refresh - Some pages redirect to a URL using a &lt;meta&gt; tag with an http-equiv attribute that indicates a 
+            redirect.  This type of redirect is normally handled client-side by the browser, but the link checker has code specifically for this since it 
+            is not a browser.  When this is detected, the link checker checks the page that is being redirected to via the meta-refresh redirect.
+        </li>
+        <li>The body of the page contains only a &lt;noscript&gt;&lt;/noscript&gt; tag.  We consider this to be a black hat technique, and delete the
+            resource from our system.
+        </li>
+    </ul>
     <h4>Conditions Which Result in Immediate Deletion</h4>
     <ul>
         <li>Known Bad Protocol – In the early days of the link checker, resources were found which did not have a good protocol on their URL.  
@@ -42,8 +64,7 @@
             <li>title</li>
             <li>docid</li>
             <li>grade</li>
-        </ul>
-        </li>
+        </ul></li>
         <li>IOER maintains a table of known 404 pages.  Each row in the table is flagged so that the link checker knows if it needs to check for an 
         exact match of a URL, or whether the URL is a regular expression that needs to be checked, and appropriate logic is used to determine whether 
         to treat it as an exact match or if a regular expression match needs to be done.  If a resource URL is found to be a match in this table, 
@@ -80,6 +101,35 @@
         It’s a horribly cryptic response that usually means there’s something wrong with the page, and should be tried again later after developers 
         have had time to fix it.</li>
     </ul>
+    <h4>Table-based rules</h4>
+    <p>Many of the rules for detecting whether a link is bad are stored in tables.  By updating a rule in a table, we can avoid having to recompile the
+        link checker every time a new rule is added.  The rules are read from the tables each time the link checker starts up, so if you've updated a rule
+        and you're running the link checker interactively, you'll have to stop and restart the link checker each time you add a new rule (or set of rules) 
+        so that the new rule will be read in from the table and used.
+    </p>
+    <p>Rules in tables are updated on a regular basis.  There are three tables currently used for storing the rules.</p>
+    <ol>
+        <li>Known Bad Content table, where rules are placed when looking for a specific piece of content that may indicate that the resource is not valid or 
+            inappropriate for our audience.  An example of a resource that is not valid would be a page that contains the words "page requested 
+            is not found."  An example of a resource that may be inappropriate for our audience is a page that contains the words "online casino."
+        </li>
+        <li>Known Bad Title table, where rules are placed when looking for a specific title that may indicate the page is not valid.</li>
+        <li>Known 404 Pages table, where rules are placed that identify a URL as one that should be treated as a page not found.  The rules in this table
+            differ slightly in that they may apply to all links, or only to links which redirect to a link that matches the rule.  This is useful when
+            you have resources that at one time were good, but now all redirect to the home page of a site, where we want to treat the home page of a site
+            as a valid resource, but anything that redirects to it as an invalid resource.
+        </li>
+    </ol>
+    <p>All rule tables can leverage the power of Regular Expressions for determining whether or not a given resource matches a rule that indicates the
+        resource should be deleted from the system.  It is beyond the scope of this document to discuss regular expressions, however an excellent tutorial
+        on how to use them can be found at <a href="http://www.regular-expressions.info/" target="_blank">http://www.regular-expressions.info</a>.
+    </p>
+    <p>You can view the current rule sets by clicking the links below to download .csv files which contain the current rules.</p>
+    <ol>
+        <li><asp:LinkButton ID="btnBadContent" runat="server" OnClick="btnBadContent_Click" Text="Download Bad Content Rules" /></li>
+        <li><asp:LinkButton ID="btnBadTitle" runat="server" OnClick="btnBadTitle_Click" Text="Download Bad Title Rules" /></li>
+        <li><asp:LinkButton ID="btn404Pages" runat="server" OnClick="btn404Pages_Click" Text="Download 404 Pages Rules" /></li>
+    </ol>
     <h3>FTP</h3>
     <h4>Conditions Which Result in Immediate Deletion</h4>
     <p>The following conditions result in the resource being immediately deleted from the system:</p>
@@ -118,6 +168,15 @@
     deleted within the database.</p>
     <h3>Phase 1 for Host Name</h3>
     <p>This utility performs a Phase 1 check for all resources that have a given FQDN.</p>
+    <h3>Bad Link Checking Rules</h3>
+    <ul>
+        <li>Too many redirects - if a page redirects more than 10 levels deep, the URL is logged and no action is taken.  It is up to administrators
+            to decide what to do with the link.  This prevents the link checker from getting stuck in an infinite loop of redirects and never finishing.</li>
+        <li>Known bad protocols - If a page's URL starts with a known bad protocol, the URL is logged and the resource is marked as deleted.</li>
+        <li>Unknown protocols - if an unknown protocol is encountered, the URL is logged and no action is taken.  This allows technical staff to examine
+            the resource's protocol, and write code which will check the resource's validity.
+        </li>
+    </ul>
     <a name="gsba">&nbsp;</a>
     <h2>Google Safe Browsing API</h2>
     <p>Per the <a href="https://developers.google.com/safe-browsing/developers_guide_v3?hl=en" target="_blank">Google Safe Browsing API's documentation</a>, 

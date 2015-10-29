@@ -802,16 +802,20 @@ ul {
     
 
       <h3 class="isleH3_Block required">Select Usage Rights<a class="toolTipLink" id="tipUsageRights" title="Usage Rights|The URL where the owner specifies permissions for using the resource.|<b>Remix and Share:</b> You may adapt, edit, or tweak resource before using and sharing.|<b>Share Only:</b> You may copy, distribute or transmit the resource in its original form only.|<b>No Strings Attached:</b> No restrictions are placed on usage.|<b>Read the Fine Print:</b> Specific restrictions may be in place; read usage rights carefully.|<b>Attribution:</b> You must attribute the work in the manner specified by the author or licensor."><img src="/images/icons/infoBubble.gif" alt="" /></a></h3>
-      <uc1:ConditionsOfUseSelector ID="conditionsSelector" runat="server" />
+      <uc1:ConditionsOfUseSelector ID="conditionsSelector" IsNewContext="yes" runat="server" />
 
       <h3 class="isleH3_Block required">Who can access this resource?<a class="toolTipLink" id="tipPrivilege" title="Access Privilege|You can allow only specific groups of users to access this resource by selecting the appropriate group from the box below."><img src="/images/icons/infoBubble.gif" alt="" /></a></h3>
       <asp:DropDownList ID="ddlPrivacyLevel" CssClass="ddl" runat="server"></asp:DropDownList>
 
-      <h3 class="isleH3_Block required">This resource is being Authored on behalf of...<a class="toolTipLink" id="tipOrganization" title="Authoring|If you are authoring this resource for your own purposes, select 'Myself'. Otherwise, select the appropriate organization from the box below."><img src="/images/icons/infoBubble.gif" alt="" /></a></h3>
-      <asp:DropDownList ID="ddlIsOrganizationContent" runat="server" Enabled="false" CssClass="ddl" >
-        <asp:ListItem Value="1" Text="Myself" Selected="True"></asp:ListItem>
-        <asp:ListItem Value="2" Text="My Organization"></asp:ListItem>
-      </asp:DropDownList>
+        <div id="addToOrg" runat="server">
+            <h3 class="isleH3_Block required">This resource is being Authored on behalf of...<a class="toolTipLink" id="tipOrganization" title="Authoring|If you are authoring this resource for your own purposes, select 'No Organization'. Otherwise, select the appropriate organization from the box below."><img src="/images/icons/infoBubble.gif" alt="" /></a></h3>
+            <asp:DropDownList ID="ddlOrganization" runat="server" CssClass="ddl"></asp:DropDownList>
+            <asp:DropDownList ID="ddlIsOrganizationContent" runat="server" Visible="false" CssClass="ddl">
+                <asp:ListItem Value="1" Text="Myself" Selected="True"></asp:ListItem>
+                <asp:ListItem Value="2" Text="My Organization"></asp:ListItem>
+            </asp:DropDownList>
+        </div>
+      
 
       <div class="buttons">
         <asp:Button ID="btnSave" runat="server" Visible="true" CssClass="defaultButton" OnClick="btnSave_Click" Text="Save and Continue" CausesValidation="false"></asp:Button>
@@ -1535,17 +1539,24 @@ ul {
   <asp:Literal ID="ltlMinTxtTitleLength" runat="server" Visible="false">10</asp:Literal>
   <asp:Literal ID="ltlMinTxtDescriptionLength" runat="server" Visible="false">20</asp:Literal>
   <asp:Literal ID="ltlMinUsageRightsURLLength" runat="server" Visible="false">15</asp:Literal>
-  <asp:Literal ID="litPreviewUrlTemplate2" runat="server" Visible="false">/Repository/ResourcePage.aspx?rid={0}</asp:Literal>
-  <asp:Literal ID="litPreviewUrlTemplate" runat="server" Visible="false">/Content/{0}/{1}</asp:Literal>
+    <asp:Literal ID="litPreviewUrlTemplate2" runat="server" Visible="false">/Repository/ResourcePage.aspx?rid={0}</asp:Literal>
+    <asp:Literal ID="litPreviewUrlTemplate" runat="server" Visible="false">/Content/{0}/{1}</asp:Literal>
     <asp:Literal ID="showingTemplates" runat="server" Visible="false">no</asp:Literal>
+    <asp:Literal ID="canUserChgOrg" runat="server" Visible="false">no</asp:Literal>
 
-  <asp:Literal ID="ltlAppliedAttachmentTemplate" runat="server" Visible="false"><h3 class="isleH3_Block"><span class="attachmentTitle">{0} ({2})</span><a class="textLink" href="javascript:removeAttachment('{3}')">Remove</a><a class="textLink" href="javascript:editAttachment('{3}')">Edit</a> <a class="textLink" href="{4}" target="_blank">View</a></h3><p>{1}</p></asp:Literal>
-</asp:Panel>
+    <asp:Literal ID="ltlAppliedAttachmentTemplate" runat="server" Visible="false"><h3 class="isleH3_Block"><span class="attachmentTitle">{0} ({2})</span><a class="textLink" href="javascript:removeAttachment('{3}')">Remove</a><a class="textLink" href="javascript:editAttachment('{3}')">Edit</a> <a class="textLink" href="{4}" target="_blank">View</a></h3><p>{1}</p></asp:Literal>
+    </asp:Panel>
 
-<asp:Panel ID="nodesHiddenPanel" runat="server" Visible="false">
-<asp:Literal ID="litNodeViewTemplate" runat="server" Visible="false"><a class="textLink" style="margin-left:10px;" href="/Content/{1}/{2}" target="resDetl2">View {3} Separately</a></asp:Literal>
+    <asp:Panel ID="nodesHiddenPanel" runat="server" Visible="false">
+    <asp:Literal ID="litNodeViewTemplate" runat="server" Visible="false"><a class="textLink" style="margin-left:10px;" href="/Content/{1}/{2}" target="resDetl2">View {3} Separately</a></asp:Literal>
 
-<asp:Literal ID="litNodePublishTemplate" runat="server" Visible="false"><a class="textLink" style="margin-left:10px;" href="/Contribute/?mode=tag&contentId={0}&doingLRPublish=no" target="resDetl2">Tag/publish {1}</a></asp:Literal>
+    <asp:Literal ID="litContentPublishUrl" runat="server" Visible="false">/Publish.aspx?rid={0}</asp:Literal>
+
+    <asp:Literal ID="litNodePublishTemplate" runat="server" Visible="false"><a class="textLink" style="margin-left:10px;" href="/tagger?theme=ioer&mode=tag&contentID={0}" target="resDetl2">Tag/publish {1}</a></asp:Literal>
+
+    <asp:Literal ID="litNodePublishTemplateOLD" runat="server" Visible="false"><a class="textLink" style="margin-left:10px;" href="/Contribute/?mode=tag&contentId={0}&doingLRPublish=no" target="resDetl2">Tag/publish {1}</a></asp:Literal>
+        
+
 <asp:Literal ID="litNodeViewTags" runat="server" Visible="false"><a class="textLink" style="margin-left:10px;" href="/Resource/{0}/{1}" target="resDetl2">View tags for {2}</a></asp:Literal>
 
 <asp:Literal ID="litNodeEditTemplate" runat="server" Visible="false"><a class="textLink" style="margin-left:10px;" href="/My/Author.aspx?rid={0}" target="resDetl2">Edit {3} Separately</a></asp:Literal>

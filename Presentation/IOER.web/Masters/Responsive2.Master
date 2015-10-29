@@ -26,7 +26,7 @@
 
     <asp:Literal ID="litHidingAddThis" Visible="false" runat="server">
          <style type="text/css">
-        .addthis-smartlayers {
+        .addthis-smartlayers, #at4m-mobile-container {
           display: none;
         }
       </style>
@@ -35,32 +35,28 @@
     <!-- Go to http://www.addthis.com/get/smart-layers to customize -->
     <script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#pubid=xa-52d4024b5e30007a"></script>
     <script type="text/javascript">
-        addthis.layers({
-            'theme': 'transparent',
-            'share': {
-                'position': 'left',
-                'services': 'twitter,facebook,google_plusone_share,pinterest,flipboard,linkedin,email,print,more'
-            }
-        });
+    	addthis.layers({
+    		'theme': 'transparent',
+    		'share': {
+    			'position': 'right',
+    			'services': 'twitter,facebook,google_plusone_share,pinterest,flipboard,linkedin,email,print,more'
+    		}
+    	});
     </script>
     <!-- AddThis Smart Layers END -->
     <asp:ContentPlaceHolder ID="HeadContent" runat="server" />
 </head>
 <body>
     <form runat="server" id="mainform">
-    <%--    <div style="width: 80%; margin-left: auto; margin-right: auto;"> </div>--%>
-            <%--<a href="#mainContent" class="offScreen">Skip navigational links</a> <a name="mainContent"></a>--%>
-             <uc1:HeaderControl ID="header" runat="server" />
-           
-            <div id="systemMessageDiv">
-                <uc1:systemMessageLine ID="systemMessageLine" runat="server" />
-            </div>
-           
-            <asp:ContentPlaceHolder ID="BodyContent" runat="server" />
-            <div class="mainSiteFooter">
-                <uc1:Footer ID="pagefooter" runat="server" />
-            </div>
-       
+        <uc1:HeaderControl ID="header" runat="server" />
+
+        <div id="systemMessageDiv">
+            <uc1:systemMessageLine ID="systemMessageLine" runat="server" />
+        </div>
+
+        <asp:ContentPlaceHolder ID="BodyContent" runat="server" />
+        <uc1:Footer ID="pagefooter" runat="server" />
+
     </form>
 </body>
 </html>

@@ -54,6 +54,7 @@ namespace LRWarehouse.Business.ResourceV2
     public string AlignmentType { get; set; }
     public int AlignmentDegreeId { get; set; }
     public string AlignmentDegree { get; set; }
+	public bool IsDirectStandard { get; set; }
   }
 
   //Usage Rights
@@ -272,7 +273,7 @@ namespace LRWarehouse.Business.ResourceV2
     }
     
     //Single Value Fields
-    public string UsageRightsUrl { get; set; }
+		public string UsageRightsUrl { get; set; }
 
     //Special Fields
     public List<string> GradeAliases { get; set; }

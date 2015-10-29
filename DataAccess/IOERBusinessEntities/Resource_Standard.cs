@@ -28,6 +28,7 @@ namespace IOERBusinessEntities
         public Nullable<int> AlignmentDegreeId { get; set; }
         public Nullable<System.DateTime> Created { get; set; }
         public Nullable<int> CreatedById { get; set; }
+        public Nullable<bool> IsDirectStandard { get; set; }
     
         public virtual StandardBody_Node StandardBody_Node { get; set; }
         public virtual Resource Resource { get; set; }

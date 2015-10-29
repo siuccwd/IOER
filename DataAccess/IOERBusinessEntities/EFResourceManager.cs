@@ -32,8 +32,10 @@ namespace IOERBusinessEntities
             {
                 Resource e = new Resource();
                 e.ResourceUrl = entity.ResourceUrl;
+				e.ImageUrl = entity.ImageUrl;
+
                 e.IsActive = entity.IsActive;
-                e.HasPathwayGradeLevel = false;
+               // e.HasPathwayGradeLevel = false;
                 e.FavoriteCount = 0;
                 e.ViewCount = 0;
                 if ( entity.Created != null && entity.Created > DefaultDate )
@@ -123,8 +125,12 @@ namespace IOERBusinessEntities
                     .SingleOrDefault( s => s.Id == entity.Id );
 
                 e.ResourceUrl = entity.ResourceUrl;
+				//may want a temp check to ensure not being overridden
+				if ( string.IsNullOrWhiteSpace( e.ImageUrl ) )
+					e.ImageUrl = entity.ImageUrl;
+
                 e.IsActive = entity.IsActive;
-                e.HasPathwayGradeLevel = false;
+                //e.HasPathwayGradeLevel = false;
                 e.FavoriteCount = entity.FavoriteCount;
                 e.ViewCount = entity.ViewCount;
                // e.Created = System.DateTime.Now;
@@ -175,6 +181,41 @@ namespace IOERBusinessEntities
                 }
             }
         }
+
+		/// <summary>
+		/// Update image url for resource
+		/// </summary>
+		/// <param name="resourceId"></param>
+		/// <param name="imageUrl"></param>
+		/// <returns>-1 - error; 0 - images aleady match; >=1 - update made</returns>
+		public int Resource_UpdateImageUrl( int resourceId, string imageUrl )
+		{
+
+			using ( var context = new ResourceContext() )
+			{
+				Resource e = context.Resources
+					.SingleOrDefault( s => s.Id == resourceId );
+				if ( e.ImageUrl != null 
+					&& e.ImageUrl.ToLower() == imageUrl.ToLower() )
+				{
+					return 0;
+				}
+				e.ImageUrl = imageUrl;
+				e.LastUpdated = System.DateTime.Now;
+
+				// submit the change to database
+				int count = context.SaveChanges();
+				if ( count > 0 )
+				{
+					return e.Id;
+				}
+				else
+				{
+					//?no info on error
+					return -1;
+				}
+			}
+		}
         public static LB.Resource Resource_GetSimple( int resourceId )
         {
             LB.Resource entity = new LB.Resource();
@@ -189,6 +230,8 @@ namespace IOERBusinessEntities
                 {
                     entity.Id = efEntity.Id;
                     entity.ResourceUrl = efEntity.ResourceUrl;
+					entity.ImageUrl = efEntity.ImageUrl;
+
                     entity.ViewCount = efEntity.ViewCount != null ? (int) efEntity.ViewCount : 0;
                     entity.FavoriteCount = efEntity.FavoriteCount != null ? ( int ) efEntity.FavoriteCount : 0;
                     entity.Created = (DateTime) efEntity.Created;
@@ -243,6 +286,8 @@ namespace IOERBusinessEntities
                 to.RowId = fromEntity.RowId;
 
                 to.ResourceUrl = fromEntity.ResourceUrl != null ? fromEntity.ResourceUrl : "";
+				to.ImageUrl = fromEntity.ImageUrl != null ? fromEntity.ImageUrl : "";
+
                 to.FavoriteCount = fromEntity.FavoriteCount != null ? ( int ) fromEntity.FavoriteCount : 10;
                 to.ViewCount = fromEntity.ViewCount != null ? ( int ) fromEntity.ViewCount : 0;
 
@@ -545,11 +590,13 @@ namespace IOERBusinessEntities
                 if ( fromEntity.Resource != null && fromEntity.Resource.Id > 0 )
                 {
                     to.ResourceUrl = fromEntity.Resource.ResourceUrl;
+					to.ResourceImageUrl = fromEntity.Resource.ImageUrl;
                 }
                 else
                 {
                     LB.Resource entity = Resource_GetSimple( to.ResourceIntId );
                     to.ResourceUrl = entity.ResourceUrl;
+					to.ResourceImageUrl = fromEntity.Resource.ImageUrl;
                 }
             }
 
@@ -894,6 +941,43 @@ namespace IOERBusinessEntities
             
             return createCount;
         }
+
+		public int ResourceStandard_Create( LB.ResourceStandard entity )
+		{
+			int newId = 0;
+			using ( var context = new ResourceContext() )
+			{
+				Resource_Standard e = new Resource_Standard();
+				e.ResourceIntId = entity.ResourceIntId;
+				e.StandardId = entity.StandardId;
+				if ( entity.CreatedById > 0 )
+					e.AlignedById = entity.CreatedById;
+				else
+					e.AlignedById = entity.AlignedById;
+				e.Created = System.DateTime.Now;
+				//AlignmentDegreeId is actually usage (major, supporting, additional )
+				e.AlignmentDegreeId = entity.AlignmentDegreeId;
+				e.AlignmentTypeCodeId = entity.AlignmentTypeCodeId;
+				e.StandardUrl = null;
+
+				context.Resource_Standard.Add( e );
+
+				// submit the change to database
+				int count = context.SaveChanges();
+				if ( count > 0 )
+				{
+					newId = e.Id;
+					return e.Id;
+				}
+				else
+				{
+					//?no info on error
+					LoggingHelper.LogError( thisClassName + ".ResourceStandard_Create()", true );
+				}
+
+			}
+			return newId;
+		}
 
         #endregion
 
@@ -1322,6 +1406,7 @@ namespace IOERBusinessEntities
                 to.RowId = fromEntity.RowId;
 
                 to.ResourceUrl = fromEntity.ResourceUrl != null ? fromEntity.ResourceUrl : "";
+				to.ImageUrl = fromEntity.ImageUrl != null ? fromEntity.ImageUrl : "";
                 to.FavoriteCount = fromEntity.FavoriteCount != null ? ( int ) fromEntity.FavoriteCount : 10;
                 to.ViewCount = fromEntity.ViewCount != null ? ( int ) fromEntity.ViewCount : 0;
 

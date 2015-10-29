@@ -550,9 +550,10 @@ function pickLibCol(item) {
     libraryIDs = [activeThing.data.id];
   }
   else {
+  	libraryIDs = [libraryID];
     collectionIDs = [activeThing.data.id];
   }
-  pipeline("resetCountdown");
+  search(searchStages.resetCountdown);
   //updateNarrowing(); //auto-search with the current object as a filter
   $("#searchBar").attr("placeholder", "Search " + item.title + "...");
   return false;

@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Illinois Open Educational Resources - Profile" Language="C#" MasterPageFile="/Masters/Responsive.Master" AutoEventWireup="true" CodeBehind="Profile.aspx.cs" Inherits="IOER.Account.Profile" %>
+﻿<%@ Page Title="Illinois Open Educational Resources - Profile" Language="C#" MasterPageFile="/Masters/Responsive2.Master" AutoEventWireup="true" CodeBehind="Profile.aspx.cs" Inherits="IOER.Account.Profile" %>
 <%@ Register Src="~/Account/controls/UserProfile2.ascx" TagPrefix="uc1" TagName="UserProfile" %>
 
 

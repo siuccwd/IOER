@@ -38,7 +38,7 @@
   <li>NSDL_DC - This is a variation of the Dublin Core schema. It includes some elements from LOM such as <b>typicalLearningTime</b>. For more information about NSDL_DC, see <a href="https://wiki.ucar.edu/display/nsdldocs/nsdl_dc" target="_blank">https://wiki.ucar.edu/display/nsdldocs/nsdl_dc</a>.</li>
   <li>DC - This is the original Dublin Core schema. For more information about Dublin Core, see <a href="http://wiki.dublincore.org/index.php/User_Guide#Dublin_Core_URIs_and_namespaces" target="_blank">http://wiki.dublincore.org/index.php/User_Guide#Dublin_Core_URIs_and_namespaces</a>.</li>
   <li>LOM - This is the IEEE's schema for Learning Object Metadata. It is commonly used in Europe. For more information about LOM, see <a href="http://standards.ieee.org/findstds/standard/1484.12.3-2005.html" target="_blank">http://standards.ieee.org/findstds/standard/1484.12.3-2005.html</a>.</li>
-  <li>LRMI - This is the Learning Resource Metadata Initiative schema and is available at <a href="http://www.lrmi.net/the-specification" target="_blank">http://www.lrmi.net/the-specification</a>. It includes elements from schema.org such as title and description.</li>
+  <li>LRMI - This is the Learning Resource Metadata Initiative schema and is available at <a href="http://dublincore.org/dcx/lrmi-terms/1.1/" target="_blank">http://dublincore.org/dcx/lrmi-terms/1.1/</a>. It includes elements from schema.org such as title and description.</li>
 </ul>
 
 <p>Paradata schemas encountered so far are:</p>

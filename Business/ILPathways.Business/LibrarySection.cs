@@ -133,18 +133,7 @@ namespace ILPathways.Business
             }
         }
     }
-    /// <summary>
-    /// Return a url friendly title
-    /// </summary>
-    public string FriendlyTitleXX
-    {
-        get
-        {
-            //return UrlFriendlyTitle( this._title);
-            return this._title;
-        }
- 
-    }
+
     private string _description = "";
     /// <summary>
     /// Gets/Sets Description
@@ -303,6 +292,29 @@ namespace ILPathways.Business
         }
     }
 
+	/// <summary>
+	/// Return a url friendly title
+	/// ==> this is no longer set in this object, it needs to be set from external methods like:
+	/// ILPathways.Utilities.UtilityManager.UrlFriendlyTitle()
+	/// </summary>
+	public string FriendlyTitle
+	{
+		get
+		{
+			//return UrlFriendlyTitle( this._title );
+			if ( string.IsNullOrWhiteSpace( _friendlyTitle ) )
+				_friendlyTitle = "Collection";
+			return this._friendlyTitle;
+		}
+		set
+		{
+			if ( this._friendlyTitle != value )
+			{
+				this._friendlyTitle = value.Trim();
+			}
+		}
+	} //
+	private string _friendlyTitle = "Collection";
     public string FriendlyUrl
     {
         get
@@ -310,7 +322,7 @@ namespace ILPathways.Business
             if ( Id == 0 )
                 return "";
             else
-                return ""; // string.Format( "/Library/Collection/{0}/{1}/{2}", LibraryId, Id, this.FriendlyTitle );
+                return string.Format( "/Library/Collection/{0}/{1}/{2}", LibraryId, Id, this.FriendlyTitle );
         }
 
     }

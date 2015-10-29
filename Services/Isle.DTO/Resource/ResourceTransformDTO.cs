@@ -16,6 +16,7 @@ namespace Isle.DTO
         public ResourceTransformDTO()
         {
             ResourceUrl= "";
+			ImageUrl = "";
             Resource_Version = new ResourceVersion();
 
             ResourceTagsIds = new List<int>();
@@ -36,6 +37,7 @@ namespace Isle.DTO
         }
 
         public string ResourceUrl { get; set; }
+		public string ImageUrl { get; set; }
         public System.Guid RowId { get; set; }
         public int CreatedById { get; set; }
 

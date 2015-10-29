@@ -73,7 +73,7 @@
 			<h2>Search</h2>
 			<a target="_blank" href="/Search" >ISLE Resources</a>
 			<a target="_blank" href="/Libraries/Search" >ISLE Libraries</a>
-            <a target="_blank" href="/gooruSearch" >gooru Resources (beta)</a>
+            <a target="_blank" href="/gooruSearch" >gooru Resources</a>
 			<!--<a target="_blank" href="/Publishers.aspx" >Publishers</a>-->
 			<img src="/images/icons/icon_search_med.png" />
 		</div>

@@ -1,9 +1,9 @@
 ﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="Lrmi.ascx.cs" Inherits="IOER.Pages.Developers.Lrmi" %>
 
 <h2>Introduction</h2>
-<p>IOER Resources are published using <a href="/developers/metadata">a custom extension</a> of <a href="http://www.lrmi.net/the-specification" target="_blank">the LRMI Schema</a>, which itself is an extension of <a href="http://schema.org/" target="_blank">schema.org</a>.
+<p>IOER Resources are published using <a href="/developers/metadata">a custom extension</a> of <a href="http://dublincore.org/dcx/lrmi-terms/1.1/" target="_blank">the LRMI Schema</a>, which itself is an extension of <a href="http://schema.org/" target="_blank">schema.org</a>.
     Since LRMI was created, it has been accepted for inclusion with schema.org, and LRMI has transferred to the Dublin Core Metadata Initiative.  Background information on LRMI is available at
-    <a href="http://www.lrmi.net/" target="_blank">http://www.lrmi.net/</a>.  Education resources can all be thought of as creative works, therefore any of the applicable properties from
+    <a href="http://dublincore.org/dcx/lrmi-terms/#history" target="_blank">http://dublincore.org/dcx/lrmi-terms/#history</a>.  Education resources can all be thought of as creative works, therefore any of the applicable properties from
     schema.org's <a href="http://www.schema.org/CreativeWork" target="_blank">Creative Work</a> can be used.  Likewise, because schema.org's Creative Work inherits from their 
     <a href="http://www.schema.org/Thing" target="_blank">Thing</a>, which is their most generic type of item, so any of the applicable properties from schema.org's Thing schema are considered
     to be legitimate LRMI properties.
@@ -15,14 +15,14 @@
   <li>IOER's custom extension - This may change from time to time, and should not be the basis of your publishing</li>
 </ol>
 <p>A description of LRMI's properties as RDF is available at <a href="http://dublincore.org/dcx/lrmi-terms" target="_blank">http://dublincore.org/dcx/lrmi-terms</a>.  An adequate explanation of the terms
-    is available at <a href="http://www.lrmi.net/the-specification" target="_blank">http://www.lrmi.net/the-specification</a>.
+    is available at <a href="http://dublincore.org/dcx/lrmi-terms/1.1/" target="_blank">http://dublincore.org/dcx/lrmi-terms/1.1/</a>.
 </p>
 
 <h2>Quirks</h2>
 <p>Using the LRMI schema is mostly straightforward; however, there are some quirks worth noting:</p>
 <dl>
   <dt>Case Sensitivity</dt>
-  <dd>LRMI prescribes using "camelCase" to record property names. The JSON format is case-sensitive, so "learningResourceType" is <b>not</b> the same as "LearningResourceType". This applies to property <i>names</i>, but not necessarily to property <i>values</i> whose expected type (according to <a href="http://www.lrmi.net/the-specification" target="_blank">the LRMI Schema</a>) is "schema.org/Text".</dd>
+  <dd>LRMI prescribes using "camelCase" to record property names. The JSON format is case-sensitive, so "learningResourceType" is <b>not</b> the same as "LearningResourceType". This applies to property <i>names</i>, but not necessarily to property <i>values</i> whose expected type (according to <a href="http://dublincore.org/dcx/lrmi-terms/1.1/" target="_blank">the LRMI Schema</a>) is "schema.org/Text".</dd>
   <dt>The educationalAlignment Property</dt>
   <dd>Most of the complexity of using LRMI comes from the educationalAlignment property. This is expected to be a specific object (or array of objects) whose structure is given in the specification, but not well explained. See below for IOER's expectations for consuming this property</dd>
   <dt>Vocabulary</dt>

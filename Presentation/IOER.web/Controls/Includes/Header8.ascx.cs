@@ -126,7 +126,7 @@ namespace IOER.Controls.Includes
 						tld = domainPieces[ lastPieceIndex ];
 					}
 
-					if ( ( hostName.IndexOf( "ioer" ) > -1 || hostName.IndexOf( "sandbox" ) > -1 ) && tld != "org" )
+					if ( ( hostName.IndexOf( "ioer" ) > -1 || hostName.IndexOf( "sandbox" ) > -1) && tld != "org" )
 					{
 						string newHostName = domainPieces[ 0 ];
 						newHostName += ".ilsharedlearning.org";
@@ -139,6 +139,18 @@ namespace IOER.Controls.Includes
 
 						Response.Redirect( url );
 					}
+                    if (hostName.IndexOf("www") > -1)
+                    {
+                        string newHostName = "ioer.ilsharedlearning.org";
+                        if (port.Length > 0)
+                        {
+                            newHostName += port;
+                        }
+                        string url = Request.Url.ToString();
+                        url = url.Replace(hostName, newHostName);
+
+                        Response.Redirect(url);
+                    }
 				}
 			}
 			catch ( System.Threading.ThreadAbortException taex )
@@ -150,6 +162,7 @@ namespace IOER.Controls.Includes
 				LogError( ex, "Header8.CheckForRedirect()" );
 			}
 		}
+
 
 	}
 }

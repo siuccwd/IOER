@@ -20,10 +20,14 @@ namespace IOERBusinessEntities
         public int ContentTypeId { get; set; }
         public int StatusId { get; set; }
         public int ResourceIntId { get; set; }
-        public int ResourceVersionIntId { get; set; }
+        public Nullable<int> ResourceVersionIntId { get; set; }
         public System.DateTime Created { get; set; }
         public int CreatedById { get; set; }
         public string DocId { get; set; }
         public Nullable<System.DateTime> PublishedDate { get; set; }
+        public string ResourceUrl { get; set; }
+        public Nullable<int> ThumbnailsStatusId { get; set; }
+        public Nullable<int> ElasticStatusId { get; set; }
+        public Nullable<int> LRPublishStatusId { get; set; }
     }
 }

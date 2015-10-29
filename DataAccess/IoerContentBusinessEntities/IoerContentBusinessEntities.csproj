@@ -86,7 +86,7 @@
       <DependentUpon>IoerContent.tt</DependentUpon>
     </Compile>
     <Compile Include="AppVisitLog.cs">
-      <DependentUpon>GatewayDB.tt</DependentUpon>
+      <DependentUpon>IoerContent.tt</DependentUpon>
     </Compile>
     <Compile Include="Codes_AccessRights.cs">
       <DependentUpon>IoerContent.tt</DependentUpon>
@@ -95,7 +95,7 @@
       <DependentUpon>IoerContent.tt</DependentUpon>
     </Compile>
     <Compile Include="Codes_AuthorizationLevel.cs">
-      <DependentUpon>GatewayDB.tt</DependentUpon>
+      <DependentUpon>IoerContent.tt</DependentUpon>
     </Compile>
     <Compile Include="Codes_CareerCluster.cs">
       <DependentUpon>IoerContent.tt</DependentUpon>
@@ -110,7 +110,7 @@
       <DependentUpon>IoerContent.tt</DependentUpon>
     </Compile>
     <Compile Include="Codes_ExternalSite.cs">
-      <DependentUpon>GatewayDB.tt</DependentUpon>
+      <DependentUpon>IoerContent.tt</DependentUpon>
     </Compile>
     <Compile Include="Codes_GradeLevel.cs">
       <DependentUpon>IoerContent.tt</DependentUpon>
@@ -140,10 +140,10 @@
       <DependentUpon>IoerContent.tt</DependentUpon>
     </Compile>
     <Compile Include="Codes_PrivilegeDepth.cs">
-      <DependentUpon>GatewayDB.tt</DependentUpon>
+      <DependentUpon>IoerContent.tt</DependentUpon>
     </Compile>
     <Compile Include="Codes_PrivilegeType.cs">
-      <DependentUpon>GatewayDB.tt</DependentUpon>
+      <DependentUpon>IoerContent.tt</DependentUpon>
     </Compile>
     <Compile Include="Codes_PublishingRole.cs">
       <DependentUpon>IoerContent.tt</DependentUpon>
@@ -158,7 +158,7 @@
       <DependentUpon>IoerContent.tt</DependentUpon>
     </Compile>
     <Compile Include="Codes_State.cs">
-      <DependentUpon>GatewayDB.tt</DependentUpon>
+      <DependentUpon>IoerContent.tt</DependentUpon>
     </Compile>
     <Compile Include="Codes_SubscriptionType.cs">
       <DependentUpon>IoerContent.tt</DependentUpon>
@@ -196,6 +196,8 @@
     <Compile Include="ContentNodeSummary.cs">
       <DependentUpon>IoerContent.tt</DependentUpon>
     </Compile>
+    <Compile Include="ContentObsoleteMethods.cs" />
+    <Compile Include="ContentStandardManager.cs" />
     <Compile Include="ContentStandard_Summary.cs">
       <DependentUpon>IoerContent.tt</DependentUpon>
     </Compile>
@@ -227,6 +229,12 @@
       <DependentUpon>IoerContent.tt</DependentUpon>
     </Compile>
     <Compile Include="Content_Reference.cs">
+      <DependentUpon>IoerContent.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Content_RelatedStandard.cs">
+      <DependentUpon>IoerContent.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Content_RelatedStandardsSummary.cs">
       <DependentUpon>IoerContent.tt</DependentUpon>
     </Compile>
     <Compile Include="Content_Resource.cs">
@@ -265,21 +273,6 @@
     </Compile>
     <Compile Include="EFSecurityManager.cs" />
     <Compile Include="GatewayContext.cs" />
-    <Compile Include="GatewayDB.Context.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>GatewayDB.Context.tt</DependentUpon>
-    </Compile>
-    <Compile Include="GatewayDB.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>GatewayDB.tt</DependentUpon>
-    </Compile>
-    <Compile Include="GatewayDB.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>GatewayDB.edmx</DependentUpon>
-    </Compile>
     <Compile Include="Gateway_OrgSummary.cs">
       <DependentUpon>IoerContent.tt</DependentUpon>
     </Compile>
@@ -381,25 +374,25 @@
       <DependentUpon>IoerContent.tt</DependentUpon>
     </Compile>
     <Compile Include="OrganizationMember_RoleIdCSV.cs">
-      <DependentUpon>GatewayDB.tt</DependentUpon>
+      <DependentUpon>IoerContent.tt</DependentUpon>
     </Compile>
     <Compile Include="OrganizationRequest.cs">
       <DependentUpon>IoerContent.tt</DependentUpon>
     </Compile>
     <Compile Include="Organization_AdminMembers.cs">
-      <DependentUpon>GatewayDB.tt</DependentUpon>
+      <DependentUpon>IoerContent.tt</DependentUpon>
     </Compile>
     <Compile Include="Organization_Member.cs">
       <DependentUpon>IoerContent.tt</DependentUpon>
     </Compile>
     <Compile Include="Organization_MemberCrosstab.cs">
-      <DependentUpon>GatewayDB.tt</DependentUpon>
+      <DependentUpon>IoerContent.tt</DependentUpon>
     </Compile>
     <Compile Include="Organization_MemberRole.cs">
       <DependentUpon>IoerContent.tt</DependentUpon>
     </Compile>
     <Compile Include="Organization_MemberSummary.cs">
-      <DependentUpon>GatewayDB.tt</DependentUpon>
+      <DependentUpon>IoerContent.tt</DependentUpon>
     </Compile>
     <Compile Include="Person_Following.cs">
       <DependentUpon>IoerContent.tt</DependentUpon>
@@ -409,7 +402,7 @@
       <DependentUpon>IoerContent.tt</DependentUpon>
     </Compile>
     <Compile Include="SqlQuery.cs">
-      <DependentUpon>GatewayDB.tt</DependentUpon>
+      <DependentUpon>IoerContent.tt</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -420,23 +413,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.Config" />
-    <EntityDeploy Include="GatewayDB.edmx">
-      <Generator>EntityModelCodeGenerator</Generator>
-      <LastGenOutput>GatewayDB.Designer.cs</LastGenOutput>
-    </EntityDeploy>
-    <None Include="GatewayDB.Context.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <DependentUpon>GatewayDB.edmx</DependentUpon>
-      <LastGenOutput>GatewayDB.Context.cs</LastGenOutput>
-    </None>
-    <None Include="GatewayDB.edmx.diagram">
-      <DependentUpon>GatewayDB.edmx</DependentUpon>
-    </None>
-    <None Include="GatewayDB.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <DependentUpon>GatewayDB.edmx</DependentUpon>
-      <LastGenOutput>GatewayDB.cs</LastGenOutput>
-    </None>
     <None Include="IoerContent.Context.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <DependentUpon>IoerContent.edmx</DependentUpon>

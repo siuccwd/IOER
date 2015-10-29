@@ -49,6 +49,7 @@ namespace IoerContentBusinessEntities
         public Nullable<System.Guid> RowId { get; set; }
         public Nullable<bool> IsIsleMember { get; set; }
         public string EmailDomain { get; set; }
+        public string Description { get; set; }
     
         public virtual ICollection<Organization_Member> Organization_Member { get; set; }
         public virtual Organization Organization1 { get; set; }

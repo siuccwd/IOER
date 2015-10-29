@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Illinois Open Educational Resources - Query Management" Language="C#" MasterPageFile="~/Masters/Responsive.Master" AutoEventWireup="true" CodeBehind="QueryMgmt.aspx.cs" Inherits="IOER.Admin.QueryMgmt" %>
+﻿<%@ Page Title="Illinois Open Educational Resources - Query Management" Language="C#" MasterPageFile="~/Masters/Responsive2.Master" AutoEventWireup="true" CodeBehind="QueryMgmt.aspx.cs" Inherits="IOER.Admin.QueryMgmt" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="HeadContent" runat="server">
     <link href="../Styles/common.css" rel="stylesheet" />
 </asp:Content>

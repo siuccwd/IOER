@@ -18,7 +18,7 @@ using ILPathways.Utilities;
 
 namespace IOER.Controls.Curriculum
 {
-  public partial class CurriculumFileUpload : System.Web.UI.Page
+  public partial class CurriculumFileUpload : BaseAppPage
   {
     public string dataJSON { get; set; }
 
@@ -32,13 +32,12 @@ namespace IOER.Controls.Curriculum
           var serializer = new JavaScriptSerializer();
 
           //Validate user
-          var user = ( Patron ) Session[ "user" ];
-          if ( user == null || user.Id == 0 )
+		  if ( WebUser == null || WebUser.Id == 0 )
           {
             dataJSON = serializer.Serialize( UtilityService.DoReturn( "", false, "You must login to do that.", null ) );
             return;
           }
-
+		  CurrentUser = GetAppUser();
           //Handle file upload
           var file = fileUpload.PostedFile;
           var usage = FormHelper.GetRequestKeyValue( "usage" ).ToLower();
@@ -46,23 +45,30 @@ namespace IOER.Controls.Curriculum
           string status = "";
 
           //Verify user is logged in
-          if ( Session[ "user" ] == null )
-          {
-            dataJSON = serializer.Serialize( UtilityService.DoReturn( usage, false, "You must login to do that.", usage ) );
-            return;
-          }
+			//?? again ??
+		  //if ( Session[ "user" ] == null )
+		  //{
+		  //  dataJSON = serializer.Serialize( UtilityService.DoReturn( usage, false, "You must login to do that.", usage ) );
+		  //  return;
+		  //}
 
           switch ( usage )
           {
             case "curriculumimage":
               {
-                  HandleImageUpload( usage, user );
+				  HandleImageUpload( usage, CurrentUser );
                 
                 break;
               }
+			case "orgimage":
+			  {
+				  HandleImageUpload( usage, CurrentUser );
+
+				  break;
+			  }
             case "attachment":
               {
-                  HandleAttachment( usage, user );
+				  HandleAttachment( usage, CurrentUser );
                 
                 break;
               }
@@ -72,13 +78,13 @@ namespace IOER.Controls.Curriculum
         }
       }
     }
-    private void HandleImageUpload( string usage, Patron user )
+	private void HandleImageUpload( string usage, Patron user )
     {
         var serializer = new JavaScriptSerializer();
         bool valid = true;
         string status = "";
 
-        //Uploaded a curriculum image
+        //Uploaded a image of type usage
         var metadata = serializer.Deserialize<CurriculumImageInput>( hdnMetadata.Value );
 
         //Validate permissions
@@ -151,7 +157,7 @@ namespace IOER.Controls.Curriculum
         dataJSON = serializer.Serialize( UtilityService.DoReturn( savingURL, valid, status, usage ) );
     }
 
-    private void HandleAttachment( string usage, Patron user )
+	private void HandleAttachment( string usage, Patron user )
     {
         var serializer = new JavaScriptSerializer();
         bool valid = true;
@@ -207,9 +213,16 @@ namespace IOER.Controls.Curriculum
 
             //Create thumbnail
             var content = new ContentServices().Get( newID );
-            var fixedURL = content.DocumentUrl.IndexOf( "ilsharedlearning" ) > -1 ? content.DocumentUrl : ( siteRoot + ( content.DocumentUrl.IndexOf( "/" ) == 0 ? content.DocumentUrl : "/" + content.DocumentUrl ) );
-            new LRWarehouse.DAL.ResourceThumbnailManager().CreateThumbnailAsync( "content-" + newID, fixedURL, true, 4 );
+			var fixedURL = content.DocumentUrl.IndexOf( "ilsharedlearning" ) > -1 ? content.DocumentUrl : ( siteRoot + ( content.DocumentUrl.IndexOf( "/" ) == 0 ? content.DocumentUrl : "/" + content.DocumentUrl ) );
+			//new LRWarehouse.DAL.ResourceThumbnailManager().CreateThumbnailAsync( "content-" + newID, fixedURL, true, 4 );
+			ThumbnailServices.CreateThumbnail( "content-" + newID, fixedURL, true );
 
+			//if node is published, then auto publish this item
+			if ( node.StatusId == 5 && node.ResourceIntId > 0 )
+			{
+				//should be able to just do the call for the parent
+				new ResourceV2Services().PublishRelatedChildContent( node, user );
+			}
         }
         else
         {
@@ -241,7 +254,8 @@ namespace IOER.Controls.Curriculum
             //Recreate thumbnail
             var content = new ContentServices().Get( item.Id );
             var fixedURL = content.DocumentUrl.IndexOf( "ilsharedlearning" ) > -1 ? content.DocumentUrl : ( siteRoot + ( content.DocumentUrl.IndexOf( "/" ) == 0 ? content.DocumentUrl : "/" + content.DocumentUrl ) );
-            new LRWarehouse.DAL.ResourceThumbnailManager().CreateThumbnailAsync( "content-" + content.Id, fixedURL, true, 4 );
+            //new LRWarehouse.DAL.ResourceThumbnailManager().CreateThumbnailAsync( "content-" + content.Id, fixedURL, true, 4 );
+						ThumbnailServices.CreateThumbnail( "content-" + content.Id, fixedURL, true );
         }
 
         //Return data

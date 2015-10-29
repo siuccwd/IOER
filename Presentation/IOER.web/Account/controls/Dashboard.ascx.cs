@@ -11,6 +11,9 @@ using LibMgr = Isle.BizServices.LibraryBizService;
 using IOER.Library;
 using ILPathways.Utilities;
 
+using IOER.Controllers;
+using LRWarehouse.Business;
+
 namespace IOER.Account.controls
 {
   public partial class Dashboard : BaseUserControl
@@ -22,7 +25,9 @@ namespace IOER.Account.controls
 
     public string varFollowingUserId { get; set; }
     public string varFollowedByUserId { get; set; }
-      
+
+    bool isValid; 
+    string status;
 
     protected void Page_Load( object sender, EventArgs e )
     {
@@ -185,5 +190,76 @@ namespace IOER.Account.controls
         dashboard.orgLibraries.resources.Add( new DashboardResourceDTO() { title = "More Resource", id = 450233, containerTitle = "Other Organization" } );
     }
 
+    public void btnUpdateAvatar_Click(object sender, EventArgs e)
+    {
+        if (IsUserAuthenticated())
+        {
+            var user = (Patron)WebUser;
+
+            try
+            {
+                if (fileAvatar.HasFile == false || fileAvatar.FileName == "")
+                {
+                    SetConsoleErrorMessage("An image was not provided.<br/>Please select a valid image and try again!");
+					//terrible but??
+					InitializeView();
+                    return;
+
+                }
+
+                int imageWidth = UtilityManager.GetAppKeyValue("libraryImageWidth", 150);
+                string ext = System.IO.Path.GetExtension(fileAvatar.FileName);
+                if (ext == null || ext.Trim().Length == 0)
+                {
+                    SetConsoleErrorMessage("The selected file does not have an extention type. Please select a valid image and try again!");
+                    isValid = false;
+                    return;
+                }
+                string savingName = user.RowId.ToString().Replace("-", "") + System.IO.Path.GetExtension(fileAvatar.FileName);
+                string savingFolder = FileResourceController.DetermineDocumentPath(user.Id, 0);
+                string savingURL = FileResourceController.DetermineMyImageUrl(user.Id, savingName);
+                var img = new ILPathways.Business.ImageStore();
+                img.FileName = savingName;
+                img.FileDate = DateTime.Now;
+
+                FileResourceController.HandleImageResizingToWidth(img, fileAvatar, imageWidth, imageWidth, false, true);
+                FileSystemHelper.HandleImageCaching(savingFolder, img, true);
+
+                bool isNewProfile = false;
+                //get the current profile
+                PatronProfile profile = new AccountServices().PatronProfile_Get(user.Id);
+                if (profile == null)
+                {
+                    profile = new PatronProfile();
+                    profile.UserId = user.Id;
+                    profile.ImageUrl = "";
+                    isNewProfile = true;
+                }
+
+                if (profile.ImageUrl != savingURL)
+                {
+                    string statusMessage = "";
+                    profile.ImageUrl = savingURL;
+
+                    if (profile.UserId == 0)
+                        profile.UserId = user.Id;
+                    if (isNewProfile)
+                        new AccountServices().PatronProfile_Create(profile, ref statusMessage);
+                    else
+                        new AccountServices().PatronProfile_Update(profile);
+                }
+
+            }
+            catch (Exception ex)
+            {
+                status = ex.Message;
+                LoggingHelper.LogError(ex, "Profile().HandleUpload");
+                SetConsoleErrorMessage("There was an error processing your request. Please try again later.");
+                isValid = false;
+            }
+            InitializeView();
+            //InitPage();
+        }
+    }
   }
 }

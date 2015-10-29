@@ -1,6 +1,7 @@
 ﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="OrganizationManagement.ascx.cs" Inherits="IOER.Organizations.OrganizationManagement" %>
 
 <%@ Register TagPrefix="uc1" TagName="UserManager" Src="/Controls/ManageUsers.ascx" %>
+
 <% var baseURL = "/organizations/?organizationID="; %>
 
  <link rel="stylesheet" type="text/css" href="/styles/common2.css" />
@@ -22,6 +23,13 @@
         window.location.href = "/organizations/?action=new";
     }
 
+    function saveOrg() {
+        //alert('saveOrg');
+        return true;
+    }
+    //function timeline(id) {
+    //    window.location.href = "/org/" + id + "/timeline";
+    //}
     function doConfirmation() {
 
         if (confirm("Are you sure that you want to remove this organization? \r\nIt will be set inactive. As well libraries, and related components will no longer be available."))
@@ -62,6 +70,8 @@
 	#sectionSelector select { width: 100%; border-radius: 5px 5px 0 0; }
 	#sectionSelector select.round { border-radius: 5px; }
 	#sectionSelector input { border-radius: 0; border-width: 1px; }
+    #sectionSelector a { display: block; width: calc(100% - 1px);margin-left: 1px; text-align: center; border-radius: 0; border-width: 1px;}
+
 	#sectionSelector input:last-child { border-radius: 0 0 5px 5px; }
 	#sectionSelector input:disabled { display: none; }
 	#sectionSelector input.selected { background-color: #9984BD; }
@@ -112,7 +122,7 @@
 	/* Users */
 	.userManagerContainer .umTabs input[data-panel=pending] { display: none; }
 	.userManagerContainer .umTabs input[data-panel=invite] { border-radius: 0 5px 5px 0; }
-	.userManagerContainer .umTabs input { width: 50%; }
+	.userManagerContainer .umTabs input { width: 33%; }
 
 	/* Libraries and Learning Lists */
 	.manageBox { margin-bottom: 10px; padding: 5px 165px 5px 5px; min-height: 160px; position: relative; }
@@ -166,6 +176,13 @@
 </style>
 
 
+<% if(CanAdministerUsers ==  false){ %>
+<style>
+    .userManagerContainer .umTabs input[data-panel=invite] { display: none; }
+    .userManagerContainer .umTabs input[data-panel=import] { display: none; }
+    	.userManagerContainer .umTabs input { width: 50%; }
+</style>
+<% } %>
 <div id="content">
 	<input type="hidden" name="Mode" id="mode" value="properties" />
     <input type="hidden" name="CurrentOrgId" id="CurrentOrgId" value="0" />
@@ -187,10 +204,13 @@
 				<% } %>
 				<% } %>
 			</select>
-			<input type="button" class="isleButton bgBlue <%=( activeOrganization.Id != 0 ? "selected" : "" ) %>" <%=(activeOrganization.Id == 0 ? "disabled=\"disabled\"" : "") %> value="Properties" data-sectionID="properties" onclick="showSection('properties');" />
-			<input type="button" class="isleButton bgBlue" <%=(activeOrganization.Id == 0 ? "disabled=\"disabled\"" : "") %> value="Users" data-sectionID="users" onclick="showSection('users');" />
-			<input type="button" class="isleButton bgBlue" <%=(activeOrganization.Id == 0 ? "disabled=\"disabled\"" : "") %> value="Libraries" data-sectionID="libraries" onclick="showSection('libraries');" />
-			<input type="button" class="isleButton bgBlue" <%=(activeOrganization.Id == 0 ? "disabled=\"disabled\"" : "") %> value="Learning Lists" data-sectionID="learninglists" onclick="showSection('learninglists');" />
+			<input type="button" class="isleButton bgBlue <%=( activeOrganization.Id != 0 ? "selected" : "" ) %>" <%=(activeOrganization.Id == 0 ? "disabled=\"disabled\"" : "") %> value="Organization Information" data-sectionID="properties" onclick="showSection('properties');" />
+			<input type="button" class="isleButton bgBlue" <%=(activeOrganization.Id < 1 ? "disabled=\"disabled\"" : "") %> value="Users" data-sectionID="users" onclick="showSection('users');" />
+			<input type="button" class="isleButton bgBlue" <%=(activeOrganization.Id < 1 ? "disabled=\"disabled\"" : "") %> value="Libraries" data-sectionID="libraries" onclick="showSection('libraries');" />
+			<input type="button" class="isleButton bgBlue" <%=(activeOrganization.Id < 1 ? "disabled=\"disabled\"" : "") %> value="Learning Lists" data-sectionID="learninglists" onclick="showSection('learninglists');" />
+            <a href="./Reports/LibraryViews.aspx<%=(activeOrganization.Id > 0 ? "?organizationID=" + activeOrganization.Id.ToString() : "") %>" class="isleButton bgBlue" <%=(activeOrganization.Id < 1 ? "style=\"display:none\"" : "style=\"margin-top:1px; margin-bottom:1px;\"") %> width: 253px; text-align: center; target="ogActivity">Library Activity Reporting</a>
+
+            <a href="/org/<%=activeOrganization.Id%>/timeline" class="isleButton bgBlue" <%=(activeOrganization.Id < 1 ? "style=\"display:none\"" : "") %> width: 253px; text-align: center;" target="ogTmline" >Organization Timeline</a>
 
             <input type="button" class="isleButton bgBlue" style="margin-top: 10px;"  value="New Organization" data-sectionID="newOrg" onclick="addOrg()";" />
 
@@ -208,7 +228,8 @@
 				<a href="<%=baseURL %><%=item.OrgId %>"><%=item.Organization %></a>
 				<% } %>
 				<% if(isSiteAdmin){ %>
-				<!--<h2 style="margin-top:15px;">Other Organizations</h2>-->
+                <hr style="width: 50%; margin-top: 10px;" />
+				<h2 style="margin-top:15px;">Other Organizations</h2>
 				<% foreach(var item in allOrganizations) { %>
 				<a href="<%=baseURL %><%=item.Id %>"><%=item.Name %> <%=item.IsActive == false ? " (INACTIVE)" : "" %></a>
 				<% } %>
@@ -310,25 +331,66 @@
 						<a href="https://tools.usps.com/go/ZipLookupAction_input" target="_blank">Look up your full zipcode here</a>
 					</div>
 				</div>
+
+
+
+                <asp:Panel ID="imagePanel" runat="server" Visible="true">
+                    <!-- -->
+                    <div class="clearFloat"></div>
+                    <div class="labelColumn">
+                        <asp:Label ID="Label4" runat="server">Organization Logo</asp:Label>
+                    </div>
+                    <div class="dataColumn" style="max-width: 200px; ">
+                        <asp:Literal ID="currentImage" runat="server" Visible="false"></asp:Literal>
+                        <% if ( !string.IsNullOrWhiteSpace( activeOrganization.ImageUrl )  )
+                   { %>
+                <img id="thumbnail" src="<%=activeOrganization.ImageUrl %>" alt="Organzation preview thumbnail" />
+                <% } %>
+                    </div>
+                    <div class="dataColumn" style="width: 150px; padding-top: 20px;">
+                        <asp:Label ID="noLibraryImagelabel" runat="server" Visible="false">You can upload an image to represent the organization.</asp:Label>
+                    </div>
+                    <div class="clearFloat"></div>
+                    <div class="labelColumn">&nbsp; </div>
+                    <div class="dataColumn">
+                        <asp:Label ID="currentFileName" runat="server" Visible="false"></asp:Label>
+
+
+                        <br />
+                        <span style="font-weight: bold;">Select an image for the organization</span><a class="toolTipLink" id="tipFile" title="organization Image|Select a image for your organization. It must be roughly square and should be 140px (width) x 140px (height) or it will be resized to a width of 140px and a height not taller than 140px. If the image is still taller than 140px, it will be cropped to fit the height."><img
+                            src="/images/icons/infoBubble.gif" alt="" /></a>
+                        <br />
+                        <asp:FileUpload ID="fileUpload" runat="server" />
+                    </div>
+                </asp:Panel>
+
+                <div class="item">
+					<span>History</span><!--
+					--><span style="text-align:left;""><%=activeOrganization.HistoryTitle() %></span>
+				</div>
                 <div class="buttons" style="margin-left: 25%;">
-				<input type="submit" class="isleButton bgGreen btnAction" value="Save Changes" />
+                    <asp:Panel ID="orgActionsPanel" runat="server" Visible="true">
+				<input type="submit" class="isleButton bgGreen btnAction" value="Save Changes"   />
+                        <asp:Button ID="btnSaveOrg" runat="server" cssclass="isleButton bgGreen btnAction" text="Save Changes" OnClick="btnSaveOrg_Click" Visible="false"/>
                     <asp:Button ID="btnDeleteOrg" runat="server" cssclass="isleButton bgGreen btnAction" text="Remove Organization" OnClientClick="doConfirmation()" OnClick="btnDeleteOrg_Click"/>
+                        </asp:Panel>
                 </div>
 			</div>
 			
 			<!-- Users -->
-			<div class="section" data-sectionID="users">
-				<h2>Managing Users for <%=activeOrganization.Name %></h2>
-        <div class="userManagerContainer" id="userManagerContainer" runat="server">
-          <uc1:UserManager ID="userManager" runat="server" />
-        </div>
-			</div>
+            <div class="section" data-sectionid="users">
+                <h2>Managing Users for <%=activeOrganization.Name %></h2>
+                <div class="userManagerContainer" id="userManagerContainer" runat="server">
+                    <uc1:UserManager ID="userManager" runat="server" />
+                </div>
+
+            </div>
 
 			<!-- Libraries -->
 			<div class="section" data-sectionID="libraries">
 				<h2>Managing Libraries for <%=activeOrganization.Name %></h2>
                 <div class="optionLinks">
-                    <a class="libLink" href="/Libraries/Admin.aspx?action=new">New Library</a>
+                    <a class="libLink" href="/Libraries/Admin.aspx?action=new"  target="orgLink">New Library</a>
                 </div>
 				<% if(libraries.Count() > 0) { %>
 				<p>The following Libraries are available for this organization:</p>
@@ -337,9 +399,9 @@
 					<div class="manageBox grayBox" data-id="<%=item.Id %>">
 						<h3 class="title"><%=item.Title %></h3>
 						<div class="manageLinks">
-							<a href="/library/<%=item.Id %>/<%=item.FriendlyTitleX %>" target="_blank">Go to this Library</a>
+							<a href="/library/<%=item.Id %>/<%=item.FriendlyTitle %>" target="orgLink">Go to this Library</a>
 							<span class="divider"> | </span>
-							<a href="/Libraries/Admin.aspx?id=<%=item.Id %>&action=edit" target="_blank">Manage this Library</a>
+							<a href="/Libraries/Admin.aspx?id=<%=item.Id %>&action=edit" target="orgLink">Manage this Library</a>
 						</div>
 						<p><%=item.Description %></p>
 						<div class="access">
@@ -357,7 +419,7 @@
 			<div class="section" data-sectionID="learninglists">
 				<h2>Managing Learning Lists for <%=activeOrganization.Name %></h2>
                 <div class="optionLinks">
-                    <a class="libLink"  href="/My/LearningList/new">New Learning List</a>
+                    <a class="libLink"  href="/My/LearningList/new"  target="orgLink">New Learning List</a>
                 </div>
 				<% if(lists.Count() > 0) { %>
 				<p>The following Learning Lists are available for this organization:</p>
@@ -366,9 +428,9 @@
 					<div class="manageBox grayBox" data-id="<%=item.Id %>">
 						<h3 class="title"><%=item.Title %></h3>
 						<div class="manageLinks">
-							<a href="<%=item.Url %>" target="_blank">Go to this Learning List</a>
+							<a href="<%=item.Url %>" target="orgLink">Go to this Learning List</a>
 							<span class="divider"> | </span>
-							<a href="/my<%=item.Url %>" target="_blank">Manage this Learning List</a>
+							<a href="/my<%=item.Url %>" target="orgLink">Manage this Learning List</a>
 						</div>
 						<p><%=item.Description %></p>
 						<div class="orgAvatar" style="background-image:url('<%=item.ImageUrl %>');"></div>

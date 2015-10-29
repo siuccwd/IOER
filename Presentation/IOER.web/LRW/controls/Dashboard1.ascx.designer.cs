@@ -28,7 +28,7 @@ namespace IOER.LRW.controls {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::IOER.Controls.Includes.Header6 Header;
+        protected global::IOER.Controls.Includes.Header8 Header;
         
         /// <summary>
         /// dashboardContent control.

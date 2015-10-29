@@ -17,7 +17,7 @@ namespace Isle.BizServices
 {
     public class OrganizationBizService : ServiceHelper
     {
-       // static EFDAL.GatewayContext context = new EFDAL.GatewayContext();
+       // static EFDAL.IsleContentContext context = new EFDAL.IsleContentContext();
 
         #region ======= EF Core
 		/// <summary>
@@ -31,7 +31,7 @@ namespace Isle.BizServices
             bool action = false;
             try
             {
-                using ( var context = new EFDAL.GatewayContext() )
+                using ( var context = new EFDAL.IsleContentContext() )
                 {
                     EFDAL.Organization entity = context.Organizations.SingleOrDefault( s => s.Id == id );
                     if ( entity != null )
@@ -56,7 +56,7 @@ namespace Isle.BizServices
             EFDAL.Organization entity = new EFDAL.Organization();
             try
             {
-                using ( var context = new EFDAL.GatewayContext() )
+                using ( var context = new EFDAL.IsleContentContext() )
                 {
                     //just in case
                     org.Created = System.DateTime.Now;
@@ -95,12 +95,45 @@ namespace Isle.BizServices
             }
         }
 
+		public bool Organization_SetActive( int orgId, int updatedById )
+		{
+			bool action = false;
+			try
+			{
+				using ( var context = new EFDAL.IsleContentContext() )
+				{
+					EFDAL.Organization entity = context.Organizations.SingleOrDefault( s => s.Id == orgId );
+					if ( entity != null )
+					{
+						entity.LastUpdated = System.DateTime.Now;
+						entity.LastUpdatedById = updatedById;
+						entity.IsActive = true;
+
+						context.SaveChanges();
+						action = true;
+
+						//activate libraries
+						new EFDAL.EFLibraryManager().Library_SetOrgLibsActiveState( orgId, updatedById, true );
+						//next?
+
+						//perhaps some notification
+						//to administrator, should only be one if a first time request
+					}
+				}
+			}
+			catch ( Exception ex )
+			{
+				LogManager.LogError( ex, string.Format( "OrganizationBizService.Organization_SetActive( orgId: {0})", orgId ) );
+			}
+
+			return action;
+		}
 		public bool Organization_SetInactive( int orgId, int updatedById )
 		{
 			bool action = false;
 			try
 			{
-				using ( var context = new EFDAL.GatewayContext() )
+				using ( var context = new EFDAL.IsleContentContext() )
 				{
 					EFDAL.Organization entity = context.Organizations.SingleOrDefault( s => s.Id == orgId );
 					if ( entity != null )
@@ -113,7 +146,7 @@ namespace Isle.BizServices
 						action = true;
 
 						//inactivate libraries
-						new EFDAL.EFLibraryManager().Library_SetOrgLibsInactive( orgId, updatedById );
+						new EFDAL.EFLibraryManager().Library_SetOrgLibsActiveState( orgId, updatedById, false );
 						//next?
 
 						//perhaps some notification
@@ -132,7 +165,7 @@ namespace Isle.BizServices
             bool action = false;
             try
             {
-                using ( var context = new EFDAL.GatewayContext() )
+                using ( var context = new EFDAL.IsleContentContext() )
                 {
                     EFDAL.Organization entity = context.Organizations.SingleOrDefault( s => s.Id == org.Id );
                     if ( entity != null )
@@ -177,7 +210,7 @@ namespace Isle.BizServices
             //              .ToList(); 
 
             Organization org = new Organization();
-            using ( var context = new EFDAL.GatewayContext() )
+            using ( var context = new EFDAL.IsleContentContext() )
             {
                 EFDAL.Organization entity = context.Organizations
                         .Include( "Organization_Member" )
@@ -197,7 +230,7 @@ namespace Isle.BizServices
         public static Organization EFGetByRowId( string id )
         {
             Organization org = new Organization();
-            using ( var context = new EFDAL.GatewayContext() )
+            using ( var context = new EFDAL.IsleContentContext() )
             {
                 EFDAL.Organization entity = context.Organizations
                         .Include( "Organization_Member" )
@@ -362,7 +395,7 @@ namespace Isle.BizServices
         public static Organization GetByEmailDomain( string emailDomain )
         {
             Organization org = new Organization();
-            using ( var context = new EFDAL.GatewayContext() )
+            using ( var context = new EFDAL.IsleContentContext() )
             {
                 EFDAL.Organization entity = context.Organizations
                         .Include( "Organization_Member" )
@@ -393,6 +426,7 @@ namespace Isle.BizServices
             to.IsActive = fromEntity.IsActive;
 
             to.parentId = ( int ) fromEntity.ParentId;
+			to.LogoUrl = fromEntity.LogoUrl;
             to.Address = fromEntity.Address1;
             to.Address2 = fromEntity.Address2;
             to.City = fromEntity.City;
@@ -426,6 +460,8 @@ namespace Isle.BizServices
 
             if ( fromEntity.parentId != null )
                 to.ParentId = ( int ) fromEntity.parentId;
+
+			to.LogoUrl = string.IsNullOrEmpty( fromEntity.LogoUrl ) ? "" : fromEntity.LogoUrl;
             to.Address1 = string.IsNullOrEmpty( fromEntity.Address ) ? "" : fromEntity.Address;
             to.Address2 = string.IsNullOrEmpty( fromEntity.Address2 ) ? "" : fromEntity.Address2;
             to.City = string.IsNullOrEmpty( fromEntity.City ) ? "" : fromEntity.City;
@@ -597,13 +633,19 @@ namespace Isle.BizServices
 
 			return isValid;
 		}
-        public bool OrganizationMember_Delete( int id )
+
+		/// <summary>
+		/// Delete an org member using the orgMbrId
+		/// </summary>
+		/// <param name="orgMbrId"></param>
+		/// <returns></returns>
+        public bool OrganizationMember_Delete( int orgMbrId )
         {
             bool action = false;
-            using ( var context = new EFDAL.GatewayContext() )
+            using ( var context = new EFDAL.IsleContentContext() )
             {
                 EFDAL.Organization_Member entity = context.Organization_Member
-                                    .SingleOrDefault( s => s.Id == id );
+									.SingleOrDefault( s => s.Id == orgMbrId );
                 if ( entity != null )
                 {
                     context.Organization_Member.Remove( entity );
@@ -612,7 +654,30 @@ namespace Isle.BizServices
                 }
             }
             return action;
- }
+		}
+
+		/// <summary>
+		/// Delete an org member using the orgId and userId
+		/// </summary>
+		/// <param name="orgId"></param>
+		/// <param name="userId"></param>
+		/// <returns></returns>
+		public bool OrganizationMember_Delete( int orgId,  int userId )
+		{
+			bool action = false;
+			using ( var context = new EFDAL.IsleContentContext() )
+			{
+				EFDAL.Organization_Member entity = context.Organization_Member
+									.SingleOrDefault( s => s.OrgId == orgId && s.UserId == userId );
+				if ( entity != null )
+				{
+					context.Organization_Member.Remove( entity );
+					context.SaveChanges();
+					action = true;
+				}
+			}
+			return action;
+		}
 
         /// <summary>
         /// Create an org member using a member type of external
@@ -643,7 +708,7 @@ namespace Isle.BizServices
 			if (orgId < 1 || userId < 1)
 				return 0;
 
-            OrganizationMember om = new OrganizationMember();
+			OrganizationMember om = new OrganizationMember();
             om.UserId = userId;
             om.OrgId = orgId;
             if ( orgMbrTypeId == 0 )
@@ -664,9 +729,15 @@ namespace Isle.BizServices
         /// <returns></returns>
         public int OrganizationMember_Create( OrganizationMember orgMbr, ref string statusMessage )
         {
+			OrganizationMember om = OrganizationMember_Get( orgMbr.OrgId, orgMbr.UserId );
+			if ( om != null && om.Id > 0 )
+			{
+				statusMessage = "User is already a member of this organization";
+				return om.Id;
+			}
 
             EFDAL.Organization_Member entity = new EFDAL.Organization_Member();
-            using ( var context = new EFDAL.GatewayContext() )
+            using ( var context = new EFDAL.IsleContentContext() )
             {
                 OrganizationMember_FromMap( orgMbr, entity );
 
@@ -697,7 +768,7 @@ namespace Isle.BizServices
         public bool OrganizationMember_Update( OrganizationMember orgMbr )
         {
             bool action = false;
-            using ( var context = new EFDAL.GatewayContext() )
+            using ( var context = new EFDAL.IsleContentContext() )
             {
                 EFDAL.Organization_Member entity = context.Organization_Member.SingleOrDefault( s => s.Id == orgMbr.Id );
                 if ( entity != null )
@@ -725,7 +796,7 @@ namespace Isle.BizServices
         public static OrganizationMember OrganizationMember_Get( int id )
         {
             OrganizationMember orgMbr = new OrganizationMember();
-            using ( var context = new EFDAL.GatewayContext() )
+            using ( var context = new EFDAL.IsleContentContext() )
             {
                 EFDAL.Organization_Member entity = context.Organization_Member
                         .SingleOrDefault( s => s.Id == id );
@@ -747,7 +818,7 @@ namespace Isle.BizServices
         public static OrganizationMember OrganizationMember_Get( int orgId, int userId )
         {
             OrganizationMember orgMbr = new OrganizationMember();
-            using ( var context = new EFDAL.GatewayContext() )
+            using ( var context = new EFDAL.IsleContentContext() )
             {
                 EFDAL.Organization_Member entity = context.Organization_Member
                         .SingleOrDefault( s => s.OrgId == orgId && s.UserId == userId );
@@ -767,7 +838,7 @@ namespace Isle.BizServices
         public static void OrganizationMember_FillRoles( OrganizationMember orgMbr )
         {
             //fill roles
-            using ( var context = new EFDAL.GatewayContext() )
+            using ( var context = new EFDAL.IsleContentContext() )
             {
                 List<EFDAL.Organization_MemberRole> roles = context.Organization_MemberRole
                                 .Include( "Codes_OrgMemberRole" )
@@ -793,7 +864,7 @@ namespace Isle.BizServices
         {
             OrganizationMember orgMbr = new OrganizationMember();
             List<OrganizationMember> mbrs = new List<ILPathways.Business.OrganizationMember>();
-            using ( var context = new EFDAL.GatewayContext() )
+            using ( var context = new EFDAL.IsleContentContext() )
             {
 
                 List<EFDAL.Organization_MemberSummary> list = context.Organization_MemberSummary
@@ -816,7 +887,7 @@ namespace Isle.BizServices
         {
             OrganizationMember orgMbr = new OrganizationMember();
             List<OrganizationMember> mbrs = new List<ILPathways.Business.OrganizationMember>();
-            using ( var context = new EFDAL.GatewayContext() )
+            using ( var context = new EFDAL.IsleContentContext() )
             {
 
                 List<EFDAL.Organization_MemberSummary> list = context.Organization_MemberSummary
@@ -911,7 +982,7 @@ namespace Isle.BizServices
         public static bool IsStaffMemberOfAnIsleOrg( int userId )
         {
             bool isMemberOfIsleOrg = false;
-            using ( var context = new EFDAL.GatewayContext() )
+            using ( var context = new EFDAL.IsleContentContext() )
             {
                 List<EFDAL.Organization_MemberSummary> list = context.Organization_MemberSummary
                             .Where( s => s.IsIsleMember == true 
@@ -934,7 +1005,7 @@ namespace Isle.BizServices
         public static bool IsMemberOfAnIsleOrg( int userId )
         {
             bool isMemberOfIsleOrg = false;
-            using ( var context = new EFDAL.GatewayContext() )
+            using ( var context = new EFDAL.IsleContentContext() )
             {
                 List<EFDAL.Organization_MemberSummary> list = context.Organization_MemberSummary
                             .Where( s => s.IsIsleMember == true && s.UserId == userId )
@@ -981,7 +1052,7 @@ namespace Isle.BizServices
         public static bool IsAnyOrgAdministrator(int userId)
         {
             bool isAdmin = false;
-            using (var context = new EFDAL.GatewayContext())
+            using (var context = new EFDAL.IsleContentContext())
             {
                 List<EFDAL.OrganizationMember_RoleIdCSV> list = context.OrganizationMember_RoleIdCSV
                             .Where(s => s.UserId == userId && (s.IsAdmin == 1 || s.IsAccountAdmin == 1))
@@ -1100,7 +1171,7 @@ namespace Isle.BizServices
 
             List<OrganizationMember> list = OrganizationMemberManager.SearchAsList( pFilter, pOrderBy, pStartPageIndex, pMaximumRows, ref pTotalRows );
             
-            using ( var context = new EFDAL.GatewayContext() )
+            using ( var context = new EFDAL.IsleContentContext() )
             {
                 //?? get all the roles for each one, or include an eagar parameter?
                 if ( includeMbrRoles && list != null && list.Count > 0 )
@@ -1205,11 +1276,12 @@ namespace Isle.BizServices
             HierarchyActivityRecord entity = new HierarchyActivityRecord();
             ActivityCount activityCount = new ActivityCount();
 
-            using ( var context = new EFDAL.GatewayContext() )
+            using ( var context = new EFDAL.IsleContentContext() )
             {
                 List<EFDAL.Organization_MemberCrosstab> items = context.Organization_MemberCrosstab
                                     .Where( s => ( int ) s.OrgId > 0 
                                             || ( includeOrphanCount == true ) )
+									.OrderBy( s => s.Organization)
                                     .ToList();
                 if ( items.Count > 0 )
                 {
@@ -1273,7 +1345,7 @@ namespace Isle.BizServices
             }
 
             EFDAL.Organization_MemberRole entity = new EFDAL.Organization_MemberRole();
-            using ( var context = new EFDAL.GatewayContext() )
+            using ( var context = new EFDAL.IsleContentContext() )
             {
                 entity.OrgMemberId = orgMbrRole.OrgMemberId;
                 entity.RoleId = orgMbrRole.RoleId;
@@ -1308,7 +1380,7 @@ namespace Isle.BizServices
                 return false;
             }
 
-            using ( var context = new EFDAL.GatewayContext() )
+            using ( var context = new EFDAL.IsleContentContext() )
             {
                 EFDAL.Organization_MemberRole entity = context.Organization_MemberRole
                         .SingleOrDefault( s => s.Id == orgMbrRoleId );
@@ -1363,9 +1435,9 @@ namespace Isle.BizServices
         {
             CodeItem ci = new CodeItem();
             List<CodeItem> list = new List<CodeItem>();
-            using ( var context = new EFDAL.GatewayContext() )
+            using ( var context = new EFDAL.IsleContentContext() )
             {
-                List<EFDAL.Codes_OrgType> codes = context.Codes_OrgType.OrderBy( s => s.Id ).ToList();
+                List<EFDAL.Codes_OrgType> codes = context.Codes_OrgType.OrderBy( s => s.Title ).ToList();
 
                 if ( codes != null && codes.Count > 0 )
                 {
@@ -1390,7 +1462,7 @@ namespace Isle.BizServices
             List<CodeItem> list = new List<CodeItem>();
             try
             {
-                using (var context = new EFDAL.GatewayContext())
+                using (var context = new EFDAL.IsleContentContext())
                 {
                     //TODO - add isActive ????
                     List<EFDAL.Codes_OrgMemberType> codes = context.Codes_OrgMemberType
@@ -1423,7 +1495,7 @@ namespace Isle.BizServices
             List<CodeItem> list = new List<CodeItem>();
             try
             {
-                using (var context = new EFDAL.GatewayContext())
+                using (var context = new EFDAL.IsleContentContext())
                 {
                     List<EFDAL.Codes_OrgMemberRole> codes = context.Codes_OrgMemberRole
 							.Where(s => s.IsActive == true)
@@ -1454,7 +1526,7 @@ namespace Isle.BizServices
         {
             CodeItem ci = new CodeItem();
             List<CodeItem> list = new List<CodeItem>();
-            using ( var context = new EFDAL.GatewayContext() )
+            using ( var context = new EFDAL.IsleContentContext() )
             {
                 List<EFDAL.Codes_State> codes = context.Codes_State.OrderBy( s => s.StateCode ).ToList();
 
@@ -1597,7 +1669,7 @@ namespace Isle.BizServices
           //Otherwise, create the user account
 					var newUser = new LRWarehouse.Business.Patron()
 					{
-						FirstName = "New",
+						FirstName = "Pending",
 						LastName = "User",
 						Email = inviteeEmail,
 						CreatedById = actingUserId,

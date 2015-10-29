@@ -14,7 +14,7 @@ namespace ILPathways.Business
         }
 
         public int ContentId { get; set; }
-
+		public int StatusId { get; set; }
         /// <summary>
         /// Record Id: ContentStandardId or ResourceStandardId
         /// </summary>
@@ -53,6 +53,7 @@ namespace ILPathways.Business
 
         public int UsageTypeId { get; set; }
         public string StandardUsage { get; set; }
+		public bool IsDirectStandard { get; set; }
 
         //resource values
         public int ResourceIntId { get; set; }

@@ -11,6 +11,11 @@
 <script type="text/javascript" src="/scripts/jscommon.js"></script>
 <link rel="stylesheet" href="/styles/common2.css" type="text/css" />
 
+<style>
+/* Users */
+.userManagerContainer .umTabs input[data-panel=import] { display: none; }
+
+</style>
 <div id="curriculumEditor" runat="server">
   <!-- Page scripts -->
   <script type="text/javascript">
@@ -380,6 +385,18 @@
         //doAjax("CurriculumService1", "Curriculum_Publish", { curriculumID: curriculumID }, success_curriculum_publish, $("#btnPublishCurriculum"), null);
       }
     }
+      //Publish curriculum
+      function publishCurriculumNode(){
+          if(confirm("Are you sure you want to publish this Learning List level to the IOER System?")){
+
+              window.location.href = "/tagger?theme=ioer&mode=tag&contentID=" + <%=currentNode.Id %>;
+          }
+      }
+      function publishCurriculumChildren(){
+          if(confirm("Are you sure you want to publish all new child resources from this level to the IOER System?")){
+              doAjax("CurriculumService1", "PublishChildResources", { curriculumID: curriculumID, nodeID: <%=currentNode.Id %> }, success_publishCurriculumChildren, $("#btnPublishCurriculumChildren"), null);
+          }
+      }
 
     //View curriculum tags
     function viewCurriculumTags() {
@@ -537,6 +554,7 @@
       //Render standards for this attachment
       renderAttachmentStandards(id);
 
+      $("html, body").animate({ scrollTop: 0 }, 500);
     }
 
     //Delete attachment
@@ -795,7 +813,14 @@
         alert(data.status);
       }
     }
-
+    function success_publishCurriculumChildren(data){
+        if(data.valid){
+            alert("Submitted process to publish any unpublished child resources!");
+        }
+        else {
+            alert(data.status);
+        }
+    }
     function success_saveNewsItem(data){
       if(data.valid){
         alert("News updated!");
@@ -1165,7 +1190,14 @@
                 <textarea class="txtDescription" id="txtDescription" placeholder="Description" runat="server"></textarea>
                 <input type="text" class="txtTimeframe" id="txtTimeframe" placeholder="Approximate timeframe to complete" runat="server" />
                 <asp:DropDownList ID="ddlNodePermissions" CssClass="ddlNodePermissions" runat="server"></asp:DropDownList>
-                <% if( currentNode.Id == curriculumID ) { %>
+
+                  <% if ( currentNode.Id == curriculumID  ) { %>
+				<h3>Create learning list on behalf of an organization (optional):</h3>
+				<select id="ddlOrganization2" class="ddlOrganization" runat="server" visible="true"></select>
+		<% } %>
+
+                <% if ( currentNode.Id == curriculumID || currentNode.IsHierarchyType )
+                   { %>
                 <label>Custom Learning List Image (will be resized to 400x300 pixels)</label>
                 <img alt="" src="<%=(string.IsNullOrWhiteSpace(currentNode.ImageUrl) ? "/images/icons/icon_upload_400x300.png" : currentNode.ImageUrl.Replace( @"\", "" )) %>" id="curriculumImageDisplay" />
                 <iframe id="curriculumImage" class="fileIframe" src="/controls/curriculum/curriculumfileupload.aspx?usage=curriculumimage"></iframe>
@@ -1206,7 +1238,13 @@
                     <% } else { %>
                   <input type="button" class="isleButton bgGreen" id="btnPublishCurriculum" value="Publish Learning List" onclick="publishCurriculum();" />
                     <% } %>
-                  <% } %>
+                  <% } else if ( currentNode.Id > 0 && currentNode.StatusId < 5 ) {%>
+                    <input type="button" class="isleButton bgGreen" id="btnPublishCurriculumNode" value="Publish Learning List Level" onclick="publishCurriculumNode();" />
+                    <% } %>
+
+                    <% if ( currentNode.Id > 0 && currentNode.StatusId == 5 ) {%>
+                    <input type="button" class="isleButton bgGreen" id="btnPublishCurriculumChildren" value="Publish Learning List Resources" onclick="publishCurriculumChildren();" />
+                    <% } %>
                   <% if(currentNode.Id != 0) { %>
                   <a href="/learninglist/<%=currentNode.Id %>" target="_blank" class="isleButton bgGreen" id="previewLink">Preview this Level</a>
 									<input type="button" class="isleButton bgRed" id="btnDeleteCurrentNode" value="Delete this <%=currentNode.Id == curriculumID ? "Learning List" : "Level" %>" onclick="deleteNode($(this));" />

@@ -8,7 +8,7 @@ namespace IoerContentBusinessEntities
     /// <summary>
     /// Instantiate Gateway context withOUT lazy loading
     /// </summary>
-    public class GatewayContext : GatewayEntities
+	public class GatewayContext : IsleContentContext
     {
         public GatewayContext()
         {

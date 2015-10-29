@@ -263,7 +263,8 @@ namespace IOER.Controls.Content
             entity.Status = "Draft";
             entity.HasChanged = false;
            // templatesPanel.Visible = true;
-            ddlIsOrganizationContent.Enabled = true;
+            //ddlIsOrganizationContent.Enabled = true;
+			ddlOrganization.Enabled = true;
             btnPublish.Visible = false;
 
             noNodePanel.Visible = true;
@@ -337,6 +338,8 @@ namespace IOER.Controls.Content
             conditionsSelector.selectedValue = entity.ConditionsOfUseId.ToString();
             this.SetListSelection( this.ddlContentType, entity.TypeId.ToString() );
 
+			this.SetListSelection( this.ddlOrganization, entity.OrgId.ToString() );
+
             //txtConditionsOfUse.Text = entity.UseRightsUrl;
             conditionsSelector.conditionsURL = entity.UseRightsUrl;
 
@@ -356,10 +359,15 @@ namespace IOER.Controls.Content
                 //if orgId > 0, may want to have an indication that org is the owner??
                 //for now always disable. changing could be complicated
                 ddlIsOrganizationContent.Enabled = false;
+				//not sure we want to allowing changing?
+				if ( canUserChgOrg .Text == "no")
+					ddlOrganization.Enabled = false;
+				//IsOrgContentOwner should now be based on presence of orgId
                 if ( entity.IsOrgContentOwner )
                 {
                     ddlIsOrganizationContent.SelectedIndex = 1;
                     ddlIsOrganizationContent.Enabled = false;
+
                     if ( entity.HasResourceId() == false )
                     {
                         //never published
@@ -376,6 +384,7 @@ namespace IOER.Controls.Content
                 else
                 {
                     ddlIsOrganizationContent.SelectedIndex = 0;
+					ddlOrganization.SelectedIndex = 0;
                     if ( entity.StatusId < ContentItem.PUBLISHED_STATUS )
                     {
                         btnPublish.Visible = true;
@@ -456,6 +465,8 @@ namespace IOER.Controls.Content
                 lblContentType.Visible = false;
                 ddlContentType.Visible = true;
 
+				ddlIsOrganizationContent.Enabled = true;
+				ddlOrganization.Enabled = true;
                 btnDelete.Visible = false;
                 btnNew.Visible = false;
                 this.btnUnPublish.Visible = false;
@@ -505,7 +516,8 @@ namespace IOER.Controls.Content
                 //hmmm, if an actual hierarch type, only want to offer outline create once
                 //so if has children:
                 //  - not curriculm - use tree route ==> suggests cannot create a new hierarchy under curr?
-                if ( entity.HasChildItems || entity.TypeId != ContentItem.CURRICULUM_CONTENT_ID )
+                if ( entity.HasChildItems 
+					|| entity.TypeId != ContentItem.CURRICULUM_CONTENT_ID )
                 {
                     PopulateTree( entity );
 
@@ -717,7 +729,7 @@ namespace IOER.Controls.Content
             else
                 Session.Add( "authoredResourceURL", UtilityManager.FormatAbsoluteUrl( string.Format( litPreviewUrlTemplate.Text, CurrentRecord.Id, ResourceBizService.FormatFriendlyTitle( CurrentRecord.Title ) ), false ) );
 
-            Response.Redirect( "/Publish.aspx?rid=" + CurrentRecord.RowId.ToString(), true );
+            Response.Redirect( string.Format(litContentPublishUrl.Text, CurrentRecord.RowId.ToString()), true );
             //redirectTarget = Request.Url.Scheme + "://" + Request.Url.Host + ":" + Request.Url.Port + "/Publish.aspx";
 
         } // end 
@@ -792,6 +804,26 @@ namespace IOER.Controls.Content
                     {
                         entity.TypeId = ContentItem.GENERAL_CONTENT_ID;
                     }
+
+					//entity.OrgId = user.OrgId;
+
+					//if not allowing this to chg, should move to the create specific section?
+					//15-10-13 noved it
+					if ( ddlOrganization.SelectedIndex == 0 )
+					{
+						entity.IsOrgContentOwner = false;
+						entity.OrgId = 0;
+					}
+					else
+					{
+						entity.IsOrgContentOwner = true;
+						entity.OrgId = int.Parse( this.ddlOrganization.SelectedValue.ToString() );
+					}
+
+					//if ( ddlIsOrganizationContent.SelectedIndex == 0 )
+					//	entity.IsOrgContentOwner = false;
+					//else
+					//	entity.IsOrgContentOwner = true;
                 }
                 else
                 {
@@ -821,12 +853,7 @@ namespace IOER.Controls.Content
                 }
 
                 entity.PrivilegeTypeId = int.Parse( this.ddlPrivacyLevel.SelectedValue.ToString() );
-                entity.OrgId = user.OrgId;
 
-                if ( ddlIsOrganizationContent.SelectedIndex == 0 )
-                    entity.IsOrgContentOwner = false;
-                else
-                    entity.IsOrgContentOwner = true;
 
                 //status
                 int currentStatusId = entity.StatusId;
@@ -853,10 +880,13 @@ namespace IOER.Controls.Content
                 int entityId = 0;
                 if ( entity.Id == 0 )
                 {
+					//create and add author as admin content partner
                     entityId = myManager.Create( entity, ref statusMessage );
                     if ( entityId > 0 )
                     {
                         this.txtId.Text = entityId.ToString();
+						
+
                         //reget the whole record, for rowId
                         entity = myManager.Get( entityId );
                         ShowPreview( entity );
@@ -914,7 +944,7 @@ namespace IOER.Controls.Content
             //if not published, leave a status as is
             if ( entity.StatusId == ContentItem.DRAFT_STATUS )
                 statusId = ContentItem.INPROGRESS_STATUS;
-            else if ( entity.StatusId < ContentItem.PUBLISHED_STATUS )
+            else if ( entity.StatusId > ContentItem.INPROGRESS_STATUS && entity.StatusId < ContentItem.PUBLISHED_STATUS )
                 statusId = entity.StatusId;
             else if ( entity.StatusId == ContentItem.INACTIVE_STATUS )
                 statusId = ContentItem.INPROGRESS_STATUS;       //TODO - do we want to arbitrarily set inactive to active, or require overt action by user?
@@ -1577,15 +1607,19 @@ namespace IOER.Controls.Content
                     //LoggingHelper.DoTrace( 5, thisClassName + " HandleDocument(). calling DetermineDocumentPath" );
                     //string documentFolder = FileResourceController.DetermineDocumentPath( parentEntity );
                     FileResourceController.PathParts parts = FileResourceController.DetermineDocumentPathUsingParentItem( parentEntity );
-                    string documentFolder = parts.filePath;
-                    entity.URL = parts.url;
+                    //entity.FilePath = parts.filePath;
+					entity.FilePath = FileResourceController.FormatPartsFilePath( parts );
+					string url = FileResourceController.FormatPartsRelativeUrl( parts );
+
+                    //entity.URL = parts.url;
+					entity.ResourceUrl = url + "/" + entity.FileName;
 
                     // LoggingHelper.DoTrace( 5, thisClassName + " - uploading to " + documentFolder );
                     //entity.URL = FileResourceController.DetermineDocumentUrl( parentEntity, entity.FileName );
-                    attachment.ResourceUrl = entity.URL;
+					attachment.ResourceUrl = entity.ResourceUrl;
 
                     //try separating following to insulate from file privileges issues
-                    UploadFile( fileUpload, documentFolder, entity.FileName );
+					FileResourceController.UploadFile( fileUpload, entity.FilePath, entity.FileName );
                     //rewind for db save
                     fileUpload.PostedFile.InputStream.Position = 0;
                     Stream fs = fileUpload.PostedFile.InputStream;
@@ -1661,24 +1695,24 @@ namespace IOER.Controls.Content
 
         }//
 
-        private void UploadFile( FileUpload uploadCtrl, string documentFolder, string filename )
-        {
-            try
-            {
-                FileSystemHelper.CreateDirectory( documentFolder );
+		//private void UploadFile( FileUpload uploadCtrl, string documentFolder, string filename )
+		//{
+		//	try
+		//	{
+		//		FileSystemHelper.CreateDirectory( documentFolder );
 
-                string diskFile = documentFolder + "\\" + filename;
-                //string diskFile = MapPath( documentFolder ) + "\\" + entity.FileName;
+		//		string diskFile = documentFolder + "\\" + filename;
+		//		//string diskFile = MapPath( documentFolder ) + "\\" + entity.FileName;
 
-                LoggingHelper.DoTrace( 5, thisClassName + " UploadFile(). doing SaveAs" );
-                uploadCtrl.SaveAs( diskFile );
+		//		LoggingHelper.DoTrace( 5, thisClassName + " UploadFile(). doing SaveAs" );
+		//		uploadCtrl.SaveAs( diskFile );
 
-            }
-            catch ( Exception ex )
-            {
-                LoggingHelper.LogError( ex, thisClassName + string.Format( "UploadFile(documentFolder: {0}, filename: {1})", documentFolder, filename ) );
-            }
-        }//
+		//	}
+		//	catch ( Exception ex )
+		//	{
+		//		LoggingHelper.LogError( ex, thisClassName + string.Format( "UploadFile(documentFolder: {0}, filename: {1})", documentFolder, filename ) );
+		//	}
+		//}//
 
         //private string ValidateDocumentOnServer( ContentItem parentEntity, DocumentVersion doc )
         //{
@@ -2090,7 +2124,7 @@ namespace IOER.Controls.Content
                 CurrentRecord.DocumentUrl = docVersion.URL;
 
                 //try separating following to insulate from file privileges issues
-                UploadFile( contentFileUpload, parts.filePath, docVersion.FileName );
+				FileResourceController.UploadFile( contentFileUpload, parts.filePath, docVersion.FileName );
                 //rewind for db save
                 contentFileUpload.PostedFile.InputStream.Position = 0;
                 Stream fs = contentFileUpload.PostedFile.InputStream;
@@ -2166,6 +2200,7 @@ namespace IOER.Controls.Content
             SetContentType2( hasHomeContent );
 			//SetNodeContentType();
 
+			LoadOrganizationDDL();
             //check if org admin, and whether already has an org home page
 
             SetPrivilegeLists();
@@ -2189,13 +2224,39 @@ namespace IOER.Controls.Content
             BDM.PopulateList( this.ddlNodeContentType, list, "Id", "Title", "" );
 
         }
+		private void LoadOrganizationDDL()
+		{
+			
+			ddlOrganization.Items.Add( new ListItem()
+			{
+				Value = "0",
+				Text = "No organization"
+			} );
+			if ( WebUser.OrgMemberships == null )
+			{
+				addToOrg.Visible = false;
+			}
+			else
+			{
+				foreach ( var item in WebUser.OrgMemberships )
+				{
+					ddlOrganization.Items.Add( new ListItem()
+					{
+						Value = item.Id.ToString(),
+						Text = item.Organization
+					} );
+				}
+			}
+		
+		}
+
         private void SetContentType2( bool hasHomeContent )
         {
 
             List<CodeItem> list2 = myManager.ContentType_TopLevelActiveList();
             BDM.PopulateList( this.ddlContentType, list2, "Id", "Title", "Select type" );
 
-            if (list2.Count == 1)
+            if (list2.Count == 2)
             {
                 ddlContentType.SelectedIndex = 1;
             }
@@ -2507,7 +2568,7 @@ namespace IOER.Controls.Content
 
     
         #region ============== curriculum ==================================
-        protected void btnCreateHierarchy_Click( object sender, EventArgs e )
+		protected void btnCreateHierarchy_Click( object sender, EventArgs e )
         {
             int modules = 10;
             int units = 3;
@@ -3248,7 +3309,8 @@ namespace IOER.Controls.Content
 
             try
             {
-                if ( myManager.ContentConnectorDelete( nodeId, id, ref statusMessage ) )
+				//  if ( myManager.ContentConnectorDelete( nodeId, id, ref statusMessage ) )
+				if ( myManager.Delete( id, ref statusMessage ) )
                 {
                     RemoveServerFile( item );
 
@@ -3343,7 +3405,7 @@ namespace IOER.Controls.Content
                     standards.Add( cs );
                 }
 
-                int added = CurriculumServices.ContentStandard_Add( standards );
+                int added = new CurriculumServices().ContentStandard_Add( contentId, WebUser.Id, standards );
                 //check if addedd equals expected
                 if ( added != standards.Count )
                 {

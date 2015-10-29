@@ -12,6 +12,7 @@ using System.Web.SessionState;
 using Microsoft.ApplicationBlocks.Data;
 
 using ILPathways.Business;
+using ILPathways.Utilities;
 
 namespace ILPathways.DAL
 {
@@ -402,7 +403,7 @@ namespace ILPathways.DAL
             }
             catch ( Exception ex )
             {
-                LogError( ex, thisClassName + ".LibrarySectionGet() " );
+				LogError( ex, thisClassName + string.Format( ".LibrarySectionGet() sectionId/guid: {0}/{1} ", sectionId, guid ) );
                 entity.Message = "Unsuccessful: " + thisClassName + ".LibrarySectionGet(): " + ex.Message.ToString();
                 entity.IsValid = false;
                 return entity;
@@ -438,7 +439,7 @@ namespace ILPathways.DAL
             }
             catch ( Exception ex )
             {
-                LogError( ex, thisClassName + ".LibrarySectionsSelectList() " );
+				LogError( ex, thisClassName + string.Format( ".LibrarySectionsSelectList() libraryId: {0} ", libraryId ) );
                 return null;
 
             }
@@ -771,6 +772,7 @@ namespace ILPathways.DAL
             entity.SectionTypeId = GetRowColumn( dr, "SectionTypeId", 0 );
             entity.SectionType = GetRowColumn( dr, "SectionType", "" );
             entity.Title = GetRowColumn( dr, "Title", "" );
+			entity.FriendlyTitle = UtilityManager.UrlFriendlyTitle( entity.Title );
             entity.Description = GetRowColumn( dr, "Description", "" );
 
             entity.AreContentsReadOnly = GetRowColumn( dr, "AreContentsReadOnly", false );
@@ -818,6 +820,7 @@ namespace ILPathways.DAL
             entity.SectionTypeId = GetRowColumn( dr, "SectionTypeId", 0 );
             entity.SectionType = GetRowColumn( dr, "SectionType", "" );
             entity.Title = GetRowColumn( dr, "Title", "" );
+			entity.FriendlyTitle = UtilityManager.UrlFriendlyTitle( entity.Title );
             entity.Description = GetRowColumn( dr, "Description", "" );
 
             entity.AreContentsReadOnly = GetRowColumn( dr, "AreContentsReadOnly", false );

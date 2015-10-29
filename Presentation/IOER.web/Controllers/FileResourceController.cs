@@ -1468,6 +1468,15 @@ namespace IOER.Controllers
             return FormatPartsFilePath( parts );
         }
 
+		public static string DetermineDocumentPath( int createdById, Organization org )
+		{
+			string orgRowId = "";
+			if ( org != null && org.Id > 0 )
+				orgRowId = org.RowId.ToString();
+
+			PathParts parts = DetermineDocumentPath( createdById, org.Id, orgRowId, "" );
+			return FormatPartsFilePath( parts );
+		}
 
         public static PathParts DetermineDocumentPath( int createdById, int orgId, string orgRowId, string childFolder )
         {

@@ -1,5 +1,5 @@
 ﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="Dashboard1.ascx.cs" Inherits="IOER.LRW.controls.Dashboard1" %>
-<%@ Register TagPrefix="uc1" TagName="HeaderControl" Src="/Controls/Includes/Header6.ascx" %>
+<%@ Register TagPrefix="uc1" TagName="HeaderControl" Src="/Controls/Includes/Header8.ascx" %>
 
 <form id="mainForm" runat="server">
 

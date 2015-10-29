@@ -458,7 +458,7 @@
 					<option value="title" data-reversed="false">Title A-Z</option>
 					<option value="SortName" data-reversed="false">Author A-Z</option>
 					<option value="base.Organization" data-reversed="false">Organization A-Z</option>
-					<option value="base.LastUpdated" data-reversed="true">Most Recently Updated</option>
+					<option value="base.LastUpdated" data-reversed="true" selected="selected">Most Recently Updated</option>
 					<option value="title" data-reversed="true">Title Z-A</option>
 					<option value="SortName" data-reversed="true">Author Z-A</option>
 					<option value="base.Organization" data-reversed="true">Organization Z-A</option>
@@ -514,13 +514,17 @@
 					<label><input type="checkbox" name="Privilege" value="4" /> Only education staff AND students at my school</label>
 				</div>
 
+                <% if ( IsUserAuthenticated() )
+                   { %>
 				<div class="filter" data-filterID="Status">
 					<h2 class="mid">Publish Status</h2>
-					<label><input type="checkbox" name="Status" value="1" /> Draft</label>
-					<label><input type="checkbox" name="Status" value="2" /> Pending Approval</label>
-					<label><input type="checkbox" name="Status" value="3" /> Published</label>
+					<label><input type="checkbox" name="Status" value="2" /> In Progress</label>
+					<label><input type="checkbox" name="Status" value="5" /> Published</label>
+                    <label><input type="checkbox" name="Status" value="8" /> Inactive</label>
 				</div>
-				--%>
+			<% } %>
+
+	--%>
 			</div><!-- /filters -->
 		
 			<div id="standards" class="grayBox toggleBox">

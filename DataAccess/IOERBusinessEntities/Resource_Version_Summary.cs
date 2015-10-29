@@ -42,5 +42,6 @@ namespace IOERBusinessEntities
         public Nullable<int> PublishedById { get; set; }
         public string URL { get; set; }
         public string DetailPage { get; set; }
+        public string ImageUrl { get; set; }
     }
 }

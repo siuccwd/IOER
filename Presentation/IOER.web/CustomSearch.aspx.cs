@@ -13,8 +13,7 @@ namespace IOER
 	{
 		protected void Page_Load( object sender, EventArgs e )
 		{
-			Title = ( ( string ) RouteData.Values[ "title" ] ) ?? "IOER Resource Search";
-			searchController.ThemeName = ( ( string ) RouteData.Values[ "theme" ] ) ?? "ioer";
+
 		}
 	}
 }

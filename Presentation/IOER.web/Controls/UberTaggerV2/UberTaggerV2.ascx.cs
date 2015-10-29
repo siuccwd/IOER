@@ -159,12 +159,12 @@ namespace IOER.Controls.UberTaggerV2
 		} // End LoadResource
 
 		//Load Content into a Resource object
-		private void LoadContentResource(Patron user)
+		private void LoadContentResource( Patron user )
 		{
 			var requestedResourceID = 0;
 			int tempContentId = 0;
 
-			int.TryParse(Request.Params["contentID"], out tempContentId);
+			int.TryParse( Request.Params[ "contentID" ], out tempContentId );
 			if ( tempContentId == 0 )
 			{
 				return;
@@ -183,123 +183,8 @@ namespace IOER.Controls.UberTaggerV2
 				throw new Exception( status );
 			}
 
-			/*
-			//valid?
-			var contentItem = new ContentServices().Get( Resource.ContentId );
-			if (contentItem.Id == 0)
-			{
-				throw new Exception("That ID does not match valid content record");
-			}
 
-			//for now don't handle updates
-			if (contentItem.ResourceIntId > 0)
-			{
-				throw new Exception("The referenced content record has already been published.");
-			}
-			//authorization
-			ContentPartner cp = ContentServices.ContentPartner_Get( Resource.ContentId, user.Id );
-			if (cp == null && cp.PartnerTypeId < ContentPartner.PARTNER_TYPE_ID_CONTRIBUTOR)
-			{
-				throw new Exception("You do not have authorization to publish the requested contentItem");
-			}
-
-			//save to initiate auto-publish later
-			createdContentItemId.Text = Resource.ContentId.ToString();
-
-			//Load the resource
-	
-			Resource.Url = SetContentUrl(contentItem);
-			Resource.Title = contentItem.Title;
-			Resource.Description = contentItem.Summary;
-			//????
-
-			Resource.UsageRights = resService.GetUsageRights(contentItem.UseRightsUrl);
-			 
-			//Creator
-			Resource.Creator = contentItem.HasOrg() ? contentItem.ContentOrg.Name : user.FullName();
-			//Publisher
-			Resource.Publisher = ILPathways.Utilities.UtilityManager.GetAppKeyValue("defaultPublisher", "Illinois Shared Learning Environment");
-
-			if (contentItem.PrivilegeTypeId != ContentItem.PUBLIC_PRIVILEGE)
-			{
-				LRPublishAction = "no";
-			}
-			else
-			{
-				Resource.PrivilegeId = contentItem.PrivilegeTypeId;
-			}
-
-			if (contentItem.IsOrgContent())
-			{
-				RequiresApproval = "yes"; //If it requires approval, we can't publish it yet
-				if (contentItem.PrivilegeTypeId == ContentItem.PUBLIC_PRIVILEGE)
-				{
-					LRPublishAction = "save";
-				}
-			}
-
-			//standards
-			//confirm these will be published, not just ignored as existing
-			if (contentItem.ContentStandards.Count > 0)
-			{
-				foreach (Content_StandardSummary css in contentItem.ContentStandards)
-				{
-					var standard = new StandardsDTO();
-					//issue the StandardsDTO doesn't have aligned by
-					//often the same. However, I suppose it is ok for publishing
-					//standard.AlignedById = css.AlignedById;
-					standard.StandardId = css.StandardId;
-					standard.AlignmentTypeId = css.AlignmentTypeCodeId;
-					//major/supporting/additional - recycles old object's at/above/below field
-					standard.AlignmentDegreeId = css.UsageTypeId;
-
-					Resource.Standards.Add(standard);
-				}
-			}
-			*/
-
-		} // End LoadContentResource
-
-		/*
-		//Determine content URL
-		private string SetContentUrl(ContentItem contentItem)
-		{
-			string url = "";
-			string contentUrl = ServiceHelper.GetAppKeyValue("contentUrl");
-			if (contentItem.TypeId == 50)
-			{
-				url = ServiceHelper.GetAppKeyValue("learningListUrl");
-				if (url.Length > 10)
-					url = string.Format(url, contentItem.Id, ResourceBizService.FormatFriendlyTitle(contentItem.Title));
-			}
-			else if (contentItem.TypeId > 50 && contentItem.TypeId < 58)
-			{
-				//really need to check the parent, and if an LL, then know the url pattern to use
-				url = ServiceHelper.GetAppKeyValue("learningListUrl");
-				if (url.Length > 10)
-					url = string.Format(url, contentItem.Id, ResourceBizService.FormatFriendlyTitle(contentItem.Title));
-			}
-			else if (contentItem.TypeId == 10)
-			{
-				if (contentUrl.Length > 10)
-					url = string.Format(contentUrl, contentItem.Id, ResourceBizService.FormatFriendlyTitle(contentItem.Title));
-			}
-			else if (contentItem.DocumentUrl != null && contentItem.DocumentUrl.Length > 10)
-			{
-				//Should probably direct to the content page, not the document URL, so that the published URL will always go through security checks in the event that the owner changes permissions later  -NA
-					url = UtilityManager.FormatAbsoluteUrl(contentItem.DocumentUrl, false);
-			}
-			else
-			{
-				//not sure, so default to content
-				if (contentUrl.Length > 10)
-					url = string.Format(contentUrl, contentItem.Id, ResourceBizService.FormatFriendlyTitle(contentItem.Title));
-			}
-
-			return url;
-		} //End SetContentUrl
-		*/
-
+		}
 		//Load Gooru Resource
 		private void LoadGooruResource(Patron user)
 		{

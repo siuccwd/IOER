@@ -170,24 +170,12 @@ namespace IOER.Organizations.controls
 					string newDate = dt.ToString("MMddyyyyss");
 					int targetOrgId = LastOrgId;
 
-					//if ( ddlOrgList.Items.Count > 0 && ddlOrgList.SelectedIndex > 0 )
-					//{
-					//    targetOrgId = Int32.Parse( ddlOrgList.SelectedValue );
-
-					//}
-					//else if ( Int32.TryParse( txtOrgId.Text, out targetOrgId ) )
-					//{
-
-					//}
-					//else
-					//{
-					//    if ( WebUser.OrgId > 0 )
-					//        targetOrgId = WebUser.OrgId;
-					//}
 
 					if (targetOrgId == 0)
 					{
 						//now what
+						SetConsoleErrorMessage( "Error - an associated organization has not been set. " );
+						return;
 					}
 
 					//user may ber importing to different org than direct
@@ -237,7 +225,12 @@ namespace IOER.Organizations.controls
 							break;
 					}
 
+					//check default password
+					if ( txtDefaultPassword.Text.Trim().Length > 0 )
+					{
 
+
+					}
 				}
 				catch (System.NullReferenceException ex)
 				{
@@ -264,8 +257,6 @@ namespace IOER.Organizations.controls
 		/// <summary>
 		/// handle preview of file
 		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
 		protected void PreviewData()
 		{
 			PanelView.Visible = true;
@@ -471,7 +462,7 @@ namespace IOER.Organizations.controls
 							else
 							{
 								//ensure a the user email does not exists
-								if (DuplicatesCheck(import) == false)
+								if (IsADuplicate(import) == true)
 								{
 									isDuplicate = true;
 									import.IsValid = false;
@@ -615,7 +606,7 @@ namespace IOER.Organizations.controls
 			//perist data
 			string statusMessage = "";
 			import.CreatedById = this.WebUser.Id;
-
+			bool sendingEmail = this.ConvertYesNoToBool( this.rblSendEmail.SelectedValue );
 			try
 			{
 				Patron user = new Patron();
@@ -623,7 +614,11 @@ namespace IOER.Organizations.controls
 				user.LastName = import.LastName;
 				user.Email = import.Email;
 				user.UserName = import.Email;
+			
 				string password = "ChangeMe_" + System.DateTime.Now.Millisecond.ToString();
+				if ( txtDefaultPassword.Text.Length >= 8 )
+					password = txtDefaultPassword.Text;
+
 				user.Password = UtilityManager.Encrypt(password);
 				user.IsActive = false;
 
@@ -649,8 +644,11 @@ namespace IOER.Organizations.controls
 						if (omid > 0)
 						{
 							OrganizationMember mbr = OrgManager.OrganizationMember_Get(omid);
-							if (sendEmailonImport.Text == "yes")
-								Notify(user, mbr);
+							if ( sendingEmail )
+							{
+								//if (sendEmailonImport.Text == "yes")
+								Notify( user, mbr );
+							}
 						}
 
 						insertSuccess++;
@@ -696,24 +694,11 @@ namespace IOER.Organizations.controls
 		}
 		#region validation
 
-		/// <summary>
-		/// validate participant
-		/// </summary>
-		/// <param name="import"></param>
-		/// <param name="doingValidationOnly"></param>
-		/// <returns></returns>
-		protected bool ValidateImport(PatronImport import, bool doingValidationOnly)
+	
+
+		protected bool IsADuplicate( PatronImport import )
 		{
-			bool isValid = true;
-			string statusMessage = "";
-
-
-			return isValid;
-		}
-
-		protected bool DuplicatesCheck(PatronImport import)
-		{
-			bool isValid = true;
+			bool isDuplicate = false;
 
 			Patron user = new Patron();
 			user = myManager.GetByEmail(import.Email);
@@ -723,10 +708,10 @@ namespace IOER.Organizations.controls
 			{
 				//found, produce error
 				import.Message = "Error - user email already exists";
-				isValid = false;
+				isDuplicate = true;
 			}
 
-			return isValid;
+			return isDuplicate;
 		}
 		#endregion
 		protected void ShowImportDetails(List<PatronImport> list, bool isValid, bool doingValidationOnly, int parentId)

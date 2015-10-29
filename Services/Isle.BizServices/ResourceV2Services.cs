@@ -1,27 +1,32 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
 using System.Data;
 using System.Data.SqlClient;
-using Microsoft.ApplicationBlocks.Data;
+using System.Linq;
+using System.Text;
 using System.Web.Script.Serialization;
-using ThisUser = LRWarehouse.Business.Patron;
+
+using ILPathways.Business;
+using ILPathways.Utilities;
 using LRWarehouse.Business;
 using LRWarehouse.Business.ResourceV2;
 using LRWarehouse.DAL;
-using ILPathways.Business;
-
+using Microsoft.ApplicationBlocks.Data;
 using EFMgr = IOERBusinessEntities;
 using IsleDTO = Isle.DTO;
+using ThisUser = LRWarehouse.Business.Patron;
 
 namespace Isle.BizServices
 {
 	public class ResourceV2Services
 	{
 		#region Get Methods
-		//Get Resource DB
+		/// <summary>
+		/// Get Resource DB
+		/// How does this differ from GetResourceDTO
+		/// </summary>
+		/// <param name="resourceID"></param>
+		/// <returns></returns>
 		public ResourceDB GetResourceDB(int resourceID)
 		{
 			var result = new ResourceDB();
@@ -146,7 +151,9 @@ namespace Isle.BizServices
 			var fields = GetFieldAndTagData(resourceID);
 
 			//Get Thumbnail
-			var thumbailUrl = GetThumbnailUrl(resourceID);
+			//TODO - 15-10-20 mp - need to update to handle custom images
+			if (string.IsNullOrWhiteSpace(data.ImageUrl))
+				data.ImageUrl = GetThumbnailUrl( resourceID );
 
 			//Fill Resource Data
 			var resource = new ResourceDB()
@@ -164,7 +171,7 @@ namespace Isle.BizServices
 				Creator = data.Version.Creator,
 				Publisher = data.Version.Publisher,
 				Submitter = data.Version.Submitter,
-				ThumbnailUrl = thumbailUrl,
+				ThumbnailUrl = data.ImageUrl,
 				Keywords = keywords,
 				IsleSectionIds = isleSectionIds,
 				Created = data.Created,
@@ -179,7 +186,12 @@ namespace Isle.BizServices
 			return resource;
 		}
 
-		//Get Resource DTO
+		/// <summary>
+		/// Get Resource DTO
+		/// Starts by using GetResourceDB
+		/// </summary>
+		/// <param name="resourceID"></param>
+		/// <returns></returns>
 		public ResourceDTO GetResourceDTO(int resourceID)
 		{
 			//Load basic data
@@ -240,11 +252,13 @@ namespace Isle.BizServices
 		public ResourceES GetResourceES(int resourceID)
 		{
 			var result = new ResourceES();
-
+			ResourceManager mgr = new ResourceManager();
 			try
 			{
 				//Convert old style tags to new table
-				DatabaseManager.ExecuteProc("[ResourceTag.ConvertById]", new SqlParameter[] { new SqlParameter("@resourceID", resourceID) });
+				mgr.ResourceTag_ConvertById( resourceID );
+
+				//DatabaseManager.ExecuteProc("[ResourceTag.ConvertById]", new SqlParameter[] { new SqlParameter("@resourceID", resourceID) });
 			}
 			catch (Exception ex)
 			{
@@ -257,8 +271,11 @@ namespace Isle.BizServices
 			try
 			{
 				//Get data from tag tables
-				resourceData = DatabaseManager.ExecuteProc("[Resource_IndexV3TextsUpdate]", new SqlParameter[] { new SqlParameter("@resourceID", resourceID) });
-				tagData = DatabaseManager.ExecuteProc("[Resource_IndexV3TagsUpdate]", new SqlParameter[] { new SqlParameter("@resourceID", resourceID) });
+				resourceData = mgr.Resource_IndexV3TextsUpdate( resourceID );
+				tagData = mgr.Resource_IndexV3TagsUpdate( resourceID );
+
+				//resourceData = DatabaseManager.ExecuteProc("[Resource_IndexV3TextsUpdate]", new SqlParameter[] { new SqlParameter("@resourceID", resourceID) });
+				//tagData = DatabaseManager.ExecuteProc("[Resource_IndexV3TagsUpdate]", new SqlParameter[] { new SqlParameter("@resourceID", resourceID) });
 			}
 			catch (Exception ex)
 			{
@@ -354,6 +371,12 @@ namespace Isle.BizServices
 			var libIDs = GetIntList("LibraryIds", versionData);
 			var favorites = libIDs.Count(); // favoritesRaw > libIDs.Count() ? favoritesRaw : libIDs.Count();
 
+			//Get Thumbnail
+			//TODO - 15-10-20 mp - need to update to handle custom images
+			string imageUrl = GetColumn<string>( "CustomImageUrl", versionData );
+			if ( string.IsNullOrWhiteSpace( imageUrl ) )
+				imageUrl = GetThumbnailUrl( resourceID );
+
 			//Build the rest of the resource
 			var res = new ResourceES()
 			{
@@ -366,7 +389,7 @@ namespace Isle.BizServices
 				Url = GetColumn<string>("Url", versionData),
 				ResourceCreated = created.ToShortDateString(),
 				UrlTitle = GetColumn<string>("UrlTitle", versionData),
-				ThumbnailUrl = GetThumbnailUrl(resourceID),
+				ThumbnailUrl = imageUrl,
 				Creator = GetColumn<string>("Creator", versionData),
 				Publisher = GetColumn<string>("Publisher", versionData),
 				Submitter = GetColumn<string>("Submitter", versionData),
@@ -407,7 +430,8 @@ namespace Isle.BizServices
 			var res = GetResourceESVersionData(versionData);
 
 			//Thumbnail Url
-			res.ThumbnailUrl = GetThumbnailUrl(res.ResourceId);
+			//this should already have been handled in GetResourceESVersionData
+			//res.ThumbnailUrl = GetThumbnailUrl(res.ResourceId);
 
 			//Clone Fields to avoid pass-by-reference problems
 			for (int i = 0; i < fieldCodes.Count(); i++)
@@ -479,8 +503,9 @@ namespace Isle.BizServices
 		{
 			var res = GetResourceESVersionData(versionData);
 
-			//Thumbnail
-			res.ThumbnailUrl = GetThumbnailUrl(res.ResourceId);
+			//Thumbnail Url
+			//this should already have been handled in GetResourceESVersionData
+			//res.ThumbnailUrl = GetThumbnailUrl(res.ResourceId);
 
 			//Fields
 			res.Fields = fieldCodes; //Should have been cloned before getting here
@@ -525,7 +550,12 @@ namespace Isle.BizServices
 			return GetJSONLRMIPayloadFromResource( input, ref log );
 		}
 
-		//Get LR Payload from Resource DTO
+		/// <summary>
+		/// Get LR Payload from Resource DTO
+		/// </summary>
+		/// <param name="input"></param>
+		/// <param name="logging"></param>
+		/// <returns></returns>
 		public string GetJSONLRMIPayloadFromResource(ResourceDTO input, ref List<string> logging)
 		{
 			logging.Add( "input status: " + (input == null ? "Null!" : "not null") );
@@ -535,6 +565,7 @@ namespace Isle.BizServices
 			var resource = new Dictionary<string, object>();
 
 			//Simple fields
+			//TODO - do we need to add thumbnail?
 			resource.Add("name", input.Title);
 			resource.Add("url", input.Url);
 			resource.Add("description", input.Description);
@@ -648,7 +679,17 @@ namespace Isle.BizServices
 			return new JavaScriptSerializer().Serialize(resource);
 		}
 
-		//Get ResourceDTO from ContentItem
+		/// <summary>
+		/// Get ResourceDTO from ContentItem
+		/// Usage - to populate a resource object used on uberTagger
+		/// </summary>
+		/// <param name="contentID"></param>
+		/// <param name="user"></param>
+		/// <param name="valid"></param>
+		/// <param name="status"></param>
+		/// <param name="requiresApproval"></param>
+		/// <param name="lrPublishAction"></param>
+		/// <returns></returns>
 		public ResourceDTO GetResourceDTOFromContent( int contentID, Patron user, ref bool valid, ref string status, ref string requiresApproval, ref string lrPublishAction )
 		{
 			var result = new ResourceDTO()
@@ -657,7 +698,8 @@ namespace Isle.BizServices
 			};
 
 			//Get the content item
-			var contentItem = new ContentServices().Get( contentID );
+			//Hmm - check, may should not use a basic get - Uses DAL, will not return standards
+			var contentItem = new ContentServices().Get( contentID, true );
 			if ( contentItem == null || contentItem.Id == 0 )
 			{
 				status = "That ID does not match valid content record";
@@ -683,6 +725,9 @@ namespace Isle.BizServices
 			}
 
 			result.Url = GetContentResourceUrl( contentItem );
+			//TODO - not shown on  tagger so picked up later
+			result.ThumbnailUrl = contentItem.ImageUrl;
+
 			result.Title = contentItem.Title;
 			result.Description = contentItem.Summary;
 			result.UsageRights = GetUsageRights( contentItem.UseRightsUrl );
@@ -706,8 +751,11 @@ namespace Isle.BizServices
 					lrPublishAction = "save";
 				}
 			}
-
-			if ( contentItem.ContentStandards.Count > 0 )
+			//NOTE: for learning lists, the standards will be applied later, so don't populate, and produce message!
+			if ( contentItem.IsHierarchyType ) 
+			{
+				ServiceHelper.SetConsoleInfoMessage( "NOTE: All standards associated with this item will be copied to the resource after publishing has completed. You should not manally add any standards that aleady are associated with the list." );
+			} else if (  contentItem.ContentStandards.Count > 0 )
 			{
 				foreach ( Content_StandardSummary css in contentItem.ContentStandards )
 				{
@@ -718,6 +766,7 @@ namespace Isle.BizServices
 					standard.AlignmentTypeId = css.AlignmentTypeCodeId;
 					//major/supporting/additional - recycles old object's at/above/below field
 					standard.AlignmentDegreeId = css.UsageTypeId;
+					standard.IsDirectStandard = css.IsDirectStandard;
 
 					result.Standards.Add( standard );
 				}
@@ -1041,6 +1090,295 @@ namespace Isle.BizServices
 		#endregion
 
 		#region == delayed publishing ==
+		/// <summary>
+		/// This method is typically used to check if afer changes to a content item, particularly if part of a learning list, there is data to sync to the resource(s)
+		/// </summary>
+		/// <param name="nodeID"></param>
+		/// <param name="userId"></param>
+		public void CheckForDelayedPublishing( int nodeID, int userId )
+		{
+			string resourceList = "";
+			string status = "";
+			CurriculumServices csMgr = new CurriculumServices();
+			ContentItem currentNode = csMgr.GetBasic( nodeID );
+			if ( currentNode.Id > 0 && currentNode.ResourceIntId > 0 )
+			{
+				//get top node and call 
+				int curriculumID = csMgr.GetCurriculumIDForNode( currentNode );
+				bool successful = new ResourceManager().InitiateDelayedPublishing( curriculumID, currentNode.ResourceIntId, userId, ref resourceList, ref status );
+				if ( successful && resourceList.Length > 0 )
+				{
+					System.Threading.ThreadPool.QueueUserWorkItem( delegate
+					{
+						int cntr = AddDelayedResourcesToElastic( curriculumID, ref status );
+					} );
+				}
+			}
+		}
+		public int ResourceDelayedPublish_AddElasticRequest( int contentId, int resourceId )
+		{
+			IsleDTO.ResourceDelayedPublish entity = new IsleDTO.ResourceDelayedPublish();
+			entity.ContentId = contentId;
+			entity.ResourceIntId = resourceId;
+			entity.ElasticStatusId = 1;
+
+			return new EFMgr.PublishingManager().ResourceDelayedPublish_Add( entity );
+		}
+		public int ResourceDelayedPublish_Add( IsleDTO.ResourceDelayedPublish entity )
+		{
+			return new EFMgr.PublishingManager().ResourceDelayedPublish_Add( entity );
+		}
+		public void PublishRelatedChildContent( int contentId, Patron user )
+		{
+			ContentServices contentServices = new ContentServices();
+			var content = contentServices.Get( contentId );
+			PublishRelatedChildContent( content, user );
+		}
+		public void PublishRelatedChildContent( ContentItem content, Patron user )
+		{
+			//get parent
+			//TODO - need to handle where a new node has been added, and not published - should not autopublish
+			if ( content.ResourceIntId == 0 )
+			{
+				//perhaps a notify??
+
+				return;
+			}
+			string status = "";
+
+			//need to allow for any hierarchy type - to allow for publishing a part added later
+			if ( content.TypeId == ContentItem.CURRICULUM_CONTENT_ID
+				|| content.IsHierarchyType )
+			{
+				//just 50 for now
+				//start auto publish  of hierarchy
+				string resourceList = "";
+				bool successful = new ResourceManager().InitiateDelayedPublishing( content.Id, content.ResourceIntId, user.Id, ref resourceList, ref status );
+
+				if ( successful && resourceList.Length > 0 )
+				{
+					//we could test the scheduler here, as typically will be used when adding content to existing learning list.
+					if ( UtilityManager.GetAppKeyValue( "useSchedulerWithNodeAutoPublish" ) == "yes" )
+					{
+						return;
+					}
+
+
+					//now add to other parts
+					ResourceV2Services mgr2 = new ResourceV2Services();
+					//mgr2.ImportRefreshResources( resourceList );
+					string statusMessage = "";
+					//do the thumbs
+					//int thumbCntr = mgr2.AddThumbsForDelayedResources( content.Id, ref statusMessage );
+					System.Threading.ThreadPool.QueueUserWorkItem( delegate
+					{
+						int thumbCntr = mgr2.AddThumbsForDelayedResources( content.Id, ref statusMessage );
+					} );
+
+					//now update elastic
+					if ( UtilityManager.GetAppKeyValue( "doElasticIndexUpdateWithAutoPublish" ) == "yes" )
+					{
+						//int cntr = mgr2.AddDelayedResourcesToElastic( content.Id, ref statusMessage );
+						System.Threading.ThreadPool.QueueUserWorkItem( delegate
+						{
+							int cntr = mgr2.AddDelayedResourcesToElastic( content.Id, ref statusMessage );
+						} );
+					}
+
+					//Log activity
+					System.Threading.ThreadPool.QueueUserWorkItem( delegate
+					{
+						new ActivityBizServices().AutoPublishActivity( new ResourceManager().Get( content.ResourceIntId ), user, resourceList );
+					} );
+				}
+				else
+				{
+					//SetConsoleErrorMessage( "InitiateDelayedPublishing failed, or didn't return any resources.<br> : resourceList" );
+					LoggingHelper.LogError( "Unexpected condition - no related content was found under a learning list/hierarchy item", true );
+					//return;
+				}
+			}
+			//}
+		}
+		public int AddThumbsForDelayedResources()
+		{
+			int lastResourceId = 0;
+			int resourceCntr = 0;
+			//cannot return anything for a scheduled process. Use activities
+			string statusMessage = "";
+
+			List<IsleDTO.ResourceDelayedPublish> list = EFMgr.PublishingManager.ResourceDelayedPublish_SelectPendingThumbnails();
+			try
+			{
+				if ( list.Count == 0 )
+				{
+					LoggingHelper.DoTrace( 7, "ResourceV2Services.AddThumbsForDelayedResources. No pending delayed publishing request" );
+					return 0;
+				}
+				foreach (IsleDTO.ResourceDelayedPublish item in list)
+				{
+					//not sure on status. This should be first, then ES
+					if ( item.ThumbnailsStatusId == 1 )
+					{
+						resourceCntr++;
+						//generate thumb. 
+						ThumbnailServices.CreateThumbnail(item.ResourceIntId.ToString(), item.ResourceUrl, false);  //or true for overwriting
+
+						lastResourceId = item.ResourceIntId;
+						statusMessage += lastResourceId.ToString() + ", ";
+						//now update status - not sure if completely appropriate as don't know if successful
+						item.StatusId = 2;
+						item.ThumbnailsStatusId = 2; //????
+
+						int count = new EFMgr.PublishingManager().ResourceDelayedPublish_Update(item);
+						
+					}
+				}
+				//statusMessage = "Processed: " + statusMessage;
+				LoggingHelper.DoTrace( 6, string.Format("ResourceV2Services.AddThumbsForDelayedResources. Requested thumbs: {0} ", list.Count) );
+			}
+			catch (Exception ex)
+			{
+				//could be a timeout
+				statusMessage = string.Format("Error encountered. Had processed: {0}. Last successful resourceId: {1}", resourceCntr, lastResourceId);
+				ServiceHelper.LogError(ex, "ResourceV2Services.AddDelayedResourcesToElastic. " + statusMessage);
+			}
+			//don't want to return anything for a schedule process
+			//need to add to the activity log!
+			return resourceCntr;
+		}
+
+		public int AddDelayedResourcesToElastic()
+		{
+			int lastResourceId = 0;
+			int resourceCntr = 0;
+			string statusMessage = "";
+			EFMgr.PublishingManager pubMgr = new EFMgr.PublishingManager();
+			List<IsleDTO.ResourceDelayedPublish> list = EFMgr.PublishingManager.ResourceDelayedPublish_SelectPendingElasticUpdates();
+			try
+			{
+				if ( list.Count == 0 )
+				{
+					LoggingHelper.DoTrace( 7, "ResourceV2Services.AddDelayedResourcesToElastic. No pending delayed publishing request" );
+					return 0;
+				}
+
+				foreach (IsleDTO.ResourceDelayedPublish item in list)
+				{
+					if ( item.ElasticStatusId == 1 )
+					{
+						resourceCntr++;
+						//refresh resource in elastic index
+						RefreshResource(item.ResourceIntId);
+						lastResourceId = item.ResourceIntId;
+						statusMessage += lastResourceId.ToString() + ", ";
+						//now update status
+						item.ElasticStatusId = 2;
+						item.StatusId = 3;
+						int count = pubMgr.ResourceDelayedPublish_Update( item );
+			
+					}
+				}
+				string message = string.Format( "ResourceV2Services.AddDelayedResourcesToElastic. Requested items: {0} ", list.Count );
+				ServiceHelper.SetConsoleSuccessMessage( message );
+				//statusMessage = "Processed: " + statusMessage;
+				LoggingHelper.DoTrace( 6, message );
+			}
+			catch (Exception ex)
+			{
+				//could be a timeout
+				statusMessage = string.Format("Error encountered. Had processed: {0}. Last successful resourceId: {1}", resourceCntr, lastResourceId);
+				ServiceHelper.LogError(ex, "ResourceV2Services.AddDelayedResourcesToElastic. " + statusMessage);
+			}
+			//don't want to return anything for a schedule process
+			//need to add to the activity log!
+			return resourceCntr;
+		}
+
+		public void PublishDelayedResourcesToLR()
+		{
+			string statusMessage = "";
+			//get type 3, or maybe a specific lrStateId
+			List<IsleDTO.ResourceDelayedPublish> list = EFMgr.PublishingManager.ResourceDelayedPublish_SelectPendingLRUpdates();
+
+			foreach (IsleDTO.ResourceDelayedPublish item in list)
+			{
+				if ( item.LRPublishStatusId == 1 )
+				{
+
+					//???????????????????????????
+					//format and call LR publish
+
+					//now update status
+					item.LRPublishStatusId = 2; //????
+					item.StatusId = 3;
+					item.PublishedDate = System.DateTime.Now;
+
+					//int count = new EFMgr.PublishingManager().ResourceDelayedPublish_Update( item );
+					//if ( item.ContentTypeId == 40 )
+					//{
+
+					//}
+				}
+			}
+
+		}
+		/// <summary>
+		/// Request thumbnails for all appropriate components of the passed content item if
+		/// </summary>
+		/// <param name="parentContentId"></param>
+		/// <param name="statusMessage"></param>
+		/// <returns></returns>
+		public int AddThumbsForDelayedResources( int parentContentId, ref string statusMessage )
+		{
+			int lastResourceId = 0;
+			int resourceCntr = 0;
+			statusMessage = "";
+
+			List<IsleDTO.ResourceDelayedPublish> list = EFMgr.PublishingManager.ResourceDelayedPublish_Select( parentContentId );
+			try
+			{
+				foreach ( IsleDTO.ResourceDelayedPublish item in list )
+				{
+					//not sure on status. This should be first, then ES
+					if ( item.ThumbnailsStatusId == 1 )
+					{
+						resourceCntr++;
+						//generate thumb. 
+						ThumbnailServices.CreateThumbnail( item.ResourceIntId.ToString(), item.ResourceUrl, false );  //or true for overwriting
+
+						lastResourceId = item.ResourceIntId;
+						statusMessage += lastResourceId.ToString() + ", ";
+						//now update status
+						item.ThumbnailsStatusId = 2; //????
+						item.StatusId = 2;
+						int count = new EFMgr.PublishingManager().ResourceDelayedPublish_Update( item );
+						//copy image
+						//if ( item.ContentTypeId == 40 )
+						//{
+						//	//try to copy an existing image to the resource folders
+						//	/*
+						//	 *	from	/OERThumbs/large/content-6101-large.png
+
+						//		to		/OERThumbs/large/585607-large.png
+
+						//	 * 
+						//	 */
+						//	string srcImage = string.Format( "????/OERThumbs/large/content-{0}-large.png", item.ContentId );
+						//	string destImage = string.Format( "????/OERThumbs/large/{0}-large.png", item.ResourceIntId );
+						//}
+					}
+				}
+				statusMessage = "Processed: " + statusMessage;
+			}
+			catch ( Exception ex )
+			{
+				//could be a timeout
+				statusMessage = string.Format( "Error encountered. Had processed: {0}. Last successful resourceId: {1}", resourceCntr, lastResourceId );
+				ServiceHelper.LogError( ex, "ResourceV2Services.AddDelayedResourcesToElastic. " + statusMessage );
+			}
+			return resourceCntr;
+		}
 		public int AddDelayedResourcesToElastic( int parentContentId, ref string statusMessage )
 		{
 			int lastResourceId = 0;
@@ -1052,7 +1390,7 @@ namespace Isle.BizServices
 			{
 				foreach ( IsleDTO.ResourceDelayedPublish item in list )
 				{
-					if ( item.StatusId == 1 )
+					if ( item.ElasticStatusId == 1 )
 					{
 						resourceCntr++;
 						//refresh resource in elastic index
@@ -1060,22 +1398,10 @@ namespace Isle.BizServices
 						lastResourceId = item.ResourceIntId;
 						statusMessage += lastResourceId.ToString() + ", ";
 						//now update status
-						item.StatusId = 2;
+						item.ElasticStatusId = 2;
+						item.StatusId = 3;
 						int count = new EFMgr.PublishingManager().ResourceDelayedPublish_Update( item );
-						//copy image
-						if ( item.ContentTypeId == 40 )
-						{
-							//try to copy an existing image to the resource folders
-							/*
-							 *	from	/OERThumbs/large/content-6101-large.png
-
-								to		/OERThumbs/large/585607-large.png
-
-							 * 
-							 */
-							string srcImage = string.Format( "????/OERThumbs/large/content-{0}-large.png",item.ContentId );
-							string destImage = string.Format( "????/OERThumbs/large/{0}-large.png", item.ResourceIntId );
-						}
+						
 					}
 				}
 				statusMessage = "Processed: " + statusMessage;
@@ -1096,25 +1422,16 @@ namespace Isle.BizServices
 
 			foreach ( IsleDTO.ResourceDelayedPublish item in list )
 			{
-				if ( item.StatusId == 1 )
+				if ( item.LRPublishStatusId == 1 )
 				{
 
 					//???????????????????????????
 					//now update status
 					item.StatusId = 3;
+					item.LRPublishStatusId = 2;
 					item.PublishedDate = System.DateTime.Now;
-					int count = new EFMgr.PublishingManager().ResourceDelayedPublish_Update( item );
-					if ( item.ContentTypeId == 40 )
-					{
-						//try to copy an existing image to the resource folders
-						/*
-						 *	from	/OERThumbs/large/content-6101-large.png
-
-							to		/OERThumbs/large/585607-large.png
-
-						 * 
-						 */
-					}
+					//int count = new EFMgr.PublishingManager().ResourceDelayedPublish_Update( item );
+			
 				}
 			}
 
@@ -1429,7 +1746,7 @@ namespace Isle.BizServices
 			var mediaTypeIDs = new ResourceFormatManager().Select(resourceID).Select(m => m.CodeId).ToList();
 			SelectTagsFromIDs(mediaTypeIDs, ref fields, "mediaType");
 
-			//K-12 Subject
+			//K-12 Subject		??????????????????????????????
 			var subjectIDsDS = DatabaseManager.DoQuery("SELECT [CodeId] FROM [Resource.Subject] WHERE ResourceIntId = 9 AND [CodeId] IS NOT NULL");
 			var subjectIDs = new List<int>();
 			foreach (DataRow dr in subjectIDsDS.Tables[0].Rows)
@@ -1443,9 +1760,24 @@ namespace Isle.BizServices
 			var edUseIDs = new List<int>();
 			foreach (DataRow dr in edUseIDsDS.Tables[0].Rows)
 			{
-				edUseIDs.Add(int.Parse(DatabaseManager.GetRowColumn(dr, "Id")));
+				if ( DatabaseManager.GetRowColumn( dr, "IsSelected" ).ToLower() == "true" )
+				{
+					edUseIDs.Add( int.Parse( DatabaseManager.GetRowColumn( dr, "Id" ) ) );
+				}
 			}
 			SelectTagsFromIDs(edUseIDs, ref fields, "educationalUse");
+
+			//Group Type
+			var groupTypeIDsDS = new ResourceGroupTypeManager().SelectedCodes(resourceID);
+			var groupTypeIDs = new List<int>();
+			foreach (DataRow dr in groupTypeIDsDS.Tables[0].Rows)
+			{
+				if ( DatabaseManager.GetRowColumn( dr, "IsSelected" ).ToLower() == "true" )
+				{
+					groupTypeIDs.Add( int.Parse( DatabaseManager.GetRowColumn( dr, "Id" ) ) );
+				}
+			}
+			SelectTagsFromIDs(groupTypeIDs, ref fields, "groupType");
 
 			//Career Cluster
 			var careerClusterIDsDS = new ResourceClusterManager().SelectedCodes(resourceID);
@@ -1466,15 +1798,6 @@ namespace Isle.BizServices
 			//End User
 			var endUserIDs = new ResourceIntendedAudienceManager().SelectCollection(resourceID).Select(m => m.CodeId).ToList();
 			SelectTagsFromIDs(endUserIDs, ref fields, "educationalRole");
-
-			//Group Type
-			var groupTypeIDsDS = new ResourceGroupTypeManager().SelectedCodes(resourceID);
-			var groupTypeIDs = new List<int>();
-			foreach (DataRow dr in groupTypeIDsDS.Tables[0].Rows)
-			{
-				groupTypeIDs.Add(int.Parse(DatabaseManager.GetRowColumn(dr, "Id")));
-			}
-			SelectTagsFromIDs(groupTypeIDs, ref fields, "groupType");
 
 			//Access Rights
 			var accessRightsIDs = new List<int>() { new ResourceVersionManager().GetByResourceId(resourceID).AccessRightsId };

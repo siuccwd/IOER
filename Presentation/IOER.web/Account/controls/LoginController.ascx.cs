@@ -159,7 +159,7 @@ namespace IOER.Account.controls
 		private void HandleQuickLogin()
 		{
             bool isProxy = false;
-            CurrentUser user = new Patron();
+			currentUser = new Patron();
             string statusMessage = "";
 
             string rowId = this.GetRequestKeyValue( "g" );
@@ -199,25 +199,22 @@ namespace IOER.Account.controls
 
                     if ( isProxy )
                     {
-                        user = myManager.GetByProxyRowId( rowId, ref statusMessage );
+						currentUser = myManager.GetByProxyRowId( rowId, ref statusMessage );
 
                     }
                     else
                     {
-                        user = myManager.GetByRowId( rowId );
+                        currentUser = myManager.GetByRowId( rowId );
                     }
 
-                    if ( user != null && user.Id > 0 )
+                    if ( currentUser != null && currentUser.Id > 0 )
                     {
-                        ActivityBizServices.UserAutoAuthentication( user );
-                        //add proxy
-                        user.ProxyId = new AccountServices().Create_SessionProxyLoginId( user.Id, ref statusMessage );
-
-                        FormsAuthentication.SetAuthCookie( user.UserName, false );
+                        ActivityBizServices.UserAutoAuthentication( currentUser );
+						InitializeUserSession( currentUser );
 
                         if ( action == "activate" )
                         {
-                            ConfirmRegistration( user );
+                            ConfirmRegistration( currentUser );
 
                             //if no return url, should direct to the profile, getting started!
                             if ( ReturnURL.Length < 5 )
@@ -229,7 +226,7 @@ namespace IOER.Account.controls
                         }
                         else if ( action == "autoactivate" )
                         {
-                            ConfirmRegistration( user );
+                            ConfirmRegistration( currentUser );
 
                             //if no return url, should direct to the profile, getting started!
                             if ( ReturnURL.Length < 5 )
@@ -244,18 +241,18 @@ namespace IOER.Account.controls
                         {
                             //just in case check if active
                             //hmm, need to ensure a user who was purposefully set inactive, cannot just recover password!
-                            if ( user.IsActive == false 
-                                && user.Created == user.LastUpdated)
+                            if ( currentUser.IsActive == false 
+                                && currentUser.Created == currentUser.LastUpdated)
                             {
                                 //a new user will not have a profile, and lastupdated will equal created date
-                                user.IsActive = true;
-                                myManager.Update( user );
+                                currentUser.IsActive = true;
+                                myManager.Update( currentUser );
                                 //log
-                                ActivityBizServices.SiteActivityAdd( "Account","Activated via auto-login",string.Format("User {0} probably used password recovery for an non-activated account", user.FullName()), user.Id, 0,0 );
+                                ActivityBizServices.SiteActivityAdd( "Account","Activated via auto-login",string.Format("User {0} probably used password recovery for an non-activated account", currentUser.FullName()), currentUser.Id, 0,0 );
                             }
                         }
 
-                        this.WebUser = user;
+                        this.WebUser = currentUser;
                         Response.Redirect( ReturnURL );
                     }
                     else
@@ -283,8 +280,12 @@ namespace IOER.Account.controls
 
         protected void ConfirmRegistration( CurrentUser user )
         {
-            user.IsActive = true;
-            myManager.Update( user );
+			if ( user.IsActive == false )
+			{
+				user.IsActive = true;
+				myManager.Update( user );
+			}
+
             //check profile, may have to create?
             if ( autoCreateLibraryOnActivate.Text == "yes" )
             {
@@ -326,7 +327,7 @@ namespace IOER.Account.controls
 						if (DateTime.TryParse(date, out activeDate)) ;
 						if (Int32.TryParse(addOptions[1], out orgId))
 						{
-							if (activeDate.ToString("yyyy-mm-dd") == DateTime.Now.ToString("yyyy-mm-dd"))
+							if (activeDate.ToString("yyyy-MM-dd") == DateTime.Now.ToString("yyyy-MM-dd"))
 								orgMgr.AssociateUserWithOrg(user, orgId);
 						}
 					}
@@ -404,16 +405,11 @@ namespace IOER.Account.controls
             currentUser = myManager.Authorize( userName, UtilityManager.Encrypt( pw ), ref statusMessage );
             if ( currentUser.IsValid )
             {
-				//add proxy
-				currentUser.ProxyId = new AccountServices().Create_SessionProxyLoginId(currentUser.Id, ref statusMessage);
+				InitializeUserSession( currentUser );
 
-				if (new AccountServices().IsUserAdmin(currentUser))
-					currentUser.TopAuthorization = 2;
-
-                SessionManager.SetUserToSession( Session, currentUser );
-                ActivityBizServices.UserAuthentication( currentUser );
-
-                FormsAuthentication.SetAuthCookie( userName, false );
+				DoSpecialChecks();
+				//
+				DoPasscodeConfirmationCheck(pw);
 
                 LoginAttempts = 0;
                 Session.Remove( lockedUserId + "_LastLoginLockDate" );
@@ -431,6 +427,72 @@ namespace IOER.Account.controls
                     LastLoginLockDate = DateTime.Now;
                 }
             }
+       }
+
+		protected void InitializeUserSession(Patron user)
+		{
+			string statusMessage = "";
+			//add proxy
+			currentUser.ProxyId = new AccountServices().Create_SessionProxyLoginId( currentUser.Id, ref statusMessage );
+
+			if ( new AccountServices().IsUserAdmin( currentUser ) )
+				currentUser.TopAuthorization = 2;
+
+			SessionManager.SetUserToSession( Session, currentUser );
+			ActivityBizServices.UserAuthentication( currentUser );
+
+			FormsAuthentication.SetAuthCookie( currentUser.Email, false );
+
+        }
+
+		protected void DoSpecialChecks()
+		{
+			//check for New User, or Pending User
+			if (currentUser.LastName == "User"
+				&& ( currentUser.FirstName == "New" || currentUser.FirstName == "Pending" ) )
+			{
+				SetConsoleSuccessMessage( "NOTE: Be sure to update your profile, and change your password to something secure." );
+				//arbitrarily force user to profile
+				//if ( ReturnURL.ToLower().IndexOf( "/default.aspx" ) > -1 )
+					ReturnURL = "/Account/Profile.aspx";
+			}
+        }
+
+		protected void DoPasscodeConfirmationCheck(string password)
+		{
+			try
+			{
+				if ( passCodeConfirmation.Text.Length > 0 && passCodeConfirmation.Text == password )
+				{
+					if ( passCodeConfirmationDate.Text == DateTime.Now.ToString( "yyyy-MM-dd" ) )
+					{
+						///fake out confirmation to get library, etc
+						//need to ensure only done once!
+						//check profile, may have to create?
+						if ( autoCreateLibraryOnActivate.Text == "yes" )
+						{
+							LibraryBizService mgr = new LibraryBizService();
+							string statusMessage = "";
+							//get will create lib if doesn't exist
+							ILPathways.Business.Library lib = mgr.GetMyLibrary( currentUser, true );
+							//mgr.CreateDefaultLibrary( currentUser, ref statusMessage );
+							SetConsoleSuccessMessage( libraryCreateMsg.Text );
+						}
+						ActivityBizServices.UserRegistrationConfirmation( currentUser );
+						//do check whether can auto associate a user with an org based on email domain
+						orgMgr.AssociateUserWithOrg( currentUser );
+
+						SetConsoleSuccessMessage( "NOTE: Be sure to update your profile, and change your password to something secure." );
+						//if return is just to the home, set to the profile page
+						if ( ReturnURL.ToLower().IndexOf( "/default.aspx" ) > -1 )
+							ReturnURL = "/Account/Profile.aspx";
+					}
+				}
+			}
+			catch ( Exception ex )
+			{
+
+			}
         }
 
         protected void loginLinkedInButton_Click( object sender, EventArgs e )

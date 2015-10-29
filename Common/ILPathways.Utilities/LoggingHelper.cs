@@ -1,4 +1,5 @@
 ﻿using System;
+//using System.Data.Entity;
 using System.IO;
 using System.Web;
 
@@ -24,6 +25,23 @@ namespace ILPathways.Utilities
             bool notifyAdmin = false;
             LogError( ex, message, notifyAdmin );
         }
+
+		//public static void LogError( System.Data.Entity.Validation.DbEntityValidationException ex, string message )
+		//{
+		//	bool notifyAdmin = false;
+		//	string message = thisClassName + string.Format( ".ContentAdd() DbEntityValidationException, Type:{0}", entity.TypeId );
+		//	foreach ( var eve in dbex.EntityValidationErrors )
+		//	{
+		//		message += string.Format( "\rEntity of type \"{0}\" in state \"{1}\" has the following validation errors:",
+		//			eve.Entry.Entity.GetType().Name, eve.Entry.State );
+		//		foreach ( var ve in eve.ValidationErrors )
+		//		{
+		//			message += string.Format( "- Property: \"{0}\", Error: \"{1}\"",
+		//				ve.PropertyName, ve.ErrorMessage );
+		//		}
+		//	}
+		//				LogError( message, true );
+		//}
 
         /// <summary>
         /// Format an exception and message, and then log it
@@ -95,7 +113,7 @@ namespace ILPathways.Utilities
 
                 if ( ex.InnerException != null && ex.InnerException.Message != null )
                     errMsg += "\r\n****Inner exception: " + ex.InnerException.Message;
-
+				
                 if ( parmsString.Length > 0 )
                     errMsg += "\r\nParameters: " + parmsString;
 
@@ -337,15 +355,8 @@ namespace ILPathways.Utilities
                 + ",'" + comment + "',"
                 + remoteIP + "";
 
-            if ( UtilityManager.GetAppKeyValue( "loggingPageVisitsToDatabase", "no" ) == "XXXX" )
-            {
-               // ILPathways.DAL.LogManager.LogPageVisit( sessionId, template, queryString, parmString, isPostBack, userid, partner, comment, remoteIP, lwia );
-                //lwia, pathway, lang, mainChannel, currentZip 
-            }
-            else
-            {
-                LogPageVisit( logEntry );
-            }
+            LogPageVisit( logEntry );
+            
 
         } //
 

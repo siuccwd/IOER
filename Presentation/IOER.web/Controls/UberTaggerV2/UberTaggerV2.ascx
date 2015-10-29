@@ -563,7 +563,17 @@
     }
     else {
     	var problems = "";
-    	$("#basicInfo .field").each(function() { 
+			//URL
+    	var urlBox = $("#dataSource .field[data-item=Url]");
+    	if(urlBox.find("#field_Url").val().length == 0) {
+    		problems += "- You must enter a URL or select a File and click the Upload button.\n";
+    	}
+    	var urlMessage = urlBox.find(".validationMessage");
+    	if(urlMessage.attr("data-status") == "red"){
+    		problems += urlMessage.text() + "\n";
+    	}
+			//Basic info
+    	$("#basicInfo .field").not("[data-field=Keywords]").each(function() { 
     		var box = $(this);
     		var message = box.find(".validationMessage");
     		var text = message.html();
@@ -577,6 +587,16 @@
     			problems += "- " + box.attr("data-field") + " must be completed\n";
     		}
     	});
+    	//Keywords
+    	var kBox = $("#basicInfo .field[data-field=Keywords]");
+    	var kMessage = kBox.find(".validationMessage");
+    	if(kMessage.attr("data-status") == "red") {
+    		problems += kMessage.text();
+    	}
+    	if(preselectedKeywords.length == 0 && addedKeywords.length == 0){
+    		problems += "- You must enter one or more keywords.";
+    	}
+			//Tag fields
     	$("#tagFields .field.required").each(function() {
     		var box = $(this);
     		if(box.find("input:checked").length == 0){
@@ -976,6 +996,7 @@
   }
   @media (max-width: 600px) {
     #tags #tagFields { -moz-column-count: 1; -webkit-column-count: 1; column-count: 1; }
+    #mainContent #btnCancelUpdate { width: 200px;  }
   }
 </style>
 

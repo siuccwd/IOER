@@ -48,8 +48,8 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=7.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\Newtonsoft.Json.7.0.1\lib\net40\Newtonsoft.Json.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
@@ -64,7 +64,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="%40TemplateManager_GuidPK.cs" />
     <Compile Include="AuditReportingManager.cs" />
     <Compile Include="BaseDataManager.cs" />
     <Compile Include="BlacklistedHostManager.cs" />
@@ -73,8 +72,10 @@
     <Compile Include="DatabaseManager.cs" />
     <Compile Include="ElasticSearchManagerOLD.cs" />
     <Compile Include="ElasticSearchManager.cs" />
+    <Compile Include="GoogleSiteMapManager.cs" />
     <Compile Include="IResourceIntManager.cs" />
     <Compile Include="IResourceManager.cs" />
+    <Compile Include="LinkCheckerRulesManager.cs" />
     <Compile Include="LRManager.cs" />
     <Compile Include="ParadataManager.cs" />
     <Compile Include="PatronManager.cs" />

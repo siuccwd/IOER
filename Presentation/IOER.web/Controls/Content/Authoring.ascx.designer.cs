@@ -202,6 +202,24 @@ namespace IOER.Controls.Content {
         protected global::System.Web.UI.WebControls.DropDownList ddlPrivacyLevel;
         
         /// <summary>
+        /// addToOrg control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl addToOrg;
+        
+        /// <summary>
+        /// ddlOrganization control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.DropDownList ddlOrganization;
+        
+        /// <summary>
         /// ddlIsOrganizationContent control.
         /// </summary>
         /// <remarks>
@@ -1408,6 +1426,15 @@ namespace IOER.Controls.Content {
         protected global::System.Web.UI.WebControls.Literal showingTemplates;
         
         /// <summary>
+        /// canUserChgOrg control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Literal canUserChgOrg;
+        
+        /// <summary>
         /// ltlAppliedAttachmentTemplate control.
         /// </summary>
         /// <remarks>
@@ -1435,6 +1462,15 @@ namespace IOER.Controls.Content {
         protected global::System.Web.UI.WebControls.Literal litNodeViewTemplate;
         
         /// <summary>
+        /// litContentPublishUrl control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Literal litContentPublishUrl;
+        
+        /// <summary>
         /// litNodePublishTemplate control.
         /// </summary>
         /// <remarks>
@@ -1442,6 +1478,15 @@ namespace IOER.Controls.Content {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Literal litNodePublishTemplate;
+        
+        /// <summary>
+        /// litNodePublishTemplateOLD control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Literal litNodePublishTemplateOLD;
         
         /// <summary>
         /// litNodeViewTags control.

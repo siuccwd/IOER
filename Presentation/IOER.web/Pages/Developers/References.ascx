@@ -16,8 +16,8 @@
 <ul>
   <li>Common Core Standards (CCSS) <a href="http://www.corestandards.org/developers-and-publishers/">http://www.corestandards.org/developers-and-publishers/</a></li>
   <li>Common Education Data Standards (CEDS) <a href="https://ceds.ed.gov/" target="_blank">https://ceds.ed.gov/</a></li>
-  <li>Dublin Core LRMI <a href="http://dublincore.org/dcx/lrmi-terms/">http://dublincore.org/dcx/lrmi-terms/</a></li>
-  <li>Learning Resource Metadata Initiative <a href="http://www.lrmi.net/">http://www.lrmi.net/</a></li>
+  <li>Dublin Core LRMI Specification<a href="http://dublincore.org/dcx/lrmi-terms/1.1/">http://dublincore.org/dcx/lrmi-terms/1.1/</a></li>
+  <li>Learning Resource Metadata Initiative <a href="http://dublincore.org/dcx/lrmi-terms/#history">http://dublincore.org/dcx/lrmi-terms/#history</a></li>
   <li>Race to the Top states Reform Support Network <a href="http://www2.ed.gov/about/inits/ed/implementation-support-unit/tech-assist/index.html">http://www2.ed.gov/about/inits/ed/implementation-support-unit/tech-assist/index.html</a></li>
   <li>Schema.org <a href="http://schema.org/">http://schema.org/</a></li>
 </ul>
@@ -35,6 +35,7 @@
     <li>Google Safe Browsing API <a href="https://developers.google.com/safe-browsing/developers_guide_v3?hl=en" target="_blank">https://developers.google.com/safe-browsing/developers_guide_v3?hl=en</a></li>
     <li>HOSTS File <a href="http://winhelp2002.mvps.org/hosts.htm" target="_blank">http://winhelp2002.mvps.org/hosts.htm</a></li>
     <li>Anti-virus scanner <a href="http://www.clamav.net/index.html" target="_blank">http://www.clamav.net/index.html</a></li>
+    <li>Regular Expressions <a href="http://www.regular-expressions.info/" target="_blank">http://www.regular-expressions.info</a></li>
 </ul>
 
 <h3>More Information</h3>

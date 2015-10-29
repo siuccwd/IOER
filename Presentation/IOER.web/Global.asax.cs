@@ -205,28 +205,28 @@ namespace IOER
 			"MyOrganizations",      // Route URL
 			"~/Organizations/Default.aspx"
 			);
-			//routes.MapPageRoute(
-			//"Organizations",      // Route name
-			//"Organizations",      // Route URL
-			//"~/Organizations/Default.aspx"
-			//);
-
 			routes.MapPageRoute(
-			 "Organization",      // Route name
-			 "Organizations/{orgId}/{*ItemTitle}",      // Route URL
-			 "~/Organizations/Default.aspx"
-			 );
+			"Organizations",      // Route name
+			"Organizations",      // Route URL
+			"~/Organizations/Default.aspx"
+			);
+
+			//routes.MapPageRoute(
+			// "Organization",      // Route name
+			// "Organizations/{orgId}/{*ItemTitle}",      // Route URL
+			// "~/Organizations/Default.aspx"
+			// );
 
 			routes.MapPageRoute(
 			 "OrganizationTimeline",      // Route name
 			 "Org/{orgId}/{*ItemTitle}",      // Route URL
 			 "~/Activity/Default.aspx"
 			 );
-			routes.MapPageRoute(
-			"UnityPoint",      // Route name
-			"UnityPoint",      // Route URL
-			"~/Organizations/UnityPoint/Default.aspx"
-		   );
+		   // routes.MapPageRoute(
+		   // "UnityPoint",      // Route name
+		   // "UnityPoint",      // Route URL
+		   // "~/Organizations/UnityPoint/Default.aspx"
+		   //);
 
 			//search =======================================
 			routes.MapPageRoute(
@@ -237,7 +237,9 @@ namespace IOER
 			routes.MapPageRoute(
 			 "Gooru",      // Route name
 			 "gooruSearch",      // Route URL
-			 "~/Pages/GooruSearch.aspx"
+			 "~/CustomSearch.aspx",
+				false,
+				new RouteValueDictionary { { "theme", "gooru" } }
 			);
 			routes.MapPageRoute(
 			 "GooruPlayer",      // Route name
@@ -283,7 +285,7 @@ namespace IOER
 				"LearningLists",
 				"~/CustomSearch.aspx",
 				false,
-				new RouteValueDictionary { { "title", "IOER Learning List Search" }, { "collectionIDs", UtilityManager.GetAppKeyValue( "learningListCollectionId", "693" ) }, { "theme", "ioer_library" } }
+				new RouteValueDictionary { { "title", "IOER Learning List Search" }, { "collectionIDs", UtilityManager.GetAppKeyValue( "learningListCollectionId", "693" ) }, { "theme", "ioer_library" }, {"sort", "ResourceId|desc" }, { "doAutoNewestSearch", "false" } }
 			);
 
 			//Rubrics

@@ -521,6 +521,7 @@ namespace LRWarehouse.Business
             encodedTitle = encodedTitle.Replace( "+", "_" );
             encodedTitle = encodedTitle.Replace( "~", "_" );
             encodedTitle = encodedTitle.Replace( "`", "_" );
+			encodedTitle = encodedTitle.Replace( "://", "/" );
             encodedTitle = encodedTitle.Replace( ":", "" );
             encodedTitle = encodedTitle.Replace( ";", "" );
             encodedTitle = encodedTitle.Replace( "?", "" );

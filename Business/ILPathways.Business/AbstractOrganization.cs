@@ -37,6 +37,7 @@ namespace ILPathways.Business
 				}
 			}
 		}
+		public string Description { get; set; }
 
 		private int _parentId;
 		/// <summary>
@@ -391,7 +392,30 @@ namespace ILPathways.Business
 				}
 			}
 		}
-        
+		public string ImageUrl
+		{
+			get
+			{
+				return this._logoUrl;
+			}
+			set
+			{
+				if ( this._logoUrl == value )
+				{
+					//Ignore set
+				}
+				else if ( value == null )
+				{
+					this._logoUrl = null;
+					HasChanged = true;
+				}
+				else
+				{
+					this._logoUrl = value.Trim();
+					HasChanged = true;
+				}
+			}
+		}
 		private Address _orgAddress = new Address();
 		/// <summary>
 		/// Get/Set for OrgAddress

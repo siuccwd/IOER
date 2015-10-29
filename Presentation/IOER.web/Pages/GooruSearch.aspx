@@ -28,10 +28,8 @@
 
         .filterBox {
             position: absolute;
-            top: 0;
             background-color: #EEE;
             padding: 5px;
-            left: 60px; 
         }
 
         #welcomeTXT {
@@ -61,16 +59,12 @@
 
         .filterBox {
             position: absolute;
-            top: 0;
             background-color: #EEE;
-            padding: 5px;
-            width: 310px;
-            left: 160px;
         }
 
         #welcomeTXT {
             text-align:center;
-            padding-top:75px; 
+            padding-top:50px; 
             width:500px;
             margin:auto; 
         }
@@ -188,7 +182,7 @@
     #filters {
         position: absolute; 
         z-index: 1000; 
-        width: 160px; 
+        width: 210px; 
         background-color: #EEE; 
         padding:5px; 
     }
@@ -207,11 +201,8 @@
    }
 
    #filterLinks a, .filterBox .list a {
-        margin-bottom: 1px; 
-        background-color: #3572B8; 
-        color: #FFF; 
-        display:block; 
-        font-size: 1.1em; 
+        margin-bottom: 1px;          
+        color: #0A0A0A;         
    }
 
     .filterBox .list a {
@@ -224,15 +215,23 @@
         border-left:15px solid #FF5707; 
     }
 
-    #filterLinks > a{
+    #filterLinks > a {
         background-color: #3572B8;
         color: #FFF; 
         text-align:right; 
         display:block; 
         font-size: 1.1em;
-        padding:5px;  
+        padding:5px;
+        padding-right: 30px;  
+        background-image: url("/images/arrow-down-white.png"); 
+        background-position: center right 5px;
+        background-repeat:no-repeat; 
+        background-size: 10px 10px;    
     }
 
+    #filterLinks > a.expand {
+        background-image: url("/images/arrow-up-white.png");
+    }
     #filterLinks a:hover, #btnShowFilterLinks:hover, .filterBox .list a:hover, .pageButtons a:hover, #btnResetFilters:hover {
         background-color:#FF5707; 
         cursor:pointer;
@@ -265,7 +264,7 @@
         font-size:20px; 
         font-weight:bold; 
         margin:2px 0; 
-        width:100%; 
+        width:210px; 
         height:30px; 
         line-height: 30px; 
         text-align:center; 
@@ -285,6 +284,11 @@
         height:30px;
         display:inline-block;
     }
+
+  label {
+    padding-left: 10px;
+  }  
+
   @media screen and (max-width: 975px) {
     #content { padding-left: 0; }
   }
@@ -293,13 +297,18 @@
 <asp:Content ID="Content2" ContentPlaceHolderID="BodyContent" runat="server">
 
       <div id="content">  
-          <h1 class="isleH1"">IOER gooru Search (beta)</h1>
+          <h1 class="isleH1"">IOER gooru Search</h1>
 
 
       <div id="searchBarBox">
-
-          <input type="text" id="textBox" placeholder="Start typing to Search..."/><input type="button" value="Search" id="searchButton" class="isleButton bgGreen" onclick="newSearch()"/>
+          <div>
+          <input type="text" id="textBox" placeholder="Search for a topic..."/><input type="button" value="Search" id="searchButton" class="isleButton bgGreen" onclick="newSearch()"/>
           <a href="#" onclick="clearSearchBar(); return false;" id="searchBarX" style="display: none;">X</a>
+              <div class="list" data-title="Search Type" data-es="searchTypeIDs" >
+                  <div style="display: inline-block; padding-top: 5px; padding-bottom: 5px; padding-left: 15px;"><input type="radio" id="resourceSearch" name="type" value="resource"/> Resources</div>
+                  <div style="display: inline-block; padding-top: 5px; padding-bottom: 5px; padding-left: 15px;"><input type="radio" id="collectionSearch" name="type" value="collection"  checked="checked"/> Collections</div>
+              </div>
+          </div>
           <div id="activeFilters">
               <div id="activeFilterList">
                   
@@ -309,99 +318,93 @@
 
             <div id="options">
                 <a href="#" id="btnShowFilterLinks" onclick="showFilterLinks()">Filters...</a>
-                <div id="filters" data-showing="true" style="display:none">
-                    <h4>Filters...</h4>
-                    <div id="filterLinks" style="display:block">
-                        <a href="#" data-name="searchType"onclick="showSearchTypeFilter()" >Search Type</a>
-                        <a href="#" data-name="standardsBrowser" id="standardsFilter" onclick="showStandardBrowser()" >Standards Browser</a>
-                        <a href="#" data-name="gradeLevel" id="gradeBTN" onclick="showGradeFilter()">Grade Level</a>
-                        <a href="#" data-name="subject" id="subjectBTN" onclick="showSubjectFilter()">K-12 Subjects</a>
-                        <a href="#" data-name="mediaType" id="mediaBTN" onclick="showMediaFilter()">Media Type</a>
-                    </div>
+                <div id="filters" data-showing="true" style="display:none">                    
+                    <div id="filterLinks" style="display:block;">                        
 
-                    <div id="filterContents">
-                        <div class="filterBox" id="searchTypeFilter" data-filtername="searchType" data-show="false" style="display:none">
-                            <a href ="#" class="closeBox" onclick="hideFilterBox()">X</a>
-                                <h4>Search Type</h4>
-                            <div class="list" data-title="Search Type" data-es="searchTypeIDs">
-                                <input type="radio" id="resourceSearch" name="type" value="resource"  checked="checked"/> Resource
-                                <input type="radio" id="collectionSearch" name="type" value="collection"/> Collection
-                            </div>
-                        </div>
-                        <div class="filterBox" id="standardBrowser" data-filtername="standardsBrowser" data-maxwidth="true" data-showing="false" style="display:none">
+                        <a href="#" data-name="standardsBrowser" id="standardsFilter" onclick="showStandardBrowser()" >Standards Browser</a>
+                        <div class="filterBox" id="standardBrowser" data-filtername="standardsBrowser" data-maxwidth="true" data-showing="false" style="display:none; top:0; left:215px;">
                             <a href ="#" class="closeBox" onclick="hideFilterBox()">X</a>
                             <h4>Standards Browser</h4>
                             <script>var SB7mode = "search";</script>
                             <UC1:StandardsBrowser ID="browserControl" runat="server" />
                         </div>
 
-                        <div class="filterBox" id="gradeFilter" data-filtername="gradeLevel" data-showing="false" style="display:none">
-                           <a href ="#" class="closeBox" onclick="hideFilterBox()">X</a>
-                             <h4>Grade Level</h4>
-                            <div class="list" data-gooruID="grade" data-type="id" data-title="Grade Level" data-es="gradeLevelIDs">
-                                <a href="#" data-selected="false" data-display="Kindergarten" data-name="Kindergarten,K-4">Kindergarten</a>
-                                <a href="#" data-selected="false" data-display="Grade 1" data-name="1">Grade 1</a>
-                                <a href="#" data-selected="false" data-display="Grade 2" data-name="2">Grade 2</a>
-                                <a href="#" data-selected="false" data-display="Grade 3" data-name="3">Grade 3</a>
-                                <a href="#" data-selected="false" data-display="Grade 4" data-name="4">Grade 4</a>
-                                <a href="#" data-selected="false" data-display="Grade 5" data-name="5">Grade 5</a>
-                                <a href="#" data-selected="false" data-display="Grade 6" data-name="6">Grade 6</a>
-                                <a href="#" data-selected="false" data-display="Grade 7" data-name="7">Grade 7</a>
-                                <a href="#" data-selected="false" data-display="Grade 8" data-name="8">Grade 8</a>
-                                <a href="#" data-selected="false" data-display="Grades 9-10" data-name="9-10">Grades 9-10</a>
-                                <a href="#" data-selected="false" data-display="Grades 11-12" data-name="11-12">Grades 11-12</a>
-                                <a href="#" data-selected="false" data-display="Higher Education" data-name="H">Higher Education</a>
+                        
+                        <a href="#" data-name="gradeLevel" id="gradeBTN" onclick="showGradeFilter()">Education Level</a>                        
+                        <div class="filterBox"  id="gradeFilter" data-filtername="gradeLevel" data-showing="false" style="display:none">
+                           
+                            <div class="list" data-gooruID="grade" data-type="id" data-title="Grade Level" data-es="gradeLevelIDs" style="width:200px;">
+                               <div><label><input type="checkbox" data-name="Kindergarten,K-4" /> Kindergarten</label></div>
+                               <div><label><input type="checkbox" data-name="1" /> Grade 1</label></div>
+                               <div><label><input type="checkbox" data-name="2" /> Grade 2</label></div>
+                               <div><label><input type="checkbox" data-name="3" /> Grade 3</label></div>
+                               <div><label><input type="checkbox" data-name="4" /> Grade 4</label></div>
+                               <div><label><input type="checkbox" data-name="5" /> Grade 5</label></div>
+                               <div><label><input type="checkbox" data-name="6" /> Grade 6</label></div>
+                               <div><label><input type="checkbox" data-name="7" /> Grade 7</label></div>
+                               <div><label><input type="checkbox" data-name="8" /> Grade 8</label></div>
+                               <div><label><input type="checkbox" data-name="9-10" /> Grades 9-10</label></div>
+                               <div><label><input type="checkbox" data-name="11-12" /> Grades 11-12</label></div>
+                               <div><label><input type="checkbox" data-name="H" /> Higher Education</label></div>
                             </div>
                         </div>
 
+                        
+                        <a href="#" data-name="subject" id="subjectBTN" onclick="showSubjectFilter()">K-12 Subjects</a>
                         <div class="filterBox" id="subjectFilter" data-filtername="subject" data-showing="false" style="display:none">
-                           <a href ="#" class="closeBox" onclick="hideFilterBox()">X</a>
-                             <h4>K-12 Subjects</h4>
-                            <div class="list" data-gooruID="subject" data-type="id" data-group="subject" data-title="K-12 Subjects">
-                                <a href="#" data-selected="false" data-display="Mathematics" data-name="Math">Mathematics</a>
-                                <a href="#" data-selected="false" data-display="English Language Arts" data-name="Language Arts">English Language Arts</a>
-                                <a href="#" data-selected="false" data-display="Science" data-name="Science">Science</a>
-                                <a href="#" data-selected="false" data-display="Social Sciences" data-name="Social Sciences">Social Sciences</a>
-                                <a href="#" data-selected="false" data-display="Arts & Humanities" data-name="Arts & Humanities">Arts & Humanities</a>
-                                <a href="#" data-selected="false" data-display="Technology & Engineering" data-name="Technology & Engineering">Technology & Engineering</a>
+                           
+                            <div class="list" data-gooruID="subject" data-type="id" data-group="subject" data-title="K-12 Subjects" style="width:200px;">
+                                <div><label><input type="checkbox" data-name="Math" /> Mathematics</label></div>
+                                <div><label><input type="checkbox" data-name="Language Arts" /> English Language Arts</label></div>
+                                <div><label><input type="checkbox" data-name="Science" /> Science</label></div>
+                                <div><label><input type="checkbox" data-name="Social Sciences" /> Social Sciences</label></div>
+                                <div><label><input type="checkbox" data-name="Arts & Humanities" />Arts & Humanities</label></div>
+                                <div><label><input type="checkbox" data-name="Technology & Engineering">Technology & Engineering</label></div>
                             </div>
                         </div>
 
+                        <a href="#" data-name="mediaType" id="mediaBTN" onclick="showMediaFilter()">Media Type</a>                        
                         <div class="filterBox" id="mediaFilter" data-filtername="mediaType" data-showing="false" style="display:none">
-                            <a href ="#" class="closeBox" onclick="hideFilterBox()">X</a>
-                            <h4>Media Type</h4>
-                            <div class="list" data-gooruID="media" data-type="id" data-title="Media Type" data-es="mediaTypeIDs">
-                                <a href="#" data-selected="false" data-display="Audio" data-name="Audio">Audio</a>
-                                <a href="#" data-selected="false" data-display="Exam" data-name="Exam">Exam</a>
-                                <a href="#" data-selected="false" data-display="Handout" data-name="Handout">Handout</a>
-                                <a href="#" data-selected="false" data-display="Image" data-name="Image">Image</a>
-                                <a href="#" data-selected="false" data-display="Interactive" data-name="Interactive">Interactive</a>
-                                <a href="#" data-selected="false" data-display="Question" data-name="Question">Question</a>
-                                <a href="#" data-selected="false" data-display="Slide" data-name="Slide">Slide</a>
-                                <a href="#" data-selected="false" data-display="Textbook" data-name="Text">Textbook</a>
-                                <a href="#" data-selected="false" data-display="Video" data-name="Video">Video</a>
-                                <a href="#" data-selected="false" data-display="Website" data-name="Website">Website</a>
+                            
+                            <div class="list" data-gooruID="media" data-type="id" data-title="Media Type" data-es="mediaTypeIDs" style="width:200px;">
+                                <div><label><input type="checkbox" data-name="Audio">Audio</label></div>
+                                <div><label><input type="checkbox" data-name="Exam">Exam</label></div>
+                                <div><label><input type="checkbox" data-name="Handout">Handout</label></div>
+                                <div><label><input type="checkbox" data-name="Image">Image</label></div>
+                                <div><label><input type="checkbox" data-name="Interactive">Interactive</label></div>
+                                <div><label><input type="checkbox" data-name="Question">Question</label></div>
+                                <div><label><input type="checkbox" data-name="Slide">Slide</label></div>
+                                <div><label><input type="checkbox" data-name="Text">Textbook</label></div>
+                                <div><label><input type="checkbox" data-name="Video">Video</label></div>
+                                <div><label><input type="checkbox" data-name="Website">Website</label></div> 
                             </div>
                         </div>
+
+                    </div>
+
+                    <div id="filterContents">
+                        
+                        
+                        
                     </div>
                  </div>
               </div>
 
           <div id="resultCount" style="text-align:center"></div>
+          <div id="welcomeTXT">
+                <h2>Welcome to ISLE Open Educational Resources gooru Search!</h2><br>
+                <p>This search taps into gooru and the ISLE Community to provide Learning Resources for teachers and students alike.</p>  
+                <p>Please take advantage of both the free-text search and the filtering options (use the blue “Filters…” button) to quickly find what you’re looking for, <br />
+                in terms of Resource, Collection, Grade Level, K-12 Subjects, Media Type and Keyword filtering options.</p>
+                 <h3>Note you must click on the search button after selecting or changing filters.</h3>
+             </div>
           </div>
 
        <div id="gooruResults">
-            <div class="pageButtons" id="topPageButtons">
-
-            </div>
-
+            <div class="pageButtons" id="topPageButtons"> </div>
+             
          <div id="resultList">
-             <div id="welcomeTXT">
-                <b style="font-size:14pt">Welcome to ISLE Open Educational Resources gooru Search!</b><br>
-                This search taps into gooru and the ISLE Community to provide Learning Resources for teachers and students alike.<br>  
-                Please take advantage of both the free-text search and the filtering options (use the blue “Filters…” button) to quickly find what you’re looking for, <br />
-                in terms of Resource, Collection, Grade Level, K-12 Subjects, Media Type and Keyword filtering options.
-             </div>
+
 
            <div id="results">
 
@@ -419,78 +422,127 @@
     //From server
     <%=gooruResourcesUrl %>
     <%=gooruCollectionsUrl %>
-    
+
     var currentPage = 1;
     var filtersSelected = 0;
     var position = $("#searchBarBox").offset();
-    var countDown; 
+    var countDown;
 
     $(document).ready(function () {
-
-        setupCountDown(); 
+        
+        setupCountDown();        
         if ($(window).width() <= 500) {
-            $(".filterBox").width($("#searchBarBox").outerWidth() - 70);
+            $(".filterBox").width($("#searchBarBox").outerWidth() - 100);
         } else {
-            $("#standardBrowser").width($("#searchBarBox").outerWidth() - 187);
+            $("#standardBrowser").width($("#searchBarBox").outerWidth() - 220);
         }
 
         if ($(window).width() > 975) {
             $("#searchBarX").css("top", position.top);
-            $("#searchBarX").css("right", position.left + 71);
+            $("#searchBarX").css("right", 165);
         } else if ($(window).width() >= 850 && $(window).width() <= 975) {
             $("#searchBarX").css("top", position.top);
-            $("#searchBarX").css("right", position.left + 121);
+            $("#searchBarX").css("right", 165);
         } else {
             $("#searchBarX").css("top", position.top);
-            $("#searchBarX").css("right", position.left);
+            $("#searchBarX").css("right", position.left - 15);
         }
 
         jQuery.support.cors = true;
 
-        $(window).on("SB7search", function (s1, s2, s3, standards) { 
-            var  chosenStandards = "";
+        $("#searchBarBox input:radio").click(function () {
+                        
+            if ($("#collectionSearch").is(':checked')) {
+                $("#mediaBTN").hide();
+                $("#mediaFilter").hide();
+
+            } else {
+                $("#mediaBTN").show();
+            }
+
+        });
+
+
+        $(window).on("SB7search", function (s1, s2, s3, standards) {
+            var chosenStandards = "";
+
+            console.log(standards);
+            //Hacky fix, because the standards.length is twice the size, the length needs is altered prior to use.
+            //Cannot alter the control, since it is also used in the IOER search filters
+            standards.length = standards.length / 2;
+
             for (var i = 0; i < standards.length; i++) {
 
-                var item = standards[i]; 
+                var item = standards[i];
                 if (item.children.length == 0) {
-                    chosenStandards += "," + item.fullCode; 
-                }
+                    chosenStandards += "," + item.fullCode;
+                }                
+
+                $("#activeFilterList").append("<div id='activeFilterItem' class='filterItems' data-name='" + item.code
+               + "'>" + item.code + "<a href ='#' class='closeBox' data-subjectID='" + item.code
+               + "' onclick='removeFilter($(this).attr(\"data-subjectID\"))'>X</a></div>");
+
+                filtersSelected++;
             }
             if (chosenStandards.length > 0) {
-                chosenStandards = chosenStandards.replace(",", ""); 
-            } 
-            getValues(chosenStandards);  
+                chosenStandards = chosenStandards.replace(",", "");
+            }
+
+            toggleBreadCrumbs();
+            getValues(chosenStandards); console.log("======= ChosenStd: " + chosenStandards);
         });
         hideILStandards();
+        //Remove or hide standards: 
+        //  "Rhode Island GSEs for Civics & Government", 
+        //  "Rhode Island GSEs for Historical Perspectives/Rhode Island History"
+        //  "Adult Education"
+        //  "National Standards"
+        $("#SBddlBody option[value*=jsonRICivics]").remove();
+        $("#SBddlBody option[value*=jsonRIHistory]").remove();
+        $("#SBddlBody optgroup[label='Adult Education']").remove();
+        $("#SBddlBody optgroup[label='National Standards']").remove();
+
+        loadFilterLinks();
     });
 
     $(window).resize(function () {
 
         position = $("#searchBarBox").offset();
         if ($(window).width() <= 500) {
-            $(".filterBox").css("left", "60px");
+            $(".filterBox").css("left", "210px");
             $(".filterBox").width($("#searchBarBox").outerWidth() - 70);
             $("#welcomeTXT").width($("#searchBarBox").outerWidth());
         } else {
-            $(".filterBox").css("left", "160px");
+            $(".filterBox").css("left", "210px");
             $(".filterBox").width(300);
-            $("#standardBrowser").width($("#searchBarBox").outerWidth() - 170);
+            $("#standardBrowser").width($("#searchBarBox").outerWidth() - 220);
         }
 
         if ($(window).width() > 975) {
             $("#searchBarX").css("top", position.top);
-            $("#searchBarX").css("right", position.left + 71);
+            $("#searchBarX").css("right", 165);
         } else if ($(window).width() >= 850 && $(window).width() <= 975) {
             $("#searchBarX").css("top", position.top);
-            $("#searchBarX").css("right", position.left + 121);
-        } else{
+            $("#searchBarX").css("right", 165);
+        } else {
             $("#searchBarX").css("top", position.top);
-            $("#searchBarX").css("right", position.left);
+            $("#searchBarX").css("right", position.left - 15);
         }
     });
 
+    function toggleBreadCrumbs() {
+        
+        if ($("#activeFilterList div").length == 0) {
+            $("#btnResetFilters").hide();
+        }
+        else {
+            $("#btnResetFilters").show();
+        }
+    }
+
+
     function hideFilterBox() {
-        $(".filterBox").hide(); 
+        $(".filterBox").hide();
     }
 
     function showFilterLinks() {
@@ -500,9 +552,9 @@
             $("#gooruResults").css("padding-left", "0px");
         } else {
             $("#filters").show();
-            if ($(window).width() > 800) {
-                $("#gooruResults").css("padding-left", "160px");
-            }
+            //if ($(window).width() > 800) {
+                $("#gooruResults").css("padding-left", "210px");
+            //}
         }
 
         if ($("#collectionSearch").is(':checked')) {
@@ -518,6 +570,12 @@
         $("#mediaFilter").hide()
     }
 
+    function loadFilterLinks() {
+
+       $("#filters").show();
+       $("#gooruResults").css("padding-left", "210px");
+    }
+    
     function showSearchTypeFilter() {
 
         $("#searchTypeFilter").fadeToggle("fast");
@@ -527,9 +585,15 @@
         $("#mediaFilter").hide();
     }
 
+    function toogleArrow(id)
+    {
+        var button = $("#" + id);
+        button.toggleClass("expand");
+    }
     function showStandardBrowser() {
 
         $("#standardBrowser").fadeToggle("fast");
+        toogleArrow("standardsFilter");
         $("#searchTypeFilter").hide();
         $("#gradeFilter").hide();
         $("#subjectFilter").hide();
@@ -537,8 +601,9 @@
     }
 
     function showGradeFilter() {
-
-        $("#gradeFilter").fadeToggle("fast");
+                              
+        $("#gradeFilter").fadeToggle("fast");        
+        toogleArrow("gradeBTN");
         $("#standardBrowser").hide();
         $("#searchTypeFilter").hide();
         $("#subjectFilter").hide();
@@ -548,6 +613,7 @@
     function showSubjectFilter() {
 
         $("#subjectFilter").fadeToggle("fast");
+        toogleArrow("subjectBTN");
         $("#gradeFilter").hide();
         $("#standardBrowser").hide();
         $("#searchTypeFilter").hide();
@@ -557,46 +623,46 @@
     function showMediaFilter() {
 
         $("#mediaFilter").fadeToggle("fast");
+        toogleArrow("mediaBTN");
         $("#subjectFilter").hide();
         $("#gradeFilter").hide();
         $("#standardBrowser").hide();
         $("#searchTypeFilter").hide();
     }
 
-    $(".filterBox .list a").on("click", function () {
+    $(".filterBox .list input").on("change", function () {
 
-        if ($(this).attr("data-selected") == "true") {
+        if ($(this).prop("checked") == "true") {
+            
+            removeFilter($(this).attr("data-display"));
 
-            $(this).attr("data-selected", "false");
-            removeFilter($(this).attr("data-display")); 
- 
         } else {
-            $(this).attr("data-selected", "true");
-
-            $("#activeFilterList").append("<div id='activeFilterItem' class='filterItems' data-name='" + $(this).attr("data-display")
-                + "'>" + $(this).attr("data-display") + "<a href ='#' class='closeBox' data-subjectID='" + $(this).attr("data-display")
+            
+            $("#activeFilterList").append("<div id='activeFilterItem' class='filterItems' data-name='" + $(this).attr("data-name")
+                + "'>" + $(this).parent().text().trim() + "<a href ='#' class='closeBox' data-subjectID='" + $(this).attr("data-name")
                 + "' onclick='removeFilter($(this).attr(\"data-subjectID\"))'>X</a></div>");
 
-            filtersSelected++;
-            $("#btnResetFilters").show();
+            filtersSelected++;            
+            toggleBreadCrumbs();
         }
         resetCountDown();
     });
 
     function removeFilter(filter) {
-            
+
         $(".filterItems").each(function () {
 
             if ($(this).attr("data-name") == filter) {
                 $(this).remove();
                 filtersSelected--;
-            } 
+            }
         });
 
-        $(".filterBox .list a").each(function () {
+        $(".filterBox .list input").each(function () {
 
-            if ($(this).attr("data-display") == filter) {
-                $(this).attr("data-selected", "false");
+            if ($(this).attr("data-name") == filter) {
+                $(this).prop("checked", false);
+                newSearch();
             }
         });
 
@@ -608,12 +674,19 @@
 
     function resetFilters() {
 
-        $(".filterBox .list a").attr("data-selected", "false");
+        $(".filterBox .list input").each(function () {
+            
+            if ($(this).attr("data-name")) {
+                $(this).prop("checked", false);
+            }
+        });
         filtersSelected = 0;
         $("#btnResetFilters").hide();
         $(".filterBox").hide();
+        $("#filterLinks a").removeClass("expand");
         $("#activeFilterList").empty();
-        resetCountDown(); 
+        resetCountDown();
+        newSearch();
     }
 
     $("#textBox").on("keyup", function () {
@@ -623,31 +696,43 @@
         } else {
             $("#searchBarX").fadeOut("fast");
         }
-    }); 
+    });
 
     function clearSearchBar() {
 
         $("#textBox").val("");
         $("#searchBarX").fadeOut("fast");
-        resetCountDown(); 
+        resetCountDown();
     }
 
     function resetCountDown() {
-        countDown = 10; 
+        countDown = 10;
     }
 
     function tickCountDown() {
         if (countDown > 0) {
             countDown--;
             if (countDown == 0) {
-                newSearch(); 
+                newSearch();
             }
         }
     }
 
     function setupCountDown() {
-        setInterval(tickCountDown, 100); 
+        //countDown = 100;
+        //setInterval(tickCountDown, countDown);
+        //setInterval(tickCountDown, 100);
+
     }
+
+    $("#textBox").keypress(function (e) {
+        if (e.which == 13) {
+            if ($(this).val() != "") {
+                newSearch();
+            }
+
+        }
+    })
 
     $("#textBox").on("keyup", function (event) {
 
@@ -662,7 +747,7 @@
         } else {
             resetCountDown();
         }
-    }); 
+    });
 
     function newSearch() {
         currentPage = 1;
@@ -674,17 +759,17 @@
         var searchParameter = {
 
             media: [],
-            grade: [], 
-            subject: [], 
-        }; 
+            grade: [],
+            subject: [],
+        };
 
-    $(".filterBox .list").each(function () {
+        $(".filterBox .list").each(function () {
 
-        var currentList = $(this).attr("data-gooruID");
+            var currentList = $(this).attr("data-gooruID");
 
-            var items = ""; 
+            var items = "";
 
-            $(this).find("a[data-selected=true]").each(function () {
+            $(this).find("input:checked").each(function () {
 
                 if (currentList == "subject") {
                     items += "~~" + ($(this).attr("data-name"));
@@ -692,10 +777,10 @@
                     items += "," + ($(this).attr("data-name"));
                 }
             });
-            items = items.replace("~~", ""); 
-            items = items.replace(",", ""); 
-            searchParameter[currentList] = items; 
-        }); 
+            items = items.replace("~~", "");
+            items = items.replace(",", "");
+            searchParameter[currentList] = items;
+        });
         doSearch(searchParameter.media, searchParameter.grade, searchParameter.subject, standards);
     }
 
@@ -704,12 +789,13 @@
         $("#welcomeTXT").hide();
         $("#loader").show();
         var query = $("#textBox").val();
-        var data = {}; 
+        var data = {};
         if (query == "") {
             data = { 'pageNum': currentPage, 'category': category, 'flt.grade': grade, 'flt.subjectName': subject, 'flt.standard': standard };
         } else {
             data = { 'pageNum': currentPage, 'category': category, 'flt.grade': grade, 'flt.subjectName': subject, 'flt.standard': standard, 'query': query };
         }
+        console.log("####### Query: " + query + " ##### Grade: " + grade + " ##### Media: " + category + " ##### Subject: " + subject + " ##### Standard: " + standard);
         doAjax(data);
     }
 
@@ -738,40 +824,17 @@
         }
     }
 
-    /*function doAjaxDev(input) {
-        if ($("#resourceSearch").is(':checked')) {
-            $.ajax({
-                type: 'GET',
-                url: "//concept.goorulearning.org/gooruapi/rest/search/resource?sessionToken=d9a38a1a-88d0-444f-8e4b-a15120308b29&pageSize=20",
-                data: input,
-                dataType: "jsonp",
-                crossDomain: true,
-                cache: false,
-                success: function (data) { displayResults(data); updatePageButtons(data.totalHitCount); updateResultCount(data.totalHitCount); }
-            });
-        } else {
-            $.ajax({
-                type: 'GET',
-                url: "//concept.goorulearning.org/gooruapi/rest/search/collection?sessionToken=d9a38a1a-88d0-444f-8e4b-a15120308b29&pageSize=20",
-                data: input,
-                dataType: "jsonp",
-                crossDomain: true,
-                cache: false,
-                success: function (data) { displayResults(data); updatePageButtons(data.totalHitCount); updateResultCount(data.totalHitCount); }
-            });
-        }
-    }*/
-
+    
     function updatePageButtons(hitCount) {
 
         var total = hitCount;
-        var pageSize = 20; 
+        var pageSize = 20;
         var totalPages = Math.ceil(total / pageSize);
 
         if (total == 0 || totalPages == 1) {
             $(".pageButtons").hide();
             return;
-        }else {
+        } else {
             $(".pageButtons").show();
         }
 
@@ -804,12 +867,12 @@
         getValues();
     }
 
-    function fixThumbnail(image){
+    function fixThumbnail(image) {
         $(image).attr("src", "/images/BlankImage.png");
     }
 
     function updateResultCount(hitCount) {
-        $("#resultCount").append("Found " + hitCount + " results."); 
+        $("#resultCount").append("Found " + hitCount + " results.");
     }
 
     function displayResults(data) {
@@ -818,22 +881,22 @@
         var results = data.searchResults;
         console.log("Results:", results);
 
-        $("#resultCount").empty(); 
+        $("#resultCount").empty();
         $("#results").empty();
 
         if ($("#resourceSearch").is(':checked')) {
             for (var i = 0; i < results.length; i++) {
                 var playerUrl = "/gooruResource?t=r&id=" + results[i].gooruOid;
 
-            	try {
-            		$("#results").append("<div id = 'resultData' class='resources'><a href ='" + playerUrl + "'  target='gooruRes'><img class='thumbnail' src ='" + results[i].thumbnails.url +
+                try {
+                    $("#results").append("<div id = 'resultData' class='resources'><a href ='" + playerUrl + "'  target='gooruRes'><img class='thumbnail' src ='" + results[i].thumbnails.url +
                     "' onerror='fixThumbnail(this)'/></a><a href = '" + playerUrl + "' target='gooruRes'><h2>" + results[i].title + "</h2></a><br><p>" + results[i].description +
                     "</p><br> Media Type: " + results[i].category + "<br> Views: " + results[i].viewCount + "<br>Subscribers: " + results[i].subscriptionCount + "</div>");
-            	}
-            	catch (e) { }
+                }
+                catch (e) { }
             }
         } else {
-            for (var i = 0; i < results.length; i++) { 
+            for (var i = 0; i < results.length; i++) {
                 //player is for resources on
                 var playerUrl = "/gooruResource?t=c&id=" + results[i].id;
                 //var playerUrl = results[i].url;
@@ -841,12 +904,12 @@
                 var goals = results[i].goals;
                 if (goals == undefined) goals = "";
 
-            	try {
-            		$("#results").append("<div id = 'resultData' class='resources'><a href ='" + playerUrl + "'  target='gooruRes'><img class='thumbnail' src ='" + results[i].thumbnails.url +
+                try {
+                    $("#results").append("<div id = 'resultData' class='resources'><a href ='" + playerUrl + "'  target='gooruRes'><img class='thumbnail' src ='" + results[i].thumbnails.url +
                     "'onerror='fixThumbnail(this)'/></a><a href = '" + playerUrl + "' target='gooruRes'><h2>" + results[i].title + "</h2></a><br><p>" +
                     goals + "</p><br> Views: " + results[i].viewCount + "<br>Subscribers: " + results[i].subscriptionCount + "</div>");
-            	}
-            	catch (e) { }
+                }
+                catch (e) { }
             }
         }
         $("#loader").hide();

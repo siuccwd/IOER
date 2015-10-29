@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Illinois Open Educational Resources - Developer Documentation" Language="C#" AutoEventWireup="true" CodeBehind="Default.aspx.cs" Inherits="IOER.Pages.Developers.Default" MasterPageFile="/Masters/Responsive.Master" %>
+﻿<%@ Page Title="Illinois Open Educational Resources - Developer Documentation" Language="C#" AutoEventWireup="true" CodeBehind="Default.aspx.cs" Inherits="IOER.Pages.Developers.Default" MasterPageFile="/Masters/Responsive2.Master" %>
 
 <asp:Content ContentPlaceHolderID="HeadContent" runat="server">
   <link rel="stylesheet" href="/styles/common2.css" />

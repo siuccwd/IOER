@@ -58,6 +58,15 @@ namespace IOER.Controls.Curriculum {
         protected global::System.Web.UI.WebControls.DropDownList ddlNodePermissions;
         
         /// <summary>
+        /// ddlOrganization2 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlSelect ddlOrganization2;
+        
+        /// <summary>
         /// cbxlK12Subject control.
         /// </summary>
         /// <remarks>

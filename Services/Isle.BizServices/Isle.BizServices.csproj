@@ -55,6 +55,7 @@
     <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.EnterpriseServices" />
+    <Reference Include="System.Runtime.Caching" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.Web" />
@@ -98,6 +99,7 @@
       <DependentUpon>Reference.svcmap</DependentUpon>
     </Compile>
     <Compile Include="ServiceHelper.cs" />
+    <Compile Include="ThumbnailServices.cs" />
     <Compile Include="WorkNetListFactoryServices.cs" />
   </ItemGroup>
   <ItemGroup>

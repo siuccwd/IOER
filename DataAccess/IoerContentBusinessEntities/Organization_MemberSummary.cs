@@ -17,6 +17,7 @@ namespace IoerContentBusinessEntities
         public int OrgMbrId { get; set; }
         public int OrgId { get; set; }
         public string Organization { get; set; }
+        public Nullable<bool> IsActive { get; set; }
         public Nullable<bool> IsIsleMember { get; set; }
         public int UserId { get; set; }
         public string FirstName { get; set; }

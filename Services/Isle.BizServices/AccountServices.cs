@@ -59,7 +59,7 @@ namespace Isle.BizServices
 		{
 			string siteAdminObjectName = ServiceHelper.GetAppKeyValue("siteAdminObjectName");
 			//"Site.Admin"
-			return SecurityManager.GetGroupObjectPrivileges(user, siteAdminObjectName).DeletePrivilege > (int)ILPathways.Business.EPrivilegeDepth.State;
+			return SecurityManager.GetGroupObjectPrivileges(user, siteAdminObjectName).CreatePrivilege > (int)ILPathways.Business.EPrivilegeDepth.State;
 		}
 
 		public void SetUserAdminRole(Patron appUser)

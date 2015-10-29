@@ -105,7 +105,7 @@ namespace LRWarehouse.Business
             set { this._alignmentDegree = value; }
         }
 
-
+		public bool IsDirectStandard { get; set; }
     }
 
 
