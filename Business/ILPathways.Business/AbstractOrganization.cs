@@ -8,9 +8,9 @@ namespace ILPathways.Business
     [Serializable]
     public abstract class AbstractOrganization : BaseBusinessDataEntity
     {
-        	///<summary>
+        ///<summary>
         ///Initializes a new instance of the ILPathways.Business.Organization class.
-		///</summary>
+	///</summary>
         public AbstractOrganization() { }
 
         #region Properties created from dictionary for BaseOrganization
