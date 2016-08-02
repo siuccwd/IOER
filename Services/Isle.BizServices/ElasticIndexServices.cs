@@ -1,10 +1,15 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
 using LRWarehouse.Business;
 using LRWarehouse.DAL;
+
+using LRWarehouse.Business.ResourceV2;
+using System.Runtime.Caching;
+using System.Collections.Concurrent;
+using System.Threading;
 
 namespace Isle.BizServices
 {
@@ -22,6 +27,7 @@ namespace Isle.BizServices
             //new ElasticSearchManager().DeleteByVersionID( resourceVersionId, ref response );
             new ElasticSearchManager().DeleteResource( new ResourceVersionManager().Get( resourceVersionId ).ResourceIntId );
         }
+				//
 
         /// <summary>
         /// Remove a resource version document 
@@ -34,12 +40,22 @@ namespace Isle.BizServices
             //new ElasticSearchManager().DeleteByIntID( resourceId, ref response );
             new ElasticSearchManager().DeleteResource( resourceId );
         }
+		//
 
-        public static void RemoveResource_NewCollection( int resourceId, ref string response )
-        {
-            response = "";
-            //new ElasticSearchManager().NewCollection_DeleteByID( resourceId, ref response );
-            new ElasticSearchManager().DeleteResource( resourceId );
-        }
-    }
+		/// <summary>
+		/// This is obsolete now, as is the same as RemoveResource( int resourceId, ref string response )
+		/// </summary>
+		/// <param name="resourceId"></param>
+		/// <param name="response"></param>
+		[Obsolete]
+		public static void RemoveResource_NewCollection( int resourceId, ref string response )
+		{
+				response = "";
+				//new ElasticSearchManager().NewCollection_DeleteByID( resourceId, ref response );
+				new ElasticSearchManager().DeleteResource( resourceId );
+		}
+		//
+
+		}
+
 }
