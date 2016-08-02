@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,7 +14,7 @@ namespace Isle.BizServices
 {
     public class CommunityServices : ServiceHelper
     {
-        private static string thisClassName = "CommunityServices";
+		//private static string thisClassName = "CommunityServices";
 
 		EFDAL.EFCommunityManager myManager = new EFDAL.EFCommunityManager();
 
