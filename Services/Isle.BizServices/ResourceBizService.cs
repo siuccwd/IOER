@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
@@ -16,6 +16,7 @@ using Isle.DTO;
 using LRWarehouse.Business;
 using LRWarehouse.DAL;
 using EfMgr = IOERBusinessEntities.EFResourceManager;
+using EfMgrO = IOERBusinessEntities.ObsoleteCode;
 using EIMgr = Isle.BizServices.ElasticIndexServices;
 using ResBiz = IOERBusinessEntities;
 using ThisUser = LRWarehouse.Business.Patron;
@@ -38,6 +39,10 @@ namespace Isle.BizServices
         public static string XlxImageUrl = "//ioer.ilsharedlearning.org/images/icons/filethumbs/filethumb_xlsx_200x150.png";
         public static string SwfImageUrl = "//ioer.ilsharedlearning.org/images/icons/filethumbs/filethumb_swf_200x200.png";
         //large
+		public static string ZipImageUrl = "//ioer.ilsharedlearning.org/images/icons/icon_zip_400x300.png";
+		public static string VideoImageUrl = "//ioer.ilsharedlearning.org/images/icons/icon_video_400x300.png";
+		public static string AudioImageUrl = "//ioer.ilsharedlearning.org/images/icons/icon_audio_400x300.png";
+		public static string DownloadImageUrl = "//ioer.ilsharedlearning.org/images/icons/icon_download_400x300.png";
 
         public static string PdfLrgImageUrl = "//ioer.ilsharedlearning.org/images/icons/filethumbs/filethumb_pdf_400x300.png";
         public static string PPTLrgImageUrl = "//ioer.ilsharedlearning.org/images/icons/filethumbs/filethumb_pptx_400x300.png";
@@ -47,105 +52,115 @@ namespace Isle.BizServices
         #endregion
 
 
-        #region resource methods
+        #region obsolete resource methods
 
         /// <summary>
         /// Create a resource and all related child records
         /// </summary>
         /// <param name="dto"></param>
         /// <returns></returns>
-        public static int ResourceCompleteCreate( ResourceTransformDTO dto, bool skipLRPublish )
-        {
-            EfMgr mgr = new EfMgr();
-            string statusMessage = "";
-            string tempStatus = "";
-            string lrDocID = "";
-            bool success = true;
-            bool successful = false;
-            string status = "";
-            string continueOnPublishError = UtilityManager.GetAppKeyValue( "continueOnPublishError", "yes" );
+		//private static int ResourceCompleteCreateXXX( ResourceTransformDTO dto, bool skipLRPublish )
+		//{
+		//	EfMgr mgr = new EfMgr();
+		//	string statusMessage = "";
+		//	string tempStatus = "";
+		//	string lrDocID = "";
+		//	bool success = true;
+		//	bool successful = false;
+		//	string status = "";
+		//	string continueOnPublishError = UtilityManager.GetAppKeyValue( "continueOnPublishError", "yes" );
 
-            try
-            {
-                Patron user = AccountServices.GetUser( dto.CreatedById );
-                //TEMP - until resource can be properly populated
-                skipLRPublish = true;
-                if ( !skipLRPublish )
-                {
-                    Resource input = PopulateResource( dto );
-                    PublishingServices.PublishToLearningRegistry( input, 
-                        ref success, 
-                        ref tempStatus, 
-                        ref lrDocID );
-                    if ( !success && !IsLocalHost() )
-                    {
-                        if ( continueOnPublishError == "no" )
-                        {
-                            successful = false;
-                            SetConsoleErrorMessage( "Error: " + tempStatus );
-                            status = statusMessage + " " + tempStatus + " ";
-                            //versionID = 0;
-                            return 0;
-                        }
-                        else
-                        {
-                            EmailManager.NotifyAdmin( "Error during LR Publish", "Error: " + tempStatus + "<p>The error was encountered during the LR publish. The system continued with saving to the database and elastic search. </p>" );
-                        }
-                    }
-                }
+		//	try
+		//	{
+		//		Patron user = AccountServices.GetUser( dto.CreatedById );
+		//		//TEMP - until resource can be properly populated
+		//		skipLRPublish = true;
+		//		if ( !skipLRPublish )
+		//		{
+		//			Resource input = PopulateResource( dto );
+		//			PublishingServices.PublishToLearningRegistry( input, 
+		//				ref success, 
+		//				ref tempStatus, 
+		//				ref lrDocID );
+		//			if ( !success && !IsLocalHost() )
+		//			{
+		//				if ( continueOnPublishError == "no" )
+		//				{
+		//					successful = false;
+		//					SetConsoleErrorMessage( "Error: " + tempStatus );
+		//					status = statusMessage + " " + tempStatus + " ";
+		//					//versionID = 0;
+		//					return 0;
+		//				}
+		//				else
+		//				{
+		//					EmailManager.NotifyAdmin( "Error during LR Publish", "Error: " + tempStatus + "<p>The error was encountered during the LR publish. The system continued with saving to the database and elastic search. </p>" );
+		//				}
+		//			}
+		//		}
 
-                mgr.Resource_CompleteCreate( dto );
-
-
-                LoggingHelper.DoTrace( 4, string.Format("ResourceBizService.ResourceCompleteCreate. calling PublishingServices.PublishToElasticSearch with resId= {0}.", dto.Id) );
-                PublishingServices.PublishToElasticSearch( dto.Id, ref successful, ref status );
-
-                if ( dto.Id > 0 && dto.SelectedCollectionID > 0 )
-                {
-                    new LibraryBizService().LibraryResourceCreate( dto.SelectedCollectionID, dto.Id, dto.CreatedById, ref statusMessage );
-                }
-
-                SetConsoleSuccessMessage( "Successfully published the Resource" );
-
-                //new Thumbnailer().CreateThumbnail( dto.Id, dto.ResourceUrl );
-								ThumbnailServices.CreateThumbnail( dto.Id.ToString(), dto.ResourceUrl, false );
-                         }
-            catch ( Exception ex )
-            {
-                LoggingHelper.LogError( ex, thisClassName + ".ResourceCompleteCreate" );
-            }
-
-            return dto.Id;
-        } //
-        private static Resource PopulateResource( ResourceTransformDTO dto )
-        {
-            Resource res = new Resource();
+		//		mgr.Resource_CompleteCreate( dto );
 
 
-            return res;
-        }
-        public static bool ResourceCompleteUpdate( ResourceTransformDTO dto )
-        {
-            bool isValid = true;
-            EfMgr mgr = new EfMgr();
-            try
-            {
-                mgr.Resource_CompleteUpdate( dto );
-            }
-            catch ( Exception ex )
-            {
-                LoggingHelper.LogError( ex, thisClassName + ".ResourceCompleteUpdate" );
-            }
+		//		LoggingHelper.DoTrace( 4, string.Format("ResourceBizService.ResourceCompleteCreate. calling PublishingServices.PublishToElasticSearch with resId= {0}.", dto.Id) );
+		//		PublishingServices.PublishToElasticSearch( dto.Id, ref successful, ref status );
 
-            return isValid;
-        }
+		//		if ( dto.Id > 0 && dto.SelectedCollectionID > 0 )
+		//		{
+		//			new LibraryBizService().LibraryResourceCreate( dto.SelectedCollectionID, dto.Id, dto.CreatedById, ref statusMessage );
+		//		}
 
-        public static ResourceTransformDTO Resource_CompleteGet( int resourceId )
-        {
+		//		SetConsoleSuccessMessage( "Successfully published the Resource" );
 
-            return EfMgr.Resource_CompleteGet( resourceId );
-        }
-        /// <summary>
+		//		//new Thumbnailer().CreateThumbnail( dto.Id, dto.ResourceUrl );
+		//						ThumbnailServices.CreateThumbnail( dto.Id.ToString(), dto.ResourceUrl, false );
+		//				 }
+		//	catch ( Exception ex )
+		//	{
+		//		LoggingHelper.LogError( ex, thisClassName + ".ResourceCompleteCreate" );
+		//	}
+
+		//	return dto.Id;
+		//} //
+		////private static Resource PopulateResourceXX( ResourceTransformDTO dto )
+		////{
+		////	Resource res = new Resource();
+
+
+		////	return res;
+		////}
+		//public static bool ResourceCompleteUpdateXX( ResourceTransformDTO dto )
+		//{
+		//	bool isValid = true;
+		//	EfMgr mgr = new EfMgr();
+		//	try
+		//	{
+		//		mgr.Resource_CompleteUpdate( dto );
+		//	}
+		//	catch ( Exception ex )
+		//	{
+		//		LoggingHelper.LogError( ex, thisClassName + ".ResourceCompleteUpdate" );
+		//	}
+
+		//	return isValid;
+		//}
+
+		/// <summary>
+		/// Called from IsleFactory - move to make obsolete?
+		/// </summary>
+		/// <param name="resourceId"></param>
+		/// <returns></returns>
+		//public static ResourceTransformDTO Resource_CompleteGet( int resourceId )
+		//{
+
+		//	return EfMgrO.Resource_CompleteGet( resourceId );
+		//}
+
+		#endregion
+
+
+		#region resource methods
+		/// <summary>
         /// Retrieve a Resource id using the related resource version id to retrieve the Resource record
         /// </summary>
         /// <param name="versionID"></param>
@@ -251,6 +266,18 @@ namespace Isle.BizServices
             return EfMgr.GetResourceAccess( resourceId, userId );
         }
 
+		/// <summary>
+		/// Get application privileges related to the resource detail page.
+		/// </summary>
+		/// <param name="user"></param>
+		/// <returns></returns>
+		public static ApplicationRolePrivilege ResourceDetailAuthorization( IWebUser user )
+		{
+			var permissions = SecurityManager.GetGroupObjectPrivileges( user, "IOER.Pages.ResourceDetail" );
+
+			return permissions;
+		}
+
         /// <summary>
         /// Determine if the user can edit the metadata for the resource
         /// Usually means is either the publisher or where the resource was published under the context of an org, the user has appropriate content privileges
@@ -262,22 +289,56 @@ namespace Isle.BizServices
         {
             return new ResourceManager().CanUserEditResource( resourceId, userId );
         }
+		public static bool CanUserEditResourceVersion( int resourceVersionId, int userId )
+		{
+			Resource r = ResourceGet_ViaVersionID( resourceVersionId );
+			if ( r.IsValid && r.Id > 0 )
+				return new ResourceManager().CanUserEditResource( r.Id, userId );
+			else
+				return false;
+		}
+        public DataSet GetListOfResourcesToUndelete(bool doUndelete) {
+            return new ResourceManager().GetListOfResourcesToUndelete(doUndelete);
+        }
+
         #endregion
 
         #region == content related methods ===
-	
+		public string Resource_SyncContentItemChanges( ContentItem entity )
+		{
+			ResourceManager mgr = new ResourceManager();
+			string result = "";
+			Resource res = mgr.Get( entity.ResourceIntId );
+			if ( res != null && res.Id > 0 )
+			{
+				if ( res.ResourceUrl != entity.ResourceUrl )
+				{
+					res.ResourceUrl = entity.ResourceUrl;
+					result= mgr.UpdateById( res );
+
+				}
+			}
+			if ( string.IsNullOrWhiteSpace( entity.ImageUrl ) == false )
+			{
+				if ( res.ImageUrl != entity.ImageUrl )
+					UpdateImageUrl( entity.ResourceIntId, entity.ImageUrl );
+			}
+			return result;
+		}// 
 
 		public string ResourceVersion_SyncContentItemChanges( ContentItem entity )
         {
+			ResourceVersionManager mgr = new ResourceVersionManager();
             string result = "";
-			ResourceVersion rv = EfMgr.ResourceVersion_GetByResourceId( entity.ResourceIntId );
+		
+			ResourceVersion rv = ResourceVersion_GetByResourceId( entity.ResourceIntId );
 			if ( rv != null && rv.Id > 0 )
 			{
 				if ( rv.Title != entity.Title || rv.Description != entity.Summary )
 				{
 					rv.Title = entity.Title;
 					rv.Description = entity.Summary;
-					result = new ResourceVersionManager().UpdateById( rv );
+					result = mgr.UpdateById( rv );
 				}
 			}
 			if ( string.IsNullOrWhiteSpace( entity.ImageUrl ) == false )
@@ -285,28 +346,21 @@ namespace Isle.BizServices
 				UpdateImageUrl( entity.ResourceIntId, entity.ImageUrl );
 			}
             return result;
+}// 
+
+
+		/// <summary>
+		/// Set a resource inactive by resourceId and remove from elastic search
+		/// </summary>
+		/// <param name="resourceId"></param>
+		/// <param name="userId"></param>
+		/// <param name="statusMessage"></param>
+		public void Resource_SetInactive( int resourceId, int userId, ref string statusMessage )
+		{
+			Patron user = AccountServices.GetUser( userId );
+			Resource_SetInactive( resourceId, user, ref statusMessage );
         }// 
-		//private static string ResourceVersion_SyncContentItemChanges( int rvId, string title, string summary )
-		//{
-		//	string result = "";
-		//	ResourceVersion rv = new ResourceVersionManager().Get( rvId );
-		//	if (rv != null && rv.Id > 0)
-		//		result = ResourceVersion_SyncContentItemChanges( rv, title, summary );
-		//	return result;
-		//}// 
-		//private static string ResourceVersion_SyncContentItemChanges( ResourceVersion rv, string title, string summary )
-		//{
-		//	string result = "";
-		//	if ( rv.Title != title || rv.Description != summary )
-		//	{
-		//		rv.Title = title;
-		//		rv.Description = summary;
-
-		//		result = new ResourceVersionManager().UpdateById( rv );
-		//	}
-
-		//	return result;
-		//}// 
+		
 
         /// <summary>
 		/// Set a resource inactive by resourceId and remove from elastic search
@@ -315,12 +369,12 @@ namespace Isle.BizServices
         /// </summary>
         /// <param name="resourceId"></param>
         /// <param name="statusMessage"></param>
-        public void Resource_SetInactive( int resourceId, ref string statusMessage )
+		public void Resource_SetInactive( int resourceId, Patron user, ref string statusMessage )
         {
             //need to get resource version, in order to get LR doc id
-            ResourceVersion entity = new ResourceVersionManager().GetByResourceId( resourceId );
+			ResourceVersion entity = ResourceVersion_GetByResourceId( resourceId );
 			if ( entity != null && entity.ResourceIntId > 0 )
-				Resource_SetInactive( entity, ref statusMessage );
+				Resource_SetInactive( entity, user, ref statusMessage );
 
         }
 
@@ -329,14 +383,15 @@ namespace Isle.BizServices
 		/// </summary>
 		/// <param name="resourceVersionId"></param>
 		/// <param name="statusMessage"></param>
-        public void Resource_SetInactiveByVersionId( int resourceVersionId, ref string statusMessage )
+		public void Resource_SetInactiveByVersionId( int resourceVersionId, Patron user, ref string statusMessage )
         {
             ResourceVersion entity = new ResourceVersionManager().Get( resourceVersionId );
 
             if ( entity != null && entity.ResourceIntId > 0 )
             {
                 LoggingHelper.DoTrace( 2, string.Format( "@@@@@@ Resource_SetInactiveByResVersionId - Setting a resource version INACTVE. rId: {0}, rvId: {1}, title ", entity.ResourceIntId, resourceVersionId, entity.Title ) );
-				Resource_SetInactive( entity, ref statusMessage );
+
+				Resource_SetInactive( entity, user, ref statusMessage );
 
             }
             else
@@ -346,33 +401,40 @@ namespace Isle.BizServices
 
         }
 
-		private void Resource_SetInactive( ResourceVersion entity, ref string statusMessage )
+		private void Resource_SetInactive( ResourceVersion entity, Patron user, ref string statusMessage )
 		{
-			//need to get resource version, in order to get LR doc id
-			//ResourceVersion entity = new ResourceVersionManager().GetByResourceId( resourceId );
-
 			statusMessage = new ResourceManager().SetResourceActiveState( entity.ResourceIntId, false );
 			//should not have to do this, but old code is resource version oriented and seems necessary
 			new ResourceVersionManager().SetActiveState( false, entity.Id );
 
-			//TODO need to remove resourceIntId from related content
+			//remove resourceIntId from related content
 			new ContentServices().HandleResourceDeactivate( entity.ResourceIntId );
-			//TODO - need check for lr  doc id on rv record!
+			
+			//TODO  - make async - would need to change return message so user will not expect to be gone immediately
 			EIMgr.RemoveResource( entity.ResourceIntId, ref statusMessage );
-			//?????? do we need both
-			EIMgr.RemoveResourceVersion( entity.Id, ref statusMessage );
-			//again for new collection???
-			EIMgr.RemoveResource_NewCollection( entity.ResourceIntId, ref statusMessage );
+			//?????? do we need both. NO-Ends up calling same method
+			//EIMgr.RemoveResourceVersion( entity.Id, ref statusMessage );
+			//again for new collection??? NO-Ends up calling same method
+			//EIMgr.RemoveResource_NewCollection( entity.ResourceIntId, ref statusMessage );
 
 			//note can have a RV id not not be published to LR. Need to check for a resource docid
 			if ( entity.LRDocId != null && entity.LRDocId.Length > 10 )
 			{
 				//post request to delete ==> this process would take care of actual delete of the Resource hierarchy
-				string msg = string.Format( "Set resource: {0} to be inactive. BUT the process is incomplete.<br/>NEED TO ADD CODE TO REMOVE FROM THE LR, AND DO PHYSICAL DELETE OF THE RESOURCE HIERARCHY.", entity.ResourceIntId );
+				//string msg = string.Format( "Set resource: {0} to be inactive. BUT the process is incomplete.<br/>NEED TO ADD CODE TO REMOVE FROM THE LR, AND DO PHYSICAL DELETE OF THE RESOURCE HIERARCHY.", entity.ResourceIntId );
 
-				EmailManager.NotifyAdmin( "JEROME - Resource set inactive - need to handle delete from Learning Registry", msg );
-				msg = msg.Replace( "<br/>", "\\r\\n" );
-				LoggingHelper.DoTrace( 3, msg );
+				//EmailManager.NotifyAdmin( "Resource set inactive - confirm deleted from Learning Registry", msg );
+				//msg = msg.Replace( "<br/>", "\\r\\n" );
+				//LoggingHelper.DoTrace( 3, msg );
+				//string deletedDocId = "";
+
+				//NOTE: should only delete from LR if an issue, not just inappropriate for IOER
+				//		- how to communicate inappropriate - ex an apparent test resource
+				if ( entity.Submitter.ToLower().IndexOf( "isle oer" ) > -1
+				  || entity.Title.ToLower().IndexOf( "test" ) == 0 )
+				{
+					PublishingServices.DeleteFromRegistry( entity.LRDocId, user );
+				}
 			}
 		}
 
@@ -463,12 +525,12 @@ namespace Isle.BizServices
         #endregion 
         
         #region == Fill methods - for ws, etc ===
-        public static Resource Resource_FillSummary (int resourceId) 
-        {
-            Resource res = EfMgr.Resource_GetSummary( resourceId );
-            res.Standard = new ResourceStandardManager().Select( resourceId );
-            return res;
-        }
+		public static Resource Resource_FillSummary( int resourceId )
+		{
+			Resource res = EfMgr.Resource_GetSummary( resourceId );
+			res.Standard = new ResourceStandardManager().Select( resourceId );
+			return res;
+		}
 
         #endregion
 
@@ -793,8 +855,8 @@ namespace Isle.BizServices
                         eval = new ResourceEvaluationDTO();
                         eval.Id = re.Id;
                         eval.ResourceIntId = re.ResourceIntId;
-                        eval.EvaluationId = re.EvaluationId == null ? 0 : ( int ) re.EvaluationId;
-                        eval.Score = re.Score == null ? 0 : ( int ) re.Score;
+                        eval.EvaluationId = re.EvaluationId;	// == null ? 0 : ( int ) re.EvaluationId;
+                        eval.Score = re.Score;	// == null ? 0 : ( int ) re.Score;
                         //eval.Score = re.Score;
                         eval.UserHasCertification = ( bool ) re.UserHasCertification;
 
@@ -1078,13 +1140,26 @@ namespace Isle.BizServices
             {
                 using ( var context = new ResBiz.ResourceContext() )
                 {
-                    efEntity.ResourceStandardId = resourceStandardId;
-                    efEntity.Score = score;
-                    efEntity.CreatedById = createdById;
-                    efEntity.Created = System.DateTime.Now;
+					//first check if user already has an eval
+					efEntity = context.Resource_StandardEvaluation.FirstOrDefault( s => s.ResourceStandardId == resourceStandardId 
+						&& (int)s.CreatedById == createdById );
 
-                    context.Resource_StandardEvaluation.Add( efEntity );
-
+					if ( efEntity != null && efEntity.Id > 0 )
+					{
+						//just update
+						efEntity.Score = score;
+						efEntity.Created = System.DateTime.Now;
+					}
+					else
+					{
+						efEntity = new ResBiz.Resource_StandardEvaluation();
+						efEntity.ResourceStandardId = resourceStandardId;
+						efEntity.Score = score;
+						efEntity.CreatedById = createdById;
+						efEntity.Created = System.DateTime.Now;
+						context.Resource_StandardEvaluation.Add( efEntity );
+					}
+                    
                     // submit the change to database
                     int count = context.SaveChanges();
                     if ( count > 0 )
@@ -1100,51 +1175,51 @@ namespace Isle.BizServices
             return retVal;
         }// Create
 
-        private static int StandardEvaluation_Create( ResourceEvaluation evaluation, ref string status )
-        {
-            status = "successful";
-            int retVal = 0;
-            ResBiz.Resource_StandardEvaluation efEntity = new ResBiz.Resource_StandardEvaluation();
-            try
-            {
-                using ( var context = new ResBiz.ResourceContext() )
-                {
-                    efEntity.ResourceStandardId = evaluation.ResourceStandardId;
-                    efEntity.Score = evaluation.Score;
-                    efEntity.CreatedById = evaluation.CreatedById;
-                    efEntity.Created = System.DateTime.Now;
+		//private static int StandardEvaluation_Create( ResourceEvaluation evaluation, ref string status )
+		//{
+		//	status = "successful";
+		//	int retVal = 0;
+		//	ResBiz.Resource_StandardEvaluation efEntity = new ResBiz.Resource_StandardEvaluation();
+		//	try
+		//	{
+		//		using ( var context = new ResBiz.ResourceContext() )
+		//		{
+		//			efEntity.ResourceStandardId = evaluation.ResourceStandardId;
+		//			efEntity.Score = evaluation.Score;
+		//			efEntity.CreatedById = evaluation.CreatedById;
+		//			efEntity.Created = System.DateTime.Now;
 
-                    context.Resource_StandardEvaluation.Add( efEntity );
+		//			context.Resource_StandardEvaluation.Add( efEntity );
 
-                    // submit the change to database
-                    int count = context.SaveChanges();
-                }
+		//			// submit the change to database
+		//			int count = context.SaveChanges();
+		//		}
 
-                //get resour
-                #region parameters
-                //will look up by resId and standard id, then do add
-                SqlParameter[] parameters = new SqlParameter[ 4 ];
-                parameters[ 0 ] = new SqlParameter( "@ResourceIntId", evaluation.ResourceIntId );
-                parameters[ 1 ] = new SqlParameter( "@StandardId", evaluation.StandardId );
-                parameters[ 2 ] = new SqlParameter( "@CreatedById", evaluation.CreatedById );
-                parameters[ 3 ] = new SqlParameter( "@Value", evaluation.Value );
+		//		//get resour
+		//		#region parameters
+		//		//will look up by resId and standard id, then do add
+		//		SqlParameter[] parameters = new SqlParameter[ 4 ];
+		//		parameters[ 0 ] = new SqlParameter( "@ResourceIntId", evaluation.ResourceIntId );
+		//		parameters[ 1 ] = new SqlParameter( "@StandardId", evaluation.StandardId );
+		//		parameters[ 2 ] = new SqlParameter( "@CreatedById", evaluation.CreatedById );
+		//		parameters[ 3 ] = new SqlParameter( "@Value", evaluation.Value );
 
-                #endregion
+		//		#endregion
 
-                //DataSet ds = SqlHelper.ExecuteDataset( ConnString, CommandType.StoredProcedure, INSERT_PROC, parameters );
-                //if ( DoesDataSetHaveRows( ds ) )
-                //{
-                //    retVal = GetRowColumn( ds.Tables[ 0 ].Rows[ 0 ], "Id", 0 );
-                //}
-            }
-            catch ( Exception ex )
-            {
-                LogError( thisClassName + ".CreateStandardEvaluation(): " + ex.ToString() );
-                status = thisClassName + ".CreateStandardEvaluation(): " + ex.Message;
-            }
+		//		//DataSet ds = SqlHelper.ExecuteDataset( ConnString, CommandType.StoredProcedure, INSERT_PROC, parameters );
+		//		//if ( DoesDataSetHaveRows( ds ) )
+		//		//{
+		//		//    retVal = GetRowColumn( ds.Tables[ 0 ].Rows[ 0 ], "Id", 0 );
+		//		//}
+		//	}
+		//	catch ( Exception ex )
+		//	{
+		//		LogError( thisClassName + ".CreateStandardEvaluation(): " + ex.ToString() );
+		//		status = thisClassName + ".CreateStandardEvaluation(): " + ex.Message;
+		//	}
 
-            return retVal;
-        }// Create
+		//	return retVal;
+		//}// Create
 
         /// <summary>
         /// Retrieve all standards aligned to the resource, as well as all ratings.
@@ -1176,31 +1251,34 @@ namespace Isle.BizServices
                             .OrderBy( s => s.Created )
                             .ToList();
                     }
-
-                    List<ResBiz.Resource_Standard> list = context.Resource_Standard
-                            .Include( "StandardBody_Node" )
-                            .Where( s => s.ResourceIntId == resourceId )
+					//TODO - use a summary view, to retrieve code value titles
+					List<ResBiz.Resource_StandardSummary> list = context.Resource_StandardSummary
+                            .Where( s => s.ResourceId == resourceId )
                             .ToList();
-                    foreach ( ResBiz.Resource_Standard re in list )
+					foreach ( ResBiz.Resource_StandardSummary re in list )
                     {
                         eval = new ResourceStandardEvaluationSummary();
 
-                        eval.ResourceIntId = re.ResourceIntId;
+                        eval.ResourceIntId = re.ResourceId;
                         eval.StandardId = re.StandardId;
                         eval.AverageRating = -1;
                         eval.TotalRatings = 0;
                         eval.HasUserRated = false;
-                        eval.AlignmentTypeId = re.AlignmentTypeCodeId ?? 0;
+                        eval.AlignmentTypeId = re.AlignmentTypeCodeId;
+						eval.AlignmentType = re.AlignmentType;
 
-                        if ( re.StandardBody_Node != null )
-                        {
-                            eval.NotationCode = re.StandardBody_Node.NotationCode;
-                            eval.Description = re.StandardBody_Node.Description;
-                        }
+						eval.UsageTypeId = re.UsageTypeId;
+						eval.UsageType = re.UsageType;
+
+						//if ( re.StandardBody_Node != null )
+						//{
+                            eval.NotationCode = re.NotationCode;
+							eval.Description = re.Description;
+                        //}
 
                         //check for an eval summary
                         resEvalSummary = context.Resource_StandardEvaluationSummary
-                                   .FirstOrDefault( s => s.StandardId == re.StandardId && s.ResourceIntId == re.ResourceIntId );
+                                   .FirstOrDefault( s => s.StandardId == re.StandardId && s.ResourceIntId == re.ResourceId );
 
                         if ( resEvalSummary != null && resEvalSummary.ResourceIntId > 0 )
                         {
@@ -1230,33 +1308,95 @@ namespace Isle.BizServices
             }
             catch ( Exception ex )
             {
-                LoggingHelper.LogError( ex, thisClassName + ".GetAllStandardEvaluationsForResource()" );
+				LoggingHelper.LogError( ex, thisClassName + ".ResourceStandardEvaluation_GetAll()" );
                 statusMessage = ex.Message;
             }
 
             return resList;
         }
-
-		public static void TestJoins()
+		private static List<ResourceStandardEvaluationSummary> ResourceStandardEvaluation_GetAll_OLD( int resourceId, ThisUser user, ref string statusMessage )
 		{
-			int resourceIntId = 444671;
-			using ( var context = new ResBiz.ResourceContext() )
+
+			List<ResourceStandardEvaluationSummary> resList = new List<ResourceStandardEvaluationSummary>();
+			ResourceStandardEvaluationSummary eval = new ResourceStandardEvaluationSummary();
+			ResBiz.Resource_StandardEvaluationSummary resEvalSummary = new ResBiz.Resource_StandardEvaluationSummary();
+
+			List<ResBiz.Resource_StandardEvaluationList> userEvals = new List<ResBiz.Resource_StandardEvaluationList>();
+
+			//get all evals for resource
+			try
 			{
-				// use DefaultIfEmpty() to do a left join (otherwise it is an inner join.
-				var results = ( from rs in context.Resource_Standard
-								join st in context.StandardBody_Node
-									on rs.StandardId equals st.Id
-								//join rse in context.Resource_StandardEvaluationSummary.DefaultIfEmpty()
-								//    on rs.Id equals rse.ResourceIntId
-								where rs.ResourceIntId == resourceIntId
-								select new { rs.ResourceIntId, rs.StandardId, st.Description, st.NotationCode, rs.CreatedById } ).ToList();
-				if ( results != null )
+				using ( var context = new ResBiz.ResourceContext() )
 				{
-					//Success code
+					if ( user != null && user.Id > 0 )
+					{
+						///get any user evaluations
+						userEvals = context.Resource_StandardEvaluationList
+							.Where( s => s.CreatedById == user.Id && s.ResourceIntId == resourceId )
+							.OrderBy( s => s.Created )
+							.ToList();
+					}
+					//TODO - use a summary view, to retrieve code value titles
+					List<ResBiz.Resource_Standard> list = context.Resource_Standard
+							.Include( "StandardBody_Node" )
+							.Where( s => s.ResourceIntId == resourceId )
+							.ToList();
+					foreach ( ResBiz.Resource_Standard re in list )
+					{
+						eval = new ResourceStandardEvaluationSummary();
+
+						eval.ResourceIntId = re.ResourceIntId;
+						eval.StandardId = re.StandardId;
+						eval.AverageRating = -1;
+						eval.TotalRatings = 0;
+						eval.HasUserRated = false;
+						eval.AlignmentTypeId = re.AlignmentTypeCodeId ?? 0;
+
+						if ( re.StandardBody_Node != null )
+						{
+							eval.NotationCode = re.StandardBody_Node.NotationCode;
+							eval.Description = re.StandardBody_Node.Description;
+						}
+
+						//check for an eval summary
+						resEvalSummary = context.Resource_StandardEvaluationSummary
+								   .FirstOrDefault( s => s.StandardId == re.StandardId && s.ResourceIntId == re.ResourceIntId );
+
+						if ( resEvalSummary != null && resEvalSummary.ResourceIntId > 0 )
+						{
+							eval.AverageRating = resEvalSummary.AverageScorePercent != null ? ( int ) resEvalSummary.AverageScorePercent : 0;
+							eval.TotalRatings = ( int ) resEvalSummary.TotalEvals;
+							if ( user.Id > 0 )
+							{
+								if ( userEvals.Count > 0 )
+								{
+									foreach ( ResBiz.Resource_StandardEvaluationList ueval in userEvals )
+									{
+										if ( ueval.StandardId == eval.StandardId )
+										{
+											eval.HasUserRated = true;
+											break;
+										}
+									}
+								}
+							}
+						}
+
+						resList.Add( eval );
+					}
+
 				}
 
 			}
+			catch ( Exception ex )
+			{
+				LoggingHelper.LogError( ex, thisClassName + ".ResourceStandardEvaluation_GetAll()" );
+				statusMessage = ex.Message;
+			}
+
+			return resList;
 		}
+		
         #endregion
 
         #region ResourceVersion methods
@@ -1272,8 +1412,11 @@ namespace Isle.BizServices
         }// 
         public static ResourceVersion ResourceVersion_GetByResourceId( int resourceId, bool mustBeActive )
         {
-          ResourceVersion rv = EfMgr.ResourceVersion_GetByResourceId( resourceId, mustBeActive );
-          
+			//be consistant, and use one or the other consistantly
+		  //ResourceVersion rv = EfMgr.ResourceVersion_GetByResourceId( resourceId, mustBeActive );
+		  ResourceVersionManager mgr = new ResourceVersionManager();
+		  ResourceVersion rv = mgr.GetByResourceId( resourceId );
+
           return rv;
 		}
 
@@ -1288,7 +1431,7 @@ namespace Isle.BizServices
             return new ResourceVersionManager().GetByUrl( url );
         }
         #endregion
-
+			
         #region Resource url methods
         /// <summary>
         /// Format a friendly url for resource
@@ -1351,18 +1494,30 @@ namespace Isle.BizServices
             //also should not hard-code domain - maybe should be at the controller level!
             if ( resourceUrl != null && resourceUrl.Length > 5 )
             {
-                string url = resourceUrl.ToLower().Trim();
+				string url = resourceUrl.ToLower().Trim();
 
-                if ( url.EndsWith( ".swf" ) ) imageUrl = SwfImageUrl;
-                else if ( url.EndsWith( ".ppt" ) ) imageUrl = PPTImageUrl;
-                else if ( url.EndsWith( ".pptx" ) ) imageUrl = PPTImageUrl;
-                else if ( url.EndsWith( ".xls" ) ) imageUrl = XlxImageUrl;
-                else if ( url.EndsWith( ".xlzx" ) ) imageUrl = XlxImageUrl;
-                else if ( url.EndsWith( ".doc" ) ) imageUrl = WordImageUrl;
-                else if ( url.EndsWith( ".docx" ) ) imageUrl = WordImageUrl;
-                //else if ( url.EndsWith( ".pdf" ) ) imageUrl = PdfImageUrl;  //now shows content
-                else
-                    imageUrl = string.Format( "//ioer.ilsharedlearning.org/OERThumbs/large/{0}-large.png", resourceIntId );
+				string ext = GetResourceExtension( url );
+				if ( ".zip .rar .tar .gz .7z".IndexOf( ext ) > -1 )
+					imageUrl = UtilityManager.GetAppKeyValue( "archiveThumbnail", "/images/icons/icon_zip_400x300.png" );
+				else if ( ".avi .mp4 .mpg .flv .3gp".IndexOf( ext ) > -1 )
+					imageUrl = UtilityManager.GetAppKeyValue( "videoThumbnail", "/images/icons/icon_video_400x300.png" );
+				else if ( ".ram .mp3 .wma .ogg .wav".IndexOf( ext ) > -1 )
+					imageUrl = UtilityManager.GetAppKeyValue( "audioThumbnail", "/images/icons/icon_audio_400x300.png" );
+				else if ( ".jnlp .tga .tiff .tif view.d2l".IndexOf( ext ) > -1 )
+					imageUrl = UtilityManager.GetAppKeyValue( "downloadThumbnail", "/images/icons/icon_download_400x300.png" );
+				else
+					imageUrl = string.Format( UtilityManager.GetAppKeyValue( "thumbnailTemplate", "//ioer.ilsharedlearning.org/OERThumbs/large/{0}-large.png" ), resourceIntId );
+
+				//if ( url.EndsWith( ".swf" ) ) imageUrl = SwfImageUrl;
+				//else if ( url.EndsWith( ".ppt" ) ) imageUrl = PPTImageUrl;
+				//else if ( url.EndsWith( ".pptx" ) ) imageUrl = PPTImageUrl;
+				//else if ( url.EndsWith( ".xls" ) ) imageUrl = XlxImageUrl;
+				//else if ( url.EndsWith( ".xlzx" ) ) imageUrl = XlxImageUrl;
+				//else if ( url.EndsWith( ".doc" ) ) imageUrl = WordImageUrl;
+				//else if ( url.EndsWith( ".docx" ) ) imageUrl = WordImageUrl;
+				////else if ( url.EndsWith( ".pdf" ) ) imageUrl = PdfImageUrl;  //now shows content
+				//else
+				//	imageUrl = string.Format( UtilityManager.GetAppKeyValue( "thumbnailTemplate", "//ioer.ilsharedlearning.org/OERThumbs/large/{0}-large.png" ), resourceIntId );
             }
 
             return imageUrl;
@@ -1377,28 +1532,21 @@ namespace Isle.BizServices
         {
             //thumbnail is the same now, just use same method
             return GetResourceImageUrl( resourceUrl, resourceIntId );
-
-            //string imageUrl = "";
-            ////need to handle special types
-            ////also should not hard-code domain - maybe should be at the controller level!
-            //if ( resourceUrl != null && resourceUrl.Length > 5 )
-            //{
-            //    string url = resourceUrl.ToLower().Trim();
-
-            //    if ( url.EndsWith( ".swf" ) )  imageUrl = SwfImageUrl;
-            //    else if ( url.EndsWith( ".ppt" ) )  imageUrl = PPTImageUrl;
-            //    else if ( url.EndsWith( ".pptx" ) ) imageUrl = PPTImageUrl;
-            //    else if ( url.EndsWith( ".xls" ) )  imageUrl = XlxImageUrl;
-            //    else if ( url.EndsWith( ".xlzx" ) ) imageUrl = XlxImageUrl;
-            //    else if ( url.EndsWith( ".doc" ) )  imageUrl = WordImageUrl;
-            //    else if ( url.EndsWith( ".docx" ) ) imageUrl = WordImageUrl;
-            //    //else if ( url.EndsWith( ".pdf" ) ) imageUrl = PdfImageUrl;
-            //    else
-            //        imageUrl = string.Format( "//ioer.ilsharedlearning.org/OERThumbs/large/{0}-large.png", resourceIntId );
-            //}
-
-            //return imageUrl;
         }
+		public static string GetResourceExtension( string resourceUrl )
+		{
+			string ext = "";
+			string url = resourceUrl.ToLower().Trim();
+			int pos = url.LastIndexOf( "." );
+
+			//attempt to prevent getting .com, but does it matter?
+			if ( pos > 8 )
+			{
+				ext = url.Substring( pos );
+			}
+
+			return ext;
+		}
         #endregion
 
 
@@ -1439,8 +1587,7 @@ namespace Isle.BizServices
         #region === resource.like methods ===
         public int AddLikeDislike( string userGUID, int resourceId, bool isLike )
         {
-            int id = 0;
-            string statusMessage = "";
+        //    int id = 0;
             Patron user = new AccountServices().GetByRowId( userGUID );
 
             if ( user.Id == 0 )
