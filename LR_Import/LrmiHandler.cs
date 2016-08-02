@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Configuration;
@@ -6,49 +6,21 @@ using System.Linq;
 using System.Text;
 using System.Xml;
 using OLDDM = LearningRegistryCache2.App_Code.DataManagers;
+using Isle.BizServices;
 using LRWarehouse.Business;
-using LRWarehouse.DAL;
 
 
 namespace LearningRegistryCache2
 {
     public class LrmiHandler : MetadataController
     {
-        private ResourceAgeRangeManager ageRangeManager;
-        private ResourceClusterManager clusterManager;
-        private ResourceGradeLevelManager gradeLevelManager;
-        private AuditReportingManager auditReportingManager;
-        private ResourceStandardManager standardManager;
-        private ResourceGradeLevelManager educationManager;
-        private ResourcePropertyManager propManager;
-        private ResourceLanguageManager languageManager;
-        private ResourceEducationUseManager edUseManager;
-        private ResourceGroupTypeManager groupTypeManager;
-        private ResourceItemTypeManager itemTypeManager;
-        private ResourceAssessmentTypeManager asmtTypeManager;
-        private ResourceAccessibilityApiManager accessibilityApiManager;
-        private ResourceAccessibilityControlManager accessibilityControlManager;
-        private ResourceAccessibilityFeatureManager accessibilityFeatureManager;
-        private ResourceAccessibilityHazardManager accessibilityHazardManager;
+        private AuditReportingServices auditReportingManager;
+        private LR_Import.ResourceVersionController versionManager;
 
         public LrmiHandler()
         {
-            ageRangeManager = new ResourceAgeRangeManager();
-            clusterManager = new ResourceClusterManager();
-            auditReportingManager = new AuditReportingManager();
-            gradeLevelManager = new ResourceGradeLevelManager();
-            standardManager = new ResourceStandardManager();
-            educationManager = new ResourceGradeLevelManager();
-            propManager = new ResourcePropertyManager();
-            languageManager = new ResourceLanguageManager();
-            edUseManager = new ResourceEducationUseManager();
-            groupTypeManager = new ResourceGroupTypeManager();
-            itemTypeManager = new ResourceItemTypeManager();
-            asmtTypeManager = new ResourceAssessmentTypeManager();
-            accessibilityApiManager = new ResourceAccessibilityApiManager();
-            accessibilityControlManager = new ResourceAccessibilityControlManager();
-            accessibilityFeatureManager = new ResourceAccessibilityFeatureManager();
-            accessibilityHazardManager = new ResourceAccessibilityHazardManager();
+            auditReportingManager = new AuditReportingServices();
+            versionManager = new LR_Import.ResourceVersionController();
         }
 
 
@@ -61,7 +33,7 @@ namespace LearningRegistryCache2
             string title = "";
             string description = "";
 
-            Resource resource = LoadCommonMetadata(docId, url, payloadPlacement, record, payload, ref isValid);
+            Resource resource = LoadCommonMetadata(docId, ref url, payloadPlacement, record, payload, ref isValid);
             if (!isValid)
             {
                 // Check to see if Resource.Version record exists.  If not, remove it.  Then skip this record
@@ -93,7 +65,7 @@ namespace LearningRegistryCache2
                     }
                     if (title.Length > resource.Version.Title.Length)
                     {
-                        resource.Version.Title = title;
+                        resource.Version.Title = StripTrailingPeriod(title);
                     }
                     break;
                 }
@@ -109,7 +81,7 @@ namespace LearningRegistryCache2
                     }
                     if (title.Length > resource.Version.Title.Length)
                     {
-                        resource.Version.Title = title;
+                        resource.Version.Title = StripTrailingPeriod(title);
                     }
                     break;
                 }
@@ -127,7 +99,7 @@ namespace LearningRegistryCache2
                     }
                     if (title.Length > resource.Version.Title.Length)
                     {
-                        resource.Version.Title = title;
+                        resource.Version.Title = StripTrailingPeriod(title);
                     }
                     break;
                 }
@@ -227,9 +199,16 @@ namespace LearningRegistryCache2
 
             // Access Rights - ISLE extension to LRMI
             list = payload.GetElementsByTagName("accessRestrictions");
+            if (list.Count == 0)
+            {
+                list = payload.GetElementsByTagName("accessRights");
+            }
             foreach (XmlNode node in list)
             {
-                resource.Version.AccessRights = TrimWhitespace(node.InnerText);
+                string accessRights = TrimWhitespace(node.InnerText);
+                string rvAccessRights = string.Empty;
+                resource.Version.AccessRightsId = importManager.MapAccessRights(accessRights, ref rvAccessRights);
+                resource.Version.AccessRights = rvAccessRights;
                 break;
             }
 
@@ -264,7 +243,7 @@ namespace LearningRegistryCache2
 
             try
             {
-                if (resource.Version.RowId == null || resource.Version.RowId == new Guid(ResourceManager.DEFAULT_GUID))
+                if (resource.Version.RowId == null || resource.Version.RowId == new Guid(ImportServices.DEFAULT_GUID))
                 {
                     if (AddResource(resource) == false)
                     {
@@ -318,7 +297,7 @@ namespace LearningRegistryCache2
                 {
                     // Deactivate resource
                     resource.IsActive = false;
-                    resourceManager.SetResourceActiveState( resource.Id, false );
+                    importManager.ResourceSetActiveState( resource.Id, false );
                 }
             }
             catch (Exception ex)
@@ -349,7 +328,7 @@ namespace LearningRegistryCache2
                 ResourceChildItem feature = new ResourceChildItem();
                 feature.ResourceIntId = resource.Id;
                 feature.OriginalValue = TrimWhitespace(node.InnerText);
-                accessibilityFeatureManager.Import(feature);
+                importManager.ImportAccessibilityFeature(feature);
             }
 
             // Accessibility Hazards
@@ -359,7 +338,7 @@ namespace LearningRegistryCache2
                 ResourceAccessibilityHazard hazard = new ResourceAccessibilityHazard();
                 hazard.ResourceIntId = resource.Id;
                 hazard.OriginalValue = TrimWhitespace(node.InnerText);
-                accessibilityHazardManager.Import(hazard);
+                importManager.ImportAccessibilityHazard(hazard);
             }
 
             // Accessibility APIs
@@ -369,7 +348,7 @@ namespace LearningRegistryCache2
                 ResourceChildItem api = new ResourceChildItem();
                 api.ResourceIntId = resource.Id;
                 api.OriginalValue = TrimWhitespace(node.InnerText);
-                accessibilityApiManager.Import(api);
+                importManager.ImportAccessibilityApi(api);
             }
 
             // Accessibility Controls
@@ -379,7 +358,7 @@ namespace LearningRegistryCache2
                 ResourceChildItem control = new ResourceChildItem();
                 control.ResourceIntId = resource.Id;
                 control.OriginalValue = TrimWhitespace(node.InnerText);
-                accessibilityControlManager.Import(control);
+                importManager.ImportAccessibilityControl(control);
             }
         }
 
@@ -427,7 +406,7 @@ namespace LearningRegistryCache2
                             resSubject.ResourceIntId = resource.Id;
                             resSubject.Subject = ApplySubjectEditRules(subjectItem);
                             resSubject.Subject = TrimWhitespace(resSubject.Subject);
-                            status = subjectManager.Create(resSubject);
+                            status = importManager.CreateSubject(resSubject);
                             if (status != "successful")
                             {
                                 reportingManager.LogMessage(LearningRegistry.reportId, LearningRegistry.fileName, resource.Version.LRDocId,
@@ -448,7 +427,7 @@ namespace LearningRegistryCache2
                     ResourceSubject resSubject = new ResourceSubject();
                     resSubject.ResourceIntId = resource.Id;
                     resSubject.Subject = subject;
-                    status = subjectManager.Create(resSubject);
+                    status = importManager.CreateSubject(resSubject);
                     if (status != "successful")
                     {
                         reportingManager.LogMessage(LearningRegistry.reportId, LearningRegistry.fileName, resource.Version.LRDocId,
@@ -495,7 +474,7 @@ namespace LearningRegistryCache2
                                         resSubject.ResourceIntId = resource.Id;
                                         resSubject.Subject = ApplySubjectEditRules(subjectItem);
                                         resSubject.Subject = TrimWhitespace(resSubject.Subject);
-                                        status = subjectManager.Create(resSubject);
+                                        status = importManager.CreateSubject(resSubject);
                                         if (status != "successful")
                                         {
                                             reportingManager.LogMessage(LearningRegistry.reportId, LearningRegistry.fileName, resource.Version.LRDocId, resource.ResourceUrl,
@@ -516,7 +495,7 @@ namespace LearningRegistryCache2
                                 ResourceSubject resSubject = new ResourceSubject();
                                 resSubject.ResourceIntId = resource.Id;
                                 resSubject.Subject = subject;
-                                status = subjectManager.Create(resSubject);
+                                status = importManager.CreateSubject(resSubject);
                                 if (status != "successful")
                                 {
                                     reportingManager.LogMessage(LearningRegistry.reportId, LearningRegistry.fileName, resource.Version.LRDocId, resource.ResourceUrl,
@@ -656,7 +635,7 @@ namespace LearningRegistryCache2
             if (standard.AlignmentTypeValue.ToLower() != "educationlevel")
             {
 
-                standardManager.Import(standard, ref status);
+                importManager.ImportStandard(standard, ref status);
                 if (status != "successful")
                 {
                     reportingManager.LogMessage(LearningRegistry.reportId, LearningRegistry.fileName, resource.Version.LRDocId, resource.ResourceUrl,
@@ -667,22 +646,21 @@ namespace LearningRegistryCache2
 
         protected void GetStandardsDomain(ref string targetUrl, ref string targetName)
         {
-            StandardDataManager sdm = new StandardDataManager();
-            StandardItem si = sdm.StandardItem_Get(0, "", targetName, "");
+            StandardItem si = importManager.StandardItem_Get(0, "", targetName, "");
             if (si == null)
             {
-                si = sdm.StandardItem_Get(0, targetUrl, "", "");
+                si = importManager.StandardItem_Get(0, targetUrl, "", "");
                 if (si == null)
                 {
-                    si = sdm.StandardItem_Get(0, "", "", targetUrl);
+                    si = importManager.StandardItem_Get(0, "", "", targetUrl);
                 }
             }
             if (si != null)
             {
-                StandardItem itemToTest = sdm.StandardItem_Get(si.Id);
+                StandardItem itemToTest = importManager.StandardItem_Get(si.Id);
                 while (itemToTest.ParentId != null && (itemToTest.LevelType.ToLower() != "domain" && itemToTest.LevelType.ToLower() != "domain?"))
                 {
-                    itemToTest = sdm.StandardItem_Get(itemToTest.ParentId);
+                    itemToTest = importManager.StandardItem_Get(itemToTest.ParentId);
                 }
                 if (itemToTest.IsValid && (itemToTest.LevelType.ToLower() == "domain" || itemToTest.LevelType.ToLower() == "domain?"))
                 {
@@ -734,7 +712,7 @@ namespace LearningRegistryCache2
                     level.FromAge = int.Parse(level.OriginalValue.Substring(0, dashIndex));
                     level.ToAge = int.Parse(level.OriginalValue.Substring(dashIndex + 1, length - dashIndex - 1));
                     hasAgeRange = true;
-                    status = ageRangeManager.Import(level);
+                    status = importManager.ImportAgeRange(level);
                     if (status != "successful")
                     {
                         reportingManager.LogMessage(LearningRegistry.reportId, LearningRegistry.fileName, resource.Version.LRDocId,
@@ -742,7 +720,7 @@ namespace LearningRegistryCache2
                     }
                 }
             }
-            ResourceAgeRange finalLevel = ageRangeManager.GetByIntId(resource.Id);
+            ResourceAgeRange finalLevel = importManager.GetAgeRangeByIntId(resource.Id);
             ageRange = finalLevel.FromAge.ToString() + "-" + finalLevel.ToAge.ToString();
         }// AddAgeRange
 
@@ -776,7 +754,7 @@ namespace LearningRegistryCache2
                                 ResourceChildItem level = new ResourceChildItem();
                                 level.ResourceIntId = resource.Id;
                                 level.OriginalValue = TrimWhitespace(grade);
-                                gradeLevelManager.Import(level, ref status);
+                                importManager.ImportGradeLevel(level, ref status);
                                 if (status != "successful")
                                 {
                                     auditReportingManager.LogMessage(LearningRegistry.reportId, LearningRegistry.fileName, resource.Version.LRDocId, resource.ResourceUrl, ErrorType.Error, ErrorRouting.Technical,
@@ -814,7 +792,7 @@ namespace LearningRegistryCache2
                 ResourceChildItem audience = new ResourceChildItem();
                 audience.ResourceIntId = resource.Id;
                 audience.OriginalValue = TrimWhitespace(node.InnerText);
-                audienceManager.Import(audience, ref status);
+                importManager.ImportAudience(audience, ref status);
                 if (status != "successful")
                 {
                     reportingManager.LogMessage(LearningRegistry.reportId, LearningRegistry.fileName, resource.Version.LRDocId, resource.ResourceUrl,
@@ -832,7 +810,7 @@ namespace LearningRegistryCache2
                 ResourceChildItem format = new ResourceChildItem();
                 format.ResourceIntId = resource.Id;
                 format.OriginalValue = TrimWhitespace(node.InnerText);
-                formatManager.Import(format, ref status);
+                importManager.ImportFormat(format, ref status);
                 if (status != "successful")
                 {
                     reportingManager.LogMessage(LearningRegistry.reportId, LearningRegistry.fileName, resource.Version.LRDocId, resource.ResourceUrl,
@@ -855,7 +833,7 @@ namespace LearningRegistryCache2
                 ResourceChildItem type = new ResourceChildItem();
                 type.ResourceIntId = resource.Id;
                 type.OriginalValue = TrimWhitespace(node.InnerText);
-                typeManager.Import(type, ref status);
+                importManager.ImportType(type, ref status);
                 if (status != "successful")
                 {
                     reportingManager.LogMessage(LearningRegistry.reportId, LearningRegistry.fileName, resource.Version.LRDocId, resource.ResourceUrl,
@@ -868,14 +846,21 @@ namespace LearningRegistryCache2
         {
             string status = "successful";
             XmlNodeList list = payload.GetElementsByTagName("inLanguage");
+            if (list == null || list.Count == 0)
+            {
+                list = payload.GetElementsByTagName("language");
+            }
             foreach (XmlNode node in list)
             {
-                if (node.InnerXml == null || node.InnerXml == "")
+                XmlDocument xdoc2 = new XmlDocument();
+                xdoc2.LoadXml(node.OuterXml);
+                XmlNodeList list2 = xdoc2.GetElementsByTagName("name");
+                if (list2.Count == 0)
                 {
                     ResourceChildItem language = new ResourceChildItem();
                     language.ResourceIntId = resource.Id;
                     language.OriginalValue = TrimWhitespace(node.InnerText);
-                    languageManager.Import(language, ref status);
+                    importManager.ImportLanguage(language, ref status);
                     if (status != "successful")
                     {
                         reportingManager.LogMessage(LearningRegistry.reportId, LearningRegistry.fileName, resource.Version.LRDocId, resource.ResourceUrl,
@@ -884,15 +869,12 @@ namespace LearningRegistryCache2
                 }
                 else
                 {
-                    XmlDocument xdoc2 = new XmlDocument();
-                    xdoc2.LoadXml(node.OuterXml);
-                    XmlNodeList list2 = xdoc2.GetElementsByTagName("name");
                     foreach (XmlNode node2 in list2)
                     {
                         ResourceChildItem language = new ResourceChildItem();
                         language.ResourceIntId = resource.Id;
                         language.OriginalValue = TrimWhitespace(node2.InnerText);
-                        languageManager.Import(language, ref status);
+                        importManager.ImportLanguage(language, ref status);
                         if (status != "successful")
                         {
                             reportingManager.LogMessage(LearningRegistry.reportId, LearningRegistry.fileName, resource.Version.LRDocId, resource.ResourceUrl,
@@ -902,14 +884,14 @@ namespace LearningRegistryCache2
                 }
             }// foreach node in list
 
-            resource.Language = languageManager.Select(resource.Id, "");
+            resource.Language = importManager.SelectLanguage(resource.Id, "");
             if (resource.Language == null || resource.Language.Count == 0)
             {
                 // If no languages found, assume English but log it.
                 ResourceChildItem language = new ResourceChildItem();
                 language.ResourceIntId = resource.Id;
                 language.OriginalValue = "English";
-                languageManager.Import(language, ref status);
+                importManager.ImportLanguage(language, ref status);
                 if (status == "successful")
                 {
                     auditReportingManager.LogMessage(LearningRegistry.reportId, LearningRegistry.fileName, resource.Version.LRDocId, resource.ResourceUrl, ErrorType.Warning,
@@ -932,7 +914,7 @@ namespace LearningRegistryCache2
                 ResourceChildItem edUse = new ResourceChildItem();
                 edUse.ResourceIntId = resource.Id;
                 edUse.OriginalValue = TrimWhitespace(node.InnerText);
-                edUseManager.Import(edUse, ref status);
+                importManager.ImportEducationalUse(edUse, ref status);
                 if (status != "successful")
                 {
                     auditReportingManager.LogMessage(LearningRegistry.reportId, LearningRegistry.fileName, resource.Version.LRDocId, resource.ResourceUrl, ErrorType.Error,
@@ -950,7 +932,7 @@ namespace LearningRegistryCache2
                 ResourceChildItem groupType = new ResourceChildItem();
                 groupType.ResourceIntId = resource.Id;
                 groupType.OriginalValue = TrimWhitespace(node.InnerText);
-                groupTypeManager.Import(groupType, ref status);
+                importManager.ImportGroupType(groupType, ref status);
                 if (status != "successful")
                 {
                     auditReportingManager.LogMessage(LearningRegistry.reportId, LearningRegistry.fileName, resource.Version.LRDocId, resource.ResourceUrl, ErrorType.Error,
@@ -969,7 +951,7 @@ namespace LearningRegistryCache2
                 ResourceChildItem itemType = new ResourceChildItem();
                 itemType.ResourceIntId = resource.Id;
                 itemType.OriginalValue = TrimWhitespace(node.InnerText);
-                status = itemTypeManager.Import(itemType);
+                status = importManager.ImportItemType(itemType);
                 if (status != "successful")
                 {
                     auditReportingManager.LogMessage(LearningRegistry.reportId, LearningRegistry.fileName, resource.Version.LRDocId, resource.ResourceUrl, ErrorType.Error,
@@ -988,7 +970,7 @@ namespace LearningRegistryCache2
                 ResourceChildItem asmtType = new ResourceChildItem();
                 asmtType.ResourceIntId = resource.Id;
                 asmtType.OriginalValue = TrimWhitespace(node.InnerText);
-                status = asmtTypeManager.Import(asmtType);
+                status = importManager.ImportAssessmentType(asmtType);
                 if (status != "successful")
                 {
                     auditReportingManager.LogMessage(LearningRegistry.reportId, LearningRegistry.fileName, resource.Version.LRDocId, resource.ResourceUrl, ErrorType.Error,
