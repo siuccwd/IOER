@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Configuration;
@@ -8,28 +8,28 @@ using System.Text.RegularExpressions;
 using System.Xml;
 //using LearningRegistryCache2.App_Code.Classes;
 using OLDDM = LearningRegistryCache2.App_Code.DataManagers;
+using Isle.BizServices;
 using LRWarehouse.Business;
-using LRWarehouse.DAL;
 
 namespace LearningRegistryCache2
 {
     public class NsdlHandler : MetadataController
     {
-        private ResourceClusterManager clusterManager;
-        private AuditReportingManager auditReportingManager;
-        private ResourceStandardManager standardManager;
+        //private ResourceClusterManager clusterManager;
+        private AuditReportingServices auditReportingManager;
+        /*private ResourceStandardManager standardManager;
         private ResourceGradeLevelManager gradeLevelManager;
         private ResourcePropertyManager propManager;
-        private ResourceLanguageManager languageManager;
+        private ResourceLanguageManager languageManager;*/
 
         public NsdlHandler()
         {
-            clusterManager = new ResourceClusterManager();
-            auditReportingManager = new AuditReportingManager();
-            standardManager = new ResourceStandardManager();
+            //clusterManager = new ResourceClusterManager();
+            auditReportingManager = new AuditReportingServices();
+            /*standardManager = new ResourceStandardManager();
             gradeLevelManager = new ResourceGradeLevelManager();
             propManager = new ResourcePropertyManager();
-            languageManager = new ResourceLanguageManager();
+            languageManager = new ResourceLanguageManager();*/
         }
 
         public bool NsdlMap(string docId, string url, string payloadPlacement, XmlDocument record)
@@ -38,7 +38,7 @@ namespace LearningRegistryCache2
             XmlDocument payload = new XmlDocument();
             bool isValid = true;
 
-            Resource resource = LoadCommonMetadata(docId, url, payloadPlacement, record, payload, ref isValid);
+            Resource resource = LoadCommonMetadata(docId, ref url, payloadPlacement, record, payload, ref isValid);
             if (!isValid)
             {
                 // Check to see if Resource.Version record exists.  If not, remove it.  Then skip this record
@@ -60,7 +60,7 @@ namespace LearningRegistryCache2
                 string title = TrimWhitespace(titleNode.InnerText);
                 if (title.Length > resource.Version.Title.Length)
                 {
-                    resource.Version.Title = title;
+                    resource.Version.Title = StripTrailingPeriod(title);
                 }
                 break;
             }
@@ -129,7 +129,7 @@ namespace LearningRegistryCache2
             XmlNodeList rightsList = payload.GetElementsByTagName("dc:rights");
             foreach (XmlNode rights in rightsList)
             {
-                if (rights.Attributes["xsi:type"] != null && rights.Attributes["xsi:type"].Value == "dct:URI")
+                //if (rights.Attributes["xsi:type"] != null && rights.Attributes["xsi:type"].Value == "dct:URI")
                 {
                     resource.Version.Rights = TrimWhitespace(rights.InnerText);
                 }
@@ -172,7 +172,7 @@ namespace LearningRegistryCache2
 
             try
             {
-                if (resource.Version.RowId == null || resource.Version.RowId == new Guid(ResourceManager.DEFAULT_GUID))
+                if (resource.Version.RowId == null || resource.Version.RowId == new Guid(ImportServices.DEFAULT_GUID))
                 {
                     if (AddResource(resource) == false)
                     {
@@ -212,7 +212,7 @@ namespace LearningRegistryCache2
                 {
                     // Deactivate resource - no good language
                     resource.IsActive = false;
-                    resourceManager.UpdateById(resource);
+                    importManager.UpdateResource(resource);
                 }
                 // AddInteractivityType(resource, payload); //Handled in code above (ieee:interactivityType)
 
@@ -311,7 +311,7 @@ namespace LearningRegistryCache2
                             resSubject.ResourceIntId = resource.Id;
                             resSubject.Subject = ApplySubjectEditRules(subjectItem);
                             resSubject.Subject = TrimWhitespace(resSubject.Subject);
-                            status = subjectManager.Create(resSubject);
+                            status = importManager.CreateSubject(resSubject);
                             if (status != "successful")
                             {
                                 auditReportingManager.LogMessage(LearningRegistry.reportId, LearningRegistry.fileName, resource.Version.LRDocId, resource.ResourceUrl,
@@ -333,7 +333,7 @@ namespace LearningRegistryCache2
                    // resSubject.ResourceId = resource.RowId;
                     resSubject.ResourceIntId = resource.Id;
                     resSubject.Subject = subject;
-                    status = subjectManager.Create(resSubject);
+                    status = importManager.CreateSubject(resSubject);
                     if (status != "successful")
                     {
                         auditReportingManager.LogMessage(LearningRegistry.reportId, LearningRegistry.fileName, resource.Version.LRDocId, resource.ResourceUrl,
@@ -365,7 +365,7 @@ namespace LearningRegistryCache2
                     standard.StandardUrl = standard.StandardUrl.Substring(0, 300);
                 }
 
-                standardManager.Import(standard, ref status);
+                importManager.ImportStandard(standard, ref status);
                 if (status != "successful")
                 {
                     auditReportingManager.LogMessage(LearningRegistry.reportId, LearningRegistry.fileName, resource.Version.LRDocId, resource.ResourceUrl,
@@ -386,7 +386,7 @@ namespace LearningRegistryCache2
                 //level.ResourceId = resource.RowId;
                 level.ResourceIntId = resource.Id;
                 level.OriginalValue = TrimWhitespace(node.InnerText);
-                gradeLevelManager.Import(level, ref status);
+                importManager.ImportGradeLevel(level, ref status);
                 if (status != "successful")
                 {
                     auditReportingManager.LogMessage(LearningRegistry.reportId, LearningRegistry.fileName, resource.Version.LRDocId, resource.ResourceUrl,
@@ -395,7 +395,7 @@ namespace LearningRegistryCache2
                 grades.Add(level.OriginalValue);
             }
 
-            resource.Gradelevel = gradeLevelManager.Select(resource.Id, "");
+            resource.Gradelevel = importManager.SelectGradeLevel(resource.Id, "");
             if ( resource.Gradelevel == null || resource.Gradelevel.Count == 0 )
             {
                 // If no education levels found, assume "unknown" but log it.
@@ -403,7 +403,7 @@ namespace LearningRegistryCache2
                 //level.ResourceId = resource.RowId;
                 level.ResourceIntId = resource.Id;
                 level.OriginalValue = "Unknown";
-                gradeLevelManager.Import(level, ref status);
+                importManager.ImportGradeLevel(level, ref status);
                 if (status == "successful")
                 {
                     auditReportingManager.LogMessage(LearningRegistry.reportId, LearningRegistry.fileName, resource.Version.LRDocId, resource.ResourceUrl,
@@ -441,7 +441,7 @@ namespace LearningRegistryCache2
                 //audience.ResourceId = resource.RowId;
                 audience.ResourceIntId = resource.Id;
                 audience.OriginalValue = TrimWhitespace(node.InnerText);
-                audienceManager.Import(audience, ref status);
+                importManager.ImportAudience(audience, ref status);
                 if (status != "successful")
                 {
                     auditReportingManager.LogMessage(LearningRegistry.reportId, LearningRegistry.fileName, resource.Version.LRDocId, resource.ResourceUrl,
@@ -460,7 +460,7 @@ namespace LearningRegistryCache2
                 //format.ResourceId = resource.RowId;
                 format.ResourceIntId = resource.Id;
                 format.OriginalValue = TrimWhitespace(node.InnerText);
-                formatManager.Import(format, ref status);
+                importManager.ImportFormat(format, ref status);
                 if (status != "successful")
                 {
                     auditReportingManager.LogMessage(LearningRegistry.reportId, LearningRegistry.fileName, resource.Version.LRDocId, resource.ResourceUrl,
@@ -483,7 +483,7 @@ namespace LearningRegistryCache2
                // type.ResourceId = resource.RowId;
                 type.ResourceIntId = resource.Id;
                 type.OriginalValue = TrimWhitespace(node.InnerText);
-                typeManager.Import(type, ref status);
+                importManager.ImportType(type, ref status);
                 if (status != "successful")
                 {
                     auditReportingManager.LogMessage(LearningRegistry.reportId, LearningRegistry.fileName, resource.Version.LRDocId, resource.ResourceUrl,
@@ -506,7 +506,7 @@ namespace LearningRegistryCache2
                // language.ResourceId = resource.RowId;
                 language.ResourceIntId = resource.Id;
                 language.OriginalValue = TrimWhitespace(node.InnerText);
-                languageManager.Import(language, ref status);
+                importManager.ImportLanguage(language, ref status);
                 if (status != "successful")
                 {
                     auditReportingManager.LogMessage(LearningRegistry.reportId, LearningRegistry.fileName, resource.Version.LRDocId, resource.ResourceUrl,
@@ -514,7 +514,7 @@ namespace LearningRegistryCache2
                 }
             }
 
-            resource.Language = languageManager.Select(resource.Id, "");
+            resource.Language = importManager.SelectLanguage(resource.Id, "");
             if (resource.Language == null || resource.Language.Count == 0)
             {
                 // If no languages found, assume English but log it
@@ -522,7 +522,7 @@ namespace LearningRegistryCache2
                // language.ResourceId = resource.RowId;
                 language.ResourceIntId = resource.Id;
                 language.OriginalValue = "English";
-                languageManager.Import(language, ref status);
+                importManager.ImportLanguage(language, ref status);
                 if (status == "successful")
                 {
                     auditReportingManager.LogMessage(LearningRegistry.reportId, LearningRegistry.fileName, resource.Version.LRDocId, resource.ResourceUrl, ErrorType.Warning,
