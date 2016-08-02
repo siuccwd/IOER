@@ -1,14 +1,14 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Xml;
 using LRWarehouse.Business;
-using LRWarehouse.DAL;
 using LearningRegistryCache2.App_Code.Classes;
 using Isle.BizServices;
 
@@ -16,27 +16,21 @@ namespace LearningRegistryCache2
 {
     public class BaseDataController
     {
-        AuditReportingManager auditReportingManager;
-        ResourceKeywordManager resourceKeywordManager;
-        ResourceClusterManager clusterManager;
-        public ResourceV2Services searchManager;
+        private List<ProhibitedKeyword> prohibitedKeywords;
+        protected ImportServices importManager;
         public ResourceBizService resourceBizService;
-        private Regex[] prohibitedKeywords;
+        private AuditReportingServices auditReportingManager;
 
         public static List<ManualResetEvent> doneEvents = new List<ManualResetEvent>(1000);
 
         public BaseDataController()
         {
-            auditReportingManager = new AuditReportingManager();
-            resourceKeywordManager=new ResourceKeywordManager();
-            clusterManager = new ResourceClusterManager();
-            searchManager = new ResourceV2Services();
+            importManager = new ImportServices();
             resourceBizService = new ResourceBizService();
-            prohibitedKeywords = new Regex[2] 
-            {
-                new Regex("^NSDL_",RegexOptions.IgnoreCase),
-                new Regex("^oai:nsdl\\.org",RegexOptions.IgnoreCase)
-            };
+            auditReportingManager = new AuditReportingServices();
+
+            string status = "successful";
+            prohibitedKeywords = importManager.GetProhibitedKeywordRules(ref status);
             
         }
 
@@ -54,32 +48,40 @@ namespace LearningRegistryCache2
             int maxKeywords = int.Parse(ConfigurationManager.AppSettings["maxKeywordsToProcess"].ToString()); // Speed processing - some people are submitting hundreds of keywords!!!
             bool isProhibitedKeyword = false;
             XmlNodeList list = record.GetElementsByTagName(tagName);
+            List<string> keywordSubstrings = prohibitedKeywords.Where(x => x.IsRegex == false).Select(x => x.Keyword).ToList();
+            List<string> keywordExpressionStrings = prohibitedKeywords.Where(x => x.IsRegex == true).Select(x => x.Keyword).ToList();
+
             foreach (XmlNode node in list)
             {
                 string keyword = node.InnerText.Trim();
-                if (keyword.Length > 1) // Ignore single character keywords
+
+                if (keywordSubstrings.Any(x => keyword.IndexOf(x) > -1))
                 {
-                    isProhibitedKeyword = false;
-                    foreach (Regex rex in prohibitedKeywords)
+                    isProhibitedKeyword = true;
+                }
+                if (!isProhibitedKeyword)
+                {
+                    foreach (string keywordExpression in keywordExpressionStrings)
                     {
+                        Regex rex = new Regex(keywordExpression, RegexOptions.IgnoreCase);
                         if (rex.IsMatch(keyword))
                         {
                             isProhibitedKeyword = true;
                             break;
                         }
                     }
+                }
 
-                    if (!isProhibitedKeyword)
+                if (!isProhibitedKeyword)
+                {
+                    nbrKeywords++;
+                    if (maxKeywords > 0 && nbrKeywords > maxKeywords)
                     {
-                        nbrKeywords++;
-                        if (maxKeywords > 0 && nbrKeywords > maxKeywords)
-                        {
-                            message += string.Format("Number of keywords exceeds {0}.  First {0}/{1} keywords processed, remainder ignored. ", maxKeywords, list.Count);
-                            break;
-                        }
-
-                        AddKeyword(resource, keyword);
+                        message += string.Format("Number of keywords exceeds {0}.  First {0}/{1} keywords processed, remainder ignored. ", maxKeywords, list.Count);
+                        break;
                     }
+
+                    AddKeyword(resource, keyword);
                 }
             }
         }
@@ -107,7 +109,7 @@ namespace LearningRegistryCache2
                         //keys.ResourceId = resource.RowId;
                         keys.ResourceIntId = resource.Id;
                         keys.OriginalValue = key;
-                        resourceKeywordManager.Create(keys, ref status);
+                        importManager.CreateKeyword(keys, ref status);
                         if (status != "successful")
                         {
                             auditReportingManager.LogMessage(LearningRegistry.reportId, "", resource.Version.LRDocId, resource.ResourceUrl, ErrorType.Error, ErrorRouting.Technical, status);
@@ -122,7 +124,7 @@ namespace LearningRegistryCache2
                 //keys.ResourceId = resource.RowId;
                 keys.ResourceIntId = resource.Id;
                 keys.OriginalValue = keyword;
-                resourceKeywordManager.Create(keys, ref status);
+                importManager.CreateKeyword(keys, ref status);
                 if (status != "successful")
                 {
                     auditReportingManager.LogMessage(LearningRegistry.reportId, "", resource.Version.LRDocId, resource.ResourceUrl, ErrorType.Error, ErrorRouting.Technical, status);
@@ -209,7 +211,7 @@ namespace LearningRegistryCache2
                 cluster.ResourceIntId = resource.Id;
                 cluster.ClusterId = 0;
                 cluster.Title = TrimWhitespace(node.InnerText);
-                status = clusterManager.Import(cluster);
+                status = importManager.ImportCluster(cluster);
                 if (status != "successful")
                 {
                     auditReportingManager.LogMessage(LearningRegistry.reportId, LearningRegistry.fileName, resource.Version.LRDocId, resource.ResourceUrl, ErrorType.Error,
@@ -219,6 +221,7 @@ namespace LearningRegistryCache2
         } //AddCareerClusters
 
         #endregion
+
         #region Helper Methods
 
         private bool IsNumeric(string param)
@@ -326,7 +329,142 @@ namespace LearningRegistryCache2
         }
 
 
+        public static bool DoesDataSetHaveRows(DataSet ds)
+        {
+            if (ds == null)
+                return false;
+            if (ds.Tables == null || ds.Tables.Count == 0)
+                return false;
+            if (ds.Tables[0].Rows == null || ds.Tables[0].Rows.Count == 0)
+                return false;
+            
+            return true;
+        }
 
+        public static int GetRowColumn(DataRow dr, string columnName, int defaultValue)
+        {
+            int retVal = defaultValue;
+            try
+            {
+                retVal = int.Parse(dr[columnName].ToString());
+            }
+            catch
+            {
+                // do nothing
+            }
+
+            return retVal;
+        }
+
+        public static int GetRowColumn(SqlDataReader dr, string columnName, int defaultValue)
+        {
+            int retVal = defaultValue;
+            try
+            {
+                retVal = int.Parse(dr[columnName].ToString());
+            }
+            catch
+            {
+                // do nothing
+            }
+
+            return retVal;
+        }
+
+        public static DateTime GetRowColumn(SqlDataReader dr, string columnName, DateTime defaultValue)
+        {
+            DateTime retVal = defaultValue;
+            try
+            {
+                retVal = DateTime.Parse(dr[columnName].ToString());
+            }
+            catch
+            {
+                // do nothing
+            }
+
+            return retVal;
+        }
+
+        public static DateTime GetRowColumn(DataRow dr, string columnName, DateTime defaultValue)
+        {
+            DateTime retVal = defaultValue;
+            try
+            {
+                retVal = DateTime.Parse(dr[columnName].ToString());
+            }
+            catch
+            {
+                // do nothing
+            }
+
+            return retVal;
+        }
+
+        public static string GetRowColumn(DataRow dr, string columnName, string defaultValue)
+        {
+            string retVal = defaultValue;
+            try
+            {
+                retVal = dr[columnName].ToString();
+            }
+            catch
+            {
+                // do nothing
+            }
+
+            return retVal;
+        }
+
+        public static string GetRowColumn(SqlDataReader dr, string columnName, string defaultValue)
+        {
+            string retVal = defaultValue;
+            try
+            {
+                retVal = dr[columnName].ToString();
+            }
+            catch
+            {
+                // do nothing
+            }
+
+            return retVal;
+        }
+
+        protected string StripTrailingPeriod(string input)
+        {
+            Regex trailingPeriod = new Regex(@"\.+$"); // backslash escapes the period so that it is interpreted as an actual period, + makes it greedy, $ asserts end of string
+            if (input == null)
+            {
+                return null;
+            }
+            string output = trailingPeriod.Replace(input, "");
+
+            return output;
+        }
+
+        protected string FixPlusesInUrl(string input)
+        {
+            string retVal = "";
+            if (input.IndexOf("+") == -1)
+            {
+                // There are no + signs, return what was input
+                return input;
+            }
+            int posQuestionMark = input.IndexOf("?");
+            if (posQuestionMark == -1)
+            {
+                retVal = input.Replace("+", "%20");
+            }
+            else
+            {
+                string originalPage = input.Substring(0, posQuestionMark);
+                string newPage = originalPage.Replace("+", "%20");
+                retVal = input.Replace(originalPage, newPage);
+            }
+
+            return retVal;
+        }
 
 #endregion
     }
