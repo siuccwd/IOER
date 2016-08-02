@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Text;
@@ -6,21 +6,21 @@ using System.Text.RegularExpressions;
 using System.Xml;
 //using LearningRegistryCache2.App_Code.Classes;
 using OLDDM = LearningRegistryCache2.App_Code.DataManagers;
+using Isle.BizServices;
 using LRWarehouse.Business;
-using LRWarehouse.DAL;
 
 namespace LearningRegistryCache2
 {
     public class LRParadataHandler : ParadataController
     {
-        private AuditReportingManager auditReportingManager = new AuditReportingManager();
+        private AuditReportingServices auditReportingManager = new AuditReportingServices();
         //private ResourcePropertyManager propertyManager = new ResourcePropertyManager();
 
         public LRParadataHandler()
         {
         }
 
-        public void LrParadataMap(string docId, string url, string payloadPlacement, XmlDocument record)
+        public void LrParadataMap(string docId, ref string url, string payloadPlacement, XmlDocument record)
         {
             string status = "";
             // Begin common logic for all paradata schemas
@@ -33,7 +33,7 @@ namespace LearningRegistryCache2
             XmlNodeList list;
             string action = "";
 
-            Resource resource = LoadCommonParadata(docId, url, payloadPlacement, record, payload, ref isValid);
+            Resource resource = LoadCommonParadata(docId, ref url, payloadPlacement, record, payload, ref isValid);
             if (!isValid)
             {
                 // Skip this record - it's already logged in LoadCommonParadata()
@@ -78,7 +78,7 @@ namespace LearningRegistryCache2
             // Process Page Views
             if (viewedDelimited.IndexOf(action) > -1 && action != "rated") // "rated" appears in "incorporated" so specifically exclude that!
             {
-                resource = LoadCommonParadata(docId, url, payloadPlacement, record, payload, ref isValid);
+                resource = LoadCommonParadata(docId, ref url, payloadPlacement, record, payload, ref isValid);
                 if (!isValid)
                 {
                     // Skip this record - it's already logged in LoadCommonParadata()
@@ -98,7 +98,7 @@ namespace LearningRegistryCache2
             // Process Favorites
             if (bookmarkedDelimited.IndexOf(action) > -1)
             {
-                resource = LoadCommonParadata(docId, url, payloadPlacement, record, payload, ref isValid);
+                resource = LoadCommonParadata(docId, ref url, payloadPlacement, record, payload, ref isValid);
                 if (!isValid)
                 {
                     // Skip this record - it's already logged in LoadCommonParadata()
@@ -118,7 +118,7 @@ namespace LearningRegistryCache2
             // Process Standards
             if (alignedDelimited.IndexOf(action) > -1)
             {
-                resource = LoadCommonParadata(docId, url, payloadPlacement, record, payload, ref isValid);
+                resource = LoadCommonParadata(docId, ref url, payloadPlacement, record, payload, ref isValid);
                 if (!isValid)
                 {
                     // Skip this record - it's already logged in LoadCommonParadata()
@@ -138,7 +138,7 @@ namespace LearningRegistryCache2
             // Process Tagged
             if (taggedDelimited.IndexOf(action) > -1)
             {
-                resource = LoadCommonParadata(docId, url, payloadPlacement, record, payload, ref isValid);
+                resource = LoadCommonParadata(docId, ref url, payloadPlacement, record, payload, ref isValid);
                 if (!isValid)
                 {
                     // Skip this record - it's already logged in LoadCommonParadata()
@@ -162,7 +162,7 @@ namespace LearningRegistryCache2
                     return;
                 }
                 string originalUrl = superceded[0].InnerText.Trim();
-                resource = LoadCommonParadata(docId, originalUrl, payloadPlacement, record, payload, ref isValid);
+                resource = LoadCommonParadata(docId, ref originalUrl, payloadPlacement, record, payload, ref isValid);
                 if (!isValid)
                 {
                     // Skip this record - it's already logged in LoadCommonParadata()
@@ -181,7 +181,7 @@ namespace LearningRegistryCache2
             // Process comments
             if (commentDelimited.IndexOf(action) > -1)
             {
-                resource = LoadCommonParadata(docId, url, payloadPlacement, record, payload, ref isValid);
+                resource = LoadCommonParadata(docId, ref url, payloadPlacement, record, payload, ref isValid);
                 if (!isValid)
                 {
                     // Skip this record - it's already logged in LoadCommonParadata()
@@ -200,7 +200,7 @@ namespace LearningRegistryCache2
             // Process delete
             if (deletedDelimited.IndexOf(action) > -1)
             {
-                resource = LoadCommonParadata(docId, url, payloadPlacement, record, payload, ref isValid);
+                resource = LoadCommonParadata(docId, ref url, payloadPlacement, record, payload, ref isValid);
                 if (!isValid)
                 {
                     // Skip this record - it's already logged in LoadCommonParadata()
@@ -215,7 +215,7 @@ namespace LearningRegistryCache2
             // Process ratings
             if (ratedDelimited.IndexOf(action) > -1)
             {
-                resource = LoadCommonParadata(docId, url, payloadPlacement, record, payload, ref isValid);
+                resource = LoadCommonParadata(docId, ref url, payloadPlacement, record, payload, ref isValid);
                 if (!isValid)
                 {
                     // Skip this record - it's already logged in LoadCommonParadata()
@@ -269,7 +269,7 @@ namespace LearningRegistryCache2
                 }
 
                 resource.ViewCount += viewCount;
-                resourceManager.UpdateById(resource);
+                importManager.UpdateResource(resource);
             }
             catch (Exception ex)
             {
@@ -315,7 +315,7 @@ namespace LearningRegistryCache2
                 }
 
                 resource.FavoriteCount += favoriteCount;
-                resourceManager.UpdateById(resource);
+                importManager.UpdateResource(resource);
             }
             catch (Exception ex)
             {
@@ -372,7 +372,7 @@ namespace LearningRegistryCache2
 
                 if (!isDuplicate)
                 {
-                    status = commentManager.Import(comment);
+                    status = importManager.ImportComment(comment);
                     if (status != "successful")
                     {
                         auditReportingManager.LogMessage(LearningRegistry.reportId, LearningRegistry.fileName, docId, resource.ResourceUrl,
@@ -397,12 +397,12 @@ namespace LearningRegistryCache2
             Regex massageEx = new Regex(@"\s|[!@#$%^&*()\-_=+\[{\]};:'\" + dq + @",./<>?]");
             comparisonText = massageEx.Replace(comparisonText, "");
 
-            DataSet ds = commentManager.Select(comment.ResourceIntId);
-            if (ResourceCommentManager.DoesDataSetHaveRows(ds))
+            DataSet ds = importManager.SelectComment(comment.ResourceIntId);
+            if (DoesDataSetHaveRows(ds))
             {
                 foreach (DataRow dr in ds.Tables[0].Rows)
                 {
-                    string text = ResourceCommentManager.GetRowColumn(dr, "Comment", "");
+                    string text = GetRowColumn(dr, "Comment", "");
                     text = text.ToLower();
                     text = massageEx.Replace(text, "");
                     if (text == comparisonText)
@@ -510,7 +510,7 @@ namespace LearningRegistryCache2
                 {
                     standard.StandardUrl = standard.StandardUrl.Substring(0, 300);
                 }
-                standardManager.Import(standard, ref status);
+                importManager.ImportStandard(standard, ref status);
                 if (status != "successful")
                 {
                     auditReportingManager.LogMessage(LearningRegistry.reportId, LearningRegistry.fileName, docId, resource.ResourceUrl,
@@ -601,7 +601,7 @@ namespace LearningRegistryCache2
                     return;
                 }
                 string submitterName = TrimWhitespace(list[0].InnerText);
-                Resource res = versionManager.GetByResourceUrlAndSubmitter(resource.ResourceUrl, submitterName);
+                Resource res = new LR_Import.ResourceVersionController().GetByResourceUrlAndSubmitter(resource.ResourceUrl, submitterName);
                 if (res == null)
                 {
                     auditReportingManager.LogMessage(LearningRegistry.reportId, LearningRegistry.fileName, docId, resource.ResourceUrl,
@@ -620,7 +620,7 @@ namespace LearningRegistryCache2
                     return;
                 }
                 resource.ResourceUrl = TrimWhitespace(list[0].InnerText);
-                resourceManager.UpdateById(resource);
+                importManager.UpdateResource(resource);
             }
             catch (Exception ex)
             {
@@ -648,7 +648,7 @@ namespace LearningRegistryCache2
                 }
 
                 string submitterName = TrimWhitespace(list[0].InnerText);
-                Resource res = versionManager.GetByResourceUrlAndSubmitter(resource.ResourceUrl, submitterName);
+                Resource res = new LR_Import.ResourceVersionController().GetByResourceUrlAndSubmitter(resource.ResourceUrl, submitterName);
                 if (res == null)
                 {
                     auditReportingManager.LogMessage(LearningRegistry.reportId, LearningRegistry.fileName, docId, resource.ResourceUrl,
@@ -796,20 +796,20 @@ namespace LearningRegistryCache2
                     RatingSummary rating = GetRating(resource.RowId.ToString(), 0,
                         ratingType, ratingIdentifier, ratingDescription, docId, resource.Id);
                     CalculateNewRating(rating, minRatingValue, maxRatingValue, ratingCount, lrRatingValue);
-                    if (rating.ResourceId == null || rating.ResourceId.ToString() == RatingSummaryManager.DEFAULT_GUID)
+                    if (rating.ResourceId == null || rating.ResourceId.ToString() == ImportServices.DEFAULT_GUID)
                     {
-                        ratingSummaryManager.Create(rating);
+                        importManager.RatingSummaryCreate(rating);
                     }
                     else
                     {
-                        ratingSummaryManager.Update(rating);
+                        importManager.RatingSummaryUpdate(rating);
                     }
 
                     if (ratingIdentifier == "None")
                     {
                         // Handle as Like/Dislike summary
                         string status = "successful";
-                        ResourceLikeSummary like = likeSummaryManager.Get(resource.Id, ref status);
+                        ResourceLikeSummary like = importManager.LikeSummaryGet(resource.Id, ref status);
                         if (status != "successful")
                         {
                             auditReportingManager.LogMessage(LearningRegistry.reportId, LearningRegistry.fileName, docId, resource.ResourceUrl, ErrorType.Error,
@@ -828,11 +828,11 @@ namespace LearningRegistryCache2
                         CalculateNewLikes(like, minRatingValue, maxRatingValue, ratingCount, lrRatingValue);
                         if (like.Id == 0)
                         {
-                            likeSummaryManager.Create(like, ref status);
+                            importManager.LikeSummaryCreate(like, ref status);
                         }
                         else
                         {
-                            likeSummaryManager.Update(like, ref status);
+                            importManager.LikeSummaryUpdate(like, ref status);
                         }
                         if (status != "successful")
                         {
