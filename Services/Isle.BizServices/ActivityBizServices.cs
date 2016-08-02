@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Web;
 
@@ -43,7 +43,13 @@ namespace Isle.BizServices
             return list;
         }
 
-
+		/// <summary>
+		/// Note: may need to cache this, as occaionally seeing deadlock errors
+		/// </summary>
+		/// <param name="objectId"></param>
+		/// <param name="startDate"></param>
+		/// <param name="endDate"></param>
+		/// <returns></returns>
         public List<HierarchyActivityRecord> ActivityTotals_LearningLists( int objectId, DateTime startDate, DateTime endDate )
         {
             List<HierarchyActivityRecord> list = new List<HierarchyActivityRecord>();
@@ -59,6 +65,15 @@ namespace Isle.BizServices
             List<HierarchyActivityRecord> list = new List<HierarchyActivityRecord>();
 
             list = ActivityAuditManager.ActivityTotals_Accounts( startDate, endDate );
+
+            return list;
+        }
+
+        public List<StatisticsReportRecord> Activities_GetAppStatistics(DateTime startDate, DateTime endDate)
+        {
+            List<StatisticsReportRecord> list = new List<StatisticsReportRecord>();
+
+            list = ActivityAuditManager.Activities_GetAppStatistics(startDate, endDate);
 
             return list;
         }
@@ -94,17 +109,6 @@ namespace Isle.BizServices
             try
             {
                 SiteActivityAdd( log );
-                //ctx.ActivityLogs.Add( log );
-                //int count = ctx.SaveChanges();
-                //if ( count > 0 )
-                //{
-                //    return; // log.Id;
-                //}
-                //else
-                //{
-                //    //?no info on error
-                //    return;
-                //}
             }
             catch ( Exception ex )
             {
@@ -148,17 +152,6 @@ namespace Isle.BizServices
             try
             {
                 SiteActivityAdd( log );
-                //ctx.ActivityLogs.Add( log );
-                //int count = ctx.SaveChanges();
-                //if ( count > 0 )
-                //{
-                //    return; // log.Id;
-                //}
-                //else
-                //{
-                //    //?no info on error
-                //    return;
-                //}
             }
             catch ( Exception ex )
             {
@@ -654,6 +647,8 @@ namespace Isle.BizServices
                 log.Activity = "Content Web Reference";
             else if ( entity.TypeId == ContentItem.CURRICULUM_CONTENT_ID )
                 log.Activity = "Learning List";
+			else if (entity.TypeId == ContentItem.LEARNING_SET_CONTENT_ID)
+				log.Activity = "Learning Set";
             else
                 log.Activity = "Node: Child Node";
 
@@ -803,7 +798,9 @@ namespace Isle.BizServices
             log.ActivityType = "Audit";
             if (entity.TypeId == ContentItem.CURRICULUM_CONTENT_ID)
                 log.Activity = "Learning List";
-            else 
+			else if (entity.TypeId == ContentItem.LEARNING_SET_CONTENT_ID)
+				log.Activity = "Learning Set";
+			else 
                 log.Activity = "Content";
 
             log.Event = "Download";   // +entity.Title;
@@ -842,77 +839,83 @@ namespace Isle.BizServices
         }
         #endregion
         #region Site Activity - account
+		
         public static int UserRegistration( ThisUser entity, string ipAddress )
         {
-            string server = ILPathways.Utilities.UtilityManager.GetAppKeyValue( "serverName", "" );
-            //EFDAL.IsleContentEntities ctx = new EFDAL.IsleContentEntities();
-            EFDAL.ActivityLog log = new EFDAL.ActivityLog();
-            log.CreatedDate = System.DateTime.Now;
-            log.ActivityType = "Audit";
-            log.Activity = "Account";
-            log.Event = "Registration";
-            log.Comment = string.Format( "{0} ({1}) Registration. From IPAddress: {2}, on server: {3}", entity.FullName(), entity.Id, ipAddress, server );
-            //actor type - person, system
-            log.ActionByUserId = entity.Id;
-            log.TargetUserId = entity.Id;
-            log.SessionId = GetCurrentSessionId();
-            try
-            {
-                return SiteActivityAdd( log );
-                //ctx.ActivityLogs.Add( log );
-                //int count = ctx.SaveChanges();
-                //if ( count > 0 )
-                //{
-                //    return; // log.Id;
-                //}
-                //else
-                //{
-                //    //?no info on error
-                //    return;
-                //}
-            }
-            catch ( Exception ex )
-            {
-                LoggingHelper.LogError( ex, thisClassName + ".UserRegistrationActivity()" );
-                return 0;
-            }
+			return UserRegistration( entity, ipAddress, "Registration" );
+			//string server = ILPathways.Utilities.UtilityManager.GetAppKeyValue( "serverName", "" );
+
+			//EFDAL.ActivityLog log = new EFDAL.ActivityLog();
+			//log.CreatedDate = System.DateTime.Now;
+			//log.ActivityType = "Audit";
+			//log.Activity = "Account";
+			//log.Event = "Registration";
+			//log.Comment = string.Format( "{0} ({1}) Registration. From IPAddress: {2}, on server: {3}", entity.FullName(), entity.Id, ipAddress, server );
+			////actor type - person, system
+			//log.ActionByUserId = entity.Id;
+			//log.TargetUserId = entity.Id;
+			//log.SessionId = GetCurrentSessionId();
+			//try
+			//{
+			//	return SiteActivityAdd( log );
+			//}
+			//catch ( Exception ex )
+			//{
+			//	LoggingHelper.LogError( ex, thisClassName + ".UserRegistrationActivity()" );
+			//	return 0;
+			//}
         }
         public static int UserRegistrationFromPortal( ThisUser entity, string ipAddress )
         {
-            string server = ILPathways.Utilities.UtilityManager.GetAppKeyValue( "serverName", "" );
-            //EFDAL.IsleContentEntities ctx = new EFDAL.IsleContentEntities();
-            EFDAL.ActivityLog log = new EFDAL.ActivityLog();
-            log.CreatedDate = System.DateTime.Now;
-            log.ActivityType = "Audit";
-            log.Activity = "Account";
-            log.Event = "Portal SSO Registration";
-            log.Comment = string.Format( "{0} ({1}) Portal SSO Registration. From IPAddress: {2}, on server: {3}", entity.FullName(), entity.Id, ipAddress, server );
-            //actor type - person, system
-            log.ActionByUserId = entity.Id;
-            log.TargetUserId = entity.Id;
-            log.SessionId = GetCurrentSessionId();
-            try
-            {
-                return SiteActivityAdd( log );
-                //ctx.ActivityLogs.Add( log );
-                //int count = ctx.SaveChanges();
-                //if ( count > 0 )
-                //{
-                //    return; // log.Id;
-                //}
-                //else
-                //{
-                //    //?no info on error
-                //    return;
-                //}
-            }
-            catch ( Exception ex )
-            {
-                LoggingHelper.LogError( ex, thisClassName + ".UserRegistrationFromPortal()" );
-                return 0;
-            }
+			return UserRegistration( entity, ipAddress, "Portal SSO Registration" );
+			//string server = ILPathways.Utilities.UtilityManager.GetAppKeyValue( "serverName", "" );
+
+			//EFDAL.ActivityLog log = new EFDAL.ActivityLog();
+			//log.CreatedDate = System.DateTime.Now;
+			//log.ActivityType = "Audit";
+			//log.Activity = "Account";
+			//log.Event = "Portal SSO Registration";
+			//log.Comment = string.Format( "{0} ({1}) Portal SSO Registration. From IPAddress: {2}, on server: {3}", entity.FullName(), entity.Id, ipAddress, server );
+			////actor type - person, system
+			//log.ActionByUserId = entity.Id;
+			//log.TargetUserId = entity.Id;
+			//log.SessionId = GetCurrentSessionId();
+			//try
+			//{
+			//	return SiteActivityAdd( log );
+			//}
+			//catch ( Exception ex )
+			//{
+			//	LoggingHelper.LogError( ex, thisClassName + ".UserRegistrationFromPortal()" );
+			//	return 0;
+			//}
         }
-        public static int UserRegistrationConfirmation( ThisUser entity )
+
+		public static int UserRegistration( ThisUser entity, string ipAddress, string type )
+		{
+			string server = ILPathways.Utilities.UtilityManager.GetAppKeyValue( "serverName", "" );
+
+			EFDAL.ActivityLog log = new EFDAL.ActivityLog();
+			log.CreatedDate = System.DateTime.Now;
+			log.ActivityType = "Audit";
+			log.Activity = "Account";
+			log.Event = type;
+			log.Comment = string.Format( "{0} ({1}) {4}. From IPAddress: {2}, on server: {3}", entity.FullName(), entity.Id, ipAddress, server, type );
+			//actor type - person, system
+			log.ActionByUserId = entity.Id;
+			log.TargetUserId = entity.Id;
+			log.SessionId = GetCurrentSessionId();
+			try
+			{
+				return SiteActivityAdd( log );
+			}
+			catch ( Exception ex )
+			{
+				LoggingHelper.LogError( ex, thisClassName + ".UserRegistrationFromPortal()" );
+				return 0;
+			}
+		}
+        public static int UserRegistrationConfirmation( ThisUser entity, string type )
         {
             string server = ILPathways.Utilities.UtilityManager.GetAppKeyValue( "serverName", "" );
             //EFDAL.IsleContentEntities ctx = new EFDAL.IsleContentEntities();
@@ -924,7 +927,7 @@ namespace Isle.BizServices
                 log.ActivityType = "Audit";
                 log.Activity = "Account";
                 log.Event = "Confirmation";
-                log.Comment = string.Format( "{0} ({1}) Registration Confirmation, on server: {2}", entity.FullName(), entity.Id, server );
+				log.Comment = string.Format( "{0} ({1}) Registration Confirmation, on server: {2}, type: {3}", entity.FullName(), entity.Id, server, type );
                 //actor type - person, system
                 log.ActionByUserId = entity.Id;
                 log.TargetUserId = entity.Id;
@@ -979,10 +982,10 @@ namespace Isle.BizServices
             }
  }
 
-        public static void SessionStartActivity(string comment, string sessionId, string ipAddress, string referrer)
+		public static void SessionStartActivity( string comment, string sessionId, string ipAddress, string referrer, bool isBot )
         {
             EFDAL.ActivityLog log = new EFDAL.ActivityLog();
-            bool isBot = false;
+            //bool isBot = false;
             string server = ILPathways.Utilities.UtilityManager.GetAppKeyValue( "serverName", "" );
             try
             {
@@ -993,7 +996,8 @@ namespace Isle.BizServices
                 log.Activity = "Session";
                 log.Event = "Start";
                 log.Comment = comment + string.Format( " (on server: {0})", server );
-                log.Comment += GetUserAgent(ref isBot);
+				//already have agent
+                //log.Comment += GetUserAgent(ref isBot);
 
                 log.SessionId = sessionId;
                 log.IPAddress = ipAddress;
@@ -1245,10 +1249,10 @@ namespace Isle.BizServices
 
             //log.Comment += GetUserAgent();
 
-            if ( log.Comment != null && log.Comment.Length > 1000 ) 
+            if ( log.Comment != null && log.Comment.Length > 5000 ) 
             {
-                truncateMsg += string.Format( "Comment overflow: {0}; ", log.Comment.Length );
-                log.Comment = log.Comment.Substring( 0, 1000 );
+				truncateMsg += string.Format( "Comment overflow: {0}; Actual: \r\n{1} ", log.Comment.Length, log.Comment );
+				log.Comment = log.Comment.Substring( 0, 5000 );
             }
 
             //the following should not be necessary but getting null related exceptions
@@ -1282,7 +1286,7 @@ namespace Isle.BizServices
                     {
                         string msg = string.Format( "ActivityId: {0}, Message: {1}", log.Id, truncateMsg );
 
-                        ServiceHelper.NotifyAdmin( "ActivityLog Field Overflow", truncateMsg );
+						ServiceHelper.NotifyAdmin( "ActivityLog Field Overflow", msg );
                     }
                     if ( count > 0 )
                     {
@@ -1419,9 +1423,10 @@ namespace Isle.BizServices
 
             return lRefererPage;
         } //
-        private static string GetUserAgent(ref bool isBot)
+        public static string GetUserAgent(ref bool isBot)
         {
             string agent = "";
+			isBot = false;
             try
             {
                 if ( HttpContext.Current.Request.UserAgent != null )
@@ -1429,11 +1434,11 @@ namespace Isle.BizServices
                     agent = HttpContext.Current.Request.UserAgent;
                 }
 
-                isBot = false;
                 if ( agent.ToLower().IndexOf( "bot" ) > -1
                     || agent.ToLower().IndexOf( "spider" ) > -1
                     || agent.ToLower().IndexOf( "slurp" ) > -1
                     || agent.ToLower().IndexOf( "crawl" ) > -1
+					|| agent.ToLower().IndexOf( "addthis.com" ) > -1
                     )
                     isBot = true;
                 if ( isBot )
