@@ -4,11 +4,16 @@ using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
 using System.IO;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Text;
 using System.Threading;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Net.Mail;
+
+using Newtonsoft.Json;
 
 using ILPathways.Business;
 //using ILPathways.Common;
@@ -148,7 +153,7 @@ namespace ILPathways.Utilities
 
 				//10-04-06 mparsons - with our new mail server, we can't send emails where the from address is anything but @siuccwd.com
 				//									- also try to handle the aliases 
-				if ( fromEmail.IndexOf( "_siuccwd.com" ) > -1 )
+				//if ( fromEmail.IndexOf( "_siuccwd.com" ) > -1 )
 					fromEmail = HandleProxyEmails( fromEmail.Trim() );
 
 				if ( fromEmail.ToLower().IndexOf( "@ilsharedlearning.org" ) == -1
@@ -252,7 +257,8 @@ namespace ILPathways.Utilities
 				//email.BodyFormat = MailFormat.Html;
 				if ( UtilityManager.GetAppKeyValue( "sendEmailFlag", "false" ) == "TRUE" )
 				{
-					smtp.Send( email );
+					DoSendEmail( email );
+					//smtp.Send( email );
 					//SmtpMail.Send(email);
 				}
 
@@ -277,6 +283,96 @@ namespace ILPathways.Utilities
 
 			return false;
 		} //
+
+		private static void DoSendEmail( MailMessage emailMsg )
+		{
+			string emailService = UtilityManager.GetAppKeyValue( "emailService", "smtp" );
+
+			if ( emailService == "serviceApi" )
+				SendEmailViaApi( emailMsg );
+			else if ( emailService == "smtp" )
+			{
+				SmtpClient smtp = new SmtpClient( UtilityManager.GetAppKeyValue( "smtpEmail" ) );
+				smtp.Send( emailMsg );
+				//SmtpMail.Send(email);
+			}
+			else if ( emailService == "sendGrid" )
+			{
+				EmailViaSendGrid( emailMsg );
+			}
+			else
+			{
+				//no service api
+				LoggingHelper.DoTrace( 2, "***** EmailManager.SendEmail - UNHANDLED EMAIL SERVICE ENCOUNTERED ******" );
+				return;
+			}
+
+		}
+
+		private static void SendEmailViaApi( MailMessage emailMsg )
+		{
+			string emailServiceUri = UtilityManager.GetAppKeyValue( "SendEmailService" );
+			if ( string.IsNullOrWhiteSpace( emailServiceUri ) )
+			{
+				//no service api
+				LoggingHelper.DoTrace( 2, "***** EmailManager.SendEmail - no email service has been configured" );
+				return;
+			}
+			else if ( emailServiceUri.ToLower().Equals( "sendgrid" ) )
+			{
+				EmailViaSendGrid( emailMsg );
+			}
+
+
+			var email = new Email()
+			{
+				Message = emailMsg.Body,
+				From = emailMsg.From.Address,
+				To = emailMsg.To.ToString(),
+				CC = emailMsg.CC.ToString(),
+				BCC = emailMsg.Bcc.ToString(),
+				IsHtml = true,
+				Subject = emailMsg.Subject
+			};
+
+			var postBody = JsonConvert.SerializeObject( email );
+
+			PostRequest( postBody, emailServiceUri );
+		}
+		private static bool PostRequest( string postBody, string serviceUri )
+		{
+
+			try
+			{
+				using ( var client = new HttpClient() )
+				{
+					client.DefaultRequestHeaders.
+						Accept.Add( new MediaTypeWithQualityHeaderValue( "application/json" ) );
+
+
+					var task = client.PostAsync( serviceUri,
+						new StringContent( postBody, Encoding.UTF8, "application/json" ) );
+					task.Wait();
+					var response = task.Result;
+
+					return response.IsSuccessStatusCode;
+
+				}
+			}
+			catch ( Exception exc )
+			{
+				LoggingHelper.LogError( exc, "Factories.EmailManager.PostRequest" );
+				return false;
+
+			}
+		}
+		private static bool EmailViaSendGrid( MailMessage emailMsg )
+		{
+			bool isValid = true;
+
+			return isValid;
+		}
+
 
 		/// <summary>
 		/// Handles multiple addresses in the passed email part
@@ -320,15 +416,23 @@ namespace ILPathways.Utilities
 			string newAddr = address;
 
 			int atPos = address.IndexOf( "@" );
-			int wnPos = address.IndexOf( "_siuccwd.com" );
+			int wnPos = address.IndexOf( "_siuccwd.com", atPos );
+			if ( wnPos == -1)
+				wnPos = address.IndexOf( "_hotmail.com", atPos );
+			if ( wnPos == -1 )
+				wnPos = address.IndexOf( "_siu.edu", atPos );
+			if ( wnPos == -1 )
+				wnPos = address.IndexOf( "_gmail.com", atPos );
 			if ( wnPos > atPos )
 			{
 				newAddr = address.Substring( 0, atPos + 1 ) + address.Substring( wnPos + 1 );
 			} else
 			{
-				//check for others with format:
+				//check for others with following format (note use of this may fail an email regex validation):
 				//	someName@_ ??? __realDomain.com
-				atPos = address.IndexOf( "@_" );
+				//16-05-23 mparsons - the pattern @_ causes an email format error. So just use the double underscore
+				//atPos = address.IndexOf( "@_" );
+				atPos = address.IndexOf( "@" );
 				if ( atPos > 1 )
 				{
 					wnPos = address.IndexOf( "__", atPos );
@@ -596,7 +700,7 @@ namespace ILPathways.Utilities
 
             if (string.IsNullOrEmpty(body))
             {
-                string file = System.Web.HttpContext.Current.Server.MapPath(string.Format("~/App_Data/{0}.txt",emailName));
+                string file = System.Web.HttpContext.Current.Server.MapPath(string.Format("~/App_Data/email/{0}.txt",emailName));
                 body = File.ReadAllText(file);
 
                 HttpContext.Current.Cache[emailName] = body;
@@ -604,6 +708,15 @@ namespace ILPathways.Utilities
 
             return body;
         }
-
+		public class Email
+		{
+			public string Message { get; set; }
+			public string From { get; set; }
+			public string To { get; set; }
+			public string CC { get; set; }
+			public string BCC { get; set; }
+			public string Subject { get; set; }
+			public bool IsHtml { get; set; }
+		}
   }
 }
