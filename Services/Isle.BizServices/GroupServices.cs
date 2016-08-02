@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
@@ -9,6 +9,7 @@ using System.Web;
 //using GatewayContext = IoerContentBusinessEntities;
 using EFDAL = IoerContentBusinessEntities;
 using ILPathways.Business;
+using ILPathways.Common;
 using ILPathways.DAL;
 using Patron = LRWarehouse.Business.Patron;
 
@@ -515,11 +516,16 @@ namespace Isle.BizServices
 
 
         #region Codes
-        public static DataSet CodesGroupType_Select()
+        public static List<CodeItem> GroupTypeCodes_Select()
         {
-            DataSet ds = DatabaseManager.DoQuery( "SELECT [Id],[Title]  FROM [Gateway].[dbo].[Codes.GroupType] order by [Title]" );
-            return ds;    //GroupMemberManager.OrgApproversSelect( userId );
+			return EFDAL.GroupsManager.Codes_GroupType_Get();   
         }//
+
+		public static DataSet CodesGroupType_Select()
+		{
+			DataSet ds = DatabaseManager.DoQuery("SELECT [Id],[Title]  FROM [Gateway].[dbo].[Codes.GroupType] order by [Title]");
+			return ds;    //GroupMemberManager.OrgApproversSelect( userId );
+		}//
         #endregion
     }
 }

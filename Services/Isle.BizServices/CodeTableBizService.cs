@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
@@ -12,6 +12,7 @@ using LRWarehouse.Business;
 using LRWarehouse.DAL;
 using LDBM = LRWarehouse.DAL.DatabaseManager;
 using ResBiz = IOERBusinessEntities;
+using RV2 = LRWarehouse.Business.ResourceV2;
 
 namespace Isle.BizServices
 {
@@ -55,7 +56,7 @@ namespace Isle.BizServices
 
         #endregion
 
-        #region === Site filter methods for WebApi ===========================================
+        #region === Site filter methods for WebApi =====================
         public static SiteFiltersDTO Site_SelectAsDto( string siteName, bool mustHaveValues )
         {
             CodesSite site = ResBiz.EFCodesManager.Codes_Site_GetByTitle( siteName, mustHaveValues );
@@ -125,6 +126,16 @@ namespace Isle.BizServices
         #endregion
 
         #region === generic handling of resource code tables ===
+		/// <summary>
+		/// Return all active Code.TagValue rows
+		/// </summary>
+		/// <param name="pWithValuesOnly">Set to true to only return codes with warehouse value > 0</param>
+		/// <returns></returns>
+		public static DataSet Codes_TagValue_GetAll( bool pWithValuesOnly )
+		{
+			return CodeTableManager.Codes_TagValue_GetAll( 0, pWithValuesOnly );
+		}
+
         /// <summary>
         /// Return values for a code table, optionally specify where to return all rows or only those with total used > 0
         /// </summary>
@@ -209,7 +220,12 @@ namespace Isle.BizServices
 
         #endregion
 
-        
+		public static DataSet DeterminingAgeRanges( RV2.ResourceDTO input )
+		{
+			return CodeTableManager.DeterminingAgeRanges( input );
+			
+		} //
+
         public static void PopulateGridPageSizeList( ref DropDownList list )
         {
             DataSet ds = LDBM.GetCodeValues( "GridPageSize", "SortOrder" );

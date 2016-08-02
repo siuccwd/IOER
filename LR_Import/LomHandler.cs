@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
@@ -10,20 +10,18 @@ using System.Xml;
 using System.Xml.XPath;
 //using LearningRegistryCache2.App_Code.Classes;
 using OLDDM = LearningRegistryCache2.App_Code.DataManagers;
+using Isle.BizServices;
 using LRWarehouse.Business;
-using LRWarehouse.DAL;
 
 namespace LearningRegistryCache2
 {
     public class LomHandler : MetadataController
     {
-        private ResourceClusterManager clusterManager;
-        private AuditReportingManager auditReportingManager;
+        private AuditReportingServices auditReportingManager;
 
         public LomHandler()
         {
-            clusterManager = new ResourceClusterManager();
-            auditReportingManager=new AuditReportingManager();
+            auditReportingManager=new AuditReportingServices();
         }
 
         public bool LomMap(string docId, string url, string payloadPlacement, XmlDocument record)
@@ -35,7 +33,7 @@ namespace LearningRegistryCache2
             string titleString = "";
             string descriptionString = "";
 
-            Resource resource = LoadCommonMetadata(docId, url, payloadPlacement, record, payload, ref isValid);
+            Resource resource = LoadCommonMetadata(docId, ref url, payloadPlacement, record, payload, ref isValid);
             if (!isValid)
             {
                 // Check to see if Resource.Version record exists.  If not, remove it.  Then skip this record
@@ -74,6 +72,7 @@ namespace LearningRegistryCache2
                     list = GetLomElementsByTagName(xdoc, "string");
                     foreach(XmlNode node2 in list) {
                         titleString = TrimWhitespace(node2.InnerText);
+                        titleString = StripTrailingPeriod(titleString);
                         if (titleString.Length > resource.Version.Title.Length)
                         {
                             resource.Version.Title = titleString;
@@ -301,7 +300,7 @@ namespace LearningRegistryCache2
             //Now do name/value pairs
             try {
 
-                if (resource.Version.RowId == null || resource.Version.RowId == new Guid(ResourceManager.DEFAULT_GUID))
+                if (resource.Version.RowId == null || resource.Version.RowId == new Guid(ImportServices.DEFAULT_GUID))
                 {
                     if (AddResource(resource) == false)
                     {
@@ -339,7 +338,7 @@ namespace LearningRegistryCache2
                 {
                     // Deactivate resource - no good language
                     resource.IsActive = false;
-                    resourceManager.UpdateById(resource);
+                    importManager.ResourceUpdateById(resource);
                 }
             }
             catch (Exception ex)
@@ -362,7 +361,6 @@ namespace LearningRegistryCache2
 
         private void AddSubjects(Resource resource, XmlDocument payload)
         {
-            ResourceSubjectManager subjectManager = new ResourceSubjectManager();
             string status = "";
             int nbrSubjects = 0;
             int maxSubjects = int.Parse(ConfigurationManager.AppSettings["maxSubjectsToProcess"]);
@@ -411,7 +409,7 @@ namespace LearningRegistryCache2
                                                 //resSubject.ResourceId = resource.RowId;
                                                 resSubject.ResourceIntId = resource.Id;
                                                 resSubject.Subject = TrimWhitespace(subj);
-                                                status = subjectManager.Create(resSubject);
+                                                status = importManager.CreateSubject(resSubject);
                                                 if (status != "successful")
                                                 {
                                                     auditReportingManager.LogMessage(LearningRegistry.reportId, LearningRegistry.fileName, resource.Version.LRDocId, resource.ResourceUrl, 
@@ -432,7 +430,7 @@ namespace LearningRegistryCache2
                                         //resSubject.ResourceId = resource.RowId;
                                         resSubject.ResourceIntId = resource.Id;
                                         resSubject.Subject = TrimWhitespace(subject);
-                                        status = subjectManager.Create(resSubject);
+                                        status = importManager.CreateSubject(resSubject);
                                         if (status != "successful")
                                         {
                                             auditReportingManager.LogMessage(LearningRegistry.reportId, LearningRegistry.fileName, resource.Version.LRDocId, resource.ResourceUrl, 
@@ -459,9 +457,6 @@ namespace LearningRegistryCache2
             string ageRange = "";
             Regex whitespaceRegex = new Regex(@"\s+"); // Regular expression to match on any whitespace.
             string status = "successful";
-            ResourcePropertyManager propManager = new ResourcePropertyManager();
-            ResourceKeywordManager keysManager = new ResourceKeywordManager();
-            ResourceAgeRangeManager ageRangeManager = new ResourceAgeRangeManager();
 
             XmlNodeList list = GetLomElementsByTagName(payload, "educational");
             foreach (XmlNode node in list)
@@ -486,7 +481,7 @@ namespace LearningRegistryCache2
                         {
                             level.FromAge = int.Parse(level.OriginalValue.Substring(0, dashIndex));
                             level.ToAge = int.Parse(level.OriginalValue.Substring(dashIndex + 1, length - dashIndex - 1));
-                            status = ageRangeManager.Import(level);
+                            status = importManager.ImportAgeRange(level);
                             if (status != "successful")
                             {
                                 auditReportingManager.LogMessage(LearningRegistry.reportId, LearningRegistry.fileName, resource.Version.LRDocId, resource.ResourceUrl, ErrorType.Error,
@@ -505,8 +500,7 @@ namespace LearningRegistryCache2
         {
             int iPropertyType = 0;
             string status = "successful";
-            ResourceKeywordManager keysManager = new ResourceKeywordManager();
-
+            
             XmlNodeList list = GetLomElementsByTagName(payload, "educational");
             foreach (XmlNode node in list)
             {
@@ -524,7 +518,7 @@ namespace LearningRegistryCache2
                        // audience.ResourceId = resource.RowId;
                         audience.ResourceIntId = resource.Id;
                         audience.OriginalValue = TrimWhitespace(node2.InnerText);
-                        audienceManager.CreateFromEntity(audience, ref status);
+                        importManager.ImportAudience(audience, ref status);
                         if (status != "successful")
                         {
                             auditReportingManager.LogMessage(LearningRegistry.reportId, LearningRegistry.fileName, resource.Version.LRDocId, resource.ResourceUrl, ErrorType.Error,
@@ -534,16 +528,14 @@ namespace LearningRegistryCache2
                 }
             }
 
-            resource.Keyword = keysManager.Select(resource.Id, "");
-            resource.Audience = audienceManager.SelectCollection(resource.Id);
+            resource.Keyword = importManager.SelectKeys(resource.Id, "");
+            resource.Audience = importManager.SelectAudience(resource.Id);
         }// AddIntendedAudience
 
         private void AddLanguage(Resource resource, XmlDocument payload)
         {
             int iPropertyType = 0;
             string status = "successful";
-            ResourceLanguageManager languageManager = new ResourceLanguageManager();
-            ResourceKeywordManager keysManager = new ResourceKeywordManager();
 
             XmlNodeList list = GetLomElementsByTagName(payload, "general");
             foreach (XmlNode node in list)
@@ -557,7 +549,7 @@ namespace LearningRegistryCache2
                     //language.ResourceId = resource.RowId;
                     language.ResourceIntId = resource.Id;
                     language.OriginalValue = TrimWhitespace(node1.InnerText);
-                    languageManager.Import(language, ref status);
+                    importManager.ImportLanguage(language, ref status);
                     if (status != "successful")
                     {
                         auditReportingManager.LogMessage(LearningRegistry.reportId, LearningRegistry.fileName, resource.Version.LRDocId, resource.ResourceUrl, ErrorType.Error,
@@ -566,7 +558,7 @@ namespace LearningRegistryCache2
                 }
             }
 
-            resource.Language = languageManager.Select(resource.Id, "");
+            resource.Language = importManager.SelectLanguage(resource.Id, "");
             if (resource.Language == null || resource.Language.Count == 0)
             {
                 // No language found - assume English but log it
@@ -574,7 +566,7 @@ namespace LearningRegistryCache2
                // language.ResourceId = resource.RowId;
                 language.ResourceIntId = resource.Id;
                 language.OriginalValue = "English";
-                languageManager.Import(language, ref status);
+                importManager.ImportLanguage(language, ref status);
                 if (status == "successful")
                 {
                     auditReportingManager.LogMessage(LearningRegistry.reportId, LearningRegistry.fileName, resource.Version.LRDocId, resource.ResourceUrl, ErrorType.Warning,
@@ -587,14 +579,12 @@ namespace LearningRegistryCache2
                 }
             }
 
-            resource.Keyword = keysManager.Select(resource.Id, "");
+            resource.Keyword = importManager.SelectKeys(resource.Id, "");
         }// AddLanguage
 
         private void AddResourceTypes(Resource resource, XmlDocument payload)
         {
             string status = "successful";
-            ResourceTypeManager rtm = new ResourceTypeManager();
-            ResourceKeywordManager keysManager = new ResourceKeywordManager();
 
             XmlNodeList list = GetLomElementsByTagName(payload, "educational");
             foreach (XmlNode node in list)
@@ -614,7 +604,7 @@ namespace LearningRegistryCache2
                         type.ResourceIntId = resource.Id;
                         type.OriginalValue = TrimWhitespace(node2.InnerText);
 
-                        rtm.Import(type, ref status);
+                        importManager.ImportType(type, ref status);
                         if (status == "successful")
                         {
                             auditReportingManager.LogMessage(LearningRegistry.reportId, LearningRegistry.fileName, resource.Version.LRDocId, resource.ResourceUrl, ErrorType.Warning,
@@ -629,15 +619,13 @@ namespace LearningRegistryCache2
                 }
             }
 
-            resource.ResourceType = (List<ResourceChildItem>)rtm.Select( resource.Id );
-            resource.Keyword = keysManager.Select(resource.Id, "");
+            resource.ResourceType = (List<ResourceChildItem>)importManager.SelectType( resource.Id );
+            resource.Keyword = importManager.SelectKeys(resource.Id, "");
         }// AddResourceTypes
 
         private void AddResourceFormats(Resource resource, XmlDocument payload)
         {
             string status = "successful";
-            ResourceFormatManager rfm = new ResourceFormatManager();
-            ResourceKeywordManager keysManager = new ResourceKeywordManager();
 
             XmlNodeList list = GetLomElementsByTagName(payload, "technical");
             foreach (XmlNode node in list)
@@ -652,7 +640,7 @@ namespace LearningRegistryCache2
                     format.ResourceIntId = resource.Id;
                     format.OriginalValue = TrimWhitespace(node1.InnerText);
 
-                    rfm.Import(format, ref status);
+                    importManager.ImportFormat(format, ref status);
                     if (status != "successful")
                     {
                         auditReportingManager.LogMessage(LearningRegistry.reportId, LearningRegistry.fileName, resource.Version.LRDocId, resource.ResourceUrl, ErrorType.Error,
@@ -661,8 +649,8 @@ namespace LearningRegistryCache2
                 }
             }
 
-            resource.ResourceFormat = (List<ResourceChildItem>)rfm.Select(resource.Id);
-            //resource.Keyword = keysManager.Select(resource.RowId.ToString(), "");
+            resource.ResourceFormat = (List<ResourceChildItem>)importManager.SelectFormat(resource.Id);
+            resource.Keyword = importManager.SelectKeys(resource.Id, "");
         }// AddResourceFormats
 
 

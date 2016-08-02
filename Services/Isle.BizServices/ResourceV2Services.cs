@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
@@ -18,20 +18,21 @@ using ThisUser = LRWarehouse.Business.Patron;
 
 namespace Isle.BizServices
 {
-	public class ResourceV2Services
+	public class ResourceV2Services : ServiceHelper
 	{
 		#region Get Methods
 		/// <summary>
 		/// Get Resource DB
+		/// Called by detail7 as well
 		/// How does this differ from GetResourceDTO
 		/// </summary>
 		/// <param name="resourceID"></param>
 		/// <returns></returns>
-		public ResourceDB GetResourceDB(int resourceID)
+		public ResourceDB GetResourceDB( int resourceID )
 		{
 			var result = new ResourceDB();
-			result.UsageRights = GetUsageRights("");
-			result.Fields = GetFieldAndTagCodeData();
+			result.UsageRights = GetUsageRights("", 0);
+			result.Fields = GetFieldAndTagCodeData(false);
 
 			if (resourceID == 0)
 			{
@@ -48,7 +49,7 @@ namespace Isle.BizServices
 			}
 
 			//Get Version Data
-			data.Version = new ResourceVersionManager().GetByResourceId(resourceID);
+			data.Version = ResourceBizService.ResourceVersion_GetByResourceId( resourceID );
 
 			//Get Keywords
 			var keywords = new ResourceKeywordManager().Select(resourceID).Select(m => m.OriginalValue).ToList();
@@ -67,14 +68,14 @@ namespace Isle.BizServices
 					NotationCode = item.StandardNotationCode,
 					AlignmentType = string.IsNullOrWhiteSpace(item.AlignmentTypeValue) ? "Aligns to" : item.AlignmentTypeValue,
 					AlignmentTypeId = item.AlignmentTypeCodeId,
-					AlignmentDegree = item.AlignmentDegree,
-					AlignmentDegreeId = item.AlignmentDegreeId,
+					UsageType = string.IsNullOrWhiteSpace(item.UsageType) ? "Normal" : item.UsageType,
+					UsageTypeId = item.UsageTypeId,
 					StandardUrl = item.StandardUrl
 				});
 			}
 
 			//Get Usage Rights
-			var usageRights = GetUsageRights(data.Version.Rights);
+			var usageRights = GetUsageRights( data.Version.Rights, data.Version.UsageRightsId);
 
 			//Get ISLE Section IDs
 			List<int> isleSectionIds = new List<int>();
@@ -87,7 +88,6 @@ namespace Isle.BizServices
 			if (!isleSectionIds.Contains(5)) { isleSectionIds.Add(5); } //All sites also have all sites
 
 			//Get Paradata
-			var status = "";
 			var likeData = DatabaseManager.DoQuery( "SELECT [IsLike] FROM [Resource.Like] WHERE ResourceIntId = " + resourceID );
 			var likesCount = 0;
 			var dislikesCount = 0;
@@ -106,35 +106,10 @@ namespace Isle.BizServices
 			var favorites = SqlHelper.ExecuteDataset(DatabaseManager.ContentConnectionRO(), CommandType.Text, "SELECT Id FROM [Library.Resource] WHERE ResourceIntId = " + resourceID).Tables[0].Rows.Count;
 			var resourceViews = DatabaseManager.DoQuery("SELECT Id FROM [Resource.View] WHERE ResourceIntId = " + resourceID).Tables[0].Rows.Count;
 			//Evaluations
-			var rubricEvaluations = new List<EvaluationSummaryV2>();
-			var rubricData = DatabaseManager.DoQuery("SELECT ResourceIntId, EvaluationId, EvalDimensionId, DimensionTitle, ([HasNOTCertificationTotal] + [HasCertificationTotal]) AS TotalEvaluations, CASE WHEN TotalEvaluations = 0 THEN 0 ELSE ((([HasCertificationTotal] * [HasCertificationTotalScore]) + ([HasNOTCertificationTotal] * [HasNOTCertificationTotalScore])) / ([HasNOTCertificationTotal] + [HasCertificationTotal])) END AS FinalScore FROM [Resource.EvalDimensionsSummary] WHERE ResourceIntId = " + resourceID);
-			foreach (DataRow dr in rubricData.Tables[0].Rows)
-			{
-				rubricEvaluations.Add(new EvaluationSummaryV2()
-				{
-					EvaluationId = GetColumn<int>("EvaluationId", dr),
-					ContextId = GetColumn<int>("EvalDimensionId", dr),
-					ResourceId = resourceID,
-					Title = GetColumn<string>("DimensionTitle", dr),
-					ScorePercent = (double)GetColumn<int>("FinalScore", dr),
-					TotalEvaluations = GetColumn<int>("TotalEvaluations", dr)
-				});
-			}
+			var rubricEvaluations = GetRubricRatingsForResource( resourceID );
+
 			//Standards
-			var standardEvaluations = new List<EvaluationSummaryV2>();
-			var standardData = DatabaseManager.DoQuery("SELECT ResourceIntId, StandardId, NotationCode, Description, AverageScorePercent, TotalEvals FROM [Resource.StandardEvaluationSummary] WHERE ResourceIntId = " + resourceID);
-			foreach (DataRow dr in standardData.Tables[0].Rows)
-			{
-				standardEvaluations.Add(new EvaluationSummaryV2()
-				{
-					EvaluationId = 0,
-					ContextId = GetColumn<int>("StandardId", dr),
-					Title = GetColumn<string>("NotationCode", dr),
-					Description = GetColumn<string>("Description", dr),
-					ScorePercent = (double)GetColumn<int>("AverageScorePercent", dr),
-					TotalEvaluations = GetColumn<int>("TotalEvals", dr)
-				});
-			}
+			var standardEvaluations = GetStandardsRatingsForResource( resourceID );
 
 			var paradata = new ParadataDB()
 			{
@@ -148,7 +123,7 @@ namespace Isle.BizServices
 			};
 
 			//Get Fields
-			var fields = GetFieldAndTagData(resourceID);
+			var fields = GetFieldAndTagData(resourceID, false);
 
 			//Get Thumbnail
 			//TODO - 15-10-20 mp - need to update to handle custom images
@@ -184,6 +159,81 @@ namespace Isle.BizServices
 			};
 
 			return resource;
+		} //
+
+		/// <summary>
+		/// Get all Rubric Dimension evaluations for a Resource
+		/// </summary>
+		/// <param name="resourceID"></param>
+		/// <returns></returns>
+		public List<EvaluationSummaryV2> GetRubricRatingsForResource( int resourceID )
+		{
+			var rubricEvaluations = new List<EvaluationSummaryV2>();
+			var rubricData = DatabaseManager.DoQuery( "SELECT ResourceIntId, EvaluationId, EvalDimensionId, DimensionTitle, ([HasNOTCertificationTotal] + [HasCertificationTotal]) AS TotalEvaluations, CASE WHEN TotalEvaluations = 0 THEN 0 ELSE ((([HasCertificationTotal] * [HasCertificationTotalScore]) + ([HasNOTCertificationTotal] * [HasNOTCertificationTotalScore])) / ([HasNOTCertificationTotal] + [HasCertificationTotal])) END AS FinalScore FROM [Resource.EvalDimensionsSummary] WHERE ResourceIntId = " + resourceID );
+			foreach ( DataRow dr in rubricData.Tables[ 0 ].Rows )
+			{
+				rubricEvaluations.Add( new EvaluationSummaryV2()
+				{
+					EvaluationId = GetColumn<int>( "EvaluationId", dr ),
+					ContextId = GetColumn<int>( "EvalDimensionId", dr ),
+					ResourceId = resourceID,
+					Title = GetColumn<string>( "DimensionTitle", dr ),
+					AverageScorePercent = ( double ) GetColumn<int>( "FinalScore", dr ),
+					TotalEvaluations = GetColumn<int>( "TotalEvaluations", dr )
+				} );
+			}
+			return rubricEvaluations;
+		} //
+
+		/// <summary>
+		/// Get all Standards Ratings for a Resource
+		/// </summary>
+		/// <param name="resourceID"></param>
+		/// <returns></returns>
+		public List<EvaluationSummaryV2> GetStandardsRatingsForResource( int resourceID )
+		{
+			var standardEvaluations = new List<EvaluationSummaryV2>();
+			var standardData = DatabaseManager.DoQuery( "SELECT ResourceIntId, StandardId, NotationCode, Description, AverageScorePercent, TotalEvals FROM [Resource.StandardEvaluationSummary] WHERE ResourceIntId = " + resourceID );
+			foreach ( DataRow dr in standardData.Tables[ 0 ].Rows )
+			{
+				standardEvaluations.Add( new EvaluationSummaryV2()
+				{
+					EvaluationId = 0,
+					ContextId = GetColumn<int>( "StandardId", dr ),
+					Title = GetColumn<string>( "NotationCode", dr ),
+					Description = GetColumn<string>( "Description", dr ),
+					AverageScorePercent = ( double ) GetColumn<int>( "AverageScorePercent", dr ),
+					TotalEvaluations = GetColumn<int>( "TotalEvals", dr )
+				} );
+			}
+			return standardEvaluations;
+		} //
+
+		/// <summary>
+		/// Get All Standards Ratings for a Resource that the user has issued
+		/// Optionally, limit to a specific standard ID
+		/// </summary>
+		/// <param name="resourceID"></param>
+		/// <param name="userID"></param>
+		/// <returns></returns>
+		public List<EvaluationSummaryV2> GetUserStandardRatingsForResource( int resourceID, int userID, int standardID )
+		{
+			var userStandardEvaluations = new List<EvaluationSummaryV2>();
+			var userData = DatabaseManager.DoQuery( "SELECT DISTINCT list.[ResourceIntId], list.[StandardId], list.[CreatedById], list.[Score] AS UserScorePercent, summary.[TotalEvals], summary.[AverageScorePercent] FROM [Resource.StandardEvaluationSummary] summary LEFT JOIN [Resource.StandardEvaluationList] list ON list.[ResourceintId] = summary.[ResourceIntId] AND list.[StandardId] = summary.[StandardId] WHERE list.[ResourceIntId] = " + resourceID + " AND list.[CreatedById] = " + userID + ( standardID > 0 ? " AND list.[StandardId] = " + standardID : "" ) );
+			foreach ( DataRow dr in userData.Tables[ 0 ].Rows )
+			{
+				userStandardEvaluations.Add( new EvaluationSummaryV2()
+				{
+					ResourceId = resourceID,
+					ContextId = GetColumn<int>( "StandardId", dr ),
+					CreatedById = GetColumn<int>( "CreatedbyId", dr ),
+					UserScorePercent = ( double ) GetColumn<int>( "UserScorePercent", dr ),
+					AverageScorePercent = ( double ) GetColumn<int>( "AverageScorePercent", dr ),
+					TotalEvaluations = GetColumn<int>( "TotalEvals", dr )
+				} );
+			}
+
+			return userStandardEvaluations;
 		}
 
 		/// <summary>
@@ -202,14 +252,16 @@ namespace Isle.BizServices
 			var resource = serializer.Deserialize<ResourceDTO>(serializer.Serialize(data));
 
 			//Load Standards
-			foreach (var item in data.Standards)
+			//Actually, these deserialize just fine in the above method call
+			/*foreach (var item in data.Standards)
 			{
 				var standard = serializer.Deserialize<StandardsDTO>(serializer.Serialize(item));
 				resource.Standards.Add(standard);
-			}
+			}*/
 
 			//Load Paradata
-			resource.Paradata = serializer.Deserialize<ParadataDTO>(serializer.Serialize(data.Paradata));
+			//resource.Paradata = serializer.Deserialize<ParadataDTO>(serializer.Serialize(data.Paradata));
+			resource.Paradata.Comments.Clear();
 			foreach (var item in data.Paradata.Comments)
 			{
 				resource.Paradata.Comments.Add(new CommentDTO()
@@ -221,34 +273,49 @@ namespace Isle.BizServices
 					Text = item.Comment
 				});
 			}
+			resource.Paradata.Evaluations.Clear();
 			foreach (var item in data.Paradata.RubricEvaluations)
 			{
 				resource.Paradata.Evaluations.Add(new LRWarehouse.Business.ResourceV2.EvaluationDTO()
 				{
 					Id = item.EvaluationId,
 					ContextId = item.ContextId,
-					Score = item.ScorePercent,
+					Score = item.AverageScorePercent,
 					UserId = item.CreatedById
 				});
 			}
+			resource.Paradata.StandardEvaluations.Clear();
 			foreach (var item in data.Paradata.StandardEvaluations)
 			{
 				resource.Paradata.StandardEvaluations.Add(new LRWarehouse.Business.ResourceV2.EvaluationDTO()
 				{
 					Id = item.EvaluationId,
 					ContextId = item.ContextId,
-					Score = item.ScorePercent,
+					Score = item.AverageScorePercent,
 					UserId = item.CreatedById
 				});
 			}
 
 			//Load Fields
-			resource.Fields = serializer.Deserialize<List<FieldDTO>>(serializer.Serialize(data.Fields));
+			//Not necessary
+			//resource.Fields = serializer.Deserialize<List<FieldDTO>>(serializer.Serialize(data.Fields));
+
+			//Load additional data from an associated content item if applicable
+			var content = new ContentItem(); //Placeholder while Mike writes a method to get content item by resource id
+			if ( content != null && content.Id > 0 )
+			{
+				resource.ContentId = content.Id;
+				resource.PrivilegeId = content.PrivilegeTypeId;
+			}
 
 			return resource;
 		}
 
-		//Get Resource ES
+		/// <summary>
+		/// Populate resource for Elastic collection
+		/// </summary>
+		/// <param name="resourceID"></param>
+		/// <returns></returns>
 		public ResourceES GetResourceES(int resourceID)
 		{
 			var result = new ResourceES();
@@ -274,8 +341,6 @@ namespace Isle.BizServices
 				resourceData = mgr.Resource_IndexV3TextsUpdate( resourceID );
 				tagData = mgr.Resource_IndexV3TagsUpdate( resourceID );
 
-				//resourceData = DatabaseManager.ExecuteProc("[Resource_IndexV3TextsUpdate]", new SqlParameter[] { new SqlParameter("@resourceID", resourceID) });
-				//tagData = DatabaseManager.ExecuteProc("[Resource_IndexV3TagsUpdate]", new SqlParameter[] { new SqlParameter("@resourceID", resourceID) });
 			}
 			catch (Exception ex)
 			{
@@ -326,10 +391,11 @@ namespace Isle.BizServices
 					}
 
 					//Add usage rights
-					var usageRightsField = result.Fields.Where(m => m.Schema == "usageRights").FirstOrDefault();
-					var rights = GetUsageRights(result.UsageRightsUrl);
-					usageRightsField.Tags.Add(rights.Title);
-					usageRightsField.Ids.Add(rights.TagId);
+					//15-11-09 mparsons - no need for tags for usage rights - validate can be removed
+					var usageRightsField = result.Fields.Where( m => m.Schema == "usageRights" ).FirstOrDefault();
+					//var rights = GetUsageRights(result.UsageRightsUrl);
+					//usageRightsField.Tags.Add(rights.Title);
+					//usageRightsField.Ids.Add(rights.TagId);
 
 				}
 			}
@@ -342,7 +408,11 @@ namespace Isle.BizServices
 			return result;
 		}
 
-		//Get Resource ES from Version Data
+		/// <summary>
+		/// Get Resource ES from Version Data
+		/// </summary>
+		/// <param name="versionData"></param>
+		/// <returns></returns>
 		public ResourceES GetResourceESVersionData(DataRow versionData)
 		{
 			//Get Resource ID
@@ -371,13 +441,16 @@ namespace Isle.BizServices
 			var libIDs = GetIntList("LibraryIds", versionData);
 			var favorites = libIDs.Count(); // favoritesRaw > libIDs.Count() ? favoritesRaw : libIDs.Count();
 
+			
 			//Get Thumbnail
-			//TODO - 15-10-20 mp - need to update to handle custom images
+			//15-10-20 mp - updated to handle custom images
 			string imageUrl = GetColumn<string>( "CustomImageUrl", versionData );
 			if ( string.IsNullOrWhiteSpace( imageUrl ) )
 				imageUrl = GetThumbnailUrl( resourceID );
 
 			//Build the rest of the resource
+			//15-11-09 mp - added UsageRightsId. 
+			//15-11-10 na - changed to RightsId in table
 			var res = new ResourceES()
 			{
 				ResourceId = resourceID,
@@ -394,6 +467,7 @@ namespace Isle.BizServices
 				Publisher = GetColumn<string>("Publisher", versionData),
 				Submitter = GetColumn<string>("Submitter", versionData),
 				UsageRightsUrl = GetColumn<string>("RightsUrl", versionData),
+				UsageRightsId = GetColumn<int>( "RightsId", versionData ),
 				Keywords = GetStringList("Keywords", versionData).Where(t => t.Length >= 3).ToList(),
 				LibraryIds = libIDs,
 				CollectionIds = GetIntList("CollectionIds", versionData),
@@ -472,7 +546,20 @@ namespace Isle.BizServices
 			}
 
 			//Add usage rights
-			var rightsTag = usageRights.Tags[0];
+			//15-11-09 mparsons - should not need to have usage rights in tags, - validate and remove
+			//		otherwise need to handle UsageRightsId
+
+			var rightsField = GetUsageRights( res.UsageRightsUrl, res.UsageRightsId, usageRightsCodes );
+			res.Fields.Add( new FieldES()
+			{
+				Id = usageRights.Id,
+				Schema = usageRights.Schema,
+				Title = usageRights.Title,
+				Ids = new List<int>() { rightsField.TagId },
+				Tags = new List<string>() { rightsField.Title }
+			} );
+			//TODO: update this to properly assign "unknown" and "custom"
+			/*var rightsTag = usageRights.Tags[0];
 			var rightsID = usageRights.Ids[0];
 			if (res.UsageRightsUrl != "" && res.UsageRightsUrl != "Unknown")
 			{
@@ -493,7 +580,7 @@ namespace Isle.BizServices
 				Title = usageRights.Title,
 				Ids = new List<int>() { rightsID },
 				Tags = new List<string>() { rightsTag }
-			});
+			});*/
 
 			return res;
 		}
@@ -544,7 +631,7 @@ namespace Isle.BizServices
 			return res;
 		}
 
-		public string GetJSONLRMIPayloadFromResource( ResourceDTO input )
+/*		public string GetJSONLRMIPayloadFromResource( ResourceDTO input )
 		{
 			var log = new List<string>();
 			return GetJSONLRMIPayloadFromResource( input, ref log );
@@ -566,6 +653,7 @@ namespace Isle.BizServices
 
 			//Simple fields
 			//TODO - do we need to add thumbnail?
+			//No - no need to publish thumbnail data to LR - NA
 			resource.Add("name", input.Title);
 			resource.Add("url", input.Url);
 			resource.Add("description", input.Description);
@@ -598,12 +686,13 @@ namespace Isle.BizServices
 			if (grades.Count > 0)
 			{
 				logging.Add( "Determining age ranges..." );
-				var ageRangeDS = DatabaseManager.DoQuery(
-					"SELECT codes.[Id], codes.[FromAge], codes.[ToAge], tags.[Id] AS TagId, tags.Title " +
-					"FROM [Codes.GradeLevel] codes " +
-					"LEFT JOIN [Codes.TagValue] tags ON tags.CodeId = codes.Id " +
-					"WHERE tags.CategoryId = " + input.Fields.Where(m => m.Schema == "gradeLevel").FirstOrDefault().Id + " AND tags.IsActive = 1"
-					);
+				var ageRangeDS = CodeTableBizService.DeterminingAgeRanges( input );
+				//var ageRangeDS = DatabaseManager.DoQuery(
+				//	"SELECT codes.[Id], codes.[FromAge], codes.[ToAge], tags.[Id] AS TagId, tags.Title " +
+				//	"FROM [Codes.GradeLevel] codes " +
+				//	"LEFT JOIN [Codes.TagValue] tags ON tags.CodeId = codes.Id " +
+				//	"WHERE tags.CategoryId = " + input.Fields.Where(m => m.Schema == "gradeLevel").FirstOrDefault().Id + " AND tags.IsActive = 1"
+				//	);
 				var fromAge = "";
 				var toAge = "";
 				foreach (DataRow dr in ageRangeDS.Tables[0].Rows)
@@ -677,8 +766,279 @@ namespace Isle.BizServices
 			logging.Add( "Serializing..." );
 
 			return new JavaScriptSerializer().Serialize(resource);
-		}
+		}*/
 
+        public string GetJsonLdLrmiForPage(ResourceDTO input)
+        {
+            var log = new List<string>();
+            return GetJsonLdLrmiPayloadFromResource(input, true, ref log);
+        }
+
+        public string GetJsonLdLrmiPayloadFromResource(ResourceDTO input)
+        {
+            var log = new List<string>();
+            return GetJsonLdLrmiPayloadFromResource(input, false, ref log);
+        }
+
+        public string GetJsonLdLrmiPayloadFromResource(ResourceDTO input, bool forPage, ref List<string> logging)
+        {
+            logging.Add("input status: " + (input == null ? "Null!" : "not null"));
+            logging.Add("Building context and type");
+
+            // Hold output
+            var resource = new Dictionary<string, object>();
+
+            // Build context - this is the same for all resources
+            var context = new Dictionary<string, object>();
+            context.Add("@vocab", "http://schema.org/");
+            context.Add("requires", "http://purl.org/dc/terms/requires");
+            context.Add("mediaType", "http://purl.org/dc/terms/format");
+            context.Add("accessRights", "http://purl.org/dc/terms/AccessRights");
+            context.Add("useRightsUrl", "http://purl.org/dcx/lrmi-terms/useRightsUrl");
+            var aud = new Dictionary<string, object>();
+            aud.Add("@id", "audience");
+            aud.Add("@type", "EducationalAudience");
+            context.Add("audience", aud);
+            resource.Add("@context", context);
+            resource.Add("@type", "CreativeWork");
+
+            logging.Add("Adding basic fields...");
+            resource.Add("name", input.Title);
+            if (!forPage)
+            {
+                resource.Add("url", input.Url);
+            }
+            resource.Add("description", input.Description);
+            resource.Add("dateCreated", DateTime.Parse(input.ResourceCreated).ToString("yyyy-MM-dd"));
+            resource.Add("requires", input.Requirements);
+            resource.Add("useRightsUrl", input.UsageRights.Url);
+            // added license, useRightsUrl is an LRMI 1.1 property, license is a schema.org property.
+            resource.Add("license", input.UsageRights.Url);
+            resource.Add("about", input.Keywords);
+
+            // author and publisher in the strictest sense are classes (see http://schema.org/author and http://schema.org/publisher)
+            var obj = new Dictionary<string, object>();
+            obj.Add("name", input.Creator);
+            resource.Add("author", obj);
+            obj = new Dictionary<string,object>();
+            obj.Add("name",input.Publisher);
+            resource.Add("publisher", obj);
+
+            // Dynamic fields
+            logging.Add("Adding dynamic fields...");
+            logging.Add("  Fields status: " + (input.Fields == null ? "Null!" : "not null"));
+            logging.Add("  Field count: " + input.Fields.Count());
+
+			var specialFieldSchemas = new List<string>() { 
+					"gradeLevel", 
+					"k12Subject", 
+					"careerCluster", 
+					"educationalRole", 
+					"groupType", 
+					"learningResourceType",
+					"assessmentType"
+			};
+
+            foreach (var item in input.Fields.Where(m => m.Tags.Where(t => t.Selected).Count() > 0).ToList())
+            {
+                if (!specialFieldSchemas.Contains(item.Schema))
+                {
+                    // gradeLevel, k12Subject, careerCluster, educationalRole, groupType, learningResourceType, and assessmentType are handled separately.
+                    logging.Add("  Handling field: " + item.Schema);
+                    resource.Add(item.Schema, item.Tags.Where(t => t.Selected).Select(t => t.Title).ToList());
+                }
+            }
+
+            // Special fields - gradeLevel, k12subject, careerCluster, educationalRole, groupType, learningResourceType, and assessmentType
+            logging.Add("  Handling special fields...");
+
+            List<AlignmentObject> alignments = new List<AlignmentObject>();
+            // If any grades are selected, go through the cantankerous process of figuring out age range and assign the grade level alignment object
+            var grades = input.Fields.Where(m => m.Schema == "gradeLevel").FirstOrDefault().Tags.Where(t => t.Selected).OrderBy(t => t.Id).ToList();
+            if (grades.Count > 0)
+            {
+                logging.Add("  Determining age ranges...");
+                var ageRangeDS = DatabaseManager.DoQuery(
+                    "SELECT codes.[Id], codes.[FromAge], codes.[ToAge], tags.[Id] AS TagId, tags.Title\n" +
+                    "FROM [Codes.GradeLevel] codes\n" +
+                    "LEFT JOIN [Codes.TagValue] tags on tags.CodeId = codes.Id\n" +
+                    "WHERE tags.CategoryId = " + input.Fields.Where(m => m.Schema == "gradeLevel")
+                        .FirstOrDefault().Id + " AND tags.IsActive = 1"
+                );
+                var fromAge = "";
+                var toAge = "";
+                foreach (DataRow dr in ageRangeDS.Tables[0].Rows)
+                {
+                    var currentId = int.Parse(DatabaseManager.GetRowColumn(dr, "TagId"));
+                    if (currentId == grades.First().Id)
+                    {
+                        fromAge = DatabaseManager.GetRowColumn(dr, "FromAge");
+                    }
+                    if (currentId == grades.Last().Id)
+                    {
+                        toAge = DatabaseManager.GetRowColumn(dr, "ToAge");
+                    }
+                }
+                resource.Add("typicalAgeRange", fromAge + "-" + toAge);
+                logging.Add("  Handling grade levels...");
+                foreach (TagDTO grade in grades)
+                {
+                    AlignmentObject alignmentObject = new AlignmentObject()
+                    {
+                        targetName = grade.Title,
+                        educationalFramework = grade.Title.IndexOf("NRS") == -1 ? "US P-20" : "NRS Adult Education",
+                        targetDescription = grade.Title,
+                        alignmentType = "educationLevel"
+                    };
+                    alignments.Add(alignmentObject);
+                }
+            }
+
+            // Handling Standards
+            logging.Add("  Handling Standards...");
+            var standardBodies = GetStandardBodiesList();
+            //Assign standard bodies to standards
+            foreach (var item in input.Standards)
+            {
+                logging.Add("    Handling standard: " + item.NotationCode);
+                item.BodyId = standardBodies.Where(m => m.IdRanges.Where(n => n.Key <= item.StandardId && n.Value >= item.StandardId).Count() > 0).FirstOrDefault().BodyId;
+                if (item.NotationCode == null || item.NotationCode == "")
+                {
+                    item.NotationCode = item.Description;
+                }
+            }
+            //Create alignment objects
+            var alignmentTypes = new string[] { "learning standard", "assesses", "teaches", "requires" };
+            foreach (var item in input.Standards)
+            {
+                var body = standardBodies.Where(m => m.BodyId == item.BodyId).FirstOrDefault();
+                if (body == null) { continue; }
+                if (item.NotationCode == item.Description)
+                {
+                    item.NotationCode = "";
+                }
+                alignments.Add(new AlignmentObject()
+                {
+                    educationalFramework = body.Url,
+                    targetDescription = item.Description,
+                    alignmentType = alignmentTypes[item.AlignmentTypeId],
+                    targetName = item.NotationCode,
+                    targetUrl = item.Url
+                });
+            }
+
+            // Handling K12 subjects
+            logging.Add("  Handling K12 Subjects...");
+            var subjects = input.Fields.Where(m => m.Schema == "k12Subject").FirstOrDefault().Tags.Where(t => t.Selected).OrderBy(t => t.Id).ToList();
+            foreach (var item in subjects)
+            {
+                alignments.Add(new AlignmentObject()
+                {
+                    educationalFramework = "US K-12 Academic Subjects",
+                    targetDescription = item.Title,
+                    alignmentType = "educationalSubject",
+                    targetName = item.Title
+                });
+            }
+
+			if ( GetAppKeyValue( "handlingClustersSeparately", "no" ) == "yes" )
+			{
+				// Handling Career Clusters
+				var clusters = input.Fields.Where( m => m.Schema == "careerCluster" ).FirstOrDefault().Tags.Where( t => t.Selected ).OrderBy( t => t.Id ).ToList();
+				if ( clusters.Count > 0 )
+				{
+					logging.Add( "  Handling Career Clusters..." );
+					foreach ( var item in clusters )
+					{
+						alignments.Add( new AlignmentObject()
+						{
+							educationalFramework = item.Title == "Energy" ? "US-IL Career Clusters" : "US Career Clusters",
+							targetDescription = item.Title,
+							targetName = item.Title,
+							alignmentType = "educationalSubject"
+						} );
+					}
+				}
+			}
+
+            // Now that we've handled everything that should be handled as an AlignmentObject, add the alignments, if any.
+            if (alignments.Count() > 0)
+            {
+                resource.Add("educationalAlignment", alignments);
+            }
+
+            // Now handle anything that uses an Audience object (educationalRole and groupType)
+            var audiences = new List<Dictionary<string, object>>();
+            var educationalRoles = input.Fields.Where(m => m.Schema == "educationalRole").FirstOrDefault().Tags.Where(t => t.Selected).OrderBy(t => t.Id).ToList();
+            if (educationalRoles.Count > 0)
+            {
+                logging.Add("  Handling Educational Role/End User...");
+                List<string> edRole = new List<string>();
+                Dictionary<string, object> audience = new Dictionary<string, object>();
+                foreach (var item in educationalRoles)
+                {
+                    edRole.Add(item.Title);
+                }
+                audience.Add("educationalRole", edRole);
+                audiences.Add(audience);
+            }
+            var groupTypes = input.Fields.Where(m => m.Schema == "groupType").FirstOrDefault().Tags.Where(t => t.Selected).OrderBy(t => t.Id).ToList();
+            if (groupTypes.Count > 0)
+            {
+                logging.Add("  Handling Audience Type/Group Type...");
+                List<string> audType = new List<string>();
+                Dictionary<string, object> audience = new Dictionary<string, object>();
+                foreach (var item in groupTypes)
+                {
+                    audType.Add(item.Title);
+                }
+                audience.Add("audienceType", audType);
+                audiences.Add(audience);
+            }
+
+            // now that we've handled everything that should be handled as an EducationalAudience, add the audiences, if any.
+            if (audiences.Count() > 0)
+            {
+                resource.Add("audience", audiences);
+            }
+
+            var resourceTypes = new List<string>();
+            // Now handle learningResourceType and assessmentType
+            var learningResourceTypes = input.Fields.Where(m => m.Schema == "learningResourceType").FirstOrDefault().Tags.Where(t => t.Selected).OrderBy(t => t.Id).ToList();
+            if (learningResourceTypes.Count > 0)
+            {
+                logging.Add("  Handling Learning Resource Types");
+                foreach (var item in learningResourceTypes)
+                {
+                    resourceTypes.Add(item.Title);
+                }
+            }
+            var assessmentTypes = input.Fields.Where(m => m.Schema == "assessmentType").FirstOrDefault().Tags.Where(t => t.Selected).OrderBy(t => t.Id).ToList();
+            if (assessmentTypes.Count > 0)
+            {
+                logging.Add("  Handling Assessment Types");
+                foreach (var item in assessmentTypes)
+                {
+                    resourceTypes.Add(item.Title);
+                }
+            }
+            if (resourceTypes.Count() > 0)
+            {
+                resource.Add("learningResourceType", resourceTypes);
+            }
+
+            logging.Add("Serializing...");
+            return new JavaScriptSerializer().Serialize(resource);
+        }//
+
+		public ResourceDTO GetResourceDTOFromContent( int contentID, Patron user )
+		{
+			var valid = true;
+			var status = "";
+			var approval = "";
+			var action = "";
+			return GetResourceDTOFromContent( contentID, user, ref valid, ref status, ref approval, ref action );
+		}
 		/// <summary>
 		/// Get ResourceDTO from ContentItem
 		/// Usage - to populate a resource object used on uberTagger
@@ -712,6 +1072,7 @@ namespace Isle.BizServices
 			{
 				status = "The referenced content record has already been published.";
 				valid = false;
+				result.ResourceId = contentItem.ResourceIntId;
 				return result;
 			}
 
@@ -730,7 +1091,13 @@ namespace Isle.BizServices
 
 			result.Title = contentItem.Title;
 			result.Description = contentItem.Summary;
-			result.UsageRights = GetUsageRights( contentItem.UseRightsUrl );
+			//if id not equal: 0,4,8, just return Id - tagger needs to handle
+			//if 4, need to also include url
+			result.UsageRights = GetUsageRights( contentItem.ConditionsOfUseUrl, contentItem.ConditionsOfUseId );
+			if ( contentItem.ConditionsOfUseId == 4 )
+			{
+				result.UsageRights.Url = contentItem.ConditionsOfUseUrl;
+			}
 			result.Creator = contentItem.HasOrg() ? contentItem.ContentOrg.Name : user.FullName();
 			result.Publisher = ILPathways.Utilities.UtilityManager.GetAppKeyValue( "defaultPublisher", "Illinois Shared Learning Environment" );
 
@@ -743,18 +1110,25 @@ namespace Isle.BizServices
 				lrPublishAction = "no";
 			}
 
+			//this is to be configuragle, not hard coded!
 			if ( contentItem.IsOrgContent() )
 			{
-				requiresApproval = "yes";
-				if ( contentItem.PrivilegeTypeId == ContentItem.PUBLIC_PRIVILEGE )
+				result.OrganizationId = contentItem.OrgId;
+				if ( UtilityManager.GetAppKeyValue( "doingOrgContentApprovals", "no" ) == "yes" )
 				{
-					lrPublishAction = "save";
+					//doingOrgContentApprovals
+					requiresApproval = "yes";
+					if ( contentItem.PrivilegeTypeId == ContentItem.PUBLIC_PRIVILEGE )
+					{
+						lrPublishAction = "save";
+					}
 				}
 			}
+
 			//NOTE: for learning lists, the standards will be applied later, so don't populate, and produce message!
-			if ( contentItem.IsHierarchyType ) 
+			if ( contentItem.IsHierarchyType || contentItem.TypeId == ContentItem.LEARNING_SET_CONTENT_ID) 
 			{
-				ServiceHelper.SetConsoleInfoMessage( "NOTE: All standards associated with this item will be copied to the resource after publishing has completed. You should not manally add any standards that aleady are associated with the list." );
+				ServiceHelper.SetConsoleInfoMessage( "NOTE: All standards associated with this item will be copied to the resource after publishing has completed. You should not manually add any standards that aleady are associated with the list." );
 			} else if (  contentItem.ContentStandards.Count > 0 )
 			{
 				foreach ( Content_StandardSummary css in contentItem.ContentStandards )
@@ -765,7 +1139,7 @@ namespace Isle.BizServices
 					standard.StandardId = css.StandardId;
 					standard.AlignmentTypeId = css.AlignmentTypeCodeId;
 					//major/supporting/additional - recycles old object's at/above/below field
-					standard.AlignmentDegreeId = css.UsageTypeId;
+					standard.UsageTypeId = css.UsageTypeId;
 					standard.IsDirectStandard = css.IsDirectStandard;
 
 					result.Standards.Add( standard );
@@ -783,6 +1157,13 @@ namespace Isle.BizServices
 			if ( contentItem.TypeId == 50 )
 			{
 				url = ServiceHelper.GetAppKeyValue( "learningListUrl" );
+				if ( url.Length > 10 )
+					url = string.Format( url, contentItem.Id, ResourceBizService.FormatFriendlyTitle( contentItem.Title ) );
+			}
+			else if ( contentItem.TypeId == ContentItem.LEARNING_SET_CONTENT_ID )
+			{
+				//really need to check the parent, and if an LL, then know the url pattern to use
+				url = ServiceHelper.GetAppKeyValue( "learningSetUrl" );
 				if ( url.Length > 10 )
 					url = string.Format( url, contentItem.Id, ResourceBizService.FormatFriendlyTitle( contentItem.Title ) );
 			}
@@ -847,7 +1228,7 @@ namespace Isle.BizServices
 					try
 					{
 						var resource = GetResourceES( item );
-						if ( resource  != null )
+						if ( resource != null && resource.ResourceId > 0 )
 							resources.Add( resource );
 					}
 					catch (Exception ex)
@@ -856,14 +1237,15 @@ namespace Isle.BizServices
 					}
 				}
 
+				//Do the bulk upload
 				var bulk = new List<object>();
-				foreach (var item in resources)
+				foreach ( var item in resources )
 				{
-					LoadBulkItem(ref bulk, item);
+					LoadBulkItem( ref bulk, item );
 				}
+				new ElasticSearchManager().DoChunkedBulkUpload( bulk );
 
-				new ElasticSearchManager().DoBulkUpload(bulk);
-
+				//Log information as needed
 				if (ServiceHelper.GetAppKeyValue("currentlyRebuildingIndex", "no") == "yes")
 				{
 					var messageTitle = "Resources need to be reindexed after import";
@@ -980,7 +1362,7 @@ namespace Isle.BizServices
 		public List<FieldDB> GetFieldsForLibCol(List<int> libraryIDs, List<int> collectionIDs, int isleSectionID)
 		{
 			var output = new List<FieldDB>();
-			var codes = GetFieldAndTagCodeData();
+			var codes = GetFieldAndTagCodeData(false);
 
 			//Get based on collections
 			foreach (var item in collectionIDs)
@@ -988,11 +1370,14 @@ namespace Isle.BizServices
 				var collectionFilters = LibraryBizService.Collection_GetPresentFiltersOnly(isleSectionID, item);
 				AddFieldsAndTags(0, item, collectionFilters.SiteTagCategories, codes, ref output);
 			}
-			//Get based on libraries
-			foreach (var item in libraryIDs)
+			//Get based on libraries if no collections are present
+			if ( collectionIDs == null || collectionIDs.Count() == 0 )
 			{
-				var libraryFilters = LibraryBizService.Library_GetPresentFiltersOnly(isleSectionID, item);
-				AddFieldsAndTags(item, 0, libraryFilters.SiteTagCategories, codes, ref output);
+				foreach (var item in libraryIDs)
+				{
+					var libraryFilters = LibraryBizService.Library_GetPresentFiltersOnly(isleSectionID, item);
+					AddFieldsAndTags(item, 0, libraryFilters.SiteTagCategories, codes, ref output);
+				}
 			}
 			//If no library or collection IDs, just get all fields
 			if (libraryIDs.Count() == 0 && collectionIDs.Count() == 0)
@@ -1041,7 +1426,7 @@ namespace Isle.BizServices
 					if (targetCode != null)
 					{
 						//Add a copy of it (don't want to copy the raw tags) to the output
-						output.Add(new FieldDB() { Id = targetCode.Id, Title = targetCode.Title, Schema = targetCode.Schema, IsleSectionIds = targetCode.IsleSectionIds });
+						output.Add(new FieldDB() { Id = targetCode.Id, Title = targetCode.Title, Schema = targetCode.Schema, IsleSectionIds = targetCode.IsleSectionIds, SortOrder = targetCode.SortOrder });
 						//Then add only the desired tags
 						var targetfield = output.Single(f => f.Id == targetCode.Id);
 
@@ -1072,20 +1457,25 @@ namespace Isle.BizServices
 			return tagsForThisFilterData;
 		}
 
-		//Delete a resource
-		public void DeleteResourceByVersionID(int versionID)
-		{
-			var intID = new ResourceBizService().GetIntIDFromVersionID(versionID);
-			DeleteResource(intID);
-		}
-		public void DeleteResource(int resourceID)
-		{
-			new ElasticSearchManager().DeleteResource(resourceID);
-		}
+		//Delete a resource from elastic
+		//public void DeleteResourceByVersionIDXXXX(int versionID)
+		//{
+		//	var intID = new ResourceBizService().GetIntIDFromVersionID(versionID);
+		//	DeleteResourceXX(intID);
+		//}
+		//public void DeleteResourceXX(int resourceID)
+		//{
+		//	new ElasticSearchManager().DeleteResource(resourceID);
+		//}
 		public void BulkDeleteResources(List<int> ids)
 		{
 			new ElasticSearchManager().DeleteResources(ids);
 		}
+        public void DeleteResource(int resourceID)
+        {
+            new ElasticSearchManager().DeleteResource(resourceID);
+        }
+
 
 		#endregion
 
@@ -1110,6 +1500,7 @@ namespace Isle.BizServices
 				{
 					System.Threading.ThreadPool.QueueUserWorkItem( delegate
 					{
+						//the list of resources are not passed, as this method will read the Resource_DelayedPublish table directly
 						int cntr = AddDelayedResourcesToElastic( curriculumID, ref status );
 					} );
 				}
@@ -1124,16 +1515,22 @@ namespace Isle.BizServices
 
 			return new EFMgr.PublishingManager().ResourceDelayedPublish_Add( entity );
 		}
-		public int ResourceDelayedPublish_Add( IsleDTO.ResourceDelayedPublish entity )
-		{
-			return new EFMgr.PublishingManager().ResourceDelayedPublish_Add( entity );
-		}
-		public void PublishRelatedChildContent( int contentId, Patron user )
-		{
-			ContentServices contentServices = new ContentServices();
-			var content = contentServices.Get( contentId );
-			PublishRelatedChildContent( content, user );
-		}
+		//public int ResourceDelayedPublish_Add( IsleDTO.ResourceDelayedPublish entity )
+		//{
+		//	return new EFMgr.PublishingManager().ResourceDelayedPublish_Add( entity );
+		//}
+		//public void PublishRelatedChildContent( int contentId, Patron user )
+		//{
+		//	ContentServices contentServices = new ContentServices();
+		//	var content = contentServices.Get( contentId );
+		//	PublishRelatedChildContent( content, user );
+		//}
+
+		/// <summary>
+		/// Publish child content of the provided content item. This will be any content item that can have a child node, document item, or reference item.
+		/// </summary>
+		/// <param name="content"></param>
+		/// <param name="user"></param>
 		public void PublishRelatedChildContent( ContentItem content, Patron user )
 		{
 			//get parent
@@ -1148,6 +1545,7 @@ namespace Isle.BizServices
 
 			//need to allow for any hierarchy type - to allow for publishing a part added later
 			if ( content.TypeId == ContentItem.CURRICULUM_CONTENT_ID
+				|| content.TypeId == ContentItem.LEARNING_SET_CONTENT_ID
 				|| content.IsHierarchyType )
 			{
 				//just 50 for now
@@ -1297,7 +1695,6 @@ namespace Isle.BizServices
 
 		public void PublishDelayedResourcesToLR()
 		{
-			string statusMessage = "";
 			//get type 3, or maybe a specific lrStateId
 			List<IsleDTO.ResourceDelayedPublish> list = EFMgr.PublishingManager.ResourceDelayedPublish_SelectPendingLRUpdates();
 
@@ -1379,6 +1776,13 @@ namespace Isle.BizServices
 			}
 			return resourceCntr;
 		}
+		/// <summary>
+		/// Retrieve any pending delayed publishing resources for the provided content Id.
+		/// Checks ElasticStatusId. If 1, then has not been processed yet. Process record and set to 2 (done)
+		/// </summary>
+		/// <param name="parentContentId"></param>
+		/// <param name="statusMessage"></param>
+		/// <returns></returns>
 		public int AddDelayedResourcesToElastic( int parentContentId, ref string statusMessage )
 		{
 			int lastResourceId = 0;
@@ -1395,6 +1799,7 @@ namespace Isle.BizServices
 						resourceCntr++;
 						//refresh resource in elastic index
 						RefreshResource( item.ResourceIntId );
+
 						lastResourceId = item.ResourceIntId;
 						statusMessage += lastResourceId.ToString() + ", ";
 						//now update status
@@ -1436,7 +1841,64 @@ namespace Isle.BizServices
 			}
 
 		}
+		#endregion
 
+		#region Utilities - Reindexing methods
+
+		public string HandlePendingResourcesToReindex()
+		{
+			DateTime maxDate = new DateTime();
+			//List<int> list = ResourceV2Services.Resource_ReindexList_Pending( ref maxDate);
+			//maxDate = new DateTime();
+			List<int> list = EFMgr.EFResourceManager.Resource_ReindexList_Pending( ref  maxDate );
+
+			if ( list == null || list.Count == 0 )
+			{
+				SetConsoleErrorMessage( "There were no records in the table to reindex " );
+				return "There were no records in the table to reindex ";
+			}
+			LoggingHelper.DoTrace(2, string.Format("$$$$$ ResourceV2Services.HandlePendingResourcesToReindex. Starting reindex of {0} resources", list.Count));
+			new ResourceV2Services().ImportRefreshResources( list, false );
+
+			LoggingHelper.DoTrace(2, "$$$$$ ResourceV2Services.HandlePendingResourcesToReindex. Updating status to 2");
+			// set statusId to 2 for max date: {1}!
+			//new ResourceV2Services().Resource_ReindexList_UpdatePending( maxDate );
+			new IOERBusinessEntities.procs.ResourceManager().Resource_ReindexList_UpdatePending( maxDate );
+
+			//if list count is 2000, there may be more --> actually assess how the reindex of 14000 resources when on Mar.12th
+			string extra = "";
+			if (list.Count == 2000) {
+				extra = "<br/><br/>NOTE: there are probably more resources, do another reindex";
+			}
+			string message = string.Format( "Reindexed {0} Resources!" + extra, list.Count, maxDate.ToShortDateString() );
+			SetConsoleSuccessMessage(message);
+
+			return message;
+			
+		}
+
+		/// <summary>
+		/// Return list of resources with a pending status from the resource.ReindexList table.
+		/// </summary>
+		/// <param name="maxDate"></param>
+		/// <returns></returns>
+		public static List<int> Resource_ReindexList_Pending( ref DateTime maxDate )
+		{
+			maxDate = new DateTime();
+			List<int> list = EFMgr.EFResourceManager.Resource_ReindexList_Pending( ref  maxDate );
+
+			return list;
+		}
+
+		/// <summary>
+		/// Set pending items in the resource.reindex list table to completed (status = 2) where created date is <= passed date
+		/// </summary>
+		/// <param name="maxDate"></param>
+		public void Resource_ReindexList_UpdatePending( DateTime maxDate )
+		{
+			new IOERBusinessEntities.procs.ResourceManager().Resource_ReindexList_UpdatePending( maxDate );
+		}
+			
 		#endregion
 
 		#region Update methods
@@ -1487,49 +1949,148 @@ namespace Isle.BizServices
 			{
 				return new List<string>();
 			}
-		}
+}
 
+		/// <summary>
+		/// Return list of all creative commons usage rights
+		/// </summary>
+		/// <returns></returns>
 		public List<UsageRights> GetUsageRightsList()
 		{
+			return GetUsageRightsList(false);
+		}
+
+
+		/// <summary>
+		/// Return list of creative commons usage rights
+		/// </summary>
+		/// <param name="forNewResourcesOnly">If true, only licenses applicable to new resources will be returned.</param>
+		/// <returns></returns>
+		public List<UsageRights> GetUsageRightsList( bool forNewResourcesOnly )
+		{
+			//TODO - should not be using with Codes.TagValue!!!!
 			var rights = new List<UsageRights>();
 
-			//DataSet ds = DatabaseManager.DoQuery( "SELECT * FROM [ConditionOfUse] WHERE IsActive = 1 ORDER BY SortOrderAuthoring" );
-			DataSet ds = DatabaseManager.DoQuery("SELECT usage.[Id],[Summary],usage.[Title],usage.[Description],[Url],[IconUrl],[MiniIconUrl],[IsCustom],[IsUnknown],vals.Id AS TagId FROM [ConditionOfUse] usage LEFT JOIN [Codes.TagValue] vals ON usage.Id = vals.CodeId LEFT JOIN [Codes.TagCategory] cats ON vals.CodeId = usage.Id WHERE vals.CategoryId = cats.Id AND cats.SchemaTag = 'usageRights' AND usage.IsActive = 1 ORDER BY usage.SortOrderAuthoring");
-			foreach (DataRow dr in ds.Tables[0].Rows)
+			DataSet ds = CodeTableManager.ConditionsOfUse_Select();
+			if ( DatabaseManager.DoesDataSetHaveRows( ds ) )
 			{
-				rights.Add(new UsageRights()
+				foreach ( DataRow dr in ds.Tables[ 0 ].Rows )
 				{
-					CodeId = int.Parse(DatabaseManager.GetRowColumn(dr, "Id")),
-					Url = DatabaseManager.GetRowPossibleColumn(dr, "Url"),
-					Title = DatabaseManager.GetRowColumn(dr, "Summary"),
-					Description = DatabaseManager.GetRowColumn(dr, "Title"),
-					IconUrl = DatabaseManager.GetRowColumn(dr, "IconUrl"),
-					MiniIconUrl = DatabaseManager.GetRowColumn(dr, "MiniIconUrl"),
-					TagId = int.Parse(DatabaseManager.GetRowColumn(dr, "TagId")),
-					Custom = bool.Parse(DatabaseManager.GetRowColumn(dr, "IsCustom")),
-					Unknown = bool.Parse(DatabaseManager.GetRowColumn(dr, "IsUnknown"))
-				});
+					if ( !forNewResourcesOnly
+					|| ( forNewResourcesOnly && DatabaseManager.GetRowPossibleColumn( dr, "IsAllowedForNewResource", true ) ) )
+					{
+						rights.Add( new UsageRights()
+						{
+							CodeId = int.Parse( DatabaseManager.GetRowColumn( dr, "Id" ) ),
+							Url = DatabaseManager.GetRowPossibleColumn( dr, "Url" ),
+							Summary = DatabaseManager.GetRowColumn( dr, "Summary" ),
+							Title = DatabaseManager.GetRowColumn( dr, "Title" ),
+							Description = DatabaseManager.GetRowColumn( dr, "Description" ),
+							IconUrl = DatabaseManager.GetRowColumn( dr, "IconUrl" ),
+							MiniIconUrl = DatabaseManager.GetRowColumn( dr, "MiniIconUrl" ),
+							TagId = 0,	//int.Parse( DatabaseManager.GetRowColumn( dr, "TagId" ) ),
+							Custom = bool.Parse( DatabaseManager.GetRowColumn( dr, "IsCustom" ) ),
+							Unknown = bool.Parse( DatabaseManager.GetRowColumn( dr, "IsUnknown" ) ),
+							IsAllowedForNewResource = DatabaseManager.GetRowPossibleColumn( dr, "IsAllowedForNewResource", true )
+
+						} );
+					}
+				}
 			}
+			
 
 			return rights;
 		}
-		public UsageRights GetUsageRights(string url)
+		public UsageRights GetUsageRights( string url, int usageRightsId )
 		{
+			//get all options
 			var rights = GetUsageRightsList();
+			return GetUsageRights( url, usageRightsId, rights );
+		}
+		//public UsageRights GetUsageRights( int usageRightsId )
+		//{
+		//	//get all options
+		//	var rights = GetUsageRightsList();
+		//	return GetUsageRights( usageRightsId, rights );
+		//}
+		public UsageRights GetUsageRights_NA( int usageRightsId, List<UsageRights> rights )
+		{
+			var result = new UsageRights();
+			//if missing, or unknown, what about fine print? need to have actual url
+			if ( "0 8 ".IndexOf( usageRightsId.ToString() ) > -1 )
+				return result;
+
 			for (var i = 0; i < rights.Count(); i++)
 			{
-				if (rights[i].Url == url)
+				if ( rights[ i ].CodeId == usageRightsId )
 				{
-					return rights[i];
+					result = rights[i];
+					result.Url = rights[ i ].Url;
+					return result;
 				}
 			}
-			if (!string.IsNullOrWhiteSpace(url))
+
+			//not found, return empty
+			return result;
+		}
+
+		/// <summary>
+		/// Populate UsageRights using a code id, or url if latter not present
+		/// </summary>
+		/// <param name="url"></param>
+		/// <param name="usageRightsId"></param>
+		/// <param name="rights"></param>
+		/// <returns></returns>
+		public UsageRights GetUsageRights( string url, int usageRightsId, List<UsageRights> rights )
+		{
+			var result = new UsageRights();
+			if ( string.IsNullOrWhiteSpace( url ) && usageRightsId == 0 )
 			{
-				return rights.Where(m => m.Custom).FirstOrDefault();
+				result = rights.Where( m => m.CodeId == 8 ).FirstOrDefault();
+				return result;
+			}
+
+			if ( usageRightsId > 0  )
+			{
+				result = rights.Where( m => m.CodeId == usageRightsId ).FirstOrDefault();
+				if ( usageRightsId == 4 )	//url should be provided
+					result.Url = url;
+				
+				return result;
+			}
+			//else if ( usageRightsId == 8 )
+			//{
+			//	//no code, so should be unknown, but should handle where not set yet
+			//	result = rights.Where( m => m.CodeId == 8 ).FirstOrDefault();
+			//	result.Url = url;
+			//	return result;
+			//}
+
+			//should not get to here, as usageRightsId should be fully populated now?
+			//actually should look up url, just in case
+			for ( var i = 0; i < rights.Count(); i++ )
+			{
+				if ( rights[ i ].Url.ToLower() == url.ToLower() )
+				{
+					result = rights[ i ];
+					result.CodeId = rights[ i ].CodeId;
+					//???, just found by url
+					//result.Url = url;
+					return result;
+				}
+			}
+			if ( !string.IsNullOrWhiteSpace( url ) )
+			{
+				//work to eliminate Custom,and Unknown
+				result = rights.Where( m => m.CodeId == 4 ).FirstOrDefault();
+				result.Url = url;
+				return result;
 			}
 			else
 			{
-				return rights.Where(m => m.Unknown).FirstOrDefault();
+				result = rights.Where( m => m.CodeId == 8 ).FirstOrDefault();
+				result.Url = url;
+				return result;
 			}
 		}
 
@@ -1537,13 +2098,16 @@ namespace Isle.BizServices
 		{
 			var result = new List<DDLItem>();
 			var data = new ContentServices().ContentPrivilegeCodes_Select();
-			foreach (DataRow dr in data.Tables[0].Rows)
+			if (DoesDataSetHaveRows(data))
 			{
-				result.Add(new DDLItem()
+				foreach (DataRow dr in data.Tables[0].Rows)
 				{
-					Id = GetColumn<int>("Id", dr),
-					Title = GetColumn<string>("Title", dr)
-				});
+					result.Add(new DDLItem()
+					{
+						Id = GetColumn<int>("Id", dr),
+						Title = GetColumn<string>("Title", dr)
+					});
+				}
 			}
 			return result;
 		}
@@ -1562,7 +2126,7 @@ namespace Isle.BizServices
 					ImageUrl = item.ImageUrl
 				};
 
-				var colData = libService.LibrarySections_SelectListWithContributeAccess(item.Id, userID);
+				var colData = libService.LibrarySections_SelectListWithContributeAccess(item.Id, userID);//.Distinct(); //Not sure why this is returning duplicates
 				foreach (var col in colData)
 				{
 					lib.Collections.Add(new DDLCollection()
@@ -1578,15 +2142,21 @@ namespace Isle.BizServices
 			return myLibrariesData;
 		}
 
-		//Get a code table style object of all fields and tags
-		public List<FieldDB> GetFieldAndTagCodeData()
+		/// <summary>
+		/// Get a code table style object of all fields and tags
+		/// </summary>
+		/// <param name="pWithValuesOnly">If true, will only return codes that have been referenced (warehouseTotal > 0)</param>
+		/// <returns></returns>
+		public List<FieldDB> GetFieldAndTagCodeData(bool pWithValuesOnly = true)
 		{
-			return GetFieldAndTagData(0);
+			return GetFieldAndTagData(0, pWithValuesOnly);
 		}
 		public List<FieldES> GetFieldCodes()
 		{
 			//Get code table
-			var fieldCodesDS = DatabaseManager.DoQuery("SELECT [Id], [Title], [SchemaTag], [SortOrder] FROM [Codes.TagCategory] WHERE IsActive = 1 ORDER BY [SortOrder], [Title]");
+			//var fieldCodesDS = DatabaseManager.DoQuery("SELECT [Id], [Title], [SchemaTag], [SortOrder] FROM [Codes.TagCategory] WHERE IsActive = 1 ORDER BY [SortOrder], [Title]");
+
+			var fieldCodesDS = CodeTableManager.CodesTagCategory_Select();
 			var json = new ResourceJSONManager();
 
 			//Assemble code data
@@ -1604,15 +2174,23 @@ namespace Isle.BizServices
 			//Return data
 			return fieldCodes;
 		}
-		//Get data for a resource
-		public List<FieldDB> GetFieldAndTagData(int resourceID)
+		/// <summary>
+		/// Get a code table style object of all fields and tags for a resource (but can be zero). 
+		/// </summary>
+		/// <param name="resourceID">Provide zero, if just want all pertinent tag values</param>
+		/// <param name="pWithValuesOnly">If true, will only return codes that have been referenced (warehouseTotal > 0)</param>
+		/// <returns></returns>
+		public List<FieldDB> GetFieldAndTagData(int resourceID, bool pWithValuesOnly )
 		{
 			var fields = new List<FieldDB>();
 
 			//Get code data
-			var codesDS = GetFieldAndTagDataDS(0);
+			//Getall, including those without a used value
+			//==> determine if called from somewhere that only wants those with values?
+			var codesDS = CodeTableBizService.Codes_TagValue_GetAll(pWithValuesOnly);
+
 			//Get Isle Section IDs
-			var sitesDS = DatabaseManager.DoQuery("SELECT [SiteId], [CategoryId], [SortOrder] FROM [Codes.SiteTagCategory] WHERE [IsActive] = 1 ORDER BY [SortOrder]");
+			var sitesDS = CodeTableManager.Codes_SiteTagCategory_Select();
 
 			//Make a list of objects to temporarily hold the Isle Section IDs data
 			var sites = new List<SiteData>();
@@ -1650,14 +2228,15 @@ namespace Isle.BizServices
 			var selectedIDs = new List<int>();
 			if (resourceID > 0)
 			{
+				selectedIDs = EFMgr.ResourceTaggingManager.Resource_GetTagIds( resourceID );
 				//Get resource tags
-				var idsDS = GetResourceTagValueIDs(resourceID);
+				//var idsDS = GetResourceTagValueIDs(resourceID);
 
 				//Set "Selected" = true for things that were selected
-				foreach (DataRow dr in idsDS.Tables[0].Rows)
-				{
-					selectedIDs.Add(int.Parse(DatabaseManager.GetRowColumn(dr, "TagvalueId")));
-				}
+				//foreach (DataRow dr in idsDS.Tables[0].Rows)
+				//{
+				//	selectedIDs.Add(int.Parse(DatabaseManager.GetRowColumn(dr, "TagvalueId")));
+				//}
 			}
 
 			//Add tags to fields
@@ -1684,32 +2263,7 @@ namespace Isle.BizServices
 
 			return fields;
 		}
-		public DataSet GetFieldAndTagDataDS(int resourceID)
-		{
-			//Get combined table of category and tag data in one call
-			DataSet ds = DatabaseManager.DoQuery(
-			  "SELECT DISTINCT vals.[Id] AS 'TagId', " +
-			  "vals.[Title] AS 'Tag', vals.[SortOrder] AS 'TagSort', vals.[CategoryId], vals.[CodeId]," +
-			  "cats.[SchemaTag] AS 'SchemaCat', vals.[SchemaTag] AS 'SchemaTag', cats.[Title] AS 'Category', cats.[SortOrder] AS 'CategorySort' " +
-			  (resourceID == 0 ? "" : ", res.[ResourceIntId]") +
-			  "FROM [Codes.TagValue] vals " +
-			  "LEFT JOIN [Codes.TagCategory] cats ON vals.[CategoryId] = cats.[Id] " +
-			  (resourceID == 0 ? "" : "LEFT JOIN [Resource.Tag] res ON res.[TagValueId] = tags.[Id]") +
-			  "WHERE " + (resourceID == 0 ? "" : "res.[ResourceIntId] = " + resourceID + " AND ") + "vals.[IsActive] = 1 AND cats.[IsActive] = 1" +
-			  "ORDER BY cats.[SortOrder], cats.[Title], vals.[SortOrder], vals.[Title]");
 
-			return ds;
-		}
-		public DataSet GetResourceTagValueIDs(int resourceID)
-		{
-			DataSet ds = DatabaseManager.DoQuery(
-			  "SELECT [TagvalueId] FROM [Resource.Tag] WHERE [ResourceIntId] = " + resourceID
-			);
-
-			return ds;
-		}
-
-		//Get Thumbnail URL (may make this dynamic later)
 		public string GetThumbnailUrl(int resourceID)
 		{
 			return "/OERThumbs/large/" + resourceID + "-large.png";
@@ -1800,7 +2354,8 @@ namespace Isle.BizServices
 			SelectTagsFromIDs(endUserIDs, ref fields, "educationalRole");
 
 			//Access Rights
-			var accessRightsIDs = new List<int>() { new ResourceVersionManager().GetByResourceId(resourceID).AccessRightsId };
+			ResourceVersion rv = ResourceBizService.ResourceVersion_GetByResourceId( resourceID );
+			var accessRightsIDs = new List<int>() { rv.AccessRightsId };
 			if (accessRightsIDs[0] < 2) { accessRightsIDs[0] = 2; }
 			SelectTagsFromIDs(accessRightsIDs, ref fields, "accessRights");
 
@@ -2034,6 +2589,15 @@ namespace Isle.BizServices
 				Title = "Illinois Adult Education (ABE/ASE) English Language Arts Standards for Speaking and Listening",
 				NotationPrefix = "",
 				IdRanges = new Dictionary<int, int>() { { 9548, 9682 } }
+			} );
+			//Illinois Foreign Language Standards
+			output.Add( new StandardBody()
+			{
+				BodyId = 18,
+				Url = "http://asn.jesandco.org/resources/D2615086",
+				Title = "Illinois Foreign Language Standards",
+				NotationPrefix = "",
+				IdRanges = new Dictionary<int, int>() { { 9750, 9936 } } 
 			} );
 			//Framework for 21st Century Learning
 			output.Add( new StandardBody()

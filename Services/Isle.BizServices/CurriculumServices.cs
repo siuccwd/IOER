@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -140,11 +140,22 @@ namespace Isle.BizServices
         /// <param name="pId"></param>
         /// <param name="statusMessage"></param>
         /// <returns></returns>
-        public bool DeleteCurriculumNode( int pId, ref string statusMessage )
+        public bool DeleteCurriculumNode( int pId, int userId, ref string statusMessage )
         {
-            return this.Delete( pId, ref statusMessage );
+            return this.Delete( pId, userId, ref statusMessage );
         }//
 
+		/// <summary>
+		/// Get a node, including:
+		/// - standards
+		/// - document nodes (state of document nodes???)
+		/// - allows caching
+		/// Does NOT include:
+		/// - child nodes
+		/// - not a complete fill
+		/// </summary>
+		/// <param name="pNodeId"></param>
+		/// <returns></returns>
         public ContentItem GetTheCurriculumNode( int pNodeId )
         {
             ThisUser user = new ThisUser();
@@ -211,8 +222,14 @@ namespace Isle.BizServices
         }//
 
         /// <summary>
-        /// Get node detail 
-        /// - assume public view 
+		/// Get node detail - assume public view
+		/// Including:
+		/// - standards
+		/// - a complete fill
+		/// - allows caching (as passed)
+		/// Does NOT include:
+		/// - child nodes
+		/// - document nodes
         /// </summary>
         /// <param name="pNodeId"></param>
         /// <param name="user"></param>
@@ -259,13 +276,17 @@ namespace Isle.BizServices
 
             //just want privileges, docs, and standards
             //just be proative and make latter properties!
-            request.DoCompleteFill = false;//?????
+            request.DoCompleteFill = true;//?????
 
             //need a variation - only want direct standards - especially for top level
             request.IncludeStandards = true;
             request.IncludeChildNodes = false;
+			request.IncludeKeywords = true;
             request.IncludeDocumentNodes = true;
-            request.IncludeConnectorNodes = false;
+			request.IncludeDocumentNodes = true;
+			request.IncludeDocumentNodesStandards = true;
+			request.IncludeDocumentNodesKeywords = false;
+			
 
             return GetCurriculumNode( request, user );
         }
@@ -275,13 +296,19 @@ namespace Isle.BizServices
 		/// </summary>
 		/// <param name="pNodeId"></param>
 		/// <returns></returns>
-		public ContentItem GetCurriculumNodeForPublish( int pNodeId )
+		//public ContentItem GetCurriculumNodeForPublish( int pNodeId )
+		//{
+		//	ContentItem entity = Get( pNodeId );
+
+		//	GetContentStandards( entity );
+
+		//	return entity;
+		//}
+
+		public int GetCurriculumIDForNode( int nodeId )
 		{
-			ContentItem entity = Get( pNodeId );
-
-			GetContentStandards( entity );
-
-			return entity;
+			ContentItem node = Get( nodeId );
+			return GetTopIdForHierarchy( node );
 		}
 
         /// <summary>
@@ -373,9 +400,14 @@ namespace Isle.BizServices
         public static List<ObjectMember> Learninglist_AllUsers(int listId)
         {
             return EFManager.Learninglist_SelectUsers(listId);
+ }
+
+		public int Content_AddNewPartner( int contentId, string email, int memberTypeId, int createdbyId, string message, ref string statusMessage )
+		{
+			return Content_AddNewPartner(contentId, email, "", "", memberTypeId, createdbyId, message, ref statusMessage);
         }
 
-        public int Content_AddNewPartner(int contentId, string email, int memberTypeId, int createdbyId, string message, ref string statusMessage)
+        public int Content_AddNewPartner(int contentId, string email, string firstName, string lastName, int memberTypeId, int createdbyId, string message, ref string statusMessage)
         {
             ContentPartner entity = new ContentPartner();
             int newId = 0;
@@ -392,7 +424,7 @@ namespace Isle.BizServices
                     //check if already a partner
                     if (IsContentPartner(contentId, user.Id))
                     {
-                        statusMessage = "User is already a member";
+                        statusMessage = user.FirstName + " is already a partner";
                         return 0;
                     }
                     entity.ContentId = contentId;
@@ -413,6 +445,8 @@ namespace Isle.BizServices
                 {
                     //create a skeleton account
                     user = new ThisUser();
+					user.FirstName = string.IsNullOrWhiteSpace(firstName) ? "Pending" : firstName;
+					user.LastName = string.IsNullOrWhiteSpace( lastName ) ? "User" : lastName;
                     user.Email = email;
                     user.UserName = email;
                     string password = "ChangeMe_" + System.DateTime.Now.Millisecond.ToString();
@@ -479,13 +513,6 @@ namespace Isle.BizServices
                     isSecure = true;
                 string link = "/Account/Login.aspx?pg={0}&nextUrl=/My/LearningList/{1}";
 
-                //EmailNotice notice = EmailServices.EmailNotice_Get(noticeCode);
-                //if (notice == null || notice.Id == 0)
-                //{
-                    
-                //    notice.HtmlBody = "<font face='Arial'>Dear {0},<br/><p>This is to notify you that <b>{1}</b> has granted access to the learning list: <em>{2}</em>, with a role of <i>{3}</i>. </p>   <p> You may use the following (one-time) link to login into IOER and navigate to the latter page.</p><p><a href='{4}'>Edit {2}</a></p><div>Sincerely,</div><div>The ISLE OER Team</div></font>";
-
-                //}
                 string proxyId = new AccountServices().Create_3rdPartyAddProxyLoginId(user.Id, "AddedContentPartner-existing", ref statusMessage);
                 //action: provide confirm url to ???. 
                 string confirmUrl = string.Format(link, proxyId.ToString(), contentId);
@@ -493,8 +520,6 @@ namespace Isle.BizServices
 
                 //assign and substitute: 0-FirstName, 1-sender name, 2-list name, 3-role, 4-login link, 5-message
                 eMessage = string.Format(email, user.FirstName, creator.FullName(), item.Title, ci.Title, confirmUrl, message);
-
-                eMessage += message;
 
 
                 EmailManager.SendEmail(toEmail, fromEmail, subject, eMessage, "", bcc);
@@ -508,7 +533,7 @@ namespace Isle.BizServices
 
         void SendEmailForNewPartner(ThisUser user, int contentId, ThisUser creator, ContentItem item, CodeItem ci, string message)
         {
-            string noticeCode = "AddedContentPartner-new";
+            //string noticeCode = "AddedContentPartner-new";
             string statusMessage = "";
             bool isSecure = false;
             string toEmail = user.Email;
@@ -524,21 +549,29 @@ namespace Isle.BizServices
                     isSecure = true;
 
                 string link = "/Account/Login.aspx?pg={0}&a=activate&nextUrl=/Account/Profile.aspx&nextUrl2=/My/LearningList/{1}";
-                string link2 = "/Account/Login.aspx?pg={0}&nextUrl=/My/LearningList/{1}";
+				//don't include this link, as it skips confirming account!
+                //string link2 = "/Account/Login.aspx?pg={0}&nextUrl=/My/LearningList/{1}";
+				/* text removed from email:
+				 * <p>If you are not redirected, <a href='{4}'>click here and go directly to the learning list</a></p>
+				 * */
 
                 string proxyId = new AccountServices().Create_3rdPartyAddProxyLoginId(user.Id, "AddedContentPartner-new", ref statusMessage);
-                string proxyId2 = new AccountServices().Create_3rdPartyAddProxyLoginId(user.Id, "AddedContentPartner-new2", ref statusMessage);
+				//string proxyId2 = new AccountServices().Create_3rdPartyAddProxyLoginId(user.Id, "AddedContentPartner-new2", ref statusMessage);
                 //action: provide confirm url to ???. 
                 string confirmUrl = string.Format(link, proxyId, contentId);
                 confirmUrl = UtilityManager.FormatAbsoluteUrl(confirmUrl, isSecure);
 
-                string llUrl = string.Format(link2, proxyId2, contentId);
-                llUrl = UtilityManager.FormatAbsoluteUrl(llUrl, isSecure);
+				//string llUrl = string.Format(link2, proxyId2, contentId);
+				//llUrl = UtilityManager.FormatAbsoluteUrl(llUrl, isSecure);
 
-                //assign and substitute: 0-sender name, 1-list name, 2-role, 3-login link to profile, 4-login to LL, 5-message
-                eMessage = string.Format(email, creator.FullName(), item.Title, ci.Title, confirmUrl, llUrl, message);
+                //assign and substitute: 0-sender name, 1-list name, 2-role, 3-login link to profile, 4-message
+				//removed 5-login to LL
+                eMessage = string.Format(email, creator.FullName(),
+									item.Title, 
+									ci.Title, 
+									confirmUrl, 
+									message);
 
-                eMessage += message;
                 EmailManager.SendEmail(toEmail, fromEmail, subject, eMessage, "", bcc);
             }
             catch (Exception ex)
@@ -588,10 +621,14 @@ namespace Isle.BizServices
         /// <param name="typeId"></param>
         /// <param name="statusMessage"></param>
         /// <returns></returns>
-        public int ContentSubScription_Create( int contentId, int userId, int typeId, ref string statusMessage )
+        public int ContentSubScription_Create( int contentId, Patron user, int typeId, ref string statusMessage )
         {
             EFManager mgr = new EFManager();
-            int id = mgr.ContentSubscription_Add( contentId, userId, typeId, ref statusMessage );
+            int id = mgr.ContentSubscription_Add( contentId, user.Id, typeId, ref statusMessage );
+			if ( id > 0 )
+			{
+				ActivityBizServices.SiteActivityAdd( "Learning List/Set", "Subscribe", string.Format( "{0} subscribed to Content ID: {1}, typeId: {2}", user.FullName(), contentId, typeId ), user.Id, 0, contentId );
+			}
             return id;
         }
 
@@ -602,10 +639,16 @@ namespace Isle.BizServices
             return mgr.ContentSubscription_Update( subscriptionId, typeId, ref statusMessage ); ;
         }
 
-        public bool ContentSubscription_Delete( int subscriptionId, ref string statusMessage )
+		public bool ContentSubscription_Delete( int subscriptionId, Patron user, ref string statusMessage )
         {
             EFManager mgr = new EFManager();
-            return mgr.ContentSubscription_Delete( subscriptionId, ref statusMessage );
+			int contentId= 0;
+            if ( mgr.ContentSubscription_Delete( subscriptionId, ref statusMessage, ref contentId ) )
+			{
+				ActivityBizServices.SiteActivityAdd( "Learning List/Set", "Unsubscribe", string.Format( "{0} unsubscribed from Content ID: {1}", user.FullName(), contentId ), user.Id, 0, contentId );
+				return true;
+			} else
+				return false;
         }
 
         #endregion
@@ -613,6 +656,11 @@ namespace Isle.BizServices
 
         #region  === Content.Standard
 		public int ContentStandard_Add( int nodeID, int userId, List<ContentStandard> standards )
+		{
+			int curriculumID = 0;
+			return ContentStandard_Add( curriculumID, nodeID, userId, standards );
+		}
+		public int ContentStandard_Add( int curriculumID, int nodeID, int userId, List<ContentStandard> standards )
         {
 			CSMgr csMgr = new CSMgr();
             int cntr = 0;
@@ -626,7 +674,7 @@ namespace Isle.BizServices
 					added++;
 					//add related standard
 					//may need at a higher level so that can reference elastic update code
-					ContentRelatedStandard_Add( standard.ContentId, newId );
+					ContentRelatedStandard_Add( curriculumID, standard.ContentId, newId );
 				}
             }
             //some check to ensure all were added.
@@ -637,13 +685,16 @@ namespace Isle.BizServices
             return added;
         }
 
-        public int ContentStandard_Add( int contentId, int standardId, int alignmentTypeCodeId, int usageTypeId, int createdById )
+        public int ContentStandard_Add( int curriculumID, int contentId, int standardId, int alignmentTypeCodeId, int usageTypeId, int createdById )
         {
 			//CSMgr csMgr = new CSMgr();
 			int newId = csMgr.ContentStandard_Add( contentId, standardId, alignmentTypeCodeId, usageTypeId, createdById );
 			//add related standard
 			//may need at a higher level so that can reference elastic update code
-			ContentRelatedStandard_Add( contentId, newId );
+			if ( newId > 0 )
+			{
+				ContentRelatedStandard_Add( curriculumID, contentId, newId );
+			}
 
 			new ResourceV2Services().CheckForDelayedPublishing( contentId, createdById );
 			return newId;
@@ -652,25 +703,6 @@ namespace Isle.BizServices
         {
 			CSMgr csMgr = new CSMgr();
 			return csMgr.ContentStandard_Update( id, alignmentTypeCodeId, usageTypeId, lastUpdatedById, ref statusMessage );
-        }
-
-        /// <summary>
-        /// Delete a Content.standard
-        /// </summary>
-        /// <param name="id"></param>
-        /// <param name="statusMessage"></param>
-        /// <returns></returns>
-        public bool ContentStandard_Delete( int parentId, int userId,  int contentStandardId, ref string statusMessage )
-        {
-			
-			//need to delete related first, as no RI cascade was possible
-			ContentRelatedStandard_Delete( contentStandardId );
-			//now delete standard
-			bool ok = csMgr.ContentStandard_Delete( contentStandardId, ref statusMessage );
-
-			//do delayed
-			new ResourceV2Services().CheckForDelayedPublishing( parentId, userId );
-			return ok;
         }
 
         /// <summary>
@@ -683,83 +715,7 @@ namespace Isle.BizServices
 			return CSMgr.Fill_ContentStandards( contentId );
         }
         #endregion
-		#region Content.RelatedStandards
-
-		public int ContentRelatedStandard_Add( int contentId, int contentStandardId )
-		{
-			int newId = 0;
-			CSMgr csMgr = new CSMgr();
-			ResourceV2Services resMgr = new ResourceV2Services();
-			int cntr = 0;
-			bool doingDelayedPubHere = false;
-			try
-			{
-				//get content and add to parent
-				ContentItem item = GetBasic( contentId );
-
-				//while each parent has a parent, add the related standard to the node
-				while ( item.ParentId > 0 )
-				{
-					//add
-					csMgr.ContentRelatedStandard_Add( item.ParentId, contentStandardId );
-
-					//if has resourceId, do something 
-					//==> actually would have been necessary after adding teh content.standard. Should use the delayed publishing!
-					if ( item.ResourceIntId > 0 && doingDelayedPubHere )
-					{
-						//call proc to do copy - probably need top node Id
-						//add delayed record and submit later
-						resMgr.ResourceDelayedPublish_AddElasticRequest( item.Id, item.ResourceIntId );
-						cntr++;
-					}
-					//get next
-					item = GetBasic( item.ParentId );
-
-				} //while
-
-				if ( cntr > 0 )
-				{
-					//initiate elastic update
-					//done elsewhere
-				}
-			}
-			catch ( Exception ex )
-			{
-				LoggingHelper.LogError( ex, thisClassName + ".ContentRelatedStandard_Add()" );
-			}
 		
-
-			return newId;
-}
-		
-		public void ContentRelatedStandard_Delete( int contentStandardId )
-		{
-			int cntr = 0;
-			bool doingDelayedPubHere = false;
-			ResourceV2Services resMgr = new ResourceV2Services();
-			List<IB.Content_RelatedStandardsSummary> list = CSMgr.ContentRelatedStandard_Summary( contentStandardId );
-			foreach ( IB.Content_RelatedStandardsSummary item in list )
-			{
-				//delete related
-				csMgr.ContentRelatedStandard_Delete( item.ContentStandardId, item.ContentId );
-
-				//ContentItem ci = GetBasic( item.ContentId );
-				if ( item.ResourceIntId > 0 && doingDelayedPubHere )
-				{
-					//add delayed record and submit later
-					resMgr.ResourceDelayedPublish_AddElasticRequest( item.ContentId, item.ResourceIntId );
-					cntr++;
-				}
-			}
-
-			if ( cntr > 0 )
-			{
-				//initiate elastic update
-				//elsewhere
-			}
-		}//
-
-		#endregion
 
         #region  === Content.Tag
 

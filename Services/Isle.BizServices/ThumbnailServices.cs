@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,6 +8,7 @@ using System.Collections.Concurrent;
 using System.Threading;
 using System.Diagnostics;
 using System.IO;
+using System.Drawing;
 
 using ILPathways.Utilities;
 
@@ -16,9 +17,33 @@ namespace Isle.BizServices
 	//A self-managing queue system to handle thumbnailing in a synchronous, serial manner from asynchronous calls from multiple threads
 	public class ThumbnailServices
 	{
+		//Take an existing image (ie a custom image), resize it to thumbnail size, then copy it into the thumbnail folder, overwriting as necessary
+		public static void CopyCustomImageToThumbnail( Image originalImage, int resourceID )
+		{
+			if ( UtilityManager.GetAppKeyValue( "creatingThumbnails" ) == "yes" && resourceID > 0 && originalImage != null )
+			{
+				var size = new Size( 400, 300 );
+				var stream = new MemoryStream();
+
+				new Bitmap( originalImage, size ).Save( stream, System.Drawing.Imaging.ImageFormat.Png );
+
+				var bytes = stream.ToArray();
+
+				var thumbnailFolder = UtilityManager.GetAppKeyValue( "serverThumbnailFolder", @"\\OERSQL\OerThumbs\large\" );
+
+				File.WriteAllBytes( thumbnailFolder + resourceID + "-large.png", bytes );
+			}
+		}
+
 		//This gets called from other methods
 		public static void CreateThumbnail( string filename, string url, bool overwriteIfExists )
 		{
+			//Skip if not creating thumbs in this env
+			if ( UtilityManager.GetAppKeyValue( "creatingThumbnails", "no" ) != "yes" )
+			{
+				return;
+			}
+
 			//Create the round
 			var bullet = new ThumbnailItem()
 			{
@@ -140,8 +165,8 @@ namespace Isle.BizServices
 					//Prevent other rounds from firing
 					chambered.Firing = true;
 
-					//Only use live ammo on production
-					if ( ServiceHelper.GetAppKeyValue( "envType", "dev" ) == "prod" )
+					//Only use live ammo on production/where desired
+					if ( ServiceHelper.GetAppKeyValue( "creatingThumbnails", "no" ) == "yes" )
 					{
 						//Fire
 						try
@@ -157,6 +182,9 @@ namespace Isle.BizServices
 							process.WaitForExit( 30000 );
 							process.Close();
 							Log( thumbnailerLog, "Thumbnail " + chambered.Filename + " should now exist.", false );
+
+							Log( thumbnailerLog, "Waiting for Chrome to finish closing", false );
+							Thread.Sleep( 5000 );
 						}
 						catch ( Exception ex )
 						{

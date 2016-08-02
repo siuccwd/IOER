@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.IO;
@@ -7,9 +7,13 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+using System.Web.SessionState;
 
 //temp use of:ILPathways.Utilities for email - probably should do differently
 using ILPathways.Utilities;
+using ILPathways.Common;
 using IPB = ILPathways.Business;
 using LRWarehouse.Business;
 
@@ -122,11 +126,19 @@ namespace Isle.BizServices
         #region Helpers and validaton
         public static bool IsLocalHost()
         {
+			if ( HttpContext.Current == null )
+			{
+				return true;
+			}
             string host = HttpContext.Current.Request.Url.Host.ToString();
             return ( host.Contains( "localhost" ) || host.Contains( "209.175.164.200" ) );
         }
 		public static bool IsTestEnv()
 		{
+			if ( HttpContext.Current == null )
+			{
+				return true;
+			}
 			string host = HttpContext.Current.Request.Url.Host.ToString();
 			return ( host.Contains( "localhost" ) || host.Contains( "209.175.164.200" ) );
 		}
@@ -1015,7 +1027,7 @@ namespace Isle.BizServices
                 Regex rx = new Regex( rxPattern );
                 output = rx.Replace( text, String.Empty );
                 if ( output.ToLower().IndexOf( "<script" ) > -1
-                    || output.ToLower().IndexOf( "javascript" ) > -1 )
+                    || output.ToLower().IndexOf( "javascript:" ) > -1 )
                 {
                     output = "";
                 }
@@ -1115,7 +1127,370 @@ namespace Isle.BizServices
 
         #endregion
 
+		#region General Utility Routines
+		/// <summary>
+		/// populate a dropdown list using generic list of CodeItems
+		/// </summary>
+		/// <param name="list"></param>
+		/// <param name="items"></param>
+		/// <param name="dataValueField"></param>
+		/// <param name="dataTextField"></param>
+		/// <param name="selectTitle"></param>
+		public static void PopulateList(DropDownList list, List<CodeItem> items, string dataValueField, string dataTextField, string selectTitle)
+		{
+			try
+			{
+				//clear current entries
+				list.Items.Clear();
 
+				if (items.Count > 0)
+				{
+					int count = items.Count;
+					if (selectTitle.Length > 0)
+					{
+						// add select row
+						CodeItem hdr = new CodeItem();
+						hdr.Id = 0;
+						hdr.Title = selectTitle;
+						items.Insert(0, hdr);
+					}
+					list.DataSource = items;
+					list.DataValueField = dataValueField;
+					list.DataTextField = dataTextField;
+					list.DataBind();
+					list.Enabled = true;
+					if (selectTitle.Length > 0)
+						list.SelectedIndex = 0;
+				}
+				else
+				{
+					list.Items.Add(new ListItem("No Selections Available", ""));
+					list.Enabled = false;
+				}
+
+			}
+			catch (Exception ex)
+			{
+				LogError(ex, "BaseDataManager.PopulateList( DropDownList list, DataSet ds, string " + dataValueField + ", string " + dataTextField + ", string selectTitle )");
+			}
+		}
+
+		public static void PopulateList(CheckBoxList list, List<CodeItem> items, string dataValueField, string dataTextField, string selectTitle)
+		{
+			try
+			{
+				//clear current entries
+				list.Items.Clear();
+
+				if (items.Count > 0)
+				{
+					int count = items.Count;
+					if (selectTitle.Length > 0)
+					{
+						// add select row
+						CodeItem hdr = new CodeItem();
+						hdr.Id = 0;
+						hdr.Title = selectTitle;
+						items.Insert(0, hdr);
+					}
+					list.DataSource = items;
+					list.DataValueField = dataValueField;
+					list.DataTextField = dataTextField;
+					list.DataBind();
+					list.Enabled = true;
+					if (selectTitle.Length > 0)
+						list.SelectedIndex = 0;
+				}
+				else
+				{
+					list.Items.Add(new ListItem("No Selections Available", ""));
+					list.Enabled = false;
+				}
+
+			}
+			catch (Exception ex)
+			{
+				LogError(ex, "BaseDataManager.PopulateList( CheckBoxList list, DataSet ds, string " + dataValueField + ", string " + dataTextField + ", string selectTitle )");
+			}
+		}
+
+		public static void PopulateList(RadioButtonList list, List<CodeItem> items, string dataValueField, string dataTextField, string selectTitle)
+		{
+			try
+			{
+				//clear current entries
+				list.Items.Clear();
+
+				if (items.Count > 0)
+				{
+					int count = items.Count;
+					if (selectTitle.Length > 0)
+					{
+						// add select row
+						CodeItem hdr = new CodeItem();
+						hdr.Id = 0;
+						hdr.Title = selectTitle;
+						items.Insert(0, hdr);
+					}
+					list.DataSource = items;
+					list.DataValueField = dataValueField;
+					list.DataTextField = dataTextField;
+					list.DataBind();
+					list.Enabled = true;
+					if (selectTitle.Length > 0)
+						list.SelectedIndex = 0;
+				}
+				else
+				{
+					list.Items.Add(new ListItem("No Selections Available", ""));
+					list.Enabled = false;
+				}
+
+			}
+			catch (Exception ex)
+			{
+				LogError(ex, "BaseDataManager.PopulateList( CheckBoxList list, DataSet ds, string " + dataValueField + ", string " + dataTextField + ", string selectTitle )");
+			}
+		}
+
+		/// <summary>
+		/// Fill a list using passed dataset
+		/// </summary>
+		/// <param name="list">DropDownList</param>
+		/// <param name="ds"></param>
+		/// <param name="dataValueField"></param>
+		/// <param name="dataTextField"></param>
+		public static void PopulateList(DropDownList list, DataSet ds, string dataValueField, string dataTextField)
+		{
+
+			PopulateList(list, ds, dataValueField, dataTextField, "");
+
+		}
+
+		/// <summary>
+		/// Fill a list using passed dataset, also insert first prompt row (asking user to select a row)
+		/// </summary>
+		/// <param name="list">DropDownList</param>
+		/// <param name="ds"></param>
+		/// <param name="dataValueField"></param>
+		/// <param name="dataTextField"></param>
+		/// <param name="selectTitle"></param>
+		public static void PopulateList(DropDownList list, DataSet ds, string dataValueField, string dataTextField, string selectTitle)
+		{
+			try
+			{
+				//clear current entries
+				list.Items.Clear();
+
+				if (DoesDataSetHaveRows(ds))
+				{
+					int count = ds.Tables[0].Rows.Count;
+					if (selectTitle.Length > 0)
+					{
+						// add select row
+						AddEntryToTable(ds.Tables[0], 0, selectTitle, dataValueField, dataTextField);
+					}
+					list.DataSource = ds;
+					list.DataValueField = dataValueField;
+					list.DataTextField = dataTextField;
+					list.DataBind();
+					list.Enabled = true;
+					if (selectTitle.Length > 0)
+						list.SelectedIndex = 0;
+				}
+				else
+				{
+					list.Items.Add(new ListItem("No Selections Available", ""));
+					list.Enabled = false;
+				}
+
+			}
+			catch (Exception ex)
+			{
+				LogError(ex, "BaseDataManager.PopulateList( DropDownList list, DataSet ds, string " + dataValueField + ", string " + dataTextField + ", string selectTitle )");
+			}
+		}
+
+		/// <summary>
+		/// Fill a list using passed dataset, also insert first prompt row (asking user to select a row)
+		/// </summary>
+		/// <param name="list">DropDownList</param>
+		/// <param name="ds"></param>
+		/// <param name="dataValueField"></param>
+		/// <param name="dataTextField"></param>
+		/// <param name="selectTitle"></param>
+		/// <param name="initialValue">value used for item added to list</param>
+		public static void PopulateList(DropDownList list, DataSet ds, string dataValueField, string dataTextField, string selectTitle, string initialValue)
+		{
+			try
+			{
+				//clear current entries
+				list.Items.Clear();
+
+				if (ds != null && ds.Tables.Count > 0)
+				{
+					if (ds.Tables[0].Rows.Count > 0)
+					{
+						// add select row
+						AddEntryToTable(ds.Tables[0], initialValue, selectTitle, dataValueField, dataTextField);
+
+						list.DataSource = ds;
+						list.DataValueField = dataValueField;
+						list.DataTextField = dataTextField;
+						list.DataBind();
+						list.Enabled = true;
+					}
+					else
+					{
+						DataTable tbl = new DataTable();
+						tbl.Columns.Add(dataValueField, typeof(string));
+						tbl.Columns.Add(dataTextField, typeof(string));
+
+						BaseDataManager.AddEntryToTable(tbl, 0, "No selections available", dataValueField, dataTextField);
+						list.DataSource = tbl;
+						list.DataValueField = dataValueField;
+						list.DataTextField = dataTextField;
+						list.DataBind();
+
+						list.Enabled = false;
+					}
+				}
+			}
+			catch (Exception ex)
+			{
+				LogError(ex, "BaseDataManager.PopulateList( DropDownList list, DataSet ds, string " + dataValueField + ", string " + dataTextField + ", string selectTitle )");
+			}
+		}
+
+		/// <summary>
+		/// Fill a list using passed DataTable, also insert first prompt row (asking user to select a row)
+		/// </summary>
+		/// <param name="list"></param>
+		/// <param name="dt"></param>
+		/// <param name="dataValueField"></param>
+		/// <param name="dataTextField"></param>
+		/// <param name="selectTitle"></param>
+		public static void PopulateDVList(DropDownList list, DataTable dt, string dataValueField, string dataTextField, string selectTitle)
+		{
+			try
+			{
+				//clear current entries
+				list.Items.Clear();
+
+				if (dt != null)
+				{
+					// add select row
+					AddEntryToTable(dt, 0, selectTitle, dataValueField, dataTextField);
+
+					list.DataSource = dt;
+					list.DataValueField = dataValueField;
+					list.DataTextField = dataTextField;
+					list.DataBind();
+				}
+
+			}
+			catch (Exception ex)
+			{
+				LogError(ex, "BaseDataManager.PopulateList( DropDownList list, DataTable dt, string " + dataValueField + ", string " + dataTextField + ", string selectTitle )");
+			}
+		}
+
+		/// <summary>
+		/// Fill a list using passed dataset, also insert first prompt row (asking user to select a row)
+		/// </summary>
+		/// <param name="list">ListBox</param>
+		/// <param name="ds"></param>
+		/// <param name="dataValueField"></param>
+		/// <param name="dataTextField"></param>
+		/// <param name="selectTitle"></param>
+		public static void PopulateList(ListBox list, DataSet ds, string dataValueField, string dataTextField, string selectTitle)
+		{
+			try
+			{
+				//clear current entries
+				list.Items.Clear();
+
+				if (ds != null && ds.Tables.Count > 0)
+				{
+					// add select row
+					AddEntryToTable(ds.Tables[0], 0, selectTitle, dataValueField, dataTextField);
+
+					list.DataSource = ds;
+					list.DataValueField = dataValueField;
+					list.DataTextField = dataTextField;
+					list.DataBind();
+				}
+
+			}
+			catch (Exception ex)
+			{
+				LogError(ex, "BaseDataManager.PopulateList( DropDownList list, DataSet ds, string " + dataValueField + ", string " + dataTextField + ", string selectTitle )");
+			}
+		}
+
+		/// <summary>
+		/// Add an entry to the beginning of a Data Table
+		/// </summary>
+		/// <param name="tbl"></param>
+		/// <param name="displayValue"></param>
+		public static void AddEntryToTable(DataTable tbl, string displayValue)
+		{
+			DataRow r = tbl.NewRow();
+			r[0] = displayValue;
+			tbl.Rows.InsertAt(r, 0);
+		}
+
+		/// <summary>
+		/// Add an entry to the beginning of a Data Table. Uses a default key name of "id" and display column of "name"
+		/// </summary>
+		/// <param name="tbl"></param>
+		/// <param name="keyValue"></param>
+		/// <param name="displayValue"></param>
+		public static void AddEntryToTable(DataTable tbl, int keyValue, string displayValue)
+		{
+			//DataRow r = tbl.NewRow();
+			//r[ 0 ] = id;
+			//r[ 1 ] = displayValue;
+			//tbl.Rows.InsertAt( r, 0 );
+
+			AddEntryToTable(tbl, keyValue, displayValue, "id", "name");
+
+		}
+
+		/// <summary>
+		/// Add an entry to the beginning of a Data Table. Uses a default key name of "id" and display column of "name"
+		/// </summary>
+		/// <param name="tbl"></param>
+		/// <param name="keyValue"></param>
+		/// <param name="displayValue"></param>
+		/// <param name="keyName"></param>
+		/// <param name="displayName"></param>
+		public static void AddEntryToTable(DataTable tbl, int keyValue, string displayValue, string keyName, string displayName)
+		{
+			DataRow r = tbl.NewRow();
+			r[keyName] = keyValue;
+			r[displayName] = displayValue;
+			tbl.Rows.InsertAt(r, 0);
+
+		}
+		/// <summary>
+		/// Add an entry to the beginning of a Data Table. Uses the provided key name and display column
+		/// </summary>
+		/// <param name="tbl"></param>
+		/// <param name="keyValue"></param>
+		/// <param name="displayValue"></param>
+		/// <param name="keyName"></param>
+		/// <param name="displayName"></param>
+		public static void AddEntryToTable(DataTable tbl, string keyValue, string displayValue, string keyName, string displayName)
+		{
+			DataRow r = tbl.NewRow();
+			r[keyName] = keyValue;
+			r[displayName] = displayValue;
+			tbl.Rows.InsertAt(r, 0);
+
+		}
+
+		#endregion
         #region === system console methods ==
 
 
@@ -1192,5 +1567,78 @@ namespace Isle.BizServices
 
         } //
         #endregion
-    }
+
+		#region HttpSessionState Methods
+		public static void SessionSet( string key, System.Object sysObject )
+		{
+			if ( HttpContext.Current.Session != null )
+			{
+				SessionSet( HttpContext.Current.Session, key, sysObject );
+			}
+			
+		} //
+		/// <summary>
+		/// Helper Session method - future use if required to chg to another session provider such as SQL Server 
+		/// </summary>
+		/// <param name="session"></param>
+		/// <param name="key"></param>
+		/// <param name="sysObject"></param>
+		public static void SessionSet( HttpSessionState session, string key, System.Object sysObject )
+		{
+
+			session[ key ] = sysObject;
+
+		} //
+		/// <summary>
+		/// Get a key from a session, default to blank if not found
+		/// </summary>
+		/// <param name="key">Key for session</param>
+		/// <returns>string</returns>
+		public static string SessionGet( string key )
+		{
+			if ( HttpContext.Current.Session != null )
+			{
+				return SessionGet( HttpContext.Current.Session, key, "" );
+			}
+			else
+				return null;
+		} //
+
+		public static string SessionGet( string key, string defaultValue )
+		{
+			if ( HttpContext.Current.Session != null )
+			{
+				return SessionGet( HttpContext.Current.Session, key, defaultValue );
+			}
+			else
+				return null;
+		} //
+		/// <summary>
+		/// Get a key from a session, default to blank if not found
+		/// </summary>
+		/// <param name="session">HttpSessionState</param>
+		/// <param name="key">Key for session</param>
+		/// <returns>string</returns>
+		public static string SessionGet( HttpSessionState session, string key, string defaultValue )
+		{
+
+			string value = "";
+			try
+			{
+				if ( session[ key ] != null )
+					value = session[ key ].ToString();
+				else
+					value = defaultValue;
+
+			}
+			catch ( Exception ex )
+			{
+				value = defaultValue;
+			}
+
+
+			return value;
+		} //
+		#endregion
+	}
 }

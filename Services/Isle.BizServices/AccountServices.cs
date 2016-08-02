@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
@@ -38,38 +38,62 @@ namespace Isle.BizServices
 
         private static bool CanUserAuthor( Patron appUser )
         {
-            bool isValid = false;
+            bool isValid = true;
 
             return isValid;
         }
 
         private static bool CanUserOrgAuthor( Patron appUser )
         {
-            bool isValid = false;
+            bool isValid = true;
 
             return isValid;
         }
 
 		/// <summary>
 		/// return true if user is part of the site admin group
+		/// 16-02-26 mp - added static version
+		/// TODO - add a session variable to save repeated calls
 		/// </summary>
 		/// <param name="user"></param>
 		/// <returns></returns>
+		public static bool IsUserAnAdmin(Patron user)
+		{
+			string siteAdminObjectName = ServiceHelper.GetAppKeyValue("siteAdminObjectName");
+			//"Site.Admin"
+			return SecurityManager.GetGroupObjectPrivileges(user, siteAdminObjectName).CreatePrivilege > (int)ILPathways.Business.EPrivilegeDepth.State;
+		}
 		public bool IsUserAdmin(Patron user)
 		{
 			string siteAdminObjectName = ServiceHelper.GetAppKeyValue("siteAdminObjectName");
 			//"Site.Admin"
 			return SecurityManager.GetGroupObjectPrivileges(user, siteAdminObjectName).CreatePrivilege > (int)ILPathways.Business.EPrivilegeDepth.State;
 		}
-
+		public bool CanAdminUserAdminAnyLibrary()
+		{
+			bool adminUserCanAdminAnyLibrary = ServiceHelper.GetAppKeyValue( "adminUserCanAdminAnyLibrary", false );
+			return adminUserCanAdminAnyLibrary;
+		}
+		
 		public void SetUserAdminRole(Patron appUser)
 		{
 			string siteAdminObjectName = ServiceHelper.GetAppKeyValue("siteAdminObjectName");
 			ApplicationRolePrivilege arp = SecurityManager.GetGroupObjectPrivileges(appUser, siteAdminObjectName);
-			if (arp.CreatePrivilege == 5 || arp.WritePrivilege == 5) 
+			if (arp.CreatePrivilege > (int)EPrivilegeDepth.State ) 
 			{
-				//NOTE: this 
-				appUser.TopAuthorization = 2;
+				//NOTE: this needs to be put back in the session!
+				//actually this is set at login
+				//add kludge until improved
+				if ("2 22 24 56".IndexOf(appUser.Id.ToString()) > -1)
+					appUser.TopAuthorization = (int)EUserRole.ProgramAdministrator;
+				else
+					appUser.TopAuthorization = ( int ) EUserRole.ProgramStaff;
+			}
+			else if (arp.CreatePrivilege == (int)EPrivilegeDepth.State)
+			{
+				//NOTE: this needs to be put back in the session!
+				//actually this is set at login
+				appUser.TopAuthorization = (int)EUserRole.StateAdministrator;
 			}
 		}
         #endregion
@@ -164,6 +188,11 @@ namespace Isle.BizServices
         {
             PatronMgr mgr = new PatronMgr();
             return mgr.Get( pId );
+		}
+
+		public static Patron Account_GetByExternalIdentifier( string identifier )
+		{
+			return EFDal.AccountManager.Account_GetByExternalIdentifier( identifier );
         }//
 
         /// <summary>
@@ -184,6 +213,9 @@ namespace Isle.BizServices
         /// <returns></returns>
         public bool DoesUserEmailExist( string email )
         {
+			if ( string.IsNullOrWhiteSpace( email ) )
+				return false;
+
             PatronMgr mgr = new PatronMgr();
             return mgr.DoesUserEmailExist( email );
 
@@ -548,7 +580,7 @@ namespace Isle.BizServices
         /// <param name="proxyType"></param>
         /// <param name="statusMessage"></param>
         /// <returns></returns>
-        private static string Create_ProxyLoginId( int userId, string proxyType, int expiryDays, ref string statusMessage )
+		public string Create_ProxyLoginId( int userId, string proxyType, int expiryDays, ref string statusMessage )
         {
             EFDal.System_GenerateLoginId efEntity = new EFDal.System_GenerateLoginId();
             string proxyId = "";
@@ -710,17 +742,16 @@ namespace Isle.BizServices
         }
         #endregion
         #region === Dashboard methods
-        private static int resourcesToReturnCount = 8;
 
         public static DashboardDTO GetMyDashboard( int forUserId )
         {
             Patron user = GetUser( forUserId );
 
-            return GetDashboard( user, forUserId, resourcesToReturnCount );
+            return GetDashboard( user, forUserId, 0 );
         }
         public static DashboardDTO GetMyDashboard( Patron user )
         {
-            return GetDashboard( user, user.Id, resourcesToReturnCount );
+            return GetDashboard( user, user.Id, 0 );
         }
         public static DashboardDTO GetMyDashboard( Patron user, int maxResources )
         {
@@ -729,7 +760,7 @@ namespace Isle.BizServices
         private static DashboardDTO GetDashboard( int forUserId, int requestedByUserId )
         {
             Patron user = GetUser( forUserId );
-            return GetDashboard( user, requestedByUserId, resourcesToReturnCount );
+            return GetDashboard( user, requestedByUserId, 0 );
         }
        
         public static DashboardDTO GetDashboard( Patron user, int requestedByUserId, int maxResources )
@@ -738,8 +769,10 @@ namespace Isle.BizServices
             if ( user.Id == requestedByUserId )
                 dto.isMyDashboard = true;
 
-            if ( maxResources > 0 )
-                dto.maxResources = maxResources;
+			if ( maxResources > 0 )
+				dto.maxResources = maxResources;
+			else
+				dto.maxResources = GetAppKeyValue( "maxDashboardResources", 8 );
 
             dto.userId = user.Id;
             dto.name = user.FullName();
@@ -774,19 +807,19 @@ namespace Isle.BizServices
             }
             Patron user = GetUser( dto.userId );
 
-            FillDashboard( dto, user, dto.userId, resourcesToReturnCount );
+            FillDashboard( dto, user, dto.userId, 0 );
         }
 
         public static void FillDashboard( DashboardDTO dto, Patron user )
         {
             //Patron user = GetUser( forUserId );
 
-            FillDashboard( dto, user, user.Id, resourcesToReturnCount );
+            FillDashboard( dto, user, user.Id, 0 );
         }
         public static void FillDashboard( DashboardDTO dto, int forUserId, int requestedByUserId )
         {
             Patron user = GetUser( forUserId );
-            FillDashboard( dto, user, requestedByUserId, resourcesToReturnCount );
+            FillDashboard( dto, user, requestedByUserId, 0 );
         }
         public static void FillDashboard( DashboardDTO dto, Patron user, int requestedByUserId, int maxResources )
         {
@@ -799,6 +832,8 @@ namespace Isle.BizServices
 
             if ( maxResources > 0 && dto.maxResources == 0)
                 dto.maxResources = maxResources;
+			else if ( dto.maxResources == 0 )
+				dto.maxResources = GetAppKeyValue( "maxDashboardResources", 8 );
 
             dto.userId = user.Id;
             dto.name = user.FullName();
@@ -857,7 +892,16 @@ namespace Isle.BizServices
             PatronMgr mgr = new PatronMgr();
             return mgr.GetByExtSiteCredentials( externalSiteId, loginId, token );
         }//
-        public Patron LoginViaWorkNet( string loginName, string password )
+
+		/// <summary>
+		/// Login with workNet credentials
+		/// This using a web service on old workNet, and is obsolete
+		/// </summary>
+		/// <param name="loginName"></param>
+		/// <param name="password"></param>
+		/// <returns></returns>
+        [Obsolete]
+		public Patron LoginViaWorkNet( string loginName, string password )
         {
             AcctSvce.AccountSoapClient wsClient = new AcctSvce.AccountSoapClient();
             AcctSvce.AccountDetail acct = new AcctSvce.AccountDetail();
@@ -890,6 +934,42 @@ namespace Isle.BizServices
                 return user;
             }
         }
+
+		/// <summary>
+		/// get a external account
+		/// </summary>
+		/// <param name="id"></param>
+		/// <param name="userId"></param>
+		/// <param name="externalSiteId"></param>
+		/// <param name="externalLoginProvider"></param>
+		/// <param name="token"></param>
+		/// <param name="statusMessage"></param>
+		/// <returns></returns>
+		public PatronExternalAccount ExternalAccount_Get( int id, int userId, int externalSiteId, string externalLoginProvider, string token, ref string statusMessage )
+		{
+			PatronExternalAccount acct = myManager.ExternalAccount_Get( id, userId, externalSiteId, externalLoginProvider, token, ref statusMessage );
+
+			return acct;
+		}
+
+		/// <summary>
+		/// Create an external account record
+		/// </summary>
+		/// <param name="userId"></param>
+		/// <param name="externalSiteId"></param>
+		/// <param name="loginName"></param>
+		/// <param name="token"></param>
+		/// <param name="statusMessage"></param>
+		/// <returns></returns>
+		public int ExternalAccount_Create( int userId, int externalSiteId, string loginName, string token, ref string statusMessage )
+		{
+			return myManager.ExternalAccount_Create( userId, externalSiteId, loginName, token, ref statusMessage );
+		}
+
+		public int ExternalAccount_Create( int userId, string externalLoginProvider, string loginName, string token, ref string statusMessage )
+		{
+			return myManager.ExternalAccount_Create( userId, externalLoginProvider, loginName, token, ref statusMessage );
+		}
         #endregion
 
     }
