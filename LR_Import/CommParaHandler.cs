@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Text;
@@ -6,13 +6,13 @@ using System.Xml;
 //using LearningRegistryCache2.App_Code.Classes;
 using OLDDM = LearningRegistryCache2.App_Code.DataManagers;
 using LRWarehouse.Business;
-using LRWarehouse.DAL;
+using Isle.BizServices;
 
 namespace LearningRegistryCache2
 {
     public class CommParaHandler : ParadataController
     {
-        private AuditReportingManager auditReportingManager = new AuditReportingManager();
+        private AuditReportingServices auditReportingManager = new AuditReportingServices();
         private string ratingTypeValue;
         public CommParaHandler()
         {
@@ -31,7 +31,7 @@ namespace LearningRegistryCache2
             XmlNodeList list;
             string nodeType = "";
 
-            Resource resource = LoadCommonParadata(docId, url, payloadPlacement, record, payload, ref isValid);
+            Resource resource = LoadCommonParadata(docId, ref url, payloadPlacement, record, payload, ref isValid);
             if (!isValid)
             {
                 // Skip this record - it's already logged in LoadCommonParadata()
@@ -98,7 +98,7 @@ namespace LearningRegistryCache2
             } //foreach
 
             // Write the basic record
-            resourceManager.UpdateById(resource);
+            importManager.UpdateResource(resource);
 
             // Process strings
             list = payload.GetElementsByTagName("string");
@@ -119,7 +119,7 @@ namespace LearningRegistryCache2
                         if (strTaggedDelimited.IndexOf(nodeType) > -1)
                         {
                             string status = "successful";
-                            ResourceCollection resources = resourceManager.SelectCollection(string.Format("ResourceUrl = '{0}'", url), ref status);
+                            ResourceCollection resources = importManager.SelectResourceCollection(string.Format("ResourceUrl = '{0}'", url), ref status);
                             if (status != "successful")
                             {
                                 reportingManager.LogMessage(LearningRegistry.reportId, LearningRegistry.fileName, docId, url, ErrorType.Error, ErrorRouting.Technical, status);
@@ -171,16 +171,16 @@ namespace LearningRegistryCache2
                         {
                             RatingSummary rating = GetRating(resource.RowId.ToString(), 0, ratingTypeValue, ratingTypeValue, "", docId, resource.Id);
                             CalculateNewRating(rating, minRatingValue, maxRatingValue, ratingCount, lrRatingValue);
-                            if (rating.ResourceId == null || rating.ResourceId.ToString() == RatingSummaryManager.DEFAULT_GUID)
+                            if (rating.ResourceId == null || rating.ResourceId.ToString() == ImportServices.DEFAULT_GUID)
                             {
-                                ratingSummaryManager.Create(rating);
+                                importManager.RatingSummaryCreate(rating);
                             }
                             else
                             {
-                                ratingSummaryManager.Update(rating);
+                                importManager.RatingSummaryUpdate(rating);
                             }
                             string status = "successful";
-                            ResourceLikeSummary like = likeSummaryManager.Get(resource.Id, ref status);
+                            ResourceLikeSummary like = importManager.LikeSummaryGet(resource.Id, ref status);
                             if (status != "successful")
                             {
                                 auditReportingManager.LogMessage(LearningRegistry.reportId, LearningRegistry.fileName, docId, resource.ResourceUrl, ErrorType.Error,
@@ -189,11 +189,11 @@ namespace LearningRegistryCache2
                             CalculateNewLikes(like, minRatingValue, maxRatingValue, ratingCount, lrRatingValue);
                             if (like.Id == 0)
                             {
-                                likeSummaryManager.Create(like, ref status);
+                                importManager.LikeSummaryCreate(like, ref status);
                             }
                             else
                             {
-                                likeSummaryManager.Update(like, ref status);
+                                importManager.LikeSummaryUpdate(like, ref status);
                             }
                             if (status != "successful")
                             {
