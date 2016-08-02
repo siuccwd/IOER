@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
@@ -12,8 +12,8 @@ using System.Xml;
 using OLDDM = LearningRegistryCache2.App_Code.DataManagers;
 using LearningRegistryCache2.App_Code.Classes;
 using ILPathways.Utilities;
+using Isle.BizServices;
 using LRWarehouse.Business;
-using LRWarehouse.DAL;
 using LR_Import;
 using Newtonsoft.Json;
 
@@ -21,8 +21,8 @@ namespace LearningRegistryCache2
 {
     public class ParadataController : BaseDataController
     {
-        protected AuditReportingManager reportingManager = new AuditReportingManager();
-        protected ResourceManager resourceManager = new ResourceManager();
+        protected AuditReportingServices reportingManager = new AuditReportingServices();
+/*        protected ResourceManager resourceManager = new ResourceManager();
         //protected ResourceVersionManager versionManager = new ResourceVersionManager();
         protected ResourceVersionController versionManager = new ResourceVersionController();
 
@@ -32,7 +32,7 @@ namespace LearningRegistryCache2
         protected ResourceLikeSummaryManager likeSummaryManager = new ResourceLikeSummaryManager();
         protected RatingTypeManager ratingTypeManager = new RatingTypeManager();
         protected ResourcePropertyManager propertyManager = new ResourcePropertyManager();
-        protected ResourceCommentManager commentManager = new ResourceCommentManager();
+        protected ResourceCommentManager commentManager = new ResourceCommentManager();*/
         protected OLDDM.SubmitterManager submitterManager = new OLDDM.SubmitterManager();
 
         protected int wnMinRatingValue = 1;
@@ -42,8 +42,9 @@ namespace LearningRegistryCache2
         {
         }
 
-        protected Resource LoadCommonParadata(string docId, string url, string payloadPlacement, XmlDocument xdoc, XmlDocument xpayload, ref bool isValid)
+        protected Resource LoadCommonParadata(string docId, ref string url, string payloadPlacement, XmlDocument xdoc, XmlDocument xpayload, ref bool isValid)
         {
+            url = FixPlusesInUrl(url);
             string status = "successful";
             XmlNodeList list;
             string payload = "";
@@ -106,7 +107,7 @@ namespace LearningRegistryCache2
             }
             else
             {
-                resource = resourceManager.GetByResourceUrl(url.Replace("'","''"), ref status);
+                resource = importManager.GetByResourceUrl(url.Replace("'","''"), ref status);
                 if (status != "successful")
                 {
                     reportingManager.LogMessage(LearningRegistry.reportId, LearningRegistry.fileName, docId, url, ErrorType.Error, ErrorRouting.Technical, status);
@@ -136,7 +137,7 @@ namespace LearningRegistryCache2
             resource.ResourceUrl = url;
             resource.FavoriteCount = 0;
             resource.ViewCount = 0;
-            resourceManager.Create(resource, ref status);
+            importManager.CreateResource(resource, ref status);
             if (status != "successful")
             {
                 reportingManager.LogMessage(LearningRegistry.reportId, LearningRegistry.fileName, docId, url, ErrorType.Error, ErrorRouting.Technical, status);
@@ -148,6 +149,7 @@ namespace LearningRegistryCache2
             resource.Version.ResourceIntId = resource.Id;
             resource.Version.LRDocId = docId;
             resource.Version.Title = new OLDDM.HttpManager().GetPageTitle(url, ref status);
+            resource.Version.Title = StripTrailingPeriod(resource.Version.Title);
             if (status != "successful")
             {
                 reportingManager.LogMessage(LearningRegistry.reportId, LearningRegistry.fileName, docId, url, ErrorType.Error, ErrorRouting.Technical, status);
@@ -161,10 +163,11 @@ namespace LearningRegistryCache2
                     reportingManager.LogMessage(LearningRegistry.reportId, LearningRegistry.fileName, docId, url, ErrorType.Error, ErrorRouting.Program, status);
                 }
 
-                ManualResetEvent doneEvent = new ManualResetEvent(false);
+                // Thumbnail generation is now done in a separate process.  This code is no longer needed.
+                /*ManualResetEvent doneEvent = new ManualResetEvent(false);
                 doneEvents.Add(doneEvent);
                 ImageGenerator imageGenerator = new ImageGenerator(resource.ResourceUrl, resource.Id, doneEvent);
-                ThreadPool.QueueUserWorkItem(imageGenerator.ImageGeneratorThreadPoolCallback, doneEvent);
+                ThreadPool.QueueUserWorkItem(imageGenerator.ImageGeneratorThreadPoolCallback, doneEvent);*/
             }
             try
             {
@@ -192,9 +195,9 @@ namespace LearningRegistryCache2
             {
                 reportingManager.LogMessage(LearningRegistry.reportId, LearningRegistry.fileName, docId, url, ErrorType.Error, ErrorRouting.Program,
                     "No title found.  Using URL for title.");
-                resource.Version.Title = url;
+                resource.Version.Title = StripTrailingPeriod(url);
             }
-            versionManager.Create(resource.Version, ref status);
+            new ResourceVersionController().Create(resource.Version, ref status);
 
             if (status == "successful")
             {
@@ -242,7 +245,7 @@ namespace LearningRegistryCache2
                     Match contentMatch = contentRegex.Match(itemprop);
                     url = contentMatch.Value.Replace("content=\"", "").Replace("\"", "");
                     url = TrimWhitespace(url);
-                    resource = resourceManager.GetByResourceUrl(url, ref status);
+                    resource = importManager.GetByResourceUrl(url, ref status);
                     if (status != "successful")
                     {
                         reportingManager.LogMessage(LearningRegistry.reportId, LearningRegistry.fileName, docId, url, ErrorType.Error, ErrorRouting.Technical, status);
@@ -256,7 +259,7 @@ namespace LearningRegistryCache2
                             resource.ResourceUrl = url;
                             resource.FavoriteCount = 0;
                             resource.ViewCount = 0;
-                            resourceManager.Create(resource, ref status);
+                            importManager.CreateResource(resource, ref status);
                             resource.Version.ResourceIntId = resource.Id;
                             list = xdoc.GetElementsByTagName("submitter");
                             resource.Version.Submitter = list[0].InnerText.Trim();
@@ -269,8 +272,10 @@ namespace LearningRegistryCache2
                             if (resource.Version.Title.IndexOf("|") > -1)
                             {
                                 resource.Version.Title = resource.Version.Title.Substring(0, resource.Version.Title.IndexOf("|"));
+
                             }
                             resource.Version.Title = TrimWhitespace(resource.Version.Title);
+                            resource.Version.Title = StripTrailingPeriod(resource.Version.Title); 
                             Match authorMatch = authorRegex.Match(page);
                             resource.Version.Creator = authorMatch.Value.Replace("<span itemprop=\"author\">", "");
                             resource.Version.Creator = resource.Version.Creator.Replace("</span>", "");
@@ -287,7 +292,7 @@ namespace LearningRegistryCache2
                                 resource.Version.IsActive = false;
                                 reportingManager.LogMessage(LearningRegistry.reportId, LearningRegistry.fileName, docId, resource.ResourceUrl, ErrorType.Error, ErrorRouting.Program, status);
                             }
-                            versionManager.Create(resource.Version, ref status);
+                            new ResourceVersionController().Create(resource.Version, ref status);
                         }
                         else
                         {
@@ -337,7 +342,7 @@ namespace LearningRegistryCache2
             RatingType ratingType = new RatingType();
             string status = "successful";
 
-            rating = ratingSummaryManager.Get(resourceId, ratingTypeId, type, identifier);
+            rating = importManager.RatingSummaryGet(resourceId, ratingTypeId, type, identifier);
             if (rating == null)
             {
                 // Rating not found
@@ -345,7 +350,7 @@ namespace LearningRegistryCache2
                 rating.ResourceId = new Guid(resourceId);
                 rating.ResourceIntId = resourceIntId;
                 // Look up the rating type.
-                ratingType = ratingTypeManager.Get(0, type, identifier);
+                ratingType = importManager.RatingTypeGet(0, type, identifier);
                 if (ratingType == null || ratingType.Message.ToLower() == "not found")
                 {
                     // Rating type not found, create one.
@@ -355,14 +360,14 @@ namespace LearningRegistryCache2
                     ratingType.Identifier = identifier;
                     ratingType.Description = description;
 
-                    rating.RatingTypeId = ratingTypeManager.Create(ratingType, ref status);
+                    rating.RatingTypeId = importManager.RatingTypeCreate(ratingType, ref status);
                 }
                 else
                 {
                     // Rating type found, use it.
                     rating.RatingTypeId = ratingType.Id;
                 }
-                status = ratingSummaryManager.Create(rating);
+                status = importManager.RatingSummaryCreate(rating);
                 if (status != "successful")
                 {
                     reportingManager.LogMessage(LearningRegistry.reportId, LearningRegistry.fileName, docId, "", ErrorType.Error, ErrorRouting.Technical, status);
@@ -430,9 +435,9 @@ namespace LearningRegistryCache2
             string status = "successful";
             if (resource != null)
             {
-                DataSet ds = versionManager.GetByResourceUrl(resource.ResourceUrl);
+                DataSet ds = new ResourceVersionController().GetByResourceUrl(resource.ResourceUrl);
 
-                if (ResourceVersionManager.DoesDataSetHaveRows(ds))
+                if (BaseDataController.DoesDataSetHaveRows(ds))
                 {
                     // do nothing - it is verified
                 }
@@ -440,7 +445,7 @@ namespace LearningRegistryCache2
                 {
                     // Resource record exists without Resource.Version.  Attempt to delete the Resource record.
                     //Need to log
-                    status = resourceManager.Delete(resource.RowId.ToString());
+                    status = importManager.DeleteResource(resource.RowId.ToString());
                     if (status != "successful")
                     {
                         reportingManager.LogMessage(LearningRegistry.reportId, LearningRegistry.fileName, resource.Version.LRDocId, resource.ResourceUrl, ErrorType.Error, ErrorRouting.Technical, status);
