@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -19,13 +19,15 @@ namespace Isle.BizServices
 {
 	public class ContentSearchServices
 	{
-		static string thisClassName = "ContentServices";
+		//static string thisClassName = "ContentServices";
 		MyManager myMgr = new MyManager();
 
 		private static string PublicFilter = "(base.PrivilegeTypeId = 1 AND base.IsActive = 1 AND base.StatusId = 5 ) ";
-		private static string BaseAuthFilter = "(base.PrivilegeTypeId = 1 AND base.StatusId = 5 ) ";
+		private static string AdminFilter = "(base.PrivilegeTypeId >= 1 AND base.IsActive = 1 AND base.StatusId >= 0 ) ";
+		//private static string BaseAuthFilter = "(base.PrivilegeTypeId = 1 AND base.StatusId = 5 ) ";
 		private static string KeywordTemplate = "(base.Title like '{0}' OR base.[Summary] like '{0}' OR base.[Description] like '{0}' OR auth.SortName like '{0}') ";
-		private static string SharedWithMeFilter = "base.StatusId >= 0 AND base.privilegetypeid >= 1 AND base.ContentId in (SELECT [ContentId] FROM [dbo].[Content.Partner] where  [UserId] = {0} and [PartnerTypeId] > 0) ";
+		private static string SharedWithMeFilter = "(base.StatusId >= 0 AND base.privilegetypeid >= 1 AND base.ContentId in (SELECT [ContentId] FROM [dbo].[Content.Partner] where  [UserId] = {0} and [PartnerTypeId] > 0) )";
+		private static string MyOrgFilter = "((base.OrgId = {0} OR auth.OrganizationId = {0}) AND base.StatusId = 5) ";
 		string ContentTypeFilter = " base.TypeId in ({0})";
 		string StatusTypeFilter = " base.StatusId in ({0})";
 		string PrivilegeTypeFilter = " base.PrivilegeTypeId in ({0})";
@@ -52,7 +54,7 @@ namespace Isle.BizServices
 
 			string filterDesc = "";
 			string filter = FormatFilters( query, user, ref filterDesc );
-			ContentSearchResult r = new ContentSearchResult();
+			ContentSearchResult csrItem = new ContentSearchResult();
 			string pOrderBy = query.SortOrder;
 			if ( query.SortReversed )
 				pOrderBy += " DESC";
@@ -64,35 +66,37 @@ namespace Isle.BizServices
 				{
 					bool allowingEdit = false;
 
-					r = new ContentSearchResult();
-					r.Id = ServiceHelper.GetRowColumn( dr, "ContentId", 0 );
-					r.Title = ServiceHelper.GetRowColumn( dr, "Title", "missing" );
-					r.Description = ServiceHelper.GetRowColumn( dr, "Summary", "" );
+					csrItem = new ContentSearchResult();
+					csrItem.Id = ServiceHelper.GetRowColumn( dr, "ContentId", 0 );
+					csrItem.Title = ServiceHelper.GetRowColumn( dr, "Title", "missing" );
+					csrItem.Description = ServiceHelper.GetRowColumn( dr, "Summary", "" );
 
-					r.Guid = ServiceHelper.GetRowColumn( dr, "ContentRowId", "" );
-					r.ImageUrl = ServiceHelper.GetRowColumn( dr, "ImageUrl", "" );
-					if ( r.ImageUrl == "" )
+					csrItem.Guid = ServiceHelper.GetRowColumn( dr, "ContentRowId", "" );
+					csrItem.ImageUrl = ServiceHelper.GetRowColumn( dr, "ImageUrl", "" );
+					if ( csrItem.ImageUrl == "" )
 					{
-						var thumbName = "/OERThumbs/large/content-" + r.Id + "-large.png";
-						r.ImageUrl = System.IO.File.Exists( @"\\OERDATASTORE" + thumbName ) ? thumbName : "";  //TBD
+						var thumbName = "/OERThumbs/large/content-" + csrItem.Id + "-large.png";
+						csrItem.ImageUrl = System.IO.File.Exists( @"\\OERDATASTORE" + thumbName ) ? thumbName : "";  //TBD
 					}
-					r.OrganizationTitle = ServiceHelper.GetRowColumn( dr, "Organization", "" );
-					r.Privilege = ServiceHelper.GetRowColumn( dr, "ContentPrivilege", "");
+					csrItem.OrganizationTitle = ServiceHelper.GetRowColumn( dr, "Organization", "" );
+					csrItem.Privilege = ServiceHelper.GetRowColumn( dr, "ContentPrivilege", "");
 
-					r.Status = ServiceHelper.GetRowColumn( dr, "ContentStatus", "" );
-					r.Type = ServiceHelper.GetRowColumn( dr, "ContentType", "" );
+					csrItem.Status = ServiceHelper.GetRowColumn( dr, "ContentStatus", "" );
 					
-					r.TypeId = ServiceHelper.GetRowColumn( dr, "TypeId", 10 );
-					r.ParentId = ServiceHelper.GetRowColumn( dr, "ParentId", 0 );
+					csrItem.ParentId = ServiceHelper.GetRowColumn( dr, "ParentId", 0 );
+					csrItem.TypeId = ServiceHelper.GetRowColumn( dr, "TypeId", 10 );
+					csrItem.Type = ServiceHelper.GetRowColumn( dr, "ContentType", "" );
+					if ( csrItem.TypeId == 40 && csrItem.ParentId > 0 )
+						csrItem.Type = "Learning List Document";
 					
-					r.Author = ServiceHelper.GetRowColumn( dr, "Author", "" );
-					r.Updated = ServiceHelper.GetRowColumn( dr, "LastUpdated", DateTime.Today.ToShortDateString() );
+					csrItem.Author = ServiceHelper.GetRowColumn( dr, "Author", "" );
+					csrItem.Updated = ServiceHelper.GetRowColumn( dr, "LastUpdated", DateTime.Today.ToShortDateString() );
 
-					r.Url = SetPublicUrl( r.TypeId.ToString(), r.Id, r.Title, r.ParentId );
-					r.Editable = false;		//TBD - check old
+					csrItem.Url = SetPublicUrl( csrItem.TypeId.ToString(), csrItem.Id, csrItem.Title, csrItem.ParentId );
+					csrItem.Editable = false;		//TBD - check old
 
 					string partnerList = ServiceHelper.GetRowColumn( dr, "PartnerList", "" );
-					if ( user.TopAuthorization < 4 
+					if ( user.TopAuthorization < 6 
 						|| IsUserAPartner( partnerList, user.Id.ToString() ) )
 						allowingEdit = true;
 
@@ -112,10 +116,12 @@ namespace Isle.BizServices
 
 					if ( allowingEdit )
 					{
-						r.Editable = true;
-						r.EditUrl = SetEditUrl( r.TypeId, r.Guid, r.Id );
+						csrItem.Editable = true;
+						csrItem.EditUrl = SetEditUrl( csrItem );
+						if ( csrItem.EditUrl.Length == 0 )
+							csrItem.Editable = false;
 					}
-					results.Add( r );
+					results.Add( csrItem );
 
 				}
 			}
@@ -135,6 +141,15 @@ namespace Isle.BizServices
 		/// <returns></returns>
 		public List<ContentSearchResult> GetLearningListsForOrganization( int orgId, Patron user, ref string message )
 		{
+
+			//show all for now, eventually will need paging
+			int startingPageNbr = 1;
+			int pageSize = 1000;
+
+			return GetLearningListsForOrganization( orgId, user, startingPageNbr, pageSize, ref message );
+		} //
+		public List<ContentSearchResult> GetLearningListsForOrganization( int orgId, Patron user, int startingPageNbr, int pageSize, ref string message )
+		{
 			ContentSearchQuery query = new ContentSearchQuery();
 			//
 			int pTotalRows = 0;
@@ -142,15 +157,15 @@ namespace Isle.BizServices
 			var results = new List<ContentSearchResult>();
 
 			query.Text = ""; //Prevent null reference error
+			query.PageStart = startingPageNbr;
 			query.CustomSearch = filter;
-			query.SortOrder = "base.Organization";
+			query.SortOrder = ContentSearchQuery.SORT_BY_TITLE;
 			results = new ContentSearchServices().Search( query, user, ref pTotalRows );
 
 			message = query.Message; //May change this implementation soon(tm)
 
 			return results;
 		} //
-
 		bool IsUserAPartner( string partnerList, string userId )
 		{
 			bool yes = false;
@@ -194,20 +209,42 @@ namespace Isle.BizServices
 			else
 				return string.Format( template, contentId, urlTitle, title );
 		}//
-		public string SetEditUrl( int typeId, string rowId, int contentId )
+		
+		/// <summary>
+		/// Determine editor for this content item.
+		/// If item has a parent, determine if it should be the editor
+		/// </summary>
+		/// <param name="csrItem"></param>
+		/// <returns></returns>
+		public string SetEditUrl( ContentSearchResult csrItem )
 		{
 			string template = "/My/{0}.aspx?rid={1}";
-			if ( typeId == 40 )
-				return string.Format( template, "DocumentEditor", rowId );
+			
 
-			else if ( typeId == 50 ) 
-				return string.Format( "/My/LearningList/{0}/Edit", contentId );
+			if ( csrItem.TypeId == 50 )
+				return string.Format( "/My/LearningList/{0}/Edit", csrItem.Id );
 
-			else if ( typeId == 52 || typeId == 54 || typeId == 56 )
-				return string.Format( "/My/LearningList/{0}/Edit", contentId );
-
+			else if ( csrItem.TypeId == 52 || csrItem.TypeId == 54 || csrItem.TypeId == 56 )
+				return string.Format( "/My/LearningList/{0}/Edit", csrItem.Id );
+			else if ( csrItem.TypeId == 60 )
+				return string.Format( "/My/LearningSet/{0}/Edit", csrItem.Id );
+			else if ( csrItem.TypeId == 40 )
+			{
+				if ( csrItem.ParentId == 0 )
+					return string.Format( template, "DocumentEditor", csrItem.Guid );
+				else
+					return string.Format( "/My/LearningList/{0}/Edit?childId={1}", csrItem.ParentId, csrItem.Id );
+			}
+			else if ( csrItem.TypeId == 41 )
+			{
+				if ( csrItem.ParentId == 0 ) //no editor
+					return "";
+				else
+					return string.Format( "/My/LearningList/{0}/Edit?childId={1}", csrItem.ParentId, csrItem.Id );
+				
+			}
 			else
-				return string.Format( template, "Author", rowId );
+				return string.Format( template, "Author", csrItem.Guid );
 		}//
 		public string CleanTitle( string text )
 		{
@@ -225,43 +262,63 @@ namespace Isle.BizServices
 			string filter = "";
 			string booleanOperator = "AND";
 			filterDesc = "";
-			if ( string.IsNullOrWhiteSpace( query.CustomSearch ) == false && query.CustomSearch.Length > 5 )
-			{
-				filter = query.CustomSearch;
-				return filter;
-			}
-
+			string authenticatedFilter = "";
 			//Skip formatting if custom filter has already been supplied
 			if ( !string.IsNullOrWhiteSpace( query.CustomSearch ) )
 			{
 				return query.CustomSearch;
 			}
 
+			filter = PublicFilter;
 			//if only current author
 			if ( AccountServices.IsUserAuthenticated( user ) )
 			{
-				if (user.TopAuthorization > 4)
-					filter = " (base.IsActive = 1) ";
-				//set base and use OR
-				//filter = PublicFilter;
-
+				//if (user.TopAuthorization > 4)
+				//	authenticatedFilter = " (base.IsActive = 1) ";
+				
 				//booleanOperator = " OR ";
-				FormatOrgFilters( query, booleanOperator, user, ref filter, ref filterDesc );
+				FormatOrgFilters( query, booleanOperator, user, ref authenticatedFilter, ref filterDesc );
+				if ( authenticatedFilter.Length > 0 )
+				{
+					filter = "(" + filter + " OR " + authenticatedFilter + ")";
+					//filter = authenticatedFilter;
+					authenticatedFilter = "";
+				}
+				else
+				{
+					//if no owner filters, then if has system admin, show all states
+					if ( new AccountServices().IsUserAdmin( user ) )
+					{
+						filter = AdminFilter;
+					}
+				}
 
-				FormatPrivilegeTypeFilter( query, booleanOperator, user, ref filter, ref filterDesc );
+				//nothing here yet, so skip to avoid confusion
+				//FormatPrivilegeTypeFilter( query, booleanOperator, user, ref authenticatedFilter, ref filterDesc );
 
+				//if ( authenticatedFilter.Length > 0 )
+				//{
+				//	//?????
+				//	//filter = "(" + filter + " OR " + authenticatedFilter + ")";
+				//	filter = authenticatedFilter;
+				//}
 				//booleanOperator = "AND";
 
 				//check for any privileges
-				if ( filter.ToLower().IndexOf( "base.privilegetypeid " ) == -1 )
-					filter += ServiceHelper.FormatSearchItem( filter, " base.PrivilegeTypeId = 1 ", booleanOperator );
+				//if ( authenticatedFilter.ToLower().IndexOf( "base.privilegetypeid " ) == -1 )
+				//	authenticatedFilter += ServiceHelper.FormatSearchItem( authenticatedFilter, " base.PrivilegeTypeId = 1 ", booleanOperator );
 
+				//if ( authenticatedFilter.Length > 0 ) 
+				//{
+				//	//filter = "(" + filter + " OR " + authenticatedFilter + ")";
+				//	filter = authenticatedFilter;
+				//}
 			}
 			else
 			{
 				//restrictions?
 				//only public ==> may want to use IsActive, so as not to show work in progress
-				filter = PublicFilter;
+				//filter = PublicFilter;
 			}
 			//date filters
 			FormatDatesFilter( query, booleanOperator, ref filter, ref filterDesc );
@@ -276,6 +333,7 @@ namespace Isle.BizServices
 
 			//15-10-14 may want to save this to the end - ==> I had commented out for some reason?
 			//should be able to see non pub for org - only if a partner
+			//status is not in interface, so will never be set
 			if ( filter.ToLower().IndexOf( "base.statusid " ) == -1 )
 				filter += ServiceHelper.FormatSearchItem( filter, " base.statusid = 5 ", booleanOperator );
 
@@ -290,6 +348,8 @@ namespace Isle.BizServices
 
 		private void FormatKeyword( string text, string booleanOperator, ref string filter )
 		{
+			if ( string.IsNullOrWhiteSpace( text ) )
+				return;
 			string keyword = ServiceHelper.HandleApostrophes( ServiceHelper.CleanText( text.Trim() ) );
 			string keywordFilter = "";
 
@@ -350,7 +410,7 @@ namespace Isle.BizServices
 							//me.
 							//however, need to consider where original creator no lonber has access (ex Scarlett created stuff for isbe)
 							//at very least, the search results need to only allow edits if creator still has access
-							//where = OR + string.Format( "(base.CreatedById = {0} AND base.StatusId > 0 ) ", user.Id );
+							//where = OR + string.Format( "(base.CreatedById = {0} AND base.StatusId == 4 ) ", user.Id );
 							where = OR + FormatPersonalAccess(user.Id);
 							OR = " OR ";
 							selDesc = "Created By Me";
@@ -368,7 +428,7 @@ namespace Isle.BizServices
 							{
 								//==> for now, overlay where (no OR)
 								//where = FormatPersonalAccess( user.Id );
-								where += OR + string.Format( " (base.OrgId = {0} OR auth.OrganizationId = {0}) AND base.StatusId = 5 ", user.OrgId );
+								where += OR + string.Format( MyOrgFilter, user.OrgId );
 								
 								selDesc = "Created by my organization";
 								OR = " OR ";
@@ -395,6 +455,7 @@ namespace Isle.BizServices
 
 						else if (listCreatedBy == 4)
 						{
+							//if anyone, should just set blank, and use default below
 							where += OR + PublicFilter;
 						}
 					}
@@ -404,8 +465,9 @@ namespace Isle.BizServices
 
 			if ( where == "" )
 			{
-				//all ==> so should not have any filter???
+				//all ==> so should not have any filter.
 				//default privilege id will be set in FormatPrivilegeTypeFilter
+				//this is confusing. It makes sense only for the first time. after that treat like a regular search
 				selDesc = "";
 				if ( query.IsMyAuthoredView == true )
 				{
@@ -429,8 +491,10 @@ namespace Isle.BizServices
 				}
 				else
 				{
-					//==> set to minimum public filter
-					where = BaseAuthFilter;
+					//==> set to minimum for authenticated user - means all shared, org related
+					where = string.Format("(createdById = {0} AND base.StatusId > 0 )", user.Id );
+					where += " OR " + string.Format( SharedWithMeFilter, user.Id );
+					where += " OR " + string.Format( MyOrgFilter, user.OrgId );
 				}
 			}
 
@@ -448,8 +512,9 @@ namespace Isle.BizServices
 
 		private string FormatPersonalAccess( int userid )
 		{
+		//eventually will not use created by. As the creator is added as an admin partner on create, we can use it
 			string where = string.Format( "( (createdById = {0} AND base.StatusId > 0 ) OR "
-						+ "(base.ContentId in (SELECT [ContentId] FROM [dbo].[Content.Partner] where  [UserId] = {0} and [PartnerTypeId] > 0) ) ) ", userid );
+						+ "(base.ContentId in (SELECT [ContentId] FROM [dbo].[Content.Partner] where  [UserId] = {0} and [PartnerTypeId] = 4) ) ) ", userid );
 			return where;
 		}
 
