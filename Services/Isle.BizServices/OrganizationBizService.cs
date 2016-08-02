@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
@@ -67,7 +67,8 @@ namespace Isle.BizServices
                         org.RowId = org.RowId;
                     else
                         org.RowId = Guid.NewGuid();
-
+					if ( org.StatusId == 0 )
+						org.StatusId = Organization.Status_Pending;
                     Organization_FromMap( org, entity );
 
                     context.Organizations.Add( entity );
@@ -107,6 +108,7 @@ namespace Isle.BizServices
 					{
 						entity.LastUpdated = System.DateTime.Now;
 						entity.LastUpdatedById = updatedById;
+						entity.StatusId = Organization.Status_Active;
 						entity.IsActive = true;
 
 						context.SaveChanges();
@@ -138,6 +140,7 @@ namespace Isle.BizServices
 					EFDAL.Organization entity = context.Organizations.SingleOrDefault( s => s.Id == orgId );
 					if ( entity != null )
 					{
+						entity.StatusId = Organization.Status_Inactive;
 						entity.LastUpdated = System.DateTime.Now;
 						entity.LastUpdatedById = updatedById;
 						entity.IsActive = false;
@@ -242,7 +245,21 @@ namespace Isle.BizServices
             }
             return org;
         }//
-
+		public static Organization EFGetByK12Identifier( string k12Identifier )
+		{
+			Organization org = new Organization();
+			using ( var context = new EFDAL.IsleContentContext() )
+			{
+				EFDAL.Organization entity = context.Organizations
+						.Include( "Organization_Member" )
+						.SingleOrDefault( s => s.K12Identifier == k12Identifier );
+				if ( entity != null )
+				{
+					org = Organization_ToMap( entity );
+				}
+			}
+			return org;
+		}//
 		/// <summary>
 		/// Check if user has an email domain for an existing org. If found, and user is not already a member, add as an employee
 		/// </summary>
@@ -359,17 +376,27 @@ namespace Isle.BizServices
 			string url = "/Account/Login.aspx?nextUrl=" + pathOrgAdmin + org.Id.ToString();
             url = UtilityManager.FormatAbsoluteUrl( url, true );
 
+			//get email template
+			string email = EmailManager.GetEmailText( "AutoOrgMbrAddNotificationEmail" );
+
             //future send to actual admin
             //string emailList = GetApproversEmailList( libraryId, ref adminMbr );
             //adminMbr = GetFirstApprover( libraryId );
 
             if ( adminEmail.Length > 5 )
             {
-                string eMessage = string.Format( "A new user has registered with your domain email. This user has been automatically added to the organization: <br/>Organization: {0} <br/>User: {1} <br/>Email: {2} <br/>Default role: {3}. <br/>", org.Name, user.FullName(), user.Email, "Employee" );
+				//string eMessage = string.Format( "A new user has registered with your domain email. This user has been automatically added to the organization: <br/>Organization: {0} <br/>User: {1} <br/>Email: {2} <br/>Default role: {3}. <br/>", org.Name, user.FullName(), user.Email, "Employee" );
 
-                eMessage += "<p>You can use the organization administration page to change the member role, or remove from your organization as needed. </p>";
-                eMessage += string.Format( "<p><a href='{0}'>Follow this link to login to IOER and view the organization.</a></p>", url );
+				//eMessage += "<p>You can use the organization administration page to change the member role, or remove from your organization as needed. </p>";
+				//eMessage += string.Format( "<p><a href='{0}'>Follow this link to login to IOER and view the organization.</a></p>", url );
+				//eMessage += string.Format( "<p>If you cannot click on this link, copy and paste the following URL into your browser to login to IOER.</p>{0}", url );
 
+				//assign and substitute: 0-org.Name, 1-User, 2-user email, 3-org role, 4-login url
+				string eMessage = string.Format( email, org.Name,
+								   user.FullName(),
+								   user.Email,
+								   "Employee",
+								   url );
 
                 EmailManager.SendEmail( adminEmail, fromEmail, "Confirm addition of new user to your organization", eMessage );
                 isValid = true;
@@ -424,6 +451,7 @@ namespace Isle.BizServices
             to.OrgTypeId = fromEntity.OrgTypeId;
             to.IsIsleMember = fromEntity.IsIsleMember;
             to.IsActive = fromEntity.IsActive;
+			to.StatusId = fromEntity.StatusId;
 
             to.parentId = ( int ) fromEntity.ParentId;
 			to.LogoUrl = fromEntity.LogoUrl;
@@ -439,6 +467,7 @@ namespace Isle.BizServices
             to.EmailDomain = fromEntity.EmailDomain;
             to.WebSite = fromEntity.WebSite;
             to.K12Identifier = fromEntity.ExternalIdentifier;
+			to.IsContentApprovalRequired = fromEntity.IsContentApprovalRequired;
 
             to.Created = fromEntity.Created;
             to.CreatedById = fromEntity.CreatedById;
@@ -457,7 +486,7 @@ namespace Isle.BizServices
             to.OrgTypeId = fromEntity.OrgTypeId == null ? 0 : ( int ) fromEntity.OrgTypeId;
             to.IsIsleMember = fromEntity.IsIsleMember != null ? ( bool ) fromEntity.IsIsleMember : false;
             to.IsActive = fromEntity.IsActive != null ? ( bool ) fromEntity.IsActive : false;
-
+			to.StatusId = fromEntity.StatusId == null ? 1 : (int) fromEntity.StatusId;
             if ( fromEntity.parentId != null )
                 to.ParentId = ( int ) fromEntity.parentId;
 
@@ -478,6 +507,7 @@ namespace Isle.BizServices
             to.WebSite = fromEntity.WebSite;
 			to.LogoUrl = fromEntity.LogoUrl;
             to.ExternalIdentifier = string.IsNullOrEmpty( fromEntity.K12Identifier ) ? "" : fromEntity.K12Identifier;
+			to.IsContentApprovalRequired = fromEntity.IsContentApprovalRequired == null ? false : (bool) fromEntity.IsContentApprovalRequired;
 
             to.Created = fromEntity.Created == null ? to.DefaultDate : ( System.DateTime ) fromEntity.Created;
             if ( fromEntity.CreatedById != null )
@@ -592,7 +622,7 @@ namespace Isle.BizServices
 		{
 			bool isValid = true;
 			string addAdminFailedMsg = "<h2>Attempt to add admin user to new org failed.</h2><p>OrgId: {0}<br />UserId: {1}</p><p>{2}</p>";
-			int mbrId = OrganizationMember_Create( orgId, userId, 1, userId, ref statusMessage );
+			int mbrId = OrganizationMember_Create( orgId, userId, OrganizationMember.MEMBERTYPE_ADMINISTRATION, userId, ref statusMessage );
 			if ( mbrId > 0 )
 			{
 				//add roles
@@ -1026,13 +1056,17 @@ namespace Isle.BizServices
         /// </summary>
         /// <param name="userId"></param>
         /// <returns></returns>
-        public static List<OrganizationMember> OrganizationMember_GetUserOrgs( int userId )
+				public static List<OrganizationMember> OrganizationMember_GetUserOrgs( int userId )
+				{
+					return OrganizationMember_GetUserOrgs( userId, false );
+				}
+        public static List<OrganizationMember> OrganizationMember_GetUserOrgs( int userId, bool includeInactive )
         {
             List<OrganizationMember> list = new List<OrganizationMember>();
             if ( userId == 0 )
                 return list;
 
-            string pFilter = string.Format( " IsActive = 1 AND UserId = {0} ", userId );
+            string pFilter = string.Format( " {1} UserId = {0} ", userId, (includeInactive ? "" : " IsActive = 1 AND ") );
             string pOrderBy = "";
             int pStartPageIndex = 0;
             //just in case, limit list - use different method if need all for a search, etc
@@ -1065,13 +1099,14 @@ namespace Isle.BizServices
             return isAdmin;
         }//
         /// <summary>
-        /// retrieve list of orgs where user has administer rights
+        /// retrieve list of orgs where user has admininstration level roles
+		/// 15-11-05 mp - removed role of lib admin (3)
         /// </summary>
         /// <param name="userId"></param>
         /// <returns></returns>
         public static List<OrganizationMember> OrganizationMember_GetAdminOrgs( int userId )
         {
-            string pFilter = string.Format( "OrgMbrId in (select OrgMemberId from [dbo].[Organization.MemberRole]  base inner join [organization.Member] om on base.OrgMemberId = om.Id   where om.UserId = {0} AND roleId in (1, 3)) ", userId );
+            string pFilter = string.Format( "OrgMbrId in (select OrgMemberId from [dbo].[Organization.MemberRole]  base inner join [organization.Member] om on base.OrgMemberId = om.Id   where om.UserId = {0} AND roleId = 1 ) ", userId );
             string pOrderBy = "";
             int pStartPageIndex = 0;
             //just in case, limit list - use different method if need all for a search, etc
@@ -1082,6 +1117,26 @@ namespace Isle.BizServices
 
             return list;
         }
+
+		/// <summary>
+		/// Return list of orgs, where user has role of library administrator
+		/// 16-02-23 MP- included roleId of 1 (admin)
+		/// </summary>
+		/// <param name="userId"></param>
+		/// <returns></returns>
+		public static List<OrganizationMember> OrganizationMember_GetLibraryAdminOrgs( int userId )
+		{
+			string pFilter = string.Format("OrgMbrId in (select OrgMemberId from [dbo].[Organization.MemberRole] base inner join [organization.Member] om on base.OrgMemberId = om.Id   where om.UserId = {0} AND RoleId in (1,3)) ", userId);
+			string pOrderBy = "";
+			int pStartPageIndex = 0;
+			//just in case, limit list - use different method if need all for a search, etc
+			int pMaximumRows = 1000;
+			int pTotalRows = 0;
+
+			List<OrganizationMember> list = OrganizationMember_Search( pFilter, pOrderBy, pStartPageIndex, pMaximumRows, true, ref pTotalRows );
+
+			return list;
+		}
 
         /// <summary>
         /// Return all where user can contribute content
@@ -1252,13 +1307,25 @@ namespace Isle.BizServices
 
             to.OrgMemberTypeId = ( int ) fromEntity.OrgMemberTypeId;
 
+			to.IsAdmin = fromEntity.IsAdmin;
+			to.IsContentAdmin = fromEntity.IsContentAdmin;
+			to.IsLibraryAdmin = fromEntity.IsLibraryAdmin;
+			to.IsAccountAdmin = fromEntity.IsAccountAdmin;
+			to.IsContentCreator = fromEntity.IsContentCreator;
+			if ( fromEntity.LastLoginDate != null )
+			{
+				to.LastLoginDate = ( System.DateTime ) fromEntity.LastLoginDate;
+			}
+
+			//may remove this, tbd
+			to.Roles = fromEntity.Roles;
+			to.RoleIds = fromEntity.RoleIds;
+
             to.Created = fromEntity.MemberAdded;
-            if ( fromEntity.CreatedById != null )
-                to.CreatedById = ( int ) fromEntity.CreatedById;
+           to.CreatedById = fromEntity.CreatedById;
 
             to.LastUpdated = fromEntity.LastUpdated == null ? to.DefaultDate : ( System.DateTime ) fromEntity.LastUpdated;
-            if ( fromEntity.LastUpdatedById != null )
-                to.LastUpdatedById = ( int ) fromEntity.LastUpdatedById;
+            to.LastUpdatedById = fromEntity.LastUpdatedById;
 
             return to;
         }
@@ -1395,7 +1462,7 @@ namespace Isle.BizServices
             return isValid;
         }
         #endregion
-
+			
 
         #region retrieval
         /// <summary>
@@ -1418,9 +1485,17 @@ namespace Isle.BizServices
 
         }//
 
+		/// <summary>
+		/// Check if user has publish privileges
+		/// 16-03-03 MP - not sure if this is accurate?
+		/// </summary>
+		/// <param name="user"></param>
+		/// <returns></returns>
         public static bool DoesUserHavePublishPrivileges( ThisUser user )
         {
-            //
+			if ( GetAppKeyValue( "allowingOpenPublishing", "yes" ) == "yes" )
+				return true;
+
             ApplicationRolePrivilege privileges = SecurityManager.GetGroupObjectPrivileges( user, SecurityManager.CAN_PUBLISH_OBJECT );
             if ( privileges.CanCreate() == true )
                 return true;
@@ -1452,6 +1527,21 @@ namespace Isle.BizServices
             }
             return list;
         }//
+		public static CodeItem GetOrgType( string orgType )
+		{
+			CodeItem ci = new CodeItem();
+			using ( var context = new EFDAL.IsleContentContext() )
+			{
+				EFDAL.Codes_OrgType item = context.Codes_OrgType.SingleOrDefault( s => s.Title.ToLower() == orgType.ToLower() );
+
+				if ( item != null && item.Id > 0 )
+				{
+					ci.Id = item.Id;
+					ci.Title = item.Title;
+				}
+			}
+			return ci;
+		}
         /// <summary>
         /// Select organization member types and return as CodeItem list
         /// </summary>
@@ -1562,101 +1652,123 @@ namespace Isle.BizServices
         }
 
         //Invite an existing IOER user
-        public bool InviteExistingUser( int organizationId, int actingUserId, int inviteeId, int typeId, List<int> roleIds, string customMessage, ref string status )
-        {
-					//Check for existing
-					var testUser = OrganizationMember_Get( organizationId, inviteeId );
-					if ( testUser != null && testUser.Id > 0 )
-					{
-						status = "That user is already a member of this organization.";
-						return false;
-					}
+		public bool InviteExistingUser( int organizationId, int actingUserId, int inviteeId, int typeId, List<int> roleIds, string customMessage, ref string status )
+		{
+			//Check for existing
+			var testUser = OrganizationMember_Get( organizationId, inviteeId );
+			if ( testUser != null && testUser.Id > 0 )
+			{
+				status = "That user is already a member of this organization.";
+				return false;
+			}
 
-					//Get the user
-					var invitedUser = AccountServices.GetUser( inviteeId );
-					//Setup the member object
-					var member = new OrganizationMember()
+			//Get the user
+			var invitedUser = AccountServices.GetUser( inviteeId );
+			//Setup the member object
+			var member = new OrganizationMember()
+			{
+				UserId = invitedUser.Id,
+				OrgId = organizationId,
+				OrgMemberTypeId = typeId,
+				LastUpdatedById = actingUserId,
+				CreatedById = actingUserId
+			};
+
+			//Create the membership
+			var memberID = OrganizationMember_Create( member, ref status );
+			if ( memberID == 0 )
+			{
+				//Status should already be set by the above method
+				return false;
+			}
+			member.Id = memberID;
+
+			//Assign roles to the new member
+			var roles = OrgMemberRole_Select();
+			foreach ( var item in roleIds )
+			{
+				var targetRole = roles.Where( m => m.Id == item ).FirstOrDefault();
+				if ( targetRole != null )
+				{
+					var role = new OrganizationMemberRole()
 					{
-						UserId = invitedUser.Id,
-						OrgId = organizationId,
-						OrgMemberTypeId = typeId,
-						LastUpdatedById = actingUserId,
+						RoleId = targetRole.Id,
+						OrgMemberId = member.Id,
 						CreatedById = actingUserId
 					};
-
-					//Create the membership
-					var memberID = OrganizationMember_Create( member, ref status );
-					if ( memberID == 0 )
-					{
-						//Status should already be set by the above method
-						return false;
-					}
-					member.Id = memberID;
-
-					//Assign roles to the new member
-					var roles = OrgMemberRole_Select();
-					foreach ( var item in roleIds )
-					{
-						var targetRole = roles.Where( m => m.Id == item ).FirstOrDefault();
-						if ( targetRole != null )
-						{
-							var role = new OrganizationMemberRole()
-							{
-								RoleId = targetRole.Id,
-								OrgMemberId = member.Id,
-								CreatedById = actingUserId
-							};
-							OrganizationMemberRole_Create( role, ref status );
-						}
-					}
-
-					//Notify the member of the addition - this is hacky due to time constraints
-					var actingUser = AccountServices.GetUser( actingUserId );
-					var organization = Get( organizationId );
-					var typeTitle = "member";
-					var memberType = OrgMemberType_Select().Where( m => m.Id == typeId ).FirstOrDefault();
-					if ( memberType != null )
-					{
-						typeTitle = memberType.Title;
-					}
-					string bcc = UtilityManager.GetAppKeyValue( "systemAdminEmail", "mparsons@siuccwd.com" );
-					string fromEmail = UtilityManager.GetAppKeyValue( "contactUsMailFrom", "mparsons@siuccwd.com" );
-					var isSecure = false;
-					string eMessage = "";
-					if ( UtilityManager.GetAppKeyValue( "SSLEnable", "0" ) == "1" )
-						isSecure = true;
-					string proxyId = new AccountServices().Create_ProxyLoginId( invitedUser.Id, "Existing user added to org.", ref status );
-					//Hacks - need to move these to somewhere less hardcoded-y when time allows
-					string subject = string.Format( "{0} added you to an \"Illinois Open Educational Resources\" organization", actingUser.FullName() );
-					string confirmUrl = string.Format( "/Account/Login.aspx?pg={0}&nextUrl=/Libraries", proxyId.ToString() );
-					confirmUrl = UtilityManager.FormatAbsoluteUrl( confirmUrl, isSecure );
-					eMessage = string.Format( "Note<br />You have been added to the following organization: <br />Organization: <strong>{0}</strong> <br />Member Type: <strong>{1}</strong>. <br /><br />" + customMessage + "<br /><br /><p>Use the link below to login to the website. You will then have access to the latter organization.</p> <a href=\"{2}\">Login to IOER</a>", organization.Name, memberType.Title, confirmUrl );
-					eMessage += " <p>" + actingUser.EmailSignature() + "</p>";
-					EmailManager.SendEmail( invitedUser.Email, fromEmail, subject, eMessage, "", bcc );
-
-					//Update the user's profile if applicable
-					if ( invitedUser.OrgId == 0 )
-					{
-						var profile = new LRWarehouse.Business.PatronProfile()
-						{
-							UserId = invitedUser.Id,
-							OrganizationId = organizationId
-						};
-						if ( profile.IsValid ) // Not sure what this check actually does
-						{
-							new AccountServices().PatronProfile_Update( profile );
-						}
-						else
-						{
-							new AccountServices().PatronProfile_Create( profile, ref status );
-						}
-					}
-
-					return true;
+					OrganizationMemberRole_Create( role, ref status );
 				}
+			}
+
+			//Notify the member of the addition - this is hacky due to time constraints
+			var actingUser = AccountServices.GetUser( actingUserId );
+			var organization = Get( organizationId );
+			var typeTitle = "member";
+			var memberType = OrgMemberType_Select().Where( m => m.Id == typeId ).FirstOrDefault();
+			if ( memberType != null )
+			{
+				typeTitle = memberType.Title;
+			}
+			string bcc = UtilityManager.GetAppKeyValue( "systemAdminEmail", "mparsons@siuccwd.com" );
+			string fromEmail = UtilityManager.GetAppKeyValue( "contactUsMailFrom", "mparsons@siuccwd.com" );
+			var isSecure = false;
+			string eMessage = "";
+			if ( UtilityManager.GetAppKeyValue( "SSLEnable", "0" ) == "1" )
+				isSecure = true;
+			string proxyId = new AccountServices().Create_ProxyLoginId( invitedUser.Id, "Existing user added to org.", ref status );
+			//Hacks - need to move these to somewhere less hardcoded-y when time allows
+			string subject = string.Format( "{0} added you to an \"Illinois Open Educational Resources\" organization", actingUser.FullName() );
+			string confirmUrl = string.Format( "/Account/Login.aspx?pg={0}&a=activate&nextUrl=/", proxyId.ToString() );
+			confirmUrl = UtilityManager.FormatAbsoluteUrl( confirmUrl, isSecure );
+			eMessage = string.Format( "Note<br />You have been added to the following organization: <br />Organization: <strong>{0}</strong> <br />Member Type: <strong>{1}</strong>. <br /><br />" + customMessage + "<br /><br /><p>Use the link below to login to the website. You will then have access to the latter organization.</p> <a href=\"{2}\">Login to IOER</a>", organization.Name, memberType.Title, confirmUrl );
+
+			eMessage += string.Format( "<p>If you cannot click on this link, copy and paste the following URL into your browser to login to IOER: <br/>{0}", confirmUrl );
+
+			eMessage += " <p>" + actingUser.EmailSignature() + "</p>";
+			EmailManager.SendEmail( invitedUser.Email, fromEmail, subject, eMessage, "", bcc );
+
+			//Update the user's profile if applicable
+			if ( invitedUser.OrgId == 0 && typeId != OrganizationMember.MEMBERTYPE_EXTERNAL)
+			{
+				var profile = new LRWarehouse.Business.PatronProfile()
+				{
+					UserId = invitedUser.Id,
+					OrganizationId = organizationId
+				};
+				if ( profile.IsValid ) // Not sure what this check actually does
+				{
+					new AccountServices().PatronProfile_Update( profile );
+				}
+				else
+				{
+					new AccountServices().PatronProfile_Create( profile, ref status );
+				}
+			}
+
+			return true;
+}
+
+		//Invite a non-existing user by email
+		public bool InviteNewUser( int organizationId, int actingUserId,
+					string inviteeEmail,
+					int typeId, List<int> roleIds, string customMessage, ref string status )
+		{
+			return InviteNewUser( organizationId, actingUserId, 
+					inviteeEmail, 
+					"", 
+					"", 
+					typeId, roleIds, customMessage, ref status);
+		}
 
         //Invite a non-existing user by email
-        public bool InviteNewUser( int organizationId, int actingUserId, string inviteeEmail, int typeId, List<int> roleIds, string customMessage, ref string status )
+        public bool InviteNewUser( int organizationId, int actingUserId, 
+					string inviteeEmail, 
+					string firstName, 
+					string lastName, 
+					int typeId, 
+					List<int> roleIds, 
+					string customMessage, 
+					ref string status )
         {
 					var acctServices = new AccountServices();
 					//Check to see if the user already exists
@@ -1669,8 +1781,8 @@ namespace Isle.BizServices
           //Otherwise, create the user account
 					var newUser = new LRWarehouse.Business.Patron()
 					{
-						FirstName = "Pending",
-						LastName = "User",
+						FirstName = string.IsNullOrWhiteSpace(firstName) ? "Pending" : firstName,
+						LastName = string.IsNullOrWhiteSpace(lastName) ? "User" : lastName,
 						Email = inviteeEmail,
 						CreatedById = actingUserId,
 						LastUpdatedById = actingUserId,
