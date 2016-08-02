@@ -1,10 +1,9 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Text;
-//using AutoMapper;
-//using GatewayBusinessEntities;
+
 using IoerContentBusinessEntities;
 
 using IPDAL = ILPathways.DAL;
@@ -15,7 +14,7 @@ namespace Isle.BizServices
 {
     public class GatewayServices
     {
-        GatewayContext ctx = new GatewayContext();
+		IsleContentContext ctx = new IsleContentContext();
 
         #region Groups
         public int CreateGroup( AppGroup entity )
@@ -50,7 +49,8 @@ namespace Isle.BizServices
                 AppGroup.Title = entity.Title;
                 AppGroup.Description = entity.Description;
                 AppGroup.GroupCode = entity.GroupCode;
-                AppGroup.ContactId = entity.ContactId; ;
+				AppGroup.ContactId = entity.ContactId;
+				;
                 //AppGroup.ApplicationId = entity.ApplicationId;
                 AppGroup.GroupTypeId = entity.GroupTypeId;
                 AppGroup.IsActive = entity.IsActive;
@@ -142,12 +142,16 @@ namespace Isle.BizServices
             log.URL = "Session Started";
 			if ( remoteIP.Length > 25 )
 				remoteIP = remoteIP.Substring( 0, 25 );
-			log.RemoteIP = remoteIP;
+            log.RemoteIP = remoteIP;
+			if ( log.RemoteIP.Length > 25 )
+				log.RemoteIP = log.RemoteIP.Substring( 0, 25 );
 
             log.ServerName = serverName;
+			if (string.IsNullOrWhiteSpace(comment) == false && comment.Length > 1500)
+				comment = comment.Substring(0, 1500);
             log.Comment = comment;
             log.Application = "IOER";
-			if ( string.IsNullOrWhiteSpace(referrer) == false && referrer.Length > 1000 )
+			if ( string.IsNullOrWhiteSpace( referrer ) == false && referrer.Length > 1000 )
 				referrer = referrer.Substring( 0, 1000 );
             log.Referrer = referrer;
 
@@ -156,8 +160,8 @@ namespace Isle.BizServices
                 ctx.AppVisitLogs.Add( log );
                 int count = ctx.SaveChanges();
 
-                if (showingTrace)
-                    LoggingHelper.DoTrace( 1, string.Format( "session start: sId-{0}; Server-{1}; Comment-{2}; remoteIP-{3} ", sessionId, serverName, comment, remoteIP ));
+				if ( showingTrace )
+					LoggingHelper.DoTrace( 1, string.Format( "session start: sId-{0}; Server-{1}; Comment-{2}; remoteIP-{3} ", sessionId, serverName, comment, remoteIP ) );
             }
             catch ( Exception e )
             {
