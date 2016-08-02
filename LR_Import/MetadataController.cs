@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlTypes;
@@ -9,9 +9,9 @@ using System.Threading;
 using System.Xml;
 //using LearningRegistryCache2.App_Code.Classes;
 using LearningRegistryCache2.App_Code.Classes;
+using Isle.BizServices;
 using OLDDM = LearningRegistryCache2.App_Code.DataManagers;
 using LRWarehouse.Business;
-using LRWarehouse.DAL;
 using LR_Import;
 using Newtonsoft.Json;
 
@@ -19,27 +19,15 @@ namespace LearningRegistryCache2
 {
     public class MetadataController : BaseDataController
     {
-        protected AuditReportingManager reportingManager = new AuditReportingManager();
-        protected ResourceGradeLevelManager educationManager = new ResourceGradeLevelManager();
-        protected ResourceFormatManager formatManager = new ResourceFormatManager();
-        protected ResourceIntendedAudienceManager audienceManager = new ResourceIntendedAudienceManager();
-        protected ResourceManager resourceManager = new ResourceManager();
-        //protected ResourceVersionManager versionManager = new ResourceVersionManager();
-        protected ResourcePropertyManager propertyManager = new ResourcePropertyManager();
-        protected ResourceStandardManager standardManager = new ResourceStandardManager();
-        protected ResourceSubjectManager subjectManager = new ResourceSubjectManager();
-        protected ResourceTypeManager typeManager = new ResourceTypeManager();
-        protected OLDDM.SubmitterManager submitterManager = new OLDDM.SubmitterManager();
-        protected ResourceAgeRangeManager ageRangeManager = new ResourceAgeRangeManager();
-
-        protected ResourceVersionController versionManager = new ResourceVersionController();
+        protected AuditReportingServices reportingManager = new AuditReportingServices();
 
         public MetadataController()
         {
         }
 
-        protected Resource LoadCommonMetadata(string docId, string url, string payloadPlacement, XmlDocument xdoc, XmlDocument xpayload, ref bool isValid)
+        protected Resource LoadCommonMetadata(string docId, ref string url, string payloadPlacement, XmlDocument xdoc, XmlDocument xpayload, ref bool isValid)
         {
+            url = FixPlusesInUrl(url);
             Resource resource = new Resource();
             isValid = true;
             XmlNodeList list = null;
@@ -59,12 +47,16 @@ namespace LearningRegistryCache2
 
             //Resource oldResource = versionManager.GetByResourceUrlAndSubmitter(url, submitterName);
             //string searchUrl = url.Replace("'", "''");
-            Resource oldResource = versionManager.GetActiveVersionByResourceUrl(url);
-            if (oldResource != null && oldResource.RowId.ToString() != BaseDataManager.DEFAULT_GUID)
+            Resource oldResource = new ResourceVersionController().GetActiveVersionByResourceUrl(url);
+            if (oldResource != null && oldResource.RowId.ToString() != ImportServices.DEFAULT_GUID)
             {
                 resource = oldResource;
+                // TODO: When files from 11/4/2015 thru 2/26/2016 have been reprocessed, remove the next two lines.
+                resource.IsActive = true;
+                importManager.UpdateResource(resource);
+                // End TODO block
                 ResourceVersion version = CopyOldToNewResourceVersion(resource.Version);
-                new ResourceVersionManager().SetActiveState(false, resource.Version.Id);
+                importManager.VersionSetActiveState(false, resource.Version.Id);
                 resource.Version = version;
                 resource.Version.ResourceIntId = resource.Id;
                 resource.Version.LRDocId = docId;
@@ -76,18 +68,18 @@ namespace LearningRegistryCache2
             {
                 //Get resource, if it exists, otherwise create it
                 string status = "successful";
-                oldResource = resourceManager.GetByResourceUrl(url, ref status);
+                oldResource = importManager.GetByResourceUrl(url, ref status);
                 if (status != "successful")
                 {
                     reportingManager.LogMessage(LearningRegistry.reportId, LearningRegistry.fileName, docId, url, ErrorType.Error, ErrorRouting.Technical, status);
                 }
-                if (oldResource == null || oldResource.RowId.ToString() == BaseDataManager.DEFAULT_GUID)
+                if (oldResource == null || oldResource.RowId.ToString() == ImportServices.DEFAULT_GUID)
                 {
                     status = "successful";
                     resource.ResourceUrl = url;
                     resource.FavoriteCount = 0;
                     resource.ViewCount = 0;
-                    resourceManager.Create(resource, ref status);
+                    importManager.CreateResource(resource, ref status);
                     resource.Version.ResourceIntId = resource.Id;
 
                     resource.Version.Submitter = submitterName;
@@ -128,6 +120,22 @@ namespace LearningRegistryCache2
                 try
                 {
                     xpayload.LoadXml(payload);
+                    // check to see if <resource_data> contains json.  If so, convert the JSON to xml and load again.
+                    list = xpayload.GetElementsByTagName("resource_data");
+                    if (list != null)
+                    {
+                        string xmlJson = list[0].InnerXml;
+                        if (xmlJson.Substring(0, 1) == "{" || xmlJson.Substring(0, 1) == "[")
+                        {
+                            // contains json, so do conversion
+                            XmlDocument xd = new XmlDocument();
+                            xd = JsonConvert.DeserializeXmlNode(xmlJson, "root");
+                            string newXml = xd.GetElementsByTagName("root")[0].InnerXml.ToString();
+                            payload = payload.Replace(xmlJson, newXml);
+                            //xpayload = new XmlDocument();
+                            xpayload.LoadXml(payload);
+                        }
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -138,14 +146,14 @@ namespace LearningRegistryCache2
                 foreach (XmlNode node in list)
                 {
                     string strDate = TrimWhitespace(node.InnerText);
-                    resource.Version.Modified = BaseDataManager.ConvertLRTimeToDateTime(strDate);
+                    resource.Version.Modified = importManager.ConvertLRTimeToDateTime(strDate);
                     break;
                 }
                 list = xdoc.GetElementsByTagName("create_timestamp");
                 foreach (XmlNode node in list)
                 {
                     string strDate = TrimWhitespace(node.InnerText);
-                    resource.Version.Created = BaseDataManager.ConvertLRTimeToDateTime(strDate);
+                    resource.Version.Created = importManager.ConvertLRTimeToDateTime(strDate);
                     break;
                 }
                 resource.Version.Imported = DateTime.Now;
@@ -207,7 +215,7 @@ namespace LearningRegistryCache2
 
             string statusMessage = "successful";
             resource.Version.ResourceIntId = resource.Id;
-            versionManager.Create(resource.Version, ref statusMessage);
+            importManager.CreateVersion(resource.Version, ref statusMessage);
             if (statusMessage != "successful")
             {
                 //if rv add fails, need to reject whole resource
@@ -229,7 +237,8 @@ namespace LearningRegistryCache2
         {
             string statusMessage = "successful";
             resource.Version.ResourceIntId = resource.Id;
-            statusMessage = versionManager.Update(resource.Version);
+            //quepasa
+            statusMessage = new ResourceVersionController().Update(resource.Version);
             if (statusMessage != "successful")
             {
                 reportingManager.LogMessage(LearningRegistry.reportId, LearningRegistry.fileName, resource.Version.LRDocId, resource.ResourceUrl, ErrorType.Error, ErrorRouting.Technical, statusMessage);
@@ -282,16 +291,16 @@ namespace LearningRegistryCache2
         public void VerifyResourceVersionRecordExists(Resource resource)
         {
             string status = "successful";
-            DataSet ds = versionManager.GetByResourceUrl(resource.ResourceUrl);
+            DataSet ds = new ResourceVersionController().GetByResourceUrl(resource.ResourceUrl);
 
-            if (ResourceVersionManager.DoesDataSetHaveRows(ds))
+            if (BaseDataController.DoesDataSetHaveRows(ds))
             {
                 // do nothing - it is verified
             }
             else
             {
                 // Resource record exists without Resource.Version.  Attempt to delete the Resource record.
-                status = resourceManager.Delete(resource.RowId.ToString());
+                status = importManager.DeleteResource(resource.RowId.ToString());
                 if (status != "successful")
                 {
                     reportingManager.LogMessage(LearningRegistry.reportId, LearningRegistry.fileName, resource.Version.LRDocId, resource.ResourceUrl, ErrorType.Error, ErrorRouting.Technical, status);
@@ -421,7 +430,6 @@ namespace LearningRegistryCache2
         protected void ConvertAgeToGrade(Resource resource, string age, ref string status)
         {
             status = "successful";
-            ResourceGradeLevelManager gradeLevelManager = new ResourceGradeLevelManager();
 
             ResourceAgeRange level = new ResourceAgeRange();
             level.ResourceIntId = resource.Id;
@@ -436,7 +444,7 @@ namespace LearningRegistryCache2
                 ResourceChildItem generalPublic = new ResourceChildItem();
                 generalPublic.ResourceIntId = resource.Id;
                 generalPublic.OriginalValue = "Adult Education";
-                gradeLevelManager.Import(generalPublic, ref status);
+                importManager.ImportGradeLevel(generalPublic, ref status);
                 if (status != "successful")
                 {
                     reportingManager.LogMessage(LearningRegistry.reportId, LearningRegistry.fileName, "", resource.ResourceUrl, ErrorType.Error, ErrorRouting.Technical,
@@ -449,7 +457,7 @@ namespace LearningRegistryCache2
                     highSchool.ResourceIntId = resource.Id;
                     highSchool.OriginalValue = "High School";
                     status = "successful";
-                    gradeLevelManager.Import(highSchool, ref status);
+                    importManager.ImportGradeLevel(highSchool, ref status);
                     if (status != "successful")
                     {
                         reportingManager.LogMessage(LearningRegistry.reportId, LearningRegistry.fileName, "", resource.ResourceUrl, ErrorType.Error, ErrorRouting.Technical,
@@ -462,14 +470,14 @@ namespace LearningRegistryCache2
             else
             {
                 // Map to grade levels
-                CodeGradeLevelCollection grades = CodeTableManager.GradeLevelGetByAgeRange(level.FromAge, level.ToAge, false, ref status);
+                CodeGradeLevelCollection grades = importManager.GradeLevelGetByAgeRange(level.FromAge, level.ToAge, false, ref status);
                 foreach (CodeGradeLevel grade in grades)
                 {
                     ResourceChildItem gradeLevel = new ResourceChildItem();
                     gradeLevel.ResourceIntId = resource.Id;
                     gradeLevel.OriginalValue = grade.Title;
                     gradeLevel.CodeId = grade.Id;
-                    gradeLevelManager.Import(gradeLevel, ref status);
+                    importManager.ImportGradeLevel(gradeLevel, ref status);
                     if (status != "successful")
                     {
                         reportingManager.LogMessage(LearningRegistry.reportId, LearningRegistry.fileName, "", resource.ResourceUrl, ErrorType.Error, ErrorRouting.Technical,
@@ -509,7 +517,7 @@ namespace LearningRegistryCache2
             ResourceAgeRange gradeLevel = new ResourceAgeRange();
             foreach (string title in grades)
             {
-                CodeGradeLevel level = CodeTableManager.GradeLevelGetByTitle(title);
+                CodeGradeLevel level = importManager.GradeLevelGetByTitle(title);
 
                 gradeLevel.ResourceIntId = resource.Id;
                 if (gradeLevel.FromAge == 0)
@@ -531,7 +539,7 @@ namespace LearningRegistryCache2
                     firstTimeThru = false;
                 }
             }
-            string status = ageRangeManager.Import(gradeLevel);
+            string status = importManager.ImportAgeRange(gradeLevel);
             if (status != "successful")
             {
                 reportingManager.LogMessage(LearningRegistry.reportId, LearningRegistry.fileName, "", resource.ResourceUrl, ErrorType.Error, ErrorRouting.Technical,
@@ -542,9 +550,8 @@ namespace LearningRegistryCache2
         protected bool CheckForGoodLanguage(int resourceIntId)
         {
             bool isGoodLanguage = true;
-            ResourceLanguageManager languageManager = new ResourceLanguageManager();
-            List<ResourceChildItem> languages = languageManager.Select(resourceIntId);
-            DataSet goodLanguages = languageManager.SelectCodeTable();
+            List<ResourceChildItem> languages = importManager.SelectLanguage(resourceIntId, "");
+            DataSet goodLanguages = importManager.SelectLanguageCodeTable();
             if (languages.Count > 0)
             {
                 // At least one language is present.  Check for English, Spanish, Polish, Chinese or Russian.  If one of these is present, the language is good.
