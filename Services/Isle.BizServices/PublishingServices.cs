@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.IO;
@@ -339,9 +339,6 @@ namespace Isle.BizServices
 			string clientID = UtilityManager.GetAppKeyValue( "learningRegistryUserId" );
 			string clientPassword = UtilityManager.GetAppKeyValue( "learningRegistryPassword" );
 
-			//string clientID = "info@siuccwd.com";
-			//string clientPassword = "in5t@ll3r";
-
 			LRClient client = new LRClient( node, clientID, clientPassword );
 			try
 			{
@@ -373,7 +370,8 @@ namespace Isle.BizServices
 		/// <param name="skipLRPublish"></param>
 		/// <param name="user"></param>
 		/// <param name="publishForOrgId">Optional will be a valid OrgId if user is publishing for an org</param>
-		public static void PublishToAll( Resource input,
+		[Obsolete]
+		public static void PublishToAll_OLD( Resource input,
 			ref bool isSuccessful,
 			ref string status,
 			ref int versionID,
@@ -391,7 +389,10 @@ namespace Isle.BizServices
 			//Publish to LR. This will give us an LR Doc ID
 			if ( !skipLRPublish )
 			{
-				PublishToLearningRegistry( input, ref success, ref tempStatus, ref lrDocID );
+				PublishToLearningRegistry2( input, 
+							ref success, 
+							ref tempStatus, 
+							ref lrDocID );
 				if ( !success && !IsLocalHost() )
 				{
 					if ( continueOnPublishError == "no" )
@@ -451,69 +452,8 @@ namespace Isle.BizServices
 			SendPublishNotification( user, input );
 		}
 
-		public static void PublishToLearningRegistry( string payload,
-		  string url,
-		  string submitter,
-		  List<string> keywords,
-		  ref bool successful,
-		  ref string status,
-		  ref string lrDocID )
-		{
-			//Create document
-			lr_document doc = new lr_document();
-			doc.resource_data_type = "metadata";
-			doc.payload_placement = "inline";
-			doc.payload_schema = new List<string> { "LRMI" };
-			doc.resource_data = payload;
-			doc.resource_locator = url;
 
-			//Identity info
-			lr_identity identity = new lr_identity();
-			identity.submitter_type = "agent";
-			identity.submitter = "ISLE OER on Behalf of " + submitter;
-			identity.signer = "ISLE OER";
-			doc.identity = identity;
-
-			//keywords
-			doc.keys = keywords;
-
-			//Sign the document
-			string PgpKeyringLocation = Path.Combine( HttpRuntime.AppDomainAppPath, "App_Data/lrpriv.asc" );
-			string keyData = File.ReadAllText( PgpKeyringLocation );
-			string[] PublicKeyLocations = new string[] { "http://pgp.mit.edu:11371/pks/lookup?op=get&search=0x6ce0837335049763" };
-			string UserID = "ISLEOER (Data Signing Key) <info@siuccwd.com>";
-			string password = "89k7SMteVzPUY";
-			PgpSigner signer = new PgpSigner( PublicKeyLocations, keyData, UserID, password );
-			doc = signer.Sign( doc );
-
-			//Build the envelope
-			lr_Envelope envelope = new lr_Envelope();
-			envelope.documents.Add( doc );
-
-			//Do publish
-			string node = UtilityManager.GetAppKeyValue( "learningRegistryNodePublish" ); //"https://node01.public.learningregistry.net", "http://sandbox.learningregistry.org/"
-			string clientID = "info@siuccwd.com";
-			string clientPassword = "in5t@ll3r";
-			LRClient client = new LRClient( node, clientID, clientPassword );
-			try
-			{
-				//Do publish
-				PublishResponse response = client.Publish( envelope );
-
-				//Set return values
-				successful = true;
-				lrDocID = response.document_results.ElementAt( 0 ).doc_ID;
-				status = "Successfully published. LR Doc ID: " + lrDocID;
-			}
-			catch ( Exception ex )
-			{
-				successful = false;
-				lrDocID = "";
-				status = "Failed to Publish: " + ex.Message;
-			}
-		}
-
-		public static void PublishToLearningRegistry( Resource input,
+		public static void PublishToLearningRegistry2( Resource input,
 					ref bool successful,
 					ref string status,
 					ref string lrDocID )
@@ -532,8 +472,209 @@ namespace Isle.BizServices
 			);
 		}
 
+
+		/// <summary>
+		/// Publish resource to LR
+		/// NOTE: keep code for filling envelop in sync (better to merge!) with CreateLREnvelope AND BuildDocument
+		/// </summary>
+		/// <param name="payload"></param>
+		/// <param name="url"></param>
+		/// <param name="submitter"></param>
+		/// <param name="keywords"></param>
+		/// <param name="successful"></param>
+		/// <param name="status"></param>
+		/// <param name="lrDocID"></param>
+		public static void PublishToLearningRegistry( string payload,
+								  string url,
+								  string submitter,
+								  List<string> keywords,
+								  ref bool successful,
+								  ref string status,
+								  ref string lrDocID )
+		{
+			//Create document
+			lr_document doc = new lr_document();
+			LoggingHelper.DoTrace( 8, " %%%%% PublishingServices.PublishToLearningRegistry - New Publish %%%%%%" );
+
+			try
+			{
+				doc.resource_data_type = "metadata";
+				doc.payload_placement = "inline";
+				doc.doc_version = UtilityManager.GetAppKeyValue( "lr_doc_version", "0.51.0" );
+				doc.payload_schema = new List<string> { "LRMI" };
+				doc.resource_data = payload;
+				doc.resource_locator = url;
+				//keywords
+				doc.keys = keywords;
+
+				if ( !string.IsNullOrWhiteSpace( lrDocID ) )
+				{
+					//doing replace
+					doc.replaces = new List<string> { lrDocID };
+					LoggingHelper.DoTrace( 3, " %%%%% PublishingServices.PublishToLearningRegistry - doing registry update of LrDoc: " + lrDocID );
+				}
+
+				//Sign the document
+				SignDocument( submitter, ref doc );
+
+				//Build the envelope
+				lr_Envelope envelope = new lr_Envelope();
+				envelope.documents.Add( doc );
+
+				//Do publish
+				string node = UtilityManager.GetAppKeyValue( "learningRegistryNodePublish" );
+				string clientID = UtilityManager.GetAppKeyValue( "learningRegistryUserId" );
+				string clientPassword = UtilityManager.GetAppKeyValue( "learningRegistryPassword" );
+				LRClient client = new LRClient( node, clientID, clientPassword );
+
+				//LoggingHelper.DoTrace( 4, " %%%%% PublishingServices.PublishToLearningRegistry - doing Publish ");
+				PublishResponse response = client.Publish( envelope );
+
+				lrDocID = response.document_results.ElementAt( 0 ).doc_ID;
+				if ( !string.IsNullOrWhiteSpace( lrDocID ) && lrDocID.Length > 10 )
+				{
+					status = "Successfully published. LR Doc ID: " + lrDocID;
+					LoggingHelper.DoTrace( 4, " %%%%% PublishingServices.PublishToLearningRegistry - Successfully published. LR Doc ID: " + lrDocID);
+					//quick read to trace document
+					if ( System.DateTime.Now.Day == 10 )
+					{
+						//lr_document lrDoc = client.ObtainDocByID( lrDocID );
+					}
+				}
+				else
+				{
+					//need to get a message from the response, or update Publish
+					successful = false;
+					lrDocID = "";
+					if ( response != null && response.document_results != null && response.document_results.Count > 0 )
+						status = "Failed to Publish: " + response.document_results[0].error;
+					else
+						status = "Failed to Publish: - contact system administration" ;
+
+					LoggingHelper.DoTrace( 2, " %%%%% PublishingServices.PublishToLearningRegistry - Error. " + status );
+				}
+				
+			}
+			catch ( Exception ex )
+			{
+				LoggingHelper.LogError( ex, "PublishingServices.PublishToLearningRegistry()" );
+				successful = false;
+				lrDocID = "";
+				status = "Failed to Publish: " + ex.Message;
+			}
+}
+
+
+		/// <summary>
+		/// Delete a document from the registry (asynchronously)
+		/// </summary>
+		/// <param name="lrDocID"></param>
+		/// <param name="submitter"></param>
+		/// <param name="deletedDocId">If successful contains docId of the document with the delete/replacement</param>
+		/// <param name="successful"></param>
+		/// <param name="status"></param>
+		public static void DeleteFromRegistry( string lrDocID,
+					Patron user )
+		{
+			//,
+			//		ref string deletedDocId,
+			//		ref bool successful,
+			//		ref string status
+			//do async, as no need for end user to be notified
+			System.Threading.ThreadPool.QueueUserWorkItem( delegate
+			{
+				DeleteFromRegistryAsync( lrDocID, user );
+			} );
+		}
+
+
+		/// <summary>
+		/// Delete a document from the registry
+		/// </summary>
+		/// <param name="lrDocID"></param>
+		/// <param name="submitter"></param>
+		/// <param name="deletedDocId">If successful contains docId of the document with the delete/replacement</param>
+		/// <param name="successful"></param>
+		/// <param name="status"></param>
+		private static void DeleteFromRegistryAsync( string lrDocID,
+					Patron user )
+		{
+			
+			bool successful = true;
+			string status = "";
+			string deletedDocId = "";
+			string submitter = user.FullName();
+
+			if ( string.IsNullOrWhiteSpace( lrDocID ) )
+			{
+				successful = false;
+				status = "An valid LR DOC ID was was not provided";
+				return;
+			}
+			//Create document
+			lr_document doc = new lr_document();
+			try
+			{
+				doc.replaces = new List<string> { lrDocID };
+				doc.payload_placement = "none";
+				doc.resource_data_type = "metadata";
+				doc.doc_version = UtilityManager.GetAppKeyValue( "lr_doc_version", "0.51.0" );
+
+				//Sign the document
+				SignDocument( submitter, ref doc );
+
+				//Build the envelope
+				lr_Envelope envelope = new lr_Envelope();
+				envelope.documents.Add( doc );
+
+				//Do publish
+				string node = UtilityManager.GetAppKeyValue( "learningRegistryNodePublish" );
+				string clientID = UtilityManager.GetAppKeyValue( "learningRegistryUserId" );
+				string clientPassword = UtilityManager.GetAppKeyValue( "learningRegistryPassword" );
+				LRClient client = new LRClient( node, clientID, clientPassword );
+
+				//trace
+				LoggingHelper.DoTrace( 3, "Delete document \r\r" + new JavaScriptSerializer().Serialize( envelope ) );
+				PublishResponse response = client.Publish( envelope );
+
+				//Set return values
+				successful = true;
+				deletedDocId = response.document_results.ElementAt( 0 ).doc_ID;
+				if ( !string.IsNullOrWhiteSpace( deletedDocId ) && deletedDocId.Length > 10 )
+				{
+					status = submitter + " successfully deleted document from the Credential Registry. Related Doc ID: " + deletedDocId;
+
+					new ActivityBizServices().AddActivity( "Learning Registry", "Document Delete", status, user == null ? 0 : user.Id, 0 );
+
+					LoggingHelper.DoTrace( 3, status );
+				}
+				else
+				{
+					//need to get a message from the response
+					successful = false;
+					deletedDocId = "";
+					if ( response != null && response.document_results != null && response.document_results.Count > 0 )
+						status = "Failed to delete the registry document: " + response.document_results[ 0 ].error;
+					else
+						status = "Failed to delete the registry document: - contact system administration";
+				}
+			}
+			catch ( Exception ex )
+			{
+				successful = false;
+				status = "Failed to delete document: " + ex.Message;
+			}
+			if ( !successful )
+			{
+				EmailManager.NotifyAdmin( "Error encountered while attempting to delete LR document", status );
+				status = status.Replace( "<br/>", "\\r\\n" );
+				LoggingHelper.DoTrace( 3, status );
+			}
+		}
+
 		public static void PublishToDatabase( LRWarehouse.Business.ResourceV2.ResourceDTO input
 						, int publishForOrgId
+						, int updatedById
 						, List<int> selectedTags
 						, ref bool successful
 						, ref string status
@@ -541,22 +682,11 @@ namespace Isle.BizServices
 						, ref int intID
 						, ref string sortTitle )
 		{
-			string statusMessage = "";
 			ResourceManager resMgr = new ResourceManager();
-
+			bool creatingSystemResource = false;	
 			try
 			{
 				//Resource
-				//Create new resource
-				/*if ( input.ResourceId == 0 && input.CreatedById == 0 )
-				{
-					intID = resMgr.CreateByUrl( input.Url, ref status );
-					  input.ResourceId = intID;
-				}
-				else if ( input.CreatedById > 0 && input.ResourceId == 0 )
-				{
-					resMgr.Create_ResourcePublishedBy( intID, input.CreatedById, publishForOrgId, ref statusMessage );
-				}*/
 				if ( input.ResourceId == 0 )
 				{
 					var resource = new Resource()
@@ -573,6 +703,7 @@ namespace Isle.BizServices
 					else
 					{
 						input.ResourceId = intID;
+						creatingSystemResource = true;
 					}
 				}
 				//Version
@@ -584,7 +715,7 @@ namespace Isle.BizServices
 				if ( targetAccessRights != null )
 				{
 					//Convert new access rights ID to old access rights ID for storage in version table
-					var accessRightsDBField = new ResourceV2Services().GetFieldAndTagCodeData().Where( m => m.Schema == "accessRights" ).FirstOrDefault();
+					var accessRightsDBField = new ResourceV2Services().GetFieldAndTagCodeData(false).Where( m => m.Schema == "accessRights" ).FirstOrDefault();
 					if ( accessRightsDBField != null )
 					{
 						var matchedAccessRightsDB = accessRightsDBField.Tags.Where( m => m.Id == targetAccessRights.Id ).FirstOrDefault();
@@ -607,6 +738,7 @@ namespace Isle.BizServices
 					Publisher = input.Publisher,
 					Creator = input.Creator,
 					Rights = input.UsageRights.Url,
+					UsageRightsId = input.UsageRights.CodeId,
 					AccessRights = finalAccessRightsValue,
 					Modified = DateTime.Now,
 					Submitter = input.Submitter,
@@ -636,7 +768,7 @@ namespace Isle.BizServices
 					{
 						ResourceIntId = intID,
 						OriginalValue = item,
-						CreatedById = input.CreatedById
+						CreatedById = updatedById	//input.CreatedById
 					}, ref status );
 				}
 
@@ -650,11 +782,11 @@ namespace Isle.BizServices
 						ResourceIntId = intID,
 						StandardId = item.StandardId,
 						AlignmentTypeCodeId = item.AlignmentTypeId,
-						AlignmentDegreeId = item.AlignmentDegreeId,
+						UsageTypeId = item.UsageTypeId,
 						AlignmentTypeValue = item.AlignmentType,
-						AlignmentDegree = item.AlignmentDegree,
-						CreatedById = input.CreatedById,
-						AlignedById = input.CreatedById,
+						UsageType = item.UsageType,
+						CreatedById = updatedById,	//input.CreatedById,
+						AlignedById = updatedById,	//input.CreatedById,
 						StandardDescription = item.Description,
 						StandardNotationCode = item.NotationCode
 					}, ref status );
@@ -668,7 +800,9 @@ namespace Isle.BizServices
 				try
 				{
 					if ( selectedTags != null && selectedTags.Count > 0 )
-						new IOERBusinessEntities.EFResourceManager().Resource_CreateTags( selectedTags, input.ResourceId, input.CreatedById );
+					{
+						new IOERBusinessEntities.EFResourceManager().Resource_CreateTags( selectedTags, input.ResourceId, updatedById );
+					}
 				}
 				catch ( Exception ex )
 				{
@@ -681,6 +815,10 @@ namespace Isle.BizServices
 				sortTitle = versionManager.Get( versionID ).SortTitle.Replace( " ", "_" );
 				successful = true;
 				status = "okay";
+				if ( creatingSystemResource )
+				{
+
+				}
 			}
 			catch ( Exception ex )
 			{
@@ -690,7 +828,8 @@ namespace Isle.BizServices
 		}
 
 
-		public static void PublishToDatabase( Resource input
+		[Obsolete]
+		private static void PublishToDatabase( Resource input
 						, int publishForOrgId
 						, ref bool successful
 						, ref string status
@@ -815,42 +954,56 @@ namespace Isle.BizServices
 		}
 		#endregion
 
-		#region LR Document methods
+		#region Obsolete LR Document methods
+		/// <summary>
+		/// ===> NOT USED
+		/// </summary>
+		/// <param name="resourceEntity"></param>
+		/// <returns></returns>
+		//[Obsolete]
+		//private static lr_document BuildDocumentXXX( ref Resource resourceEntity )
+		//{
+		//	lr_document doc = new lr_document();
+		//	//string resourceData = BuildPayloadLRMI_JSON( resourceEntity );
+		//	//OR?
+		//	var resourceData = new ResourceJSONManager().GetJSONLRMIFromResource(resourceEntity);
 
-		public static lr_document BuildDocument( ref Resource resourceEntity )
-		{
-			string resourceData = BuildPayloadLRMI_JSON( resourceEntity );
 
-			lr_document doc = new lr_document();
 
-			//Required Fields
-			doc.resource_data_type = "metadata";
-			doc.payload_placement = "inline";
-			doc.payload_schema = new List<string>( new string[] { "LRMI" } );
+		//	//Required Fields
+		//	doc.resource_data_type = "metadata";
+		//	doc.payload_placement = "inline";
+		//	doc.doc_version = UtilityManager.GetAppKeyValue("lr_doc_version", "0.51.0");
+		//	doc.payload_schema = new List<string>( new string[] { "LRMI" } );
 
-			//Most of the data is in here:
-			doc.resource_data = resourceData;
+		//	//Most of the data is in here:
+		//	doc.resource_data = resourceData;
 
-			//Resource Locator
-			doc.resource_locator = resourceEntity.ResourceUrl;
+		//	//Resource Locator
+		//	doc.resource_locator = resourceEntity.ResourceUrl;
 
-			//Submitter Informaton
-			lr_identity identity = new lr_identity();
-			identity.submitter_type = "agent";
-			identity.submitter = "ISLE OER on Behalf of " + resourceEntity.Version.Submitter;
-			identity.signer = "ISLE OER";
-			doc.identity = identity;
+		//	//Submitter Informaton
+		//	lr_identity identity = new lr_identity();
+		//	identity.submitter_type = "agent";
+		//	identity.signer = UtilityManager.GetAppKeyValue("lrIdentitySigner", "error");
+		//	string defaultSubmitter = UtilityManager.GetAppKeyValue("defaultSubmitter", "IOER");
+		//	if ( resourceEntity.Version.Submitter.ToLower().IndexOf( defaultSubmitter.ToLower() ) == -1 )
+		//		resourceEntity.Version.Submitter = defaultSubmitter + resourceEntity.Version.Submitter;
+		//	identity.submitter = resourceEntity.Version.Submitter;
+			
+		//	doc.identity = identity;
 
-			//Keywords
-			foreach ( ResourceChildItem keyword in resourceEntity.Keyword )
-			{
-				doc.keys.Add( keyword.OriginalValue.Trim() );
-			}
+		//	//Keywords
+		//	foreach ( ResourceChildItem keyword in resourceEntity.Keyword )
+		//	{
+		//		doc.keys.Add( keyword.OriginalValue.Trim() );
+		//	}
 
-			return doc;
-		}
+		//	return doc;
+		//}
 
-		public static string BuildPayloadLRMI_JSON( Resource entity )
+		[Obsolete]
+		private static string BuildPayloadLRMI_JSONXXX( Resource entity )
 		{
 			ResourceJSONManager jsonManager = new ResourceJSONManager();
 			ResourceJSONLRMI resource = jsonManager.GetJSONLRMIFromResource( entity );
@@ -859,7 +1012,8 @@ namespace Isle.BizServices
 			return serializer.Serialize( resource );
 		}
 
-		public static lr_Envelope BuildEnvelope( lr_document doc )
+		[Obsolete]
+		private static lr_Envelope BuildEnvelope( lr_document doc )
 		{
 			lr_Envelope envelope = new lr_Envelope();
 
@@ -896,6 +1050,7 @@ namespace Isle.BizServices
 				status = ex.Message;
 			}
 		}
+
 		public static void BuildSaveLRDocument( Resource input,
 				ref bool successful,
 				ref string status )
@@ -912,42 +1067,81 @@ namespace Isle.BizServices
 
 			new ResourceManager().PublishPending_Create( pending, ref status );
 
-		}
+}
 
-		public static lr_Envelope CreateLREnvelope( Resource input, ref bool successful, ref string status )
+		/// <summary>
+		/// Fill an LR Envelope
+		/// NOTE: keep filling code in sync with PublishToLearningRegistry
+		/// </summary>
+		/// <param name="input"></param>
+		/// <param name="successful"></param>
+		/// <param name="status"></param>
+		/// <returns></returns>
+		public static lr_Envelope CreateLREnvelope(Resource input, ref bool successful, ref string status)
 		{
 			//Create payload
-			var payload = new ResourceJSONManager().GetJSONLRMIFromResource( input );
+			var payload = new ResourceJSONManager().GetJSONLRMIFromResource(input);
+			//keywords
+			List<string> keywords = new List<string>();
+			foreach (ResourceChildItem word in input.Keyword)
+			{
+				keywords.Add(word.OriginalValue.Trim());
+			}
+
+			return CreateLREnvelope(new JavaScriptSerializer().Serialize(payload), input.ResourceUrl, input.Version.Submitter, keywords, ref successful, ref status);
+		}
+
+		/// <summary>
+		/// Fill an LR Envelope
+		/// NOTE: keep filling code in sync with PublishToLearningRegistry and BuildDocument
+		/// </summary>
+		/// <param name="payload"></param>
+		/// <param name="resourceUrl"></param>
+		/// <param name="submitter"></param>
+		/// <param name="keywords"></param>
+		/// <param name="successful"></param>
+		/// <param name="status"></param>
+		/// <returns></returns>
+		public static lr_Envelope CreateLREnvelope( string payload,
+													string resourceUrl,
+													string submitter,
+													List<string> keywords,
+													ref bool successful,
+													ref string status )
+		{
+			//Create payload
+			//var payload = new ResourceJSONManager().GetJSONLRMIFromResource( input );
 
 			//Create document
 			lr_document doc = new lr_document();
 			doc.resource_data_type = "metadata";
 			doc.payload_placement = "inline";
+			doc.doc_version = UtilityManager.GetAppKeyValue("lr_doc_version", "0.51.0");
 			doc.payload_schema = new List<string> { "LRMI" };
 			doc.resource_data = payload;
-			doc.resource_locator = input.ResourceUrl;
+			doc.resource_locator = resourceUrl;
+			//keywords
+			doc.keys = keywords;
 
 			//Identity info
-			lr_identity identity = new lr_identity();
-			identity.submitter_type = "agent";
-			identity.submitter = "ISLE OER on Behalf of " + input.Version.Submitter;
-			identity.signer = "ISLE OER";
-			doc.identity = identity;
+			//lr_identity identity = new lr_identity();
+			//identity.submitter_type = "agent";
+			//identity.signer = UtilityManager.GetAppKeyValue("lrIdentitySigner", "error");
+			//string defaultSubmitter = UtilityManager.GetAppKeyValue("defaultSubmitter", "IOER");
+			////check if default submitter already included
+			//if ( submitter.ToLower().IndexOf( defaultSubmitter.ToLower() ) == -1 )
+			//	submitter = defaultSubmitter + submitter;
+			//identity.submitter = submitter;
 
-			//keywords
-			foreach ( ResourceChildItem word in input.Keyword )
-			{
-				doc.keys.Add( word.OriginalValue.Trim() );
-			}
+			//doc.identity = identity;
 
-			//Sign the document
-			string PgpKeyringLocation = Path.Combine( HttpRuntime.AppDomainAppPath, "App_Data/lrpriv.asc" );
-			string keyData = File.ReadAllText( PgpKeyringLocation );
-			string[] PublicKeyLocations = new string[] { "http://pgp.mit.edu:11371/pks/lookup?op=get&search=0x6ce0837335049763" };
-			string UserID = "ISLEOER (Data Signing Key) <info@siuccwd.com>";
-			string password = "89k7SMteVzPUY";
-			PgpSigner signer = new PgpSigner( PublicKeyLocations, keyData, UserID, password );
-			doc = signer.Sign( doc );
+			//foreach ( ResourceChildItem word in input.Keyword )
+			//{
+			//	doc.keys.Add( word.OriginalValue.Trim() );
+			//}
+
+			
+			SignDocument( submitter, ref doc );
 
 			//Build the envelope
 			lr_Envelope envelope = new lr_Envelope();
@@ -955,10 +1149,67 @@ namespace Isle.BizServices
 
 			return envelope;
 		}
+		private static void SignDocument( string submitter, ref lr_document doc )
+		{
+			//LoggingHelper.DoTrace( 3, " %%%%% PublishingServices.SignDocument for " + submitter );
+
+			string signingKeyLocation = UtilityManager.GetAppKeyValue( "signingKeyLocation", "" );
+			if ( string.IsNullOrWhiteSpace( signingKeyLocation ) )
+			{
+				//produce error?
+
+				return;
+			}
+
+			//Identity info
+			lr_identity identity = new lr_identity();
+			identity.submitter_type = "agent";
+			identity.signer = UtilityManager.GetAppKeyValue( "lrIdentitySigner", "error" );
+			string defaultSubmitter = UtilityManager.GetAppKeyValue( "defaultSubmitter", "IOER" );
+			//check if default submitter already included
+			if ( submitter.ToLower().IndexOf( defaultSubmitter.ToLower() ) == -1 )
+				submitter = defaultSubmitter + submitter;
+			identity.submitter = submitter;
+
+			doc.identity = identity;
+
+			string publicKeyLocationId = UtilityManager.GetAppKeyValue( "publicKeyLocationId", "" );
+			//try
+			//{
+				string PgpKeyringLocation = Path.Combine( HttpRuntime.AppDomainAppPath, signingKeyLocation );
+				string keyData = File.ReadAllText( PgpKeyringLocation );
+				string[] PublicKeyLocations = new string[] { string.Format("http://pgp.mit.edu:11371/pks/lookup?op=get&search={0}",publicKeyLocationId) };
+				string UserID = UtilityManager.GetAppKeyValue( "signingUserId", "error" );
+				string password = UtilityManager.GetAppKeyValue( "signingPassword", "error" );
+
+				PgpSigner signer = new PgpSigner( PublicKeyLocations, keyData, UserID, password );
+				doc = signer.Sign( doc );
+			//}
+			//catch ( Exception ex )
+			//{
+			//	//maybe do not want to catch, let it fail?
+			//}
+
+
+		}
 		public static void GenerateThumbnail( int resourceID, string url )
 		{
 			//new Thumbnailer().CreateThumbnail( resourceID, url );
 			ThumbnailServices.CreateThumbnail( resourceID.ToString(), url, false );
 		}
+
+		public static lr_document LR_GetByDocID( string lrDocID )
+		{
+			string node = UtilityManager.GetAppKeyValue( "learningRegistryNodePublish" );
+			string clientID = UtilityManager.GetAppKeyValue( "learningRegistryUserId" );
+			string clientPassword = UtilityManager.GetAppKeyValue( "learningRegistryPassword" );
+			LRClient client = new LRClient( node, clientID, clientPassword );
+
+			lr_document lrDoc = client.ObtainDocByID( lrDocID );
+			//add trace code
+			LoggingHelper.DoTrace( 5, "lrDoc \r\r" + new JavaScriptSerializer().Serialize( lrDoc ) );
+			return lrDoc;
+		}
+
 	}
 }
