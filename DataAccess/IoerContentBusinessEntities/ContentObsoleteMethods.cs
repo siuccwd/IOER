@@ -19,7 +19,7 @@ namespace IoerContentBusinessEntities
 {
 	class ContentObsoleteMethods
 	{
-		static bool usingContentConnector = false;
+		//static bool usingContentConnector = false;
 
 		#region Content.Connector
 		public int ContentConnectorAdd( int parentId, int childId, int createdById )
@@ -204,7 +204,7 @@ namespace IoerContentBusinessEntities
 					//to.ConditionsOfUseIconUrl = cou.IconUrl != null ? cou.IconUrl : "";
 				}
 
-				to.UseRightsUrl = fromEntity.UseRightsUrl != null ? fromEntity.UseRightsUrl : "";
+				to.UsageRightsUrl = fromEntity.UseRightsUrl != null ? fromEntity.UseRightsUrl : "";
 
 				//to.ResourceVersionId = fromEntity.ResourceVersionId;
 				to.ResourceIntId = fromEntity.ResourceIntId != null ? ( int ) fromEntity.ResourceIntId : 0;
@@ -218,7 +218,7 @@ namespace IoerContentBusinessEntities
 					//to.RelatedDocument = Document_Version_Get( to.DocumentRowId );
 				}
 
-				to.IsOrgContentOwner = fromEntity.IsOrgContentOwner;
+				//to.IsOrgContentOwner = fromEntity.IsOrgContentOwner;
 
 				to.OrgId = fromEntity.OrgId;
 				if ( to.OrgId > 0 )

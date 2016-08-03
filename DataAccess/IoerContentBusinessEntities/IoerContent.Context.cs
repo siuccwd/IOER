@@ -129,5 +129,6 @@ namespace IoerContentBusinessEntities
         public DbSet<OrganizationMember_RoleIdCSV> OrganizationMember_RoleIdCSV { get; set; }
         public DbSet<Content_RelatedStandard> Content_RelatedStandard { get; set; }
         public DbSet<Content_RelatedStandardsSummary> Content_RelatedStandardsSummary { get; set; }
+        public DbSet<Content_Keyword> Content_Keyword { get; set; }
     }
 }

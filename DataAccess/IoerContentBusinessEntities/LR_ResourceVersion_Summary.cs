@@ -26,7 +26,7 @@ namespace IoerContentBusinessEntities
         public string Rights { get; set; }
         public Nullable<int> ViewCount { get; set; }
         public Nullable<int> FavoriteCount { get; set; }
-        public Nullable<int> AccessRightsId { get; set; }
+        public int AccessRightsId { get; set; }
         public string AccessRights { get; set; }
         public Nullable<int> InteractivityTypeId { get; set; }
         public string TypicalLearningTime { get; set; }
@@ -34,5 +34,6 @@ namespace IoerContentBusinessEntities
         public string Submitter { get; set; }
         public string SortTitle { get; set; }
         public Nullable<int> PublishedById { get; set; }
+        public string ImageUrl { get; set; }
     }
 }

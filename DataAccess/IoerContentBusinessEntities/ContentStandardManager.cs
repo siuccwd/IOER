@@ -33,6 +33,15 @@ namespace IoerContentBusinessEntities
 			{
 				try
 				{
+					//interface doesn't prevent duplicate adds, so check here
+					efEntity = context.Content_Standard.SingleOrDefault( s => s.ContentId == contentId && s.StandardId == standardId );
+					if ( efEntity != null && efEntity.Id > 0 )
+					{
+						//need to check what caller does with this. return zero, so a related standard is not created
+						return 0;
+					}
+
+					efEntity = new Content_Standard();
 					efEntity.ContentId = contentId;
 					efEntity.StandardId = standardId;
 					efEntity.AlignmentTypeCodeId = alignmentTypeCodeId;
@@ -245,8 +254,13 @@ namespace IoerContentBusinessEntities
 
 
 		#region Content.RelatedStandards
-
-		public int ContentRelatedStandard_Add( int contentId, int contentStandardId )
+		public int ContentRelatedStandard_Add(  int contentId, int contentStandardId )
+		{
+			//may not be necessary
+			int curriculumID = 0;
+			return ContentRelatedStandard_Add( curriculumID, contentId, contentStandardId );
+		}
+		public int ContentRelatedStandard_Add( int curriculumID, int contentId, int contentStandardId )
 		{
 			int count = 0;
 			using ( var context = new IsleContentContext() )

@@ -14,7 +14,7 @@ namespace IoerContentBusinessEntities
 {
     public class EFSecurityManager
     {
-        static string thisClassName = "EFSecurityManager";
+		//static string thisClassName = "EFSecurityManager";
         DateTime DefaultDate = new System.DateTime(1970, 1, 1);
 
         public static ILP.ApplicationGroupPrivilege ApplicationGroupPrivilege_Get(int id)
@@ -114,6 +114,7 @@ namespace IoerContentBusinessEntities
                 {
                     foreach (Codes_PrivilegeDepth item in items)
                     {
+						entity = new CodeItem();
                         entity.Id = item.Id;
                         entity.Title = item.Title;
                         list.Add(entity);

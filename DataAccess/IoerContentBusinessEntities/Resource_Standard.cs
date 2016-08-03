@@ -26,10 +26,10 @@ namespace IoerContentBusinessEntities
         public int AlignedById { get; set; }
         public int AlignmentTypeCodeId { get; set; }
         public string AlignmentType { get; set; }
-        public int AlignmentDegreeId { get; set; }
-        public string AlignmentDegree { get; set; }
         public Nullable<System.DateTime> Created { get; set; }
         public int CreatedById { get; set; }
         public Nullable<bool> IsDirectStandard { get; set; }
+        public int UsageTypeId { get; set; }
+        public string UsageType { get; set; }
     }
 }

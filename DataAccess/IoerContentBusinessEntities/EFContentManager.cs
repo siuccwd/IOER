@@ -22,7 +22,6 @@ namespace IoerContentBusinessEntities
     {
         static string thisClassName = "EFContentManager";
 
-        static IsleContentEntities ctxXX = new IsleContentEntities();
         static string DEFAULT_GUID = "00000000-0000-0000-0000-000000000000";
 
         static int DefaultSortOrder = 20;
@@ -71,7 +70,7 @@ namespace IoerContentBusinessEntities
 				catch ( System.Data.Entity.Validation.DbEntityValidationException dbex )
 				{
 					//LoggingHelper.LogError( dbex, thisClassName + string.Format( ".ContentAdd() DbEntityValidationException, Type:{0}", entity.TypeId ) );
-					string message = thisClassName + string.Format( ".ContentAdd() DbEntityValidationException, Type:{0}", entity.TypeId );
+					string message = thisClassName + string.Format( ".ContentAdd() DbEntityValidationException, Type:{0}, title: {1}", entity.TypeId, entity.Title );
 					foreach ( var eve in dbex.EntityValidationErrors )
 					{
 						message += string.Format("\rEntity of type \"{0}\" in state \"{1}\" has the following validation errors:",
@@ -87,7 +86,7 @@ namespace IoerContentBusinessEntities
 				}
 				catch ( Exception ex )
 				{
-					LoggingHelper.LogError( ex, thisClassName + string.Format( ".ContentAdd(), Type:{0}", entity.TypeId ) );
+					LoggingHelper.LogError( ex, thisClassName + string.Format( ".ContentAdd(), Type:{0}, title: {1}", entity.TypeId, entity.Title ) );
 				}
 
 				return 0;
@@ -266,8 +265,34 @@ namespace IoerContentBusinessEntities
             }
         }
 
+		/// <summary>
+		/// Get a full Content object, with all child objects populated!!
+		/// Watch for performance issues, only call if really want most of the related objects!
+		/// </summary>
+		/// <param name="contentId"></param>
+		/// <param name="doingEagerLoad"></param>
+		/// <returns></returns>
+		public static IB.ContentItem Content_GetFull( int contentId, bool doingEagerLoad = false )
+		{
+			IB.ContentItem entity = new IB.ContentItem();
+			using ( var context = new IsleContentContext() )
+			{
+				context.Configuration.LazyLoadingEnabled = true;
+				//                            .Include( "Codes_ContentStatus" )
+				Content item = context.Contents
+								.SingleOrDefault( s => s.Id == contentId );
+
+				if ( item != null && item.Id > 0 )
+				{
+					entity = Content_ToMap( item, doingEagerLoad );
+				}
+			}
+			return entity;
+		}
+
+
         /// <summary>
-        /// Get a Content
+        /// Get a Content from summary
         /// </summary>
         /// <param name="contentId"></param>
         /// <param name="doingEagerLoad">If true, will populate child components like standards</param>
@@ -290,27 +315,7 @@ namespace IoerContentBusinessEntities
             return entity;
         }
 
-        /// <summary>
-        /// Retrieve content using related resource Id
-        /// - need to plan for conversion to use resourceIntId!!
-        /// </summary>
-        /// <param name="resVerId"></param>
-        /// <returns></returns>
-        private static IB.ContentItem Content_GetByResourceVersionId( int resVerId )
-        {
-            IB.ContentItem entity = new IB.ContentItem();
-            using ( var context = new IsleContentContext() )
-            {
-                Content item = context.Contents.SingleOrDefault( s => s.ResourceVersionId == resVerId );
-
-                if ( item != null && item.Id > 0 )
-                {
-                    entity = Content_ToMap( item, true, true, false );
-                }
-            }
-            return entity;
-        }
-
+   
 		/// <summary>
 		/// Get content by resourceId
 		/// Typically used to determine if a resource is associated with with a content Item
@@ -414,13 +419,13 @@ namespace IoerContentBusinessEntities
             mod.Title = title;
             mod.Description = title + " for curriculum " + content.Title;
             mod.Summary = title + " for curriculum " + content.Title;
-            mod.IsOrgContentOwner = content.IsOrgContentOwner;
+            //mod.IsOrgContentOwner = content.IsOrgContentOwner;
             mod.StatusId = content.StatusId;
             mod.PrivilegeTypeId = content.PrivilegeTypeId;
             mod.ConditionsOfUseId = content.ConditionsOfUseId;
             mod.IsActive = true;
             //mod.IsPublished = false;
-            mod.IsOrgContentOwner = content.IsOrgContentOwner;
+            //mod.IsOrgContentOwner = content.IsOrgContentOwner;
             mod.OrgId = content.OrgId;
             mod.ResourceIntId = 0;
             mod.Created = System.DateTime.Now;
@@ -428,7 +433,7 @@ namespace IoerContentBusinessEntities
             mod.CreatedById = content.CreatedById;
             mod.LastUpdatedById = mod.CreatedById;
             mod.RowId = Guid.NewGuid();
-            mod.UseRightsUrl = content.UseRightsUrl;
+			mod.UsageRightsUrl = content.UsageRightsUrl;
 
             //ADD
             int modId = ContentAdd( mod );
@@ -477,13 +482,13 @@ namespace IoerContentBusinessEntities
                     mod.Title = "Module " + i.ToString();
                     mod.Description = "Module " + i.ToString() + " for curriculum " + curr.Title;
                     mod.Summary = "Module " + i.ToString() + " for curriculum " + curr.Title;
-                    mod.IsOrgContentOwner = curr.IsOrgContentOwner;
+                    //mod.IsOrgContentOwner = curr.IsOrgContentOwner;
                     mod.StatusId = curr.StatusId;
                     mod.PrivilegeTypeId = curr.PrivilegeTypeId;
                     mod.ConditionsOfUseId = curr.ConditionsOfUseId;
                     mod.IsActive = true;
                    // mod.IsPublished = false;
-                    mod.IsOrgContentOwner = curr.IsOrgContentOwner;
+                    //mod.IsOrgContentOwner = curr.IsOrgContentOwner;
                     mod.OrgId = curr.OrgId;
                     mod.ResourceIntId = 0;
                     mod.Created = System.DateTime.Now;
@@ -491,7 +496,7 @@ namespace IoerContentBusinessEntities
                     mod.CreatedById = curr.CreatedById;
                     mod.LastUpdatedById = mod.CreatedById;
                     mod.RowId = Guid.NewGuid();
-                    mod.UseRightsUrl = curr.UseRightsUrl;
+					mod.UsageRightsUrl = curr.UsageRightsUrl;
 
                     int modId = ContentAdd( mod );
                     if ( units > 0 )
@@ -510,25 +515,25 @@ namespace IoerContentBusinessEntities
         private void Content_CreateChildren( IB.ContentItem parentEntity, int levelId, int units, int lessons, int activities )
         {
             IB.ContentItem child = new IB.ContentItem();
-            string parentTitle = "Parent";
+           // string parentTitle = "Parent";
             string childTitle = "Child";
             int childReq = 3;
             if ( levelId == IB.ContentItem.UNIT_CONTENT_ID )
             {
                 childReq = units;
-                parentTitle = "Module";
+              //  parentTitle = "Module";
                 childTitle = "Unit";
             }
             else if ( levelId == IB.ContentItem.LESSON_CONTENT_ID )
             {
                 childReq = lessons;
-                parentTitle = "Unit";
+               // parentTitle = "Unit";
                 childTitle = "Lesson";
             }
             else if ( levelId == IB.ContentItem.ACTIVITY_CONTENT_ID )
             {
                 childReq = activities;
-                parentTitle = "Lesson";
+              //  parentTitle = "Lesson";
                 childTitle = "Actitity";
             }
             else
@@ -550,13 +555,13 @@ namespace IoerContentBusinessEntities
                     child.Title = parentEntity.Title + " - " + childTitle + " " + i.ToString();
                     child.Description = parentEntity.Title + " - " + childTitle + " " + i.ToString() + " TBD";
                     child.Summary = parentEntity.Title + " - " + childTitle + " " + i.ToString() + " TBD";
-                    child.IsOrgContentOwner = parentEntity.IsOrgContentOwner;
+            
                     child.StatusId = parentEntity.StatusId;
                     child.PrivilegeTypeId = parentEntity.PrivilegeTypeId;
                     child.ConditionsOfUseId = parentEntity.ConditionsOfUseId;
                     child.IsActive = true;
                    // child.IsPublished = false;
-                    child.IsOrgContentOwner = parentEntity.IsOrgContentOwner;
+                    //child.IsOrgContentOwner = parentEntity.IsOrgContentOwner;
                     child.OrgId = parentEntity.OrgId;
                     child.ResourceIntId = 0;
                     child.Created = System.DateTime.Now;
@@ -564,7 +569,7 @@ namespace IoerContentBusinessEntities
                     child.CreatedById = parentEntity.CreatedById;
                     child.LastUpdatedById = child.CreatedById;
                     child.RowId = Guid.NewGuid();
-                    child.UseRightsUrl = parentEntity.UseRightsUrl;
+					child.UsageRightsUrl = parentEntity.UsageRightsUrl;
 
                     int childId = ContentAdd( child );
                     if ( childReq > 0 )
@@ -591,14 +596,14 @@ namespace IoerContentBusinessEntities
             child.Title = parentEntity.Title + " - " + childTitle + childSuffix;
             child.Description = parentEntity.Title + " - " + childTitle + childSuffix + " TBD";
             child.Summary = parentEntity.Title + " - " + childTitle + childSuffix + " TBD";
-            child.IsOrgContentOwner = parentEntity.IsOrgContentOwner;
+            //child.IsOrgContentOwner = parentEntity.IsOrgContentOwner;
             child.StatusId = parentEntity.StatusId;
             child.PrivilegeTypeId = parentEntity.PrivilegeTypeId;
             child.ConditionsOfUseId = parentEntity.ConditionsOfUseId;
             child.ResourceIntId = 0;
             child.IsActive = true;
             //child.IsPublished = false;
-            child.IsOrgContentOwner = parentEntity.IsOrgContentOwner;
+            //child.IsOrgContentOwner = parentEntity.IsOrgContentOwner;
             child.OrgId = parentEntity.OrgId;
             child.ResourceIntId = 0;
             child.Created = System.DateTime.Now;
@@ -606,7 +611,7 @@ namespace IoerContentBusinessEntities
             child.CreatedById = parentEntity.CreatedById;
             child.LastUpdatedById = child.CreatedById;
             child.RowId = Guid.NewGuid();
-            child.UseRightsUrl = parentEntity.UseRightsUrl;
+			child.UsageRightsUrl = parentEntity.UsageRightsUrl;
 
             int childId = ContentAdd( child );
             parentEntity.ChildItems.Add( child );
@@ -669,6 +674,7 @@ namespace IoerContentBusinessEntities
                 node.SortOrder = entity.SortOrder == null ? DefaultSortOrder : ( int ) entity.SortOrder;
                 node.Title = entity.Title;
                 node.Description = entity.Description;
+				node.Summary = entity.Summary; //Note: Is returning null
 
                 Content_GetHierarchyOutline( context, node, publishedOnly );
 
@@ -739,6 +745,7 @@ namespace IoerContentBusinessEntities
                     child.SortOrder = efom.SortOrder == null ? DefaultSortOrder : ( int ) efom.SortOrder;
                     child.Title = efom.Title;
                     child.Description = efom.Description;
+					child.Summary = efom.Summary;
                     if ( efom.StatusId == IB.ContentItem.PUBLISHED_STATUS )
                         child.IsPublished = true;
                     else
@@ -783,6 +790,8 @@ namespace IoerContentBusinessEntities
                     child.SortOrder = efom.SortOrder == null ? DefaultSortOrder : ( int ) efom.SortOrder;
                     child.Title = efom.Title;
                     child.Description = efom.Description;
+					child.Summary = efom.Summary;
+
                     if ( efom.StatusId == IB.ContentItem.PUBLISHED_STATUS )
                         child.IsPublished = true;
                     else
@@ -900,8 +909,13 @@ namespace IoerContentBusinessEntities
             else
                 to.TypeId = 10;
 
+			if ( fromEntity.DisplayTemplateId > 0 )
+				to.DisplayTemplateId = fromEntity.DisplayTemplateId;
+			else
+				to.DisplayTemplateId = 1;
+
             if ( fromEntity.StatusId == 0 )
-                fromEntity.StatusId = 2;
+                fromEntity.StatusId = IB.ContentItem.INPROGRESS_STATUS;
             to.StatusId = fromEntity.StatusId;
             if ( fromEntity.StatusId == IB.ContentItem.PUBLISHED_STATUS )
                 to.IsPublished = true;
@@ -910,22 +924,20 @@ namespace IoerContentBusinessEntities
             //to.IsPublished = ( bool ) fromEntity.IsPublished;
 
             if ( fromEntity.PrivilegeTypeId == 0 )
-                fromEntity.PrivilegeTypeId = 1;
+				fromEntity.PrivilegeTypeId = IB.ContentItem.PUBLIC_PRIVILEGE;
             to.PrivilegeTypeId = fromEntity.PrivilegeTypeId;
 
             if ( fromEntity.ConditionsOfUseId == 0 )
-                fromEntity.ConditionsOfUseId = 1;
+				fromEntity.ConditionsOfUseId = IB.ContentItem.UNKNOWN_CCOU;
             to.ConditionsOfUseId = fromEntity.ConditionsOfUseId;
 
-            if ( fromEntity.UseRightsUrl != null && fromEntity.UseRightsUrl.Trim().Length > 0 )
-                to.UseRightsUrl = fromEntity.UseRightsUrl;
+			if ( fromEntity.UsageRightsUrl != null && fromEntity.UsageRightsUrl.Trim().Length > 0 )
+				to.UseRightsUrl = fromEntity.UsageRightsUrl;
             else
                 to.UseRightsUrl = null;
 
             if ( fromEntity.ResourceIntId > 0 )
                 to.ResourceIntId = fromEntity.ResourceIntId;
-            //if ( fromEntity.ResourceVersionId > 0 )
-            //    to.ResourceVersionId = fromEntity.ResourceVersionId;
 
             if ( fromEntity.ImageUrl != null && fromEntity.ImageUrl.Trim().Length > 0 )
                 to.ImageUrl = fromEntity.ImageUrl;
@@ -970,16 +982,17 @@ namespace IoerContentBusinessEntities
 
    
 
-        private static IB.ContentItem Content_ToMap( Content fromEntity, bool doingEagerLoad, bool loadingStandards, bool loadingDocument )
+        private static IB.ContentItem Content_ToMap( Content fromEntity, bool doingEagerLoad = false, bool loadingStandards = false, bool loadingDocument = false )
         {
             IB.ContentItem to = new IB.ContentItem();
 
             try
             {
                 //if ( IsUsingContentStandards() )
-                    to.UsingContentStandards = true;
+                to.UsingContentStandards = true;
 
-                to.IsValid = true;
+				#region base properties
+				to.IsValid = true;
                 to.Id = fromEntity.Id;
                 to.RowId = fromEntity.RowId;
 
@@ -1000,15 +1013,17 @@ namespace IoerContentBusinessEntities
                 {
                     to.ContentType = ContentType_Get( to.TypeId );
                 }
-                to.StatusId = fromEntity.StatusId != null ? ( int ) fromEntity.StatusId : 0;
+				to.StatusId = fromEntity.StatusId != null ? ( int ) fromEntity.StatusId : IB.ContentItem.INPROGRESS_STATUS;
                 to.Status = fromEntity.Codes_ContentStatus != null ? fromEntity.Codes_ContentStatus.Title : "";
                 if (to.Status == "")
                     to.Status = to.GetStatusTitle( to.StatusId );
 
-                to.PrivilegeTypeId = fromEntity.PrivilegeTypeId != null ? ( int ) fromEntity.PrivilegeTypeId : 1;
+				to.DisplayTemplateId = fromEntity.DisplayTemplateId != null ? ( int ) fromEntity.DisplayTemplateId : 1;
+
+				to.PrivilegeTypeId = fromEntity.PrivilegeTypeId != null ? ( int ) fromEntity.PrivilegeTypeId : IB.ContentItem.PUBLIC_PRIVILEGE;
                 to.PrivilegeType = fromEntity.Codes_ContentPrivilege != null ? fromEntity.Codes_ContentPrivilege.Title : "";
 
-                to.ConditionsOfUseId = fromEntity.ConditionsOfUseId != null ? ( int ) fromEntity.ConditionsOfUseId : 0;
+				to.ConditionsOfUseId = fromEntity.ConditionsOfUseId != null ? ( int ) fromEntity.ConditionsOfUseId : IB.ContentItem.UNKNOWN_CCOU;
                 if ( to.ConditionsOfUseId > 0  )
                 {
                     try
@@ -1028,9 +1043,8 @@ namespace IoerContentBusinessEntities
                     }
                 }
 
-                to.UseRightsUrl = fromEntity.UseRightsUrl != null ? fromEntity.UseRightsUrl : "";
+				to.UsageRightsUrl = fromEntity.UseRightsUrl != null ? fromEntity.UseRightsUrl : "";
 
-                //to.ResourceVersionId = fromEntity.ResourceVersionId != null ? ( int ) fromEntity.ResourceVersionId : 0;
                 to.ResourceIntId = fromEntity.ResourceIntId != null ? ( int ) fromEntity.ResourceIntId : 0;
 
                 if ( fromEntity.ImageUrl != null && fromEntity.ImageUrl.Trim().Length > 0 )
@@ -1038,58 +1052,87 @@ namespace IoerContentBusinessEntities
                 else
                     to.ImageUrl = "";
 
-                to.DocumentUrl = fromEntity.DocumentUrl != null ? fromEntity.DocumentUrl : "";
-                if ( fromEntity.DocumentRowId != null && to.IsValidRowId( fromEntity.DocumentRowId ) )
-                    to.DocumentRowId = ( Guid ) fromEntity.DocumentRowId;
+				to.Approved = fromEntity.Approved != null ? ( System.DateTime ) fromEntity.Approved : to.DefaultDate;
+				to.ApprovedById = fromEntity.ApprovedById != null ? ( int ) fromEntity.ApprovedById : 0;
 
-                if ( doingEagerLoad || loadingDocument 
+				to.Created = fromEntity.Created != null ? ( System.DateTime ) fromEntity.Created : to.DefaultDate;
+				to.CreatedById = fromEntity.CreatedById != null ? ( int ) fromEntity.CreatedById : 0;
+				to.LastUpdated = fromEntity.LastUpdated != null ? ( System.DateTime ) fromEntity.LastUpdated : to.DefaultDate;
+				to.LastUpdatedById = fromEntity.LastUpdatedById != null ? ( int ) fromEntity.LastUpdatedById : 0;
+				#endregion
+				to.ContentKeywords = new List<IB.ContentKeyword>();
+				if ( fromEntity.Content_Keyword != null )
+				{
+					foreach ( Content_Keyword item in fromEntity.Content_Keyword )
+					{
+						to.ContentKeywords.Add( new IB.ContentKeyword() { Id = item.Id, ContentId = (int)item.ContentId, Keyword = item.Keyword });
+					}
+				}
+
+				to.DocumentUrl = fromEntity.DocumentUrl != null ? fromEntity.DocumentUrl : "";
+				if ( fromEntity.DocumentRowId != null && to.IsValidRowId( fromEntity.DocumentRowId ) )
+					to.DocumentRowId = ( Guid ) fromEntity.DocumentRowId;
+
+				//check what we have in the entity
+				if ( fromEntity.Document_Version != null && fromEntity.Document_Version.FileName != null )
+				{
+					to.RelatedDocument = new IB.DocumentVersion();
+					DocumentVersion_ToMap( fromEntity.Document_Version, to.RelatedDocument );
+					to.FileName = to.RelatedDocument.FileName;
+					to.FilePath = to.RelatedDocument.FilePath;
+				}
+
+				if ( doingEagerLoad || loadingDocument 
                     && (to.DocumentUrl != null && to.IsValidRowId( to.DocumentRowId ) ))
                 {
                     //do we want this - very heavy, should be cached on file system anyway!
-                    //need min of file path
-                    to.RelatedDocument = Document_Version_Get( to.DocumentRowId );
+					//check if already retrieved with content
+					if ( to.RelatedDocument == null || string.IsNullOrWhiteSpace( to.RelatedDocument.FileName ) == true )
+					{
+						//need min of file path
+						to.RelatedDocument = Document_Version_Get( to.DocumentRowId );
+					}
                 }
 
-                to.IsOrgContentOwner = fromEntity.IsOrgContentOwner != null ? ( bool ) fromEntity.IsOrgContentOwner : false;
+                //to.IsOrgContentOwner = fromEntity.IsOrgContentOwner != null ? ( bool ) fromEntity.IsOrgContentOwner : false;
 
                 to.OrgId = fromEntity.OrgId != null ? ( int ) fromEntity.OrgId : 0;
                 if ( to.OrgId > 0 && doingEagerLoad )
                 {
-                    //this also should be cached, as unlikely to change for a child item
-                    Gateway_OrgSummary org = Gateway_OrgSummary_Get( to.OrgId );
+					if ( fromEntity.Organization != null && fromEntity.Organization.Id > 0 )
+					{
+						//already retrieved.
+						to.Organization = fromEntity.Organization.Name;
+						to.ParentOrgId = fromEntity.Organization.parentId != null ? ( int ) fromEntity.Organization.parentId : 0;
+						to.ParentOrganization = ""; //org.ParentOrganization != null ? org.ParentOrganization : "";
+					}
+					else
+					{
+						//this also should be cached, as unlikely to change for a child item
+						Gateway_OrgSummary org = Gateway_OrgSummary_Get( to.OrgId );
 
-                    if ( org != null && org.id > 0 )
-                    {
-                        to.Organization = org.Name;
-                        to.ParentOrgId = org.parentId != null ? ( int ) org.parentId : 0;
-                        to.ParentOrganization = org.ParentOrganization != null ? org.ParentOrganization : "";
-                    }
+						if ( org != null && org.id > 0 )
+						{
+							to.Organization = org.Name;
+							to.ParentOrgId = org.parentId != null ? ( int ) org.parentId : 0;
+							to.ParentOrganization = org.ParentOrganization != null ? org.ParentOrganization : "";
+						}
+					}
                 }
                 to.Timeframe = fromEntity.Timeframe != null ? fromEntity.Timeframe : "";
                 
                 //And/OR get content standards
                 if ( loadingStandards )
                 {
-                    //get standards==> only do if no content standards -= transitioning
-
-					//if ( to.UsingContentStandards )
-					//{
-					to.ContentStandards = CSMgr.Fill_ContentStandards( to.Id );
-                    //}
-					//else if ( to.ResourceIntId > 0 )
-					//{
-					//	to.Standards = FillResourceStandards( to.Id, to.ResourceIntId );
-					//}
+					//actually don't want to again if already attempted with the lazy loading.
+					if ( to.ContentStandards == null || to.ContentStandards.Count() ==0 )
+					{
+						to.ContentStandards = CSMgr.Fill_ContentStandards( to.Id );
+					}
+					
                 }
              
 
-                to.Approved = fromEntity.Approved != null ? ( System.DateTime ) fromEntity.Approved : to.DefaultDate;
-                to.ApprovedById = fromEntity.ApprovedById != null ? ( int ) fromEntity.ApprovedById : 0;
-
-                to.Created = fromEntity.Created != null ? ( System.DateTime ) fromEntity.Created : to.DefaultDate;
-                to.CreatedById = fromEntity.CreatedById != null ? ( int ) fromEntity.CreatedById : 0;
-                to.LastUpdated = fromEntity.LastUpdated != null ? ( System.DateTime ) fromEntity.LastUpdated : to.DefaultDate;
-                to.LastUpdatedById = fromEntity.LastUpdatedById != null ? ( int ) fromEntity.LastUpdatedById : 0;
             }
             catch ( Exception ex )
             {
@@ -1134,9 +1177,8 @@ namespace IoerContentBusinessEntities
                 to.ConditionsOfUseUrl = fromEntity.ConditionsOfUseUrl != null ? fromEntity.ConditionsOfUseUrl : "";
                 to.ConditionsOfUseIconUrl = fromEntity.ConditionsOfUseIconUrl != null ? fromEntity.ConditionsOfUseIconUrl : "";
 
-                to.UseRightsUrl = fromEntity.UseRightsUrl != null ? fromEntity.UseRightsUrl : "";
-
-                //to.ResourceVersionId = fromEntity.ResourceVersionId != null ? ( int ) fromEntity.ResourceVersionId : 0;
+                to.UsageRightsUrl = fromEntity.UseRightsUrl != null ? fromEntity.UseRightsUrl : "";
+              
                 to.ResourceIntId = fromEntity.ResourceIntId != null ? ( int )fromEntity.ResourceIntId : 0;
 
                 if ( fromEntity.ImageUrl != null && fromEntity.ImageUrl.Trim().Length > 0 )
@@ -1153,7 +1195,7 @@ namespace IoerContentBusinessEntities
                     to.RelatedDocument = Document_Version_Get( to.DocumentRowId );
                 }
 
-                to.IsOrgContentOwner = fromEntity.IsOrgContentOwner != null ? ( bool )fromEntity.IsOrgContentOwner : false;
+				//to.IsOrgContentOwner = fromEntity.IsOrgContentOwner != null ? ( bool )fromEntity.IsOrgContentOwner : false;
 
                 to.OrgId = fromEntity.OrgId;
                 if ( to.OrgId > 0 && doingEagerLoad )
@@ -1230,7 +1272,7 @@ namespace IoerContentBusinessEntities
         private static void Content_RenumberHierarchyChildren( IsleContentContext context, Content entity )
         {
             int sortOrder = DefaultSortOrder;
-            List<IB.ContentItem> items = new List<IB.ContentItem>();
+            //List<IB.ContentItem> items = new List<IB.ContentItem>();
 
             List<Content> eflist = context.Contents
                             .Where( s => s.ParentId == entity.Id )
@@ -1257,7 +1299,52 @@ namespace IoerContentBusinessEntities
             
         }
 
-      
+		/// <summary>
+		/// Get last child of requested type for a content item.
+		/// Note: document child items, and external url items need to be checked together as are displayed together. 
+		/// Other combinations will be added as needed.
+		/// </summary>
+		/// <param name="contentId"></param>
+		/// <param name="contentTypeId"></param>
+		/// <returns>A bare bones content item, assuming a primary reason is to get the highest sort order number</returns>
+		public static IB.ContentItem Content_GetLastChild( int contentId, int contentTypeId )
+		{
+			IB.ContentItem item = new IB.ContentItem();
+			//actually docs and urls, are sorted together so if one of latter, include both in where clause
+			int altTypeId = contentTypeId;
+			if ( contentTypeId == IB.ContentItem.DOCUMENT_CONTENT_ID )
+				altTypeId = IB.ContentItem.EXTERNAL_URL_CONTENT_ID;
+			else if ( altTypeId == IB.ContentItem.EXTERNAL_URL_CONTENT_ID )
+				altTypeId = IB.ContentItem.DOCUMENT_CONTENT_ID;
+
+			try
+			{
+				using ( var context = new IsleContentContext() )
+				{
+					List<Content> eflist = context.Contents
+										.Where( s => s.ParentId == contentId && (s.TypeId == contentTypeId || s.TypeId == altTypeId) )
+										.OrderByDescending( s => s.SortOrder )
+										.Take( 1 )
+										.ToList();
+
+					if ( eflist != null && eflist.Count > 0 )
+					{
+						foreach ( Content efom in eflist )
+						{
+							item = Content_ToMap( efom, false, false, false );
+							break;
+						}
+					}
+				}
+			}
+			catch ( Exception ex )
+			{
+				LoggingHelper.LogError( ex, thisClassName + string.Format(".Content_GetLastChild(). CId: {0}", contentId) );
+				return item;
+			}
+			return item;
+		}//
+
 
         /// <summary>
         /// Get content item for node and all related content resources
@@ -1307,9 +1394,12 @@ namespace IoerContentBusinessEntities
                         LoggingHelper.DoTrace( 5, string.Format( "****** Content_GetHierarchyNode === Retrieving full version of curriculum, Id: {0}, {1}", entity.Id, entity.Title ) );
                     }
                 }
-            
+
+				if ( request.DoCompleteFill )
+					context.Configuration.LazyLoadingEnabled = true;
+
 				//15-09-14 mparsons - this should be using the request object
-                Content_FillHierarchyNode( context, entity, true );
+                Content_FillHierarchyNode( context, entity, request );
 
                 //Cache the output
                 if ( key.Length > 0 )
@@ -1319,25 +1409,27 @@ namespace IoerContentBusinessEntities
                         Item = entity,
                         lastUpdated = DateTime.Now
                     };
+					if ( HttpContext.Current != null )
+					{
+						if ( HttpContext.Current.Cache[ key ] != null )
+						{
+							HttpRuntime.Cache.Remove( key );
+							HttpRuntime.Cache.Insert( key, newCache );
 
-                    if ( HttpContext.Current.Cache[ key ] != null )
-                    {
-                        HttpRuntime.Cache.Remove( key );
-                        HttpRuntime.Cache.Insert( key, newCache );
+							//HttpContext.Current.Cache.Remove( key );
+							//HttpContext.Current.Cache.Insert( key,  newCache );
 
-                        //HttpContext.Current.Cache.Remove( key );
-                        //HttpContext.Current.Cache.Insert( key,  newCache );
+							LoggingHelper.DoTrace( 5, string.Format( "===Content_GetHierarchyNode $$$ Updating cached version of curriculum, Id: {0}, {1}", entity.Id, entity.Title ) );
 
-                        LoggingHelper.DoTrace( 5, string.Format( "===Content_GetHierarchyNode $$$ Updating cached version of curriculum, Id: {0}, {1}", entity.Id, entity.Title ) );
+						}
+						else
+						{
+							LoggingHelper.DoTrace( 5, string.Format( "===Content_GetHierarchyNode ****** Inserting new cached version of curriculum, Id: {0}, {1}", entity.Id, entity.Title ) );
+							//HttpContext.Current.Cache.Insert( key, newCache );
 
-                    }
-                    else
-                    {
-                        LoggingHelper.DoTrace( 5, string.Format( "===Content_GetHierarchyNode ****** Inserting new cached version of curriculum, Id: {0}, {1}", entity.Id, entity.Title ) );
-                        //HttpContext.Current.Cache.Insert( key, newCache );
-
-                        System.Web.HttpRuntime.Cache.Insert( key, newCache, null, DateTime.Now.AddHours( cacheHours ), TimeSpan.Zero );
-                    }
+							System.Web.HttpRuntime.Cache.Insert( key, newCache, null, DateTime.Now.AddHours( cacheHours ), TimeSpan.Zero );
+						}
+					}
                 }
                 return entity;
             }
@@ -1350,9 +1442,10 @@ namespace IoerContentBusinessEntities
         /// <param name="contentId"></param>
         /// <param name="doCompleteFill">If true, fill all appicable child items</param>
         /// <returns></returns>
-        public static void Content_FillHierarchyNode( IsleContentContext context, IB.ContentItem entity, bool doCompleteFill )
+        public static void Content_FillHierarchyNode( IsleContentContext context, IB.ContentItem entity, NodeRequest request)
         {
 
+			bool doCompleteFill = request.DoCompleteFill;
             //LoggingHelper.DoTrace( 8, string.Format( "Content_GetHierarchyNode. Id: {0}, parentId: {1}, Node: {2}, type: {3}", entity.Id, entity.ParentId, entity.Title, entity.TypeId ) );
              //get standards (check if already done)
             //14-04-11 MP - now attempting to fill standards in Get, so no need to check here!
@@ -1364,11 +1457,13 @@ namespace IoerContentBusinessEntities
 
             //now get all direct child content items 
             entity.ChildItems = new List<IB.ContentItem>();
+			//if (request.DoCompleteFill)
+			//	context.Configuration.LazyLoadingEnabled = true;
 
             List<Content> eflist = context.Contents
                             .Where( s => s.ParentId == entity.Id
                                 && ( s.TypeId == IB.ContentItem.DOCUMENT_CONTENT_ID
-                                    || s.TypeId == IB.ContentItem.EXTERNAL_URL_CONTENT_ID )
+                                  || s.TypeId == IB.ContentItem.EXTERNAL_URL_CONTENT_ID )
                                     )
                             .OrderBy( s => s.SortOrder ).ThenBy( s => s.Title )
                             .ToList();
@@ -1379,6 +1474,7 @@ namespace IoerContentBusinessEntities
                 {
                     //14-12-16 mp - no reason to do complete fill for a document item - review and minimize
                     IB.ContentItem child = Content_ToMap( efom, false, true, false ); //??????
+
                     if ( (child.IsDocumentType  || child.IsReferenceUrlType)
                         &&  child.SortOrder == IB.ContentItem.FEATURED_CONTENT_SORT_ORDER )
                     {
@@ -1398,7 +1494,7 @@ namespace IoerContentBusinessEntities
          
 
 
-            if ( entity.IsHierarchyType  )
+            if ( entity.IsHierarchyType || entity.TypeId == IB.ContentItem.LEARNING_SET_CONTENT_ID  )
             {
                 //get standards from all children and merge
                 //need to skip docs, as already done
@@ -1415,7 +1511,7 @@ namespace IoerContentBusinessEntities
                         //TODO - mapping needs to be thinner here!!
                         IB.ContentItem childNode = Content_ToMap( nodeChild, false, true, false );
 
-                        Content_FillHierarchyNode( context, childNode, true );
+                        Content_FillHierarchyNode( context, childNode, request );
                         //don't add
                         //entity.ChildItems.Add( childNode );
 
@@ -1431,7 +1527,12 @@ namespace IoerContentBusinessEntities
 
         }//
 
-
+		/// <summary>
+		/// Merge the standards from a child with the parent
+		/// 16-04-06 MP - ??Will the related standards already have the equivalent of this?
+		/// </summary>
+		/// <param name="childEntity"></param>
+		/// <param name="parentEntity"></param>
         private static void Content_MergeStandards( IB.ContentItem childEntity, IB.ContentItem parentEntity)
         {
 
@@ -1534,12 +1635,16 @@ namespace IoerContentBusinessEntities
         }
 
         /// <summary>
-        /// Return the top node of a hierarchy
+        /// Return the top node of a hierarchy. If there is no parentId, return the initial entity
+		/// NOTE: the passed node could be a new one without an Id. This will only be called if a parentId is present.
         /// </summary>
         /// <param name="entity"></param>
         /// <returns></returns>
         public static IB.ContentItem GetTopNode(IB.ContentItem entity)
         {
+			if ( entity.ParentId == 0 )
+				return entity;
+
             int topNodeId = 0;
             int parentId = 0;
             IB.ContentItem topNode = new IB.ContentItem();
@@ -1744,55 +1849,55 @@ namespace IoerContentBusinessEntities
 
         }//
 
-        private static void FillHierarchyForDownloadOLD( IsleContentContext context, IB.ContentItem entity, bool includingChildren, bool doCompleteFill )
-        {
+		//private static void FillHierarchyForDownloadOLD( IsleContentContext context, IB.ContentItem entity, bool includingChildren, bool doCompleteFill )
+		//{
 
-            //now get all content items connected thru the content connector
-            //document types (40) or reference url types (41)
-            entity.ChildItems = new List<IB.ContentItem>();
+		//	//now get all content items connected thru the content connector
+		//	//document types (40) or reference url types (41)
+		//	entity.ChildItems = new List<IB.ContentItem>();
    
-            List<Content> eflist = context.Contents
-                            .Where( s => s.ParentId == entity.Id
-                                && ( s.TypeId == IB.ContentItem.DOCUMENT_CONTENT_ID
-                                  || s.TypeId == IB.ContentItem.EXTERNAL_URL_CONTENT_ID )
-                                 )
-                            .OrderBy( s => s.SortOrder ).ThenBy( s => s.Title )
-                            .ToList();
+		//	List<Content> eflist = context.Contents
+		//					.Where( s => s.ParentId == entity.Id
+		//						&& ( s.TypeId == IB.ContentItem.DOCUMENT_CONTENT_ID
+		//						  || s.TypeId == IB.ContentItem.EXTERNAL_URL_CONTENT_ID )
+		//						 )
+		//					.OrderBy( s => s.SortOrder ).ThenBy( s => s.Title )
+		//					.ToList();
 
-            if ( eflist != null && eflist.Count > 0 )
-            {
-                foreach ( Content efom in eflist )
-                {
-                    IB.ContentItem child = Content_DownloadToMap( efom, doCompleteFill );
+		//	if ( eflist != null && eflist.Count > 0 )
+		//	{
+		//		foreach ( Content efom in eflist )
+		//		{
+		//			IB.ContentItem child = Content_DownloadToMap( efom, doCompleteFill );
 
-                    entity.ChildItems.Add( child );
-                }
-            }
+		//			entity.ChildItems.Add( child );
+		//		}
+		//	}
 
 
-            if ( entity.IsHierarchyType && includingChildren )
-            {
-                //get standards from all children
-                List<Content> childList = context.Contents
-                            .Where( s => s.ParentId == entity.Id )
-                            .OrderBy( s => s.SortOrder )
-                            .ToList();
+		//	if ( entity.IsHierarchyType && includingChildren )
+		//	{
+		//		//get standards from all children
+		//		List<Content> childList = context.Contents
+		//					.Where( s => s.ParentId == entity.Id )
+		//					.OrderBy( s => s.SortOrder )
+		//					.ToList();
 
-                if ( childList != null && childList.Count > 0 )
-                {
-                    foreach ( Content nodeChild in childList )
-                    {
-                        //LoggingHelper.DoTrace( 8, string.Format( "======================== Child Node: {0}, type: {1}", nodeChild.Title, nodeChild.TypeId ) );
-                        IB.ContentItem childNode = Content_ToMap( nodeChild, true, true, true );
-                        FillHierarchyForDownload( context, childNode, includingChildren, true );
-                        // add?
-                        entity.ChildItems.Add( childNode );
+		//		if ( childList != null && childList.Count > 0 )
+		//		{
+		//			foreach ( Content nodeChild in childList )
+		//			{
+		//				//LoggingHelper.DoTrace( 8, string.Format( "======================== Child Node: {0}, type: {1}", nodeChild.Title, nodeChild.TypeId ) );
+		//				IB.ContentItem childNode = Content_ToMap( nodeChild, true, true, true );
+		//				FillHierarchyForDownload( context, childNode, includingChildren, true );
+		//				// add?
+		//				entity.ChildItems.Add( childNode );
 
-                    }
-                }
-            }
+		//			}
+		//		}
+		//	}
 
-        }//
+		//}//
         private static IB.ContentItem Content_DownloadToMap( Content fromEntity, bool doingEagerLoad )
         {
             bool loadingStandards = doingEagerLoad;
@@ -1817,16 +1922,38 @@ namespace IoerContentBusinessEntities
             {
                 using ( var context = new IsleContentContext() )
                 {
-                    efEntity.ContentId = entity.ContentId;
-                    efEntity.PartnerTypeId = entity.PartnerTypeId;
-                    efEntity.UserId = entity.UserId;
+					//check if already a partner
+					efEntity = context.Content_Partner.SingleOrDefault( s => s.ContentId == entity.ContentId && s.UserId == entity.UserId );
+					if ( efEntity != null && efEntity.Id > 0 )
+					{
+						//check if new type is higher than existing
+						if ( efEntity.PartnerTypeId < entity.PartnerTypeId )
+						{
+							efEntity.PartnerTypeId = entity.PartnerTypeId;
+							efEntity.LastUpdatedById = entity.CreatedById;
+							efEntity.LastUpdated = System.DateTime.Now;
+						}
+						else
+						{
+							statusMessage = "successful";
+							entity.Id = efEntity.Id;
+							return efEntity.Id;
+						}
+					}
+					else
+					{
+						efEntity = new Content_Partner();
+						efEntity.ContentId = entity.ContentId;
+						efEntity.PartnerTypeId = entity.PartnerTypeId;
+						efEntity.UserId = entity.UserId;
 
-                    efEntity.CreatedById = entity.CreatedById;
-                    efEntity.LastUpdatedById = entity.CreatedById;
-                    efEntity.Created = System.DateTime.Now;
-                    efEntity.LastUpdated = System.DateTime.Now;
-                    context.Content_Partner.Add( efEntity );
-
+						efEntity.CreatedById = entity.CreatedById;
+						efEntity.LastUpdatedById = entity.CreatedById;
+						efEntity.Created = System.DateTime.Now;
+						efEntity.LastUpdated = System.DateTime.Now;
+						context.Content_Partner.Add( efEntity );
+					}
+                    
                     // submit the change to database
                     int count = context.SaveChanges();
                     if ( count > 0 )
@@ -2391,15 +2518,17 @@ namespace IoerContentBusinessEntities
             }
             return isValid;
         }
-        public bool ContentSubscription_Delete( int id, ref string statusMessage )
+        public bool ContentSubscription_Delete( int id, ref string statusMessage, ref int contentId )
         {
             bool isValid = false;
             statusMessage = "";
+			contentId = 0;
             using ( var context = new IsleContentContext() )
             {
                 Content_Subscription efEntity = context.Content_Subscription.SingleOrDefault( s => s.Id == id );
                 try
                 {
+					contentId = efEntity.ContentId;
                     context.Content_Subscription.Remove( efEntity );
                     int count = context.SaveChanges();
                     if ( count > 0 )
@@ -2539,24 +2668,7 @@ namespace IoerContentBusinessEntities
         //    }
         //}
 
-        //public static bool ContentFile_UpdateVersionId( int contentFileId, int versionId )
-        //{
-
-        //    bool action = false;
-
-        //    ContentFile entity = ctx.ContentFiles.SingleOrDefault( s => s.Id == contentFileId );
-        //    if ( entity != null )
-        //    {
-        //        entity.ResourceVersionId = contentFileId;
-        //        entity.LastUpdated = System.DateTime.Now;
-        //        ctx.SaveChanges();
-
-        //        action = true;
-        //    }
-
-        //    return action;
-        //}
-
+       
         //public static ContentFile ILPContentFile_FromMap( ILPContentFile fromEntity )
         //{
         //    Mapper.CreateMap<ILPContentFile, ContentFile>();
@@ -2582,7 +2694,7 @@ namespace IoerContentBusinessEntities
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public static IB.DocumentVersion Document_Version_Get( Guid id )
+		public static IB.DocumentVersion Document_Version_Get( Guid id, bool includingBytes = false )
         {
             Document_Version efEntity = new Document_Version();
             IB.DocumentVersion entity = new IB.DocumentVersion();
@@ -2591,35 +2703,64 @@ namespace IoerContentBusinessEntities
                 efEntity = context.Document_Version.SingleOrDefault( s => s.RowId == id );
                 if ( efEntity != null && entity.IsValidRowId( efEntity.RowId ) )
                 {
-                    entity.RowId = efEntity.RowId;
-                    entity.Title = efEntity.Title != null ? efEntity.Title : "";
-                    entity.Summary = efEntity.Summary != null ? efEntity.Summary : "";
-                    entity.Status = efEntity.Status != null ? efEntity.Status : "";
-                    entity.FileName = efEntity.FileName != null ? efEntity.FileName : "";
-                    entity.FilePath = efEntity.FilePath != null ? efEntity.FilePath : "";
-                    entity.MimeType = efEntity.MimeType != null ? efEntity.MimeType : "";
+					DocumentVersion_ToMap( efEntity, entity, includingBytes );
 
-                    entity.FileDate = efEntity.FileDate != null ? ( System.DateTime ) efEntity.FileDate : entity.DefaultDate;
+					//entity.RowId = efEntity.RowId;
+					//entity.Title = efEntity.Title != null ? efEntity.Title : "";
+					//entity.Summary = efEntity.Summary != null ? efEntity.Summary : "";
+					//entity.Status = efEntity.Status != null ? efEntity.Status : "";
+					//entity.FileName = efEntity.FileName != null ? efEntity.FileName : "";
+					//entity.FilePath = efEntity.FilePath != null ? efEntity.FilePath : "";
+					//entity.MimeType = efEntity.MimeType != null ? efEntity.MimeType : "";
 
-                    if ( efEntity.Bytes != null )
-                    {
-                        entity.ResourceBytes = ( long ) efEntity.Bytes;
-                        if ( entity.ResourceBytes > 0 )
-                        {
-                            entity.SetResourceData( entity.ResourceBytes, efEntity.Data );
-                        }
-                    }
-                    entity.ResourceUrl = efEntity.Url != null ? efEntity.Url : "";
+					//entity.FileDate = efEntity.FileDate != null ? ( System.DateTime ) efEntity.FileDate : entity.DefaultDate;
 
-                    entity.Created = efEntity.Created != null ? ( System.DateTime ) efEntity.Created : entity.DefaultDate;
-                    entity.CreatedById = efEntity.CreatedById;
-                    entity.LastUpdated = efEntity.LastUpdated != null ? ( System.DateTime ) efEntity.LastUpdated : entity.DefaultDate;
-                    entity.LastUpdatedById = efEntity.LastUpdatedById;
+					//if ( efEntity.Bytes != null )
+					//{
+					//	entity.ResourceBytes = ( long ) efEntity.Bytes;
+					//	if ( entity.ResourceBytes > 0 )
+					//	{
+					//		entity.SetResourceData( entity.ResourceBytes, efEntity.Data );
+					//	}
+					//}
+					//entity.ResourceUrl = efEntity.Url != null ? efEntity.Url : "";
+
+					//entity.Created = efEntity.Created;	// != null ? ( System.DateTime ) efEntity.Created : entity.DefaultDate;
+					//entity.CreatedById = efEntity.CreatedById;
+					//entity.LastUpdated = efEntity.LastUpdated;	// != null ? ( System.DateTime ) efEntity.LastUpdated : entity.DefaultDate;
+					//entity.LastUpdatedById = efEntity.LastUpdatedById;
                 }
             }
             return entity;
         }
+		private static void DocumentVersion_ToMap( Document_Version fromEntity, IB.DocumentVersion to, bool includingBytes = false)
+		{
+			to.RowId = fromEntity.RowId;
+			to.Title = fromEntity.Title != null ? fromEntity.Title : "";
+			to.Summary = fromEntity.Summary != null ? fromEntity.Summary : "";
+			to.Status = fromEntity.Status != null ? fromEntity.Status : "";
+			to.FileName = fromEntity.FileName != null ? fromEntity.FileName : "";
+			to.FilePath = fromEntity.FilePath != null ? fromEntity.FilePath : "";
+			to.MimeType = fromEntity.MimeType != null ? fromEntity.MimeType : "";
 
+			to.FileDate = fromEntity.FileDate != null ? ( System.DateTime ) fromEntity.FileDate : to.DefaultDate;
+
+			//generally skip, or make optional
+			if ( includingBytes && fromEntity.Bytes != null )
+			{
+				to.ResourceBytes = ( long ) fromEntity.Bytes;
+				if ( to.ResourceBytes > 0 )
+				{
+					to.SetResourceData( to.ResourceBytes, fromEntity.Data );
+				}
+			}
+			to.ResourceUrl = fromEntity.Url != null ? fromEntity.Url : "";
+
+			to.Created = fromEntity.Created;	// != null ? ( System.DateTime ) fromEntity.Created : to.DefaultDate;
+			to.CreatedById = fromEntity.CreatedById;
+			to.LastUpdated = fromEntity.LastUpdated;	// != null ? ( System.DateTime ) fromEntity.LastUpdated : to.DefaultDate;
+			to.LastUpdatedById = fromEntity.LastUpdatedById;
+		}
         public bool Document_Version_Delete( Guid? id, ref string statusMessage )
         {
             bool isSuccessful = false;

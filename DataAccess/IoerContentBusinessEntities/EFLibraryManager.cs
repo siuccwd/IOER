@@ -59,60 +59,61 @@ namespace IoerContentBusinessEntities
             //return entity;
         }
 
-        public static void Library_FillDashboard( DashboardDTO dashboard, ILP.Library entity, int requestedByUserId )
-        {
-            if ( dashboard.maxResources == 0 )
-                dashboard.maxResources = MAX_RESOURCE_BOX_COUNT;
+		public static void Library_FillDashboard( DashboardDTO dashboard, ILP.Library entity, int requestedByUserId )
+		{
+			if ( dashboard.maxResources == 0 )
+				dashboard.maxResources = MAX_RESOURCE_BOX_COUNT;
 
-            using ( var context = new IsleContentContext() )
-            {
-                dashboard.libraryId = entity.Id;
-                dashboard.libraryUrl = GetLibraryFriendlyUrl(entity);
-                dashboard.libraryPublicAccessLevel = entity.PublicAccessLevelInt;
-                dashboard.libraryOrgAccessLevel = entity.OrgAccessLevelInt;
+			using ( var context = new IsleContentContext() )
+			{
+				dashboard.libraryId = entity.Id;
+				dashboard.libraryUrl = GetLibraryFriendlyUrl( entity );
+				dashboard.libraryPublicAccessLevel = entity.PublicAccessLevelInt;
+				dashboard.libraryOrgAccessLevel = entity.OrgAccessLevelInt;
 
-                dashboard.library = new ResourcesBox();
-                dashboard.library.name = "Resources From My Library";
-                dashboard.library.resources = RecentResources_ForLibrary( context, dashboard.library, entity.Id, dashboard.maxResources );
+				dashboard.library = new ResourcesBox();
+				dashboard.library.name = "Resources From My Library";
+				dashboard.library.resources = RecentResources_ForLibrary( context, dashboard.library, entity.Id, dashboard.maxResources );
 
-               //now get followed libraries
-                if ( dashboard.includeMyFollowedLibraries > 0 )
-                {
-                    dashboard.followedLibraries = new ResourcesBox();
-                    dashboard.followedLibraries.name = "My Followed Libraries";
-                    dashboard.followedLibraries.resources = GetMyFollowedLibraries( context, dashboard.followedLibraries, dashboard.userId, dashboard.maxResources );
-                }
-                //now get followed libraries resources
-                if ( dashboard.includeMyFollowedLibrariesRecentResources > 0 )
-                {
-                dashboard.followedLibraryResources = new ResourcesBox();
-                    dashboard.followedLibraryResources.name = "Recent Resources from My Followed Libraries";
-                dashboard.followedLibraryResources.resources = RecentResources_ForFollowedLibraries( context, dashboard.followedLibraryResources, dashboard.userId, dashboard.maxResources );
-                }
+				//now get followed libraries
+				if ( dashboard.includeMyFollowedLibraries > 0 )
+				{
+					dashboard.followedLibraries = new ResourcesBox();
+					dashboard.followedLibraries.name = "My Followed Libraries";
+					dashboard.followedLibraries.resources = GetMyFollowedLibraries( context, dashboard.followedLibraries, dashboard.userId, dashboard.maxResources );
+				}
+				//now get followed libraries resources
+				if ( dashboard.includeMyFollowedLibrariesRecentResources > 0 )
+				{
+					dashboard.followedLibraryResources = new ResourcesBox();
+					dashboard.followedLibraryResources.name = "Recent Resources from My Followed Libraries";
+					dashboard.followedLibraryResources.resources = RecentResources_ForFollowedLibraries( context, dashboard.followedLibraryResources, dashboard.userId, dashboard.maxResources );
+				}
 
-                //now get libraries where a member
-                if ( dashboard.includeMyMemberLibraries > 0 )
-                {
-                dashboard.orgLibraries = new ResourcesBox();
-                dashboard.orgLibraries.name = "Library Memberships";
-                dashboard.orgLibraries.resources = GetMyMemberLibraries( context, dashboard.orgLibraries, dashboard.userId, dashboard.maxResources );
-                }
-                
-                if ( dashboard.includeMyMemberLibrariesRecentResources > 0 )
-                {
-                    dashboard.orgLibrariesResources = new ResourcesBox();
-                    dashboard.orgLibrariesResources.name = "Recent Resources from Library Memberships";
-                    dashboard.orgLibrariesResources.resources = RecentResources_ForLibraryMemberships( context, dashboard.followedLibraryResources, dashboard.userId, dashboard.maxResources );
-            }
-            }
-            //return entity;
-        }
+				//now get libraries where a member
+				if ( dashboard.includeMyMemberLibraries > 0 )
+				{
+					dashboard.orgLibraries = new ResourcesBox();
+					dashboard.orgLibraries.name = "Library Memberships";
+					dashboard.orgLibraries.resources = GetMyMemberLibraries( context, dashboard.orgLibraries, dashboard.userId, dashboard.maxResources );
+				}
+
+				if ( dashboard.includeMyMemberLibrariesRecentResources > 0 )
+				{
+					dashboard.orgLibrariesResources = new ResourcesBox();
+					dashboard.orgLibrariesResources.name = "Recent Resources from Library Memberships";
+					dashboard.orgLibrariesResources.resources = RecentResources_ForLibraryMemberships( context, dashboard.followedLibraryResources, dashboard.userId, dashboard.maxResources );
+				}
+			}
+			//return entity;
+		}
         public static List<DashboardResourceDTO> RecentResources_ForLibrary( IsleContentContext context, ResourcesBox resourceBox, int libraryId, int maxResources )
         {
             DashboardResourceDTO entity = new DashboardResourceDTO();
             List<DashboardResourceDTO> list = new List<DashboardResourceDTO>();
 
-        
+			string imgUrl = ContentHelper.GetAppKeyValue( "cachedImagesUrl", "/OERThumbs/" );
+
             //??not sure if will get all, and break after max (will have total available then)
             List<Library_SectionResourceSummary> items = context.Library_SectionResourceSummary
                             .Where( s => s.LibraryId == libraryId )
@@ -133,6 +134,10 @@ namespace IoerContentBusinessEntities
                     entity.containerTitle = item.LibrarySection;
                     entity.DateAdded = item.DateAddedToCollection;
                     entity.url = string.Format( "/Resource/{0}/{1}", item.ResourceIntId, UtilityManager.UrlFriendlyTitle( item.Title ) );
+					if ( string.IsNullOrEmpty( item.ImageUrl ) == false )
+						entity.imageUrl = item.ImageUrl;
+					else
+						entity.imageUrl = imgUrl + string.Format( "large/{0}-large.png", entity.id );
 
                     list.Add( entity );
 

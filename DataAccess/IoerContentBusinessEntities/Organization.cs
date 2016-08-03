@@ -21,6 +21,7 @@ namespace IoerContentBusinessEntities
             this.AppGroups = new HashSet<AppGroup>();
             this.AppGroup_Member = new HashSet<AppGroup_Member>();
             this.AppGroup_OrgMember = new HashSet<AppGroup_OrgMember>();
+            this.Contents = new HashSet<Content>();
         }
     
         public int Id { get; set; }
@@ -50,6 +51,8 @@ namespace IoerContentBusinessEntities
         public Nullable<bool> IsIsleMember { get; set; }
         public string EmailDomain { get; set; }
         public string Description { get; set; }
+        public Nullable<bool> IsContentApprovalRequired { get; set; }
+        public Nullable<int> StatusId { get; set; }
     
         public virtual ICollection<Organization_Member> Organization_Member { get; set; }
         public virtual Organization Organization1 { get; set; }
@@ -58,5 +61,6 @@ namespace IoerContentBusinessEntities
         public virtual ICollection<AppGroup> AppGroups { get; set; }
         public virtual ICollection<AppGroup_Member> AppGroup_Member { get; set; }
         public virtual ICollection<AppGroup_OrgMember> AppGroup_OrgMember { get; set; }
+        public virtual ICollection<Content> Contents { get; set; }
     }
 }

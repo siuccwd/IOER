@@ -30,5 +30,6 @@ namespace IoerContentBusinessEntities
         public Nullable<int> ObjectRelatedId { get; set; }
         public Nullable<int> TargetObjectId { get; set; }
         public string Referrer { get; set; }
+        public Nullable<bool> IsBot { get; set; }
     }
 }

@@ -27,6 +27,7 @@ namespace IoerContentBusinessEntities
             this.Content_Subscription = new HashSet<Content_Subscription>();
             this.Content_Tag = new HashSet<Content_Tag>();
             this.Content_RelatedStandard = new HashSet<Content_RelatedStandard>();
+            this.Content_Keyword = new HashSet<Content_Keyword>();
         }
     
         public int Id { get; set; }
@@ -41,7 +42,6 @@ namespace IoerContentBusinessEntities
         public Nullable<bool> IsPublished { get; set; }
         public Nullable<bool> IsOrgContentOwner { get; set; }
         public Nullable<int> OrgId { get; set; }
-        public Nullable<int> ResourceVersionId { get; set; }
         public Nullable<System.DateTime> Created { get; set; }
         public Nullable<int> CreatedById { get; set; }
         public Nullable<System.DateTime> LastUpdated { get; set; }
@@ -57,6 +57,7 @@ namespace IoerContentBusinessEntities
         public Nullable<int> ResourceIntId { get; set; }
         public string Timeframe { get; set; }
         public string ImageUrl { get; set; }
+        public Nullable<int> DisplayTemplateId { get; set; }
     
         public virtual Codes_ContentPrivilege Codes_ContentPrivilege { get; set; }
         public virtual Codes_ContentStatus Codes_ContentStatus { get; set; }
@@ -74,5 +75,7 @@ namespace IoerContentBusinessEntities
         public virtual ICollection<Content_Tag> Content_Tag { get; set; }
         public virtual Document_Version Document_Version { get; set; }
         public virtual ICollection<Content_RelatedStandard> Content_RelatedStandard { get; set; }
+        public virtual Organization Organization { get; set; }
+        public virtual ICollection<Content_Keyword> Content_Keyword { get; set; }
     }
 }

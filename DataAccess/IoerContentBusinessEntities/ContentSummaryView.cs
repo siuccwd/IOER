@@ -25,7 +25,6 @@ namespace IoerContentBusinessEntities
         public Nullable<int> PrivilegeTypeId { get; set; }
         public string ContentPrivilege { get; set; }
         public int ConditionsOfUseId { get; set; }
-        public int ResourceVersionId { get; set; }
         public bool IsPublished { get; set; }
         public Nullable<bool> IsOrgContentOwner { get; set; }
         public int OrgId { get; set; }
@@ -56,5 +55,6 @@ namespace IoerContentBusinessEntities
         public string ConditionsOfUseIconUrl { get; set; }
         public string Timeframe { get; set; }
         public string ImageUrl { get; set; }
+        public Nullable<int> DisplayTemplateId { get; set; }
     }
 }

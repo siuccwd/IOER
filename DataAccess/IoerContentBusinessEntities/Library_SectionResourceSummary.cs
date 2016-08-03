@@ -41,5 +41,6 @@ namespace IoerContentBusinessEntities
         public string ResourceUrl { get; set; }
         public string Description { get; set; }
         public string SortTitle { get; set; }
+        public string ImageUrl { get; set; }
     }
 }

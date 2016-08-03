@@ -33,8 +33,16 @@ namespace IoerContentBusinessEntities
         public string BaseOrganization { get; set; }
         public System.DateTime Created { get; set; }
         public System.DateTime MemberAdded { get; set; }
-        public Nullable<int> CreatedById { get; set; }
+        public int CreatedById { get; set; }
         public Nullable<System.DateTime> LastUpdated { get; set; }
-        public Nullable<int> LastUpdatedById { get; set; }
+        public int LastUpdatedById { get; set; }
+        public string Roles { get; set; }
+        public int IsAdmin { get; set; }
+        public int IsContentAdmin { get; set; }
+        public int IsLibraryAdmin { get; set; }
+        public int IsAccountAdmin { get; set; }
+        public int IsContentCreator { get; set; }
+        public Nullable<System.DateTime> LastLoginDate { get; set; }
+        public string RoleIds { get; set; }
     }
 }

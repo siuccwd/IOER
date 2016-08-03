@@ -14,7 +14,7 @@
           <Property Name="ActivityType" Type="varchar" MaxLength="25" Nullable="false" />
           <Property Name="Activity" Type="varchar" MaxLength="100" Nullable="false" />
           <Property Name="Event" Type="varchar" MaxLength="100" Nullable="false" />
-          <Property Name="Comment" Type="varchar" MaxLength="1000" />
+          <Property Name="Comment" Type="varchar" MaxLength="5000" />
           <Property Name="TargetUserId" Type="int" />
           <Property Name="ActionByUserId" Type="int" />
           <Property Name="ActivityObjectId" Type="int" />
@@ -25,6 +25,7 @@
           <Property Name="IPAddress" Type="varchar" MaxLength="50" />
           <Property Name="TargetObjectId" Type="int" />
           <Property Name="Referrer" Type="varchar" MaxLength="1000" />
+          <Property Name="IsBot" Type="bit" />
         </EntityType>
         <EntityType Name="AppGroup">
           <Key>
@@ -137,7 +138,7 @@
           <Property Name="Parameters" Type="varchar" MaxLength="300" />
           <Property Name="IsPostback" Type="bit" />
           <Property Name="Userid" Type="varchar" MaxLength="50" />
-          <Property Name="Comment" Type="varchar" MaxLength="500" />
+          <Property Name="Comment" Type="varchar" MaxLength="1500" />
           <Property Name="RemoteIP" Type="varchar" MaxLength="25" />
           <Property Name="ServerName" Type="varchar" MaxLength="25" />
           <Property Name="CurrentZip" Type="varchar" MaxLength="12" />
@@ -385,7 +386,6 @@
           <Property Name="IsOrgContentOwner" Type="bit" />
           <Property Name="OrgId" Type="int" />
           <Property Name="ResourceIntId" Type="int" />
-          <Property Name="ResourceVersionId" Type="int" />
           <Property Name="Created" Type="datetime" />
           <Property Name="CreatedById" Type="int" />
           <Property Name="LastUpdated" Type="datetime" />
@@ -395,11 +395,12 @@
           <Property Name="RowId" Type="uniqueidentifier" Nullable="false" />
           <Property Name="UseRightsUrl" Type="varchar" MaxLength="200" />
           <Property Name="DocumentRowId" Type="uniqueidentifier" />
-          <Property Name="DocumentUrl" Type="varchar" MaxLength="200" />
+          <Property Name="DocumentUrl" Type="varchar" MaxLength="500" />
           <Property Name="ParentId" Type="int" />
           <Property Name="SortOrder" Type="int" />
           <Property Name="Timeframe" Type="varchar" MaxLength="100" />
           <Property Name="ImageUrl" Type="varchar" MaxLength="200" />
+          <Property Name="DisplayTemplateId" Type="int" />
         </EntityType>
         <EntityType Name="Content_History">
           <Key>
@@ -411,6 +412,16 @@
           <Property Name="Description" Type="varchar(max)" />
           <Property Name="Created" Type="datetime" Nullable="false" />
           <Property Name="CreatedById" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Content_Keyword">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ContentId" Type="int" Nullable="false" />
+          <Property Name="Keyword" Type="varchar" MaxLength="200" Nullable="false" />
+          <Property Name="CreatedById" Type="int" />
+          <Property Name="Created" Type="datetime" />
         </EntityType>
         <EntityType Name="Content_Like">
           <Key>
@@ -810,11 +821,11 @@
           <Property Name="IsActive" Type="bit" />
           <Property Name="MainPhone" Type="varchar" MaxLength="20" />
           <Property Name="MainExtension" Type="varchar" MaxLength="10" />
-          <Property Name="Fax" Type="varchar" MaxLength="10" />
-          <Property Name="TTY" Type="varchar" MaxLength="10" />
-          <Property Name="WebSite" Type="varchar" MaxLength="100" />
+          <Property Name="Fax" Type="varchar" MaxLength="20" />
+          <Property Name="TTY" Type="varchar" MaxLength="20" />
+          <Property Name="WebSite" Type="varchar" MaxLength="300" />
           <Property Name="Email" Type="varchar" MaxLength="100" />
-          <Property Name="LogoUrl" Type="varchar" MaxLength="200" />
+          <Property Name="LogoUrl" Type="varchar" MaxLength="300" />
           <Property Name="Address" Type="varchar" MaxLength="50" />
           <Property Name="Address2" Type="varchar" MaxLength="50" />
           <Property Name="City" Type="varchar" MaxLength="50" />
@@ -830,6 +841,8 @@
           <Property Name="IsIsleMember" Type="bit" />
           <Property Name="EmailDomain" Type="varchar" MaxLength="50" />
           <Property Name="Description" Type="varchar(max)" />
+          <Property Name="IsContentApprovalRequired" Type="bit" />
+          <Property Name="StatusId" Type="int" />
         </EntityType>
         <EntityType Name="Organization_Member">
           <Key>
@@ -883,7 +896,7 @@
           </Key>
           <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Title" Type="varchar" MaxLength="125" Nullable="false" />
-          <Property Name="Description" Type="varchar" MaxLength="500" />
+          <Property Name="Description" Type="varchar(max)" />
           <Property Name="QueryCode" Type="varchar" MaxLength="50" />
           <Property Name="Category" Type="varchar" MaxLength="25" />
           <Property Name="SQL" Type="varchar(max)" Nullable="false" />
@@ -1218,7 +1231,6 @@ warning 6002: The table/view 'IsleContent.dbo.ContentConnector_ChildSummary' doe
             <PropertyRef Name="Description" />
             <PropertyRef Name="SortOrder" />
             <PropertyRef Name="ConditionsOfUseId" />
-            <PropertyRef Name="ResourceVersionId" />
             <PropertyRef Name="IsPublished" />
             <PropertyRef Name="UseRightsUrl" />
             <PropertyRef Name="IsOrgContentOwner" />
@@ -1246,7 +1258,6 @@ warning 6002: The table/view 'IsleContent.dbo.ContentConnector_ChildSummary' doe
           <Property Name="SortOrder" Type="int" Nullable="false" />
           <Property Name="ContentPrivilege" Type="varchar" MaxLength="50" />
           <Property Name="ConditionsOfUseId" Type="int" Nullable="false" />
-          <Property Name="ResourceVersionId" Type="int" Nullable="false" />
           <Property Name="ResourceUrl" Type="varchar" MaxLength="600" />
           <Property Name="ResourceIntId" Type="int" />
           <Property Name="IsPublished" Type="bit" Nullable="false" />
@@ -1316,6 +1327,7 @@ warning 6002: The table/view 'IsleContent.dbo.ContentStandard_Summary' does not 
           <Property Name="ContentId" Type="int" Nullable="false" />
           <Property Name="TypeId" Type="int" />
           <Property Name="ParentId" Type="int" />
+          <Property Name="ContentTitle" Type="varchar" MaxLength="200" />
           <Property Name="StandardId" Type="int" Nullable="false" />
           <Property Name="StandardUrl" Type="varchar" MaxLength="200" />
           <Property Name="NotationCode" Type="varchar" MaxLength="50" />
@@ -1346,7 +1358,6 @@ warning 6002: The table/view 'IsleContent.dbo.ContentSummaryView' does not have 
             <PropertyRef Name="ConditionsOfUse" />
             <PropertyRef Name="ConditionsOfUseUrl" />
             <PropertyRef Name="ConditionsOfUseIconUrl" />
-            <PropertyRef Name="ResourceVersionId" />
             
             <PropertyRef Name="UseRightsUrl" />
             <PropertyRef Name="DocumentUrl" />
@@ -1367,17 +1378,16 @@ warning 6002: The table/view 'IsleContent.dbo.ContentSummaryView' does not have 
           <Property Name="PrivilegeTypeId" Type="int" />
           <Property Name="ContentPrivilege" Type="varchar" MaxLength="50" />
           <Property Name="ConditionsOfUseId" Type="int" Nullable="false" />
-          <Property Name="ConditionsOfUse" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="ConditionsOfUse" Type="varchar" MaxLength="100" Nullable="false" />
           <Property Name="ConditionsOfUseUrl" Type="varchar" MaxLength="200" Nullable="false" />
           <Property Name="ConditionsOfUseIconUrl" Type="varchar" MaxLength="200" Nullable="false" />
-          <Property Name="ResourceVersionId" Type="int" Nullable="false" />
           <Property Name="ResourceUrl" Type="varchar" MaxLength="600" />
           <Property Name="ResourceIntId" Type="int" />
           <Property Name="IsPublished" Type="bit" Nullable="false" />
           <Property Name="UseRightsUrl" Type="varchar" MaxLength="200" Nullable="false" />
           <Property Name="IsOrgContentOwner" Type="bit" />
           <Property Name="IsActive" Type="bit" />
-          <Property Name="DocumentUrl" Type="varchar" MaxLength="200" Nullable="false" />
+          <Property Name="DocumentUrl" Type="varchar" MaxLength="500" Nullable="false" />
           <Property Name="DocumentRowId" Type="uniqueidentifier" />
           <Property Name="SortOrder" Type="int" />
           <Property Name="Timeframe" Type="varchar" MaxLength="100" />
@@ -1397,6 +1407,7 @@ warning 6002: The table/view 'IsleContent.dbo.ContentSummaryView' does not have 
           <Property Name="ApprovedById" Type="int" />
           <Property Name="Approved" Type="datetime" />
           <Property Name="ContentRowId" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="DisplayTemplateId" Type="int" />
         </EntityType>
         <!--Errors Found During Generation:
 warning 6002: The table/view 'IsleContent.dbo.Curriculum_DistinctStandards' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
@@ -1665,6 +1676,7 @@ warning 6002: The table/view 'IsleContent.dbo.Library.SectionResourceSummary' do
           <Property Name="Description" Type="nvarchar(max)" />
           <Property Name="ResourceVersionIntId" Type="int" Nullable="false" />
           <Property Name="SortTitle" Type="nvarchar" MaxLength="300" />
+          <Property Name="ImageUrl" Type="varchar" MaxLength="200" />
         </EntityType>
         <!--Errors Found During Generation:
 warning 6002: The table/view 'IsleContent.dbo.LR.ConditionOfUse_Select' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
@@ -1719,8 +1731,10 @@ warning 6002: The table/view 'IsleContent.dbo.LR.ResourceVersion_Summary' does n
             <PropertyRef Name="ResourceId" />
             <PropertyRef Name="ResourceVersionIntId" />
             <PropertyRef Name="Title" />
+            
+            
           </Key>
-          <Property Name="ResourceUrl" Type="varchar" MaxLength="500" Nullable="false" />
+          <Property Name="ResourceUrl" Type="varchar" MaxLength="600" Nullable="false" />
           <Property Name="Id" Type="int" Nullable="false" />
           <Property Name="ResourceIntId" Type="int" Nullable="false" />
           <Property Name="ResourceId" Type="varchar" MaxLength="1" Nullable="false" />
@@ -1732,8 +1746,9 @@ warning 6002: The table/view 'IsleContent.dbo.LR.ResourceVersion_Summary' does n
           <Property Name="Rights" Type="varchar" MaxLength="700" />
           <Property Name="ViewCount" Type="int" />
           <Property Name="FavoriteCount" Type="int" />
-          <Property Name="AccessRightsId" Type="int" />
-          <Property Name="AccessRights" Type="varchar" MaxLength="50" />
+          <Property Name="ImageUrl" Type="varchar" MaxLength="200" />
+          <Property Name="AccessRightsId" Type="int" Nullable="false" />
+          <Property Name="AccessRights" Type="varchar" MaxLength="50" Nullable="false" />
           <Property Name="InteractivityTypeId" Type="int" />
           <Property Name="TypicalLearningTime" Type="varchar" MaxLength="50" />
           <Property Name="Modified" Type="datetime" />
@@ -1789,8 +1804,17 @@ warning 6002: The table/view 'IsleContent.dbo.Organization_MemberSummary' does n
             <PropertyRef Name="OrgId" />
             <PropertyRef Name="Organization" />
             <PropertyRef Name="UserId" />
+            
+            
+            <PropertyRef Name="IsAdmin" />
+            <PropertyRef Name="IsContentAdmin" />
+            <PropertyRef Name="IsLibraryAdmin" />
+            <PropertyRef Name="IsAccountAdmin" />
+            <PropertyRef Name="IsContentCreator" />
             <PropertyRef Name="Created" />
             <PropertyRef Name="MemberAdded" />
+            
+            
           </Key>
           <Property Name="OrgMbrId" Type="int" Nullable="false" />
           <Property Name="OrgId" Type="int" Nullable="false" />
@@ -1809,11 +1833,19 @@ warning 6002: The table/view 'IsleContent.dbo.Organization_MemberSummary' does n
           <Property Name="OrgMemberType" Type="varchar" MaxLength="50" />
           <Property Name="BaseOrgId" Type="int" />
           <Property Name="BaseOrganization" Type="varchar" MaxLength="100" />
+          <Property Name="RoleIds" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="Roles" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="IsAdmin" Type="int" Nullable="false" />
+          <Property Name="IsContentAdmin" Type="int" Nullable="false" />
+          <Property Name="IsLibraryAdmin" Type="int" Nullable="false" />
+          <Property Name="IsAccountAdmin" Type="int" Nullable="false" />
+          <Property Name="IsContentCreator" Type="int" Nullable="false" />
+          <Property Name="LastLoginDate" Type="datetime" />
           <Property Name="Created" Type="datetime" Nullable="false" />
           <Property Name="MemberAdded" Type="datetime" Nullable="false" />
-          <Property Name="CreatedById" Type="int" />
+          <Property Name="CreatedById" Type="int" Nullable="false" />
           <Property Name="LastUpdated" Type="datetime" />
-          <Property Name="LastUpdatedById" Type="int" />
+          <Property Name="LastUpdatedById" Type="int" Nullable="false" />
         </EntityType>
         <!--Errors Found During Generation:
 warning 6002: The table/view 'IsleContent.dbo.OrganizationMember.RoleIdCSV' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
@@ -1850,8 +1882,8 @@ warning 6002: The table/view 'IsleContent.dbo.Resource.Standard' does not have a
             <PropertyRef Name="AlignedById" />
             <PropertyRef Name="AlignmentTypeCodeId" />
             <PropertyRef Name="AlignmentType" />
-            <PropertyRef Name="AlignmentDegreeId" />
-            <PropertyRef Name="AlignmentDegree" />
+            <PropertyRef Name="UsageTypeId" />
+            <PropertyRef Name="UsageType" />
             <PropertyRef Name="CreatedById" />
           </Key>
           <Property Name="ResourceStandardId" Type="int" Nullable="false" />
@@ -1866,8 +1898,8 @@ warning 6002: The table/view 'IsleContent.dbo.Resource.Standard' does not have a
           <Property Name="AlignedById" Type="int" Nullable="false" />
           <Property Name="AlignmentTypeCodeId" Type="int" Nullable="false" />
           <Property Name="AlignmentType" Type="varchar" MaxLength="50" Nullable="false" />
-          <Property Name="AlignmentDegreeId" Type="int" Nullable="false" />
-          <Property Name="AlignmentDegree" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="UsageTypeId" Type="int" Nullable="false" />
+          <Property Name="UsageType" Type="varchar" MaxLength="50" Nullable="false" />
           <Property Name="IsDirectStandard" Type="bit" />
           <Property Name="Created" Type="datetime" />
           <Property Name="CreatedById" Type="int" Nullable="false" />
@@ -2114,6 +2146,20 @@ warning 6002: The table/view 'IsleContent.dbo.Resource.Standard' does not have a
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_Content_Keyword_Content">
+          <End Role="Content" Type="Self.Content" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Content_Keyword" Type="Self.Content_Keyword" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Content">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Content_Keyword">
+              <PropertyRef Name="ContentId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_Content_Like_Content">
           <End Role="Content" Type="Self.Content" Multiplicity="0..1">
             <OnDelete Action="Cascade" />
@@ -2333,6 +2379,18 @@ warning 6002: The table/view 'IsleContent.dbo.Resource.Standard' does not have a
             </Principal>
             <Dependent Role="Content">
               <PropertyRef Name="DocumentRowId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Content_Organization">
+          <End Role="Organization" Type="Self.Organization" Multiplicity="0..1" />
+          <End Role="Content" Type="Self.Content" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Organization">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Content">
+              <PropertyRef Name="OrgId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -2701,6 +2759,7 @@ warning 6002: The table/view 'IsleContent.dbo.Resource.Standard' does not have a
           <EntitySet Name="Community_PostItem" EntityType="Self.Community_PostItem" Schema="dbo" Table="Community.PostItem" store:Type="Tables" />
           <EntitySet Name="Content" EntityType="Self.Content" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Content_History" EntityType="Self.Content_History" Schema="dbo" Table="Content.History" store:Type="Tables" />
+          <EntitySet Name="Content_Keyword" EntityType="Self.Content_Keyword" Schema="dbo" Table="Content.Keyword" store:Type="Tables" />
           <EntitySet Name="Content_Like" EntityType="Self.Content_Like" Schema="dbo" Table="Content.Like" store:Type="Tables" />
           <EntitySet Name="Content_Partner" EntityType="Self.Content_Partner" Schema="dbo" Table="Content.Partner" store:Type="Tables" />
           <EntitySet Name="Content_Reference" EntityType="Self.Content_Reference" Schema="dbo" Table="Content.Reference" store:Type="Tables" />
@@ -2981,7 +3040,6 @@ FROM [dbo].[Content_LearningListSummary] AS [Content_LearningListSummary]</Defin
 [ContentConnector_ChildSummary].[SortOrder] AS [SortOrder], 
 [ContentConnector_ChildSummary].[ContentPrivilege] AS [ContentPrivilege], 
 [ContentConnector_ChildSummary].[ConditionsOfUseId] AS [ConditionsOfUseId], 
-[ContentConnector_ChildSummary].[ResourceVersionId] AS [ResourceVersionId], 
 [ContentConnector_ChildSummary].[ResourceUrl] AS [ResourceUrl], 
 [ContentConnector_ChildSummary].[ResourceIntId] AS [ResourceIntId], 
 [ContentConnector_ChildSummary].[IsPublished] AS [IsPublished], 
@@ -3027,6 +3085,7 @@ FROM [dbo].[ContentNodeSummary] AS [ContentNodeSummary]</DefiningQuery>
 [ContentStandard_Summary].[ContentId] AS [ContentId], 
 [ContentStandard_Summary].[TypeId] AS [TypeId], 
 [ContentStandard_Summary].[ParentId] AS [ParentId], 
+[ContentStandard_Summary].[ContentTitle] AS [ContentTitle], 
 [ContentStandard_Summary].[StandardId] AS [StandardId], 
 [ContentStandard_Summary].[StandardUrl] AS [StandardUrl], 
 [ContentStandard_Summary].[NotationCode] AS [NotationCode], 
@@ -3061,7 +3120,6 @@ FROM [dbo].[ContentStandard_Summary] AS [ContentStandard_Summary]</DefiningQuery
 [ContentSummaryView].[ConditionsOfUse] AS [ConditionsOfUse], 
 [ContentSummaryView].[ConditionsOfUseUrl] AS [ConditionsOfUseUrl], 
 [ContentSummaryView].[ConditionsOfUseIconUrl] AS [ConditionsOfUseIconUrl], 
-[ContentSummaryView].[ResourceVersionId] AS [ResourceVersionId], 
 [ContentSummaryView].[ResourceUrl] AS [ResourceUrl], 
 [ContentSummaryView].[ResourceIntId] AS [ResourceIntId], 
 [ContentSummaryView].[IsPublished] AS [IsPublished], 
@@ -3087,7 +3145,8 @@ FROM [dbo].[ContentStandard_Summary] AS [ContentStandard_Summary]</DefiningQuery
 [ContentSummaryView].[LastUpdatedBy] AS [LastUpdatedBy], 
 [ContentSummaryView].[ApprovedById] AS [ApprovedById], 
 [ContentSummaryView].[Approved] AS [Approved], 
-[ContentSummaryView].[ContentRowId] AS [ContentRowId]
+[ContentSummaryView].[ContentRowId] AS [ContentRowId], 
+[ContentSummaryView].[DisplayTemplateId] AS [DisplayTemplateId]
 FROM [dbo].[ContentSummaryView] AS [ContentSummaryView]</DefiningQuery>
           </EntitySet>
           <EntitySet Name="Curriculum_DistinctStandards" EntityType="Self.Curriculum_DistinctStandards" store:Type="Views" store:Schema="dbo">
@@ -3274,7 +3333,8 @@ FROM [dbo].[Library.ResourceTagUniqueFilters] AS [Library_ResourceTagUniqueFilte
 [Library_SectionResourceSummary].[ResourceUrl] AS [ResourceUrl], 
 [Library_SectionResourceSummary].[Description] AS [Description], 
 [Library_SectionResourceSummary].[ResourceVersionIntId] AS [ResourceVersionIntId], 
-[Library_SectionResourceSummary].[SortTitle] AS [SortTitle]
+[Library_SectionResourceSummary].[SortTitle] AS [SortTitle], 
+[Library_SectionResourceSummary].[ImageUrl] AS [ImageUrl]
 FROM [dbo].[Library.SectionResourceSummary] AS [Library_SectionResourceSummary]</DefiningQuery>
           </EntitySet>
           <EntitySet Name="LR_ConditionOfUse_Select" EntityType="Self.LR_ConditionOfUse_Select" store:Type="Views" store:Schema="dbo" store:Name="LR.ConditionOfUse_Select">
@@ -3326,6 +3386,7 @@ FROM [dbo].[LR.PatronOrgSummary] AS [LR_PatronOrgSummary]</DefiningQuery>
 [LR_ResourceVersion_Summary].[Rights] AS [Rights], 
 [LR_ResourceVersion_Summary].[ViewCount] AS [ViewCount], 
 [LR_ResourceVersion_Summary].[FavoriteCount] AS [FavoriteCount], 
+[LR_ResourceVersion_Summary].[ImageUrl] AS [ImageUrl], 
 [LR_ResourceVersion_Summary].[AccessRightsId] AS [AccessRightsId], 
 [LR_ResourceVersion_Summary].[AccessRights] AS [AccessRights], 
 [LR_ResourceVersion_Summary].[InteractivityTypeId] AS [InteractivityTypeId], 
@@ -3384,6 +3445,14 @@ FROM [dbo].[Organization_MemberCrosstab] AS [Organization_MemberCrosstab]</Defin
 [Organization_MemberSummary].[OrgMemberType] AS [OrgMemberType], 
 [Organization_MemberSummary].[BaseOrgId] AS [BaseOrgId], 
 [Organization_MemberSummary].[BaseOrganization] AS [BaseOrganization], 
+[Organization_MemberSummary].[RoleIds] AS [RoleIds], 
+[Organization_MemberSummary].[Roles] AS [Roles], 
+[Organization_MemberSummary].[IsAdmin] AS [IsAdmin], 
+[Organization_MemberSummary].[IsContentAdmin] AS [IsContentAdmin], 
+[Organization_MemberSummary].[IsLibraryAdmin] AS [IsLibraryAdmin], 
+[Organization_MemberSummary].[IsAccountAdmin] AS [IsAccountAdmin], 
+[Organization_MemberSummary].[IsContentCreator] AS [IsContentCreator], 
+[Organization_MemberSummary].[LastLoginDate] AS [LastLoginDate], 
 [Organization_MemberSummary].[Created] AS [Created], 
 [Organization_MemberSummary].[MemberAdded] AS [MemberAdded], 
 [Organization_MemberSummary].[CreatedById] AS [CreatedById], 
@@ -3418,8 +3487,8 @@ FROM [dbo].[OrganizationMember.RoleIdCSV] AS [OrganizationMember_RoleIdCSV]</Def
 [Resource_Standard].[AlignedById] AS [AlignedById], 
 [Resource_Standard].[AlignmentTypeCodeId] AS [AlignmentTypeCodeId], 
 [Resource_Standard].[AlignmentType] AS [AlignmentType], 
-[Resource_Standard].[AlignmentDegreeId] AS [AlignmentDegreeId], 
-[Resource_Standard].[AlignmentDegree] AS [AlignmentDegree], 
+[Resource_Standard].[UsageTypeId] AS [UsageTypeId], 
+[Resource_Standard].[UsageType] AS [UsageType], 
 [Resource_Standard].[IsDirectStandard] AS [IsDirectStandard], 
 [Resource_Standard].[Created] AS [Created], 
 [Resource_Standard].[CreatedById] AS [CreatedById]
@@ -3501,6 +3570,10 @@ FROM [dbo].[Resource.Standard] AS [Resource_Standard]</DefiningQuery>
             <End Role="Content" EntitySet="Content" />
             <End Role="Content_History" EntitySet="Content_History" />
           </AssociationSet>
+          <AssociationSet Name="FK_Content_Keyword_Content" Association="Self.FK_Content_Keyword_Content">
+            <End Role="Content" EntitySet="Content" />
+            <End Role="Content_Keyword" EntitySet="Content_Keyword" />
+          </AssociationSet>
           <AssociationSet Name="FK_Content_Like_Content" Association="Self.FK_Content_Like_Content">
             <End Role="Content" EntitySet="Content" />
             <End Role="Content_Like" EntitySet="Content_Like" />
@@ -3567,6 +3640,10 @@ FROM [dbo].[Resource.Standard] AS [Resource_Standard]</DefiningQuery>
           </AssociationSet>
           <AssociationSet Name="FK_Content_Document_Version" Association="Self.FK_Content_Document_Version">
             <End Role="Document_Version" EntitySet="Document_Version" />
+            <End Role="Content" EntitySet="Content" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Content_Organization" Association="Self.FK_Content_Organization">
+            <End Role="Organization" EntitySet="Organization" />
             <End Role="Content" EntitySet="Content" />
           </AssociationSet>
           <AssociationSet Name="FK_Library_Comment_Library" Association="Self.FK_Library_Comment_Library">
@@ -3677,8 +3754,8 @@ FROM [dbo].[Resource.Standard] AS [Resource_Standard]</DefiningQuery>
       </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
-      <Schema Namespace="IsleContentModel" Alias="Self" xmlns="http://schemas.microsoft.com/ado/2009/11/edm" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation">
-        <EntityContainer Name="IsleContentEntities" annotation:LazyLoadingEnabled="true" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation">
+      <Schema Namespace="IsleContentModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns="http://schemas.microsoft.com/ado/2009/11/edm" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation">
+        <EntityContainer Name="IsleContentEntities" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="Codes_ContentPrivilege" EntityType="IsleContentModel.Codes_ContentPrivilege" />
           <EntitySet Name="Codes_ContentStatus" EntityType="IsleContentModel.Codes_ContentStatus" />
           <EntitySet Name="Codes_SubscriptionType" EntityType="IsleContentModel.Codes_SubscriptionType" />
@@ -4043,6 +4120,15 @@ FROM [dbo].[Resource.Standard] AS [Resource_Standard]</DefiningQuery>
             <End Role="Content_RelatedStandard" EntitySet="Content_RelatedStandard" />
           </AssociationSet>
           <EntitySet Name="Content_RelatedStandardsSummary" EntityType="IsleContentModel.Content_RelatedStandardsSummary" />
+          <AssociationSet Name="FK_Content_Organization" Association="IsleContentModel.FK_Content_Organization">
+            <End Role="Organization" EntitySet="Organizations" />
+            <End Role="Content" EntitySet="Contents" />
+          </AssociationSet>
+          <EntitySet Name="Content_Keyword" EntityType="IsleContentModel.Content_Keyword" />
+          <AssociationSet Name="FK_Content_Keyword_Content" Association="IsleContentModel.FK_Content_Keyword_Content">
+            <End Role="Content" EntitySet="Contents" />
+            <End Role="Content_Keyword" EntitySet="Content_Keyword" />
+          </AssociationSet>
           </EntityContainer>
         <EntityType Name="Codes_ContentPrivilege">
           <Key>
@@ -4083,7 +4169,7 @@ FROM [dbo].[Resource.Standard] AS [Resource_Standard]</DefiningQuery>
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="TypeId" Type="Int32" />
           <Property Name="Title" Type="String" MaxLength="200" Unicode="false" FixedLength="false" />
           <Property Name="Summary" Type="String" MaxLength="Max" Unicode="false" FixedLength="false" />
@@ -4095,7 +4181,6 @@ FROM [dbo].[Resource.Standard] AS [Resource_Standard]</DefiningQuery>
           <Property Name="IsPublished" Type="Boolean" />
           <Property Name="IsOrgContentOwner" Type="Boolean" />
           <Property Name="OrgId" Type="Int32" />
-          <Property Name="ResourceVersionId" Type="Int32" />
           <Property Name="Created" Type="DateTime" Precision="3" />
           <Property Name="CreatedById" Type="Int32" />
           <Property Name="LastUpdated" Type="DateTime" Precision="3" />
@@ -4111,7 +4196,7 @@ FROM [dbo].[Resource.Standard] AS [Resource_Standard]</DefiningQuery>
           <NavigationProperty Name="Content_Supplement" Relationship="IsleContentModel.FK_Content_Supplement_Content" FromRole="Content" ToRole="Content_Supplement" />
           <NavigationProperty Name="ContentType" Relationship="IsleContentModel.FK_Content_ContentType" FromRole="Content" ToRole="ContentType" />
           <Property Type="Guid" Name="DocumentRowId" />
-          <Property Type="String" Name="DocumentUrl" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="DocumentUrl" MaxLength="500" FixedLength="false" Unicode="false" />
           <Property Type="Int32" Name="ParentId" />
           <NavigationProperty Name="Content_Resource" Relationship="IsleContentModel.FK_Content_Resource_Content" FromRole="Content" ToRole="Content_Resource" />
           <NavigationProperty Name="Content1" Relationship="IsleContentModel.FK_Content_Content_ContentParent" FromRole="Content" ToRole="Content1" />
@@ -4127,12 +4212,15 @@ FROM [dbo].[Resource.Standard] AS [Resource_Standard]</DefiningQuery>
           <Property Type="String" Name="ImageUrl" MaxLength="200" FixedLength="false" Unicode="false" />
           <NavigationProperty Name="Document_Version" Relationship="IsleContentModel.FK_Content_Document_Version" FromRole="Content" ToRole="Document_Version" />
           <NavigationProperty Name="Content_RelatedStandard" Relationship="IsleContentModel.FK_Content_RelatedStandard_Content" FromRole="Content" ToRole="Content_RelatedStandard" />
+          <NavigationProperty Name="Organization" Relationship="IsleContentModel.FK_Content_Organization" FromRole="Content" ToRole="Organization" />
+          <Property Name="DisplayTemplateId" Type="Int32" />
+          <NavigationProperty Name="Content_Keyword" Relationship="IsleContentModel.FK_Content_Keyword_Content" FromRole="Content" ToRole="Content_Keyword" />
           </EntityType>
         <EntityType Name="Content_History">
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="ContentId" Type="Int32" Nullable="false" />
           <Property Name="Action" Type="String" Nullable="false" MaxLength="75" Unicode="false" FixedLength="false" />
           <Property Name="Description" Type="String" MaxLength="Max" Unicode="false" FixedLength="false" />
@@ -4144,7 +4232,7 @@ FROM [dbo].[Resource.Standard] AS [Resource_Standard]</DefiningQuery>
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="ParentId" Type="Int32" Nullable="false" />
           <Property Name="Title" Type="String" Nullable="false" MaxLength="200" Unicode="false" FixedLength="false" />
           <Property Name="Author" Type="String" MaxLength="100" Unicode="false" FixedLength="false" />
@@ -4162,7 +4250,7 @@ FROM [dbo].[Resource.Standard] AS [Resource_Standard]</DefiningQuery>
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="ParentId" Type="Int32" Nullable="false" />
           <Property Name="Title" Type="String" Nullable="false" MaxLength="200" Unicode="false" FixedLength="false" />
           <Property Name="Description" Type="String" MaxLength="Max" Unicode="false" FixedLength="false" />
@@ -4182,7 +4270,7 @@ FROM [dbo].[Resource.Standard] AS [Resource_Standard]</DefiningQuery>
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="Title" Type="String" MaxLength="50" Unicode="false" FixedLength="false" />
           <Property Name="Template" Type="String" MaxLength="Max" Unicode="false" FixedLength="false" />
           <Property Name="Created" Type="DateTime" Precision="3" />
@@ -4227,7 +4315,7 @@ FROM [dbo].[Resource.Standard] AS [Resource_Standard]</DefiningQuery>
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="Title" Type="String" Nullable="false" MaxLength="200" Unicode="false" FixedLength="false" />
           <Property Name="Description" Type="String" MaxLength="500" Unicode="false" FixedLength="false" />
           <Property Name="LibraryTypeId" Type="Int32" />
@@ -4258,7 +4346,7 @@ FROM [dbo].[Resource.Standard] AS [Resource_Standard]</DefiningQuery>
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="LibrarySectionId" Type="Int32" Nullable="false" />
           <Property Name="ResourceIntId" Type="Int32" Nullable="false" />
           <Property Name="Comment" Type="String" MaxLength="500" Unicode="false" FixedLength="false" />
@@ -4271,7 +4359,7 @@ FROM [dbo].[Resource.Standard] AS [Resource_Standard]</DefiningQuery>
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="LibraryId" Type="Int32" Nullable="false" />
           <Property Name="SectionTypeId" Type="Int32" Nullable="false" />
           <Property Name="Title" Type="String" MaxLength="100" Unicode="false" FixedLength="false" />
@@ -4302,7 +4390,7 @@ FROM [dbo].[Resource.Standard] AS [Resource_Standard]</DefiningQuery>
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="SectionId" Type="Int32" Nullable="false" />
           <Property Name="UserId" Type="Int32" Nullable="false" />
           <Property Name="SubscriptionTypeId" Type="Int32" />
@@ -4316,7 +4404,7 @@ FROM [dbo].[Resource.Standard] AS [Resource_Standard]</DefiningQuery>
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="Title" Type="String" Nullable="false" MaxLength="50" Unicode="false" FixedLength="false" />
           <Property Name="AreContentsReadOnly" Type="Boolean" />
           <Property Name="Decription" Type="String" MaxLength="200" Unicode="false" FixedLength="false" />
@@ -4328,7 +4416,7 @@ FROM [dbo].[Resource.Standard] AS [Resource_Standard]</DefiningQuery>
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="LibraryId" Type="Int32" Nullable="false" />
           <Property Name="UserId" Type="Int32" Nullable="false" />
           <Property Name="SubscriptionTypeId" Type="Int32" />
@@ -4342,7 +4430,7 @@ FROM [dbo].[Resource.Standard] AS [Resource_Standard]</DefiningQuery>
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="Title" Type="String" MaxLength="50" Unicode="false" FixedLength="false" />
           <Property Name="Description" Type="String" MaxLength="300" Unicode="false" FixedLength="false" />
           <Property Name="Created" Type="DateTime" Precision="3" />
@@ -4521,7 +4609,7 @@ FROM [dbo].[Resource.Standard] AS [Resource_Standard]</DefiningQuery>
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
+          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Type="Guid" Name="ParentRowId" Nullable="false" />
           <Property Type="Guid" Name="RelatedRowId" Nullable="false" />
           <Property Type="DateTime" Name="Created" Precision="3" Nullable="false" />
@@ -4530,7 +4618,7 @@ FROM [dbo].[Resource.Standard] AS [Resource_Standard]</DefiningQuery>
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
+          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Type="String" Name="Title" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Type="String" Name="Description" MaxLength="500" FixedLength="false" Unicode="false" />
           <Property Type="Boolean" Name="IsActive" />
@@ -4541,7 +4629,7 @@ FROM [dbo].[Resource.Standard] AS [Resource_Standard]</DefiningQuery>
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
+          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Type="String" Name="Title" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Type="String" Name="NsdtTitle" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Type="String" Name="Description" MaxLength="255" FixedLength="false" Unicode="false" />
@@ -4554,7 +4642,7 @@ FROM [dbo].[Resource.Standard] AS [Resource_Standard]</DefiningQuery>
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
+          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Type="String" Name="Title" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Type="String" Name="NsdlTitle" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Type="Int32" Name="AgeLevel" />
@@ -4573,7 +4661,7 @@ FROM [dbo].[Resource.Standard] AS [Resource_Standard]</DefiningQuery>
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
+          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Type="String" Name="Title" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Type="String" Name="Description" MaxLength="500" FixedLength="false" Unicode="false" />
           <Property Type="Boolean" Name="IsIsleCode" />
@@ -4585,7 +4673,7 @@ FROM [dbo].[Resource.Standard] AS [Resource_Standard]</DefiningQuery>
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
+          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Type="String" Name="Title" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Type="String" Name="Description" MaxLength="500" FixedLength="false" Unicode="false" />
           <Property Type="Boolean" Name="IsIsleItem" />
@@ -4599,7 +4687,6 @@ FROM [dbo].[Resource.Standard] AS [Resource_Standard]</DefiningQuery>
           <Key>
             <PropertyRef Name="ContentId" />
             <PropertyRef Name="ContentType" />
-            <PropertyRef Name="ResourceVersionId" />
             <PropertyRef Name="Author" />
             <PropertyRef Name="ContentRowId" />
             <PropertyRef Name="ParentId" />
@@ -4621,7 +4708,6 @@ FROM [dbo].[Resource.Standard] AS [Resource_Standard]</DefiningQuery>
           <Property Type="Int32" Name="PrivilegeTypeId" />
           <Property Type="String" Name="ContentPrivilege" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Type="Int32" Name="ConditionsOfUseId" Nullable="false" />
-          <Property Type="Int32" Name="ResourceVersionId" Nullable="false" />
           <Property Type="Boolean" Name="IsPublished" Nullable="false" />
           <Property Type="Boolean" Name="IsOrgContentOwner" />
           <Property Type="Int32" Name="OrgId" Nullable="false" />
@@ -4643,15 +4729,16 @@ FROM [dbo].[Resource.Standard] AS [Resource_Standard]</DefiningQuery>
           <Property Type="String" Name="ResourceUrl" MaxLength="600" FixedLength="false" Unicode="false" />
           <Property Type="Int32" Name="ResourceIntId" />
           <Property Type="String" Name="UseRightsUrl" Nullable="false" MaxLength="200" FixedLength="false" Unicode="false" />
-          <Property Type="String" Name="DocumentUrl" Nullable="false" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="DocumentUrl" Nullable="false" MaxLength="500" FixedLength="false" Unicode="false" />
           <Property Type="Guid" Name="DocumentRowId" />
           <Property Type="Int32" Name="SortOrder" />
           <Property Type="String" Name="LastUpdatedBy" Nullable="false" MaxLength="101" FixedLength="false" Unicode="false" />
-          <Property Type="String" Name="ConditionsOfUse" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="ConditionsOfUse" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
           <Property Type="String" Name="ConditionsOfUseUrl" Nullable="false" MaxLength="200" FixedLength="false" Unicode="false" />
           <Property Type="String" Name="ConditionsOfUseIconUrl" Nullable="false" MaxLength="200" FixedLength="false" Unicode="false" />
           <Property Type="String" Name="Timeframe" MaxLength="100" FixedLength="false" Unicode="false" />
           <Property Type="String" Name="ImageUrl" MaxLength="8000" FixedLength="false" Unicode="false" />
+          <Property Name="DisplayTemplateId" Type="Int32" />
         </EntityType>
         <EntityType Name="Library_SectionResourceSummary">
           <Key>
@@ -4693,6 +4780,7 @@ FROM [dbo].[Resource.Standard] AS [Resource_Standard]</DefiningQuery>
           <Property Type="String" Name="ResourceUrl" Nullable="false" MaxLength="600" FixedLength="false" Unicode="false" />
           <Property Type="String" Name="Description" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Type="String" Name="SortTitle" MaxLength="300" FixedLength="false" Unicode="true" />
+          <Property Name="ImageUrl" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
         </EntityType>
         <Association Name="FK_Library_SectionSubscription_Codes_SubscriptionType">
           <End Type="IsleContentModel.Codes_SubscriptionType" Role="Codes_SubscriptionType" Multiplicity="0..1">
@@ -4726,7 +4814,7 @@ FROM [dbo].[Resource.Standard] AS [Resource_Standard]</DefiningQuery>
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
+          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Type="Int32" Name="LibraryId" />
           <Property Type="String" Name="Comment" MaxLength="1000" FixedLength="false" Unicode="false" />
           <Property Type="DateTime" Name="Created" Precision="3" />
@@ -4737,7 +4825,7 @@ FROM [dbo].[Resource.Standard] AS [Resource_Standard]</DefiningQuery>
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
+          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Type="Int32" Name="LibraryId" Nullable="false" />
           <Property Type="Boolean" Name="IsLike" Nullable="false" />
           <Property Type="DateTime" Name="Created" Precision="3" Nullable="false" />
@@ -4748,7 +4836,7 @@ FROM [dbo].[Resource.Standard] AS [Resource_Standard]</DefiningQuery>
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
+          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Type="Int32" Name="SectionId" />
           <Property Type="String" Name="Comment" MaxLength="1000" FixedLength="false" Unicode="false" />
           <Property Type="DateTime" Name="Created" Precision="3" />
@@ -4759,7 +4847,7 @@ FROM [dbo].[Resource.Standard] AS [Resource_Standard]</DefiningQuery>
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
+          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Type="Int32" Name="SectionId" Nullable="false" />
           <Property Type="Boolean" Name="IsLike" Nullable="false" />
           <Property Type="DateTime" Name="Created" Precision="3" Nullable="false" />
@@ -4818,7 +4906,7 @@ FROM [dbo].[Resource.Standard] AS [Resource_Standard]</DefiningQuery>
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
+          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Type="Guid" Name="RowId" Nullable="false" />
           <Property Type="String" Name="Comment" Nullable="false" MaxLength="1000" FixedLength="false" Unicode="false" />
           <Property Type="DateTime" Name="Created" Nullable="false" Precision="3" />
@@ -4843,12 +4931,12 @@ FROM [dbo].[Resource.Standard] AS [Resource_Standard]</DefiningQuery>
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
+          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Type="DateTime" Name="CreatedDate" Precision="3" />
           <Property Type="String" Name="ActivityType" Nullable="false" MaxLength="25" FixedLength="false" Unicode="false" />
           <Property Type="String" Name="Activity" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
           <Property Type="String" Name="Event" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
-          <Property Type="String" Name="Comment" MaxLength="1000" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="Comment" MaxLength="5000" FixedLength="false" Unicode="false" />
           <Property Type="Int32" Name="TargetUserId" />
           <Property Type="Int32" Name="ActionByUserId" />
           <Property Type="Int32" Name="ActivityObjectId" />
@@ -4859,6 +4947,7 @@ FROM [dbo].[Resource.Standard] AS [Resource_Standard]</DefiningQuery>
           <Property Type="Int32" Name="ObjectRelatedId" />
           <Property Type="Int32" Name="TargetObjectId" />
           <Property Type="String" Name="Referrer" MaxLength="1000" FixedLength="false" Unicode="false" />
+          <Property Name="IsBot" Type="Boolean" />
         </EntityType>
         <EntityType Name="Codes_LibraryMemberType">
           <Key>
@@ -4875,7 +4964,7 @@ FROM [dbo].[Resource.Standard] AS [Resource_Standard]</DefiningQuery>
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
+          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Type="Int32" Name="LibraryId" Nullable="false" />
           <Property Type="Int32" Name="UserId" Nullable="false" />
           <Property Type="Int32" Name="MemberTypeId" Nullable="false" />
@@ -4891,7 +4980,7 @@ FROM [dbo].[Resource.Standard] AS [Resource_Standard]</DefiningQuery>
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
+          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Type="Int32" Name="LibrarySectionId" Nullable="false" />
           <Property Type="Int32" Name="UserId" Nullable="false" />
           <Property Type="Int32" Name="MemberTypeId" Nullable="false" />
@@ -5007,7 +5096,7 @@ FROM [dbo].[Resource.Standard] AS [Resource_Standard]</DefiningQuery>
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
+          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Type="Int32" Name="FollowingUserId" Nullable="false" />
           <Property Type="Int32" Name="FollowedByUserId" Nullable="false" />
           <Property Type="DateTime" Name="Created" Precision="3" />
@@ -5016,7 +5105,7 @@ FROM [dbo].[Resource.Standard] AS [Resource_Standard]</DefiningQuery>
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
+          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Type="String" Name="Title" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Type="String" Name="Description" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Type="Int32" Name="ContactId" />
@@ -5039,7 +5128,7 @@ FROM [dbo].[Resource.Standard] AS [Resource_Standard]</DefiningQuery>
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
+          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Type="Int32" Name="CommunityId" Nullable="false" />
           <Property Type="Int32" Name="UserId" Nullable="false" />
           <Property Type="DateTime" Name="Created" Precision="3" />
@@ -5063,7 +5152,7 @@ FROM [dbo].[Resource.Standard] AS [Resource_Standard]</DefiningQuery>
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
+          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Type="Int32" Name="PostingId" />
           <Property Type="Guid" Name="DocumentId" />
           <Property Type="DateTime" Name="Created" Precision="3" />
@@ -5125,7 +5214,7 @@ FROM [dbo].[Resource.Standard] AS [Resource_Standard]</DefiningQuery>
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
+          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Type="String" Name="Message" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Type="Int32" Name="PostingTypeId" />
           <Property Type="Int32" Name="CreatedById" Nullable="false" />
@@ -5142,7 +5231,7 @@ FROM [dbo].[Resource.Standard] AS [Resource_Standard]</DefiningQuery>
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
+          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Type="Int32" Name="CommunityId" Nullable="false" />
           <Property Type="Int32" Name="PostingId" />
           <Property Type="Int32" Name="CreatedById" Nullable="false" />
@@ -5280,7 +5369,7 @@ FROM [dbo].[Resource.Standard] AS [Resource_Standard]</DefiningQuery>
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
+          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Type="String" Name="Summary" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Type="String" Name="Title" MaxLength="100" FixedLength="false" Unicode="false" />
           <Property Type="String" Name="Description" MaxLength="800" FixedLength="false" Unicode="false" />
@@ -5356,9 +5445,9 @@ FROM [dbo].[Resource.Standard] AS [Resource_Standard]</DefiningQuery>
             <PropertyRef Name="AlignedById" />
             <PropertyRef Name="AlignmentTypeCodeId" />
             <PropertyRef Name="AlignmentType" />
-            <PropertyRef Name="AlignmentDegreeId" />
-            <PropertyRef Name="AlignmentDegree" />
             <PropertyRef Name="CreatedById" />
+            <PropertyRef Name="UsageTypeId" />
+            <PropertyRef Name="UsageType" />
           </Key>
           <Property Type="Int32" Name="ResourceStandardId" Nullable="false" />
           <Property Type="Int32" Name="ResourceIntId" Nullable="false" />
@@ -5372,11 +5461,11 @@ FROM [dbo].[Resource.Standard] AS [Resource_Standard]</DefiningQuery>
           <Property Type="Int32" Name="AlignedById" Nullable="false" />
           <Property Type="Int32" Name="AlignmentTypeCodeId" Nullable="false" />
           <Property Type="String" Name="AlignmentType" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Type="Int32" Name="AlignmentDegreeId" Nullable="false" />
-          <Property Type="String" Name="AlignmentDegree" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Type="DateTime" Name="Created" Precision="3" />
           <Property Type="Int32" Name="CreatedById" Nullable="false" />
           <Property Name="IsDirectStandard" Type="Boolean" />
+          <Property Name="UsageTypeId" Type="Int32" Nullable="false" />
+          <Property Name="UsageType" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="ContentConnector_ChildSummary">
           <Key>
@@ -5391,7 +5480,6 @@ FROM [dbo].[Resource.Standard] AS [Resource_Standard]</DefiningQuery>
             <PropertyRef Name="Description" />
             <PropertyRef Name="SortOrder" />
             <PropertyRef Name="ConditionsOfUseId" />
-            <PropertyRef Name="ResourceVersionId" />
             <PropertyRef Name="IsPublished" />
             <PropertyRef Name="UseRightsUrl" />
             <PropertyRef Name="IsOrgContentOwner" />
@@ -5417,7 +5505,6 @@ FROM [dbo].[Resource.Standard] AS [Resource_Standard]</DefiningQuery>
           <Property Type="Int32" Name="SortOrder" Nullable="false" />
           <Property Type="String" Name="ContentPrivilege" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Type="Int32" Name="ConditionsOfUseId" Nullable="false" />
-          <Property Type="Int32" Name="ResourceVersionId" Nullable="false" />
           <Property Type="String" Name="ResourceUrl" MaxLength="600" FixedLength="false" Unicode="false" />
           <Property Type="Int32" Name="ResourceIntId" />
           <Property Type="Boolean" Name="IsPublished" Nullable="false" />
@@ -5513,7 +5600,7 @@ FROM [dbo].[Resource.Standard] AS [Resource_Standard]</DefiningQuery>
             <PropertyRef Name="ResourceVersionIntId" />
             <PropertyRef Name="Title" />
           </Key>
-          <Property Type="String" Name="ResourceUrl" Nullable="false" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="ResourceUrl" Nullable="false" MaxLength="600" FixedLength="false" Unicode="false" />
           <Property Type="Int32" Name="Id" Nullable="false" />
           <Property Type="Int32" Name="ResourceIntId" Nullable="false" />
           <Property Type="String" Name="ResourceId" Nullable="false" MaxLength="1" FixedLength="false" Unicode="false" />
@@ -5525,14 +5612,15 @@ FROM [dbo].[Resource.Standard] AS [Resource_Standard]</DefiningQuery>
           <Property Type="String" Name="Rights" MaxLength="700" FixedLength="false" Unicode="false" />
           <Property Type="Int32" Name="ViewCount" />
           <Property Type="Int32" Name="FavoriteCount" />
-          <Property Type="Int32" Name="AccessRightsId" />
-          <Property Type="String" Name="AccessRights" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="Int32" Name="AccessRightsId" Nullable="false" />
+          <Property Type="String" Name="AccessRights" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Type="Int32" Name="InteractivityTypeId" />
           <Property Type="String" Name="TypicalLearningTime" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Type="DateTime" Name="Modified" Precision="3" />
           <Property Type="String" Name="Submitter" MaxLength="100" FixedLength="false" Unicode="false" />
           <Property Type="String" Name="SortTitle" MaxLength="300" FixedLength="false" Unicode="true" />
           <Property Type="Int32" Name="PublishedById" />
+          <Property Name="ImageUrl" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="Library_FollowingSummary">
           <Key>
@@ -5847,6 +5935,7 @@ FROM [dbo].[Resource.Standard] AS [Resource_Standard]</DefiningQuery>
           <Property Name="IsDirectStandard" Type="Boolean" />
           <Property Name="StatusId" Type="Int32" />
           <Property Name="ResourceIntId" Type="Int32" />
+          <Property Name="ContentTitle" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="Codes_TagCategoryValue_Summary">
           <Key>
@@ -6108,11 +6197,11 @@ FROM [dbo].[Resource.Standard] AS [Resource_Standard]</DefiningQuery>
           <Property Name="IsActive" Type="Boolean" />
           <Property Name="MainPhone" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
           <Property Name="MainExtension" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
-          <Property Name="Fax" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
-          <Property Name="TTY" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
-          <Property Name="WebSite" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="Fax" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="TTY" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="WebSite" Type="String" MaxLength="300" FixedLength="false" Unicode="false" />
           <Property Name="Email" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
-          <Property Name="LogoUrl" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Name="LogoUrl" Type="String" MaxLength="300" FixedLength="false" Unicode="false" />
           <Property Name="Address" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="Address2" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="City" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
@@ -6135,6 +6224,9 @@ FROM [dbo].[Resource.Standard] AS [Resource_Standard]</DefiningQuery>
           <NavigationProperty Name="AppGroup_Member" Relationship="IsleContentModel.FK_AppGroup_Member_Organization" FromRole="Organization" ToRole="AppGroup_Member" />
           <NavigationProperty Name="AppGroup_OrgMember" Relationship="IsleContentModel.FK_AppGroup_OrgMember_Organization" FromRole="Organization" ToRole="AppGroup_OrgMember" />
           <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Contents" Relationship="IsleContentModel.FK_Content_Organization" FromRole="Organization" ToRole="Content" />
+          <Property Name="IsContentApprovalRequired" Type="Boolean" />
+          <Property Name="StatusId" Type="Int32" />
         </EntityType>
         <EntityType Name="Organization_Member">
           <Key>
@@ -6598,6 +6690,11 @@ FROM [dbo].[Resource.Standard] AS [Resource_Standard]</DefiningQuery>
             <PropertyRef Name="UserId" />
             <PropertyRef Name="Created" />
             <PropertyRef Name="MemberAdded" />
+            <PropertyRef Name="IsAdmin" />
+            <PropertyRef Name="IsContentAdmin" />
+            <PropertyRef Name="IsLibraryAdmin" />
+            <PropertyRef Name="IsAccountAdmin" />
+            <PropertyRef Name="IsContentCreator" />
           </Key>
           <Property Name="OrgMbrId" Type="Int32" Nullable="false" />
           <Property Name="OrgId" Type="Int32" Nullable="false" />
@@ -6618,9 +6715,17 @@ FROM [dbo].[Resource.Standard] AS [Resource_Standard]</DefiningQuery>
           <Property Name="BaseOrganization" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
           <Property Name="Created" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="MemberAdded" Type="DateTime" Nullable="false" Precision="3" />
-          <Property Name="CreatedById" Type="Int32" />
+          <Property Name="CreatedById" Type="Int32" Nullable="false" />
           <Property Name="LastUpdated" Type="DateTime" Precision="3" />
-          <Property Name="LastUpdatedById" Type="Int32" />
+          <Property Name="LastUpdatedById" Type="Int32" Nullable="false" />
+          <Property Name="Roles" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="IsAdmin" Type="Int32" Nullable="false" />
+          <Property Name="IsContentAdmin" Type="Int32" Nullable="false" />
+          <Property Name="IsLibraryAdmin" Type="Int32" Nullable="false" />
+          <Property Name="IsAccountAdmin" Type="Int32" Nullable="false" />
+          <Property Name="IsContentCreator" Type="Int32" Nullable="false" />
+          <Property Name="LastLoginDate" Type="DateTime" Precision="3" />
+          <Property Name="RoleIds" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
         </EntityType>
         <EntityType Name="AppVisitLog">
           <Key>
@@ -6634,7 +6739,7 @@ FROM [dbo].[Resource.Standard] AS [Resource_Standard]</DefiningQuery>
           <Property Name="Parameters" Type="String" MaxLength="300" FixedLength="false" Unicode="false" />
           <Property Name="IsPostback" Type="Boolean" />
           <Property Name="Userid" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="Comment" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Name="Comment" Type="String" MaxLength="1500" FixedLength="false" Unicode="false" />
           <Property Name="RemoteIP" Type="String" MaxLength="25" FixedLength="false" Unicode="false" />
           <Property Name="ServerName" Type="String" MaxLength="25" FixedLength="false" Unicode="false" />
           <Property Name="CurrentZip" Type="String" MaxLength="12" FixedLength="false" Unicode="false" />
@@ -6646,7 +6751,7 @@ FROM [dbo].[Resource.Standard] AS [Resource_Standard]</DefiningQuery>
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="Title" Type="String" Nullable="false" MaxLength="125" FixedLength="false" Unicode="false" />
-          <Property Name="Description" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
           <Property Name="QueryCode" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="Category" Type="String" MaxLength="25" FixedLength="false" Unicode="false" />
           <Property Name="SQL" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="false" />
@@ -6782,6 +6887,43 @@ FROM [dbo].[Resource.Standard] AS [Resource_Standard]</DefiningQuery>
           <Property Name="RelatedStandardCreated" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="CreatedById" Type="Int32" Nullable="false" />
         </EntityType>
+        <Association Name="FK_Content_Organization">
+          <End Type="IsleContentModel.Organization" Role="Organization" Multiplicity="0..1" />
+          <End Type="IsleContentModel.Content" Role="Content" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Organization">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Content">
+              <PropertyRef Name="OrgId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="Content_Keyword">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ContentId" Type="Int32" Nullable="false" />
+          <Property Name="Keyword" Type="String" Nullable="false" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Name="CreatedById" Type="Int32" />
+          <Property Name="Created" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="Content" Relationship="IsleContentModel.FK_Content_Keyword_Content" FromRole="Content_Keyword" ToRole="Content" />
+        </EntityType>
+        <Association Name="FK_Content_Keyword_Content">
+          <End Type="IsleContentModel.Content" Role="Content" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="IsleContentModel.Content_Keyword" Role="Content_Keyword" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Content">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Content_Keyword">
+              <PropertyRef Name="ContentId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -6823,6 +6965,7 @@ FROM [dbo].[Resource.Standard] AS [Resource_Standard]</DefiningQuery>
           <EntitySetMapping Name="Contents">
             <EntityTypeMapping TypeName="IsTypeOf(IsleContentModel.Content)">
               <MappingFragment StoreEntitySet="Content">
+                <ScalarProperty Name="DisplayTemplateId" ColumnName="DisplayTemplateId" />
                 <ScalarProperty Name="ImageUrl" ColumnName="ImageUrl" />
                 <ScalarProperty Name="Timeframe" ColumnName="Timeframe" />
                 <ScalarProperty Name="ResourceIntId" ColumnName="ResourceIntId" />
@@ -6835,7 +6978,6 @@ FROM [dbo].[Resource.Standard] AS [Resource_Standard]</DefiningQuery>
                 <ScalarProperty Name="LastUpdated" ColumnName="LastUpdated" />
                 <ScalarProperty Name="CreatedById" ColumnName="CreatedById" />
                 <ScalarProperty Name="Created" ColumnName="Created" />
-                <ScalarProperty Name="ResourceVersionId" ColumnName="ResourceVersionId" />
                 <ScalarProperty Name="OrgId" ColumnName="OrgId" />
                 <ScalarProperty Name="IsOrgContentOwner" ColumnName="IsOrgContentOwner" />
                 <ScalarProperty Name="IsPublished" ColumnName="IsPublished" />
@@ -7143,6 +7285,7 @@ FROM [dbo].[Resource.Standard] AS [Resource_Standard]</DefiningQuery>
           <EntitySetMapping Name="ContentSummaryViews">
             <EntityTypeMapping TypeName="IsleContentModel.ContentSummaryView">
               <MappingFragment StoreEntitySet="ContentSummaryView">
+                <ScalarProperty Name="DisplayTemplateId" ColumnName="DisplayTemplateId" />
                 <ScalarProperty Name="ImageUrl" ColumnName="ImageUrl" />
                 <ScalarProperty Name="Timeframe" ColumnName="Timeframe" />
                 <ScalarProperty Name="ConditionsOfUseIconUrl" ColumnName="ConditionsOfUseIconUrl" />
@@ -7173,7 +7316,6 @@ FROM [dbo].[Resource.Standard] AS [Resource_Standard]</DefiningQuery>
                 <ScalarProperty Name="OrgId" ColumnName="OrgId" />
                 <ScalarProperty Name="IsOrgContentOwner" ColumnName="IsOrgContentOwner" />
                 <ScalarProperty Name="IsPublished" ColumnName="IsPublished" />
-                <ScalarProperty Name="ResourceVersionId" ColumnName="ResourceVersionId" />
                 <ScalarProperty Name="ConditionsOfUseId" ColumnName="ConditionsOfUseId" />
                 <ScalarProperty Name="ContentPrivilege" ColumnName="ContentPrivilege" />
                 <ScalarProperty Name="PrivilegeTypeId" ColumnName="PrivilegeTypeId" />
@@ -7191,6 +7333,7 @@ FROM [dbo].[Resource.Standard] AS [Resource_Standard]</DefiningQuery>
           <EntitySetMapping Name="Library_SectionResourceSummary">
             <EntityTypeMapping TypeName="IsleContentModel.Library_SectionResourceSummary">
               <MappingFragment StoreEntitySet="Library_SectionResourceSummary">
+                <ScalarProperty Name="ImageUrl" ColumnName="ImageUrl" />
                 <ScalarProperty Name="SortTitle" ColumnName="SortTitle" />
                 <ScalarProperty Name="Description" ColumnName="Description" />
                 <ScalarProperty Name="ResourceUrl" ColumnName="ResourceUrl" />
@@ -7289,6 +7432,7 @@ FROM [dbo].[Resource.Standard] AS [Resource_Standard]</DefiningQuery>
           <EntitySetMapping Name="ActivityLogs">
             <EntityTypeMapping TypeName="IsleContentModel.ActivityLog">
               <MappingFragment StoreEntitySet="ActivityLog">
+                <ScalarProperty Name="IsBot" ColumnName="IsBot" />
                 <ScalarProperty Name="Referrer" ColumnName="Referrer" />
                 <ScalarProperty Name="TargetObjectId" ColumnName="TargetObjectId" />
                 <ScalarProperty Name="ObjectRelatedId" ColumnName="ObjectRelatedId" />
@@ -7560,11 +7704,11 @@ FROM [dbo].[Resource.Standard] AS [Resource_Standard]</DefiningQuery>
           <EntitySetMapping Name="Resource_Standard">
             <EntityTypeMapping TypeName="IsleContentModel.Resource_Standard">
               <MappingFragment StoreEntitySet="Resource_Standard">
+                <ScalarProperty Name="UsageType" ColumnName="UsageType" />
+                <ScalarProperty Name="UsageTypeId" ColumnName="UsageTypeId" />
                 <ScalarProperty Name="IsDirectStandard" ColumnName="IsDirectStandard" />
                 <ScalarProperty Name="CreatedById" ColumnName="CreatedById" />
                 <ScalarProperty Name="Created" ColumnName="Created" />
-                <ScalarProperty Name="AlignmentDegree" ColumnName="AlignmentDegree" />
-                <ScalarProperty Name="AlignmentDegreeId" ColumnName="AlignmentDegreeId" />
                 <ScalarProperty Name="AlignmentType" ColumnName="AlignmentType" />
                 <ScalarProperty Name="AlignmentTypeCodeId" ColumnName="AlignmentTypeCodeId" />
                 <ScalarProperty Name="AlignedById" ColumnName="AlignedById" />
@@ -7602,7 +7746,6 @@ FROM [dbo].[Resource.Standard] AS [Resource_Standard]</DefiningQuery>
                 <ScalarProperty Name="IsPublished" ColumnName="IsPublished" />
                 <ScalarProperty Name="ResourceIntId" ColumnName="ResourceIntId" />
                 <ScalarProperty Name="ResourceUrl" ColumnName="ResourceUrl" />
-                <ScalarProperty Name="ResourceVersionId" ColumnName="ResourceVersionId" />
                 <ScalarProperty Name="ConditionsOfUseId" ColumnName="ConditionsOfUseId" />
                 <ScalarProperty Name="ContentPrivilege" ColumnName="ContentPrivilege" />
                 <ScalarProperty Name="SortOrder" ColumnName="SortOrder" />
@@ -7677,6 +7820,7 @@ FROM [dbo].[Resource.Standard] AS [Resource_Standard]</DefiningQuery>
           <EntitySetMapping Name="LR_ResourceVersion_Summary">
             <EntityTypeMapping TypeName="IsleContentModel.LR_ResourceVersion_Summary">
               <MappingFragment StoreEntitySet="LR_ResourceVersion_Summary">
+                <ScalarProperty Name="ImageUrl" ColumnName="ImageUrl" />
                 <ScalarProperty Name="PublishedById" ColumnName="PublishedById" />
                 <ScalarProperty Name="SortTitle" ColumnName="SortTitle" />
                 <ScalarProperty Name="Submitter" ColumnName="Submitter" />
@@ -7855,6 +7999,7 @@ FROM [dbo].[Resource.Standard] AS [Resource_Standard]</DefiningQuery>
           <EntitySetMapping Name="ContentStandard_Summary">
             <EntityTypeMapping TypeName="IsleContentModel.ContentStandard_Summary">
               <MappingFragment StoreEntitySet="ContentStandard_Summary">
+                <ScalarProperty Name="ContentTitle" ColumnName="ContentTitle" />
                 <ScalarProperty Name="ResourceIntId" ColumnName="ResourceIntId" />
                 <ScalarProperty Name="StatusId" ColumnName="StatusId" />
                 <ScalarProperty Name="IsDirectStandard" ColumnName="IsDirectStandard" />
@@ -8065,6 +8210,8 @@ FROM [dbo].[Resource.Standard] AS [Resource_Standard]</DefiningQuery>
           <EntitySetMapping Name="Organizations">
             <EntityTypeMapping TypeName="IsleContentModel.Organization">
               <MappingFragment StoreEntitySet="Organization">
+                <ScalarProperty Name="StatusId" ColumnName="StatusId" />
+                <ScalarProperty Name="IsContentApprovalRequired" ColumnName="IsContentApprovalRequired" />
                 <ScalarProperty Name="Description" ColumnName="Description" />
                 <ScalarProperty Name="EmailDomain" ColumnName="EmailDomain" />
                 <ScalarProperty Name="IsIsleMember" ColumnName="IsIsleMember" />
@@ -8362,6 +8509,14 @@ FROM [dbo].[Resource.Standard] AS [Resource_Standard]</DefiningQuery>
           <EntitySetMapping Name="Organization_MemberSummary">
             <EntityTypeMapping TypeName="IsleContentModel.Organization_MemberSummary">
               <MappingFragment StoreEntitySet="Organization_MemberSummary">
+                <ScalarProperty Name="RoleIds" ColumnName="RoleIds" />
+                <ScalarProperty Name="LastLoginDate" ColumnName="LastLoginDate" />
+                <ScalarProperty Name="IsContentCreator" ColumnName="IsContentCreator" />
+                <ScalarProperty Name="IsAccountAdmin" ColumnName="IsAccountAdmin" />
+                <ScalarProperty Name="IsLibraryAdmin" ColumnName="IsLibraryAdmin" />
+                <ScalarProperty Name="IsContentAdmin" ColumnName="IsContentAdmin" />
+                <ScalarProperty Name="IsAdmin" ColumnName="IsAdmin" />
+                <ScalarProperty Name="Roles" ColumnName="Roles" />
                 <ScalarProperty Name="LastUpdatedById" ColumnName="LastUpdatedById" />
                 <ScalarProperty Name="LastUpdated" ColumnName="LastUpdated" />
                 <ScalarProperty Name="CreatedById" ColumnName="CreatedById" />
@@ -8501,6 +8656,17 @@ FROM [dbo].[Resource.Standard] AS [Resource_Standard]</DefiningQuery>
                 <ScalarProperty Name="TypeId" ColumnName="TypeId" />
                 <ScalarProperty Name="ContentId" ColumnName="ContentId" />
                 <ScalarProperty Name="ContentStandardId" ColumnName="ContentStandardId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Content_Keyword">
+            <EntityTypeMapping TypeName="IsleContentModel.Content_Keyword">
+              <MappingFragment StoreEntitySet="Content_Keyword">
+                <ScalarProperty Name="Created" ColumnName="Created" />
+                <ScalarProperty Name="CreatedById" ColumnName="CreatedById" />
+                <ScalarProperty Name="Keyword" ColumnName="Keyword" />
+                <ScalarProperty Name="ContentId" ColumnName="ContentId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

@@ -33,5 +33,6 @@ namespace IoerContentBusinessEntities
         public Nullable<bool> IsDirectStandard { get; set; }
         public Nullable<int> StatusId { get; set; }
         public Nullable<int> ResourceIntId { get; set; }
+        public string ContentTitle { get; set; }
     }
 }

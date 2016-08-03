@@ -30,7 +30,6 @@ namespace IoerContentBusinessEntities
         public int SortOrder { get; set; }
         public string ContentPrivilege { get; set; }
         public int ConditionsOfUseId { get; set; }
-        public int ResourceVersionId { get; set; }
         public string ResourceUrl { get; set; }
         public Nullable<int> ResourceIntId { get; set; }
         public bool IsPublished { get; set; }

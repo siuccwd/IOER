@@ -12,11 +12,14 @@ namespace IoerContentBusinessEntities
     using System;
     using System.Collections.Generic;
     
-    public partial class ContentTemplate
+    public partial class Content_Keyword
     {
         public int Id { get; set; }
-        public string Title { get; set; }
-        public string Template { get; set; }
+        public int ContentId { get; set; }
+        public string Keyword { get; set; }
+        public Nullable<int> CreatedById { get; set; }
         public Nullable<System.DateTime> Created { get; set; }
+    
+        public virtual Content Content { get; set; }
     }
 }
