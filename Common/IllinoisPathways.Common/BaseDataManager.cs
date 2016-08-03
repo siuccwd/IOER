@@ -397,6 +397,16 @@ namespace ILPathways.Common
 
             try
             {
+				//need to properly handle int values of 0,1, as bool
+				string strValue = row[ column ].ToString();
+				if ( !string.IsNullOrWhiteSpace( strValue ) && strValue.Trim().Length == 1 )
+				{
+					strValue = strValue.Trim();
+					if ( strValue == "0" )
+						return false;
+					else if ( strValue == "1" )
+						return true;
+				}
                 colValue = Boolean.Parse( row[ column ].ToString() );
 
             }
@@ -565,6 +575,16 @@ namespace ILPathways.Common
 
             try
             {
+				//need to properly handle int values of 0,1, as bool
+				string strValue = row[ column ].ToString();
+				if ( !string.IsNullOrWhiteSpace( strValue ) && strValue.Trim().Length == 1 )
+				{
+					strValue = strValue.Trim();
+					if ( strValue == "0" )
+						return false;
+					else if ( strValue == "1" )
+						return true;
+				}
                 colValue = Boolean.Parse( row[ column ].ToString() );
 
             }
@@ -708,6 +728,17 @@ namespace ILPathways.Common
             bool colValue;
             try
             {
+				//need to properly handle int values of 0,1, as bool
+				string strValue = row[ column ].ToString();
+				if ( !string.IsNullOrWhiteSpace( strValue ) && strValue.Trim().Length == 1 )
+				{
+					strValue = strValue.Trim();
+					if ( strValue == "0" )
+						return false;
+					else if ( strValue == "1" )
+						return true;
+				}
+
                 colValue = Boolean.Parse( row[ column ].ToString() );
 
             }
@@ -1688,7 +1719,7 @@ namespace ILPathways.Common
             string remoteIP = "unknown";
             string path = "unknown";
             string queryString = "unknown";
-            string mcmsUrl = "unknown";
+            string pageUrl = "unknown";
             string parmsString = "";
 
             try
@@ -1699,13 +1730,13 @@ namespace ILPathways.Common
                 string serverName = GetAppKeyValue( "serverName", HttpContext.Current.Request.ServerVariables[ "LOCAL_ADDR" ] );
                 path = serverName + HttpContext.Current.Request.Path;
                 queryString = GetWebUrl();
-                mcmsUrl = GetPublicUrl( queryString );
+                pageUrl = GetPublicUrl( queryString );
 
-                mcmsUrl = HttpContext.Current.Server.UrlDecode( mcmsUrl );
-                if ( mcmsUrl.IndexOf( "?" ) > -1 )
+                pageUrl = HttpContext.Current.Server.UrlDecode( pageUrl );
+                if ( pageUrl.IndexOf( "?" ) > -1 )
                 {
-                    parmsString = mcmsUrl.Substring( mcmsUrl.IndexOf( "?" ) + 1 );
-                    mcmsUrl = mcmsUrl.Substring( 0, mcmsUrl.IndexOf( "?" ) );
+                    parmsString = pageUrl.Substring( pageUrl.IndexOf( "?" ) + 1 );
+                    pageUrl = pageUrl.Substring( 0, pageUrl.IndexOf( "?" ) );
                 }
 
                 //user = UserManager.GetCurrentUserid();
@@ -1723,7 +1754,7 @@ namespace ILPathways.Common
                     "\r\nException: " + ex.Message.ToString() +
                     "\r\nStack Trace: " + ex.StackTrace.ToString() +
                     "\r\nServer\\Template: " + path +
-                    "\r\nUrl: " + mcmsUrl;
+                    "\r\nUrl: " + pageUrl;
 
                 if ( parmsString.Length > 0 )
                     errMsg += "\r\nParameters: " + parmsString;
@@ -1811,12 +1842,13 @@ namespace ILPathways.Common
             //avoid infinite loop by ensuring this method didn't generate the exception
             string emailTo = GetAppKeyValue( "systemAdminEmail", "mparsons@siuccwd.com" );
             string emailFrom = GetAppKeyValue( "systemNotifyFromEmail", "TheWatcher@siuccwd.com" );
-            string cc = "";
+            //string cc = "";
 
             //work on implementing some specific routing based on error type
-            if ( message.IndexOf( "SqlClient.SqlConnection.Open()" ) > -1 )
-                cc = "jgrimmer@siuccwd.com";
-
+			if ( message.IndexOf( "SqlClient.SqlConnection.Open()" ) > -1 )
+			{
+				//cc = "jgrimmer@siuccwd.com";
+			}
             if ( message.IndexOf( "BaseDataManager.NotifyAdmin" ) > -1 )
             {
                 //skip may be error on send
