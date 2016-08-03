@@ -276,7 +276,7 @@ namespace ILPathways.Utilities
             //get internal link snippet using default from web.config (or other way around??)
             string internalLink = GetInternalLink();
             string externalLink = GetExternalLink();
-            string glossaryLink = GetGlossaryLink();
+            //string glossaryLink = GetGlossaryLink();
             string textOnlyIndicator = "opens in a new window";
             // string landingPageLink = UtilityManager.GetResourceValue( rm, "url_landing_page" );
 
@@ -356,7 +356,7 @@ namespace ILPathways.Utilities
                     }
                     // do checks before insert of landing link
                     bool isPopupLink = IsLinkPopup( insideTag );
-                    bool isInternalLink = IsPathInternal( insideTag );
+					bool isInternalLink = false;// 					IsPathInternal( insideTag );
                     //bool isGlossaryLink = IsPathGlossary( insideTag );
 
                     //check if extenal link
@@ -477,7 +477,7 @@ namespace ILPathways.Utilities
                 "opens in a new window" ) + "";
             string landingPageLink = UtilityManager.GetResourceValue( rm, "url_landing_page" );
 
-            bool isInternalLink = IsPathInternal( link.NavigateUrl.ToString() );
+			bool isInternalLink = false;	//IsPathInternal( link.NavigateUrl.ToString() );
 
             bool isPopupLink = link.Target.ToLower() == "_blank" ? true : false;
 
@@ -1098,9 +1098,9 @@ namespace ILPathways.Utilities
 
             string landingPageLink = UtilityManager.GetResourceValue( rm, "url_landing_page" );
 
-            if ( IsPathInternal( url ) )
-                linkSnippet = GetInternalLink( );
-            else
+			//if ( IsPathInternal( url ) )
+			//	linkSnippet = GetInternalLink( );
+			//else
                 linkSnippet = GetExternalLink();
 
             href = " href =\""
@@ -1162,9 +1162,9 @@ namespace ILPathways.Utilities
             {
                 //Create the link 
 
-                if ( IsPathInternal( url ) )
-                    linkSnippet = GetInternalLink( );
-                else
+				//if ( IsPathInternal( url ) )
+				//	linkSnippet = GetInternalLink( );
+				//else
                     linkSnippet = GetExternalLink();
 
                 //this is a slightly simplified version of the href code used in the non-extended functions

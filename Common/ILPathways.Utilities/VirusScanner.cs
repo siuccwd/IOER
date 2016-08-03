@@ -63,6 +63,22 @@ namespace ILPathways.Utilities
             }
         }
 
+				public string Scan( Stream stream, ref bool clean, ref string status )
+				{
+					if ( shouldScan )
+					{
+						var scanResult = clam.SendAndScanFile( stream );
+						SetScanResult( scanResult, ref clean, ref status );
+						return ConvertResultToString( scanResult );
+					}
+					else
+					{
+						clean = true;
+						status = "no scan done";
+						return "no scan done";
+					}
+				}
+
         public string Scan(byte[] bytes)
         {
             if (shouldScan)
@@ -81,28 +97,33 @@ namespace ILPathways.Utilities
 					if ( shouldScan )
 					{
 						var result = clam.SendAndScanFile( bytes );
-						switch ( result.Result )
-						{
-							case ClamScanResults.Clean:
-								clean = true;
-								status = "Scan passed";
-								break;
-							case ClamScanResults.VirusDetected:
-								clean = false;
-								status = "Virus detected: " + result.RawResult;
-								break;
-							case ClamScanResults.Error:
-							case ClamScanResults.Unknown:
-							default:
-								clean = false;
-								status = "Error occurred: " + result.RawResult;
-								break;
-						}
+						SetScanResult( result, ref clean, ref status );
 					}
 					else
 					{
 						clean = true;
 						status = "No scan performed";
+					}
+				}
+
+				protected void SetScanResult( ClamScanResult result, ref bool clean, ref string status )
+				{
+					switch ( result.Result )
+					{
+						case ClamScanResults.Clean:
+							clean = true;
+							status = "Scan passed";
+							break;
+						case ClamScanResults.VirusDetected:
+							clean = false;
+							status = "Virus detected: " + result.RawResult;
+							break;
+						case ClamScanResults.Error:
+						case ClamScanResults.Unknown:
+						default:
+							clean = false;
+							status = "Error occurred: " + result.RawResult;
+							break;
 					}
 				}
 

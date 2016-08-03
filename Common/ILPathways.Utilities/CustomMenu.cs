@@ -261,7 +261,7 @@ namespace ILPathways.Utilities
 		} //
 		private string FormatMenuItem(DataItem menuItem, string style) 
 		{
-			string item = "";
+			//string item = "";
 			string onClick = "";
 
             if ( menuItem.Url == "#" )

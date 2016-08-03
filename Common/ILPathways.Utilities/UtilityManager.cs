@@ -824,17 +824,6 @@ namespace ILPathways.Utilities
         } //
 
         /// <summary>
-        /// Get glossary link snippet - img tag for link to glossary page
-        /// </summary>
-        /// <param name="rm"></param>
-        /// <returns></returns>
-        public static string GetGlossaryLink()
-        {
-            //get glossary link snippet using default from web.config (or other way around??)
-            string link = GetAppKeyValue( "glossaryLinkImg", "" );
-            return link;
-        }
-        /// <summary>
         /// Insert soft breaks into long URLs or email addresses in text string
         /// </summary>
         /// <param name="anchorText">Text to insert soft breaks into</param>
@@ -1065,126 +1054,71 @@ namespace ILPathways.Utilities
             }
         }
 
-        /// <summary>
-        /// Determine if the passed url is to the glossary page(s)
-        /// </summary>
-        /// <param name="path">URL to inspect</param>
-        /// <returns>true if the path is to the glossary page(s), otherwise false</returns>
-        public static bool IsPathGlossary( string path )
-        {
-            //string defaultPage = GetAppKeyValue( "defaultPage", "/vos_portal/" ).ToLower();
-            //string landingPage = GetAppKeyValue( "landingPage", "landing.htm" ).ToLower();
-            //if ( ( path.ToLower().IndexOf( "/nr/exeres" ) > -1 ||
-            //  path.ToLower().IndexOf( "/nr/rdonlyres/" ) > -1 ) && path.ToLower().IndexOf( landingPage ) < 0 )
-            //{
-            //    char[] separator = new char[ 1 ];
-            //    separator[ 0 ] = '/';
-            //    string[] folders = path.Split( separator );
-            //    string guid;
-            //    if ( folders[ 3 ].ToLower().IndexOf( ".htm" ) > -1 )
-            //    {
-            //        guid = folders[ 3 ].Substring( 0, folders[ 3 ].IndexOf( ".htm" ) );
-            //    }
-            //    else
-            //    {
-            //        guid = folders[ 3 ];
-            //    }
-            //    HierarchyItem hi;
-            //    try
-            //    {
-            //        hi = CmsHttpContext.Current.Searches.GetByGuid( "{" + guid + "}" );
-            //        if ( hi is Channel )
-            //        {
-            //            path = ( ( Channel ) hi ).Name;
-            //        }
-            //        else if ( hi is Posting )
-            //        {
-            //            path = ( ( Posting ) hi ).Url;
-            //        }
-            //    }
-            //    catch ( CmsServerException cse )
-            //    {
-            //        // Ignore this exception
-            //    }
-            //    catch ( Exception ex )
-            //    {
-            //        LoggingHelper.LogError( ex, "UtilityManager.IsPathGlossary exception: " );
-            //    }
-            //}
-            if ( path.ToLower().IndexOf( GetAppKeyValue( "glossaryPage", "glossary_terms" ).ToLower() ) > -1 )
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
 
         /// <summary>
         /// Determine if the passed url is to the internal site or an external site
         /// </summary>
         /// <param name="path">URL to inspect</param>
         /// <returns>true if path is internal, otherwise false</returns>
-        public static bool IsPathInternal( string path )
-        {
-            string defaultPage = GetAppKeyValue( "defaultPage", "/vos_portal/" );
-            string landingPage = GetAppKeyValue( "landingPage", "landing.htm" );
-            string host = HttpContext.Current.Request.ServerVariables[ "HTTP_HOST" ];
+		//public static bool IsPathInternal( string path )
+		//{
+		//	string defaultPage = GetAppKeyValue( "defaultPage", "/vos_portal/" );
+		//	string landingPage = GetAppKeyValue( "landingPage", "landing.htm" );
+		//	string host = HttpContext.Current.Request.ServerVariables[ "HTTP_HOST" ];
 
-            bool action = true;
+		//	bool action = true;
 
-            try
-            {
+		//	try
+		//	{
 
-                if ( path.ToLower().IndexOf( defaultPage ) > -1
-                    || path.ToLower().IndexOf( "/nr/exeres/" ) > -1
-                    || path.ToLower().IndexOf( "/nr/rdonlyres/" ) > -1
-                    || path.ToLower().IndexOf( "#" ) > -1
-                    || !path.ToLower().StartsWith( "http" )
-                    )
-                {
-                    action = true;
-                }
-                else
-                {
-                    action = false;
-                }
+		//		if ( path.ToLower().IndexOf( defaultPage ) > -1
+		//			|| path.ToLower().IndexOf( "/nr/exeres/" ) > -1
+		//			|| path.ToLower().IndexOf( "/nr/rdonlyres/" ) > -1
+		//			|| path.ToLower().IndexOf( "#" ) > -1
+		//			|| !path.ToLower().StartsWith( "http" )
+		//			)
+		//		{
+		//			action = true;
+		//		}
+		//		else
+		//		{
+		//			action = false;
+		//		}
 
-                if ( path.ToLower().IndexOf( landingPage ) > 0 )
-                {
-                    //landing page in path, assume external
-                    action = false;
+		//		if ( path.ToLower().IndexOf( landingPage ) > 0 )
+		//		{
+		//			//landing page in path, assume external
+		//			action = false;
 
-                    //check for hard coded prod path - as will be used in newsletters when on web
-                }
-                else if ( path.ToLower().IndexOf( "http://www.illinoisworknet.com" ) > 0
-                  || path.ToLower().IndexOf( "https://www.illinoisworknet.com" ) > 0
-                  || path.ToLower().IndexOf( host ) > 0
-                  )
-                {
-                    action = true;
+		//			//check for hard coded prod path - as will be used in newsletters when on web
+		//		}
+		//		else if ( path.ToLower().IndexOf( "http://www.illinoisworknet.com" ) > 0
+		//		  || path.ToLower().IndexOf( "https://www.illinoisworknet.com" ) > 0
+		//		  || path.ToLower().IndexOf( host ) > 0
+		//		  )
+		//		{
+		//			action = true;
 
-                }
-                else if ( path.ToLower().IndexOf( "http://" ) > 0
-                  || path.ToLower().IndexOf( "http%3a" ) > 0
-                  || path.ToLower().IndexOf( "https://" ) > 0
-                  || path.ToLower().IndexOf( "https%3a" ) > 0
-                  )
-                {
-                    action = false;
-                }
+		//		}
+		//		else if ( path.ToLower().IndexOf( "http://" ) > 0
+		//		  || path.ToLower().IndexOf( "http%3a" ) > 0
+		//		  || path.ToLower().IndexOf( "https://" ) > 0
+		//		  || path.ToLower().IndexOf( "https%3a" ) > 0
+		//		  )
+		//		{
+		//			action = false;
+		//		}
 
-                return action;
+		//		return action;
 
-            }
-            catch ( Exception e )
-            {
-                LoggingHelper.LogError( "UtilityManager.IsPathInternal: " + e.ToString() );
-                //default value
-                return false;
-            }
-        }
+		//	}
+		//	catch ( Exception e )
+		//	{
+		//		LoggingHelper.LogError( "UtilityManager.IsPathInternal: " + e.ToString() );
+		//		//default value
+		//		return false;
+		//	}
+		//}
         #endregion
 
         /// <summary>

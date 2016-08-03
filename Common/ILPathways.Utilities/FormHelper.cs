@@ -602,7 +602,13 @@ namespace ILPathways.Utilities
 		/// <param name="sessionValue">Value to be assigned to the session key</param>
 		public static void SetSessionItem( string sessionKey, string sessionValue )
 		{
-			HttpContext.Current.Session[ sessionKey ] = sessionValue;
+			SetSessionItem( HttpContext.Current.Session, sessionKey, sessionValue );
+
+		} //
+
+		public static void SetSessionItem( HttpSessionState session, string sessionKey, string sessionValue )
+		{
+			session[ sessionKey ] = sessionValue;
 
 		} //
 

@@ -79,6 +79,7 @@ namespace ILPathways.Utilities
 					//may want to return path for display in a link?
                     if ( overwritingFile )
                     {
+						LoggingHelper.DoTrace( 3, thisClassName + ".HandleDocumentCaching() overwriting existing file: " + destFile );
                         //download
                         byte[] buffer = document.ResourceData;
                         using ( FileStream fs = new FileStream( destFile, FileMode.Create ) )
@@ -285,7 +286,37 @@ namespace ILPathways.Utilities
 
 
         #region Folders and files
-        
+		/// <summary>
+		/// Analyze a filename, and return system friendly name
+		/// </summary>
+		/// <param name="filename"></param>
+		/// <returns></returns>
+		public static string SanitizeFilename( string filename )
+		{
+			return SanitizeFilename( filename, 0 );
+		}
+		/// <summary>
+		/// Analyze a filename, and return system friendly name
+		/// </summary>
+		/// <param name="filename"></param>
+		/// <param name="maxLength">If greater than zero, use to truncate the file length</param>
+		/// <returns></returns>
+		public static string SanitizeFilename( string filename, int maxLength )
+		{
+			if ( filename == null || filename.Trim().Length == 0 )
+				return "";
+
+			string file = filename.Trim();
+			file = string.Concat( file.Split( System.IO.Path.GetInvalidFileNameChars(), StringSplitOptions.RemoveEmptyEntries ) );
+
+			if ( maxLength > 0 && file.Length > maxLength )
+			{
+				file = file.Substring( 0, maxLength );
+			}
+			return file;
+
+		} //
+
         /// <summary>
 		/// Return true if the passed path exists
 		/// </summary>
@@ -310,7 +341,7 @@ namespace ILPathways.Utilities
 				LoggingHelper.LogError( ex, thisClassName + ".DoesPathExist(" + path + ")" );
 				return false;
 			}
-		}
+}
 
 		/// <summary>
 		/// Check if file exists on server
@@ -319,13 +350,26 @@ namespace ILPathways.Utilities
 		/// <param name="fileName"></param>
 		public static bool DoesFileExist( string documentFolder, string fileName )
 		{
-            if ( documentFolder == null || fileName == null )
+			if ( documentFolder == null || fileName == null )
+                return false;
+			string pathAndFileName = documentFolder + "\\" + fileName;
+
+			return DoesFileExist( pathAndFileName );
+		}
+
+		/// <summary>
+		/// Check if file exists on server
+		/// </summary>
+		/// <param name="documentFolder"></param>
+		/// <param name="fileName"></param>
+		public static bool DoesFileExist( string pathAndFileName )
+		{
+			if ( pathAndFileName == null || pathAndFileName == null )
                 return false;
 
-			string destFile = documentFolder + "\\" + fileName;
 			try
 			{
-				if ( System.IO.File.Exists( destFile ) )
+				if ( System.IO.File.Exists( pathAndFileName ) )
 				{
 					return true;
 				} else
@@ -334,7 +378,7 @@ namespace ILPathways.Utilities
 				}
 			} catch ( Exception ex )
 			{
-				LoggingHelper.LogError( ex, thisClassName + ".DoesFileExist() - Unexpected error encountered while retrieving document" );
+				LoggingHelper.LogError( ex, thisClassName + ".DoesFileExist() - Unexpected error encountered while retrieving document. File: " + pathAndFileName );
 
 				return false;
 			}

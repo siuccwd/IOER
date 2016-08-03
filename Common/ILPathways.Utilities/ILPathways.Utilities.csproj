@@ -35,6 +35,15 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Testing|AnyCPU'">
+    <OutputPath>bin\Testing\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Interop.Scripting">
       <HintPath>..\..\Library\Interop.Scripting.dll</HintPath>
@@ -48,10 +57,15 @@
       <HintPath>..\..\LR_Import\packages\nClam.2.0.6.0\lib\net40-Client\nClam.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\Newtonsoft.Json.9.0.1\lib\net40\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Net.Http, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -60,6 +74,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ASPnetPagerV2_8.cs" />
     <Compile Include="BadWordChecker.cs" />
     <Compile Include="BaseUtilityManager.cs" />
     <Compile Include="BrowserWindow.cs" />
@@ -83,7 +98,7 @@
       <Project>{cae031c2-7899-4cc3-9772-0787e65977a2}</Project>
       <Name>ILPathways.Business</Name>
     </ProjectReference>
-    <ProjectReference Include="..\google-safebrowse-v2-client\Safebrowsev2\SafebrowseV2.csproj">
+    <ProjectReference Include="..\..\google-safebrowse-v2-client\Safebrowsev2\SafebrowseV2.csproj">
       <Project>{7da36d86-757e-48e3-8c82-545ee59cf820}</Project>
       <Name>SafebrowseV2</Name>
     </ProjectReference>

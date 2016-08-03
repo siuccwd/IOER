@@ -28,7 +28,7 @@ namespace ILPathways.Utilities
           
             try
             {
-                int f = 1;
+                
                 // we create a reader for a certain document
                 PdfReader reader = new PdfReader( baseFile );
                 // we retrieve the total number of pages
@@ -43,8 +43,8 @@ namespace ILPathways.Utilities
                 // step 3: we open the document
                 document.Open();
                 PdfContentByte cb = writer.DirectContent;
-                PdfImportedPage page;
-                int rotation = 0;
+                
+                
                 // step 4: we add content
 
                 MergeFiles( writer, document, reader,   cb );
@@ -53,6 +53,9 @@ namespace ILPathways.Utilities
                 
                 MergeFiles( writer, document, reader,   cb );
 
+				//int f = 1;
+				//PdfImportedPage page;
+				//int rotation = 0;
                 //while ( f < args.Length )
                 //{
                 //    int i = 0;

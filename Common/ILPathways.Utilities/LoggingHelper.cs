@@ -111,9 +111,14 @@ namespace ILPathways.Utilities
                     "\r\nServer\\Template: " + path +
                     "\r\nUrl: " + url;
 
-                if ( ex.InnerException != null && ex.InnerException.Message != null )
-                    errMsg += "\r\n****Inner exception: " + ex.InnerException.Message;
-				
+				if ( ex.InnerException != null && ex.InnerException.Message != null )
+				{
+					errMsg += "\r\n****Inner exception: " + ex.InnerException.Message;
+
+					if ( ex.InnerException.InnerException != null && ex.InnerException.InnerException.Message != null )
+						errMsg += "\r\n@@@@@@Inner-Inner exception: " + ex.InnerException.InnerException.Message;
+				}
+
                 if ( parmsString.Length > 0 )
                     errMsg += "\r\nParameters: " + parmsString;
 
@@ -311,7 +316,7 @@ namespace ILPathways.Utilities
         /// <param name="comment">Comment</param>
         /// <param name="remoteIP">client IP address</param>
         /// <remarks>06/09/15 mparsons - added remoteIP</remarks>
-        public static void LogPageVisit( string sessionId, string template, string queryString, string parmString, bool isPostBack, string userid, string partner, string comment, string remoteIP, string lwia )
+		public static void LogPageVisit( string sessionId, string template, string queryString, string parmString, bool isPostBack, string userid, string partner, string comment, string remoteIP, string lwia )
         {
             System.DateTime visitDate = System.DateTime.Now;
 
@@ -364,20 +369,19 @@ namespace ILPathways.Utilities
         /// Log a page visit. Output is to a file.
         /// </summary>
         /// <param name="message"></param>
-        public static void LogPageVisit( string message )
+        private static void LogPageVisit( string message )
         {
 
             string msg = "";
             string outputPath = "";
-
+			string logFileAppKey = "path.trace.log"; //"path.visitor.log"
             try
             {
-                //msg += "'User Log', " + message;
-                msg = message;
+				msg = "**** Visitor.log: " + message;
 
                 string datePrefix = System.DateTime.Today.ToString( "u" ).Substring( 0, 10 );
 
-                string logFile = UtilityManager.GetAppKeyValue( "path.visitor.log", "C:\\VOS_LOGS.txt" );
+				string logFile = UtilityManager.GetAppKeyValue( logFileAppKey, "C:\\VOS_LOGS.txt" );
 
                 string outputFile = logFile.Replace( "[date]", datePrefix );
 
