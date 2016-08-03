@@ -1089,7 +1089,7 @@ namespace LRWarehouse.DAL
         {
             try
             {
-                return array[ i ] == null ? 0 : array[ i ];
+                return array[ i ];	// == null ? 0 : array[ i ];
             }
             catch ( IndexOutOfRangeException ex )
             {

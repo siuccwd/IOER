@@ -624,13 +624,13 @@ namespace LRWarehouse.DAL
             entity.ResourceUrl = GetRowColumn( dr, "ResourceUrl", "" );
             entity.ViewCount = GetRowColumn( dr, "ViewCount", 0 );
             entity.FavoriteCount = GetRowColumn( dr, "FavoriteCount", 0 );
-            entity.Created = GetRowColumn( dr, "Created", DateTime.Now );
+            entity.Created = GetRowPossibleColumn( dr, "Created", DateTime.Now );
             entity.LastUpdated = GetRowColumn( dr, "LastUpdated", DateTime.Now );
 			entity.ImageUrl = GetRowPossibleColumn(dr, "ImageUrl", "" );
 
             //entity.HasPathwayGradeLevel = GetRowColumn( dr, "HasPathwayGradeLevel", true );
             entity.Id = GetRowColumn( dr, "Id", 0 );
-
+			entity.CreatedById = GetRowPossibleColumn( dr, "CreatedById", 0 );
             string filter = string.Format( "ResourceId = '{0}'", entity.RowId );
             string status = "successful";
 
@@ -767,6 +767,9 @@ namespace LRWarehouse.DAL
 		/// <returns></returns>
 		public bool ResourceTag_ConvertById( int resourceId )
 		{
+			if ( resourceId == 0 )
+				return false;
+
 			string connectionString = LRWarehouse();
 			bool successful = false;
 
@@ -780,7 +783,7 @@ namespace LRWarehouse.DAL
 			}
 			catch ( Exception ex )
 			{
-				LogError( ex, thisClassName + ".ResourceTag_ConvertById() " );
+				LogError( ex, thisClassName + string.Format( ".ResourceTag_ConvertById(), resourceId: {0} ", resourceId ) );
 
 				successful = false;
 			}
@@ -883,6 +886,7 @@ namespace LRWarehouse.DAL
 					{
 						foreach ( DataRow dr in ds.Tables[ 0 ].Rows )
 						{
+							//returns a csv list of resourceIds
 							resourceList = GetRowColumn( dr, "Resources", "" );
 							//only return one
 							DoTrace( 1, string.Format("ResourceManager.InitiateDelayedPublishing. ContentId: {0}, resId: {1}, resources: {2}", contentId, resourceId, resourceList) );
@@ -892,7 +896,7 @@ namespace LRWarehouse.DAL
 					}
 					else
 					{
-						statusMessage = "Warning no resources were returnede";
+						statusMessage = "Warning no resources were returned";
 					}
 
 				}
@@ -1190,7 +1194,7 @@ namespace LRWarehouse.DAL
                 keys = new ResourceChildItem();
             }
             XmlNodeList list = xdoc.GetElementsByTagName( tagName );
-            bool itemDeletedFromKeys = false;
+            //bool itemDeletedFromKeys = false;
             foreach ( XmlNode node in list )
             {
                 string value = string.Format( "\"{0}\"", node.InnerText );
@@ -1199,7 +1203,7 @@ namespace LRWarehouse.DAL
                 {
                     keys.OriginalValue = keys.OriginalValue.Replace( value, "" );
                     keys.OriginalValue = keys.OriginalValue.Replace( ",,", "," );
-                    itemDeletedFromKeys = true;
+                    //itemDeletedFromKeys = true;
                 }
 
                 ResourceChildItem type = new ResourceChildItem();
@@ -1227,7 +1231,7 @@ namespace LRWarehouse.DAL
             }
 
             XmlNodeList list = xdoc.GetElementsByTagName( tagName );
-            bool itemDeletedFromKeys = false;
+           // bool itemDeletedFromKeys = false;
             foreach ( XmlNode node in list )
             {
                 string value = string.Format( "\"{0}\"", node.InnerText );
@@ -1235,7 +1239,7 @@ namespace LRWarehouse.DAL
                 {
                     keys.OriginalValue = keys.OriginalValue.Replace( value, "" );
                     keys.OriginalValue = keys.OriginalValue.Replace( ",,", "," );
-                    itemDeletedFromKeys = true;
+                    //itemDeletedFromKeys = true;
                 }
 
                 ResourceChildItem format = new ResourceChildItem();

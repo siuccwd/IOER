@@ -20,6 +20,7 @@ namespace LRWarehouse.DAL
         const string INSERT_PROC = "[Resource.ItemTypeInsert]";
         const string UPDATE_PROC = "[Resource.ItemTypeUpdate]";
         const string IMPORT_PROC = "[Resource.ItemType_Import]";
+        const string IMPORT_PROCV2 = "[Resource.ItemType_ImportV2]";
 
         /// <summary>
         /// Default constructor
@@ -310,6 +311,33 @@ namespace LRWarehouse.DAL
 
             return retVal;
         }// Import
+
+        public string ImportV2(MyEntity entity)
+        {
+            string retVal = "successful";
+            string connectionString = LRWarehouse();
+
+            try
+            {
+                #region SQL Parameters
+                SqlParameter[] parameters = new SqlParameter[4];
+                parameters[0] = new SqlParameter("@ResourceIntId", entity.ResourceIntId);
+                parameters[1] = new SqlParameter("@ItemTypeId", entity.CodeId);
+                parameters[2] = new SqlParameter("@OriginalValue", entity.OriginalValue);
+                parameters[3] = new SqlParameter("@TotalRows", SqlDbType.Int);
+                parameters[3].Direction = ParameterDirection.Output;
+                #endregion
+
+                DataSet ds = SqlHelper.ExecuteDataset(connectionString, CommandType.StoredProcedure, IMPORT_PROCV2, parameters);
+            }
+            catch (Exception ex)
+            {
+                retVal = ex.Message;
+                LogError(className + ".ImportV2(): " + ex.ToString());
+            }
+
+            return retVal;
+        }// ImportV2
 
         #endregion
 

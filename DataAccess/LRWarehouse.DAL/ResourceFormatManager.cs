@@ -27,10 +27,12 @@ namespace LRWarehouse.DAL
         const string GET_PROC = "[Resource.FormatGet]";
         const string SELECT_PROC = "[Resource.FormatSelect]";
         const string SELECT2_PROC = "[Resource.FormatSelect2]";
+        const string SELECT_PROCV2 = "[Resource.FormatSelectV2]";
         const string DELETE_PROC = "[Resource.FormatDelete]";
         const string INSERT_PROC = "[Resource.FormatInsert]";
         const string UPDATE_PROC = "[Resource.FormatUpdate]";
         const string IMPORT_PROC = "[Resource.Format_Import]";
+        const string IMPORT_PROCV2 = "[Resource.Format_ImportV2]";
 
 
         /// <summary>
@@ -250,8 +252,8 @@ namespace LRWarehouse.DAL
         public string Import( MyEntity entity, ref string statusMessage )
         {
             string newId = "";
-            bool isDup = false;
-            string msg = "";
+           // bool isDup = false;
+           // string msg = "";
             int outputCol = 3;
             int pTotalRows = 0;
             DataSet ds = new DataSet();
@@ -298,6 +300,71 @@ namespace LRWarehouse.DAL
             {
                 LogError( ex, className + string.Format( ".Import() for ResourceId: {0}, CodeId: {1}, Vale: {2}, and CreatedBy: {4}", entity.ResourceIntId.ToString(), entity.CodeId, entity.OriginalValue, entity.CreatedById ) );
                 statusMessage = className + "- Unsuccessful: Import(): " + ex.Message.ToString();
+            }
+
+            return newId;
+        }
+
+        /// <summary>
+        /// Import
+        /// the Insert is now the same as this essentially, so probably will not use
+        /// May still be used by the process to resolve mapping issues, but likely to be called from a sproc
+        /// This is V2 that adds to Resource.Tags table
+        /// </summary>
+        /// <param name="entity"></param>
+        /// <param name="statusMessage"></param>
+        /// <returns></returns>
+        public string ImportV2(MyEntity entity, ref string statusMessage)
+        {
+            string newId = "";
+           // bool isDup = false;
+          //  string msg = "";
+            int outputCol = 3;
+            int pTotalRows = 0;
+            DataSet ds = new DataSet();
+
+            try
+            {
+                #region parameters
+                SqlParameter[] sqlParameters = new SqlParameter[4];
+                //sqlParameters[ 0 ] = new SqlParameter( "@ResourceId", entity.ResourceId );
+                sqlParameters[0] = new SqlParameter("@ResourceIntId", entity.ResourceIntId);
+                sqlParameters[1] = new SqlParameter("@ResourceFormatId", entity.CodeId);
+                sqlParameters[2] = new SqlParameter("@OriginalValue", entity.OriginalValue);
+                sqlParameters[outputCol] = new SqlParameter("@TotalRows", SqlDbType.Int);
+                sqlParameters[outputCol].Direction = ParameterDirection.Output;
+
+                #endregion
+                //??
+                ds = SqlHelper.ExecuteDataset(ConnString, CommandType.StoredProcedure, IMPORT_PROCV2, sqlParameters);
+
+                string rows = sqlParameters[outputCol].Value.ToString();
+                try
+                {
+                    pTotalRows = Int32.Parse(rows);
+                }
+                catch
+                {
+                    pTotalRows = 0;
+                }
+                //OR ????????????????????
+                //SqlDataReader dr = SqlHelper.ExecuteReader( ConnString, CommandType.StoredProcedure, IMPORT_PROC, sqlParameters );
+                //if ( dr.HasRows )
+                //{
+                //    dr.Read();
+                //    newId = GetRowColumn( dr, "Id", "" );
+                //    isDup = GetRowColumn( dr, "IsDuplicate", false );
+                //    msg = GetRowColumn( dr, "Message", "" );
+                //}
+                //dr.Close();
+                //dr = null;
+                statusMessage = "successful";
+
+            }
+            catch (Exception ex)
+            {
+                LogError(ex, className + string.Format(".ImportV2() for ResourceId: {0}, CodeId: {1}, Vale: {2}, and CreatedBy: {4}", entity.ResourceIntId.ToString(), entity.CodeId, entity.OriginalValue, entity.CreatedById));
+                statusMessage = className + "- Unsuccessful: ImportV2(): " + ex.Message.ToString();
             }
 
             return newId;
@@ -417,20 +484,20 @@ namespace LRWarehouse.DAL
         }
 
 
-        public EntityCollection Select( int pResourceIntId )
+        public EntityCollection Select(int pResourceIntId)
         {
             EntityCollection collection = new EntityCollection();
             try
             {
-                SqlParameter[] sqlParameters = new SqlParameter[ 1 ];
-                sqlParameters[ 0 ] = new SqlParameter( "@ResourceIntId", pResourceIntId );
+                SqlParameter[] sqlParameters = new SqlParameter[1];
+                sqlParameters[0] = new SqlParameter("@ResourceIntId", pResourceIntId);
 
-                DataSet ds = SqlHelper.ExecuteDataset( ConnString, CommandType.StoredProcedure, SELECT2_PROC, sqlParameters );
+                DataSet ds = SqlHelper.ExecuteDataset(ConnString, CommandType.StoredProcedure, SELECT2_PROC, sqlParameters);
                 if (DoesDataSetHaveRows(ds))
                 {
                     foreach (DataRow dr in ds.Tables[0].Rows)
                     {
-                        Entity entity = FillEntity( dr );
+                        Entity entity = FillEntity(dr);
                         collection.Add(entity);
                     }
                 }
@@ -443,6 +510,35 @@ namespace LRWarehouse.DAL
 
             return collection;
         }
+
+        public EntityCollection SelectV2(int pResourceIntId)
+        {
+            EntityCollection collection = new EntityCollection();
+            try
+            {
+                SqlParameter[] sqlParameters = new SqlParameter[1];
+                sqlParameters[0] = new SqlParameter("@ResourceIntId", pResourceIntId);
+
+                DataSet ds = SqlHelper.ExecuteDataset(ConnString, CommandType.StoredProcedure, SELECT_PROCV2, sqlParameters);
+                if (DoesDataSetHaveRows(ds))
+                {
+                    foreach (DataRow dr in ds.Tables[0].Rows)
+                    {
+                        Entity entity = FillEntity(dr);
+                        collection.Add(entity);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                LogError("ResourceFormatManager.SelectV2(): " + ex.ToString());
+                return null;
+            }
+
+            return collection;
+        }
+
+
         public List<MyEntity> SelectList( int pResourceIntId )
         {
 

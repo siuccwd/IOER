@@ -250,6 +250,32 @@ namespace LRWarehouse.DAL
 
             return status;
         }
+
+        public string ImportV2(ResourceCluster cluster)
+        {
+            string status = "successful";
+            string connectionString = LRWarehouse();
+
+            try
+            {
+                #region SQL Parameters
+                SqlParameter[] parameters = new SqlParameter[4];
+                parameters[0] = new SqlParameter("@ResourceIntId", cluster.ResourceIntId);
+                parameters[1] = new SqlParameter("@ClusterId", cluster.ClusterId);
+                parameters[2] = new SqlParameter("@OriginalValue", cluster.Title);
+                parameters[3] = new SqlParameter("@TotalRows", SqlDbType.Int);
+                #endregion
+
+                DataSet ds = SqlHelper.ExecuteDataset(connectionString, CommandType.StoredProcedure, "[Resource.Cluster_ImportV2]", parameters);
+            }
+            catch (Exception ex)
+            {
+                LogError(className + ".ImportV2(): " + ex.ToString());
+                status = ex.Message;
+            }
+
+            return status;
+        }
         #endregion 
 
         #region ====== String Methods - OBSOLETE ===============================================

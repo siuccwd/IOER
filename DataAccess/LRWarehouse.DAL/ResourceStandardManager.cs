@@ -72,7 +72,7 @@ namespace LRWarehouse.DAL
                 sqlParameter[ 2 ] = new SqlParameter( "@StandardUrl", entity.StandardUrl );
                 sqlParameter[ 3 ] = new SqlParameter( "@AlignedById", entity.AlignedById );
                 sqlParameter[ 4 ] = new SqlParameter( "@AlignmentTypeCodeId", entity.AlignmentTypeCodeId );
-                sqlParameter[ 5 ] = new SqlParameter( "@AlignmentDegreeId", entity.AlignmentDegreeId );
+                sqlParameter[ 5 ] = new SqlParameter( "@UsageTypeId", entity.UsageTypeId );
 
                 SqlDataReader dr = SqlHelper.ExecuteReader(ConnString, CommandType.StoredProcedure, "[Resource.StandardInsert]", sqlParameter);
                 if (dr.HasRows)
@@ -198,8 +198,8 @@ namespace LRWarehouse.DAL
             entity.AlignmentTypeCodeId = GetRowColumn( dr, "AlignmentTypeCodeId", 0 );
             entity.AlignmentTypeValue = GetRowColumn( dr, "AlignmentTypeValue", "" );
 
-            entity.AlignmentDegreeId = GetRowColumn( dr, "AlignmentDegreeId", 0 );
-            entity.AlignmentDegree = GetRowColumn( dr, "AlignmentDegree", "" );
+            entity.UsageTypeId = GetRowColumn( dr, "UsageTypeId", 0 );
+            entity.UsageType = GetRowColumn( dr, "UsageType", "" );
 
 			entity.IsDirectStandard = GetRowColumn( dr, "IsDirectStandard", true );
             return entity;

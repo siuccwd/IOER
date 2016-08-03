@@ -47,9 +47,61 @@ namespace LRWarehouse.DAL
             }
             catch (Exception ex)
             {
-                LogError(className + ".Create(): " + ex.ToString());
+				if ( ex.Message.ToLower().IndexOf( "foreign key constraint" ) == -1 )
+					LogError(ex, className + string.Format(".Create(). resourceId: {0} " ,resourceIntId));
             }
             return retVal;
+        }
+
+        public DataSet Select(int resourceIntId)
+        {
+            #region parameters
+            SqlParameter[] parameter = new SqlParameter[1];
+            parameter[0] = new SqlParameter("@ResourceIntId", resourceIntId);
+            #endregion
+            DataSet ds = null;
+            try
+            {
+                ds = SqlHelper.ExecuteDataset(ConnString, CommandType.StoredProcedure, "[Resource.ViewSelect]", parameter);
+                if (DoesDataSetHaveRows(ds))
+                {
+                    return ds;
+                }
+            }
+            catch (Exception ex)
+            {
+                LogError(ex, className + string.Format(".SelectDetailPageView(). resourceId: {0} ", resourceIntId));
+            }
+
+            return ds;
+        }
+
+        /// <summary>
+        /// The only reason to call this is for a merging of two resources.
+        /// </summary>
+        /// <param name="Id"></param>
+        /// <param name="resourceIntId"></param>
+        /// <returns></returns>
+        public string UpdateView(int id, int resourceIntId)
+        {
+            string status = "successful";
+            #region parameters
+            SqlParameter[] parameter = new SqlParameter[2];
+            parameter[0] = new SqlParameter("@Id", id);
+            parameter[1] = new SqlParameter("@ResourceIntId", resourceIntId);
+            #endregion
+
+            try
+            {
+                SqlHelper.ExecuteNonQuery(ConnString, CommandType.StoredProcedure, "[Resource.ViewUpdate]", parameter);
+            }
+            catch (Exception ex)
+            {
+                LogError(ex, className + string.Format(".UpdateView().  Id: {0}", id));
+                status = className + string.Format(".UpdateView(). Id: {0}", id);
+            }
+
+            return status;
         }
 
         public int CreateDetailPageView(int resourceIntId, int createdById) {
@@ -72,9 +124,60 @@ namespace LRWarehouse.DAL
             }
             catch (Exception ex)
             {
-                LogError(className + ".CreateDetailPageView(): " + ex.ToString());
+				LogError( ex, className + string.Format( ".CreateDetailPageView(). resourceId: {0} ", resourceIntId ) );
             }
             return retVal;
+        }
+
+        public DataSet SelectDetailPageView(int resourceIntId)
+        {
+            #region parameters
+            SqlParameter[] parameter = new SqlParameter[1];
+            parameter[0] = new SqlParameter("@ResourceIntId", resourceIntId);
+            #endregion
+
+            DataSet ds=null;
+            try
+            {
+                ds = SqlHelper.ExecuteDataset(ConnString, CommandType.StoredProcedure, "[Resource.DetailViewSelect]", parameter);
+                if (DoesDataSetHaveRows(ds))
+                {
+                    return ds;
+                }
+            }
+            catch (Exception ex)
+            {
+                LogError(ex, className + string.Format(".SelectDetailPageView(). resourceId: {0} ", resourceIntId));
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// The only reason to call this is for a merging of two resources.
+        /// </summary>
+        /// <param name="Id"></param>
+        /// <param name="resourceIntId"></param>
+        /// <returns></returns>
+        public string UpdateDetailPageView(int id, int resourceIntId)
+        {
+            string status = "successful";
+            #region parameters
+            SqlParameter[] parameter = new SqlParameter[2];
+            parameter[0] = new SqlParameter("@Id", id);
+            parameter[1] = new SqlParameter("@ResourceIntId", resourceIntId);
+            #endregion
+
+            try {
+                SqlHelper.ExecuteNonQuery(ConnString, CommandType.StoredProcedure, "[Resource.DetailViewUpdate]", parameter);
+            }
+            catch (Exception ex)
+            {
+                LogError(ex,className+string.Format(".UpdateDetailPageView().  Id: {0}", id));
+                status = className+string.Format(".UpdateDetailPageView(). Id: {0}",id);
+            }
+
+            return status;
         }
             
     }

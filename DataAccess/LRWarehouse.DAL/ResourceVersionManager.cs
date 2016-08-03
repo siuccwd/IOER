@@ -8,7 +8,8 @@ using System.Web;
 using System.Web.Security;
 using System.Web.SessionState;
 using Microsoft.ApplicationBlocks.Data;
-using MyEntity = LRWarehouse.Business.ResourceVersion;
+
+using LRWarehouse.Business;
 
 namespace LRWarehouse.DAL
 {
@@ -26,6 +27,7 @@ namespace LRWarehouse.DAL
         const string DISPLAY_PROC = "[Resource.Version_Display]";
         const string SELECT_PROC = "[Resource.VersionSelect]";
         const string DELETE_PROC = "[Resource.VersionDelete]";
+		const string DELETE_BYID_PROC = "[Resource.VersionDeleteById]";
         const string INSERT_PROC = "[Resource.VersionInsert]";
         const string UPDATE_PROC = "[Resource.VersionUpdate]";
 		//const string UPDATEByRowid_PROC = "[Resource.VersionUpdateByRowId]";
@@ -75,13 +77,38 @@ namespace LRWarehouse.DAL
             return successful;
         }//
 
+		public bool DeleteById( int rvId, ref string statusMessage )
+		{
+			string connectionString = LRWarehouse();
+			bool successful;
+
+
+			try
+			{
+				SqlParameter[] sqlParameters = new SqlParameter[ 1 ];
+				sqlParameters[ 0 ] = new SqlParameter( "@rvId",  rvId );
+
+				DoTrace( 2, "ResourceVersionManager.DeleteById: " + rvId );
+				SqlHelper.ExecuteNonQuery( connectionString, CommandType.StoredProcedure, DELETE_PROC, sqlParameters );
+				successful = true;
+			}
+			catch ( Exception ex )
+			{
+				LogError( ex, thisClassName + ".Delete() " );
+				statusMessage = thisClassName + "- Unsuccessful: Delete(): " + ex.Message.ToString();
+
+				successful = false;
+			}
+			return successful;
+		}//
+
         /// <summary>
         /// Add an ResourceVersion record
         /// </summary>
         /// <param name="entity"></param>
         /// <param name="statusMessage"></param>
         /// <returns></returns>
-        public int Create( MyEntity entity, ref string statusMessage )
+        public int Create( ResourceVersion entity, ref string statusMessage )
         {
             string connectionString = LRWarehouse();
             //string newId = "";
@@ -92,7 +119,7 @@ namespace LRWarehouse.DAL
             {
 
                 #region parameters
-                SqlParameter[] sqlParameters = new SqlParameter[17];
+                SqlParameter[] sqlParameters = new SqlParameter[18];
                 sqlParameters[ 0 ] = new SqlParameter( "@DocId", entity.LRDocId);
                 sqlParameters[ 1 ] = new SqlParameter( "@Title", entity.Title);
                 sqlParameters[ 2 ] = new SqlParameter( "@Description", entity.Description);
@@ -121,6 +148,8 @@ namespace LRWarehouse.DAL
                 sqlParameters[ 14 ] = new SqlParameter( "@InteractivityTypeId", entity.InteractivityTypeId );
                 sqlParameters[ 15 ] = new SqlParameter( "@ResourceIntId", entity.ResourceIntId );
                 sqlParameters[ 16 ] = new SqlParameter( "@Requirements", entity.Requirements );
+
+				sqlParameters[ 17 ] = new SqlParameter( "@UsageRightsId", entity.UsageRightsId );
                 #endregion
 
                 SqlDataReader dr = SqlHelper.ExecuteReader( connectionString, CommandType.StoredProcedure, INSERT_PROC, sqlParameters );
@@ -135,7 +164,7 @@ namespace LRWarehouse.DAL
                     }
                     //newId = dr[ 0 ].ToString();
                     //TODO - retrieve int Id, do temp get, then change procs!!
-                    //MyEntity rv = Get( newId );
+                    //ResourceVersion rv = Get( newId );
                     //entity.Id = rv.Id;
                 }
                 dr.Close();
@@ -157,7 +186,7 @@ namespace LRWarehouse.DAL
         /// </summary>
         /// <param name="entity"></param>
         /// <returns></returns>
-        public string UpdateById( MyEntity entity )
+        public string UpdateById( ResourceVersion entity )
         {
             string message = "successful";
             using ( SqlConnection conn = new SqlConnection( this.ConnString ) )
@@ -167,7 +196,7 @@ namespace LRWarehouse.DAL
                 {
 
                     #region parameters
-                    SqlParameter[] sqlParameters = new SqlParameter[ 10 ];
+                    SqlParameter[] sqlParameters = new SqlParameter[ 11 ];
                     sqlParameters[ 0 ] = new SqlParameter( "@Id", entity.Id );
 
                     sqlParameters[ 1 ] = new SqlParameter( "@Title", entity.Title );
@@ -181,7 +210,7 @@ namespace LRWarehouse.DAL
                     sqlParameters[ 7 ] = new SqlParameter( "@Requirements", entity.Requirements );
 					sqlParameters[ 8 ] = new SqlParameter( "@Creator", entity.Creator );
 					sqlParameters[ 9 ] = new SqlParameter( "@Publisher", entity.Publisher );
-
+					sqlParameters[ 10 ] = new SqlParameter( "@UsageRightsId", entity.UsageRightsId );
 					//? how to publish an update to interactivity type
 					//sqlParameters[ 7 ] = new SqlParameter( "@InteractivityTypeId", entity.InteractivityTypeId );
                     #endregion
@@ -206,7 +235,7 @@ namespace LRWarehouse.DAL
         /// </summary>
         /// <param name="entity"></param>
         /// <returns></returns>
-		//private string UpdateByRowId( MyEntity entity )
+		//private string UpdateByRowId( ResourceVersion entity )
 		//{
 		//	string message = "successful";
 		//	string connectionString = LRWarehouse();
@@ -246,7 +275,7 @@ namespace LRWarehouse.DAL
 
 		//}//
 
-        public string Update_LrDocId( MyEntity entity )
+        public string Update_LrDocId( ResourceVersion entity )
         {
             string message = "successful";
             string connectionString = LRWarehouse();
@@ -280,7 +309,7 @@ namespace LRWarehouse.DAL
         /// </summary>
         /// <param name="resourceVersion"></param>
         /// <returns>status</returns>
-        public string Import( MyEntity resourceVersion )
+        public string Import( ResourceVersion resourceVersion )
         {
             string status = "successful";
 
@@ -342,6 +371,30 @@ namespace LRWarehouse.DAL
             return status;
         }
 
+
+		/// <summary>
+		/// Call proc to fix inconsistencies for usage rights, such as where rights is a text value that matches a creative commons license
+		/// </summary>
+		/// <returns></returns>
+		public string ResourceVersion_FixRightsId()
+		{
+			string status = "successful";
+
+			try
+			{
+
+
+				SqlHelper.ExecuteNonQuery( ConnString, CommandType.StoredProcedure, "[Resource.Version_FixRightsId]");
+			}
+			catch ( Exception ex )
+			{
+				LogError( "ResourceVersion_FixRightsId.Import(): " + ex.ToString() );
+				status = ex.ToString();
+			}
+
+			return status;
+		}
+
         #endregion
 
         #region ====== Retrieval Methods ===============================================
@@ -351,10 +404,10 @@ namespace LRWarehouse.DAL
         /// </summary>
         /// <param name="pRowId"></param>
         /// <returns></returns>
-        public MyEntity Get( int pId )
+        public ResourceVersion Get( int pId )
         {
             string connectionString = LRWarehouseRO();
-            MyEntity entity = new MyEntity();
+            ResourceVersion entity = new ResourceVersion();
 
             try
             {
@@ -397,10 +450,10 @@ namespace LRWarehouse.DAL
         /// </summary>
         /// <param name="resourceId"></param>
         /// <returns></returns>
-        public MyEntity GetByResourceId( int resourceId )
+		public ResourceVersion GetByResourceId( int resourceId )
         {
             LRManager searchMgr = new LRManager();
-            MyEntity entity = new MyEntity();
+			ResourceVersion entity = new ResourceVersion();
             try
             {
                 string filter = string.Format( "(lr.[ResourceIntId] = {0} )", resourceId );
@@ -444,23 +497,23 @@ namespace LRWarehouse.DAL
         /// </summary>
         /// <param name="pUrl"></param>
         /// <returns></returns>
-        public List<MyEntity> GetByUrl( string pUrl )
+        public List<ResourceVersion> GetByUrl( string pUrl )
         {
-            List<MyEntity> collection = new List<MyEntity>();
+            List<ResourceVersion> collection = new List<ResourceVersion>();
             LRManager searchMgr = new LRManager();
             try
             {
                 pUrl = HandleApostrophes( pUrl );
                 string filter = string.Format( "(lr.[ResourceUrl] = '{0}')", pUrl );
                 int pTotalRows = 0;
-                string orderBy = "ResourceVersionIntId DESC ";
+               // string orderBy = "ResourceVersionIntId DESC ";
                 DataSet ds = searchMgr.Search( filter, "", 1, 100, false, ref pTotalRows );
 
                 if ( DoesDataSetHaveRows( ds ) )
                 {
                     foreach ( DataRow dr in ds.Tables[ 0 ].Rows )
                     {
-                        MyEntity entity = Fill( dr, false );
+                        ResourceVersion entity = Fill( dr, false );
                         collection.Add( entity );
                     }
                 }
@@ -477,7 +530,8 @@ namespace LRWarehouse.DAL
 
         }//
 
-        public MyEntity Get( string pRowId )
+		[Obsolete]
+        private ResourceVersion Get( string pRowId )
         {
             Guid id = new Guid( pRowId );
             return Get( id );
@@ -488,10 +542,11 @@ namespace LRWarehouse.DAL
         /// </summary>
         /// <param name="pRowId"></param>
         /// <returns></returns>
-        private MyEntity Get( Guid pRowId )
+		[Obsolete]
+        private ResourceVersion Get( Guid pRowId )
         {
             string connectionString = LRWarehouseRO();
-            MyEntity entity = new MyEntity();
+            ResourceVersion entity = new ResourceVersion();
 
             try
             {
@@ -539,10 +594,10 @@ namespace LRWarehouse.DAL
         /// </summary>
         /// <param name="pRowId"></param>
         /// <returns></returns>
-        public MyEntity Display( int pId )
+        public ResourceVersion Display( int pId )
         {
             string connectionString = LRWarehouseRO();
-            MyEntity entity = new MyEntity();
+            ResourceVersion entity = new ResourceVersion();
 
             try
             {
@@ -708,9 +763,9 @@ namespace LRWarehouse.DAL
         /// <param name="dr"></param>
         /// <param name="includeRelatedData"></param>
         /// <returns></returns>
-        public MyEntity Fill( DataRow dr, bool includeRelatedData )
+        public ResourceVersion Fill( DataRow dr, bool includeRelatedData )
         {
-            MyEntity entity = new MyEntity();
+            ResourceVersion entity = new ResourceVersion();
 
             entity.IsValid = true;
 
@@ -740,6 +795,7 @@ namespace LRWarehouse.DAL
             entity.TypicalLearningTime = GetRowColumn( dr, "TypicalLearningTime", "" );
 
             entity.Rights = GetRowColumn( dr, "Rights", "" );
+			entity.UsageRightsId = GetRowColumn( dr, "UsageRightsId", 0 );
             entity.AccessRights = GetRowColumn( dr, "AccessRights", "" );
             entity.AccessRightsId = GetRowColumn( dr, "AccessRightsId", 0 );
 
@@ -777,10 +833,10 @@ namespace LRWarehouse.DAL
         /// Fill an ResourceVersion object from a SqlDataReader
         /// </summary>
         /// <param name="dr">SqlDataReader</param>
-        /// <returns>MyEntity</returns>
-        public MyEntity Fill( SqlDataReader dr, bool includeRelatedData )
+        /// <returns>ResourceVersion</returns>
+        public ResourceVersion Fill( SqlDataReader dr, bool includeRelatedData )
         {
-            MyEntity entity = new MyEntity();
+            ResourceVersion entity = new ResourceVersion();
 
             entity.IsValid = true;
 
@@ -812,6 +868,8 @@ namespace LRWarehouse.DAL
             entity.TypicalLearningTime = GetRowColumn( dr, "TypicalLearningTime", "" );
 
             entity.Rights = GetRowColumn( dr, "Rights", "" );
+			entity.UsageRightsId = GetRowColumn( dr, "UsageRightsId", 0 );
+
             entity.AccessRights = GetRowColumn( dr, "AccessRights", "" );
             entity.AccessRightsId = GetRowColumn( dr, "AccessRightsId", 0 );
 
@@ -844,7 +902,8 @@ namespace LRWarehouse.DAL
             return entity;
         }//
 
-        public int ConvertInteractivityTypeToId( string resourceId, string interactivityType )
+		[Obsolete]
+        private int ConvertInteractivityTypeToId( string resourceId, string interactivityType )
         {
             int retVal = 0;
 
@@ -863,6 +922,38 @@ namespace LRWarehouse.DAL
             catch ( Exception ex )
             {
                 LogError( "ResourceVersionManager.ConvertInteractivityTypeToId(): " + ex.ToString() );
+            }
+
+            return retVal;
+        }
+        #endregion
+
+        #region ====== Access Rights Mapping methods ======
+        public int MapAccessRights(string lrValue, ref string codeValue)
+        {
+            int retVal = 0;
+            string status = "successful";
+            try
+            {
+                SqlParameter[] arParms = new SqlParameter[1];
+                arParms[0] = new SqlParameter("@AccessRights", lrValue);
+
+                DataSet ds = SqlHelper.ExecuteDataset(ConnString, CommandType.StoredProcedure, "[Map.AccessRights_Map]", arParms);
+                if (DoesDataSetHaveRows(ds))
+                {
+                    DataRow dr = ds.Tables[0].Rows[0];
+                    retVal = GetRowColumn(dr, "CodeId", 0);
+                    codeValue = GetRowColumn(dr, "Title", "");
+                }
+                else
+                {
+                    codeValue = lrValue;
+                    retVal = 8; // "Unknown"
+                }
+            }
+            catch (Exception ex)
+            {
+                LogError(thisClassName + ".MapAccessRights(): " + ex.ToString());
             }
 
             return retVal;

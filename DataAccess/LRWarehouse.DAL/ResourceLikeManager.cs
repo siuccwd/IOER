@@ -131,10 +131,18 @@ namespace LRWarehouse.DAL
                 {
                     parameter[1].Value = SqlDateTime.MinValue;
                 }
+                else
+                {
+                    parameter[1].Value = startDate;
+                }
                 parameter[2] = new SqlParameter("@EndDate", SqlDbType.DateTime);
                 if (endDate < SqlDateTime.MinValue || endDate > SqlDateTime.MaxValue)
                 {
                     parameter[2].Value = DateTime.Now;
+                }
+                else
+                {
+                    parameter[2].Value = endDate;
                 }
                 parameter[3] = new SqlParameter("@IsLike", isLike);
                 #endregion

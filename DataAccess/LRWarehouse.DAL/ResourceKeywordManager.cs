@@ -25,6 +25,7 @@ namespace LRWarehouse.DAL
         const string SELECT_PROC = "[Resource.KeywordSelect]";
         const string DELETE_PROC = "[Resource.KeywordDelete]";
         const string INSERT_PROC = "[Resource.KeywordInsert]";
+        const string INSERT_PROCV2 = "[Resource.KeywordInsertV2]";
 
         public ResourceKeywordManager()
         {
@@ -66,6 +67,45 @@ namespace LRWarehouse.DAL
             {
                 LogError( ex, className + string.Format( ".Create() for ResourceId: {0}, CodeId: {1}, Vale: {2}, and CreatedBy: {3}", entity.ResourceIntId, entity.CodeId, entity.OriginalValue, entity.CreatedById ) );
                 statusMessage = className + "- Unsuccessful: Create(): " + ex.Message.ToString();
+            }
+
+            return newId;
+        }
+
+        /// <summary>
+        /// Add an ResourceKeyword record - V2
+        /// </summary>
+        /// <param name="entity"></param>
+        /// <param name="statusMessage"></param>
+        /// <returns></returns>
+        public string CreateV2(MyEntity entity, ref string statusMessage)
+        {
+            string newId = "";
+            try
+            {
+                #region parameters
+                SqlParameter[] sqlParameters = new SqlParameter[3];
+                sqlParameters[0] = new SqlParameter("@ResourceIntId", entity.ResourceIntId);
+                sqlParameters[1] = new SqlParameter("@OriginalValue", entity.OriginalValue);
+                sqlParameters[2] = new SqlParameter("@CreatedById", entity.CreatedById);
+
+                #endregion
+
+                SqlDataReader dr = SqlHelper.ExecuteReader(ConnString, CommandType.StoredProcedure, INSERT_PROCV2, sqlParameters);
+                if (dr.HasRows)
+                {
+                    dr.Read();
+                    //newId will be zeroes if the keyword being added exists in other tables
+                    newId = dr[0].ToString();
+                }
+                dr.Close();
+                dr = null;
+                statusMessage = "successful";
+            }
+            catch (Exception ex)
+            {
+                LogError(ex, className + string.Format(".Create() for ResourceId: {0}, CodeId: {1}, Vale: {2}, and CreatedBy: {3}", entity.ResourceIntId, entity.CodeId, entity.OriginalValue, entity.CreatedById));
+                statusMessage = className + "- Unsuccessful: CreateV2(): " + ex.Message.ToString();
             }
 
             return newId;

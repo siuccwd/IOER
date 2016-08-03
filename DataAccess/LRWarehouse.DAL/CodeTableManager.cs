@@ -7,6 +7,7 @@ using System.Text;
 using Microsoft.ApplicationBlocks.Data;
 
 using LRWarehouse.Business;
+using LRWarehouse.Business.ResourceV2;
 using MyEntity = LRWarehouse.Business.ResourceChildItem;
 using MyEntityCollection = System.Collections.Generic.List<LRWarehouse.Business.ResourceChildItem>;
 using CodeGradeLevel = LRWarehouse.Business.CodeGradeLevel;
@@ -79,7 +80,60 @@ namespace LRWarehouse.DAL
 		#endregion
 
 		#region  [Codes_TagValue]
-		public static CodesTagValue CodesTagValue_Get( int pId )
+
+		/// <summary>
+		/// Return all active Code.TagValue rows
+		/// </summary>
+		/// <param name="pWithValuesOnly">Set to true to only return codes with warehouse value > 0</param>
+		/// <returns></returns>
+		public static DataSet Codes_TagValue_GetAll( bool pWithValuesOnly )
+		{
+			return Codes_TagValue_GetAll( 0, pWithValuesOnly );
+		}
+		/// <summary>
+		/// Retrieve all Code.TagValue rows, or all for an resource
+		/// </summary>
+		/// <param name="resourceId">Provide a resourceId to only return codes used with the resource</param>
+		/// <param name="pWithValuesOnly">Set to true to only return codes with warehouse value > 0</param>
+		/// <returns></returns>
+		public static DataSet Codes_TagValue_GetAll( int resourceId, bool pWithValuesOnly )
+		{
+			SqlParameter[] sqlParameters = new SqlParameter[ 2 ];
+			sqlParameters[ 0 ] = new SqlParameter( "@resourceID", resourceId );
+			sqlParameters[ 1 ] = new SqlParameter( "@WithValuesOnly", pWithValuesOnly );
+			
+
+			using ( SqlConnection conn = new SqlConnection( LRWarehouseRO() ) )
+			{
+				DataSet ds = new DataSet();
+				try
+				{
+					ds = SqlHelper.ExecuteDataset( conn, CommandType.StoredProcedure, "[Codes.TagValueGetAll]", sqlParameters );
+					
+
+					if ( ds.HasErrors )
+					{
+						return null;
+					}
+					return ds;
+				}
+				catch ( Exception ex )
+				{
+					LogError( ex, thisClassName + ".Codes_TagValue_GetAll() " );
+					return null;
+				}
+			}
+		}
+
+
+
+
+		/// <summary>
+		/// ??????????????????????? looks general, but hard-coded to grade level
+		/// </summary>
+		/// <param name="pId"></param>
+		/// <returns></returns>
+		private static CodesTagValue CodesTagValue_Get( int pId )
 		{
 			string connectionString = GetReadOnlyConnection();
 			CodesTagValue entity = new CodesTagValue();
@@ -124,7 +178,7 @@ namespace LRWarehouse.DAL
 		}//
 
 
-		public static CodesTagCategory CodesTagCategory_Get( int pId )
+		private static CodesTagCategory CodesTagCategory_Get( int pId )
 		{
 			string connectionString = GetReadOnlyConnection();
 			CodesTagCategory entity = new CodesTagCategory();
@@ -163,38 +217,59 @@ namespace LRWarehouse.DAL
 			}
 
 		}//
+
+		public static DataSet CodesTagCategory_Select()
+		{
+			try
+			{
+				
+				DataSet ds = DatabaseManager.DoQuery( "SELECT [Id], [Title], [SchemaTag], [SortOrder] FROM [Codes.TagCategory] WHERE IsActive = 1 ORDER BY [SortOrder], [Title]" );
+				
+				return ds;
+
+			}
+			catch ( Exception ex )
+			{
+				LogError( ex, thisClassName + ".CodesTagCategory_Select() " );
+				return null;
+
+			}
+
+		}//
+		public static DataSet Codes_SiteTagCategory_Select()
+		{
+			try
+			{
+				DataSet ds = DatabaseManager.DoQuery( "SELECT [SiteId], [CategoryId], [SortOrder] FROM [Codes.SiteTagCategory] WHERE [IsActive] = 1 ORDER BY [SortOrder]" );
+
+				return ds;
+
+			}
+			catch ( Exception ex )
+			{
+				LogError( ex, thisClassName + ".Codes_SiteTagCategory_Select() " );
+				return null;
+
+			}
+
+		}//
 		#endregion
 
 		#region  [ConditionOfUse]
 		public static DataSet ConditionsOfUse_Select()
         {
-            string connectionString = GetReadOnlyConnection();
-            DataSet ds = new DataSet();
-            try
-            {
-                ds = SqlHelper.ExecuteDataset( LRWarehouseRO(), "[ConditionsOfUse_Select]" );
-                if ( ds.HasErrors )
-                {
-                    return null;
-                }
-                return ds;
-
-            }
-            catch ( Exception ex )
-            {
-                LogError( ex, thisClassName + ".ConditionsOfUse_Select() " );
-
-                return null;
-            }
-
+            return ConditionsOfUse_Select( false );
         }//
-		public static DataSet ConditionsOfUse_SelectForNewContent()
+		public static DataSet ConditionsOfUse_Select( bool forNewContentOnly )
 		{
 			string connectionString = GetReadOnlyConnection();
 			DataSet ds = new DataSet();
 			try
 			{
-				ds = SqlHelper.ExecuteDataset( LRWarehouseRO(), "[ConditionsOfUse_Select]" );
+				SqlParameter[] sqlParameters = new SqlParameter[ 1 ];
+				sqlParameters[ 0 ] = new SqlParameter( "@IsAllowedForNewResource", forNewContentOnly );
+
+				ds = SqlHelper.ExecuteDataset( LRWarehouseRO(), "[ConditionsOfUse_Select]", sqlParameters );
 				if ( ds.HasErrors )
 				{
 					return null;
@@ -213,6 +288,17 @@ namespace LRWarehouse.DAL
         #endregion
 
         #region  GradeLevel
+		public static DataSet DeterminingAgeRanges( ResourceDTO input )
+		{
+			DataSet ageRangeDS = DatabaseManager.DoQuery(
+					"SELECT codes.[Id], codes.[FromAge], codes.[ToAge], tags.[Id] AS TagId, tags.Title " +
+					"FROM [Codes.GradeLevel] codes " +
+					"LEFT JOIN [Codes.TagValue] tags ON tags.CodeId = codes.Id " +
+					"WHERE tags.CategoryId = " + input.Fields.Where( m => m.Schema == "gradeLevel" ).FirstOrDefault().Id + " AND tags.IsActive = 1"
+					);
+
+			return ageRangeDS;
+		} //
         public static CodeGradeLevel GradeLevelGet( int pId )
         {
             return GradeLevelGet( pId, "", "", "" );
@@ -442,6 +528,14 @@ namespace LRWarehouse.DAL
 
                 }
             }
+        }
+        #endregion
+
+        #region AccessibilityHazard
+        public static DataSet GetAccessibilityHazardCodes()
+        {
+            string sql = string.Format("SELECT Id, Title, Description, IsActive, WarehouseTotal, AntonymId, schemaValue, SortOrder FROM [Codes.AccessibilityHazard] WHERE IsActive = 'True' ORDER BY SortOrder");
+            return DatabaseManager.DoQuery(sql);
         }
         #endregion
 

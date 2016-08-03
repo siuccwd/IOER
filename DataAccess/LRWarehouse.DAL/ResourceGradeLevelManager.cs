@@ -18,11 +18,13 @@ namespace LRWarehouse.DAL
         /// </summary>
         //const string SELECT_PROC = "[Resource.GradeLevel_SelectedCodes]";
         const string SELECT_PROC = "[Resource.GradeLevelSelect]";
+        const string SELECT_PROCV2 = "[Resource.GradeLevelSelectV2]";
         //using same proc for select and selected codes as the source education level procs was essentially selected codes
         const string SELECTED_CODES_PROC = "[Resource.GradeLevel_SelectedCodes]";
         const string DELETE_PROC = "[Resource.GradeLevel_Delete]";
         const string INSERT_PROC = "[Resource.GradeLevel_Insert]";
         const string IMPORT_PROC = "[Resource.GradeLevel_Import]";
+        const string IMPORT_PROCV2 = "[Resource.GradeLevel_ImportV2]";
         public ResourceGradeLevelManager()
         {
         }
@@ -34,7 +36,7 @@ namespace LRWarehouse.DAL
         /// <param name="entity"></param>
         /// <param name="statusMessage"></param>
         /// <returns></returns>
-        public int Import( Entity entity, ref string statusMessage )
+        public int Import(Entity entity, ref string statusMessage)
         {
             statusMessage = "";
             int pTotalRows = 0;
@@ -42,18 +44,18 @@ namespace LRWarehouse.DAL
             DataSet ds = new DataSet();
             try
             {
-                SqlParameter[] sqlParameters = new SqlParameter[ 3 ];
-                sqlParameters[ 0 ] = new SqlParameter( "@resourceIntId", entity.ResourceIntId );
-                sqlParameters[ 1 ] = new SqlParameter( "@OriginalValue", entity.OriginalValue );
-                sqlParameters[ outputCol ] = new SqlParameter( "@TotalRows", SqlDbType.Int );
-                sqlParameters[ outputCol ].Direction = ParameterDirection.Output;
+                SqlParameter[] sqlParameters = new SqlParameter[3];
+                sqlParameters[0] = new SqlParameter("@resourceIntId", entity.ResourceIntId);
+                sqlParameters[1] = new SqlParameter("@OriginalValue", entity.OriginalValue);
+                sqlParameters[outputCol] = new SqlParameter("@TotalRows", SqlDbType.Int);
+                sqlParameters[outputCol].Direction = ParameterDirection.Output;
 
-                ds = SqlHelper.ExecuteDataset( ConnString, CommandType.StoredProcedure, IMPORT_PROC, sqlParameters );
+                ds = SqlHelper.ExecuteDataset(ConnString, CommandType.StoredProcedure, IMPORT_PROC, sqlParameters);
                 //get output paramter
-                string rows = sqlParameters[ outputCol ].Value.ToString();
+                string rows = sqlParameters[outputCol].Value.ToString();
                 try
                 {
-                    pTotalRows = Int32.Parse( rows );
+                    pTotalRows = Int32.Parse(rows);
                 }
                 catch
                 {
@@ -62,9 +64,51 @@ namespace LRWarehouse.DAL
 
                 statusMessage = "successful";
             }
-            catch ( Exception ex )
+            catch (Exception ex)
             {
-                LogError( className + ".Import(): " + ex.ToString() );
+                LogError(className + ".Import(): " + ex.ToString());
+                statusMessage = ex.Message;
+            }
+            return pTotalRows;
+        }
+
+        /// <summary>
+        /// Import education level - multiple inserts are possible, so only a count is returned
+        /// </summary>
+        /// <param name="entity"></param>
+        /// <param name="statusMessage"></param>
+        /// <returns></returns>
+        public int ImportV2(Entity entity, ref string statusMessage)
+        {
+            statusMessage = "";
+            int pTotalRows = 0;
+            int outputCol = 2;
+            DataSet ds = new DataSet();
+            try
+            {
+                SqlParameter[] sqlParameters = new SqlParameter[3];
+                sqlParameters[0] = new SqlParameter("@resourceIntId", entity.ResourceIntId);
+                sqlParameters[1] = new SqlParameter("@OriginalValue", entity.OriginalValue);
+                sqlParameters[outputCol] = new SqlParameter("@TotalRows", SqlDbType.Int);
+                sqlParameters[outputCol].Direction = ParameterDirection.Output;
+
+                ds = SqlHelper.ExecuteDataset(ConnString, CommandType.StoredProcedure, IMPORT_PROCV2, sqlParameters);
+                //get output paramter
+                string rows = sqlParameters[outputCol].Value.ToString();
+                try
+                {
+                    pTotalRows = Int32.Parse(rows);
+                }
+                catch
+                {
+                    pTotalRows = 0;
+                }
+
+                statusMessage = "successful";
+            }
+            catch (Exception ex)
+            {
+                LogError(className + ".ImportV2(): " + ex.ToString());
                 statusMessage = ex.Message;
             }
             return pTotalRows;
@@ -230,7 +274,34 @@ namespace LRWarehouse.DAL
             return collection;
         }
 
-        public List<MyEntity> Select( int resourceIntId )
+        public EntityCollection SelectV2(int resourceIntId, string originalValue)
+        {
+            EntityCollection collection = new EntityCollection();
+            try
+            {
+                SqlParameter[] sqlParameters = new SqlParameter[1];
+                sqlParameters[0] = new SqlParameter("@ResourceIntId", resourceIntId);
+                //sqlParameters[ 1 ] = new SqlParameter( "@OriginalValue", originalValue );
+
+                DataSet ds = SqlHelper.ExecuteDataset(ReadOnlyConnString, CommandType.StoredProcedure, SELECT_PROCV2, sqlParameters);
+                if (DoesDataSetHaveRows(ds))
+                {
+                    foreach (DataRow dr in ds.Tables[0].Rows)
+                    {
+                        Entity entity = Fill(dr);
+                        collection.Add(entity);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                LogError(className + ".SelectV2(): " + ex.ToString());
+                return null;
+            }
+            return collection;
+        }
+
+        public List<MyEntity> Select(int resourceIntId)
         {
             List<MyEntity> collection = new List<MyEntity>();
             try
@@ -255,6 +326,8 @@ namespace LRWarehouse.DAL
             }
             return collection;
         }
+
+
         public Entity Fill( DataRow dr )
         {
             Entity entity = new Entity();

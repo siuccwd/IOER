@@ -195,8 +195,8 @@ namespace LRWarehouse.DAL
             entity.Title = GetRowColumn( dr, "Title", "missing" );
             entity.Description = GetRowColumn( dr, "Description", "" );
             entity.Url = GetRowColumn( dr, "Url", "" );
-            entity.Language = GetRowColumn( dr, "Language", "" );
-            entity.Created = GetRowColumn( dr, "Created", System.DateTime.MinValue );
+            entity.Language = GetRowPossibleColumn( dr, "Language", "en" );
+			entity.Created = GetRowPossibleColumn( dr, "Created", System.DateTime.MinValue );
 
             return entity;
         }//
@@ -205,32 +205,32 @@ namespace LRWarehouse.DAL
         /// </summary>
         /// <param name="pId"></param>
         /// <returns></returns>
-        private DataSet StandardSubject_Select( int pId, string parm2 )
-        {
+		//private DataSet StandardSubject_Select( int pId, string parm2 )
+		//{
 
-            //replace following with actual nbr of parameters and do assignments
-            SqlParameter[] sqlParameters = new SqlParameter[ 2 ];
-            sqlParameters[ 0 ] = new SqlParameter( "@Id", pId );
-            sqlParameters[ 1 ] = new SqlParameter( "@parm2", parm2 );
+		//	//replace following with actual nbr of parameters and do assignments
+		//	SqlParameter[] sqlParameters = new SqlParameter[ 2 ];
+		//	sqlParameters[ 0 ] = new SqlParameter( "@Id", pId );
+		//	sqlParameters[ 1 ] = new SqlParameter( "@parm2", parm2 );
 
-            DataSet ds = new DataSet();
-            try
-            {
-                ds = SqlHelper.ExecuteDataset( ReadOnlyConnString, CommandType.StoredProcedure, SELECT_PROC, sqlParameters );
+		//	DataSet ds = new DataSet();
+		//	try
+		//	{
+		//		ds = SqlHelper.ExecuteDataset( ReadOnlyConnString, CommandType.StoredProcedure, SELECT_PROC, sqlParameters );
 
-                if ( ds.HasErrors )
-                {
-                    return null;
-                }
-                return ds;
-            }
-            catch ( Exception ex )
-            {
-                LogError( ex, className + ".StandardSubject_Select() " );
-                return null;
+		//		if ( ds.HasErrors )
+		//		{
+		//			return null;
+		//		}
+		//		return ds;
+		//	}
+		//	catch ( Exception ex )
+		//	{
+		//		LogError( ex, className + ".StandardSubject_Select() " );
+		//		return null;
 
-            }
-        }
+		//	}
+		//}
 
         #endregion
 
@@ -377,36 +377,36 @@ namespace LRWarehouse.DAL
         /// </summary>
         /// <param name="pResourceIntId"></param>
         /// <returns></returns>
-        public List<StandardItem> StandardItem_Select( int pParentId )
-        {
+		//public List<StandardItem> StandardItem_Select( int pParentId )
+		//{
 
-            List<StandardItem> collection = new List<StandardItem>();
+		//	List<StandardItem> collection = new List<StandardItem>();
 
-            SqlParameter[] sqlParameters = new SqlParameter[ 1 ];
-            sqlParameters[ 0 ] = new SqlParameter( "@ParentId", pParentId );
+		//	SqlParameter[] sqlParameters = new SqlParameter[ 1 ];
+		//	sqlParameters[ 0 ] = new SqlParameter( "@ParentId", pParentId );
 
-            DataSet ds = new DataSet();
-            try
-            {
-                ds = SqlHelper.ExecuteDataset( ReadOnlyConnString, CommandType.StoredProcedure, "[StandardBody.NodeSelect]", sqlParameters );
+		//	DataSet ds = new DataSet();
+		//	try
+		//	{
+		//		ds = SqlHelper.ExecuteDataset( ReadOnlyConnString, CommandType.StoredProcedure, "[StandardBody.NodeSelect]", sqlParameters );
 
-                if ( DoesDataSetHaveRows( ds ) )
-                {
-                    foreach ( DataRow dr in ds.Tables[ 0 ].Rows )
-                    {
-                        StandardItem entity = StandardItem_Fill( dr );
-                        collection.Add( entity );
-                    }
-                }
-                return collection;
-            }
-            catch ( Exception ex )
-            {
-                LogError( ex, className + ".StandardItem_Select( int pResourceIntId ) " );
-                return null;
+		//		if ( DoesDataSetHaveRows( ds ) )
+		//		{
+		//			foreach ( DataRow dr in ds.Tables[ 0 ].Rows )
+		//			{
+		//				StandardItem entity = StandardItem_Fill( dr );
+		//				collection.Add( entity );
+		//			}
+		//		}
+		//		return collection;
+		//	}
+		//	catch ( Exception ex )
+		//	{
+		//		LogError( ex, className + ".StandardItem_Select( int pResourceIntId ) " );
+		//		return null;
 
-            }
-        }
+		//	}
+		//}
         public StandardItem StandardItem_Fill( SqlDataReader dr )
         {
             StandardItem entity = new StandardItem();
@@ -419,11 +419,11 @@ namespace LRWarehouse.DAL
             entity.Description = GetRowColumn( dr, "Description", "" );
             entity.StandardUrl = GetRowColumn( dr, "StandardUrl", "" );
             entity.NotationCode = GetRowColumn( dr, "NotationCode", "" );
-            entity.Language = GetRowColumn( dr, "Language", "" );
+			//entity.Language = GetRowPossibleColumn( dr, "Language", "en" );
             entity.StandardGuid = GetRowColumn( dr, "StandardGuid", "" );
             entity.GradeLevels = GetRowPossibleColumn( dr, "GradeLevels", "" );
 
-            entity.Created = GetRowColumn( dr, "Created", System.DateTime.MinValue );
+			//entity.Created = GetRowPossibleColumn( dr, "Created", System.DateTime.MinValue );
 
             //?????
            // entity.EducationLevelStart = GetRowColumn( dr, "EducationLevelStart", "" );
@@ -443,11 +443,11 @@ namespace LRWarehouse.DAL
             entity.Description = GetRowColumn( dr, "Description", "" );
             entity.StandardUrl = GetRowColumn( dr, "StandardUrl", "" );
             entity.NotationCode = GetRowColumn( dr, "NotationCode", "" );
-            entity.Language = GetRowColumn( dr, "Language", "" );
+			//entity.Language = GetRowPossibleColumn( dr, "Language", "en" );
             entity.StandardGuid = GetRowColumn( dr, "StandardGuid", "" );
             entity.GradeLevels = GetRowPossibleColumn( dr, "GradeLevels", "" );
 
-            entity.Created = GetRowColumn( dr, "Created", System.DateTime.MinValue );
+			//entity.Created = GetRowPossibleColumn( dr, "Created", System.DateTime.MinValue );
 
             //?????
             // entity.EducationLevelStart = GetRowColumn( dr, "EducationLevelStart", "" );

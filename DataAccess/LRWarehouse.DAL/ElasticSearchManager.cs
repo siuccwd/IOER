@@ -25,10 +25,12 @@ namespace LRWarehouse.DAL
     ResourceEvaluationManager evaluationManager;
     string status = "";
     string type = "resource";
-
+	string esCollection = "mainSearchCollection";
     //Setup class
     public ElasticSearchManager() {
       var node = new Uri( GetAppKeyValue( "elasticSearchUrl" ) );
+	  esCollection = GetAppKeyValue( "elasticSearchCollection", "mainSearchCollection" );
+
       var connectionPool = new SniffingConnectionPool(new[] { node });
       var config = new ConnectionConfiguration( connectionPool ).MaximumRetries(10).DisablePing(true);
       client = new ElasticsearchClient( config );
@@ -41,7 +43,7 @@ namespace LRWarehouse.DAL
     //Search
     public string Search( string queryJSON )
     {
-      return Search( queryJSON, "mainSearchCollection" );
+      return Search( queryJSON, esCollection );
     }
     public string Search( string queryJSON, string indexName )
     {
@@ -67,31 +69,21 @@ namespace LRWarehouse.DAL
 						min_term_freq = minFieldMatches <= 0 ? 1 : minFieldMatches,
 						max_query_terms = maxFieldMatches < minFieldMatches ? minFieldMatches + 5 : maxFieldMatches,
 					}
-					/*more_like_this = new
-					{
-						fields = fields,
-						min_term_freq = minFieldMatches <= 0 ? 1 : minFieldMatches,
-						max_query_terms = maxFieldMatches < minFieldMatches ? minFieldMatches + 5 : maxFieldMatches,
-						docs = new object[] {
-							new {
-								_index = "mainSearchCollection",
-								_type = type,
-								_id = intID
-							}
-						}
-					}*/
 				}
 			};
       //return Search( serializer.Serialize( parameters ) );
-      return client.Mlt<string>( "mainSearchCollection", type, intID.ToString(), parameters ).Response;
+      return client.Mlt<string>( esCollection, type, intID.ToString(), parameters ).Response;
     }
 
-    //Create or replace record(s) in the index
-    public void RefreshResourceOld( int id )
+	#region old obsolete methods
+	//Create or replace record(s) in the index
+	[Obsolete]
+	private void RefreshResourceOld( int id )
     {
       RefreshResourcesOld( new List<int> { id } );
     }
-    public void RefreshResourcesOld( List<int> ids )
+	  [Obsolete]
+    private void RefreshResourcesOld( List<int> ids )
     {
       //Get Evaluation Data
       var evaluations = evaluationManager.GetEvaluationsWithCount( 0 );
@@ -111,7 +103,8 @@ namespace LRWarehouse.DAL
     }
 
     //Create or update from existing DataSets (useful for full index rebuilds)
-    public void CreateOrReplaceResourcesInCollection5( DataSet dataC5, List<ResourceEvaluationManager.EvaluationResult> evaluations )
+	  [Obsolete]
+	  private void CreateOrReplaceResourcesInCollection5( DataSet dataC5, List<ResourceEvaluationManager.EvaluationResult> evaluations )
     {
       //Return if no data
       if ( !DoesDataSetHaveRows( dataC5 ) ) { return; }
@@ -124,7 +117,8 @@ namespace LRWarehouse.DAL
       //Do the bulk upload
       client.Bulk( bulkC5 );
     }
-    public void AddBulkCollection5( DataRow row, List<ResourceEvaluationManager.EvaluationResult> evaluations, ref List<object> bulkC5 )
+	  [Obsolete]
+	  public void AddBulkCollection5( DataRow row, List<ResourceEvaluationManager.EvaluationResult> evaluations, ref List<object> bulkC5 )
     {
       //Get a record
       var flat = jsonManager.GetJSONFlatFromDataRow( row );
@@ -139,7 +133,8 @@ namespace LRWarehouse.DAL
       bulkC5.Add( new { index = new { _index = "collection5", _type = type, _id = flat.intID } } );
       bulkC5.Add( flat );
     }
-    public void CreateOrReplaceResourcesInCollection6( DataSet dataC6, List<ResourceEvaluationManager.EvaluationResult> evaluations )
+	  [Obsolete]
+	  private void CreateOrReplaceResourcesInCollection6( DataSet dataC6, List<ResourceEvaluationManager.EvaluationResult> evaluations )
     {
       //Return if no data
       if ( !DoesDataSetHaveRows( dataC6 ) ) { return; }
@@ -152,7 +147,8 @@ namespace LRWarehouse.DAL
       //Do the bulk upload
       client.Bulk( bulkC6 );
     }
-    public void AddBulkCollection6( DataRow row, List<ResourceEvaluationManager.EvaluationResult> evaluations, ref List<object> bulkC6 )
+	  [Obsolete]
+	  public void AddBulkCollection6( DataRow row, List<ResourceEvaluationManager.EvaluationResult> evaluations, ref List<object> bulkC6 )
     {
       //Get a record
       var crs = jsonManager.GetCRSResourceFromDataRow( row, 0, -1 );
@@ -167,39 +163,23 @@ namespace LRWarehouse.DAL
       bulkC6.Add( new { index = new { _index = "collection6", _type = type, _id = crs.intID } } );
       bulkC6.Add( crs );
     }
+	#endregion
 
-    //Delete a list of records in the index
+	//Delete a list of records in the index
     public void DeleteResource( int id )
     {
       DeleteResources( new List<int> { id } );
     }
     public void DeleteResources( List<int> ids )
     {
-      /*
-      //Collection 5
-      var bulkC5 = new List<object>();
-      foreach ( var item in ids )
-      {
-        bulkC5.Add( new { delete = new { _index = "collection5", _type = type, _id = item } } );
-      }
-      client.Bulk( bulkC5 );
-
-      //Collection 6
-      var bulkC6 = new List<object>();
-      foreach ( var item in ids )
-      {
-        bulkC6.Add( new { delete = new { _index = "collection6", _type = type, _id = item } } );
-      }
-      client.Bulk( bulkC6 );
-      */
-
       //Collection 7
       var bulkC7 = new List<object>();
       foreach ( var item in ids )
       {
-        bulkC7.Add( new { delete = new { _index = "mainSearchCollection", _type = type, _id = item.ToString() } } );
+        bulkC7.Add( new { delete = new { _index = esCollection, _type = type, _id = item.ToString() } } );
       }
-      client.Bulk( bulkC7 );
+
+			DoChunkedBulkUpload( bulkC7 );
     }
 
     //Delete Entire Index
@@ -220,10 +200,46 @@ namespace LRWarehouse.DAL
       var response = client.Bulk( preformattedBulkData ).ToString();
       return response;
     }
-    #endregion
-    #region Helper methods
-    //Get SQL data for elasticsearch records
-    public DataSet GetSqlDataForElasticSearchCollection5( string idList, ref string status )
+
+		//Handle chunked bulk uploads
+		public void DoChunkedBulkUpload( List<object> preformattedBulkData )
+		{
+			DoChunkedBulkUpload( preformattedBulkData, 1000 );
+		}
+		public void DoChunkedBulkUpload( List<object> preformattedBulkData, int evenNumberedChunkSize )
+		{
+			var chunkSize = evenNumberedChunkSize; //Must be an even number because bulk items are processed in pairs (unless they are deletes)
+			var counter = 0;
+			var temp = new List<object>();
+			var max = preformattedBulkData.Count();
+			var lastItem = max - 1;
+
+			//For each item in the list
+			for ( var i = 0 ; i < max ; i++ )
+			{
+				//Add the item to the list and increment the counter
+				temp.Add( preformattedBulkData[ i ] );
+				counter++;
+
+				//If the counter hits the chunksize or this is the last item in the list, do the upload, then sleep
+				if ( counter >= chunkSize || i == lastItem )
+				{
+					client.Bulk( temp );
+					temp.Clear();
+					counter = 0;
+					System.Threading.Thread.Sleep( chunkSize * 10 ); //Don't overload elasticsearch
+				}
+
+			}
+
+		}
+		//
+
+
+		#endregion
+		#region Helper methods
+		//Get SQL data for elasticsearch records
+		public DataSet GetSqlDataForElasticSearchCollection5( string idList, ref string status )
     {
       return GetDataSet( idList, "Resource_BuildElasticSearch", ref status );
     }

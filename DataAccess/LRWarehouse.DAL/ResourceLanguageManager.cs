@@ -78,6 +78,50 @@ namespace LRWarehouse.DAL
             return newId;
         }
 
+        public string ImportV2(Entity entity, ref string statusMessage)
+        {
+            statusMessage = "successful";
+            string newId = "";
+            //bool isDup = false;
+            //string msg = "";
+            int outputCol = 3;
+            int pTotalRows = 0;
+            DataSet ds = new DataSet();
+
+            try
+            {
+                #region parameters
+                SqlParameter[] sqlParameters = new SqlParameter[5];
+                sqlParameters[0] = new SqlParameter("@ResourceId", "");
+                sqlParameters[1] = new SqlParameter("@LanguageId", entity.CodeId);
+                sqlParameters[2] = new SqlParameter("@OriginalValue", entity.OriginalValue);
+                sqlParameters[outputCol] = new SqlParameter("@TotalRows", SqlDbType.Int);
+                sqlParameters[outputCol].Direction = ParameterDirection.Output;
+                sqlParameters[4] = new SqlParameter("@ResourceIntId", entity.ResourceIntId);
+                #endregion
+
+                ds = SqlHelper.ExecuteDataset(ConnString, CommandType.StoredProcedure, "[Resource.Language_ImportV2]", sqlParameters);
+
+                string rows = sqlParameters[outputCol].Value.ToString();
+                try
+                {
+                    pTotalRows = Int32.Parse(rows);
+                }
+                catch
+                {
+                    pTotalRows = 0;
+                }
+            }
+            catch (Exception ex)
+            {
+                LogError(ex, className + string.Format(".ImportV2() for ResourceId: {0}, CodeId: {1}, Value: {2}, and CreatedBy: {3}",
+                    entity.ResourceIntId.ToString(), entity.CodeId, entity.OriginalValue, entity.CreatedById));
+                statusMessage = className + " - Unsuccessful: ImportV2(): " + ex.Message.ToString();
+            }
+
+            return newId;
+        }
+
         public string Import(Entity entity, ref string statusMessage)
         {
             statusMessage = "successful";
@@ -121,6 +165,8 @@ namespace LRWarehouse.DAL
 
             return newId;
         }
+
+
         public string Update(Entity entity)
         {
             string statusMessage = "successful";
@@ -223,6 +269,63 @@ namespace LRWarehouse.DAL
             return collection;
         }
 
+        public EntityCollection SelectV2(int pResourceIntId, string language)
+        {
+            EntityCollection collection = new EntityCollection();
+            try
+            {
+                SqlParameter[] sqlParameter = new SqlParameter[2];
+                sqlParameter[0] = new SqlParameter("@ResourceIntId", pResourceIntId);
+                sqlParameter[1] = new SqlParameter("@OriginalLanguage", language);
+
+
+                DataSet ds = SqlHelper.ExecuteDataset(ConnString, CommandType.StoredProcedure, "[Resource.LanguageSelectV2]", sqlParameter);
+                if (DoesDataSetHaveRows(ds))
+                {
+                    foreach (DataRow dr in ds.Tables[0].Rows)
+                    {
+                        Entity entity = Fill(dr);
+                        collection.Add(entity);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                LogError("ResourceLanguageManager.SelectV2(): " + ex.ToString());
+                return null;
+            }
+
+            return collection;
+        }
+        public List<MyEntity> SelectV2(int pResourceIntId)
+        {
+            List<MyEntity> collection = new List<MyEntity>();
+            try
+            {
+                SqlParameter[] sqlParameter = new SqlParameter[2];
+                sqlParameter[0] = new SqlParameter("@ResourceIntId", pResourceIntId);
+                sqlParameter[1] = new SqlParameter("@OriginalLanguage", "");
+
+                DataSet ds = SqlHelper.ExecuteDataset(ConnString, CommandType.StoredProcedure, "[Resource.LanguageSelectV2]", sqlParameter);
+                if (DoesDataSetHaveRows(ds))
+                {
+                    foreach (DataRow dr in ds.Tables[0].Rows)
+                    {
+                        Entity entity = Fill(dr);
+                        collection.Add(entity);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                LogError("ResourceLanguageManager.SelectV2(): " + ex.ToString());
+                return null;
+            }
+
+            return collection;
+        }
+
+
         public Entity Fill(DataRow dr)
         {
             Entity entity = new Entity();
@@ -241,6 +344,21 @@ namespace LRWarehouse.DAL
             try
             {
                 DataSet ds = SqlHelper.ExecuteDataset(ReadOnlyConnString, CommandType.StoredProcedure, "[Codes.LanguageSelect]");
+
+                return ds;
+            }
+            catch (Exception ex)
+            {
+                LogError("ResourceLanguageManager.SelectCodeTable(): " + ex.ToString());
+                return null;
+            }
+        }
+
+        public DataSet SelectCodeTableV2()
+        {
+            try
+            {
+                DataSet ds = SqlHelper.ExecuteDataset(ReadOnlyConnString, CommandType.StoredProcedure, "[Codes.LanguageSelectV2]");
 
                 return ds;
             }

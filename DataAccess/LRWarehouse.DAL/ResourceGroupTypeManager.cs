@@ -19,6 +19,7 @@ namespace LRWarehouse.DAL
         const string DELETE_PROC = "[Resource.GroupTypeDelete]";
         const string INSERT_PROC = "[Resource.GroupTypeInsert]";
         const string IMPORT_PROC = "[Resource.GroupTypeImport]";
+        const string IMPORT_PROCV2 = "[Resource.GroupTypeImportV2]";
 
         /// <summary>
         /// Default constructor
@@ -328,6 +329,48 @@ namespace LRWarehouse.DAL
 
             return nbrRows;
         }// Import
+
+        public int ImportV2(MyEntity entity, ref string status)
+        {
+            status = "successful";
+            int nbrRows = 0;
+
+            try
+            {
+                #region SqlParameters
+                SqlParameter[] parameters = new SqlParameter[4];
+                parameters[0] = new SqlParameter("@ResourceIntId", entity.ResourceIntId);
+                parameters[1] = new SqlParameter("@GroupTypeId", entity.CodeId);
+                parameters[2] = new SqlParameter("@OriginalValue", SqlDbType.VarChar);
+                parameters[2].Size = 100;
+                if (entity.OriginalValue.Length > 100)
+                {
+                    parameters[2].Value = entity.OriginalValue.Substring(0, 100);
+                }
+                else
+                {
+                    parameters[2].Value = entity.OriginalValue;
+                }
+                parameters[3] = new SqlParameter("@TotalRows", 0);
+                parameters[3].Direction = ParameterDirection.Output;
+                parameters[3].Value = 0;
+                //parameters[4] = new SqlParameter("@ResourceRowId", entity.ResourceId);
+                #endregion
+
+                DataSet ds = SqlHelper.ExecuteDataset(ConnString, CommandType.StoredProcedure, IMPORT_PROCV2, parameters);
+                if (DoesDataSetHaveRows(ds))
+                {
+                    nbrRows = (int)parameters[3].Value;
+                }
+            }
+            catch (Exception ex)
+            {
+                LogError(className + ".ImportV2(): " + ex.ToString());
+                status = ex.Message;
+            }
+
+            return nbrRows;
+        }// ImportV2
         #endregion
     }
 }

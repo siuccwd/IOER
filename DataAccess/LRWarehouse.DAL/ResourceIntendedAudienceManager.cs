@@ -229,6 +229,51 @@ namespace LRWarehouse.DAL
 
             return pTotalRows;
         }
+
+        public int ImportV2(Entity entity, ref string status)
+        {
+            int pTotalRows = 0;
+            int pOutputColumn = 3;
+            DataSet ds = new DataSet();
+            try
+            {
+                #region parameters
+                SqlParameter[] sqlParameters = new SqlParameter[5];
+                sqlParameters[0] = new SqlParameter("@ResourceId", DEFAULT_GUID); //OBSOLETE
+                sqlParameters[1] = new SqlParameter("@IntendedAudienceId", SqlDbType.Int);
+                sqlParameters[1].Value = entity.CodeId;
+                sqlParameters[2] = new SqlParameter("@OriginalValue", SqlDbType.VarChar);
+                sqlParameters[2].Size = 100;
+                sqlParameters[2].Value = entity.OriginalValue;
+                sqlParameters[3] = new SqlParameter("@TotalRows", SqlDbType.Int);
+                sqlParameters[3].Value = pTotalRows;
+                sqlParameters[3].Direction = ParameterDirection.Output;
+                sqlParameters[4] = new SqlParameter("@ResourceIntId", SqlDbType.Int);
+                sqlParameters[4].Value = entity.ResourceIntId;
+                #endregion
+
+                ds = SqlHelper.ExecuteDataset(ConnString, CommandType.StoredProcedure, "[Resource.IntendedAudience_ImportV2]", sqlParameters);
+                string rows = sqlParameters[pOutputColumn].Value.ToString();
+                try
+                {
+                    pTotalRows = int.Parse(rows);
+                }
+                catch
+                {
+                    pTotalRows = 0;
+                }
+
+                status = "successful";
+            }
+            catch (Exception ex)
+            {
+                LogError("ResourceIntendedAudienceManager.ImportV2(): " + ex.ToString());
+                status = ex.Message;
+            }
+
+            return pTotalRows;
+
+        }
         #endregion
 
         #region ====== Retrieval Methods ===============================================
@@ -352,6 +397,67 @@ namespace LRWarehouse.DAL
 
             }
         }
+
+        /// <summary>
+        /// OBSOLETE
+        /// </summary>
+        /// <param name="resourceId"></param>
+        /// <returns></returns>
+        private EntityCollection SelectCollectionV2(string resourceId)
+        {
+            EntityCollection collection = new EntityCollection();
+            DataSet ds = SelectV2(resourceId, 0);
+            if (DoesDataSetHaveRows(ds))
+            {
+                foreach (DataRow dr in ds.Tables[0].Rows)
+                {
+                    Entity entity = Fill(dr);
+                    collection.Add(entity);
+                }
+            }
+            return collection;
+        }
+
+        public EntityCollection SelectCollectionV2(int pResourceIntId)
+        {
+            EntityCollection collection = new EntityCollection();
+            DataSet ds = SelectV2("", pResourceIntId);
+            if (DoesDataSetHaveRows(ds))
+            {
+                foreach (DataRow dr in ds.Tables[0].Rows)
+                {
+                    Entity entity = Fill(dr);
+                    collection.Add(entity);
+                }
+            }
+            return collection;
+        }
+        private DataSet SelectV2(string pResourceId, int pResourceIntId)
+        {
+
+            DataSet ds = new DataSet();
+            try
+            {
+                SqlParameter[] sqlParameters = new SqlParameter[2];
+                sqlParameters[0] = new SqlParameter("@ResourceId", "");
+                sqlParameters[1] = new SqlParameter("@ResourceIntId", pResourceIntId);
+
+                ds = SqlHelper.ExecuteDataset(LRWarehouseRO(), CommandType.StoredProcedure, "[Resource.IntendedAudienceSelectV2]", sqlParameters);
+
+                if (ds.HasErrors)
+                {
+                    return null;
+                }
+                return ds;
+            }
+            catch (Exception ex)
+            {
+                LogError(ex, className + ".SelectV2() ");
+                return null;
+
+            }
+        }
+
         public List<MyEntity> Select( int pResourceIntId )
         {
 

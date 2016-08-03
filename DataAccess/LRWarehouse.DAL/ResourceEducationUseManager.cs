@@ -29,6 +29,7 @@ namespace LRWarehouse.DAL
         const string DELETE_PROC = "[Resource.EducationUseDelete]";
         const string INSERT_PROC = "[Resource.EducationUseInsert]";
         const string IMPORT_PROC = "[Resource.EducationUseImport]";
+        const string IMPORT_PROCV2 = "[Resource.EducationUseImportV2]";
 
         /// <summary>
         /// Default constructor
@@ -320,6 +321,49 @@ namespace LRWarehouse.DAL
             catch (Exception ex)
             {
                 LogError(className + ".Import(): " + ex.ToString());
+                status = ex.Message;
+            }
+
+            return nbrRows;
+        }
+
+        public int ImportV2(MyEntity entity, ref string status)
+        {
+            status = "successful";
+            int nbrRows = 0;
+
+            try
+            {
+                #region SqlParameters
+                SqlParameter[] parameters = new SqlParameter[4];
+                parameters[0] = new SqlParameter("@ResourceIntId", entity.ResourceIntId);
+                parameters[1] = new SqlParameter("@EducationUseId", entity.CodeId);
+                parameters[2] = new SqlParameter("@OriginalValue", SqlDbType.VarChar);
+                parameters[2].Size = 100;
+                if (entity.OriginalValue.Length > 100)
+                {
+                    parameters[2].Value = entity.OriginalValue.Substring(0, 100);
+                }
+                else
+                {
+                    parameters[2].Value = entity.OriginalValue;
+                }
+                parameters[3] = new SqlParameter("@TotalRows", SqlDbType.Int);
+                parameters[3].Value = 0;
+                parameters[3].Direction = ParameterDirection.Output;
+                //parameters[4] = new SqlParameter("@ResourceRowId", SqlDbType.UniqueIdentifier);
+                //parameters[4].Value = entity.ResourceId;
+                #endregion
+
+                DataSet ds = SqlHelper.ExecuteDataset(ConnString, CommandType.StoredProcedure, IMPORT_PROCV2, parameters);
+                if (DoesDataSetHaveRows(ds))
+                {
+                    nbrRows = (int)parameters[3].Value;
+                }
+            }
+            catch (Exception ex)
+            {
+                LogError(className + ".ImportV2(): " + ex.ToString());
                 status = ex.Message;
             }
 

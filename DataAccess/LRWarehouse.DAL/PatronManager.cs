@@ -26,7 +26,6 @@ namespace LRWarehouse.DAL
         /// Base procedures
         /// </summary>
         const string GET_PROC = "[PatronGet]";
-        const string SELECT_PROC = "[PatronSelect]";
         const string DELETE_PROC = "[PatronDelete]";
         const string INSERT_PROC = "[PatronInsert]";
         const string UPDATE_PROC = "[PatronUpdate]";
@@ -88,7 +87,7 @@ namespace LRWarehouse.DAL
                 if ( entity.UserName == null || entity.UserName.Trim().Length == 0 )
                     entity.UserName = entity.Email;
                 #region parameters
-                SqlParameter[] sqlParameters = new SqlParameter[ 6 ];
+                SqlParameter[] sqlParameters = new SqlParameter[ 7 ];
 
                 sqlParameters[ 0 ] = new SqlParameter( "@UserName", entity.UserName );
                 sqlParameters[ 1 ] = new SqlParameter( "@Password", entity.Password );
@@ -97,6 +96,7 @@ namespace LRWarehouse.DAL
                 sqlParameters[ 4 ] = new SqlParameter( "@Email", entity.Email);
 
                 sqlParameters[ 5 ] = new SqlParameter( "@IsActive", entity.IsActive );
+				sqlParameters[ 6 ] = new SqlParameter( "@Identifier", entity.ExternalIdentifier );
                 
                 #endregion
 
@@ -204,6 +204,8 @@ namespace LRWarehouse.DAL
                 return new Patron();
 
         }//
+
+
         /// <summary>
         /// Get User record via rowId
         /// </summary>
@@ -932,10 +934,9 @@ namespace LRWarehouse.DAL
                 PatronId = GetRowColumn(dr, "PatronId", 0),
                 Id = GetRowColumn(dr, "Id", 0),
                 ExternalSiteId = GetRowColumn(dr, "ExternalSiteId", 0),
-                LoginId = GetRowColumn(dr, "LoginId", ""),
-                Password = GetRowColumn(dr, "Password", ""),
+                LoginId = GetRowPossibleColumn(dr, "LoginId", ""),
+                Password = GetRowPossibleColumn(dr, "Password", ""),
                 Token = GetRowColumn(dr, "Token", ""),
-                Created = GetRowColumn(dr, "Created", DateTime.Now)
             };
 
             dr.Close();
@@ -953,7 +954,6 @@ namespace LRWarehouse.DAL
                 LoginId = GetRowColumn(dr, "LoginId", ""),
                 Password = GetRowColumn(dr, "Password", ""),
                 Token = GetRowColumn(dr, "Token", ""),
-                Created = GetRowColumn(dr, "Created", DateTime.Now)
             };
 
             return retVal;

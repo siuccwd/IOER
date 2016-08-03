@@ -205,6 +205,28 @@ namespace LRWarehouse.DAL
 
             return entity;
         }//
+
+        public MyEntity Fill(DataRow dr)
+        {
+            MyEntity entity = new MyEntity();
+
+            entity.IsValid = true;
+
+            //string rowId = GetRowColumn( dr, "ResourceId", "" );
+            //if ( rowId.Length > 35 )
+            //    entity.ResourceId = new Guid( rowId );
+
+            entity.Id = GetRowColumn(dr, "Id", 0);
+            entity.ResourceIntId = GetRowColumn(dr, "ResourceIntId", 0);
+            entity.CreatedById = GetRowColumn(dr, "CreatedById", 0);
+            entity.OriginalValue = GetRowColumn(dr, "RelatedUrl", "");
+
+            //string rowId = GetRowColumn( dr, "RowId", "" );
+            //if ( rowId.Length > 35 )
+            //    entity.RowId = new Guid( rowId );
+
+            return entity;
+        }
         #endregion
     }
 }

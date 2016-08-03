@@ -39,6 +39,32 @@ namespace LRWarehouse.DAL
             return status;
         }
 
+        public string ImportV2(MyEntity entity)
+        {
+            string status = "successful";
+            #region Sql Parameters
+            SqlParameter[] parameters = new SqlParameter[4];
+            parameters[0] = new SqlParameter("@ResourceIntId", entity.ResourceIntId);
+            parameters[1] = new SqlParameter("@CodeId", entity.CodeId);
+            parameters[2] = new SqlParameter("@OriginalValue", entity.OriginalValue);
+            parameters[3] = new SqlParameter("@TotalRows", SqlDbType.Int);
+            parameters[3].Direction = ParameterDirection.Output;
+            #endregion
+
+            try
+            {
+                SqlHelper.ExecuteNonQuery(ConnString, CommandType.StoredProcedure, "[Resource.AccessibilityControlImportV2]", parameters);
+            }
+            catch (Exception ex)
+            {
+                status = "ResourceAccessibilityControlManager.ImportV2(): " + ex.Message;
+                LogError("ResourceAccessibilityControlManager.ImportV2(): " + ex.ToString());
+            }
+
+            return status;
+
+        }
+
         public MyEntityCollection Select(int resourceIntId, int codeId, ref string status)
         {
             status = "successful";

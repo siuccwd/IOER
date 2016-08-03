@@ -19,6 +19,7 @@ namespace LRWarehouse.DAL
         const string DELETE_PROC = "[Resource.AssessmentTypeDelete]";
         const string INSERT_PROC = "[Resource.AssessmentTypeInsert]";
         const string IMPORT_PROC = "[Resource.AssessmentType_Import]";
+        const string IMPORT_PROCV2 = "[Resource.AssessmentType_ImportV2]";
 
         /// <summary>
         /// Default constructor
@@ -274,6 +275,33 @@ namespace LRWarehouse.DAL
             }
 
             return status;
+        }
+
+        public string ImportV2(MyEntity asmtType)
+        {
+            string status = "successful";
+            string connectionString = LRWarehouse();
+
+            try
+            {
+                #region SQL Parameters
+                SqlParameter[] parameters = new SqlParameter[4];
+                parameters[0] = new SqlParameter("@ResourceIntId", asmtType.ResourceIntId);
+                parameters[1] = new SqlParameter("@OriginalValue", asmtType.OriginalValue);
+                parameters[2] = new SqlParameter("@TotalRows", SqlDbType.Int);
+                parameters[2].Direction = ParameterDirection.Output;
+                #endregion
+
+                DataSet ds = SqlHelper.ExecuteDataset(connectionString, CommandType.StoredProcedure, IMPORT_PROCV2, parameters);
+            }
+            catch (Exception ex)
+            {
+                status = ex.Message;
+                LogError(className + ".ImportV2(): " + ex.ToString());
+            }
+
+            return status;
+
         }
 
 
