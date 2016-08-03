@@ -300,7 +300,7 @@ namespace ILPathways.DAL
                 }
                 catch ( Exception ex )
                 {
-                    LogError( ex, className + ".Search() " );
+					LogError( ex, className + ".Search(). filter: " + pFilter );
                     return null;
 
                 }
@@ -326,11 +326,14 @@ namespace ILPathways.DAL
 
 			entity.IsValid = true;
 			entity.OrgId = GetRowColumn( dr, "OrgId", 0 );
+			entity.IsOrgActive = GetRowColumn( dr, "IsActive", false );
+			//entity.is
 			entity.UserId = GetRowColumn( dr, "UserId", 0 );
 
             entity.OrgMemberTypeId = GetRowColumn( dr, "OrgMemberTypeId", 0 );
             entity.OrgMemberType = GetRowColumn( dr, "OrgMemberType", "" );
             entity.Organization = GetRowColumn( dr, "Organization", "Missing" );
+			entity.IsIsleApprovedOrg = GetRowColumn( dr, "IsIsleMember", false );
 			//entity.Comment = dr[ "Comment" ].ToString();
 
             entity.Created = GetRowPossibleColumn( dr, "MemberAdded", entity.DefaultDate );

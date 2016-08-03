@@ -215,7 +215,7 @@ namespace ILPathways.DAL
         /// <returns></returns>
         private static int ActivityLogDetailInsert( int pActivityLogId, string pDetailType, int pTargetUserId, string pDetails, int pCreatedById )
         {
-            int groupId = 0;
+          //  int groupId = 0;
             int newId = 0;
             try
             {
@@ -697,15 +697,50 @@ namespace ILPathways.DAL
             }
         }//
 
-
+		/// <summary>
+		/// Return activity totals for a learning list
+		/// 15-11-07 mparsons - we have been seeing deadlock errors on this method, typically occuring early in the morning, so probably while being crawled. 
+		///				The proc is an expensive opp, so it probalby makes sense to cache these results, and update regularly (hourly?)
+		/// </summary>
+		/// <param name="objectId">Id of the learning list</param>
+		/// <param name="startDate"></param>
+		/// <param name="endDate"></param>
+		/// <param name="removeEmptyNodes"></param>
+		/// <returns></returns>
         public static List<HierarchyActivityRecord> ActivityTotals_LearningLists( int objectId, DateTime startDate, DateTime endDate, bool removeEmptyNodes )
         {
             List<HierarchyActivityRecord> list = new List<HierarchyActivityRecord>();
             HierarchyActivityRecord entity = new HierarchyActivityRecord();
             ActivityCount activityCount = new ActivityCount();
-            
+			string key = "ActivityTotals_LearningLists" + objectId.ToString();
+			//tip - extend cache hours overnight?
+			int cacheHours = 2;
+			int thisHour = DateTime.Now.Hour;
+			Int32.TryParse( DateTime.Now.ToString("HH"), out thisHour );
+			if ( thisHour > 18 || thisHour < 7 )
+				cacheHours = 10;
+			int cacheHoursElapsed = cacheHours * -1;
             try
             {
+				//check caching
+				if ( HttpRuntime.Cache[ key ] != null )
+				{
+					var cache = ( CachedContent ) HttpRuntime.Cache[ key ];
+					try
+					{
+						if ( cache.lastUpdated > DateTime.Now.AddHours( cacheHoursElapsed ) )
+						{
+							DoTrace( 6, className + string.Format( "=== Using cached version of ActivityTotals_LearningLists totals, Id: {0}", objectId ) );
+							return cache.ListTotals;
+						}
+					}
+					catch ( Exception ex )
+					{
+						DoTrace( 5, className + " === cache exception (continuing)" + ex.Message );
+					}
+				}
+
+				//===============================
                 SqlParameter[] sqlParameters = new SqlParameter[ 4 ];
                 sqlParameters[ 0 ] = new SqlParameter( "@StartDate", startDate );
                 sqlParameters[ 1 ] = new SqlParameter( "@EndDate", endDate );
@@ -787,19 +822,59 @@ namespace ILPathways.DAL
                             list.Add( entity );
                     }
                 }
-                /*
-                Dictionary<int, StudentName> students = new Dictionary<int, StudentName>()
-                {
-                    { 111, new StudentName {FirstName="Sachin", LastName="Karnik", ID=211}},
-                    { 112, new StudentName {FirstName="Dina", LastName="Salimzianova", ID=317}},
-                    { 113, new StudentName {FirstName="Andy", LastName="Ruth", ID=198}}
-                };
-                */
+				//Cache the output, just in case of deadlock conditions
+				if ( key.Length > 0 )
+				{
+					var newCache = new CachedContent()
+					{
+						ListTotals = list,
+						lastUpdated = DateTime.Now
+					};
+
+					if ( HttpContext.Current.Cache[ key ] != null )
+					{
+						HttpRuntime.Cache.Remove( key );
+						HttpRuntime.Cache.Insert( key, newCache );
+
+						DoTrace( 6, string.Format( "===  Updating cached version of ActivityTotals_LearningLists, Id: {0}", objectId) );
+
+					}
+					else
+					{
+						DoTrace( 6, string.Format( "===  Inserting new cached version of ActivityTotals_LearningLists, Id: {0}", objectId ) );
+						//not sure if want a max? Will always show latest if needed
+						//or, maybe we want to use cache and update hourly?
+						System.Web.HttpRuntime.Cache.Insert( key, newCache, null, DateTime.Now.AddHours( cacheHours ), TimeSpan.Zero );
+					}
+				}
                 return list;
             }
+			catch ( System.Data.SqlClient.SqlException sdex )
+			{
+				//possible deadlock, regardless, return cache if present
+				if ( HttpContext.Current.Cache[ key ] != null )
+				{
+					var cache = ( CachedContent ) HttpRuntime.Cache[ key ];
+					try
+					{
+						if ( cache != null )
+						{
+							DoTrace( 5, className + string.Format( "=== After exception, using cached version of ActivityTotals_LearningLists totals, Id: {0}", objectId ) );
+							return cache.ListTotals;
+						}
+					}
+					catch ( Exception ex )
+					{
+						DoTrace( 5, className + " === cache exception (in SqlException)" + ex.Message );
+					}
+				}
+				LogError( sdex, className + string.Format( ".ActivityTotals_LearningLists() Id: {0}", objectId ) );
+				
+				return null;
+			}
             catch ( Exception ex )
             {
-                LogError( ex, className + ".ActivityTotals_LearningLists() " );
+				LogError( ex, className + string.Format( ".ActivityTotals_LearningLists() Id: {0}", objectId ) );
                 return null;
             }
         }//
@@ -872,6 +947,67 @@ namespace ILPathways.DAL
             var cids = new List<int>() { views };
             activityCount.Activities.Add( label, cids );
         }
+
+        public static List<StatisticsReportRecord> Activities_GetAppStatistics(DateTime startDate, DateTime endDate)
+        {
+            SqlParameter[] parms = new SqlParameter[2];
+            parms[0] = new SqlParameter("@pStartDate", SqlDbType.NVarChar);
+            parms[0].Size = 10;
+            parms[0].Value = startDate.Date.ToString("yyyy-MM-dd");
+            parms[1] = new SqlParameter("@pEndDate", SqlDbType.NVarChar);
+            parms[1].Size = 10;
+            parms[1].Value = endDate.Date.ToString("yyyy-MM-dd");
+            List<StatisticsReportRecord> rows = new List<StatisticsReportRecord>();
+
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(ContentConnectionRO()))
+                {
+                    DataSet ds = new DataSet();
+                    ds = SqlHelper.ExecuteDataset(conn, CommandType.StoredProcedure, "[Activity.GetSitewideStatistics]", parms);
+                    if (ds.HasErrors)
+                    {
+                        return rows;
+                    }
+
+                    if (DoesDataSetHaveRows(ds))
+                    {
+                        foreach (DataRow dr in ds.Tables[0].Rows)
+                        {
+                            StatisticsReportRecord row = new StatisticsReportRecord
+                            {
+                                Id = GetRowColumn(dr, "Id", 0),
+                                Activity = GetRowColumn(dr, "Activity", ""),
+                                Count = GetRowColumn(dr, "Count", 0)
+                            };
+
+                            rows.Add(row);
+                        }
+                    }
+                }
+
+                return rows;
+            }
+            catch (Exception ex)
+            {
+                LogError(ex, className + ".Activities_GetAppStatistics(): ");
+                return null;
+            }
+        }
         #endregion
     }
+
+
+	public class CachedContent
+	{
+		public CachedContent()
+		{
+			ListTotals = new List<HierarchyActivityRecord>();
+			lastUpdated = DateTime.Now;
+		}
+		public DateTime lastUpdated { get; set; }
+		public List<HierarchyActivityRecord> ListTotals { get; set; }
+
+
+	}
 }

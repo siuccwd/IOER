@@ -98,7 +98,7 @@ namespace ILPathways.DAL
             entity.Id = libId;
             if ( libId > 0 )
             {
-                LibrarySectionManager.CreateDefault( libId, ref statusMessage );
+				LibrarySectionManager.CreateDefault( entity, ref statusMessage );
             }
             //would it be logical to also create the default section??
             //the caller may want to do the default insert?
@@ -223,10 +223,20 @@ namespace ILPathways.DAL
 		/// <returns></returns>
         public Library Get( int pId )
 		{
+			if (pId < 1)
+				return new Library();
+
 		    return Get( pId, "" );
 		}//
         public Library GetByRowId( string pRowId )
         {
+			Guid validGuid;
+
+			if ( string.IsNullOrWhiteSpace(pRowId )
+				|| pRowId.Length != 36
+				|| Guid.TryParse(pRowId, out validGuid) == false)
+				return new Library();
+
             return Get( 0, pRowId );
 
         }//
@@ -307,6 +317,7 @@ namespace ILPathways.DAL
                     if ( createIfMissing )
                     {
                         entity = CreateMyLibrary( user, ref statusMessage );
+						entity.Message = "Created Library";
                     }
                     else
                     {
@@ -416,7 +427,7 @@ namespace ILPathways.DAL
         /// - collections where has curate access
         /// - org libraries with implicit access
         /// </summary>
-        /// <param name="pLibraryId"></param>
+        /// <param name="pLibraryId">If zero, should return all libs with edit access</param>
         /// <param name="pUserid"></param>
         /// <returns></returns>
         public List<Library> Library_SelectListWithEditAccess( int libraryId, int pUserid )
@@ -454,6 +465,7 @@ namespace ILPathways.DAL
         /// - org libraries with implicit access
 		/// </summary>
         /// <param name="pUserid"></param>
+		/// <param name="libraryId"></param>
 		/// <returns></returns>
         public DataSet Library_SelectWithEditAccess( int pUserid, int libraryId )
 		{
@@ -754,6 +766,41 @@ namespace ILPathways.DAL
             }
         }//
 
+				/// <summary>
+				/// Retrieve IDs of all collections containing the resource
+				/// </summary>
+				/// <param name="resourceIntId"></param>
+				/// <returns></returns>
+				public List<int> AllLibrarySectionIdsWithResource( int resourceIntId )
+				{
+					List<int> results = new List<int>();
+					SqlParameter[] sqlParameters = new SqlParameter[1];
+					sqlParameters[ 0 ] = new SqlParameter( "@ResourceIntId", resourceIntId );
+
+					using ( SqlConnection conn = new SqlConnection( ContentConnectionRO() ) )
+					{
+						DataSet ds = new DataSet();
+					
+						try 
+						{
+							ds = SqlHelper.ExecuteDataset( conn, CommandType.StoredProcedure, "[Library.UniqueSectionsForResource]", sqlParameters );
+							if ( DoesDataSetHaveRows( ds ) )
+							{
+								foreach ( DataRow dr in ds.Tables[ 0 ].Rows )
+								{
+									results.Add( int.Parse( GetRowColumn( dr, "CollectionId" ) ) );
+								}
+							}
+						}
+						catch 
+						{
+						
+						}
+
+					}
+					return results;
+				} //
+
         /// <summary>
         /// Search for Library related data using passed parameters
         /// - returns List
@@ -831,7 +878,7 @@ namespace ILPathways.DAL
                 }
                 catch ( Exception ex )
                 {
-                    LogError( ex, thisClassName + ".Search() " );
+                    LogError( ex, thisClassName + string.Format(".Search() \rfilter: {0}, \rorderBy: {1} ", pFilter, pOrderBy) );
                     return null;
 
                 }

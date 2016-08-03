@@ -18,7 +18,7 @@ namespace ILPathways.DAL
 {
     public class LibrarySectionManager : BaseDataManager
     {
-        static string thisClassName = "LibraryManager";
+		static string thisClassName = "LibrarySectionManager";
         /// <summary>
         /// Base procedures
         /// </summary>
@@ -62,18 +62,24 @@ namespace ILPathways.DAL
             }
             return successful;
         }//
+
+		public static LibrarySection CreateDefault( int libraryId, ref string statusMessage )
+		{
+			Library lib = new LibraryManager().Get( libraryId );
+			return CreateDefault( lib, ref statusMessage );
+		}
         /// <summary>
         /// Add default section for library 
         /// </summary>
         /// <param name="libraryId"></param>
         /// <param name="statusMessage"></param>
         /// <returns></returns>
-        public static LibrarySection CreateDefault( int libraryId, ref string statusMessage )
+		public static LibrarySection CreateDefault( Library lib, ref string statusMessage )
         {
-            Library lib = new LibraryManager().Get( libraryId );
+//            Library lib = new LibraryManager().Get( libraryId );
 
             LibrarySection entity = new LibrarySection();
-            entity.LibraryId = libraryId;
+            entity.LibraryId = lib.Id;
             entity.SectionTypeId = GENERAL_LIBRARY_SECTION_ID;
             entity.Title = "Default collection";
             entity.Description = "The default collection is system generated. You may change the title and description as needed.";
@@ -403,8 +409,8 @@ namespace ILPathways.DAL
             }
             catch ( Exception ex )
             {
-				LogError( ex, thisClassName + string.Format( ".LibrarySectionGet() sectionId/guid: {0}/{1} ", sectionId, guid ) );
-                entity.Message = "Unsuccessful: " + thisClassName + ".LibrarySectionGet(): " + ex.Message.ToString();
+				LogError( ex, thisClassName + string.Format( ".Get() sectionId/guid: {0}/{1} ", sectionId, guid ) );
+                entity.Message = "Unsuccessful: " + thisClassName + ".Get(): " + ex.Message.ToString();
                 entity.IsValid = false;
                 return entity;
 
@@ -857,7 +863,7 @@ namespace ILPathways.DAL
         /// </summary>
         public static List<LibraryMember> SectionMember_Search( string pFilter, string pOrderBy, int pStartPageIndex, int pMaximumRows, ref int pTotalRows )
         {
-            int newId = 0;
+            //int newId = 0;
             List<LibraryMember> list = new List<LibraryMember>();
             LibraryMember item = new LibraryMember();
             int outputCol = 4;

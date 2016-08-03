@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System;
 using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
@@ -319,9 +318,9 @@ namespace ILPathways.DAL
             return newId;
         }//
 
-        public string ResourceMoveById( int libraryResourceId, int toCollectionId, int userId, ref string statusMessage )
+        public string ResourceMoveById( int libraryResourceId, int toCollectionId, int userId )
         {
-            return ResourceMove( libraryResourceId, 0, 0, toCollectionId, userId, ref statusMessage );
+            return ResourceMove( libraryResourceId, 0, 0, toCollectionId, userId );
         }//
 
         /// <summary>
@@ -333,12 +332,12 @@ namespace ILPathways.DAL
         /// <param name="userId"></param>
         /// <param name="statusMessage"></param>
         /// <returns></returns>
-        public string ResourceMove( int fromCollectionId, int resourceIntId, int toCollectionId, int userId, ref string statusMessage )
+        public string ResourceMove( int fromCollectionId, int resourceIntId, int toCollectionId, int userId )
         {
-            return ResourceMove( 0, fromCollectionId, resourceIntId, toCollectionId, userId, ref statusMessage );
+            return ResourceMove( 0, fromCollectionId, resourceIntId, toCollectionId, userId );
         }//
 
-        private string ResourceMove( int libraryResourceId, int fromCollectionId, int resourceIntId, int toCollectionId, int userId, ref string statusMessage )
+        private string ResourceMove( int libraryResourceId, int fromCollectionId, int resourceIntId, int toCollectionId, int userId)
         {
             string message = "successful";
             using ( SqlConnection conn = new SqlConnection( ContentConnection() ) )
@@ -363,12 +362,12 @@ namespace ILPathways.DAL
                 {
                     if ( ex.Message.ToLower().IndexOf( "cannot insert duplicate key row" ) > -1 )
                     {
-                        statusMessage = "Error - the resource already exists in the selected collection";
+						message = "Error - the resource already exists in the selected collection";
                     }
                     else
                     {
                         LogError( ex, className + string.Format( ".ResourceMove() for Id: {0}, or resourceIntId: {1}, fromCollectionId: {2}, toCollectionId: {3}", libraryResourceId, resourceIntId, fromCollectionId, toCollectionId ) );
-                        statusMessage = className + "- Unsuccessful: ResourceMove(): " + ex.Message.ToString();
+						message = className + "- Unsuccessful: ResourceMove(): " + ex.Message.ToString();
                     }
                 }
             }
@@ -532,6 +531,71 @@ namespace ILPathways.DAL
             }
             return list;
         }//
+
+        public List<LibraryResource> LibraryCollectionGet(int resourceIntId)
+        {
+            List<LibraryResource> list = new List<LibraryResource>();
+            using (SqlConnection conn = new SqlConnection(ContentConnectionRO()))
+            {
+                SqlParameter[] parms = new SqlParameter[1];
+                parms[0] = new SqlParameter("@ResourceIntId", resourceIntId);
+
+                try
+                {
+                    DataSet ds = SqlHelper.ExecuteDataset(conn, CommandType.StoredProcedure, "[LibraryCollection.ResourceGet]", parms);
+                    if (DoesDataSetHaveRows(ds))
+                    {
+                        foreach (DataRow dr in ds.Tables[0].Rows)
+                        {
+                            LibraryResource entity = new LibraryResource
+                            {
+                                Id = GetRowColumn(dr, "Id", 0),
+                                LibrarySectionId = GetRowColumn(dr, "LibrarySectionId", 0),
+                                ResourceIntId = GetRowColumn(dr, "ResourceIntId", 0),
+                                IsActive = GetRowColumn(dr, "IsActive", true),
+                                Comment = GetRowColumn(dr, "Comment", ""),
+                                Created = GetRowColumn(dr, "Created", DateTime.Now),
+                                CreatedById = GetRowColumn(dr, "CreatedById", 0)
+                            };
+                            list.Add(entity);
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    LogError(ex, className + ".LibraryCollectionGet() ");
+                    return null;
+                }
+            }
+
+            return list;
+        }
+
+        public string LibraryCollectionUpdate(LibraryResource entity)
+        {
+            string status = "successful";
+            SqlParameter[] parms = new SqlParameter[5];
+            parms[0] = new SqlParameter("@Id", entity.Id);
+            parms[1] = new SqlParameter("@LibrarySectionId", entity.LibrarySectionId);
+            parms[2] = new SqlParameter("@ResourceIntId", entity.ResourceIntId);
+            parms[3] = new SqlParameter("@IsActive", entity.IsActive);
+            parms[4] = new SqlParameter("@Comment", entity.Comment);
+
+            using (SqlConnection conn = new SqlConnection(ContentConnection()))
+            {
+                try
+                {
+                    SqlHelper.ExecuteNonQuery(conn, CommandType.StoredProcedure, "[LibraryCollection.ResourceUpdate]", parms);
+                }
+                catch (Exception ex)
+                {
+                    LogError(ex, className + ".LibraryCollectionUpdate() ");
+                    status = ex.Message;
+                }
+            }
+
+            return status;
+        }
         #endregion
 
 

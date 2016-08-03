@@ -477,7 +477,7 @@ namespace ILPathways.DAL
             entity.State = GetRowColumn( dr, "State", "" );
             entity.Zipcode = GetRowColumn( dr, "Zipcode", "" );
             entity.ZipCode4 = GetRowPossibleColumn( dr, "ZipCode4", "" );
-
+			entity.IsContentApprovalRequired = GetRowPossibleColumn( dr, "IsContentApprovalRequired", false );
             entity.Created = DateTime.Parse( dr[ "Created" ].ToString() );
             entity.CreatedById = GetRowColumn( dr, "CreatedById", 0 );
             //entity.CreatedBy = dr[ "CreatedBy" ].ToString();
@@ -528,6 +528,7 @@ namespace ILPathways.DAL
             entity.State = GetRowColumn( dr, "State", "" );
             entity.Zipcode = GetRowColumn( dr, "Zipcode", "" );
             entity.ZipCode4 = GetRowPossibleColumn( dr, "ZipCode4", "" );
+			entity.IsContentApprovalRequired = GetRowPossibleColumn( dr, "IsContentApprovalRequired", false );
 
             entity.Created = DateTime.Parse( dr[ "Created" ].ToString() );
             entity.CreatedById = GetRowColumn( dr, "CreatedById", 0 );

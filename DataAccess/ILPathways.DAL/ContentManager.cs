@@ -97,13 +97,14 @@ namespace ILPathways.DAL
                 sqlParameters[ 8 ] = new SqlParameter( "@OrgId", entity.OrgId );
                 sqlParameters[ 9 ] = new SqlParameter( "@IsOrgContentOwner", entity.IsOrgContentOwner );
                 sqlParameters[ 10 ] = new SqlParameter( "@CreatedById", entity.CreatedById );
-                sqlParameters[ 11 ] = new SqlParameter( "@UseRightsUrl", entity.UseRightsUrl );
+                sqlParameters[ 11 ] = new SqlParameter( "@UseRightsUrl", entity.UsageRightsUrl );
 
                 sqlParameters[ 12 ] = new SqlParameter( "@DocumentUrl", entity.DocumentUrl );
                 sqlParameters[ 13 ] = new SqlParameter( "@DocumentRowId", entity.DocumentRowId.ToString() );
                 sqlParameters[ 14 ] = new SqlParameter( "@SortOrder", entity.SortOrder );
                 sqlParameters[ 15 ] = new SqlParameter( "@Timeframe", entity.Timeframe );
                 sqlParameters[ 16 ] = new SqlParameter( "@ParentId", entity.ParentId );
+	
 				#endregion
 
                 SqlDataReader dr = SqlHelper.ExecuteReader( ContentConnection(), CommandType.StoredProcedure, INSERT_PROC, sqlParameters );
@@ -146,7 +147,7 @@ namespace ILPathways.DAL
 			{
                 NotifyAdmin( className + "Update()", string.Format( "Call to an obsolete method. Title: {0}, userId: {1} ", entity.Title, entity.LastUpdatedById ) );
 				#region parameters
-                SqlParameter[] sqlParameters = new SqlParameter[ 18 ];
+                SqlParameter[] sqlParameters = new SqlParameter[ 17 ];
                 sqlParameters[ 0 ] = new SqlParameter( "@Id", entity.Id);
 
                 sqlParameters[ 1 ] = new SqlParameter( "@Title", entity.Title );
@@ -164,14 +165,16 @@ namespace ILPathways.DAL
                 sqlParameters[ 8 ] = new SqlParameter( "@IsPublished", entity.IsPublished);
 
                 sqlParameters[ 9 ] = new SqlParameter( "@LastUpdatedById", entity.LastUpdatedById );
-                sqlParameters[ 10 ] = new SqlParameter( "@UseRightsUrl", entity.UseRightsUrl );
-                sqlParameters[ 11 ] = new SqlParameter( "@ResourceVersionId", 0);   //entity.ResourceVersionId );
+                sqlParameters[ 10 ] = new SqlParameter( "@UsageRightsUrl", entity.UsageRightsUrl );
+				sqlParameters[ 11 ] = new SqlParameter( "@ParentId", entity.ParentId );
+
                 sqlParameters[ 12 ] = new SqlParameter( "@DocumentUrl", entity.DocumentUrl );
                 sqlParameters[ 13 ] = new SqlParameter( "@DocumentRowId", entity.DocumentRowId.ToString() );
                 sqlParameters[ 14 ] = new SqlParameter( "@ResourceIntId", entity.ResourceIntId );
                 sqlParameters[ 15 ] = new SqlParameter( "@SortOrder", entity.SortOrder );
                 sqlParameters[ 16 ] = new SqlParameter( "@Timeframe", entity.Timeframe );
-                sqlParameters[ 17 ] = new SqlParameter( "@ParentId", entity.ParentId );
+           
+				
 				#endregion
 
 				SqlHelper.ExecuteNonQuery( ContentConnection(), UPDATE_PROC, sqlParameters );
@@ -190,40 +193,6 @@ namespace ILPathways.DAL
 
 		}//
 
-        /// <summary>
-        /// Update content item with related resourceVersionId
-        /// </summary>
-        /// <param name="id"></param>
-        /// <param name="resourceVersionId"></param>
-        /// <returns></returns>
-        [Obsolete]
-        private string UpdateResourceVersionId( int id, int resourceVersionId )
-        {
-            string message = "successful";
-
-            try
-            {
-
-                #region parameters
-                SqlParameter[] sqlParameters = new SqlParameter[ 2 ];
-                sqlParameters[ 0 ] = new SqlParameter( "@Id", id);
-                sqlParameters[ 1 ] = new SqlParameter( "@ResourceVersionId", resourceVersionId );
-                #endregion
-
-                SqlHelper.ExecuteNonQuery( ContentConnection(), "[Content.UpdateResourceVersionId]", sqlParameters );
-                message = "successful";
-
-            }
-            catch ( Exception ex )
-            {
-                LogError( ex, className + string.Format( ".UpdateResourceVersionId() for Id: {0}, and resourceVersionId: {2}", id, resourceVersionId) );
-                message = className + "- Unsuccessful: UpdateResourceVersionId(): " + ex.Message.ToString();
-
-            }
-
-            return message;
-
-        }//
 
         /// <summary>
         /// Update content item with related resourceIntId
@@ -249,7 +218,7 @@ namespace ILPathways.DAL
             }
             catch ( Exception ex )
             {
-                LogError( ex, className + string.Format( ".UpdateResourceIntId() for Id: {0}, and resourceVersionId: {2}", id, resourceIntId ) );
+                LogError( ex, className + string.Format( ".UpdateResourceIntId() for Id: {0}, and resourceIntId: {2}", id, resourceIntId ) );
                 message = className + "- Unsuccessful: UpdateResourceIntId(): " + ex.Message.ToString();
 
             }
@@ -432,6 +401,8 @@ namespace ILPathways.DAL
 		/// <returns></returns>
         public DataSet Search( string pFilter, string pOrderBy, int pStartPageIndex, int pMaximumRows, ref int pTotalRows )
 		{
+			if ( pMaximumRows < 1 )
+				pMaximumRows = 25;
 
             string searchProcedure = "ContentSearch";
             int outputCol = 4;
@@ -516,20 +487,22 @@ namespace ILPathways.DAL
             //need to check for custom - or get both and let interface handle
             //- if custom exists, then ConditionsOfUseUrl will have been set to be the same
             entity.ConditionsOfUseUrl = GetRowColumn( dr, "ConditionsOfUseUrl", "" );
-            entity.UseRightsUrl = GetRowColumn( dr, "UseRightsUrl", "" );
+            entity.UsageRightsUrl = GetRowColumn( dr, "UseRightsUrl", "" );
 
-            //entity.ResourceVersionId = GetRowColumn( dr, "ResourceVersionId", 0 );
             entity.ResourceIntId = GetRowPossibleColumn( dr, "ResourceIntId", 0 );
-
+			entity.DisplayTemplateId = GetRowPossibleColumn( dr, "DisplayTemplateId", 1 );
             entity.SortOrder = GetRowPossibleColumn( dr, "SortOrder", 10 );
             entity.DocumentUrl = GetRowPossibleColumn( dr, "DocumentUrl", "" );
             entity.Timeframe = GetRowPossibleColumn( dr, "Timeframe", "" );
             entity.ImageUrl = GetRowPossibleColumn( dr, "ImageUrl", "" );
 
-            entity.IsOrgContentOwner = GetRowColumn( dr, "IsOrgContentOwner", false );
+            //entity.IsOrgContentOwner = GetRowColumn( dr, "IsOrgContentOwner", false );
             entity.OrgId = GetRowColumn( dr, "OrgId", 0 );
             entity.Organization = GetRowColumn( dr, "Organization", "" );
-
+			if ( entity.OrgId > 0 )
+			{
+				entity.ContentOrganization = OrganizationManager.Get( entity.OrgId );
+			}
             entity.ParentOrgId = GetRowColumn( dr, "ParentOrgId", 0 );
             entity.ParentOrganization = GetRowColumn( dr, "ParentOrganization", "" );
 
@@ -538,10 +511,12 @@ namespace ILPathways.DAL
 
 			entity.Created = GetRowColumn( dr, "Created", System.DateTime.MinValue );
 			entity.CreatedById = GetRowColumn( dr, "CreatedById", 0 );
+			entity.CreatedBy = GetRowColumn( dr, "CreatedBy", "" );
             entity.Author = GetRowColumn( dr, "Author", "" );
 			entity.LastUpdated = GetRowColumn( dr, "LastUpdated", System.DateTime.MinValue );
 			entity.LastUpdatedById = GetRowColumn( dr, "LastUpdatedById", 0 );
-			//entity.LastUpdatedBy = GetRowColumn( dr, "LastUpdatedBy", "" );
+			entity.LastUpdatedBy = GetRowColumn( dr, "LastUpdatedBy", "" );
+
             string rowId = GetRowColumn( dr, "RowId", "" );
             //if expecting a RowId and it is not found is probably an error condition and someone should be notified!!
             if ( rowId.Length > 35 )
@@ -565,9 +540,147 @@ namespace ILPathways.DAL
 		}//
 
         #endregion
+		#region === Content.Keyword
+		
+		/// <summary>
+		/// Add an Content Keyword record
+		/// </summary>
+		/// <param name="contentId"></param>
+		/// <param name="keyword"></param>
+		/// <param name="createdById"></param>
+		/// <param name="statusMessage"></param>
+		/// <returns></returns>
+		public int ContentKeyword_Create( int contentId, string keyword, int createdById, ref string statusMessage )
+		{
+			int newId = 0;
+			try
+			{
+				#region parameters
+				SqlParameter[] sqlParameters = new SqlParameter[ 3 ];
+				sqlParameters[ 0 ] = new SqlParameter( "@ContentId", contentId );
+				sqlParameters[ 1 ] = new SqlParameter( "@Keyword", keyword );
+				sqlParameters[ 2 ] = new SqlParameter( "@CreatedById", createdById );
 
-        #region ====== ContentSupplement Section ===============================================
-        public bool ContentSupplementDelete( int pId, ref string statusMessage )
+				#endregion
+
+				SqlDataReader dr = SqlHelper.ExecuteReader( ContentConnection(), CommandType.StoredProcedure, "[Content.KeywordInsert]", sqlParameters );
+				if ( dr.HasRows )
+				{
+					dr.Read();
+					//newId will be zeroes if the keyword being added exists in other tables
+					int.TryParse( dr[ 0 ].ToString(), out newId);
+				}
+				dr.Close();
+				dr = null;
+				//only set on errors
+				statusMessage = "";
+			}
+			catch ( Exception ex )
+			{
+				LogError( ex, className + string.Format( ".ContentKeyword_Create() for contentId: {0}, Value: {1}, and CreatedBy: {2}", contentId, keyword, createdById ) );
+				statusMessage = className + "- Unsuccessful: ContentKeyword_Create(): " + ex.Message.ToString();
+			}
+
+			return newId;
+		}
+
+		/// <summary>
+		/// Delete a single Content.Keywork record
+		/// </summary>
+		/// <param name="pId"></param>
+		/// <param name="statusMessage"></param>
+		/// <returns></returns>
+		public bool ContentKeyword_Delete( int pId, ref string statusMessage )
+		{
+			bool successful = false;
+
+			SqlParameter[] sqlParameters = new SqlParameter[ 2 ];
+			sqlParameters[ 0 ] = new SqlParameter( "@id", SqlDbType.Int );
+			sqlParameters[ 0 ].Value = pId;
+			sqlParameters[ 1 ] = new SqlParameter( "@ContentId", SqlDbType.Int );
+			sqlParameters[ 1 ].Value = 0;
+			try
+			{
+				SqlHelper.ExecuteNonQuery( ContentConnection(), CommandType.StoredProcedure, "[Content.KeywordDelete]", sqlParameters );
+				successful = true;
+			}
+			catch ( Exception ex )
+			{
+				LogError( ex, className + ".ContentKeyword_Delete() " );
+				statusMessage = className + "- Unsuccessful: ContentKeyword_Delete(): " + ex.Message.ToString();
+
+				successful = false;
+			}
+			return successful;
+		}
+		/// <summary>
+		/// Delete all Content.keyword records for the content item
+		/// </summary>
+		/// <param name="pContentId"></param>
+		/// <param name="statusMessage"></param>
+		/// <returns></returns>
+		public bool ContentKeyword_DeleteAll( int pContentId, ref string statusMessage )
+		{
+			bool successful = false;
+
+			SqlParameter[] sqlParameters = new SqlParameter[ 2 ];
+			sqlParameters[ 0 ] = new SqlParameter( "@id", SqlDbType.Int );
+			sqlParameters[ 0 ].Value = 0;
+			sqlParameters[ 1 ] = new SqlParameter( "@ContentId", SqlDbType.Int );
+			sqlParameters[ 1 ].Value = pContentId;
+			try
+			{
+				SqlHelper.ExecuteNonQuery( ContentConnection(), CommandType.StoredProcedure, "[Content.KeywordDelete]", sqlParameters );
+				successful = true;
+			}
+			catch ( Exception ex )
+			{
+				LogError( ex, className + ".ContentKeyword_Delete() " );
+				statusMessage = className + "- Unsuccessful: ContentKeyword_Delete(): " + ex.Message.ToString();
+
+				successful = false;
+			}
+			return successful;
+		}
+		public static List<ContentKeyword> ContentKeyword_Select( int pContentId )
+		{
+
+			List<ContentKeyword> collection = new List<ContentKeyword>();
+			ContentKeyword entity = new ContentKeyword();
+			SqlParameter[] sqlParameters = new SqlParameter[ 1 ];
+			sqlParameters[ 0 ] = new SqlParameter( "@ContentId", pContentId );
+
+			DataSet ds = new DataSet();
+			try
+			{
+				ds = SqlHelper.ExecuteDataset( ContentConnectionRO(), CommandType.StoredProcedure, "[Content.KeywordSelect]", sqlParameters );
+
+				if ( DoesDataSetHaveRows( ds ) )
+				{
+					foreach ( DataRow dr in ds.Tables[ 0 ].Rows )
+					{
+						entity = new ContentKeyword();
+						entity.Id = GetRowColumn( dr, "Id", 0 );
+						entity.ContentId = GetRowColumn( dr, "ContentId", 0 );
+						entity.Keyword = GetRowColumn( dr, "Keyword", "" );
+						entity.CreatedById = GetRowColumn( dr, "CreatedById", 0 );
+						entity.Created = GetRowColumn( dr, "Created", DateTime.Now );
+						collection.Add( entity );
+					}
+				}
+				return collection;
+			}
+			catch ( Exception ex )
+			{
+				LogError( ex, className + ".Select( int pResourceIntId ) " );
+				return null;
+
+			}
+		}
+
+		#endregion
+		#region ====== ContentSupplement Section ===============================================
+		public bool ContentSupplementDelete( int pId, ref string statusMessage )
         {
             bool successful = false;
 
