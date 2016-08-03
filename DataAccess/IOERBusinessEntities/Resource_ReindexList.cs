@@ -12,21 +12,12 @@ namespace IOERBusinessEntities
     using System;
     using System.Collections.Generic;
     
-    public partial class Patron_Profile
+    public partial class Resource_ReindexList
     {
-        public int UserId { get; set; }
-        public string MainPhone { get; set; }
-        public string JobTitle { get; set; }
-        public Nullable<int> PublishingRoleId { get; set; }
-        public string RoleProfile { get; set; }
-        public Nullable<int> OrganizationId { get; set; }
+        public int Id { get; set; }
+        public int ResourceId { get; set; }
+        public int StatusId { get; set; }
         public System.DateTime Created { get; set; }
-        public Nullable<int> CreatedById { get; set; }
         public System.DateTime LastUpdated { get; set; }
-        public Nullable<int> LastUpdatedId { get; set; }
-        public string Notes { get; set; }
-        public string ImageUrl { get; set; }
-    
-        public virtual Patron Patron { get; set; }
     }
 }

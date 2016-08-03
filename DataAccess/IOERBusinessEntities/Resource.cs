@@ -31,6 +31,14 @@ namespace IOERBusinessEntities
             this.Resource_Like = new HashSet<Resource_Like>();
             this.Resource_LikeSummary = new HashSet<Resource_LikeSummary>();
             this.Resource_Language = new HashSet<Resource_Language>();
+            this.Resource_Format = new HashSet<Resource_Format>();
+            this.Resource_ItemType = new HashSet<Resource_ItemType>();
+            this.Resource_ResourceType = new HashSet<Resource_ResourceType>();
+            this.Resource_Text = new HashSet<Resource_Text>();
+            this.Resource_View = new HashSet<Resource_View>();
+            this.Resource_AccessibilityControl = new HashSet<Resource_AccessibilityControl>();
+            this.Resource_AccessibilityFeature = new HashSet<Resource_AccessibilityFeature>();
+            this.Resource_AccessibilityHazard = new HashSet<Resource_AccessibilityHazard>();
         }
     
         public System.Guid RowId { get; set; }
@@ -60,5 +68,13 @@ namespace IOERBusinessEntities
         public virtual ICollection<Resource_Like> Resource_Like { get; set; }
         public virtual ICollection<Resource_LikeSummary> Resource_LikeSummary { get; set; }
         public virtual ICollection<Resource_Language> Resource_Language { get; set; }
+        public virtual ICollection<Resource_Format> Resource_Format { get; set; }
+        public virtual ICollection<Resource_ItemType> Resource_ItemType { get; set; }
+        public virtual ICollection<Resource_ResourceType> Resource_ResourceType { get; set; }
+        public virtual ICollection<Resource_Text> Resource_Text { get; set; }
+        public virtual ICollection<Resource_View> Resource_View { get; set; }
+        public virtual ICollection<Resource_AccessibilityControl> Resource_AccessibilityControl { get; set; }
+        public virtual ICollection<Resource_AccessibilityFeature> Resource_AccessibilityFeature { get; set; }
+        public virtual ICollection<Resource_AccessibilityHazard> Resource_AccessibilityHazard { get; set; }
     }
 }

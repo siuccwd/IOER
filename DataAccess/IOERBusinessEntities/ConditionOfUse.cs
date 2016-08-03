@@ -27,5 +27,6 @@ namespace IOERBusinessEntities
         public string MiniIconUrl { get; set; }
         public bool IsCustom { get; set; }
         public bool IsUnknown { get; set; }
+        public bool IsAllowedForNewResource { get; set; }
     }
 }

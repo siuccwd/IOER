@@ -12,16 +12,16 @@ namespace IOERBusinessEntities
     using System;
     using System.Collections.Generic;
     
-    public partial class Resource_ItemType
+    public partial class Patron_ExternalAccount
     {
+        public Nullable<int> PatronId { get; set; }
         public int Id { get; set; }
-        public int ResourceIntId { get; set; }
-        public int ItemTypeId { get; set; }
+        public Nullable<int> ExternalSiteId { get; set; }
+        public string LoginId { get; set; }
+        public string Password { get; set; }
+        public string Token { get; set; }
         public Nullable<System.DateTime> Created { get; set; }
-        public Nullable<int> CreatedById { get; set; }
-        public Nullable<System.DateTime> LastUpdated { get; set; }
-        public Nullable<int> LastUpdatedById { get; set; }
     
-        public virtual Resource Resource { get; set; }
+        public virtual Patron Patron { get; set; }
     }
 }

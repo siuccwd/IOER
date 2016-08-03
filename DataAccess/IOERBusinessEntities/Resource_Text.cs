@@ -22,5 +22,6 @@ namespace IOERBusinessEntities
         public Nullable<int> CreatedById { get; set; }
     
         public virtual Codes_TextType Codes_TextType { get; set; }
+        public virtual Resource Resource { get; set; }
     }
 }

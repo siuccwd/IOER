@@ -82,5 +82,11 @@ namespace IOERBusinessEntities
         public DbSet<Resource_LikeSummary> Resource_LikeSummary { get; set; }
         public DbSet<Resource_View> Resource_View { get; set; }
         public DbSet<Resource_DelayedPublish> Resource_DelayedPublish { get; set; }
+        public DbSet<Resource_StandardSummary> Resource_StandardSummary { get; set; }
+        public DbSet<Resource_AccessibilityControl> Resource_AccessibilityControl { get; set; }
+        public DbSet<Resource_AccessibilityFeature> Resource_AccessibilityFeature { get; set; }
+        public DbSet<Resource_AccessibilityHazard> Resource_AccessibilityHazard { get; set; }
+        public DbSet<Resource_ReindexList> Resource_ReindexList { get; set; }
+        public DbSet<Patron_ExternalAccount> Patron_ExternalAccount { get; set; }
     }
 }

@@ -12,15 +12,14 @@ namespace IOERBusinessEntities
     using System;
     using System.Collections.Generic;
     
-    public partial class Resource_ItemType
+    public partial class Resource_AccessibilityControl
     {
         public int Id { get; set; }
-        public int ResourceIntId { get; set; }
-        public int ItemTypeId { get; set; }
-        public Nullable<System.DateTime> Created { get; set; }
+        public Nullable<int> ResourceIntId { get; set; }
+        public Nullable<int> AccessibilityControlId { get; set; }
+        public string OriginalValue { get; set; }
         public Nullable<int> CreatedById { get; set; }
-        public Nullable<System.DateTime> LastUpdated { get; set; }
-        public Nullable<int> LastUpdatedById { get; set; }
+        public Nullable<System.DateTime> Created { get; set; }
     
         public virtual Resource Resource { get; set; }
     }

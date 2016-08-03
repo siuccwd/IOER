@@ -412,6 +412,9 @@ namespace IOERBusinessEntities
             to.Url = fromEntity.Url;
             to.IconUrl = fromEntity.IconUrl;
             to.Summary = fromEntity.MiniIconUrl;
+			to.IsCustom = fromEntity.IsCustom;
+			to.IsUnknown = fromEntity.IsUnknown;
+			to.IsAllowedForNewResource = fromEntity.IsAllowedForNewResource;
 
             to.SortOrder = fromEntity.SortOrderAuthoring != null ? ( int ) fromEntity.SortOrderAuthoring : 0;
             to.WarehouseTotal = fromEntity.WarehouseTotal != null ? ( int ) fromEntity.WarehouseTotal : 0;

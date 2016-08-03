@@ -25,10 +25,10 @@ namespace IOERBusinessEntities
         public string StandardUrl { get; set; }
         public Nullable<int> AlignedById { get; set; }
         public Nullable<int> AlignmentTypeCodeId { get; set; }
-        public Nullable<int> AlignmentDegreeId { get; set; }
         public Nullable<System.DateTime> Created { get; set; }
         public Nullable<int> CreatedById { get; set; }
         public Nullable<bool> IsDirectStandard { get; set; }
+        public Nullable<int> UsageTypeId { get; set; }
     
         public virtual StandardBody_Node StandardBody_Node { get; set; }
         public virtual Resource Resource { get; set; }

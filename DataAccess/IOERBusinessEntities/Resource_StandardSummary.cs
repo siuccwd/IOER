@@ -12,16 +12,21 @@ namespace IOERBusinessEntities
     using System;
     using System.Collections.Generic;
     
-    public partial class Resource_ItemType
+    public partial class Resource_StandardSummary
     {
+        public int ResourceId { get; set; }
+        public string ResourceUrl { get; set; }
+        public int ResourceVersionId { get; set; }
+        public string Title { get; set; }
+        public int StandardId { get; set; }
         public int Id { get; set; }
-        public int ResourceIntId { get; set; }
-        public int ItemTypeId { get; set; }
         public Nullable<System.DateTime> Created { get; set; }
-        public Nullable<int> CreatedById { get; set; }
-        public Nullable<System.DateTime> LastUpdated { get; set; }
-        public Nullable<int> LastUpdatedById { get; set; }
-    
-        public virtual Resource Resource { get; set; }
+        public string NotationCode { get; set; }
+        public string Description { get; set; }
+        public int AlignmentTypeCodeId { get; set; }
+        public string AlignmentType { get; set; }
+        public int UsageTypeId { get; set; }
+        public string UsageType { get; set; }
+        public Nullable<bool> IsDirectStandard { get; set; }
     }
 }

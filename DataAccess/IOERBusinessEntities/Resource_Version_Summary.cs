@@ -27,7 +27,7 @@ namespace IOERBusinessEntities
         public Nullable<int> ViewCount { get; set; }
         public Nullable<int> FavoriteCount { get; set; }
         public string DocId { get; set; }
-        public Nullable<int> AccessRightsId { get; set; }
+        public int AccessRightsId { get; set; }
         public string AccessRights { get; set; }
         public Nullable<int> InteractivityTypeId { get; set; }
         public string InteractivityType { get; set; }
@@ -43,5 +43,6 @@ namespace IOERBusinessEntities
         public string URL { get; set; }
         public string DetailPage { get; set; }
         public string ImageUrl { get; set; }
+        public int UsageRightsId { get; set; }
     }
 }

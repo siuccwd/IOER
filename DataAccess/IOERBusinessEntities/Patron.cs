@@ -18,6 +18,7 @@ namespace IOERBusinessEntities
         {
             this.Patron_Following = new HashSet<Patron_Following>();
             this.Patron_Following1 = new HashSet<Patron_Following>();
+            this.Patron_ExternalAccount = new HashSet<Patron_ExternalAccount>();
         }
     
         public int Id { get; set; }
@@ -27,14 +28,15 @@ namespace IOERBusinessEntities
         public string LastName { get; set; }
         public string Email { get; set; }
         public Nullable<bool> IsActive { get; set; }
-        public Nullable<System.DateTime> Created { get; set; }
-        public Nullable<System.DateTime> LastUpdated { get; set; }
+        public System.DateTime Created { get; set; }
+        public System.DateTime LastUpdated { get; set; }
         public Nullable<int> LastUpdatedById { get; set; }
         public System.Guid RowId { get; set; }
-        public string IsleIdentifier { get; set; }
+        public string ExternalIdentifier { get; set; }
     
         public virtual Patron_Profile Patron_Profile { get; set; }
         public virtual ICollection<Patron_Following> Patron_Following { get; set; }
         public virtual ICollection<Patron_Following> Patron_Following1 { get; set; }
+        public virtual ICollection<Patron_ExternalAccount> Patron_ExternalAccount { get; set; }
     }
 }
