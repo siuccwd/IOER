@@ -9,7 +9,7 @@ using System.Web.SessionState;
 
 using ILPathways.Utilities;
 using Isle.BizServices;
-
+using LRWarehouse.Business;
 namespace IOER
 {
     public class Global : System.Web.HttpApplication
@@ -82,11 +82,11 @@ namespace IOER
 			 "~/My/Authored2.aspx"
 			);
 			//K12 author's pages
-			routes.MapPageRoute(
-			 "My Authored SearchOLD",
-			 "My/AuthoredOLD",
-			 "~/My/Authored.aspx"
-			);
+			//routes.MapPageRoute(
+			// "My Authored SearchOLD",
+			// "My/AuthoredOLD",
+			// "~/My/Authored.aspx"
+			//);
 			//K12 author's pages
 			routes.MapPageRoute(
 			 "K12 Author Search",      // Route name
@@ -126,20 +126,18 @@ namespace IOER
 				"My/LearningList/{node}/{*title}",
 				"~/My/Curriculum.aspx"
 			);
-
-
-			//K12 author's home page
-			//routes.MapPageRoute(
-			// "K12 Author Home",      // Route name
-			// "K12/Home/{OrgName}/{Author}",      // Route URL
-			// "~/Repository/ResourcePage.aspx" // Web page to handle route
-			//);
-			//search K12 district content
-			//routes.MapPageRoute(
-			// "K12 District87",      // Route name
-			// "K12/{*DistrictName}",      // Route URL
-			// "~/Repository/Search.aspx" // Web page to handle route
-			//);
+			routes.MapPageRoute(
+				"Learning Set Display",         
+				"LearningSet/{node}/{*title}",         
+				"~/Controls/Curriculum/Default.aspx"
+			);
+			routes.MapPageRoute(
+				"Learning Set Editor",
+				"My/LearningSet/{node}/{*title}",
+				"~/My/Curriculum.aspx",
+				false,
+				new RouteValueDictionary { { "mode", "learningset" } }
+			);
 
 			//library ===============================================
 			routes.MapPageRoute(
@@ -150,7 +148,7 @@ namespace IOER
 			//library by name. Check org then personal
 			routes.MapPageRoute(
 			 "Named Library",      // Route name
-			 "Library_/{*LbraryTitle}",      // Route URL
+			 "Library_/{*LibraryTitle}",      // Route URL
 			 "~/Libraries/Library.aspx"             // Web page to handle route
 			);
 			routes.MapPageRoute(
@@ -173,13 +171,13 @@ namespace IOER
 			routes.MapPageRoute(
 			 "My Timeline",      // Route name
 			 "My/Timeline",      // Route URL
-			 "~/Activity/Default.aspx?id=mine"             // Web page to handle route
+			 "~/Activity/Default.aspx?id=mine"           
 			);
 			//IOER Timeline
 			routes.MapPageRoute(
 			 "IOER Timeline",      // Route name
 			 "IOER_Timeline",      // Route URL
-			 "~/Activity/Default.aspx"             // Web page to handle route
+			 "~/Activity/Default.aspx"           
 			);
 
 			//people =======================================
@@ -222,24 +220,25 @@ namespace IOER
 			 "Org/{orgId}/{*ItemTitle}",      // Route URL
 			 "~/Activity/Default.aspx"
 			 );
-		   // routes.MapPageRoute(
-		   // "UnityPoint",      // Route name
-		   // "UnityPoint",      // Route URL
-		   // "~/Organizations/UnityPoint/Default.aspx"
-		   //);
 
 			//search =======================================
 			routes.MapPageRoute(
 			 "Search",      // Route name
 			 "Search",      // Route URL
-			 "~/Search.aspx"
+			 "~/Search.aspx",
+				false,
+				new RouteValueDictionary { //Parameters and Values to pass to the page
+					{ "theme", "ioer" } //Override default theme - ioer theme IS the default, but for consistency, I'm leaving this here
+				}
 			);
 			routes.MapPageRoute(
 			 "Gooru",      // Route name
 			 "gooruSearch",      // Route URL
-			 "~/CustomSearch.aspx",
+			 "~/Search.aspx",
 				false,
-				new RouteValueDictionary { { "theme", "gooru" } }
+				new RouteValueDictionary { //Parameters and Values to pass to the page
+					{ "theme", "gooru" } //Override default theme to use the gooru theme instead
+				}
 			);
 			routes.MapPageRoute(
 			 "GooruPlayer",      // Route name
@@ -281,11 +280,16 @@ namespace IOER
 
 			//Custom searches
 			routes.MapPageRoute(
-				"CustomSearch_LearningLists",
+				"LearningListsSearch",
 				"LearningLists",
-				"~/CustomSearch.aspx",
+				"~/Search.aspx",
 				false,
-				new RouteValueDictionary { { "title", "IOER Learning List Search" }, { "collectionIDs", UtilityManager.GetAppKeyValue( "learningListCollectionId", "693" ) }, { "theme", "ioer_library" }, {"sort", "ResourceId|desc" }, { "doAutoNewestSearch", "false" } }
+				new RouteValueDictionary { //Values to pass to control
+					{ "title", "IOER Learning List / Learning Set Search" }, //Override default title
+					{ "collectionIDs", UtilityManager.GetAppKeyValue( "learningListCollectionId", "693" ) }, //Search within the special learning list collection
+					{ "theme", "ioer_library" }, //override default theme to use the library theme, since it supports customizing the filters based on collection ID
+					{ "doAutoNewestSearch", "false" } //Disable doing an auto search for newest
+				}
 			);
 
 			//Rubrics
@@ -299,7 +303,7 @@ namespace IOER
 			routes.MapPageRoute(
 				"newbertagger",
 				"tagger",
-				"~/controls/ubertaggerv2/default.aspx"
+				"~/controls/ubertaggerv4/default.aspx"
 				);
 
 			routes.MapPageRoute(
@@ -318,24 +322,135 @@ namespace IOER
         }
 		void Application_EndRequest(object sender, System.EventArgs e)
 		{
-			// If the user is not authorised to see this page or access this function, send them to the error page.
-			if (Response.StatusCode == 401)
+			if ( UtilityManager.GetAppKeyValue( "envType", "prod" ) == "prod" )
 			{
-				Response.ClearContent();
-				ServiceHelper.SetConsoleErrorMessage("Error: You must be authenticated and authorized to use that feature.");
-				Response.Redirect("/Error/401", true); 
+				// If the user is not authorised to see this page or access this function, send them to the error page.
+				if ( Response.StatusCode == 401 )
+				{
+					Response.ClearContent();
+					ServiceHelper.SetConsoleErrorMessage( "Error: You must be authenticated and authorized to use that feature." );
+					Response.Redirect( "/Error/401", true );
+				}
+				else if ( Response.StatusCode == 404 )
+				{
+					Response.ClearContent();
+					Response.Redirect( "/Error/404", true );
+					//Response.Redirect("/PageNotFound.aspx", true); 
+				}
 			}
-			else if (Response.StatusCode == 404)
+			else
 			{
-				Response.ClearContent();
-				Response.Redirect("/Error/404", true);
-				//Response.Redirect("/PageNotFound.aspx", true); 
+				return;
 			}
 		}
         void Application_Error( object sender, EventArgs e )
         {
             // Code that runs when an unhandled error occurs
+			Exception objErr = Server.GetLastError().GetBaseException();
+			string url = "Startup";
+			string reqUrl = "unknown";
+			string remoteIP = "";
+			string sessionId = "";
+			bool loggingError = true;
+			string userId = "";
+			string userEmail = "";
+			string message = "";
+			try
+			{
+				url = Request.Url.ToString();
+				message += "Url: " + url;
+				reqUrl = Request.UserHostAddress;
+				message += "\r\nreqUrl: " + reqUrl;
+				remoteIP = Request.ServerVariables[ "REMOTE_HOST" ];
+				if ( Session.SessionID != null || Session.SessionID != "" )
+				{
+					sessionId = Session.SessionID.ToString();
+				}
+				Patron user = AccountServices.GetUserFromSession( Session );
+				if ( user != null && user.Id > 0)
+				{
+					userEmail = user.Email;
+					message += "user: " + user.Email;
+				}
+				string err = "Application_Error: Error in: " + Request.Url.ToString() +
+					". Error Message:" + objErr.Message.ToString();
+				LoggingHelper.DoTrace( 2, err );
+				LoggingHelper.LogError( err );
 
+			}
+			catch
+			{
+				//no request object - continue
+			}
+			string errType = objErr.GetType().ToString();
+			string errMessage = objErr.Message.ToString();
+
+			string errMsg = "Unhandled exception Caught in Application_Error event" +
+				"\r\nError in: " + url +
+				"\r\nType: " + errType +
+				"\r\nUser: " + userEmail + "_______Session Id - " + sessionId +
+				"\r\nfrom: " + reqUrl +
+				"\r\nError Message:" + errMessage +
+				"\r\nStack Trace:" + objErr.StackTrace.ToString();
+			try
+			{
+				errMsg += "\n\rSource: " + objErr.Source.ToString();
+				errMsg += "\n\rInnerException: " + objErr.InnerException.ToString();
+
+			}
+			catch
+			{
+				//ignore, possibly nulls
+			}
+
+			//check for messages to ignore
+			if ( errType.Equals( "System.Web.HttpException" ) )
+			{
+				//check
+				if ( errMessage.IndexOf( ".aspx' does not exist." ) > -1 )
+				{
+					//probably bot related error
+					loggingError = false;
+				}
+			}
+
+			bool doRedirect = false;
+			//check if the "user" is a known robot
+			//84.109.121.176 - ripe in amsterdam
+			// actually 84.109.0.0 - 84.109.255.255 has been allocated to a site in Isreal
+			string bots = "84.109.121.176 94.102.60.35 61.234.105.61";
+			if ( bots.IndexOf( remoteIP ) > -1
+				|| remoteIP.IndexOf( "66.249" ) > -1 )
+			{
+				loggingError = false;
+
+			}
+			//just redirect always:
+			//doRedirect = true;
+
+			try
+			{
+				Session[ "AppErrorUrl" ] = url;
+				Session[ "AppError" ] = objErr;
+
+				if ( doRedirect )
+				{
+					string redirectUrl = "http://ioer.ilsharedlearning.org";
+					Response.Redirect( redirectUrl, true );
+				}
+			}
+			catch ( System.Threading.ThreadAbortException taex )
+			{
+				//Ignore this exception, it's okay!
+			}
+			catch
+			{
+				//ignore
+			}
+
+			//If you do not call Server.ClearError or trap the error in the Page_Error or Application_Error event handler, 
+			//the error is handled based on the settings in the <customErrors> section of the Web.config file
+			//Server.ClearError();
         }
 
         void Session_Start( object sender, EventArgs e )
@@ -344,18 +459,21 @@ namespace IOER
             {
                 //Do we want to track the referer somehow??
                 string lRefererPage = GetUserReferrer();
-               
+				bool isBot = false;
                 string ipAddress = this.GetUserIPAddress();
-                ///check for bots
-                ///bot, crawler, spider, slurp, crawling
-                string agent = Request.UserAgent != null ? Request.UserAgent : "none";
-                bool isBot = false;
-                if ( agent.ToLower().IndexOf( "bot" ) > -1
-                    || agent.ToLower().IndexOf( "spider" ) > -1
-                    || agent.ToLower().IndexOf( "slurp" ) > -1
-                    || agent.ToLower().IndexOf( "crawl" ) > -1
-                    )
-                    isBot = true;
+                //check for bots
+				//use common method
+				string agent = ActivityBizServices.GetUserAgent( ref isBot );
+               
+                //string agent = Request.UserAgent != null ? Request.UserAgent : "none";
+				//ISSUE - if we don't add the initial bot session to the activity log, we can't check for follow on activity related to the bot!
+				//if ( agent.ToLower().IndexOf( "bot" ) > -1
+				//	|| agent.ToLower().IndexOf( "spider" ) > -1
+				//	|| agent.ToLower().IndexOf( "slurp" ) > -1
+				//	|| agent.ToLower().IndexOf( "crawl" ) > -1
+				//	|| agent.ToLower().IndexOf( "addthis.com" ) > -1
+				//	)
+				//	isBot = true;
 
                 if ( isBot == false )
                 {
@@ -370,7 +488,12 @@ namespace IOER
                     startMsg += ", IP Address: " + ipAddress;
                     startMsg += ", Agent: " + agent;
 
-                    ActivityBizServices.SessionStartActivity( startMsg, Session.SessionID.ToString(), ipAddress, lRefererPage );
+					if ( User.Identity.IsAuthenticated )
+					{
+						Patron user = new AccountServices().GetByEmail( User.Identity.Name );
+					}
+
+					ActivityBizServices.SessionStartActivity( startMsg, Session.SessionID.ToString(), ipAddress, lRefererPage, isBot );
 
                     //Log page visit
                     if ( UtilityManager.GetAppKeyValue( "loggingPageVisits", "no" ) == "yes" )
@@ -379,7 +502,7 @@ namespace IOER
 
                         string serverName = UtilityManager.GetAppKeyValue( "serverName" );
 
-                        GatewayServices.LogSessionStart( Session.SessionID.ToString(), serverName, startMsg, ipAddress, lRefererPage );
+                        //GatewayServices.LogSessionStart( Session.SessionID.ToString(), serverName, startMsg, ipAddress, lRefererPage );
                     }
                 }
                 else

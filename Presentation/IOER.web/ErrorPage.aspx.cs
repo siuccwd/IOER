@@ -72,7 +72,7 @@ namespace IOER
 			string userid = "";
 
 			string errorUrl = this.GetSessionItem("AppErrorUrl");
-			
+			string errorMsg = this.GetSessionItem( "AppErrorMessage" );
 			try
 			{
 				url = Request.Url.ToString();
@@ -109,7 +109,13 @@ namespace IOER
 				reason = "The requested page no longer exists. If you arrived at the page in error via a saved link, then you should remove the link.";
 			}
 
-			if (reason.Length > 0)
+			if ( errorMsg.Length > 0 )
+			{
+				lblInfo.Text = "Additional Information:";
+				lblInfo.Text += "<br/> " + errorMsg + "<br/>";
+				
+			}
+			else if ( reason.Length > 0 )
 			{
 				lblInfo.Text = "Additional Information:";
 				lblInfo.Text += "<br/>Error originated on: " + errorSourcePage + "<br/>";

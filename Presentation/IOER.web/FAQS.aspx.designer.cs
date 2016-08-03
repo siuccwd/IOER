@@ -10,15 +10,24 @@
 namespace IOER {
     
     
-    public partial class ElasticSearch {
+    public partial class FAQS {
         
         /// <summary>
-        /// searchController control.
+        /// ScriptManager1 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::IOER.Controls.SearchV7.SearchV7 searchController;
+        protected global::AjaxControlToolkit.ToolkitScriptManager ScriptManager1;
+        
+        /// <summary>
+        /// FaqList1 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::IOER.Controls.FAQs.FaqList FaqList1;
     }
 }
