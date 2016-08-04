@@ -484,13 +484,32 @@ namespace IOER.Services
         { 
           return "Invalid user"; 
         }
+		//change to use session
+		var sessionUser = AccountServices.GetUserFromSession();
+		if ( sessionUser == null || !sessionUser.IsValid )
+		{
+			return "Invalid user";
+		}
+		//at least verify the same!
+		if ( user.Email != sessionUser.Email )
+		{
+			return "Invalid user";
+		}
 
+		//should an admin user be allowed to copy anything?
+		if ( accountService.IsUserAdmin( sessionUser ) && accountService.CanAdminUserAdminAnyLibrary() )
+		{
+			//OK
+		}
+		else 
+		{
         //Check user can edit the collection to copy to
         var collection = libService.LibrarySectionGet( toCollection );
         if ( !libService.LibrarySection_DoesUserHaveContributeAccess( collection.LibraryId, collection.Id, user.Id ) ) 
         {
           return "Sorry, you don't have permission to do that.";
         }
+		}
 
         //Do the copy
         string status = "";
@@ -519,27 +538,46 @@ namespace IOER.Services
         var user = GetUser( userGUID );
         if ( !user.IsValid ) 
         { 
-          return ""; 
+          return "Invalid user"; 
+        }
+		//change to use session
+		var sessionUser = AccountServices.GetUserFromSession();
+		if ( sessionUser == null || !sessionUser.IsValid )
+		{
+			return "Invalid user";
+		}
+		//at least verify the same!
+		if ( user.Email != sessionUser.Email )
+		{
+			return "Invalid user";
         }
 
         //Check user can edit the collection to move from
-          //var fromCol = libService.LibrarySectionGet( fromCollection );
+        //should an admin user be allowed to move anything?
+		if ( accountService.IsUserAdmin( sessionUser ) && accountService.CanAdminUserAdminAnyLibrary() )
+		{
+			//OK
+		} else 
+		{
           if ( !libService.LibrarySection_DoesUserHaveEditAccess( libraryID, fromCollection, user.Id ) )
         { 
-          return ""; 
+				return "User does not have edit access for this collection";
         }
         
         //Check user can edit the collection to move to, regardless of whether or not it's the source library
           var toCol = libService.LibrarySectionGet( toCollection );
           if ( !libService.LibrarySection_DoesUserHaveEditAccess( toCol.LibraryId, toCollection, user.Id ) )
         { 
-          return ""; 
+				return "User does not have edit access for target collection";
+			}
         }
 
         //Do the move
-        string status = "";
-        var id = libService.ResourceMove( fromCollection, intID, toCollection, user.Id, ref status );
-        if ( id != "successful" ) { return ""; }
+        string status = libService.ResourceMove( fromCollection, intID, toCollection, user );
+		if (status != "successful") 
+		{
+			return status; 
+		}
         else
         {
 			//this is done in libService.ResourceMove

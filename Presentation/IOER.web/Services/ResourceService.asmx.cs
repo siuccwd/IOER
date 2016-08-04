@@ -17,6 +17,8 @@ using LRWarehouse.Business.ResourceV2;
 using Isle.BizServices;
 using IOER.classes;
 using ILPathways.Utilities;
+using IOER.Controllers;
+
 
 using DatabaseManager = LRWarehouse.DAL.DatabaseManager;
 using PatronManager = LRWarehouse.DAL.PatronManager;
@@ -65,6 +67,13 @@ namespace IOER.Services
 			var isNewResource = input.ResourceId == 0;
 			var updateContentSpecialFields = false;
 			var loggingData = new List<string>();
+			string message = "";
+
+			var errors = new List<string>();
+			var succesfulLRPublish = false;
+			var successfulDBPublish = false;
+			var successfulESPublish = false;
+			var successfulLibColAdd = false;
 
 			//loggingData.Add( "TIMER: Initialization complete @ " + stopwatch.ElapsedMilliseconds );
 
@@ -89,6 +98,11 @@ namespace IOER.Services
 
 			//Validate Resource
 			//URL
+			//Strip trailing slash
+			if ( input.Url.Last<char>() == '/' )
+			{
+				input.Url = input.Url.Substring( 0, input.Url.Length - 2 );
+			}
 			input.Url = util.ValidateURL( input.Url, isNewResource, ref valid, ref status );
 			if ( !valid ) { return Fail( status, null ); }
 
@@ -117,11 +131,34 @@ namespace IOER.Services
 			//loggingData.Add( "TIMER: Keywords validated @ " + stopwatch.ElapsedMilliseconds );
 
 			//Usage Rights
-			if ( input.UsageRights.Url != "" )
+			if ( input.UsageRights.CodeId == ContentItem.READ_THE_FINE_PRINT_CCOU )
 			{
-				input.UsageRights.Url = util.ValidateURL( input.UsageRights.Url, false, ref valid, ref status );
-				if ( !valid ) { return Fail( status, null ); }
+				//url required
+				//Usage Rights URL
+				if ( input.UsageRights.Url.Length == 0 )
+				{
+					status = "A URL must be entered when selecting Usage Rights of 'Read the Fine Print'";
+					return Fail( status, null );
+				}
+				else
+				{
+					input.UsageRights.Url = util.ValidateURL( input.UsageRights.Url, false, ref valid, ref status );
+					if ( !valid ) { return Fail( status, null ); }
+				}
+				//If the usage rights URL matches a known one from the code table, set it to that instead of custom - need a less hacky solution to the trailing slash issue though
+				var codeRights = service.GetUsageRightsList().Where( m => !m.Custom && !m.Unknown && m.Url.ToLower() == (input.UsageRights.Url.ToLower() + "/") ).FirstOrDefault();
+				if ( codeRights != null )
+				{
+					input.UsageRights.CodeId = codeRights.CodeId;
+					input.UsageRights.Url = codeRights.Url;
+					input.UsageRights.Custom = false;
+				}
 			}
+			//if ( input.UsageRights.Url != "" )
+			//{
+			//	input.UsageRights.Url = util.ValidateURL( input.UsageRights.Url, false, ref valid, ref status );
+			//	if ( !valid ) { return Fail( status, null ); }
+			//}
 
 			//loggingData.Add( "TIMER: Usage Rights validated @ " + stopwatch.ElapsedMilliseconds );
 
@@ -148,7 +185,7 @@ namespace IOER.Services
 			//loggingData.Add( "TIMER: Text inputs validated @ " + stopwatch.ElapsedMilliseconds );
 
 			//Mark input tags as selected - useful for processing later
-			var finalFields = serializer.Deserialize<List<FieldDTO>>( serializer.Serialize( service.GetFieldAndTagCodeData() ) );
+			var finalFields = serializer.Deserialize<List<FieldDTO>>( serializer.Serialize( service.GetFieldAndTagCodeData(false) ) );
 			foreach ( var field in input.Fields )
 			{
 				var matchedField = finalFields.Where( f => f.Schema == field.Schema ).FirstOrDefault();
@@ -170,6 +207,9 @@ namespace IOER.Services
 				item.NotationCode = standard.NotationCode;
 				item.Description = standard.Description;
 				item.Url = standard.StandardUrl;
+
+				//any standard from tagger is direct
+				item.IsDirectStandard = true;
 			}
 
 			//loggingData.Add( "TIMER: Standards added @ " + stopwatch.ElapsedMilliseconds );
@@ -185,6 +225,10 @@ namespace IOER.Services
 				{
 					return Fail( "Error getting the existing resource", "service.GetResourceDTO() did not return a valid resource" );
 				}
+
+				versionID = existing.VersionId;
+				lrDocID = existing.LrDocId;
+				sortTitle = existing.UrlTitle;
 
 				//loggingData.Add( "TIMER: Existing resource retrieved @ " + stopwatch.ElapsedMilliseconds );
 
@@ -234,6 +278,7 @@ namespace IOER.Services
 				//Ensure certain fields aren't changed
 				input.Url = existing.Url;
 				//cannot change the createdById!!!
+				//Yes, but need to use current user for updates
 				input.CreatedById = existing.CreatedById;  //( existing.CreatedById == 0 ? user.Id : existing.CreatedById );
 				input.Submitter = existing.Submitter;
 
@@ -252,7 +297,8 @@ namespace IOER.Services
 				//loggingData.Add( "TIMER: Keyword checks complete @ " + stopwatch.ElapsedMilliseconds );
 
 				//Separated this so it gets tested instead of skipped
-				var payload = service.GetJSONLRMIPayloadFromResource( input, ref loggingData );
+				//var payload = service.GetJSONLRMIPayloadFromResource( input, ref loggingData );
+                var payload = service.GetJsonLdLrmiPayloadFromResource(input, false, ref loggingData);
 
 				//loggingData.Add( "TIMER: Publish payload retrieved @ " + stopwatch.ElapsedMilliseconds );
 
@@ -265,22 +311,35 @@ namespace IOER.Services
 				}
 
 				//If in production and not testing, do LR publish
-				if ( ServiceHelper.GetAppKeyValue( "envType", "prod" ) == "prod" && !testingMode )
+				if (ServiceHelper.GetAppKeyValue("doingLRPublish", "yes") == "yes" && !testingMode)
+				{
+					PublishingServices.PublishToLearningRegistry( payload, 
+								input.Url, 
+								input.Submitter, 
+								input.Keywords, 
+								ref valid, 
+								ref status, 
+								ref lrDocID );
+					if ( !valid )
 					{
-						PublishingServices.PublishToLearningRegistry( payload, input.Url, input.Submitter, input.Keywords, ref valid, ref status, ref lrDocID );
-						if ( !valid )
-						{
-						return Fail( "There was an error publishing to the Learning Registry.", status );
-						}
-						input.LrDocId = lrDocID;
-
-						//loggingData.Add( "TIMER: LR publish complete @ " + stopwatch.ElapsedMilliseconds );
-
+						//return Fail( "There was an error publishing to the Learning Registry.", status );
+						errors.Add( "There was an error publishing to the Learning Registry: " + status );
 					}
 					else
 					{
-					loggingData.Add( "TIMER: LR publish skipped @ " + stopwatch.ElapsedMilliseconds );
+						input.LrDocId = lrDocID;
+						succesfulLRPublish = true;
 					}
+
+					//loggingData.Add( "TIMER: LR publish complete @ " + stopwatch.ElapsedMilliseconds );
+
+				}
+				else
+				{
+					succesfulLRPublish = true;
+					LoggingHelper.DoTrace( 4, "%%%%%% LR publish skipped for " + input.Url );
+					loggingData.Add( "TIMER: LR publish skipped @ " + stopwatch.ElapsedMilliseconds );
+				}
 
 				//We do however want to set the content's special fields for a new resource:
 				updateContentSpecialFields = true;
@@ -289,11 +348,21 @@ namespace IOER.Services
 			//loggingData.Add( "TIMER: Processing for database begins @ " + stopwatch.ElapsedMilliseconds );
 
 			//Regardless of new or update, save to Database
-			var tags = input.Fields.SelectMany( i => i.Tags ).Where( t => t.Selected ).Select( t => t.Id ).ToList();
+			var tags = input.Fields.SelectMany( i => i.Tags )
+					.Where( t => t.Selected )
+					.Select( t => t.Id ).ToList();
 
 			//loggingData.Add( "TIMER: Relevant tags selected @ " + stopwatch.ElapsedMilliseconds );
 
-			PublishingServices.PublishToDatabase( input, input.OrganizationId, tags, ref valid, ref status, ref versionID, ref intID, ref sortTitle );
+			PublishingServices.PublishToDatabase( input, 
+						input.OrganizationId, 
+						user.Id, 
+						tags, 
+						ref valid, 
+						ref status, 
+						ref versionID, 
+						ref intID, 
+						ref sortTitle );
 			if ( !valid )
 			{
 				return Fail( "There was an error publishing to the Database.", status );
@@ -301,25 +370,35 @@ namespace IOER.Services
 			input.VersionId = versionID;
 			input.ResourceId = intID;
 			input.UrlTitle = sortTitle;
+			successfulDBPublish = true;
 
 			//loggingData.Add( "TIMER: Database publish complete @ " + stopwatch.ElapsedMilliseconds );
 
 			//Update ElasticSearch
 			PublishingServices.PublishToElasticSearchAsynchronously( intID );
+			successfulESPublish = true;
 			//loggingData.Add( "TIMER: ElasicSearch publish complete @ " + stopwatch.ElapsedMilliseconds );
 
 			//Add to library
 			//TODO - this means elastic has to be called again to be updated after adding resource to the library.
-			if ( input.LibraryId != 0 && input.CollectionId != 0 )
+			if ( input.LibraryIds.Count() != 0 && input.CollectionIds.Count() != 0 )
 			{
 				try
 				{
-					new LibraryBizService().LibraryResourceCreate( input.CollectionId, input.ResourceId, user.Id, ref status );
+					foreach ( var item in input.CollectionIds )
+					{
+						new LibraryBizService().LibraryResourceCreate( item, input.ResourceId, user, ref status );
+					}
+					successfulLibColAdd = true;
 				}
 				catch ( Exception ex )
 				{
 					return Fail( "There was a problem adding the resource to the selected library and collection.", ex.Message );
 				}
+			}
+			else
+			{
+				successfulLibColAdd = true;
 			}
 
 			//loggingData.Add( "TIMER: Added resource to Library @ " + stopwatch.ElapsedMilliseconds );
@@ -343,7 +422,7 @@ namespace IOER.Services
 			{
 				loggingData.Add( "Content loaded (first method): " + content.Id );
 				//loggingData.Add( "TIMER: Content loaded @ " + stopwatch.ElapsedMilliseconds );
-				SetContentData( input, content, contentServices, updateContentSpecialFields, loggingData );
+				SetContentData( input, content, contentServices, updateContentSpecialFields, false, loggingData );
 				//loggingData.Add( "TIMER: Content set @ " + stopwatch.ElapsedMilliseconds );
 			}
 			//Otherwise try to get based on passed ID
@@ -360,6 +439,7 @@ namespace IOER.Services
 
 				//loggingData.Add( "TIMER: Beginning thumbnail generation @ " + stopwatch.ElapsedMilliseconds );
 				//new ResourceThumbnailManager().CreateThumbnail( input.ResourceId, input.Url, true );
+				loggingData.Add( "Creating thumbnail: " + input.ResourceId.ToString() + " - " + input.Url );
 				ThumbnailServices.CreateThumbnail( input.ResourceId.ToString(), input.Url, true );
 				//loggingData.Add( "TIMER: Thumbnail finished @ " + stopwatch.ElapsedMilliseconds );
 			}
@@ -367,7 +447,17 @@ namespace IOER.Services
 			//Return
 			//loggingData.Add( "TIMER: All operations finished @ " + stopwatch.ElapsedMilliseconds );
 			stopwatch.Stop();
-			return UtilityService.DoReturn( input, true, "okay", loggingData );
+			//Return compacted data
+			var temp = input.Fields.SelectMany( m => m.Tags.Where( t => t.Selected ).Select( s => s.Id ) ).ToList<int>();
+			input.Fields.Clear();
+			
+			if ( !succesfulLRPublish || !successfulDBPublish || !successfulESPublish || ( !successfulLibColAdd && input.LibraryIds.Count > 0 ) )
+			{
+				var errorList = string.Join( System.Environment.NewLine, errors );
+				LoggingHelper.LogError( "Error publishing resource " + input.ResourceId + ": " + errorList );
+			}
+
+			return UtilityService.DoReturn( input, true, "okay", new { loggingData = loggingData, selected = temp } );
 		}
 
 		/// <summary>
@@ -391,18 +481,21 @@ namespace IOER.Services
 
 			//Auto-add it to the SIUC collection of learning lists
 			//may need to use a different, arbitrary user ID
-			if ( content.TypeId == ContentItem.CURRICULUM_CONTENT_ID )
+			if ( content.TypeId == ContentItem.CURRICULUM_CONTENT_ID 
+				|| content.TypeId == ContentItem.LEARNING_SET_CONTENT_ID )
 			{
-				int learningListCollectionId = UtilityManager.GetAppKeyValue( "learningListCollectionId", 693 );
+				int learningListCollectionId = UtilityManager.GetAppKeyValue( "learningListCollectionId", 0 );
 				if ( learningListCollectionId > 0 )
 					new LibraryBizService().LibraryResourceCreate( learningListCollectionId, input.ResourceId, user.Id, ref status );
 			}
 
-			SetContentData( input, content, contentServices, updateContentSpecialFields, loggingData );
+			SetContentData( input, content, contentServices, updateContentSpecialFields, true, loggingData );
 
 			if ( content.TypeId == ContentItem.CURRICULUM_CONTENT_ID
+				|| content.TypeId == ContentItem.LEARNING_SET_CONTENT_ID
 				|| content.IsHierarchyType )
 			{
+				loggingData.Add( "Starting InitiateDelayedPublishing" );
 				//just 50 for now
 				//start auto publish  of hierarchy
 				string resourceList = "";
@@ -415,13 +508,12 @@ namespace IOER.Services
 				{
 					//now add to other parts
 					ResourceV2Services mgr2 = new ResourceV2Services();
-					//mgr2.ImportRefreshResources( resourceList );
 					string statusMessage = "";
 					//do the thumbs
 					int thumbCntr = mgr2.AddThumbsForDelayedResources( content.Id, ref statusMessage );
 
 					//now update elastic
-					//this could be lengthy, do we want to handle with a scheduled task?
+					//this could be lengthy, do we want to handle with a scheduled task? NO - using async instead
 					if ( UtilityManager.GetAppKeyValue( "doElasticIndexUpdateWithAutoPublish" ) == "yes" )
 					{
 						//ResourceV2Services mgr2 = new ResourceV2Services();
@@ -440,15 +532,27 @@ namespace IOER.Services
 				else
 				{
 					//SetConsoleErrorMessage( "InitiateDelayedPublishing failed, or didn't return any resources.<br> : resourceList" );
-					LoggingHelper.LogError( "Unexpected condition - no related content was found under a learning list/hierarchy item", true );
+					LoggingHelper.LogError( string.Format( "Unexpected condition - no related content was found under a learning list/hierarchy item. Id: {0}, typeId: {1}", content.Id, content.TypeId ), true );
 					//return;
 				}
 			}
-			//}
 		}
 
-		private void SetContentData( ResourceDTO input, ContentItem content, ContentServices contentServices, bool updateContentSpecialFields, List<string> loggingData )
+		private void SetContentData( ResourceDTO input, ContentItem content, ContentServices contentServices, bool updateContentSpecialFields, bool isAdd, List<string> loggingData )
 		{
+			//Not sure if this needs some kind of check
+			//Or a save() method of some sort
+			content.PrivilegeTypeId = input.PrivilegeId;
+
+			//Is org ID being saved somewhere? If not, input.OrganizationId should be used
+			//NOTE: this is not being saved for some reason - commenting out for now
+			/* var associatedOrg = OrganizationBizService.Get( input.OrganizationId );
+			if ( associatedOrg != null && associatedOrg.Id > 0 ) //Might need to include user membership check?
+			{
+				content.ContentOrganization = associatedOrg;
+			}
+			*/
+
 			if ( updateContentSpecialFields )
 			{
 				loggingData.Add( "Updating special fields" );
@@ -456,13 +560,28 @@ namespace IOER.Services
 				content.Summary = input.Description;
 				//==> no, potential serious error
 				//content.Description = input.Description;
+				
 			}
-			//what if not entered, ex on a quick tag
-			content.PrivilegeTypeId = input.PrivilegeId;
-			content.StatusId = ContentItem.PUBLISHED_STATUS;
-			content.ResourceIntId = input.ResourceId;
-			contentServices.Update( content, false );
-			input.ContentId = content.Id;
+			if ( isAdd 
+				&& input.UsageRights.CodeId != content.UsageRightsId )
+			{
+				//should only allow if this is a new publish, can't do arbitrarily
+				//PLUS seems to be setting to incorrect value
+				content.UsageRightsId = input.UsageRights.CodeId;
+				content.UsageRightsUrl = input.UsageRights.Url;
+			}
+			//Should we only update content if an add????
+			if (isAdd)
+			{
+				//what if not entered, ex on a quick tag
+				content.PrivilegeTypeId = input.PrivilegeId;
+				content.StatusId = ContentItem.PUBLISHED_STATUS;
+				content.ResourceIntId = input.ResourceId;
+				contentServices.Update(content, false);
+
+				input.ContentId = content.Id;
+			}
+
 
 			loggingData.Add( "input.PrivilegeId: " + input.PrivilegeId );
 			loggingData.Add( "ContentItem.PUBLIC_PRIVILEGE: " + ContentItem.PUBLIC_PRIVILEGE );
@@ -495,9 +614,19 @@ namespace IOER.Services
 			{
 				loggingData.Add( "Changing thumbnail URL to: " + content.DocumentUrl );
 				thumbURL = content.DocumentUrl;
+				var id = content.ResourceIntId == 0 ? input.ResourceId : content.ResourceIntId;
+				if ( id == 0 )
+				{
+					LoggingHelper.LogError( "Error creating thumbnail for Content ID " + content.Id + ". No Resource ID available at the time the thumbnail method was called" );
+				}
+				else
+				{
+					ThumbnailServices.CreateThumbnail( id.ToString(), thumbURL, false );
+				}
 			}
-			//If the content already has a is the top level of a learning list and already has a thumbnail, do not replace the thumbnail
-			if ( content.TypeId == ContentItem.CURRICULUM_CONTENT_ID && !string.IsNullOrWhiteSpace( content.ImageUrl ) )
+			//If the content already is the top level of a learning list and already has a thumbnail, do not replace the thumbnail
+			if ( (content.TypeId == ContentItem.CURRICULUM_CONTENT_ID || content.TypeId == ContentItem.LEARNING_SET_CONTENT_ID) 
+				&& !string.IsNullOrWhiteSpace( content.ImageUrl ) )
 			{
 				loggingData.Add( "Doing nothing with thumbnails" );
 				//do nothing
@@ -510,7 +639,174 @@ namespace IOER.Services
 				//new ResourceThumbnailManager().CreateThumbnail( input.ResourceId, "http://ioer.ilsharedlearning.org" + thumbURL, true );
 			}
 
+			//Actually save the changes
+			//==> no only on add!
+			if ( content.Id > 0 )
+			{
+				//contentServices.Update( content );
+			}
 		}
+
+		#region Content Document things - used for tagger upload handling
+		//Create a Document Item
+		public ContentItem CreateContentDocument( byte[] fileBytes, string fileName, string mimeType, Patron user, int resourceID, int contentID, ref bool valid, ref string status )
+		{
+			var url = "";
+			var result = new ContentItem()
+			{
+				Id = contentID,
+				Title = "Uploaded File",
+				FileName = fileName,
+				MimeType = mimeType,
+				TypeId = ContentItem.DOCUMENT_CONTENT_ID,
+				Summary = "File uploaded by " + user.FullName() + " (" + user.Id + ") on " + DateTime.Now.ToLongDateString(),
+				CreatedById = user.Id,
+				OrgId = user.OrgId,
+				PrivilegeTypeId = ContentItem.PUBLIC_PRIVILEGE,
+				StatusId = ContentItem.SUBMITTED_STATUS //Set to 3, just in case of a failure before publish,then set after actual publish
+			};
+
+			//Check file size
+			var maxFileSize = UtilityManager.GetAppKeyValue( "maxDocumentSize", 30000000 );
+			if ( fileBytes.Length > maxFileSize )
+			{
+				valid = false;
+				status = "Uploaded file is too large. Maximum file size is " + Math.Floor( ( maxFileSize / 1024f ) / 1024f ) + " megabytes.";
+				return result;
+			}
+
+			//Scan the file
+			new VirusScanner( maxFileSize ).Scan( fileBytes, ref valid, ref status );
+			if ( !valid )
+			{
+				return result;
+			}
+
+			//Handle user replacing an uploaded file for a resource that was already tagged
+			if ( resourceID > 0 )
+			{
+				if ( ResourceBizService.CanUserEditResource( resourceID, user.Id ) )
+				{
+					result.ResourceIntId = resourceID;
+				}
+				else
+				{
+					valid = false;
+					status = "You don't have access to update that resource's file.";
+					return result;
+				}
+			}
+			if ( contentID > 0 )
+			{
+				var existing = new ContentServices().Get( contentID );
+				if ( existing.CreatedById != user.Id && !ContentServices.DoesUserHaveContentEditAccess( contentID, user.Id ) )
+				{
+					valid = false;
+					status = "You don't have access to update that resource's file.";
+					return result;
+		}
+				else
+				{
+					result.Id = contentID;
+				}
+			}
+
+			//Attempt to get content by resource ID 
+			if ( resourceID > 0 && contentID == 0 )
+			{
+				var canView = true;
+				//NOTE - may not want to use this, could be multiple content items (but not yet possible for files - yet). Will return first
+				var existingContent = new ContentServices().GetForResourceDetail( resourceID, user, ref canView );
+
+				if ( existingContent != null && existingContent.Id > 0 )
+				{
+					result.Id = existingContent.Id;
+				}
+			}
+
+			//Upsert the file
+			if ( contentID > 0 )
+			{
+				//Replace existing file
+				valid = new FileResourceController().ReplaceDocument( fileBytes, fileName, mimeType, contentID, user.Id, ref status );
+			}
+			else
+			{
+				//Create the file
+				var newID = FileResourceController.CreateContentItemWithFileOnly( fileName, mimeType, fileBytes, new ContentItem(), result, ref status );
+				if ( newID > 0 )
+				{
+					result.Id = newID;
+					valid = true;
+				}
+				else
+				{
+					valid = false;
+					//status = "There was a problem uploading the file. Please try again later.";
+				}
+			}
+
+			//Set URL - may not be necessary
+			if ( string.IsNullOrWhiteSpace( result.DocumentUrl ) )
+			{
+				result.DocumentUrl = "/content/" + result.Id;
+			}
+
+			return result;
+
+		} //
+
+		//Delete a content document item
+		public void DeleteContentDocument( int contentID, Patron user, ref bool valid, ref string status )
+		{
+			//Get content
+			var service = new ContentServices();
+			var content = service.Get( contentID );
+			if ( content == null || content.Id == 0 )
+			{
+				valid = false;
+				status = "Invalid Content ID";
+				return;
+			}
+
+			//Ensure the content hasn't already been published
+			if ( content.ResourceIntId > 0 )
+			{
+				valid = false;
+				status = "You can't delete a file that has already been published.";
+				return;
+			}
+
+			//Ensure the user has the right to delete the file
+			//May need to add organization related handling here
+			if ( content.CreatedById != user.Id )
+			{
+				valid = false;
+				status = "You don't have access to delete that file.";
+				return;
+			}
+
+			//Do the delete
+			valid = service.Delete( contentID, user.Id, ref status );
+
+			//Return
+
+		} //
+
+		//DTO
+		public class UploadInfo
+		{
+			public string command { get; set; }
+			public int resourceID { get; set; }
+			public int contentID { get; set; }
+			public string contentURL { get; set; }
+			public string fileName { get; set; }
+			public object extraData { get; set; }
+			public bool valid { get; set; }
+			public string status { get; set; }
+		} //
+
+		#endregion
 
 		public UtilityService.GenericReturn Fail( string message, string exception )
 		{

@@ -48,7 +48,7 @@ namespace IOER.Services
 	public string ValidateURL(string url, bool mustBeNew, ref bool isValid, ref string status)
 	{
 		//Do basic text validation without rewriting the URL
-		ValidateText(url, 12, "URL", ref isValid, ref status);
+		ValidateText(url, 11, "URL", ref isValid, ref status);
 		if (!isValid)
 		{
 			return url;
@@ -56,12 +56,21 @@ namespace IOER.Services
 
 		//Just to be sure
 		url = url.Replace("<", "").Replace(">", "");
+		if ( url.Last<char>() == '/' )
+		{
+			url = url.Substring( 0, url.Length - 1 );
+		}
 
 		//Check for existing URL, if we care
 		if (mustBeNew)
 		{
-			var test = ResourceBizService.ResourceVersion_GetByUrl(url);
-			if (test.Count > 0)
+			
+			//Check for http/https duplicates
+			var remainder = url.Substring( url.IndexOf( "://" ) );
+			var url1 = "http" + remainder;
+			var url2 = "https" + remainder;
+			var test = ResourceBizService.ResourceVersion_GetByUrl( url1 ).Concat( ResourceBizService.ResourceVersion_GetByUrl( url2 ) ).ToList();
+			if( test.Count > 0 )
 			{
 				var first = test.First<LRWarehouse.Business.ResourceVersion>();
 				status = "Resource already exists in IOER: <a href=\"/Resource/" + first.ResourceIntId + "/" + ResourceVersion.UrlFriendlyTitle(first.SortTitle) + "\">Click Here</a>";
@@ -266,40 +275,50 @@ namespace IOER.Services
         }
       );
     }
-    public string ValidateEmail( string text, ref bool isValid, ref string status, ref bool emailAlreadyExists )
-    {
-      //Do basic validation
-      text = ValidateText( text, 6, "Email", ref isValid, ref status );
-      if ( !isValid )
-      {
-        return text;
-      }
 
-      //Ensure the address is email formatted
-      try
-      {
-        var test = new System.Net.Mail.MailAddress( text );
-        if ( test.User.Length == 0 ) { throw new ArgumentException(); }
-        var testURI = new Uri( "http://" + test.Host, UriKind.Absolute); //Should throw an error if improperly formatted
-        isValid = true;
-        status = "okay";
-      }
-      catch(Exception ex)
-      {
-        isValid = false;
-        status = "Invalid Email Address.";
-        return "";
-      }
+	  /// <summary>
+	  /// checks if email is valid and if it already exists in system.
+	  /// the calling method needs to then check if there is an issue
+	  /// </summary>
+	  /// <param name="text"></param>
+	  /// <param name="isValid"></param>
+	  /// <param name="status"></param>
+	  /// <param name="emailAlreadyExists"></param>
+	  /// <returns></returns>
+	public string ValidateEmail( string text, ref bool isValid, ref string status, ref bool emailAlreadyExists )
+	{
+		//Do basic validation
+		text = ValidateText( text, 6, "Email", ref isValid, ref status );
+		if ( !isValid )
+		{
+			return text;
+		}
 
-      //Check for existing email
-      var testUser = new PatronManager().GetByEmail( text );
-      emailAlreadyExists = ( testUser.IsValid && testUser.Id > 0 );
-			if ( emailAlreadyExists )
-			{
-				status = "Email Address already exists in system.";
-			}
-      return text;
-    }
+		//Ensure the address is email formatted
+		try
+		{
+			var test = new System.Net.Mail.MailAddress( text );
+			if ( test.User.Length == 0 ) { throw new ArgumentException(); }
+			var testURI = new Uri( "http://" + test.Host, UriKind.Absolute ); //Should throw an error if improperly formatted
+			isValid = true;
+			status = "okay";
+		}
+		catch ( Exception ex )
+		{
+			isValid = false;
+			status = "Invalid Email Address.";
+			return "";
+		}
+
+		//Check for existing email
+		var testUser = new PatronManager().GetByEmail( text );
+		emailAlreadyExists = ( testUser.IsValid && testUser.Id > 0 );
+		if ( emailAlreadyExists )
+		{
+			status = "Email Address already exists in system.";
+		}
+		return text;
+	}
 
     [WebMethod]
     public string ValidatePassword( string text )
@@ -409,7 +428,7 @@ namespace IOER.Services
       text = FormHelper.CleanText( text );
       if ( text == "" )
       {
-        status = "Invalid character(s) in " + fieldTitle + ".";
+        status = fieldTitle + " is required.";
         isValid = false;
         return text;
       }
@@ -480,7 +499,6 @@ namespace IOER.Services
 				{
 					if ( isUserAdmin( user ) )
 					{
-						//new Thumbnailer().CreateThumbnail( intID, url, true );
 						ThumbnailServices.CreateThumbnail( intID.ToString(), url, true );
 
 						return ImmediateReturn( true, true, "Regenerating, please wait", null );

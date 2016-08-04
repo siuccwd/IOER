@@ -24,14 +24,19 @@ namespace IOER.Services
     [WebMethod(EnableSession=true)]
     public void LearningList_DocumentHit( int curriculumID, int nodeID, int contentID )
     {
-      var user = ( Patron ) Session[ "user" ];
+	  var user = AccountServices.GetUserFromSession( Session );
       ActivityBizServices.LearningList_DocumentHit( curriculumID, nodeID, contentID, user );
     }
 
+	  /// <summary>
+	/// called from Widgets.Resource/AddView and ?
+	  /// </summary>
+	  /// <param name="resourceID"></param>
+	  /// <param name="title"></param>
     [WebMethod(EnableSession=true)]
     public void Resource_ResourceView(int resourceID, string title)
     {
-      var user = ( Patron ) Session[ "user" ] ?? new Patron();
+		var user = AccountServices.GetUserFromSession( Session );
       new ResourceV2Services().AddResourceClickThrough( resourceID, user, title );
     }
   }

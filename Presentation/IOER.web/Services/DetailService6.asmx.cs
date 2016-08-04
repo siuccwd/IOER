@@ -84,7 +84,7 @@ namespace IOER.Services
                 detail.k12subject = GetMVF( "subject", detail.intID, true, "K-12 Subject" );
 
                 //Specially-formatted data
-                detail.usageRights = GetUsageRights( version.Rights );
+                detail.usageRights = GetUsageRights( version );
                 detail.timeRequired = GetTimeRequired( version.TypicalLearningTime );
 
                 //TODO - update the following
@@ -415,13 +415,6 @@ namespace IOER.Services
 
             new ResourceV2Services().AddResourceClickThrough( version.ResourceIntId, GetUser( userGUID ), version.Title );
 
-            //new ResourceViewManager().Create( intID, GetUserID( userGUID ) );
-
-            //ActivityBizServices.ResourceClickThroughHit( intID, userGUID, "" );
-            //new ElasticSearchManager().AddResourceView( intID.ToString() );
-            //new ElasticSearchManager().RefreshResource( intID );
-            //new Isle.BizServices.ResourceV2Services().RefreshResource( intID );
-
             return serializer.Serialize( GetClickThroughs( version.ResourceIntId ) );
         }
 
@@ -531,8 +524,13 @@ namespace IOER.Services
                     item.ResourceIntId = resourceIntID;
                     item.StandardId = standard.id;
                     item.StandardNotationCode = standard.code;
+
                     item.AlignmentTypeCodeId = standard.alignment.id;
                     item.AlignmentTypeValue = standard.alignment.value;
+
+					item.UsageTypeId = standard.usage.id;
+					item.UsageType = standard.usage.value;
+
                     standardsManager.Create( item, ref status );
 
                 }
@@ -583,20 +581,25 @@ namespace IOER.Services
         [WebMethod( EnableSession = true )]
         public string DeactivateResource( string userGUID, int versionID )
         {
-            var user = GetUser( userGUID );
-            var permissions = SecurityManager.GetGroupObjectPrivileges( user, "IOER.Pages.ResourceDetail" );
-            if ( permissions.CreatePrivilege > ( int ) ILPathways.Business.EPrivilegeDepth.State )
+            Patron user = GetUser( userGUID );
+			bool canEdit = false;//
+			if ( new AccountServices().IsUserAdmin( user ) )
+				canEdit = true;
+			else 
+				canEdit = ResourceBizService.CanUserEditResourceVersion( versionID, user.Id );
+
+			//this is not really used, but leave just in case
+			var permissions = ResourceBizService.ResourceDetailAuthorization( user );
+
+			if ( canEdit || permissions.CreatePrivilege > ( int ) ILPathways.Business.EPrivilegeDepth.Region )
             {
                 try 
                 {
                     string response = "";
-                    new ResBiz().Resource_SetInactiveByVersionId( versionID, ref response );
-
-                    //new ResourceVersionManager().SetActiveState( false, versionID );
+                    new ResBiz().Resource_SetInactiveByVersionId( versionID, user, ref response );
                     
-                    //var esManager = new ElasticSearchManager();
-                    //new ElasticSearchManager().DeleteByVersionID( versionID, ref response );
-					new ResourceV2Services().DeleteResourceByVersionID( versionID );
+                    //TODO mp - already removed from elastic 
+					//new ResourceV2Services().DeleteResourceByVersionID( versionID );
 
                     ActivityBizServices.SiteActivityAdd( "Resource", "Deactivate", string.Format( "Resource VersionID: {0} was deactivated by {1}", versionID, user.FullName() ), user.Id, 0, versionID );
 
@@ -609,9 +612,36 @@ namespace IOER.Services
             }
             else
             {
-                return "You do not have permission to deactivate Resources!";
+                return "You do not have permission to deactivate this Resource!";
             }
         }
+
+		[WebMethod( EnableSession = true )]
+		public string ReindexResource( string userGUID, int resourceID )
+		{
+			var user = GetUser( userGUID );
+			var permissions = SecurityManager.GetGroupObjectPrivileges( user, "IOER.Pages.ResourceDetail" );
+			if ( permissions.CreatePrivilege > ( int ) ILPathways.Business.EPrivilegeDepth.State )
+			{
+				try
+				{
+					string response = "";
+					new Isle.BizServices.ResourceV2Services().RefreshResource( resourceID );
+
+					ActivityBizServices.SiteActivityAdd( "Resource", "Reindex", string.Format( "Resource ID: {0} was reindexed by {1}", resourceID, user.FullName() ), user.Id, 0, resourceID );
+
+					return "Resource Reindexed Check the search to confirm.";
+				}
+				catch ( Exception ex )
+				{
+					return "There was a problem reindexing the Resource: " + ex.ToString();
+				}
+			}
+			else
+			{
+				return "You do not have permission to reindex Resources!";
+			}
+		}//
 
         [WebMethod]
         public string RegenerateThumbnail( string userGUID, int resourceID, string url )
@@ -651,37 +681,38 @@ namespace IOER.Services
             }
         }
 
-        public jsonUsageRights GetUsageRights( string rights )
-        {
-					var output = new jsonUsageRights();
-					var useRights = new ResourceV2Services().GetUsageRights( rights );
+		public jsonUsageRights GetUsageRights( ResourceVersion version )
+		{
+			var output = new jsonUsageRights();
+			var useRights = new ResourceV2Services().GetUsageRights( version.Rights, version.UsageRightsId );
 
-					output.usageRightsText = useRights.Title;
-					output.usageRightsValue = useRights.CodeId;
-					output.usageRightsDescription = useRights.Description;
-					output.usageRightsURL = rights;
-					output.usageRightsIconURL = useRights.IconUrl;
-					output.usageRightsMiniIconURL = useRights.MiniIconUrl;
+			output.usageRightsText = useRights.Title;
+			output.usageRightsValue = useRights.CodeId;
+			output.usageRightsDescription = useRights.Description;
+			output.usageRightsURL = useRights.Url;
+			output.usageRightsIconURL = useRights.IconUrl;
+			output.usageRightsMiniIconURL = useRights.MiniIconUrl;
+			output.usageRightsRawValue = version.Rights;
 
-					return output;
+			return output;
 
-					/*
-            var output = new jsonUsageRights();
-            //DataSet ds = CodeTableManager.ConditionsOfUse_Select(); //Not enough data
-            DataSet ds = ResBiz.DoQuery( "IF( SELECT COUNT(*) FROM [ConditionOfUse] WHERE [Url] = '" + rights + "' ) = 0 SELECT * FROM [ConditionOfUse] WHERE [Url] IS NULL ELSE SELECT * FROM [ConditionOfUse] WHERE [Url] = '" + rights + "'" );
-            if ( ResBiz.DoesDataSetHaveRows( ds ) )
-            {
-                DataRow dr = ds.Tables[ 0 ].Rows[ 0 ];
-                output.usageRightsText = Get( dr, "Summary" );
-                output.usageRightsValue = int.Parse( Get( dr, "Id" ) );
-                output.usageRightsDescription = Get( dr, "Title" );
-                output.usageRightsURL = rights;
-                output.usageRightsIconURL = Get( dr, "IconUrl" );
-                output.usageRightsMiniIconURL = Get( dr, "MiniIconUrl" );
-            }
-            return output;
-					*/
-        }
+			/*
+	var output = new jsonUsageRights();
+	//DataSet ds = CodeTableManager.ConditionsOfUse_Select(); //Not enough data
+	DataSet ds = ResBiz.DoQuery( "IF( SELECT COUNT(*) FROM [ConditionOfUse] WHERE [Url] = '" + rights + "' ) = 0 SELECT * FROM [ConditionOfUse] WHERE [Url] IS NULL ELSE SELECT * FROM [ConditionOfUse] WHERE [Url] = '" + rights + "'" );
+	if ( ResBiz.DoesDataSetHaveRows( ds ) )
+	{
+		DataRow dr = ds.Tables[ 0 ].Rows[ 0 ];
+		output.usageRightsText = Get( dr, "Summary" );
+		output.usageRightsValue = int.Parse( Get( dr, "Id" ) );
+		output.usageRightsDescription = Get( dr, "Title" );
+		output.usageRightsURL = rights;
+		output.usageRightsIconURL = Get( dr, "IconUrl" );
+		output.usageRightsMiniIconURL = Get( dr, "MiniIconUrl" );
+	}
+	return output;
+			*/
+		}
 
         public string GetTimeRequired( string timeRequired )
         {
@@ -895,34 +926,37 @@ namespace IOER.Services
           //detail.standards = new ResourceEvaluationManager().GetRatingsForResource( detail.intID, user.Id ).standardRatings;
           detail.standards = ResourceBizService.ResourceStandardEvaluation_GetAll( detail.intID, user, ref statusMessage );
           var alignments = new string[] { "Aligns to", "Assesses", "Teaches", "Requires" }; //kludge
+		  var usages = new string[] { "Normal", "Major", "Supporting", "Additional" }; //kludge2
           foreach ( var item in detail.standards )
           {
-            try
-            {
-              item.AlignmentType = alignments[ item.AlignmentTypeId ];
-            }
-            catch
-            {
-              item.AlignmentType = "Aligns to";
-            }
+			  if ( string.IsNullOrWhiteSpace( item.AlignmentType ) )
+			  {
+				  item.AlignmentType = "Aligns to";
+				  if ( item.AlignmentTypeId > 0 )
+				  {
+					  item.AlignmentType = alignments[ item.AlignmentTypeId ];
+				  }
+			  }
+			//try
+			//{
+			//  item.AlignmentType = alignments[ item.AlignmentTypeId ];
+			//}
+			//catch
+			//{
+			//  item.AlignmentType = "Aligns to";
+			//}
+			
+			//can't UsageType be provided by retrieval? (YES, this should be obsolete now
+			if ( string.IsNullOrWhiteSpace( item.UsageType ) )
+			{
+				if ( item.UsageTypeId > 0 )
+				{
+					item.UsageType = usages[ item.UsageTypeId ];
+				}
+			}
           }
           return;
-          //
-
-          /*var status = "";
-          var baseStandardData = new ResourceEvaluationManager().GetRatingsForResource( detail.intID, user.Id ).standardRatings; //Need alignment type, couldn't get it to come from database in the next call. so this will need to be temporary too.
-          var standardsEvalData = ResourceBizService.GetAllStandardEvaluationsForResource( detail.intID, user, ref status );
-
-          foreach ( var item in standardsEvalData )
-          {
-            var target = baseStandardData.Where( m => m.id == item.StandardId ).FirstOrDefault();
-            if ( target != null )
-            {
-              item.AlignmentType = target.alignmentType;
-              item.AlignmentTypeId = target.alignmentTypeID;
-            }
-          }
-          detail.standards = standardsEvalData;*/
+        
         }
         
         public void GetEvaluations( ref jsonDetail detail, Patron user )
@@ -1141,6 +1175,7 @@ namespace IOER.Services
             public string usageRightsURL { get; set; }
             public string usageRightsIconURL { get; set; }
             public string usageRightsMiniIconURL { get; set; }
+						public string usageRightsRawValue { get; set; }
         }
         public class jsonMVF
         {
@@ -1281,6 +1316,8 @@ namespace IOER.Services
             public int id { get; set; }
             public string code { get; set; }
             public IDValuePair alignment { get; set; }
+
+			public IDValuePair usage { get; set; }
         }
         #endregion
 

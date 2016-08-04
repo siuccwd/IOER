@@ -285,7 +285,7 @@ namespace IOER.Services
             public JSONOrganizationSearchResult()
             {
             }
-            public string url { get; set; }
+            //public string url { get; set; }
             public string organizationTitle { get; set; }
             public string organizationUrl { get; set; }
 

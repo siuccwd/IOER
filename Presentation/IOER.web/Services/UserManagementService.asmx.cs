@@ -177,6 +177,22 @@ namespace IOER.Services
 				return Fail( status, ex );
 			}
 		}
+
+		[WebMethod( EnableSession = true )]
+		public string AjaxInviteOrgUser( UserManagementInput input )
+		{
+			var status = "There was a problem inviting the user to this object.";
+			try
+			{
+				input.IsNameRequired = true;
+				var result = InviteUser( input, ref status );
+				return Stringify( result, null, true );
+			}
+			catch ( Exception ex )
+			{
+				return Fail( status, ex );
+			}
+		}
 		public bool InviteUser(UserManagementInput input, ref string status)
 		{
 			GetManager( input.ObjectType );
@@ -185,13 +201,25 @@ namespace IOER.Services
 			//Validate email
 			var valid = true;
 			var exists = false;
+			status = "";
+			if ( input.IsNameRequired )
+			{
+				if ( string.IsNullOrWhiteSpace( input.TargetFirstName ) )
+					status = "First name must be entered\r\n";
+				if ( string.IsNullOrWhiteSpace( input.TargetLastName ) )
+					status += "Last name must be entered\r\n";
+			}
+			//validation should have occurred on the client
 			input.TargetUserEmail = new UtilityService().ValidateEmail( input.TargetUserEmail, ref valid, ref status, ref exists );
 			if ( !valid )
 			{
-				status = "Invalid email address.";
-				throw new InvalidOperationException( "Invalid email address" );
+				status += "Invalid email address.";
+				//throw new InvalidOperationException( "Invalid email address" );
 			}
-
+			if ( status.Length > 6 && exists == false)
+			{
+				throw new InvalidOperationException( status );
+			}
 			return manager.InviteUser( input, user, ref status );
 		}
 		//
@@ -319,11 +347,14 @@ namespace IOER.Services
 			}
 			public int ObjectId { get; set; } //Target object ID
 			public string ObjectType { get; set; } //e.g, learninglist, library, etc.
+			public string TargetFirstName { get; set; }
+			public string TargetLastName { get; set; }
 			public int TargetUserId { get; set; } //User being operated on
 			public string TargetUserEmail { get; set; } //Email being operated on
 			public int TargetMemberTypeId { get; set; } //Member Type involved
 			public string Message { get; set; } //Message to send to user being invited/removed/etc
 			public List<int> TargetMemberRoleIds { get; set; } //Applicable member roles
+			public bool IsNameRequired { get; set; }
 		}
 	}
 }

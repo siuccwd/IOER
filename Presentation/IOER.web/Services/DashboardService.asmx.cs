@@ -247,10 +247,10 @@ namespace IOER.Services
                 {
                     return true;
                 }
-                else
-                {
-                    return false;
-                }
+				//else
+				//{
+				//	return false;
+				//}
             }
             catch
             {

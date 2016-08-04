@@ -102,7 +102,7 @@ namespace IOER.Services
 		public List<LibColData> GetResourceLibraryData( int resourceID )
 		{
 			//Get library data relevant to the resource
-			var resourceLibraryData = new LibraryBizService().GetAllLibrariesWithResource( resourceID );
+			var resourceLibraryData = new LibraryBizService().GetAllLibrariesWithResource( resourceID ).Where( m => m.IsPublic ).ToList();
 			var resourceLibraries = new List<LibColData>();
 			foreach ( var item in resourceLibraryData )
 			{
@@ -289,7 +289,52 @@ namespace IOER.Services
 			return true;
 		}
 
+		[WebMethod( EnableSession = true )]
+		public string RateStandardJSON( int resourceID, int standardID, int recordID, int ratingPercent )
+		{
+			try
+			{
+				var valid = true;
+				var status = "";
+				var results = RateStandard( resourceID, standardID, recordID, ratingPercent, ref valid, ref status );
+				return serializer.Serialize( UtilityService.DoReturn( results, valid, status, null ) );
+			}
+			catch ( Exception ex )
+			{
+				return serializer.Serialize( Fail( "Sorry, there was an error posting the standard Rating.", ex.Message ) );
+			}
+		}
+		public EvaluationSummaryV2 RateStandard( int resourceID, int standardID, int recordID, int ratingPercent, ref bool valid, ref string status )
+		{
+			var service = new ResourceV2Services();
+			//Validate User
+			var user = GetUser();
+			if ( user.Id == 0 )
+			{
+				valid = false;
+				status = "You must be logged in to do that.";
+				return null;
+			}
 
+			//Issue the rating
+			var eval = ResourceBizService.ResourceStandardEvaluation_Create( recordID, user.Id, ratingPercent, ref status );
+			if ( eval == 0 )
+			{
+				valid = false;
+				return null;
+			}
+
+			//Retrieve the updated list
+			var result = service.GetUserStandardRatingsForResource( resourceID, user.Id, standardID ).FirstOrDefault();
+			if ( result == null )
+			{
+				valid = false;
+				status = "Error loading updated ratings.";
+				return null;
+			}
+
+			return result;
+		}
 		#endregion
 
 		#region Helper methods

@@ -132,7 +132,7 @@ namespace IOER.Services
       {
         text = FormHelper.CleanText( text.Trim() );
 
-        string filter = FormatFilter( text, filters, user, useSubscribedLibraries );
+        string filter = FormatFilter( "library", text, filters, user, useSubscribedLibraries );
         generatedFilter = filter;
         int totalRows = 0;
 
@@ -161,7 +161,7 @@ namespace IOER.Services
       {
         text = FormHelper.CleanText( text.Trim() );
 
-        string filter = FormatFilter( text, filters, user, useSubscribedLibraries );
+		string filter = FormatFilter( "collection", text, filters, user, useSubscribedLibraries );
         generatedFilter = filter;
         int totalRows = 0;
 
@@ -343,19 +343,18 @@ namespace IOER.Services
               return new UtilityService().ImmediateReturn( "", false, ex.Message, null );
           }
       }
-      /// <summary>
-      /// Do actual resource pending approvals search
-      /// </summary>
-      /// <param name="text"></param>
-      /// <param name="filters"></param>
-      /// <param name="user">May not need</param>
-      /// <param name="libraryId"></param>
-      /// <param name="collectionId"></param>
-      /// <param name="sort"></param>
-      /// <param name="start"></param>
-      /// <param name="max"></param>
-      /// <param name="generatedFilter"></param>
-      /// <returns></returns>
+      
+		/// <summary>
+	   /// Do actual resource pending approvals search
+		/// </summary>
+		/// <param name="text"></param>
+		/// <param name="libraryId"></param>
+		/// <param name="collectionId"></param>
+		/// <param name="sort"></param>
+		/// <param name="start"></param>
+		/// <param name="pageSize"></param>
+		/// <param name="totalRows"></param>
+		/// <returns></returns>
       public List<IB.LibraryResource> DoPendingApprovalsSearch2( string text, string libraryId, string collectionId, string sort, int start, int pageSize, ref int totalRows )
       {
           text = FormHelper.CleanText( text.Trim() );
@@ -414,7 +413,7 @@ namespace IOER.Services
       /// call for an initial search
       /// </summary>
       /// <returns></returns>
-      protected string FormatFilter( string text, List<JSONInputFilter> filters, Patron user, bool useSubscribedLibraries )
+      protected string FormatFilter( string searchType, string text, List<JSONInputFilter> filters, Patron user, bool useSubscribedLibraries )
       {
         string booleanOperator = "AND";
         string filter = "";
@@ -454,7 +453,7 @@ namespace IOER.Services
         //
         FormatViewableFilter( booleanOperator, privacyFilterID, user, ref filter );
 
-        FormatKeyword( text, booleanOperator, ref filter );
+        FormatKeyword( searchType, text, booleanOperator, ref filter );
 
         if ( new WebDALService().IsLocalHost() )
         {
@@ -463,11 +462,18 @@ namespace IOER.Services
 
         return filter;
       }	//
-      protected void FormatKeyword( string text, string booleanOperator, ref string filter )
+	  protected void FormatKeyword( string searchType, string text, string booleanOperator, ref string filter )
       {
         string keyword = DataBaseHelper.HandleApostrophes( FormHelper.CleanText( text ) );
         string keywordFilter = "";
-        string keywordTemplate = " (lib.Title like '{0}'  OR lib.[Description] like '{0}' OR owner.[SortName] like '{0}'  OR owner.[Organization] like '{0}' OR org.[Name] like '{0}') ";
+        string keywordTemplate = "";
+		string libKeywordTemplate = " (lib.Title like '{0}'  OR lib.[Description] like '{0}' OR owner.[SortName] like '{0}'  OR owner.[Organization] like '{0}' OR org.[Name] like '{0}') ";
+		  //not sure it is intuitive to expect to find an org if doing a collection search?
+		string colKeywordTemplate = " (base.Title like '{0}'  OR base.[Description] like '{0}' OR owner.[SortName] like '{0}'  OR owner.[Organization] like '{0}' OR org.[Name] like '{0}') ";
+		if ( searchType == "collection" )
+			keywordTemplate = colKeywordTemplate;
+		else
+			keywordTemplate = libKeywordTemplate;
 
         if ( keyword.Length > 0 )
         {
@@ -519,7 +525,7 @@ namespace IOER.Services
             break;
           default:
             return;
-            break;
+            //break;
         }
 
         string where = string.Format( " ResourceLastAddedDate > '{0}'", endDate.ToString( "yyyy-MM-dd" ) );
@@ -686,7 +692,7 @@ namespace IOER.Services
         {
           collections = new List<JSONLibColSearchResultItem>();
         }
-        public string url { get; set; }
+        //public string url { get; set; }
         public string libraryTitle { get; set; }
         public string libraryUrl { get; set; }
         public string organization { get; set; }
