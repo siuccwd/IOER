@@ -73,7 +73,7 @@ namespace IOER.LRW.controls {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::WebControlLibrary.PagerV2_8 pager1;
+        protected global::ASPnetControls.PagerV2_8 pager1;
         
         /// <summary>
         /// formGrid control.
@@ -91,7 +91,7 @@ namespace IOER.LRW.controls {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::WebControlLibrary.PagerV2_8 pager2;
+        protected global::ASPnetControls.PagerV2_8 pager2;
         
         /// <summary>
         /// Panel4 control.

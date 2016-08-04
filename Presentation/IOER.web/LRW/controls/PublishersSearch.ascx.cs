@@ -80,7 +80,7 @@ namespace IOER.LRW.controls
         /// Handle Page Load
         /// </summary>
         /// <param name="sender"></param>
-        /// <param name="ex"></param>
+        /// <param name="e"></param>
         protected void Page_Load( object sender, EventArgs e )
         {
 
@@ -137,7 +137,7 @@ namespace IOER.LRW.controls
         /// Handle a form button clicked 
         /// </summary>
         /// <param name="sender"></param>
-        /// <param name="ex"></param>
+        /// <param name="ev"></param>
         public void FormButton_Click( Object sender, CommandEventArgs ev )
         {
 
@@ -456,7 +456,7 @@ namespace IOER.LRW.controls
         /// Handle change to page size
         /// </summary>
         /// <param name="sender"></param>
-        /// <param name="ex"></param>
+        /// <param name="ea"></param>
         protected void PageSizeList_OnSelectedIndexChanged( object sender, System.EventArgs ea )
         {
             // Set the page size for the DataGrid control based on the selection

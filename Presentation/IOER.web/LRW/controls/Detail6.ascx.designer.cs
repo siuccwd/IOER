@@ -112,6 +112,15 @@ namespace IOER.LRW.controls {
         protected global::System.Web.UI.HtmlControls.HtmlInputButton btnRegenerateThumbnail;
         
         /// <summary>
+        /// btnReindexResource control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlInputButton btnReindexResource;
+        
+        /// <summary>
         /// usageRightsSelector control.
         /// </summary>
         /// <remarks>

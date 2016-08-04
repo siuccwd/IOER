@@ -26,6 +26,10 @@
       <%=resourceText %>
       <%=codeTables %>
       var SB7mode = "tag";
+      var lrUrl = "<%=lrUrl %>";
+  </script>
+  <script type="application/ld+json" id="resourceJSONLD">
+      <%=resourceJson %>
   </script>
   <script type="text/javascript" language="javascript" src="/Scripts/detail6.js?v=6"></script>
   <%--<link rel="Stylesheet" href="/Styles/detail6.css" />--%>
@@ -54,6 +58,10 @@
     .thumbnailDiv { width: 400px; height: 300px; background-color: #DDD; text-align: center; padding-top: 50px; font-weight: bold; color: #333; font-size: 20px; }
     #standardsBrowser { padding: 5px; }
     #standardsBrowser #selectStandardGrade h2 { margin-bottom: 5px; background-color: transparent; color: #333; }
+    .usage_Major { background-color: #484; color: #fff; padding: 0 5px; }
+    .usage_Supporting { background-color: #48A; color: #fff; padding: 0 5px; }
+    .usage_Additional { background-color: #CB2; color: #fff; padding: 0 5px; }
+
     #subject .edit, #subject .view, #keyword .edit, #keyword .view { padding: 5px; }
     #subject input[type=text], #keyword input[type=text] { width: 100%; margin-bottom: 5px; }
     .addedTextItem { display: inline-block;  border: 1px solid #CCC; border-radius: 5px; }
@@ -326,18 +334,18 @@
     <h1 id="title"><span class="view admin author" itemprop="name"></span><span class="edit admin author">Title: <input type="text" /></span></h1>
 
     <div class="left column">
-      <a href="#" id="resourceURL" target="_blank" itemprop="targetUrl"></a>
+      <a href="#" id="resourceURL" target="_blank"  itemprop="targetUrl"></a>
       <div id="lrDocLink"></div>
       <div id="clickthroughs"></div>
       <div id="thumbAndCritical">
         <a id="thumbnail" href="#" title="resource" target="_blank"><img alt='' src="/images/ThumbnailResizer.png" /></a>
         <div id="criticalInfo">
-          <div id="usageRights"><a rel="license" id="usageRightsUrl" href="" target="ccPage"><img alt='' class="view" src="/images/icons/rightsreserved.png" /></a></div>
+          <div id="usageRights"><a rel="license" id="usageRightsUrl" href="" target="ccPage" itemprop="useRightsUrl"><img alt='' class="view" src="/images/icons/rightsreserved.png" /></a></div>
           <div id="created" itemprop="dateCreated"><strong>Created:</strong> <span></span></div>
         </div>
       </div>
       <div id="description"><h2>Description</h2><p class="view admin author" itemprop="description"></p><span class="edit admin author"><textarea></textarea></span></div>
-        <div id="resourceNote"><p class="view admin" itemprop="description"></p></div>
+        <div id="resourceNote"><p class="view admin"></p></div>
 
       <div id="requires"><h2>Technology and Equipment Requirements</h2><p class="view admin"></p><span class="edit admin"><input type="text" /></span></div>
       <div id="infoTabBox" class="tabBox">
@@ -348,10 +356,11 @@
 						<input type="button" value="Save Changes" runat="server" id="btnFinishUpdate" class="finish btn green edit" onclick="saveUpdates()" />
 						<input type="button" value="Cancel Changes" runat="server" id="btnCancelChanges" class="cancel btn red edit" onclick="cancelChanges()" />
 						<!--<input type="button" value="Send Resource to External Site" class="btn green" id="btnSendResource" onclick="sendResource()" />-->
-						<input type="button" value="Send Resource to External Site" class="btn green" id="btnMsgResource" onclick="sendResourceMsg()" />
 					</div>
+					<input type="button" value="Send Resource to External Site" class="btn green" id="btnMsgResource" onclick="sendResourceMsg()" />
           <input type="button" value="Deactivate Resource" runat="server" id="btnDeactivateResource" class="deactivate btn red" onclick="deactivate()" />
           <input type="button" value="Regenerate Thumbnail" runat="server" id="btnRegenerateThumbnail" class="regenerate btn green" onclick="regenerateThumbnail()" />
+				 <input type="button" value="Reindex Resource" runat="server" id="btnReindexResource" class="reindex btn green" onclick="reindexResource()" visible="false" />
        </div>
         <div class="tabNavigator">
           <a href="#" data-id="tags" title="Metadata Tags"><div class="name">Tags</div><div class="value"></div></a>
@@ -363,19 +372,19 @@
        <div class="tab" id="tags">
           <h2>Tags</h2>
           <div id="gradeLevel" class="cbxl" Itemprop="educationalAlignment"></div>
-          <div id="careerCluster" class="cbxl"></div>
-          <div id="endUser" class="cbxl" itemprop="endUser"></div>
+          <div id="careerCluster" class="cbxl" itemprop="endUser"></div>
+          <div id="endUser" class="cbxl"></div>
           <div id="groupType" class="cbxl"></div>
           <div id="resourceType" class="cbxl" itemprop="learningResourceType"></div>
           <div id="mediaType" class="cbxl" itemprop="mediaType"></div>
           <div id="educationalUse" class="cbxl" itemprop="educationalUse"></div>
-          <div id="k12subject" class="cbxl" itemprop="about" ></div>
+          <div id="k12subject" class="cbxl"  itemprop="about"></div>
           <div id="pickUsageRights" class="edit">
             <h3>Usage Rights</h3>
             <uc1:UsageRightsSelector ID="usageRightsSelector" runat="server" />
           </div>
           <div id="accessRights" class="ddl"></div>
-          <div id="language" class="ddl" itemprop="inLanguage"></div>
+          <div id="language" class="ddl"></div>
           <div id="timeRequired">
             <h3>Time Required</h3>
             <div class="view" itemprop="timeRequired"></div>
@@ -412,7 +421,7 @@
             <input type="text" placeholder="Type a subject and press Enter..." />
             <div class="addedFreeText" data-id="subject"></div>
           </div>
-          <div class="view" itemprop="about"></div>
+          <div class="view"></div>
         </div>
         <div class="tab" id="alignedStandards">
           <h2>Aligned Standards</h2>
@@ -561,7 +570,7 @@
 
     <script type="text/template" id="template_listedStandard">
       <div class="listedStandard lightbox" data-standardid="{standardID}">
-        <h3>{alignment}: <a href="/search?text=standard:{title}" target="_blank">{title}</a></h3>
+        <h3>{alignment}: <a href="/search?text=StandardIDs:{standardID}" target="_blank">{title}</a> <span class="usage_{usage}">{usage}</span></h3>
         <p>{description}</p>
       </div>
     </script>

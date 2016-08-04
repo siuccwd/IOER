@@ -7,234 +7,315 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace IOER.LRW.controls {
+namespace ILPathways.LRW.controls {
     
     
-    public partial class ESLibrary2 {
+    public partial class ContentSearch {
         
         /// <summary>
-        /// toolTip control.
+        /// authoringPanel control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::IOER.Controls.ToolTipV3 toolTip;
+        protected global::System.Web.UI.WebControls.Panel authoringPanel;
         
         /// <summary>
-        /// libraryStuff control.
+        /// CustomHdrPanel control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlGenericControl libraryStuff;
+        protected global::System.Web.UI.WebControls.Panel CustomHdrPanel;
         
         /// <summary>
-        /// activityRenderer control.
+        /// lblCustomTitle control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::IOER.Activity.ActivityRenderer activityRenderer;
+        protected global::System.Web.UI.WebControls.Label lblCustomTitle;
         
         /// <summary>
-        /// settingsTab control.
+        /// approversPanel control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlAnchor settingsTab;
+        protected global::System.Web.UI.WebControls.Panel approversPanel;
         
         /// <summary>
-        /// addTab control.
+        /// approversOptionsList control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlAnchor addTab;
+        protected global::System.Web.UI.WebControls.RadioButtonList approversOptionsList;
         
         /// <summary>
-        /// joinTab control.
+        /// dateFiltersPanel control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlAnchor joinTab;
+        protected global::System.Web.UI.WebControls.Panel dateFiltersPanel;
         
         /// <summary>
-        /// settingsPanel control.
+        /// rblIDateCreated control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlGenericControl settingsPanel;
+        protected global::System.Web.UI.WebControls.RadioButtonList rblIDateCreated;
         
         /// <summary>
-        /// ddlPublicAccessLevels control.
+        /// filtersPanel control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList ddlPublicAccessLevels;
+        protected global::System.Web.UI.WebControls.Panel filtersPanel;
         
         /// <summary>
-        /// ddlOrganizationAccessLevels control.
+        /// createdByMessage control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList ddlOrganizationAccessLevels;
+        protected global::System.Web.UI.WebControls.Label createdByMessage;
         
         /// <summary>
-        /// addResourcesPanel control.
+        /// listCreatedBy control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlGenericControl addResourcesPanel;
+        protected global::System.Web.UI.WebControls.RadioButtonList listCreatedBy;
         
         /// <summary>
-        /// joinLibraryPanel control.
+        /// createResourceLinkPanel control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlGenericControl joinLibraryPanel;
+        protected global::System.Web.UI.WebControls.Panel createResourceLinkPanel;
         
         /// <summary>
-        /// txtStartDate control.
+        /// txtKeyword control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlInputText txtStartDate;
+        protected global::System.Web.UI.WebControls.TextBox txtKeyword;
         
         /// <summary>
-        /// txtEndDate control.
+        /// searchImgBtn control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlInputText txtEndDate;
+        protected global::System.Web.UI.WebControls.ImageButton searchImgBtn;
         
         /// <summary>
-        /// searchControl control.
+        /// searchSummaryDesc control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::IOER.Controls.SearchV7.SearchV7 searchControl;
+        protected global::System.Web.UI.WebControls.Label searchSummaryDesc;
         
         /// <summary>
-        /// error control.
+        /// pnlSearch control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlGenericControl error;
+        protected global::System.Web.UI.WebControls.Panel pnlSearch;
         
         /// <summary>
-        /// noLibraryYet control.
+        /// resultsPanel control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlGenericControl noLibraryYet;
+        protected global::System.Web.UI.WebControls.Panel resultsPanel;
         
         /// <summary>
-        /// quickLibrary control.
+        /// ddlPageSizeList control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button quickLibrary;
+        protected global::System.Web.UI.WebControls.DropDownList ddlPageSizeList;
         
         /// <summary>
-        /// txtTitleNew control.
+        /// pager1 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtTitleNew;
+        protected global::WebControlLibrary.PagerV2_8 pager1;
         
         /// <summary>
-        /// txtDescriptionNew control.
+        /// formGrid control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtDescriptionNew;
+        protected global::System.Web.UI.WebControls.GridView formGrid;
         
         /// <summary>
-        /// ddlPublicAccessLevel control.
+        /// pager2 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList ddlPublicAccessLevel;
+        protected global::WebControlLibrary.PagerV2_8 pager2;
         
         /// <summary>
-        /// ddlOrgAccessLevel control.
+        /// hiddenStuff control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList ddlOrgAccessLevel;
+        protected global::System.Web.UI.WebControls.Panel hiddenStuff;
         
         /// <summary>
-        /// fileNewImage control.
+        /// txtFormSecurityName control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.FileUpload fileNewImage;
+        protected global::System.Web.UI.WebControls.Literal txtFormSecurityName;
         
         /// <summary>
-        /// BtnCreateLibrary control.
+        /// txtAuthorSecurityName control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button BtnCreateLibrary;
+        protected global::System.Web.UI.WebControls.Literal txtAuthorSecurityName;
         
         /// <summary>
-        /// completionMessage control.
+        /// txtLibraryId control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label completionMessage;
+        protected global::System.Web.UI.WebControls.Literal txtLibraryId;
         
         /// <summary>
-        /// libraryCreateMsg control.
+        /// formattedTitleTemplate control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Literal libraryCreateMsg;
+        protected global::System.Web.UI.WebControls.Literal formattedTitleTemplate;
+        
+        /// <summary>
+        /// Panel3 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel Panel3;
+        
+        /// <summary>
+        /// readMoreTemplate control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Literal readMoreTemplate;
+        
+        /// <summary>
+        /// readMoreTemplateSystran control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Literal readMoreTemplateSystran;
+        
+        /// <summary>
+        /// Panel4 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel Panel4;
+        
+        /// <summary>
+        /// keywordTemplate control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Literal keywordTemplate;
+        
+        /// <summary>
+        /// txtMyOrgFilter control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Literal txtMyOrgFilter;
+        
+        /// <summary>
+        /// txtCustomFilter control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Literal txtCustomFilter;
+        
+        /// <summary>
+        /// txtPublicFilter control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Literal txtPublicFilter;
+        
+        /// <summary>
+        /// txtAuthFilter control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Literal txtAuthFilter;
     }
 }

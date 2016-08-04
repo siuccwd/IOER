@@ -39,7 +39,7 @@ $(document).ready(function() {
 <style type="text/css">
   .conditionsSelector { width: 100%; border-collapse: collapse; }
   .conditionsSelector td { padding: 1px 0; }
-  .conditions_thumbnail { width: 95px; text-align: center; vertical-align: middle; }
+  .conditions_thumbnail { width: 95px; text-align: center; vertical-align: top; }
   .ddlConditionsOfUse { width: 100%; margin: 0; }
   .conditions_descriptor { vertical-align: top; margin: 0; padding: 2px; }
   .txtConditionsOfUse { width: 100%; }

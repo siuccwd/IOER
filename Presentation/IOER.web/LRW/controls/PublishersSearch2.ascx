@@ -1,5 +1,5 @@
 ﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="PublishersSearch2.ascx.cs" Inherits="IOER.LRW.controls.PublishersSearch2" %>
-
+<%@ Register Namespace="ASPnetControls" Assembly="ILPathways.Utilities" TagPrefix="wcl" %>
 
 <% 
   //Easy CSS colors

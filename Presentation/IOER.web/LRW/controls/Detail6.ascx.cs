@@ -28,7 +28,9 @@ namespace IOER.LRW.controls
         public int resourceIntID { get; set; }
         public int resourceVersionID { get; set; }
         public string resourceText { get; set; }
+        public string resourceJson { get; set; }
         public string codeTables { get; set; }
+		public string lrUrl { get; set; }
         public bool isUserAdmin { get; set; }
         public bool isUserAuthor { get; set; }
         public bool alreadyLoaded { get; set; }
@@ -67,6 +69,12 @@ namespace IOER.LRW.controls
             {
                 content.Visible = false;
                 error.Visible = true;
+							//Hack to fix weird elasticsearch issue
+								try
+								{
+									new ResourceV2Services().BulkDeleteResources( new List<int>() { resourceIntID } );
+								}
+								catch { }
             }
         }
         private bool IsWNUserAuthorized()
@@ -93,7 +101,8 @@ namespace IOER.LRW.controls
         }
         protected void GetResource( int resourceVersionID )
         {
-            
+            ResourceV2Services v2Services = new ResourceV2Services();
+			lrUrl = UtilityManager.GetAppKeyValue( "learningRegistryNodeRead", "http://node01.public.learningregistry.net" );
             content.Visible = true;
             error.Visible = false;
             var serializer = new JavaScriptSerializer();
@@ -111,6 +120,8 @@ namespace IOER.LRW.controls
 
             resourceText = "var resource = " + serializer.Serialize( new Services.DetailService6().LoadAllResourceData( resourceVersionID, userGUID ) ) + ";";
             codeTables = "var codeTables = " + serializer.Serialize( new Services.DetailService6().GetCodeTables() ) + ";";
+            LRWarehouse.Business.ResourceV2.ResourceDTO resource = v2Services.GetResourceDTO(resourceIntID);
+            resourceJson = v2Services.GetJsonLdLrmiForPage(resource);
         }
 
         protected bool IsValidRecord()
@@ -189,6 +200,7 @@ namespace IOER.LRW.controls
             btnDeactivateResource.Visible = false;
             btnCancelChanges.Visible = false;
             btnRegenerateThumbnail.Visible = false;
+			btnReindexResource.Visible = false;
             btnUbertag.Visible = false;
 
             if ( IsUserAuthenticated() )
@@ -196,7 +208,8 @@ namespace IOER.LRW.controls
                 reportProblemContainer.Visible = true;
 
                 //get general privileges
-                FormPrivileges = SecurityManager.GetGroupObjectPrivileges( WebUser, txtFormSecurityName.Text );
+				FormPrivileges = ResourceBizService.ResourceDetailAuthorization( WebUser );
+				//FormPrivileges = SecurityManager.GetGroupObjectPrivileges( WebUser, txtFormSecurityName.Text );
                 if ( FormPrivileges.CanUpdate() == false &&  txtGeneralSecurity.Text == "" )
                 {
                     //anyone can update
@@ -236,7 +249,7 @@ namespace IOER.LRW.controls
                 if ( FormPrivileges.CanUpdate() )
                 {
 					btnUbertag.Visible = true;
-					btnUbertag.Attributes[ "onclick" ] = "window.location.href = '/tagger?theme=ioer&mode=tag&resourceID=" + resourceIntID + "'";
+					btnUbertag.Attributes[ "onclick" ] = "window.location.href = '/tagger?theme=ioer&resourceID=" + resourceIntID + "'";
 
                     btnStartUpdateMode.Visible = true;
                     btnFinishUpdate.Visible = true;
@@ -249,11 +262,13 @@ namespace IOER.LRW.controls
 					btnDeactivateResource.Visible = true;
 				}
 
-                if ( FormPrivileges.CreatePrivilege > ( int )EPrivilegeDepth.Region )
+				if ( new AccountServices().IsUserAdmin( GetAppUser() )
+				|| FormPrivileges.CreatePrivilege > ( int ) ILPathways.Business.EPrivilegeDepth.State )
                 {
                    
                     btnDeactivateResource.Visible = true;
                     btnReActivateResource.Visible = true;
+					btnReindexResource.Visible = true;
 					if ( pResourceVersion != null && pResourceVersion.Id > 0
 						&& string.IsNullOrWhiteSpace( pResourceVersion.ResourceImageUrl ) == true )
 					{
@@ -264,8 +279,7 @@ namespace IOER.LRW.controls
                     isUserAdmin = true;
                 }
             }
-        }
-
+		}
 
 
         protected void btnReActivateResource_Click( object sender, EventArgs e )

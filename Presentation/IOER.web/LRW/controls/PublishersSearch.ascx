@@ -1,5 +1,5 @@
 ﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="PublishersSearch.ascx.cs" Inherits="IOER.LRW.controls.PublishersSearch" %>
-
+<%@ Register Namespace="ASPnetControls" Assembly="ILPathways.Utilities" TagPrefix="wcl" %>
  
 <style type="text/css">
 .watermarked { text-align: center; }

@@ -7,63 +7,63 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace IOER.LRW.controls {
+namespace ILPathways.LRW.controls {
     
     
-    public partial class Dashboard1 {
+    public partial class Rubric3 {
         
         /// <summary>
-        /// mainForm control.
+        /// header control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlForm mainForm;
+        protected global::ILPathways.Controls.Includes.Header6 header;
         
         /// <summary>
-        /// Header control.
+        /// btnFinish control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::IOER.Controls.Includes.Header8 Header;
+        protected global::System.Web.UI.WebControls.Button btnFinish;
         
         /// <summary>
-        /// dashboardContent control.
+        /// Comments control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlGenericControl dashboardContent;
+        protected global::ILPathways.LRW.controls.Comments Comments;
         
         /// <summary>
-        /// notLoggedInContent control.
+        /// hdnScores control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlGenericControl notLoggedInContent;
+        protected global::System.Web.UI.HtmlControls.HtmlInputHidden hdnScores;
         
         /// <summary>
-        /// hiddenItems control.
+        /// hiddenStuff control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel hiddenItems;
+        protected global::System.Web.UI.WebControls.Panel hiddenStuff;
         
         /// <summary>
-        /// demoMode control.
+        /// rubricSelect control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Literal demoMode;
+        protected global::System.Web.UI.WebControls.Literal rubricSelect;
     }
 }

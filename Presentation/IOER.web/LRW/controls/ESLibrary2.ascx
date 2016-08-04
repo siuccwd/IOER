@@ -4,6 +4,9 @@
 <%@ Register TagPrefix="uc1" TagName="ActivityRenderer" Src="/Activity/ActivityRenderer.ascx" %>
 <%@ Register TagPrefix="uc1" TagName="Search" Src="/Controls/SearchV7/SearchV7.ascx" %>
 
+<%@ Register Src="~/Controls/ToolTipV3.ascx" TagPrefix="uc1" TagName="Tooltip" %>
+<uc1:Tooltip id="toolTip" runat="server" />
+
 
 <div id="libraryStuff" runat="server">
   <!-- from server -->
@@ -17,8 +20,8 @@
   <script type="text/javascript" src="/Scripts/ESLibrary2.js?ver=2"></script>
   <!--<script type="text/javascript" language="javascript" src="/Scripts/toolTip.js"></script>-->
   <!--<link rel="Stylesheet" type="text/css" href="/Styles/ToolTip.css" />-->
-  <script type="text/javascript" src="/Scripts/toolTipV2.js"></script>
-  <link rel="stylesheet" type="text/css" href="/Styles/toolTipV2.css" />
+ <%-- <script type="text/javascript" src="/Scripts/toolTipV2.js"></script>
+  <link rel="stylesheet" type="text/css" href="/Styles/toolTipV2.css" />--%>
 
   <style type="text/css">
     /* General */
@@ -368,7 +371,7 @@
       <h2 id="libColTitle"></h2>
       <div id="libColSelector">
         <a href="#" id="libraryAvatar" onclick="pickLibrary(); return false;"></a>
-        <h2 id="collectionsHeader">Collections for this Library: <a class="toolTipLink" title="Collections|A Library contains one or more Collections.|A Collection contains one or more Resources.|Click on a Collection icon to view its contents.|Click on the Library icon to the left to view the entire contents of the Library."></a></h2>
+        <h2 id="collectionsHeader">Collections for this Library: <a class="toolTip toolTipBubbleBefore" title="Collections|A Library contains one or more Collections.|A Collection contains one or more Resources.|Click on a Collection icon to view its contents.|Click on the Library icon to the left to view the entire contents of the Library."></a></h2>
         <div id="collectionList"></div>
             
       </div>
@@ -423,11 +426,11 @@
               <iframe id="avatarFrame" allowtransparency="true" scrolling="no" src="/My/Avatar.aspx?guid=<%=userGUID %>&lib=<%=libraryID %>"></iframe>
               <div id="accessLevelDDLs" >
                 <p>Set general public access level:</p>
-                <a class="toolTipLink" title="Public Access Level|<ul><li><b>None</b> - The library has no default access, and is hidden from searches.</li><li><b>By Request Only</b> - The library has no default access, but will enable requests to access the library. The library can be found by a search.</li><li><b>Read Only</b> - The library can be viewed by anyone and will be displayed in searches.</li><li><b>Contribute with Approval</b> - The library is publically available and any authenticated user may add a resource to the library. The resource will not be visible until it has been approved by a library curator or administrator.</li><li><b>Contribute No Approval</b> - Same as the latter, except no approval is required.</li></ul>"></a>
+                <a class="toolTip toolTipBubbleBefore" title="Public Access Level|<ul><li><b>None</b> - The library has no default access, and is hidden from searches.</li><li><b>By Request Only</b> - The library has no default access, but will enable requests to access the library. The library can be found by a search.</li><li><b>Read Only</b> - The library can be viewed by anyone and will be displayed in searches.</li><li><b>Contribute with Approval</b> - The library is publically available and any authenticated user may add a resource to the library. The resource will not be visible until it has been approved by a library curator or administrator.</li><li><b>Contribute No Approval</b> - Same as the latter, except no approval is required.</li></ul>"></a>
                 <asp:DropDownList ID="ddlPublicAccessLevels" CssClass="ddlPublicAccessLevels" runat="server"></asp:DropDownList>
                  
                 <p>Set organization member access level: </p>
-                <a class="toolTipLink" title="Organization Access Level|<ul><li><b>None</b> - The library has no default access for members of the related organization, and is hidden from searches. </li><li><b>By Request Only</b> - The library has no default access for members of the related organization, but will enable requests to access the library. The library can be found by a search.</li><li><b>Read Only</b> - The library can be viewed by any member the related organization and will be displayed in searches.</li><li><b>Contribute with Approval</b> - The library is publically available and any member of the related organization may add a resource to the library. The resource will not be visible until it has been approved by a library curator or administrator.</li><li><b>Contribute No Approval</b> - Same as the latter, except no approval is required.</li></ul>"></a>
+                <a class="toolTip toolTipBubbleBefore" title="Organization Access Level|<ul><li><b>None</b> - The library has no default access for members of the related organization, and is hidden from searches. </li><li><b>By Request Only</b> - The library has no default access for members of the related organization, but will enable requests to access the library. The library can be found by a search.</li><li><b>Read Only</b> - The library can be viewed by any member the related organization and will be displayed in searches.</li><li><b>Contribute with Approval</b> - The library is publically available and any member of the related organization may add a resource to the library. The resource will not be visible until it has been approved by a library curator or administrator.</li><li><b>Contribute No Approval</b> - Same as the latter, except no approval is required.</li></ul>"></a>
                 <asp:DropDownList ID="ddlOrganizationAccessLevels" CssClass="ddlOrganizationAccessLevels" runat="server"></asp:DropDownList>
               </div>
               <div id="defaulter">
