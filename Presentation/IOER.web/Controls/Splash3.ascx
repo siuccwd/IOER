@@ -410,6 +410,28 @@ a#backToTopRight {
     </div>
   </div><!-- /rotator -->--%>
 	<!-- Headline Boxes -->
+
+    <style type="text/css">
+        /* Black background */
+        /*#goOpenBanner { padding: 50px; text-align: center; background-color: #333; color: #FFF; display: block; }*/
+        /* Blue background */
+        #goOpenBanner { padding: 50px; text-align: center; background-color: #3572B8; color: #FFF; display: block; }
+
+        #goOpenBanner h1 { font-size: 40px; }
+        #goOpenBanner p { font-size: 22px; }
+        #goOpenBanner a { color: inherit; font-size: inherit; text-decoration: underline; display: inline-block; padding: 10px 15px; }
+        /*#goOpenBanner:hover p, #goOpenBanner:focus p {  text-decoration: underline; }*/
+
+        @media (max-width: 500px){
+            #goOpenBanner h1 { font-size: 30px; }
+            #goOpenBanner p { font-size: 18px; }
+        }
+    </style>
+    <div id="goOpenBanner">
+        <h1>Illinois Launches Statewide #GoOpen Initiative!</h1>
+        <p><a href="http://www.isbe.net/news/2016/jun27.htm" target="_blank">Press Release</a> <a href="http://tech.ed.gov/open-education/states/" target="_blank">More Information</a></p>
+    </div>
+
 	<div id="headlineBox">
 		<h1>Illinois Open Educational Resources</h1>
 		<div id="txtSearchBox">
@@ -514,6 +536,11 @@ a#backToTopRight {
           var addthis_config = {
           	services_expanded: "'twitter,facebook,google_plusone_share,pinterest,flipboard,linkedin,email,print,more'"
           }
+          $(document).ready(function() {
+          	setTimeout(function() {
+          		//$(".at-icon-wrapper, .at-icon-wrapper *").css("height", "25px").css("width","25px"); //Fix addthis item size
+          	}, 250);
+          });
         </script>
         <style type="text/css">
           .addthis_toolbox { white-space: nowrap; text-align: center; padding: 10px 0; }
@@ -521,7 +548,7 @@ a#backToTopRight {
         	a.at300b .at4-icon, a.at300m .at4-icon { width: 25px; height: 25px; background-size: 25px 25px !important; background-color: #3572B8 !important; transition: background-color 0.2s; }
         	a.at300b .at4-icon:hover, a.at300m .at4-icon:hover, a.at300b .at4-icon:focus, a.at300m .at4-icon:focus { background-color: #FF6A00 !important; }
         </style>
-        <div class="addthis_toolbox addthis_default_style addthis_32x32_style">
+        <div class="addthis_toolbox addthis_default_style addthis_16x16_style">
           <a class="addthis_button_twitter"></a><!--
           --><a class="addthis_button_facebook"></a><!--
 					--><a class="addthis_button_google_plusone_share"></a><!--

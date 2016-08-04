@@ -616,17 +616,17 @@
   #SB7 #SBtree .treeItem:focus, #SB7 #SBtree .treeItem:hover { background-color: #FF5707; color: #FFF; cursor: pointer; }
   #SB7 #SBtree .treeItem input { float: left; margin: 4px 5px;  }
   #SB7 #SBtree .treeItem .code { font-weight: bold; }
-	#SB7 #SBtree .treeItem .grades, .selectedStandard .grades { font-size: 16px; font-style: italic; font-weight: normal; }
-	.selectedStandard .grades { border-top: 1px solid #CCC; }
+	#SB7 #SBtree .treeItem .grades, .selectedStandard .grades { font-size: 14px; font-style: italic; font-weight: normal; opacity: 0.7; }
+	.selectedStandard .grades { border-top: 1px solid #CCC; margin-top: 5px; }
   #SB7 #SBtree .treeItem[data-depth=d0] { padding-left: 5px; }
   #SB7 #SBtree .treeItem[data-depth=d1] { padding-left: 15px; }
   #SB7 #SBtree .treeItem[data-depth=d2] { padding-left: 30px; }
   #SB7 #SBtree .treeItem[data-depth=d3] { padding-left: 45px; }
   #SB7 #SBtree .treeItem[data-depth=d4] { padding-left: 60px; }
   #SB7 #SBtree .treeItem[data-depth=d5] { padding-left: 75px; }
-  #SB7 #SBtree .treeItem[data-depth=d0] .code, #SB7 #SBtree .treeItem[data-depth=d0] .text { font-size: 30px; font-weight: bold; }
-  #SB7 #SBtree .treeItem[data-depth=d1] .code, #SB7 #SBtree .treeItem[data-depth=d1] .text { font-size: 24px; font-weight: bold; color: #4AA394; }
-  #SB7 #SBtree .treeItem[data-depth=d2] .code, #SB7 #SBtree .treeItem[data-depth=d2] .text { font-size: 20px; }
+  #SB7 #SBtree .treeItem[data-depth=d0] .code, #SB7 #SBtree .treeItem[data-depth=d0] .text { font-size: 22px; font-weight: bold; }
+  #SB7 #SBtree .treeItem[data-depth=d1] .code, #SB7 #SBtree .treeItem[data-depth=d1] .text { font-size: 20px; font-weight: bold; color: #4AA394; }
+  #SB7 #SBtree .treeItem[data-depth=d2] .code, #SB7 #SBtree .treeItem[data-depth=d2] .text { font-size: 18px; }
   #SB7 #SBtree .treeItem[data-depth=d0] input[type=checkbox] { margin: 9px 5px; }
   #SB7 #SBtree .treeItem[data-depth=d1] input[type=checkbox] { margin: 6px 5px }
   #SB7 #SBtree .treeItem[data-depth=d2] input[type=checkbox] { margin: 5px 5px; }
@@ -740,15 +740,15 @@
     <div class="selectedStandard" data-standardID="{id}" data-code="{code}">
       <a href="#" onclick="removeSelectedStandard({id}); return false;">X</a>
       <select class="alignmentType">
-        <option value="0">Aligns To</option>
-        <option value="1">Assesses</option>
-        <option value="2">Teaches</option>
-        <option value="3">Requires</option>
+        <option value="0">Resource aligns to this standard</option>
+        <option value="1">Resource assesses this standard</option>
+        <option value="2">Resource teaches this standard</option>
+        <option value="3">Resource requires this standard</option>
       </select>
       <select class="usageType">
-        <option value="1">Major</option>
-        <option value="2">Supporting</option>
-        <option value="3">Additional</option>
+        <option value="1">Major alignment</option>
+        <option value="2">Supporting alignment</option>
+        <option value="3">Additional alignment</option>
       </select>
       <span>{name}</span>
 			<div class="grades">Grades {grades}</div>

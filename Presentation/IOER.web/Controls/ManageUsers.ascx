@@ -1,13 +1,16 @@
 ﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="ManageUsers.ascx.cs" Inherits="IOER.Controls.ManageUsers" %>
 <%@ Register Src="~/Organizations/controls/Import.ascx" TagPrefix="uc1" TagName="Import" %>
+<%@ Register Src="~/Controls/ToolTipV3.ascx" TagPrefix="uc1" TagName="Tooltip" %>
 
-<script type="text/javascript" language="javascript" src="/Scripts/toolTip.js"></script>
-<link rel="Stylesheet" type="text/css" href="/Styles/ToolTip.css" />
+<uc1:Tooltip id="toolTip" runat="server" />
+
+<%-- <script type="text/javascript" language="javascript" src="/Scripts/toolTip.js"></script>
+<link rel="Stylesheet" type="text/css" href="/Styles/ToolTip.css" />--%>
 
 <div id="userManagerError" class="userManagerPanel" runat="server" visible="false">
   <style type="text/css">
     .userManagerPanel p { padding: 25px 10px; text-align: center; }
-    #btnImport {display: none;}
+
   </style>
   <p>Unable to manage this object.</p>
   <p id="userManagerErrorMessage" runat="server"></p>
@@ -32,6 +35,8 @@
       });
       um.refreshExistingUsers();
       um.refreshPendingUsers();
+        //??
+      $("#umSelectedUser").hide();
     });
     
     /* --- Page Functions --- */
@@ -50,33 +55,50 @@
       		return;
       	}
       	else {
-      		um.doAjax("AjaxCanInviteUser", um.getQuery(0, um.getInviteEmail(), 0, "", []), um.successCanInviteUser);
+      		um.doAjax("AjaxCanInviteUser", um.getQuery(0, um.getInviteEmail(),"","", 0, "", []), um.successCanInviteUser);
       	}
       }, 800);
     };
 
     //Send an invite
     um.sendInvite = function() {
-      um.doAjax("AjaxInviteUser", um.getQuery(0, um.getInviteEmail(), um.getInviteMemberType(), um.getText($(".umPanel[data-panel=invite] .message")), um.getTargetMemberRoleIDs(false)), um.successInvite);
+        var message = "";
+        var email = um.getInviteEmail();
+        if (email.length == 0)
+            message = "Email is required\r\n";
+        var firstName = um.getFirstName();
+        if (firstName.length == 0)
+            message += "First Name is required\r\n";
+        var lastName = um.getLastName();
+        if (lastName.length == 0)
+            message += "Last Name is required\r\n";
+        if (message.length > 0) {
+            alert("Errors: \r\n" + message);
+        } else {
+            um.doAjax("AjaxInviteOrgUser", um.getQuery(0, email, firstName,lastName, um.getInviteMemberType(), um.getText($(".umPanel[data-panel=invite] .message")), um.getTargetMemberRoleIDs(false)), um.successInvite);
+        }
     };
 
   	//Refresh the list of existing users
     um.refreshExistingUsers = function() {
-    	um.doAjax("AjaxGetUsers", um.getQuery(0, "", 0, "", []), um.successRefreshExistingUsers);
+        um.doAjax("AjaxGetUsers", um.getQuery(0, "","","", 0, "", []), um.successRefreshExistingUsers);
     }
 
   	//Refresh the list of pending users
     um.refreshPendingUsers = function() {
-    	um.doAjax("AjaxGetPendingUsers", um.getQuery(0, "", 0, "", []), um.successRefreshPendingUsers);
+        um.doAjax("AjaxGetPendingUsers", um.getQuery(0, "","","", 0, "", []), um.successRefreshPendingUsers);
     }
 
     //Get query (some parameters are always the same per page load):
-    um.getQuery = function(userID, userEmail, userMemberType, message, roleIDs){
+    um.getQuery = function(userID, userEmail, firstName, lastName,userMemberType, message, roleIDs){
     	return { input: {
     		ObjectId: <%=ObjectId %>,
     		ObjectType: "<%=ObjectType %>",
     		TargetUserId: userID,
     		TargetUserEmail: userEmail,
+    		TargetFirstName: firstName,
+    		TargetLastName: lastName,
+    		IsNameRequired: true,
     		TargetMemberTypeId: userMemberType,
     		Message: message,
     		TargetMemberRoleIds: roleIDs
@@ -86,6 +108,12 @@
     //Get email invite value
     um.getInviteEmail = function () {
       return um.getText($(".umPanel[data-panel=invite] .email"));
+    };
+    um.getFirstName = function () {
+        return um.getText($(".umPanel[data-panel=invite] .firstName"));
+    };
+    um.getLastName = function () {
+        return um.getText($(".umPanel[data-panel=invite] .lastName"));
     };
     //Get generic text value
     um.getText = function (jItem) {
@@ -127,6 +155,8 @@
 
   	//Select a user
     um.selectUser = function(id) {
+
+        
     	//Select the user
     	var currentUser = {};
     	for(var i in um.users){
@@ -136,9 +166,11 @@
     			break;
     		}
     	}
-    	console.log("Selected User:", currentUser);
-        $("html, body").animate({ scrollTop: 0 }, 500);
+    	console.log("Selected Member:", currentUser);
+        $("html, body").animate({ scrollTop: $("#umSelectedUser").position().top }, 250);
 
+        $("#btnUpdateSelectedUser").show();
+        $("#btnRemoveSelectedUser").show();
     	//Populate the details
     	$("#umSelectedUser_name").html(currentUser.MemberFullName);
     	$("#umSelectedUser_email").html(currentUser.Email == null ? "" : currentUser.Email);
@@ -163,7 +195,7 @@
   		var id = parseInt($("#umSelectedUser").attr("data-userID"));
   		var selectedType = parseInt($("#umSelectedUser_ddlType option:selected").attr("value"));
   		var selectedRoles = um.getTargetMemberRoleIDs(true);
-  		query = um.getQuery(id, "", selectedType, "", selectedRoles);
+  		query = um.getQuery(id, "","","", selectedType, "", selectedRoles);
   		console.log(selectedType);
   		console.log(selectedRoles);
   		console.log(query);
@@ -177,7 +209,7 @@
   		var name = $("#umSelectedUser_name").html();
   		if(id > 0){
   			if(confirm("Are you sure you want to remove " + name + " from this <%=ObjectTypeTitle %>?")){
-  			    um.doAjax("AjaxRemoveUser", um.getQuery(id, "", 0, "", []), um.successRemoveUserMember)
+  			    um.doAjax("AjaxRemoveUser", um.getQuery(id, "", "","", 0, "", []), um.successRemoveUserMember)
   			}
   		}
   	}
@@ -222,7 +254,7 @@
     um.successCanInviteUser = function(msg){
     	if(msg.valid && msg.data){ //Transaction may be valid, but user may still not be inviteable
     		if(msg.extra) { //if user already exists in IOER
-    			um.setStatus("Ready to add this user", "green");
+    			um.setStatus("Ready to add this member", "green");
     		}
     		else {
     			um.setStatus("Ready to invite this person", "green");
@@ -235,12 +267,15 @@
     
     um.successInvite = function(msg){
     	if(msg.valid){
-    		alert("User invited!");
+    		alert("Person invited!");
     		$(".umPanel[data-panel=invite] .email").val("").trigger("change");
+            $(".umPanel[data-panel=invite] .firstName").val("").trigger("change");
+            $(".umPanel[data-panel=invite] .lastName").val("").trigger("change");
     		$(".umPanel[data-panel=invite] .memberType option:first-child").prop("selected", true).trigger("change");
     		$(".umPanel[data-panel=invite] .message").val("").trigger("change");
     		um.refreshPendingUsers();
     		um.refreshExistingUsers();
+            //clear invite
     	}
     	else {
     		um.fail(msg);
@@ -253,7 +288,7 @@
     		um.renderExistingUsers(msg.data);
     	}
     	else {
-    		console.log("Error updating existing users:", msg.status);
+    		console.log("Error updating existing members:", msg.status);
     		console.log(msg.extra);
     	}
     }
@@ -264,7 +299,7 @@
     		um.renderPendingUsers(msg.data);
     	}
     	else {
-    		console.log("Error refreshing pending users:", msg.status);
+    		console.log("Error refreshing pending members:", msg.status);
     		console.log(msg.extra);
     	}
     }
@@ -280,7 +315,7 @@
 
     um.successRemoveUserMember = function(msg){
     	if(msg.valid){
-    	    alert("User removed from Organization!");
+    	    alert("Person removed from Organization!");
     	    $("#umSelectedUser").hide();
     		um.refreshExistingUsers();
     	}
@@ -294,7 +329,6 @@
     	var box = $(".umPanel[data-panel=current] .userList");
     	var template = $("#template_existingUser").html();
     	box.html("");
-    	debugger;
     	if(users.length > 0) {
     	    $("[id$='btnDownload']").show();
     	}
@@ -305,6 +339,8 @@
 					.replace(/{name}/g, user.FirstName + " " + user.LastName)
 					.replace(/{memberType}/g, user.MemberType)
 					.replace(/{memberTypeID}/g, user.MemberTypeId)
+                    .replace(/{memberRoles}/g, user.MemberRoles)
+                    .replace(/{memberLastLogin}/g, user.LastLoginShortDate)
 					.replace(/{img}/g, user.MemberImageUrl)
 					<% foreach(var item in MemberRoles) { %>
 					.replace(/{checked_<%=item.Id %>}/g, user.Roles.indexOf(<%=item.Id %>) > -1 ? "checked=\"checked\"" : "" )
@@ -318,7 +354,7 @@
   		var template = $("#template_pendingUser").html();
   		box.html("");
   		if(users.length == 0){
-  			box.html("<p class=\"grayMessage\">No users are pending.</p>");
+  			box.html("<p class=\"grayMessage\">No members are pending.</p>");
   			return;
   		}
   		for(var i in users){
@@ -331,6 +367,13 @@
 				);
   		}
   	}
+
+  	//function openImportPage( rId) {
+  	//    var id = $("#umOrgRId").html();
+
+  	//    //window.location.href = "/Organizations/Import.aspx?rid=" + id;
+  	//    var win = window.open("/Organizations/Import.aspx?rid=" + id, '_blank');
+  	//}
   </script>
   <style type="text/css">
 		/* Object Type specific things */
@@ -361,7 +404,7 @@
 
 		/* Users */
   	.umUser { padding: 5px; border-radius: 5px; margin: 0 0 5px 0; transition: background-color 0.2s; position: relative; width: 100%; display: inline-block; vertical-align: top; }
-  	.umUser .avatar { background-size: cover; background-repeat: no-repeat; position: absolute; top: 0; left: 0; width: 75px; height: 100%; background-color: #DDD; background-position: center center; }
+  	.umUser .avatar { background-size: cover; background-repeat: no-repeat; position: absolute; top: 0; left: 0; width: 75px; height: 100%; background-color: #DDD; background-position: center center; border-radius: 5px 0 0 5px; }
   	.umExisting:hover, .umExisting:focus { background-color: #DFDFDF; cursor: pointer; }
   	.umExisting { padding-left: 80px; border: 1px solid #CCC; }
   	.umExisting .umUserTitle, .umExisting .umUserControls { display: inline-block; vertical-align: top; }
@@ -383,7 +426,8 @@
   	#umSelectedUser_type { margin-bottom: 10px; }
   	#umSelectedUser_avatar { width: 150px; height: 150px; border-radius: 5px; position: absolute; top: 0; right: 5px; background-color: #CCC; border: 1px solid #4F4E4F; background-size: cover; background-repeat: no-repeat; background-position: center center; }
   	#umSelectedUser_buttons input { margin-bottom: 5px; }
-
+  	#umUser_ImportExportbuttons { text-align: right; }
+  	#umUser_ImportExportbuttons .isleButton { width: 130px; border: none; text-align: center; vertical-align: top; display: inline-block; height: 30px; line-height: 25px; }
   </style>
 
 <% if(CanAdministerUsers ==  false){ %>
@@ -393,24 +437,31 @@
 <% } %>
 
   <div class="umTabs">
-    <input type="button" class="isleButton bgBlue active" value="Current Users" onclick="um.showTab('current')" data-panel="current" /><!--
-    --><input type="button" class="isleButton bgBlue" value="Invite Users" onclick="um.showTab('invite')" data-panel="invite" /><!--
-    --><input type="button" class="isleButton bgBlue" value="Pending Users" onclick="um.showTab('pending')" data-panel="pending" /><!--
-    --><input type="button" id="btnImport" class="isleButton bgBlue" value="Import Users" onclick="um.showTab('import')" data-panel="import" />
+    <input type="button" class="isleButton bgBlue active" value="Current Members" onclick="um.showTab('current')" data-panel="current" /><!--
+    --><input type="button" class="isleButton bgBlue" value="Invite Members" onclick="um.showTab('invite')" data-panel="invite" /><!--
+    --><input type="button" class="isleButton bgBlue" value="Pending Members" onclick="um.showTab('pending')" data-panel="pending" />
   </div><!--/umTabs--><!--
 
   --><div class="umPanels">
     <div class="umPanel" data-panel="invite">
-      <h3 class="mid">Invite New User</h3>
+      <h3 class="mid">Invite New Member</h3>
       <div class="umColumn form">
         <!-- Elements to invite a new user -->
+        <div class="label">
+          <div>First Name</div><!--
+          --><input type="text" id="inviteFirstName" class="firstName" />
+        </div>
+          <div class="label">
+          <div>Last Name</div><!--
+          --><input type="text" id="inviteLastName" class="lastName" />
+        </div>
         <div class="label">
           <div>Email Address</div><!--
           --><input type="text" class="email" />
         </div>
         <div class="status">Enter an email address to begin</div>
         <div class="label">
-          <div><a class="toolTipLink" style="text-align:left;" id="ombr2ToolTipLink" title="Organization Member Types|<ul><li><strong>Administrator</strong> - An administrator can performance all available functions including: adding people, assigning any role, creating libraries, and communities. As well will have the same privileges as a staff member.</li><li><strong>Staff member/Employee</strong> - A staff member will have access to functions that are defined as staff only, will be able to contribute to organzation libraries (unless restricted by an library administrator), and other functions that may be only allowed for members of an organization.</li><li><strong>Student</strong> - A student will have many of the privileges of a staff member. A user may exclude students from accesssing content such as assessments.</li><li><strong>Contractor/External</strong> - People from outside an organization may be added to an organization to facilitate collaboration on learning lists, or perhaps to easily enable access to libraries. An external will have the same implicit privileges as a staff member.</li></ul>"><img src="/images/icons/infoBubble.gif" alt="" /></a> Select Member Type</div><!--
+          <div class="toolTip toolTipBubbleBefore toolTipBubbleOnly" title="Organization Member Types|<ul><li><strong>Administrator</strong> - An administrator can performance all available functions including: adding people, assigning any role, creating libraries, and communities. As well will have the same privileges as a staff member.</li><li><strong>Staff member/Employee</strong> - A staff member will have access to functions that are defined as staff only, will be able to contribute to organzation libraries (unless restricted by an library administrator), and other functions that may be only allowed for members of an organization.</li><li><strong>Student</strong> - A student will have many of the privileges of a staff member. A user may exclude students from accesssing content such as assessments.</li><li><strong>Contractor/External</strong> - People from outside an organization may be added to an organization to facilitate collaboration on learning lists, or perhaps to easily enable access to libraries. An external will have the same implicit privileges as a staff member.</li></ul>">Select Member Type</div><!--
           --><select class="umMemberType">
 						<% foreach(var item in MemberTypes){ %>
 							<option value="<%=item.Id %>"><%=item.Title %></option>
@@ -419,7 +470,7 @@
         </div>
 				<% if(MemberRoles.Count() > 0) { %>
         <div class="label">
-          <div> <a class="toolTipLink" id="orol2ToolTipLink" title="Organization Roles|<ul><li><strong>Administrator</strong> - An administrator can perform all the functions associated with any of the organization roles. As an administrator can also assign the administrator role to others.</li><li ><strong>Content Administrator</strong> - May approve content - where content approval has been implemented by an organization.</li><li><strong>Library Administrator</strong> - May create libraries, and assign any role, including administrator to any other user.</li><li class='offScreen'><strong>Account Administrator</strong> - Will have access to manage organization people??.</li><li><strong>Content Curator</strong> - Can add/invite people to share content like a learning list.</li></ul>"><img src="/images/icons/infoBubble.gif" alt="" /></a> Select Member Role(s)</div><!--
+          <div class="toolTip toolTipBubbleBefore toolTipBubbleOnly" title="Organization Roles|<ul><li><strong>Administrator</strong> - An administrator can perform all the functions associated with any of the organization roles. As an administrator can also assign the administrator role to others.</li><li ><strong>Content Administrator</strong> - May approve content - where content approval has been implemented by an organization.</li><li><strong>Library Administrator</strong> - May create libraries, and assign any role, including administrator to any other user.</li><li class='offScreen'><strong>Account Administrator</strong> - Will have access to manage organization people??.</li><li><strong>Content Curator</strong> - Can add/invite people to share content like a learning list.</li></ul>">Select Member Role(s)</div><!--
           --><div class="umMemberRoles">
 						<% foreach(var item in MemberRoles){ %>
 							<label><input type="checkbox" value="<%=item.Id %>" /> <%=item.Title %></label>
@@ -428,7 +479,7 @@
         </div>
 				<% } %>
         <div class="label">
-          <div>Message to User</div><!--
+          <div>Message to Member</div><!--
           --><textarea class="message"></textarea>
         </div>
         <div class="umButtons">
@@ -438,7 +489,7 @@
       </div><!--
       --><div class="umColumn help">
         <!-- User help -->
-        <h3>To invite a user...</h3>
+        <h3>To invite a member...</h3>
         <ol>
           <li>Enter the email address of the person you want to invite</li>
 					<li>Select the member type (and role, if applicable) you want this person to be when they join</li>
@@ -448,62 +499,52 @@
 
     </div><!--/invite-->
     <div class="umPanel" data-panel="pending">
-      <h3 class="mid">Pending Users</h3>
-      <p>These users have either requested access or been invited:</p>
+      <h3 class="mid">Pending Members</h3>
+      <p>These people have either requested access or been invited:</p>
       <div class="userList"></div>
 
     </div><!--/pending-->
     <div class="umPanel active" data-panel="current">
 			<div id="umSelectedUser" data-userID="0" style="display: none;">
-                <div style="display: none;"><a class="toolTipLink" style="text-align:left;" id="ombrToolTipLink" title="Organization Member Types|<ul><li><strong>Administrator</strong> - An administrator can performance all available functions including: adding people, assigning any role, creating libraries, and communities. As well will have the same privileges as a staff member.</li><li><strong>Staff member/Employee</strong> - A staff member will have access to functions that are defined as staff only, will be able to contribute to organzation libraries (unless restricted by an library administrator), and other functions that may be only allowed for members of an organization.</li><li><strong>Student</strong> - A student will have many of the privileges of a staff member. A user may exclude students from accesssing content such as assessments.</li><li><strong>Contractor/External</strong> - People from outside an organization may be added to an organization to facilitate collaboration on learning lists, or perhaps to easily enable access to libraries. An external will have the same implicit privileges as a staff member.</li></ul>"><img src="/images/icons/infoBubble.gif" alt="" /></a>
-                
-                <a class="toolTipLink" id="orolToolTipLink" title="Organization Roles|<ul><li><strong>Administrator</strong> - An administrator can perform all the functions associated with any of the organization roles. As an administrator can also assign the administrator role to others.</li><li ><strong>Content Administrator</strong> - May approve content - where content approval has been implemented by an organization.</li><li><strong>Library Administrator</strong> - May create libraries, and assign any role, including administrator to any other user.</li><li class='offScreen'><strong>Account Administrator</strong> - Will have access to manage organization people??.</li><li><strong>Content Curator</strong> - Can add/invite people to share content like a learning list.</li></ul>"><img src="/images/icons/infoBubble.gif" alt="" /></a>
-                </div>
-                
-				<div id="umSelectedUser_name"></div>
-				<div id="umSelectedUser_properties">
-					<a href="mailto:" id="umSelectedUser_email"></a>
-					<div id="umSelectedUser_type">
-						<div><strong> Member Type:</strong></div>
-						<select id="umSelectedUser_ddlType">
-							<% foreach(var item in MemberTypes){ %>
-								<option value="<%=item.Id %>"><%=item.Title %></option>
-							<% } %>
-						</select>
-					</div>
-
-					<% if(MemberRoles.Count() > 0){ %>
-					<div id="umSelectedUser_roles">
-						<div><strong> <%=ObjectTypeTitle %> Roles:</strong></div>
-						<% foreach(var item in MemberRoles){ %><label><input type="checkbox" value="<%=item.Id %>" /> <%=item.Title %></label><% } %>
-					</div>
-					<% } %>
-				</div><!--
-				--><div id="umSelectedUser_buttons">
-					<input type="button" class="isleButton bgBlue" id="btnUpdateSelectedUser" onclick="um.updateSelectedUser();" value="Update" />
-					<input type="button" class="isleButton bgRed" id="btnRemoveSelectedUser" onclick="um.removeSelectedUser();" value="Remove User" />
+			<div id="umSelectedUser_name"></div>
+			<div id="umSelectedUser_properties">
+				<a href="mailto:" id="umSelectedUser_email"></a>
+				<div id="umSelectedUser_type">
+						<div class="toolTip toolTipBubbleBefore toolTipBubbleOnly" title="Organization Member Types|<ul><li><strong>Administrator</strong> - An administrator can performance all available functions including: adding people, assigning any role, creating libraries, and communities. As well will have the same privileges as a staff member.</li><li><strong>Staff member/Employee</strong> - A staff member will have access to functions that are defined as staff only, will be able to contribute to organzation libraries (unless restricted by an library administrator), and other functions that may be only allowed for members of an organization.</li><li><strong>Student</strong> - A student will have many of the privileges of a staff member. A user may exclude students from accesssing content such as assessments.</li><li><strong>Contractor/External</strong> - People from outside an organization may be added to an organization to facilitate collaboration on learning lists, or perhaps to easily enable access to libraries. An external will have the same implicit privileges as a staff member.</li></ul>"><strong> Member Type:</strong></div>
+					<select id="umSelectedUser_ddlType">
+						<% foreach(var item in MemberTypes){ %>
+							<option value="<%=item.Id %>"><%=item.Title %></option>
+						<% } %>
+					</select>
 				</div>
-				<div id="umSelectedUser_avatar"></div>
+
+				<% if(MemberRoles.Count() > 0){ %>
+				<div id="umSelectedUser_roles">
+						<div class="toolTip toolTipBubbleBefore toolTipBubbleOnly" title="Organization Roles|<ul><li><strong>Administrator</strong> - An administrator can perform all the functions associated with any of the organization roles. As an administrator can also assign the administrator role to others.</li><li ><strong>Content Administrator</strong> - May approve content - where content approval has been implemented by an organization.</li><li><strong>Library Administrator</strong> - May create libraries, and assign any role, including administrator to any other user.</li><li class='offScreen'><strong>Account Administrator</strong> - Will have access to manage organization people??.</li><li><strong>Content Curator</strong> - Can add/invite people to share content like a learning list.</li></ul>"><strong> <%=ObjectTypeTitle %> Roles:</strong></div>
+					<% foreach(var item in MemberRoles){ %><label><input type="checkbox" value="<%=item.Id %>" /> <%=item.Title %></label><% } %>
+				</div>
+				<% } %>
+			</div><!--
+			--><div id="umSelectedUser_buttons">
+				<input type="button" class="isleButton bgBlue" id="btnUpdateSelectedUser" onclick="um.updateSelectedUser();" value="Update" />
+				<input type="button" class="isleButton bgRed" id="btnRemoveSelectedUser" onclick="um.removeSelectedUser();" value="Remove Member" />
 			</div>
-      <div style="float:right; width:100px;">
-                  <!-- download button -->
-        <asp:Button ID="btnDownload" runat="server" CssClass="isleButton bgBlue" OnClick="btnDownload_Click" Text="Export Users" style="width:auto; display:none; margin-bottom:5px;" />
-      </div>
+			<div id="umSelectedUser_avatar"></div>
+		</div>
+        <div id="umUser_ImportExportbuttons">
+    <!-- download button -->
+        <asp:Button ID="btnDownload" runat="server" CssClass="isleButton bgBlue" OnClick="btnDownload_Click" Text="Export Members" />
+        <asp:HyperLink ID="hlkImport" runat="server" CssClass="isleButton bgBlue" NavigateUrl="" Text="Import Members" Target="_blank" Visible="true"></asp:HyperLink>
+        <%--<asp:Button ID="btnImport" runat="server" CssClass="isleButton bgBlue" visible="false" OnClientClick="openImportPage()" Text="Import Users2" Style="width: 110px; height: 25px; margin-bottom: 5px; margin-right: 5px; float: right;" />--%>
+            </div>
       <div style="float:left;">
-        <h3>Select a user to manage:</h3>
+        <h3>Select a member to manage:</h3>
       </div>
-      <br style="clear:both;" />
+      <br  />
       <div class="userList"></div>
     </div><!--/current-->
 
-      <div class="umPanel" data-panel="import">
-      <h3 class="mid">Import Users</h3>
-        <p>Users may be bulk imported into this organization.</p>
-        <p>Use the following link to import users into this organization.</p>
-          
-          <asp:hyperlink ID="hlkImport" NavigateUrl="" Text="Import Users" runat="server" Target="_blank"></asp:hyperlink>
-  </div><!--/umPanels-->
-    </div>
+    </div><!--/umPanels-->
 	<div id="umTemplates" style="display:none;">
 		<script id="template_existingUser" type="text/template"><!--
 			--><div class="umUser umExisting" tabindex="0" data-id="{id}" onclick="um.selectUser({id})">
@@ -511,6 +552,8 @@
 				<div class="umUserTitle">
 					<div class="umName">{name}</div>
 					<div class="umMemberType">{memberType}</div>
+                    <div class="umMemberRoles">Roles: {memberRoles}</div>
+                    <div class="umMemberLastLogin">Last Login: {memberLastLogin}</div>
 				</div><!--
 				--><div class="umUserControls">
 					<input type="button" class="isleButton bgBlue" value="Select" onclick="um.selectUser({id})" />
@@ -526,4 +569,5 @@
 		</script>
 	</div>
     <asp:literal ID="txtImportUrl" runat="server" Visible="false">/Organizations/Import.aspx?rid={0}</asp:literal>
+    <div id="umOrgRId" class="offScreen"><asp:literal ID="litOrgRId" runat="server" ></asp:literal></div>
 </div><!-- /userManagerPanel -->

@@ -80,6 +80,7 @@ namespace IOER.Controls
 		public void SetImportOrg( string orgRowId )
 		{
 			hlkImport.NavigateUrl = string.Format( txtImportUrl.Text, orgRowId );
+			litOrgRId.Text = orgRowId;
 		}
 		//Set an error message and hide the management panel
 		private void SetError( string message )

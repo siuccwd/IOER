@@ -132,7 +132,7 @@ namespace IOER.Controls
           try
           {
 			  //HACK WARNING
-            gooruSessionToken = new IOER.Pages.GooruSearch().GetSessionToken();
+						gooruSessionToken = new SearchV7.Themes.gooru().GetGooruToken();
           }
           catch ( Exception ex )
           {
@@ -679,7 +679,7 @@ namespace IOER.Controls
         //TBD - will populate once org list added
         resource.PublishedForOrgId= 0;
 
-        PublishingServices.PublishToAll( resource
+		PublishingServices.PublishToAll_OLD(resource
                     , ref successfulPublish
                     , ref publishStatus
                     , ref versionID
@@ -717,9 +717,11 @@ namespace IOER.Controls
                             item.ResourceIntId = resource.Id;
                             // 14-11-03 mparsons - connector no longer used, set parentId
                             item.ParentId = parentId;
-
                             item.StatusId = ContentItem.PUBLISHED_STATUS;
-                            item.UseRightsUrl = resource.Version.Rights;
+
+							//rights should have been the same, but in case changed mind
+                            item.UsageRightsUrl = resource.Version.Rights;
+							item.ConditionsOfUseId = resource.Version.UsageRightsId;
                             //item.IsPublished = true;
                             item.PrivilegeTypeId = accessRightsId;
                             string statusMsg = new ContentServices().UpdateAfterQuickPub( item );
@@ -762,7 +764,7 @@ namespace IOER.Controls
                 //item.ResourceIntId = resource.Id;
 
                 //item.StatusId = ContentItem.PUBLISHED_STATUS;
-                //item.UseRightsUrl = resource.Version.Rights;
+                //item.UsageRightsUrl = resource.Version.Rights;
                 //item.IsPublished = true;
                 //string statusMsg = new ContentServices().UpdateAfterQuickPub( item );
                 

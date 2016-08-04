@@ -650,7 +650,7 @@
     function getID(ID) {      
             $.ajax({
                 type: 'GET',
-                url: "http://www.goorulearning.org/gooruapi/rest/v2/resource/" + ID + "?sessionToken=<%=gooruSessionToken %>",
+                url: "http://www.gooru.org/gooruapi/rest/v2/resource/" + ID + "?sessionToken=<%=gooruSessionToken %>",
                 dataType: "jsonp",
                 crossDomain: true,
                 cache: false,

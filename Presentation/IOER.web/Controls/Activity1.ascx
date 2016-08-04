@@ -395,7 +395,7 @@
   .contributeTabs a.selected { background-color: #4AA394; }
   .contributeTabs a:hover, .contributeTabs a:focus { background-color: #FF5707; }
 
-  .wayToContribute { display: inline-block; vertical-align: top; width: 24%; position: relative; padding-left: 15px; margin-bottom: 5px; min-width: 100px; }
+  .wayToContribute { display: inline-block; vertical-align: top; width: 32%; position: relative; padding-left: 15px; margin-bottom: 5px; min-width: 100px; }
   .wayToContribute h4 { border-radius: 5px; background-color: #4AA394; color: #FFF; padding: 2px 5px 2px 20px; }
   .wayToContribute img { position: absolute; top: 0; left: 0px; border-radius: 50%; background-color: #4AA394; }
   .wayToContribute p { padding-left: 15px; text-align: left; }
@@ -559,29 +559,23 @@
         <input id="btnSubmit" type="button" onclick="postMessage(this); return false;" value="Post" />
       </div>
       <div class="grayBox contributeTab" data-tabID="contribute">
-        <div class="wayToContribute" data-id="quickTag">
-          <img alt="" src="/images/icons/icon_swirl_bg.png">
-          <h4>Quick Tag</h4>
-          <p>Submit a webpage or a file that is already hosted online, tag it with basic information, and enhance your tags later.</p>
-          <a href="/tagger?theme=quick&mode=tag">Tag Now &rarr;</a>
+        <div class="wayToContribute" data-id="publisher">
+          <img alt="" src="/images/icons/icon_tag_bg.png">
+          <h4>Tag an Online Resource</h4>
+          <p>Share a webpage or a file (from your PC or Google Drive) with IOER.</p>
+          <a href="/tagger?theme=ioer&mode=tag">Go to Tagging Tool &rarr;</a>
         </div>
-        <div class="wayToContribute" data-id="quickUpload">
-          <img alt="" src="/images/icons/icon_upload_bg.png">
-          <h4>Quick Upload</h4>
-          <p>Upload a file, tag it with basic information, and enhance your tags later.</p>
-          <a href="/tagger?theme=quick&mode=file">Upload Now &rarr;</a>
+        <div class="wayToContribute" data-id="learninglist">
+          <img alt="" src="/images/icons/icon_standards_bg.png">
+          <h4>Build a Learning List</h4>
+          <p>Group related resources and files together. Works for small lessons, full curricula, and everything in between.</p>
+          <a href="/My/LearningList/new">Go to Learning List Builder &rarr;</a>
         </div>
         <div class="wayToContribute" data-id="author">
           <img alt="" src="/images/icons/icon_create_bg.png">
           <h4>Create a New Resource</h4>
           <p>Easily create a simple webpage and attach multiple files to it with this tool.</p>
           <a href="/My/Author.aspx">Go to Authoring Tool &rarr;</a>
-        </div>
-        <div class="wayToContribute" data-id="publisher">
-          <img alt="" src="/images/icons/icon_tag_bg.png">
-          <h4>Tag an Online Resource</h4>
-          <p>Want to thoroughly tag a website or a file that's already hosted online? Start here.</p>
-          <a href="/tagger?theme=ioer&mode=tag">Go to Tagging Tool &rarr;</a>
         </div>
       </div>
     </div>

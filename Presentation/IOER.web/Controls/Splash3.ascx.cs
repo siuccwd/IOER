@@ -108,7 +108,7 @@ namespace IOER.Controls
 			var input = new Services.ElasticSearchService.JSONQueryV7();
 			input.sort = new Services.ElasticSearchService.SortV7() { field = field, order = order };
 			input.text = "*";
-			input.not = " 'delete'  'freesound'  'bookshare'  'smarter balanced' ";
+			input.not = " 'delete'  'freesound'  'smarter balanced' ";
 			input.size = 10;
 			input.start = 0;
 
