@@ -65,30 +65,29 @@ namespace IOER.Services.UserManagement
 				return false;
 			}
 
-			if ( true )
-			{
-				//Check to see if the user exists
-				var targetUser = new AccountServices().GetByEmail(input.TargetUserEmail);
+			
+			//Check to see if the user exists
+			var targetUser = new AccountServices().GetByEmail(input.TargetUserEmail);
 
-				//If so, add them
-				if ( targetUser != null && targetUser.Id > 0 )
-				{
-					var result = new OrganizationBizService().InviteExistingUser( input.ObjectId, actingUser.Id, targetUser.Id, input.TargetMemberTypeId, input.TargetMemberRoleIds, input.Message, ref status );
-					return result;
-				}
-				//Otherwise, invite new
-				else
-				{
-					var result = new OrganizationBizService().InviteNewUser( input.ObjectId, actingUser.Id, input.TargetUserEmail, input.TargetMemberTypeId, input.TargetMemberRoleIds, input.Message, ref status );
-					return result;
-				}
+			//If so, add them
+			if ( targetUser != null && targetUser.Id > 0 )
+			{
+				var result = new OrganizationBizService().InviteExistingUser( input.ObjectId, actingUser.Id, targetUser.Id, input.TargetMemberTypeId, input.TargetMemberRoleIds, input.Message, ref status );
+				return result;
 			}
+			//Otherwise, invite new
 			else
 			{
-				//Return an error message
-				status = "You do not have permission to invite a new user.";
-				return false;
+				var result = new OrganizationBizService().InviteNewUser( input.ObjectId, 
+					actingUser.Id, 
+					input.TargetUserEmail, 
+					input.TargetFirstName, input.TargetLastName, 
+					input.TargetMemberTypeId, 
+					input.TargetMemberRoleIds, 
+					input.Message, ref status );
+				return result;
 			}
+		
 		}
 
 		//Add an existing user directly
@@ -228,7 +227,9 @@ namespace IOER.Services.UserManagement
 					MemberImageUrl = item.ImageUrl,
 					MemberType = item.OrgMemberType,
 					MemberTypeId = item.OrgMemberTypeId,
-					Organization = item.Organization
+					Organization = item.Organization,
+					MemberRoles = item.Roles,
+					LastLoginDate = item.LastLoginDate
 				};
 
 				//Add roles

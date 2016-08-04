@@ -43,10 +43,11 @@ namespace IOER.Services.UserManagement
 		public override bool InviteUser( UserManagementService.UserManagementInput input, IWebUser actingUser, ref string status )
 		{
 			//Check to see if the actingUser has authority to invite a new user
-			if ( true )
+			bool skippingCheck = true;
+			if ( skippingCheck )
 			{
 				//If so, do the add
-				int id = new CurriculumServices().Content_AddNewPartner( input.ObjectId, input.TargetUserEmail, input.TargetMemberTypeId, actingUser.Id, input.Message, ref status );
+				int id = new CurriculumServices().Content_AddNewPartner( input.ObjectId, input.TargetUserEmail, input.TargetFirstName, input.TargetLastName, input.TargetMemberTypeId, actingUser.Id, input.Message, ref status );
 				//Return the result
 				return id > 0;
 			}
